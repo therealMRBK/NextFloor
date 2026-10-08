@@ -1742,7 +1742,36 @@ def paints(*names):
 
 
 # models an owner can put on their own Home Assistant: id -> size of the model (width, depth, height)
-MESHES = {"tesla_model_y": [2.12, 4.79, 1.57]}
+MESHES = {
+    "tesla_model_3": [2.09, 4.69, 1.41],
+    "tesla_model_3_2024": [2.09, 4.72, 1.41],
+    "tesla_model_3_2024_performance": [2.09, 4.72, 1.41],
+    "tesla_model_s": [2.19, 5.02, 1.42],
+    "tesla_model_s_plaid": [2.19, 5.04, 1.42],
+    "tesla_model_x": [2.27, 5.06, 1.65],
+    "tesla_model_y": [2.13, 4.75, 1.62],
+    "tesla_model_y_2025": [2.12, 4.79, 1.57],
+    "tesla_model_y_2025_premium": [2.12, 4.79, 1.57],
+    "tesla_model_y_2025_performance": [2.12, 4.79, 1.57],
+    "tesla_model_y_l": [2.12, 4.97, 1.61],
+    "tesla_cybertruck": [2.44, 5.68, 1.8],
+}
+
+
+def variants():
+    """Variants that only differ in an owned 3D model (docs/models.md); the family shape is the fallback."""
+    m3 = (4.72, 1.85, 1.44, "#b3202c", 2.875, 0.85, 0.68, 0.95, 0.6, 0.95, 0.8, -1.35, 0.0, -0.8, 0.15)
+    ms = (4.98, 1.96, 1.44, "#f4f5f7", 2.96, 0.93, 0.70, 0.98, 0.62, 0.9, 0.95, -1.45, 0.1, -0.75, 0.18)
+    my = (4.75, 1.92, 1.62, "#8d95a1", 2.89, 0.9, 0.72, 1.02, 0.66, 1.02, 0.82, -1.65, 0.15, -1.1, 0.25)
+    return [
+        ("tesla_model_3_2024", "Tesla Model 3 (2024)", tesla_sedan(*m3)),
+        ("tesla_model_3_2024_performance", "Tesla Model 3 Performance (2024)", tesla_sedan(*m3)),
+        ("tesla_model_s_plaid", "Tesla Model S Plaid", tesla_sedan(*ms)),
+        ("tesla_model_y_2025", "Tesla Model Y Standard (2025)", tesla_sedan(*my)),
+        ("tesla_model_y_2025_premium", "Tesla Model Y Premium (2025)", tesla_sedan(*my)),
+        ("tesla_model_y_2025_performance", "Tesla Model Y Performance (2025)", tesla_sedan(*my)),
+        ("tesla_model_y_l", "Tesla Model Y L", tesla_sedan(4.97, 1.92, 1.62, "#8d95a1", 3.0, *my[5:])),
+    ]
 
 
 def tesla_items():
@@ -1769,6 +1798,7 @@ def tesla_items():
             tesla_sedan(4.75, 1.92, 1.62, "#8d95a1", 2.89, 0.9, 0.72, 1.02, 0.66, 1.02, 0.82, -1.65, 0.15, -1.1, 0.25),
         ),
         ("tesla_cybertruck", "Tesla Cybertruck", tesla_cybertruck()),
+        *variants(),
         (
             "tesla_roadster",
             "Tesla Roadster",
@@ -1781,6 +1811,13 @@ def tesla_items():
         "tesla_model_3": paints("red", "white", "black", "midnight", "stealth", "blue", "quicksilver"),
         "tesla_model_x": paints("blue", "white", "black", "midnight", "quicksilver", "red", "ultrared"),
         "tesla_model_y": paints("quicksilver", "white", "black", "stealth", "blue", "ultrared", "midnight"),
+        "tesla_model_3_2024": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
+        "tesla_model_3_2024_performance": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
+        "tesla_model_s_plaid": paints("white", "black", "midnight", "quicksilver", "blue", "ultrared", "cherry"),
+        "tesla_model_y_2025": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
+        "tesla_model_y_2025_premium": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
+        "tesla_model_y_2025_performance": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
+        "tesla_model_y_l": paints("white", "black", "stealth", "quicksilver", "blue", "ultrared"),
         "tesla_cybertruck": paints("steel", "wrap_black", "wrap_white", "wrap_grey", "wrap_blue"),
         "tesla_roadster": paints("blue", "ultrared", "white", "black", "quicksilver"),
         "tesla_semi": paints("white", "black", "red", "blue", "stealth"),

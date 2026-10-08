@@ -1,12 +1,15 @@
 // Prepare a 3D model you own for NextFloor: lighter, upright, front towards +z, body paint marked.
 //
 //   npm install @gltf-transform/core @gltf-transform/extensions @gltf-transform/functions draco3dgltf meshoptimizer
-//   node tools/prepare-model.mjs input.glb output.glb [--ratio=0.3] [--front=Hood] [--paint=^Paint] [--drop=^Fade]
+//   node tools/prepare-model.mjs input.glb output.glb [--ratio=0.3] [--front=^Hood | --rear=^Charge] [--paint=^Paint] [--drop=^Fade]
+//                                [--drop-materials=Fade]
 //
 // --ratio  share of the triangles to keep (0.3 turns 200,000 into about 60,000; default 0.3)
-// --front  name of a part at the front of the model (a hood, a bonnet): the model is turned so it points to +z
+// --front  pattern for the name of a part at the front of the model (a hood, a bonnet); --rear the same for the back
+//          (a charge port): the model is turned so its front points to +z
 // --paint  materials whose name matches become the body paint that the colour picker changes
 // --drop   parts whose name matches are left out (hidden or only there for animations)
+// --drop-materials  surfaces whose material name matches are left out (see-through fade layers that would flicker)
 //
 // Textures and normals are removed (NextFloor shades the model smooth itself) and the Draco compression is
 // unpacked, because the 3D view reads plain binary glTF. Check the licence of your model before you use it.
@@ -24,7 +27,9 @@ if (!input || !output) {
   process.exit(1);
 }
 const ratio = Number(opt("ratio", "0.3"));
-const frontName = opt("front", "");
+const frontName = opt("front", "") ? new RegExp(opt("front", "")) : null;
+const rearName = opt("rear", "") ? new RegExp(opt("rear", "")) : null;
+const dropMaterials = opt("drop-materials", "") ? new RegExp(opt("drop-materials", "")) : null;
 const paint = new RegExp(opt("paint", "^Paint"));
 const drop = opt("drop", "") ? new RegExp(opt("drop", "")) : null;
 
@@ -33,11 +38,12 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
 const doc = await io.read(input);
 const root = doc.getRoot();
 
-// the middle of the front part along z (before anything moves)
+// the middle of the front (or rear) part along z, before anything moves
 let frontZ = 0;
 let frontN = 0;
 for (const n of root.listNodes()) {
-  if (!frontName || n.getName() !== frontName || !n.getMesh()) continue;
+  const hit = (frontName && frontName.test(n.getName())) || (rearName && rearName.test(n.getName()));
+  if (!hit || !n.getMesh()) continue;
   for (const p of n.getMesh().listPrimitives()) {
     const a = p.getAttribute("POSITION");
     const v = [0, 0, 0];
@@ -49,8 +55,13 @@ for (const n of root.listNodes()) {
   }
 }
 frontZ /= Math.max(1, frontN);
+// the middle of the whole model: a rear part lies on the other side of it than a front part
+const whole = getBounds(root.listScenes()[0]);
+frontZ -= (whole.min[2] + whole.max[2]) / 2;
+if (rearName && !frontName) frontZ = -frontZ;
 
 for (const m of root.listMaterials()) if (paint.test(m.getName())) m.setExtras({ paint: true });
+if (dropMaterials) for (const mesh of root.listMeshes()) for (const p of mesh.listPrimitives()) if (dropMaterials.test(p.getMaterial()?.getName() ?? "")) p.dispose();
 if (drop) for (const n of root.listNodes()) if (drop.test(n.getName())) (n.getMesh()?.dispose(), n.dispose());
 
 for (const m of root.listMaterials()) {
@@ -80,10 +91,12 @@ for (const mesh of root.listMeshes()) {
     }
   }
 }
-for (const ext of root.listExtensionsUsed()) if (ext.extensionName === "KHR_draco_mesh_compression") ext.dispose();
+// the textures are gone, so the extensions that only served them can go too
+for (const ext of root.listExtensionsUsed()) if (["KHR_draco_mesh_compression", "EXT_texture_webp"].includes(ext.extensionName)) ext.dispose();
 await io.write(output, doc);
 
 let tris = 0;
 for (const mesh of root.listMeshes()) for (const p of mesh.listPrimitives()) tris += p.getIndices().getCount() / 3;
 const size = [0, 1, 2].map((i) => (bounds.max[i] - bounds.min[i]).toFixed(2));
 console.log(`${output}: ${tris} triangles, ${size[0]} m wide, ${size[1]} m high, ${size[2]} m long`);
+console.log(`SIZE ${JSON.stringify([+size[0], +size[2], +size[1]])}`);

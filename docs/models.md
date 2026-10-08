@@ -1,6 +1,6 @@
 # Your own 3D models
 
-NextFloor draws furniture and vehicles from simple shapes. For a few items (the Tesla Model Y so far) it can show a
+NextFloor draws furniture and vehicles from simple shapes. For a few items (the Tesla models so far) it can show a
 real 3D model instead, **if you own one and put it on your own Home Assistant**. NextFloor ships none of these
 files: without yours, the item looks as it always did.
 
@@ -30,7 +30,18 @@ files: without yours, the item looks as it always did.
 
 | Item | Model id |
 | --- | --- |
+| Tesla Model 3 | `tesla_model_3` |
+| Tesla Model 3 (2024) | `tesla_model_3_2024` |
+| Tesla Model 3 Performance (2024) | `tesla_model_3_2024_performance` |
+| Tesla Model S | `tesla_model_s` |
+| Tesla Model S Plaid | `tesla_model_s_plaid` |
+| Tesla Model X | `tesla_model_x` |
 | Tesla Model Y | `tesla_model_y` |
+| Tesla Model Y Standard (2025) | `tesla_model_y_2025` |
+| Tesla Model Y Premium (2025) | `tesla_model_y_2025_premium` |
+| Tesla Model Y Performance (2025) | `tesla_model_y_2025_performance` |
+| Tesla Model Y L | `tesla_model_y_l` |
+| Tesla Cybertruck | `tesla_cybertruck` |
 
 ## Preparing a model
 
@@ -39,10 +50,10 @@ triangles would be too heavy for a tablet. `tools/prepare-model.mjs` does the wo
 
 ```
 npm install @gltf-transform/core @gltf-transform/extensions @gltf-transform/functions draco3dgltf meshoptimizer
-node tools/prepare-model.mjs original.glb tesla_model_y.glb --ratio=0.35 --front=Hood --paint=^Paint --drop="^(Fade|Underhood_Piece)"
+node tools/prepare-model.mjs original.glb tesla_model_y.glb --ratio=0.35 --rear=^Charge --paint=^Paint --drop-materials="Fade|^Light$" --drop="^(Fade|Underhood_Piece)"
 ```
 
-`--front` names a part at the front (the hood) so the car points to +z; `--paint` is a pattern for the material
+`--front` (or `--rear`, for a part at the back such as the charge port) is a pattern for the name of a part that tells which end is which, so the car points to +z; `--drop-materials` leaves out see-through fade layers and light beams that would float around the car; `--paint` is a pattern for the material
 names of the body paint. Both depend on how your model's author named things; open the file in a glTF viewer to look.
 With a ratio of 0.35, a Model Y has about 70,000 triangles and 1 MB.
 
