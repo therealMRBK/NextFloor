@@ -1340,9 +1340,9 @@
     "en": "Tesla Model Y"
    },
    "size": [
-    1.92,
-    4.75,
-    1.62
+    2.12,
+    4.79,
+    1.57
    ],
    "parts": [
     {
@@ -1773,7 +1773,8 @@
      },
      "hex": "#565d66"
     }
-   ]
+   ],
+   "mesh": "tesla_model_y"
   },
   {
    "id": "tesla_cybertruck",

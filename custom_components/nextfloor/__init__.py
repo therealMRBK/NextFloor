@@ -23,6 +23,7 @@ from .const import (
     PANEL_URL_PATH,
     URL_BASE,
 )
+from .meshes import async_register_mesh_view
 from .storage import NextFloorData
 from .websocket import async_register_commands
 
@@ -34,6 +35,7 @@ _STATIC_REGISTERED = f"{DOMAIN}_static_registered"
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Register the websocket commands once."""
     async_register_commands(hass)
+    async_register_mesh_view(hass)
     return True
 
 

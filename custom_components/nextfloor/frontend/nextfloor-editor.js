@@ -263,7 +263,7 @@ var yt=globalThis,kt=yt.ShadowRoot&&(yt.ShadyCSS===void 0||yt.ShadyCSS.nativeSha
         color: var(--nf-muted);
         cursor: default;
       }
-    `]};customElements.get("nf-entity-picker")||customElements.define("nf-entity-picker",Yn);var Do=new URL(import.meta.url),Lo=new URL("./nextfloor-3d.js?v=d8d168d71721",Do).href,us;function fs(){return us??=import(Lo),us}function vt(o,e){if(!Be(e))return ce(o,`furn_${e}`);let t=U(e);return t?ke(t,o?.language??navigator.language):ce(o,"pack_missing_item")}var ps=["weather","energy","car","sound","screens","cameras"],Ct="https://github.com/therealMRBK/NextFloor";var Xn=class extends J{static properties={hass:{attribute:!1},packs:{attribute:!1},_packMsg:{state:!0}};constructor(){super(),this._packMsg=null}get isAdmin(){return this.hass?.user?.is_admin??!1}t(e,t){return ce(this.hass,e,t)}render(){return g`<div class="nf-ext">
+    `]};customElements.get("nf-entity-picker")||customElements.define("nf-entity-picker",Yn);var Do=new URL(import.meta.url),Lo=new URL("./nextfloor-3d.js?v=a205521436fa",Do).href,us;function fs(){return us??=import(Lo),us}function vt(o,e){if(!Be(e))return ce(o,`furn_${e}`);let t=U(e);return t?ke(t,o?.language??navigator.language):ce(o,"pack_missing_item")}var ps=["weather","energy","car","sound","screens","cameras"],Ct="https://github.com/therealMRBK/NextFloor";var Xn=class extends J{static properties={hass:{attribute:!1},packs:{attribute:!1},_packMsg:{state:!0}};constructor(){super(),this._packMsg=null}get isAdmin(){return this.hass?.user?.is_admin??!1}t(e,t){return ce(this.hass,e,t)}render(){return g`<div class="nf-ext">
       <header class="nf-ext-head">
         <h2>${this.t("ext_title")}</h2>
         <p class="nf-sub">${this.t("ext_intro")}</p>
@@ -1506,7 +1506,7 @@ var yt=globalThis,kt=yt.ShadowRoot&&(yt.ShadyCSS===void 0||yt.ShadyCSS.nativeSha
               </select></label
             >
           </div>`:v}
-      ${(()=>{let n=U(e.type)?.colors;if(!n?.length)return v;let i=n.find(s=>s.id===e.variant)??n[0],r=s=>s.name[this.hass?.language??"en"]??s.name.en??Object.values(s.name)[0];return g`<div class="nf-form">
+      ${(()=>{let n=U(e.type==="parking"?e.vehicle??"":e.type)?.colors;if(!n?.length)return v;let i=n.find(s=>s.id===e.variant)??n[0],r=s=>s.name[this.hass?.language??"en"]??s.name.en??Object.values(s.name)[0];return g`<div class="nf-form">
           <div class="nf-field nf-wide">
             <span>${this.t("paint_colour")}: ${r(i)}</span>
             <div class="nf-swatches" role="radiogroup" aria-label=${this.t("paint_colour")}>

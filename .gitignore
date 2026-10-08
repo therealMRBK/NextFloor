@@ -10,3 +10,7 @@ preview/screenshots/
 private/
 *.pem
 *.key
+
+# owned 3D models never go into the repository
+*.glb
+nextfloor_meshes/

@@ -132,3 +132,7 @@ npm run screenshot  # renders preview/index.html (invented demo data) with a loc
 MIT, see [LICENSE](LICENSE). NextFloor ships [three.js](https://threejs.org) (MIT), [Lit](https://lit.dev) (BSD-3-Clause); their notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 "Home Assistant" is a trademark of its owners; "Tesla" and the Tesla model names are trademarks of Tesla, Inc., and "IKEA" and its product names are trademarks of Inter IKEA Systems B.V.; they are used here only to name the sizes and models. NextFloor is an independent community project and not affiliated with or endorsed by Nabu Casa, Tesla or IKEA.
+
+## Your own 3D models
+
+If you own a 3D model of a vehicle (a `.glb` file), you can put it on your own Home Assistant and NextFloor shows it instead of the simple shape, in the paint colour you pick. NextFloor ships no models. See [docs/models.md](docs/models.md).

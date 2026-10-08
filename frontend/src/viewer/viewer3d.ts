@@ -9,6 +9,7 @@ import {
   AdditiveBlending,
   
   Box3,
+  type Object3D,
   CanvasTexture,
   ClampToEdgeWrapping,
   Color,
@@ -47,7 +48,7 @@ import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry } from "./buil
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { makeFoldable, type FoldMasks } from "./fold.ts";
 import { pushCameraModel, pushPackLamp, screenRect, pushFridgeDoors } from "./furniture.ts";
-import { mountBase, packItem, setPacks, type FurniturePack } from "../packs.ts";
+import { hasMesh, mountBase, packItem, setMeshSource, setPacks, type FurniturePack, type MeshSource } from "../packs.ts";
 import { withVehicles } from "../parking.ts";
 import { buildRoof, type RoofWindowState } from "./roof.ts";
 import { GROUND, groundFace, groundFloor, wallFaces } from "../solar.ts";
@@ -62,6 +63,7 @@ import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { TrailLayer, type TrailPoint } from "./live-trail.ts";
+import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
 import { circlePath, cleaningPath, stepRobot, type RobotInfo, type RobotMotion } from "./robot.ts";
 
 export type { RobotInfo } from "./robot.ts";
@@ -454,6 +456,10 @@ export class NextFloorViewer {
   private robotMat: MeshBasicMaterial | null = null;
   private robotLedGeo: BufferGeometry | null = null;
   private robotLast = 0;
+  /** Owned 3D models standing in the floors (see meshes.ts), and the light they need. */
+  private meshes: { group: Group; furnitureId: string }[] = [];
+  private meshLight: ReturnType<typeof addMeshLighting> | null = null;
+  private meshAsked = new Set<string>();
   private robotTimer: ReturnType<typeof setTimeout> | undefined;
   private floorStack: FloorStack = "dim";
   /** Floors by id, and per-frame bookkeeping so labels are only placed when something moved. */
@@ -609,6 +615,11 @@ export class NextFloorViewer {
   }
 
   /** Furniture packs (models of pack furniture); set before the building that uses them. */
+  /** Where owned 3D models come from (the host knows Home Assistant's login). */
+  setMeshSource(source: MeshSource | null): void {
+    setMeshSource(source);
+  }
+
   setPacks(packs: FurniturePack[]): void {
     setPacks(packs);
     if (this.building) {
@@ -1090,6 +1101,7 @@ export class NextFloorViewer {
     this.robotGeo?.dispose();
     this.robotLedGeo?.dispose();
     this.robotMat?.dispose();
+    this.meshLight?.dispose();
     this.renderer.dispose();
     // frees the GPU context now instead of when the garbage collector gets to it
     this.renderer.forceContextLoss();
@@ -1159,6 +1171,12 @@ export class NextFloorViewer {
   private clear(): void {
     // robots share one geometry: keep them out of the floor groups while those are disposed
     for (const r of this.robots.values()) r.group.removeFromParent();
+    // owned models are shared: only their own materials go
+    for (const m of this.meshes) {
+      m.group.removeFromParent();
+      disposeMeshInstance(m.group);
+    }
+    this.meshes = [];
     for (const fv of this.floors) {
       fv.group.traverse((o) => {
         const g = (o as Mesh).geometry as BufferGeometry | undefined;
@@ -1604,6 +1622,40 @@ export class NextFloorViewer {
     this.applyTierFlags();
     this.buildRoofMesh();
     this.updateGhost();
+    this.placeMeshes();
+  }
+
+  /** Put the owned 3D models of the furniture in place; models not loaded yet are fetched, and the floors rebuilt when they arrive. */
+  private placeMeshes(): void {
+    for (const m of this.meshes) {
+      m.group.removeFromParent();
+      disposeMeshInstance(m.group);
+    }
+    this.meshes = [];
+    for (const fv of this.floors) {
+      for (const f of withVehicles(fv.floor, this.parked).furniture) {
+        const item = packItem(f.type);
+        if (!item?.mesh) continue;
+        const id = item.mesh;
+        if (!hasMesh(f.type)) {
+          if (!this.meshAsked.has(id)) {
+            this.meshAsked.add(id);
+            void loadMesh(id).then((ok) => {
+              if (ok && !this.disposed) this.rebuild();
+            });
+          }
+          continue;
+        }
+        const colour = item.colors?.length ? (item.colors.find((c) => c.id === f.variant) ?? item.colors[0]).hex : null;
+        const group = instantiateMesh(id, { x: f.x, z: f.z, y: mountBase(fv.floor, f), rotation: f.rotation, mirror: f.mirror, w: f.w, d: f.d, h: f.h, paint: colour });
+        if (!group) continue;
+        if (!this.meshLight) this.meshLight = addMeshLighting(this.root, this.renderer);
+        applyEnvironment(group, this.meshLight.env);
+        fv.group.add(group);
+        this.meshes.push({ group, furnitureId: f.id });
+      }
+    }
+    this.invalidate();
   }
 
   private buildRoofMesh(): void {
@@ -2293,6 +2345,16 @@ export class NextFloorViewer {
   private pick(x: number, y: number): { entity: string } | { floorId: string; roomId: string | null } | null {
     const ray = this.rayAt(x, y);
     const floors = this.activeFloors();
+    // an owned 3D model that stands for a device: a tap on it is a tap on the device
+    if (this.meshes.length) {
+      const hit = ray.intersectObjects(this.meshes.map((m) => m.group), true)[0];
+      if (hit) {
+        let o: Object3D | null = hit.object;
+        while (o && !this.meshes.some((m) => m.group === o)) o = o.parent;
+        const entity = o ? this.pickFurniture.get(this.meshes.find((m) => m.group === o)!.furnitureId) : undefined;
+        if (entity) return { entity };
+      }
+    }
     const meshes = floors.flatMap((f) => [f.lampMesh, f.coneMesh, f.framesMesh, f.glassMesh, f.blindsMesh, f.wallMesh, f.floorMesh].filter((m) => m.visible));
     const inRange = (list: { id: string; start: number; end: number }[], tri: number) => list.find((r) => tri >= r.start && tri < r.end)?.id;
     for (const hit of ray.intersectObjects(meshes, false)) {

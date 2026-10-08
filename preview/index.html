@@ -142,6 +142,12 @@
           if (window.nfCard) window.nfCard.hass = current;
           else if (window.nfPanel) window.nfPanel.hass = current;
         },
+        // a model the owner uploaded: only when the page is told where to read it from (?meshdir=)
+        async fetchWithAuth(path) {
+          const id = /mesh\/([a-z0-9_]+)/.exec(path)?.[1];
+          const dir = params.get("meshdir");
+          return id && dir ? fetch(`${dir}/${id}.glb`) : new Response(null, { status: 404 });
+        },
         async callWS(msg) {
           switch (msg.type) {
             case "nextfloor/building/get": {

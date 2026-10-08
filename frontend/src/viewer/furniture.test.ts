@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import type { Furniture } from "../model.ts";
-import { mountBase, setPacks, type FurniturePack } from "../packs.ts";
+import { hasMesh, markMeshReady, mountBase, setPacks, type FurniturePack } from "../packs.ts";
 import { newFloor } from "../model.ts";
 import { pushFurniture } from "./furniture.ts";
 import { GeoBuffer, LineBuffer } from "./geo.ts";
@@ -174,4 +174,13 @@ test("the chosen colour recolours the painted parts of a pack item and nothing e
   assert.equal(reds(null), 0, "the first colour is the default");
   assert.ok(reds("red") > 10, "the red paint shows");
   assert.equal(reds("unknown"), 0, "an unknown colour falls back to the default");
+});
+
+test("an item with a loaded owned model leaves its parts out of the merged geometry", () => {
+  const item = { id: "car", name: { en: "Car" }, size: [2, 4, 1.5] as [number, number, number], mesh: "own_car_test", parts: [{ shape: "box", x: 0, z: 0, w: 1, d: 1, y: 0, h: 1, color: "#ffffff" }] } as FurniturePack["items"][number];
+  setPacks([{ id: "t.mesh", name: "Mesh", publisher: "t", items: [item] }]);
+  assert.equal(hasMesh("pack:t.mesh:car"), false);
+  markMeshReady("own_car_test");
+  assert.equal(hasMesh("pack:t.mesh:car"), true);
+  assert.equal(hasMesh("pack:t.mesh:other"), false);
 });

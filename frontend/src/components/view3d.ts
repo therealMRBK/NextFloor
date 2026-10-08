@@ -449,6 +449,10 @@ export class NfView3d extends LitElement {
       this.viewer.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
       this.viewer.setKeepRoof(this.keepRoof);
       this._low = this.viewer.low;
+      // owned 3D models (cars and the like) come from the user's Home Assistant, with the user's login
+      this.viewer.setMeshSource((id) =>
+        this.hass?.fetchWithAuth ? this.hass.fetchWithAuth(`/api/nextfloor/mesh/${encodeURIComponent(id)}`).then((r) => (r.ok ? r.arrayBuffer() : null)) : Promise.resolve(null),
+      );
       this.viewer.setPacks([...getPacks()]);
       this.shownPacks = packsVersion();
       if (this.building) {

@@ -116,6 +116,8 @@ ITEM_SCHEMA = vol.Schema(
         vol.Optional("wall_y", default=1.0): vol.All(vol.Coerce(float), vol.Range(min=0, max=3)),
         # its top carries other items (like a table or a worktop)
         vol.Optional("surface", default=False): bool,
+        # a 3D model the owner has put on their Home Assistant (see meshes.py); the parts are the fallback
+        vol.Optional("mesh"): vol.All(str, vol.Match(r"^[a-z0-9_]{1,48}$")),
         # a vehicle: offered for parking spots
         vol.Optional("vehicle", default=False): bool,
         # stairs: when it reaches the floor above, it cuts a stairwell opening into that floor

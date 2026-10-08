@@ -64,7 +64,7 @@ function copyAssets() {
 }
 
 // Size budgets, small enough for old wall tablets.
-const BUDGET = { "nextfloor.js": 470 * 1024, "nextfloor-3d.js": 790 * 1024, "nextfloor-editor.js": 560 * 1024, "nextfloor-card-editor.js": 180 * 1024 };
+const BUDGET = { "nextfloor.js": 470 * 1024, "nextfloor-3d.js": 900 * 1024, "nextfloor-editor.js": 560 * 1024, "nextfloor-card-editor.js": 180 * 1024 };
 
 copyAssets();
 if (watch) {

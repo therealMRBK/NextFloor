@@ -58,5 +58,7 @@ export interface HomeAssistant {
   themes?: { darkMode?: boolean };
   connection: HassConnection;
   callWS<T>(msg: Record<string, unknown>): Promise<T>;
+  /** fetch() with the logged-in user's token (Home Assistant's frontend provides it). */
+  fetchWithAuth?(path: string, init?: Record<string, unknown>): Promise<Response>;
   callService(domain: string, service: string, data?: Record<string, unknown>): Promise<unknown>;
 }

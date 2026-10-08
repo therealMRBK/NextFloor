@@ -13,8 +13,8 @@ mkdirSync(outDir, { recursive: true });
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".png": "image/png", ".json": "application/json" };
 const server = createServer((req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^([/\\])+/, "");
-  const file = join(root, path);
-  if (!file.startsWith(root) || !existsSync(file)) {
+  const file = path.startsWith("__mesh/") && process.env.MESHDIR ? join(process.env.MESHDIR, path.slice(7)) : join(root, path);
+  if (!(file.startsWith(root) || (process.env.MESHDIR && file.startsWith(process.env.MESHDIR))) || !existsSync(file)) {
     res.writeHead(404).end();
     return;
   }
@@ -54,6 +54,7 @@ const shots = [
   { name: "view-stacked", query: "", width: 1280, height: 800, click: "Gestapelt" },
   // development views of a whole pack (PACK=nextfloor.ikea): the room from above, and three zooms along it
   { name: "pack-iso", dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1500, height: 760, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.cx, 0.6, s.cz); w.theta = -0.45; w.phi = 0.95; w.radius = Math.max(s.width, s.depth * 1.5) * 0.95; v.viewer.flyTo(w, 1);" },
+  { name: "pack-mesh", dev: true, query: "?pack=nextfloor.fahrzeuge&only=tesla_model_y&colors&row=16&meshdir=/__mesh", width: 1500, height: 760, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.cx, 0.6, s.cz); w.theta = -0.5; w.phi = 0.95; w.radius = Math.max(s.width, s.depth * 1.5) * 0.7; v.viewer.flyTo(w, 1);" },
   { name: "pack-colors", dev: true, query: "?cars&colors&row=26", width: 1500, height: 760, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.cx, 0.6, s.cz); w.theta = -0.45; w.phi = 0.9; w.radius = Math.max(s.width, s.depth * 1.5) * 0.9; v.viewer.flyTo(w, 1);" },
   { name: "pack-plan", dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1500, height: 700, editor: true, editorScript: "e.fit();" },
   ...[0, 1, 2].map((i) => ({ name: `pack-zoom-${i}`, dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1100, height: 700, viewScript: `document.querySelector("nextfloor-panel")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.width * ${(i + 0.5) / 3}, 0.7, s.cz); w.theta = -0.55; w.phi = 0.85; w.radius = Math.max(5, s.width / 3 * 1.35); v.viewer.flyTo(w, 1);` })),

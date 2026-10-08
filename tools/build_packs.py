@@ -1741,6 +1741,10 @@ def paints(*names):
     return [PAINT[n] for n in names]
 
 
+# models an owner can put on their own Home Assistant: id -> size of the model (width, depth, height)
+MESHES = {"tesla_model_y": [2.12, 4.79, 1.57]}
+
+
 def tesla_items():
     out = []
     models = [
@@ -1785,7 +1789,13 @@ def tesla_items():
         for part in parts:
             if part.get("paint"):
                 part["color"] = colors[id_][0]["hex"]
-        out.append(item(id_, name, name, car.size(), parts, vehicle=True, electric=True, colors=colors[id_]))
+        extra = {}
+        size = car.size()
+        if id_ in MESHES:
+            # the owner's own 3D model (see docs/models.md) replaces the parts; they stay as the fallback
+            extra["mesh"] = id_
+            size = MESHES[id_]
+        out.append(item(id_, name, name, size, parts, vehicle=True, electric=True, colors=colors[id_], **extra))
     return out
 
 

@@ -5471,7 +5471,7 @@ export class NfEditor extends LitElement {
         : nothing}
       ${(() => {
         // a car's paint: pick one of the colours the pack offers (kept as the furniture's variant)
-        const colors = packItem(f.type)?.colors;
+        const colors = packItem(f.type === "parking" ? (f.vehicle ?? "") : f.type)?.colors;
         if (!colors?.length) return nothing;
         const current = colors.find((c) => c.id === f.variant) ?? colors[0];
         const label = (c: (typeof colors)[number]) => c.name[this.hass?.language ?? "en"] ?? c.name.en ?? Object.values(c.name)[0];

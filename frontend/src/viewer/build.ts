@@ -16,7 +16,7 @@ import { furnitureFootprint, isLamp, pointInPolygon } from "../model.ts";
 import { generateWalls, locateOpening, openingHost, type Wall } from "../geometry/walls.ts";
 import { holeInRoom, insetHole, mergeHoles } from "../geometry/holes.ts";
 import { pushFurniture } from "./furniture.ts";
-import { mountBase, packItem } from "../packs.ts";
+import { hasMesh, mountBase, packItem } from "../packs.ts";
 import { pushOutdoor } from "./outdoor.ts";
 import { pushModules } from "./roof.ts";
 import type { RoofFace } from "../solar.ts";
@@ -362,7 +362,8 @@ export function buildFloorGeometry(
     const start = wallBuf.count;
     const l0 = lines.p.length / 6;
     const base = mountBase(floor, f);
-    pushFurniture(wallBuf, lines, shadow, f, base);
+    // an owned 3D model replaces the parts: the viewer adds it as its own object
+    if (!hasMesh(f.type)) pushFurniture(wallBuf, lines, shadow, f, base);
     // a wardrobe or a stair reaching above the cut height is cut with the walls, so it hides nothing behind it
     if (base + f.h > cut + 0.05) {
       cutAbove(wallBuf, start, cut, FURN_OFFSET);

@@ -194,3 +194,20 @@ def test_colours_of_an_item_are_checked() -> None:
     for bad in ([white], [white, white], [white, {**red, "hex": "red"}], [white, {**red, "id": "Rot Rot"}]):
         with pytest.raises(packs.PackError):
             packs.validate_payload(pack(bad))
+
+
+def test_mesh_id_of_an_item_is_checked() -> None:
+    def pack(mesh):
+        item = {
+            "id": "car",
+            "name": {"en": "Car"},
+            "size": [2, 4, 1.5],
+            "mesh": mesh,
+            "parts": [{"shape": "box", "x": 0, "z": 0, "w": 1, "d": 1, "y": 0, "h": 1, "color": "body"}],
+        }
+        return {**PAYLOAD, "items": [item]}
+
+    assert packs.validate_payload(pack("tesla_model_y"))["items"][0]["mesh"] == "tesla_model_y"
+    for bad in ("../etc/passwd", "Model Y", ""):
+        with pytest.raises(packs.PackError):
+            packs.validate_payload(pack(bad))

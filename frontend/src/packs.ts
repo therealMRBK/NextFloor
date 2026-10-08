@@ -61,6 +61,8 @@ export interface PackItem {
   wall_y?: number;
   /** Its top carries other items. */
   surface?: boolean;
+  /** A 3D model the owner uploaded (id of a .glb on their Home Assistant); the parts are the fallback. */
+  mesh?: string;
   /** A vehicle: offered for parking spots. */
   vehicle?: boolean;
   /** Stairs: cuts a stairwell opening into the floor above when it reaches it. */
@@ -203,4 +205,29 @@ export function mountBase(floor: Floor, f: Pick<Furniture, "type" | "x" | "z" | 
       // built-in models: where they are drawn by default (a wall cabinet at 1.45 m)
       return item ? 0 : builtinBase(f);
   }
+}
+
+// ---------------------------------------------------------------- owned 3D models
+/** Fetches a model file by id (null when there is none): set by the host, which knows Home Assistant's login. */
+export type MeshSource = (id: string) => Promise<ArrayBuffer | null>;
+let meshSource: MeshSource | null = null;
+const meshesReady = new Set<string>();
+
+export function setMeshSource(source: MeshSource | null): void {
+  meshSource = source;
+}
+
+export function getMeshSource(): MeshSource | null {
+  return meshSource;
+}
+
+/** A model has been loaded and is drawn instead of the item's parts. */
+export function markMeshReady(id: string): void {
+  meshesReady.add(id);
+}
+
+/** The item's own model is loaded: its parts are not drawn into the merged geometry then. */
+export function hasMesh(type: string): boolean {
+  const id = items.get(type)?.mesh;
+  return !!id && meshesReady.has(id);
 }
