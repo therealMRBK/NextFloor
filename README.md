@@ -10,7 +10,7 @@ Free and open source (MIT). No account, no cloud, no licence keys.
 
 [![Release](https://img.shields.io/github/v/release/therealMRBK/NextFloor?style=flat-square)](https://github.com/therealMRBK/NextFloor/releases) [![CI](https://img.shields.io/github/actions/workflow/status/therealMRBK/NextFloor/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/therealMRBK/NextFloor/actions) [![HACS](https://img.shields.io/badge/HACS-custom-orange?style=flat-square)](https://hacs.xyz) [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue?style=flat-square)](LICENSE) [![Built with AI](https://img.shields.io/badge/built%20with-AI%20assistance-8a63d2?style=flat-square)](#made-with-ai)
 
-![NextFloor: the house turns in 3D, then the camera goes into the living room](docs/images/demo.gif)
+![NextFloor: the house turns in 3D, then the camera goes into the living room](docs/images/demo-loop.gif)
 
 NextFloor sits in Home Assistant like one of its own pages: it takes the colours, the font and the corner radius from your theme and follows light and dark mode.
 
