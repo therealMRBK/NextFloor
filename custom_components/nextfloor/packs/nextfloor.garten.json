@@ -1,0 +1,1648 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.garten",
+ "name": "Garten & Terrasse",
+ "publisher": "NextFloor",
+ "description": "Lounge, Grill, Pool, Whirlpool, Trampolin, Gewächshaus, Hochbeet, Gartenhaus, Mähroboter",
+ "release": 1,
+ "items": [
+  {
+   "id": "sun_lounger",
+   "name": {
+    "de": "Gartenliege",
+    "en": "Sun lounger"
+   },
+   "size": [
+    0.7,
+    2.0,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.15,
+     "w": 1,
+     "d": 0.7,
+     "y": 0.25,
+     "h": 0.1,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": -0.35,
+     "w": 1,
+     "d": 0.3,
+     "y": 0.3,
+     "h": 0.6,
+     "color": "wood",
+     "tz": -0.4,
+     "td": 0.1
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.15,
+     "w": 0.9,
+     "d": 0.65,
+     "y": 0.35,
+     "h": 0.06,
+     "color": "cushion"
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": -0.45,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.25,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": 0.45,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.25,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": -0.45,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.25,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": 0.45,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.25,
+     "color": "wood"
+    }
+   ]
+  },
+  {
+   "id": "garden_table",
+   "name": {
+    "de": "Gartentisch",
+    "en": "Garden table"
+   },
+   "size": [
+    1.8,
+    0.9,
+    0.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.94,
+     "h": 0.06,
+     "color": "#8a6a4a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.44,
+     "z": -0.44,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.44,
+     "z": 0.44,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.44,
+     "z": -0.44,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.44,
+     "z": 0.44,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "garden_chair",
+   "name": {
+    "de": "Gartenstuhl",
+    "en": "Garden chair"
+   },
+   "size": [
+    0.55,
+    0.6,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 1,
+     "d": 0.85,
+     "y": 0.48,
+     "h": 0.05,
+     "color": "#8a6a4a"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.43,
+     "w": 1,
+     "d": 0.08,
+     "y": 0.53,
+     "h": 0.45,
+     "color": "#8a6a4a"
+    },
+    {
+     "shape": "box",
+     "x": -0.44,
+     "z": -0.44,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.48,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.44,
+     "z": 0.44,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.48,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.44,
+     "z": -0.44,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.48,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.44,
+     "z": 0.44,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 0.48,
+     "color": "dark"
+    }
+   ]
+  },
+  {
+   "id": "lounge_set",
+   "name": {
+    "de": "Lounge-Ecke",
+    "en": "Outdoor lounge"
+   },
+   "size": [
+    2.4,
+    2.0,
+    0.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.35,
+     "w": 1,
+     "d": 0.3,
+     "y": 0,
+     "h": 0.5,
+     "color": "#5a5f6a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": 0.15,
+     "w": 0.3,
+     "d": 0.7,
+     "y": 0,
+     "h": 0.5,
+     "color": "#5a5f6a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.45,
+     "w": 1,
+     "d": 0.1,
+     "y": 0.5,
+     "h": 0.45,
+     "color": "#5a5f6a"
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": 0.15,
+     "w": 0.1,
+     "d": 0.7,
+     "y": 0.5,
+     "h": 0.45,
+     "color": "#5a5f6a"
+    },
+    {
+     "shape": "box",
+     "x": 0.05,
+     "z": -0.32,
+     "w": 0.85,
+     "d": 0.22,
+     "y": 0.5,
+     "h": 0.12,
+     "color": "cushion"
+    },
+    {
+     "shape": "box",
+     "x": -0.32,
+     "z": 0.17,
+     "w": 0.22,
+     "d": 0.6,
+     "y": 0.5,
+     "h": 0.12,
+     "color": "cushion"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0.2,
+     "w": 0.35,
+     "d": 0.35,
+     "y": 0,
+     "h": 0.45,
+     "color": "#8a6a4a",
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "parasol",
+   "name": {
+    "de": "Sonnenschirm",
+    "en": "Parasol"
+   },
+   "size": [
+    2.8,
+    2.8,
+    2.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.18,
+     "d": 0.18,
+     "y": 0,
+     "h": 0.03,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 0.92,
+     "color": "metal"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.82,
+     "h": 0.12,
+     "color": "#e8e0c8",
+     "tw": 0.04,
+     "td": 0.04,
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "gas_grill",
+   "name": {
+    "de": "Gasgrill",
+    "en": "Gas grill"
+   },
+   "size": [
+    1.4,
+    0.6,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.6,
+     "d": 1,
+     "y": 0,
+     "h": 0.7,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 0.6,
+     "d": 1,
+     "y": 0.7,
+     "h": 0.22,
+     "color": "dark",
+     "tw": 0.55,
+     "td": 0.6,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": 0,
+     "w": 0.2,
+     "d": 0.9,
+     "y": 0.7,
+     "h": 0.03,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0,
+     "w": 0.2,
+     "d": 0.9,
+     "y": 0.7,
+     "h": 0.03,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.4,
+     "d": 0.04,
+     "y": 0.82,
+     "h": 0.04,
+     "color": "metal",
+     "axis": "x"
+    }
+   ]
+  },
+  {
+   "id": "fire_bowl",
+   "name": {
+    "de": "Feuerschale",
+    "en": "Fire bowl"
+   },
+   "size": [
+    0.8,
+    0.8,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.5,
+     "d": 0.5,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.5,
+     "h": 0.4,
+     "color": "#5a3a2a",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.6,
+     "d": 0.6,
+     "y": 0.8,
+     "h": 0.15,
+     "color": "#ff7a1a",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "garden"
+  },
+  {
+   "id": "pool",
+   "name": {
+    "de": "Pool",
+    "en": "Pool"
+   },
+   "size": [
+    8.0,
+    4.0,
+    0.3
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#d9dee6",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.96,
+     "d": 0.92,
+     "y": 0.6,
+     "h": 0.42,
+     "color": "#2a8fd4",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "garden"
+  },
+  {
+   "id": "hot_tub",
+   "name": {
+    "de": "Whirlpool",
+    "en": "Hot tub"
+   },
+   "size": [
+    2.2,
+    2.2,
+    0.95
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9,
+     "color": "#5a3a2a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.84,
+     "d": 0.84,
+     "y": 0.88,
+     "h": 0.04,
+     "color": "#2a8fd4",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.9,
+     "h": 0.1,
+     "color": "#d9dee6"
+    }
+   ],
+   "electric": true,
+   "light": "garden"
+  },
+  {
+   "id": "trampoline",
+   "name": {
+    "de": "Trampolin",
+    "en": "Trampoline"
+   },
+   "size": [
+    3.0,
+    3.0,
+    2.4
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.33,
+     "h": 0.03,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0.34,
+     "h": 0.01,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.48,
+     "z": 0.0,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.48,
+     "z": 0.0,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.48,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.48,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.336,
+     "z": 0.336,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.336,
+     "z": 0.336,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.336,
+     "z": -0.336,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.336,
+     "z": -0.336,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.36,
+     "h": 0.62,
+     "color": "glass"
+    }
+   ]
+  },
+  {
+   "id": "greenhouse",
+   "name": {
+    "de": "Gewächshaus",
+    "en": "Greenhouse"
+   },
+   "size": [
+    2.5,
+    3.0,
+    2.3
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.7,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.7,
+     "h": 0.3,
+     "color": "glass",
+     "tw": 0.05,
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.25,
+     "color": "#8a6a4a"
+    },
+    {
+     "shape": "box",
+     "x": 0.3,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.25,
+     "color": "#8a6a4a"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": -0.3,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": -0.3,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.06,
+     "y": 0.25,
+     "h": 0.2,
+     "color": "plant"
+    }
+   ]
+  },
+  {
+   "id": "raised_bed",
+   "name": {
+    "de": "Hochbeet",
+    "en": "Raised bed"
+   },
+   "size": [
+    2.0,
+    0.8,
+    0.8
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.95,
+     "color": "#8a6a4a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.94,
+     "d": 0.88,
+     "y": 0.95,
+     "h": 0.04,
+     "color": "#4a3526"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.35,
+     "z": -0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.35,
+     "z": 0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.1,
+     "z": -0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.1,
+     "z": 0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.15,
+     "z": -0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.15,
+     "z": 0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.38,
+     "z": -0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.38,
+     "z": 0.2,
+     "w": 0.1,
+     "d": 0.22,
+     "y": 0.97,
+     "h": 0.2,
+     "color": "plant"
+    }
+   ]
+  },
+  {
+   "id": "garden_shed",
+   "name": {
+    "de": "Gartenhaus",
+    "en": "Garden shed"
+   },
+   "size": [
+    3.0,
+    2.5,
+    2.4
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.75,
+     "color": "#8a6a4a",
+     "edges": true
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.75,
+     "h": 0.25,
+     "color": "dark",
+     "tw": 1,
+     "td": 0.05
+    },
+    {
+     "shape": "box",
+     "x": 0.15,
+     "z": 0.5,
+     "w": 0.3,
+     "d": 0.02,
+     "y": 0,
+     "h": 0.7,
+     "color": "#5a3a2a"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.5,
+     "w": 0.25,
+     "d": 0.02,
+     "y": 0.35,
+     "h": 0.25,
+     "color": "glass"
+    }
+   ]
+  },
+  {
+   "id": "swing_bench",
+   "name": {
+    "de": "Hollywoodschaukel",
+    "en": "Porch swing"
+   },
+   "size": [
+    2.0,
+    1.3,
+    1.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0,
+     "w": 0.04,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": 0,
+     "w": 0.04,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 0.08,
+     "y": 0.96,
+     "h": 0.04,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.8,
+     "d": 0.45,
+     "y": 0.25,
+     "h": 0.08,
+     "color": "cushion"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.2,
+     "w": 0.8,
+     "d": 0.08,
+     "y": 0.33,
+     "h": 0.3,
+     "color": "cushion"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.7,
+     "y": 0.85,
+     "h": 0.12,
+     "color": "#e8e0c8",
+     "tw": 0.9,
+     "td": 0.2
+    }
+   ]
+  },
+  {
+   "id": "mower_robot",
+   "name": {
+    "de": "Mähroboter",
+    "en": "Robotic mower"
+   },
+   "size": [
+    0.6,
+    0.5,
+    0.28
+   ],
+   "parts": [
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.15,
+     "h": 0.85,
+     "color": "#d1293d",
+     "tw": 0.8,
+     "td": 0.75,
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.35,
+     "z": 0.3,
+     "w": 0.2,
+     "d": 0.5,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.35,
+     "z": 0.3,
+     "w": 0.2,
+     "d": 0.5,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.1,
+     "w": 0.3,
+     "d": 0.2,
+     "y": 0.98,
+     "h": 0.04,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "tree_oak",
+   "name": {
+    "de": "Laubbaum",
+    "en": "Deciduous tree"
+   },
+   "size": [
+    5.0,
+    5.0,
+    7.0
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.08,
+     "y": 0,
+     "h": 0.45,
+     "color": "#5a3a2a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.38,
+     "h": 0.4,
+     "color": "plant",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.1,
+     "z": -0.05,
+     "w": 0.75,
+     "d": 0.75,
+     "y": 0.72,
+     "h": 0.28,
+     "color": "plant"
+    }
+   ]
+  },
+  {
+   "id": "tree_birch",
+   "name": {
+    "de": "Birke",
+    "en": "Birch"
+   },
+   "size": [
+    3.2,
+    3.2,
+    7.5
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.08,
+     "y": 0,
+     "h": 0.6,
+     "color": "#e8e6df"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0.4,
+     "h": 0.6,
+     "color": "plant",
+     "tw": 0.25,
+     "td": 0.25,
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "tree_fruit",
+   "name": {
+    "de": "Obstbaum",
+    "en": "Fruit tree"
+   },
+   "size": [
+    3.2,
+    3.2,
+    3.6
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.45,
+     "color": "#5a3a2a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.4,
+     "h": 0.5,
+     "color": "plant",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.2,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0.55,
+     "h": 0.08,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.25,
+     "z": 0.3,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0.6,
+     "h": 0.08,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.1,
+     "z": -0.35,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0.7,
+     "h": 0.08,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": -0.1,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0.5,
+     "h": 0.08,
+     "color": "#d1293d"
+    }
+   ]
+  },
+  {
+   "id": "conifer",
+   "name": {
+    "de": "Nadelbaum",
+    "en": "Conifer"
+   },
+   "size": [
+    2.6,
+    2.6,
+    6.5
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.15,
+     "color": "#5a3a2a"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "#2f6b45",
+     "tw": 0.05,
+     "td": 0.05,
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "shrub",
+   "name": {
+    "de": "Strauch",
+    "en": "Shrub"
+   },
+   "size": [
+    1.3,
+    1.3,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "plant",
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "shrub_flowering",
+   "name": {
+    "de": "Blühstrauch",
+    "en": "Flowering shrub"
+   },
+   "size": [
+    1.3,
+    1.3,
+    1.4
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9,
+     "color": "plant",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.25,
+     "z": 0.1,
+     "w": 0.15,
+     "d": 0.15,
+     "y": 0.82,
+     "h": 0.12,
+     "color": "#e05aa8"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2,
+     "z": 0.25,
+     "w": 0.15,
+     "d": 0.15,
+     "y": 0.82,
+     "h": 0.12,
+     "color": "#e05aa8"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.05,
+     "z": -0.3,
+     "w": 0.15,
+     "d": 0.15,
+     "y": 0.82,
+     "h": 0.12,
+     "color": "#e05aa8"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": -0.15,
+     "w": 0.15,
+     "d": 0.15,
+     "y": 0.82,
+     "h": 0.12,
+     "color": "#e05aa8"
+    }
+   ]
+  },
+  {
+   "id": "hedge",
+   "name": {
+    "de": "Hecke",
+    "en": "Hedge"
+   },
+   "size": [
+    3.0,
+    0.7,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#2f6b45",
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "lawn_brush",
+   "name": {
+    "de": "Gestrüpp",
+    "en": "Brushwood"
+   },
+   "size": [
+    2.6,
+    2.6,
+    0.8
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": -0.15,
+     "z": 0.1,
+     "w": 0.7,
+     "d": 0.7,
+     "y": 0,
+     "h": 0.8,
+     "color": "plant"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2,
+     "z": -0.15,
+     "w": 0.6,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "#4f7a3a"
+    }
+   ]
+  },
+  {
+   "id": "bike_rack",
+   "name": {
+    "de": "Fahrradständer",
+    "en": "Bike rack"
+   },
+   "size": [
+    1.6,
+    0.5,
+    0.4
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": 0,
+     "w": 0.03,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": 0,
+     "w": 0.03,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.03,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0,
+     "w": 0.03,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0,
+     "w": 0.03,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.05,
+     "color": "metal"
+    }
+   ]
+  },
+  {
+   "id": "bin_box",
+   "name": {
+    "de": "Mülltonnenbox (4 Tonnen)",
+    "en": "Bin store (4 bins)"
+   },
+   "size": [
+    2.8,
+    0.85,
+    1.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#5a5f6a",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.37,
+     "z": 0.5,
+     "w": 0.22,
+     "d": 0.02,
+     "y": 0.05,
+     "h": 0.9,
+     "color": "#4a4f5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.5,
+     "w": 0.22,
+     "d": 0.02,
+     "y": 0.05,
+     "h": 0.9,
+     "color": "#4a4f5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.5,
+     "w": 0.22,
+     "d": 0.02,
+     "y": 0.05,
+     "h": 0.9,
+     "color": "#4a4f5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.37,
+     "z": 0.5,
+     "w": 0.22,
+     "d": 0.02,
+     "y": 0.05,
+     "h": 0.9,
+     "color": "#4a4f5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.37,
+     "z": 0.5,
+     "w": 0.04,
+     "d": 0.02,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.5,
+     "w": 0.04,
+     "d": 0.02,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#3b7bb5"
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.5,
+     "w": 0.04,
+     "d": 0.02,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#f2c94c"
+    },
+    {
+     "shape": "box",
+     "x": 0.37,
+     "z": 0.5,
+     "w": 0.04,
+     "d": 0.02,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#6b4a2a"
+    }
+   ]
+  }
+ ]
+}

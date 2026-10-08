@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🗳️ Ideas & voting / Ideen & Abstimmung
+    url: https://github.com/therealMRBK/NextFloor/discussions/categories/ideas
+    about: Suggest features and vote with 👍 on what you want most. / Wünsche vorschlagen und mit 👍 abstimmen.
+  - name: 💬 Questions & help / Fragen & Hilfe
+    url: https://github.com/therealMRBK/NextFloor/discussions/categories/q-a
+    about: How do I …? Ask the community. / Wie mache ich …? Frag die Community.
+  - name: 📖 Manual / Anleitung
+    url: https://github.com/therealMRBK/NextFloor/blob/main/docs/anleitung.md
+    about: The manual (English: docs/manual.md). / Die Anleitung (Deutsch).

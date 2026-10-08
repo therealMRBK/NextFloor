@@ -1,0 +1,793 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.schlafen",
+ "name": "Schlafen & Kinder",
+ "publisher": "NextFloor",
+ "description": "Boxspringbett, Babybett, Wickelkommode, Schminktisch, Hochbett",
+ "release": 1,
+ "items": [
+  {
+   "id": "boxspring",
+   "name": {
+    "de": "Boxspringbett",
+    "en": "Box spring bed"
+   },
+   "size": [
+    1.8,
+    2.1,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.04,
+     "w": 1,
+     "d": 0.92,
+     "y": 0,
+     "h": 0.3,
+     "color": "fabric",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.04,
+     "w": 0.98,
+     "d": 0.9,
+     "y": 0.3,
+     "h": 0.2,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.96,
+     "d": 0.88,
+     "y": 0.5,
+     "h": 0.05,
+     "color": "cushion"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.48,
+     "w": 1,
+     "d": 0.06,
+     "y": 0,
+     "h": 1,
+     "color": "fabric",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.22,
+     "z": -0.38,
+     "w": 0.4,
+     "d": 0.12,
+     "y": 0.5,
+     "h": 0.14,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.22,
+     "z": -0.38,
+     "w": 0.4,
+     "d": 0.12,
+     "y": 0.5,
+     "h": 0.14,
+     "color": "white"
+    }
+   ]
+  },
+  {
+   "id": "baby_crib",
+   "name": {
+    "de": "Babybett",
+    "en": "Baby crib"
+   },
+   "size": [
+    0.75,
+    1.3,
+    0.95
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.3,
+     "h": 0.12,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": -0.48,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0.48,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": -0.48,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": 0.48,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": -0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": -0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.05,
+     "z": -0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.1,
+     "z": -0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": -0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": 0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": 0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.05,
+     "z": 0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.1,
+     "z": 0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": 0.48,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": -0.35,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": -0.15,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0.05,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0.25,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": -0.35,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": -0.15,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": 0.05,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": 0.25,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0.42,
+     "h": 0.55,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.96,
+     "d": 0.96,
+     "y": 0.95,
+     "h": 0.05,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0.42,
+     "h": 0.06,
+     "color": "#bfe3d0"
+    }
+   ]
+  },
+  {
+   "id": "changing_table",
+   "name": {
+    "de": "Wickelkommode",
+    "en": "Changing table"
+   },
+   "size": [
+    1.0,
+    0.75,
+    0.95
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 1,
+     "d": 0.75,
+     "y": 0,
+     "h": 0.92,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.92,
+     "h": 0.04,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.85,
+     "y": 0.96,
+     "h": 0.04,
+     "color": "#bfe3d0"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.48,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.08,
+     "h": 0.25,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.48,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.38,
+     "h": 0.25,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.48,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.66,
+     "h": 0.25,
+     "color": "body"
+    }
+   ]
+  },
+  {
+   "id": "vanity_table",
+   "name": {
+    "de": "Schminktisch",
+    "en": "Vanity table"
+   },
+   "size": [
+    1.0,
+    0.45,
+    1.4
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.5,
+     "h": 0.04,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": -0.45,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.5,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": 0.45,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.5,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": -0.45,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.5,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": 0.45,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0,
+     "h": 0.5,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.3,
+     "z": 0,
+     "w": 0.35,
+     "d": 0.9,
+     "y": 0.38,
+     "h": 0.12,
+     "color": "white"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": -0.3,
+     "w": 0.5,
+     "d": 0.08,
+     "y": 0.6,
+     "h": 0.38,
+     "color": "#c8dcec",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": -0.32,
+     "w": 0.55,
+     "d": 0.06,
+     "y": 0.58,
+     "h": 0.42,
+     "color": "#ffe7b0",
+     "glow": true,
+     "axis": "z"
+    }
+   ],
+   "surface": true,
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "clothes_rail",
+   "name": {
+    "de": "Kleiderstange",
+    "en": "Clothes rail"
+   },
+   "size": [
+    1.2,
+    0.5,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.47,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.03,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.47,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.03,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.47,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.47,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0,
+     "h": 1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.96,
+     "d": 0.04,
+     "y": 0.97,
+     "h": 0.02,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.8,
+     "y": 0.45,
+     "h": 0.5,
+     "color": "fabric"
+    },
+    {
+     "shape": "box",
+     "x": -0.15,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.8,
+     "y": 0.45,
+     "h": 0.5,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.8,
+     "y": 0.45,
+     "h": 0.5,
+     "color": "#b5523b"
+    },
+    {
+     "shape": "box",
+     "x": 0.15,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.8,
+     "y": 0.45,
+     "h": 0.5,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.3,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.8,
+     "y": 0.45,
+     "h": 0.5,
+     "color": "dark"
+    }
+   ]
+  },
+  {
+   "id": "loft_bed_desk",
+   "name": {
+    "de": "Hochbett mit Schreibtisch",
+    "en": "Loft bed with desk"
+   },
+   "size": [
+    1.0,
+    2.0,
+    1.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.47,
+     "z": -0.47,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 1,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": -0.47,
+     "z": 0.47,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 1,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.47,
+     "z": -0.47,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 1,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.47,
+     "z": 0.47,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0,
+     "h": 1,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.58,
+     "h": 0.05,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.95,
+     "d": 0.95,
+     "y": 0.63,
+     "h": 0.1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0,
+     "w": 0.04,
+     "d": 1,
+     "y": 0.73,
+     "h": 0.15,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.48,
+     "z": 0.1,
+     "w": 0.04,
+     "d": 0.8,
+     "y": 0.73,
+     "h": 0.15,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.95,
+     "d": 0.5,
+     "y": 0.39,
+     "h": 0.03,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.3,
+     "w": 0.6,
+     "d": 0.1,
+     "y": 0.42,
+     "h": 0.18,
+     "color": "dark",
+     "screen": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "toy_box",
+   "name": {
+    "de": "Spielzeugkiste",
+    "en": "Toy box"
+   },
+   "size": [
+    0.7,
+    0.45,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9,
+     "color": "#f2c94c",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.9,
+     "h": 0.1,
+     "color": "#3b7bb5"
+    }
+   ]
+  }
+ ]
+}

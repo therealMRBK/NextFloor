@@ -1,0 +1,538 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.bad",
+ "name": "Bad extra",
+ "publisher": "NextFloor",
+ "description": "Doppelwaschtisch, Walk-in-Dusche, Handtuchheizkörper, Spiegelschrank, Waschturm",
+ "release": 1,
+ "items": [
+  {
+   "id": "double_vanity",
+   "name": {
+    "de": "Doppelwaschtisch",
+    "en": "Double vanity"
+   },
+   "size": [
+    1.4,
+    0.5,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.35,
+     "h": 0.55,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.9,
+     "h": 0.1,
+     "color": "white"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.25,
+     "z": 0.05,
+     "w": 0.3,
+     "d": 0.75,
+     "y": 0.86,
+     "h": 0.12,
+     "color": "white"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.25,
+     "z": 0.05,
+     "w": 0.3,
+     "d": 0.75,
+     "y": 0.86,
+     "h": 0.12,
+     "color": "white"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.25,
+     "z": -0.35,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 1,
+     "h": 0.25,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.25,
+     "z": -0.35,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 1,
+     "h": 0.25,
+     "color": "metal"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 0.0
+  },
+  {
+   "id": "walkin_shower",
+   "name": {
+    "de": "Walk-in-Dusche",
+    "en": "Walk-in shower"
+   },
+   "size": [
+    1.4,
+    1.0,
+    2.1
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.02,
+     "color": "#d9dee6"
+    },
+    {
+     "shape": "box",
+     "x": 0.15,
+     "z": 0.48,
+     "w": 0.7,
+     "d": 0.03,
+     "y": 0.02,
+     "h": 0.95,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": -0.35,
+     "w": 0.18,
+     "d": 0.25,
+     "y": 0.92,
+     "h": 0.02,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": -0.45,
+     "w": 0.02,
+     "d": 0.02,
+     "y": 0.5,
+     "h": 0.45,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": -0.48,
+     "w": 0.25,
+     "d": 0.03,
+     "y": 0.4,
+     "h": 0.2,
+     "color": "#d9dee6"
+    }
+   ]
+  },
+  {
+   "id": "towel_radiator",
+   "name": {
+    "de": "Handtuchheizkörper",
+    "en": "Towel radiator"
+   },
+   "size": [
+    0.55,
+    0.08,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": 0,
+     "w": 0.08,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": 0,
+     "w": 0.08,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.05,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.15,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.25,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.4,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.5,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.6,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.75,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.85,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.6,
+     "y": 0.95,
+     "h": 0.025,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.3,
+     "w": 0.7,
+     "d": 0.3,
+     "y": 0.55,
+     "h": 0.3,
+     "color": "#a5c9e8"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 0.3,
+   "electric": true
+  },
+  {
+   "id": "mirror_cabinet",
+   "name": {
+    "de": "Spiegelschrank mit Licht",
+    "en": "Mirror cabinet with light"
+   },
+   "size": [
+    1.0,
+    0.15,
+    0.7
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.96,
+     "d": 0.02,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#c8dcec"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.3,
+     "w": 1,
+     "d": 0.4,
+     "y": 0,
+     "h": 0.04,
+     "color": "#fff1c9",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "electric": true,
+   "light": "wall"
+  },
+  {
+   "id": "washer_tower",
+   "name": {
+    "de": "Waschturm (Waschmaschine + Trockner)",
+    "en": "Washer-dryer stack"
+   },
+   "size": [
+    0.6,
+    0.65,
+    1.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.49,
+     "color": "white",
+     "edges": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.04,
+     "y": 0.08,
+     "h": 0.32,
+     "color": "#9aa6b8",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.51,
+     "h": 0.49,
+     "color": "white",
+     "edges": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.04,
+     "y": 0.58,
+     "h": 0.32,
+     "color": "#9aa6b8",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.49,
+     "h": 0.02,
+     "color": "metal"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "laundry_basket",
+   "name": {
+    "de": "Wäschekorb",
+    "en": "Laundry basket"
+   },
+   "size": [
+    0.45,
+    0.35,
+    0.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9,
+     "color": "#c9a77a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0.9,
+     "h": 0.1,
+     "color": "fabric"
+    }
+   ]
+  },
+  {
+   "id": "bath_shelf",
+   "name": {
+    "de": "Badregal",
+    "en": "Bath shelf"
+   },
+   "size": [
+    0.4,
+    0.3,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.03,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.3,
+     "h": 0.03,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.6,
+     "h": 0.03,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.97,
+     "h": 0.03,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": -0.46,
+     "z": 0,
+     "w": 0.08,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.46,
+     "z": 0,
+     "w": 0.08,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0.33,
+     "h": 0.15,
+     "color": "#a5c9e8"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0.63,
+     "h": 0.12,
+     "color": "white"
+    }
+   ]
+  }
+ ]
+}

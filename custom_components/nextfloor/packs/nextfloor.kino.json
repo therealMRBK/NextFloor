@@ -1,0 +1,838 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.kino",
+ "name": "Heimkino & Gaming",
+ "publisher": "NextFloor",
+ "description": "Leinwand, Beamer, Lautsprecher, Gaming-Platz und Arcade-Automat",
+ "release": 1,
+ "items": [
+  {
+   "id": "projection_screen",
+   "name": {
+    "de": "Leinwand",
+    "en": "Projection screen"
+   },
+   "size": [
+    2.6,
+    0.12,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.94,
+     "h": 0.06,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.96,
+     "d": 0.4,
+     "y": 0.05,
+     "h": 0.88,
+     "color": "white",
+     "screen": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 0.6,
+   "electric": true
+  },
+  {
+   "id": "projector",
+   "name": {
+    "de": "Beamer",
+    "en": "Projector"
+   },
+   "size": [
+    0.4,
+    0.35,
+    0.15
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "white",
+     "edges": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2,
+     "z": 0.5,
+     "w": 0.3,
+     "d": 0.1,
+     "y": 0.25,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": -0.1,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0.9,
+     "h": 0.1,
+     "color": "metal"
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "floor_speaker",
+   "name": {
+    "de": "Standlautsprecher",
+    "en": "Floor speaker"
+   },
+   "size": [
+    0.25,
+    0.32,
+    1.05
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.04,
+     "h": 0.96,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.06,
+     "y": 0.12,
+     "h": 0.2,
+     "color": "#2b3446",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.06,
+     "y": 0.38,
+     "h": 0.2,
+     "color": "#2b3446",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.3,
+     "d": 0.06,
+     "y": 0.75,
+     "h": 0.1,
+     "color": "metal",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": -0.42,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.04,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0.42,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.04,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": -0.42,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.04,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0.42,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.04,
+     "color": "metal"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "subwoofer",
+   "name": {
+    "de": "Subwoofer",
+    "en": "Subwoofer"
+   },
+   "size": [
+    0.4,
+    0.4,
+    0.42
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.75,
+     "d": 0.05,
+     "y": 0.15,
+     "h": 0.7,
+     "color": "#2b3446",
+     "axis": "z"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "soundbar",
+   "name": {
+    "de": "Soundbar",
+    "en": "Soundbar"
+   },
+   "size": [
+    1.0,
+    0.12,
+    0.07
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.96,
+     "d": 0.05,
+     "y": 0.15,
+     "h": 0.7,
+     "color": "#2b3446"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "gaming_desk",
+   "name": {
+    "de": "Gaming-Platz",
+    "en": "Gaming desk"
+   },
+   "size": [
+    1.6,
+    0.8,
+    1.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.56,
+     "h": 0.03,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": -0.46,
+     "z": 0,
+     "w": 0.05,
+     "d": 0.85,
+     "y": 0,
+     "h": 0.56,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.46,
+     "z": 0,
+     "w": 0.05,
+     "d": 0.85,
+     "y": 0,
+     "h": 0.56,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": -0.32,
+     "w": 0.5,
+     "d": 0.06,
+     "y": 0.66,
+     "h": 0.3,
+     "color": "dark",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.28,
+     "z": -0.25,
+     "w": 0.32,
+     "d": 0.06,
+     "y": 0.66,
+     "h": 0.28,
+     "color": "dark",
+     "screen": true,
+     "rot": -20
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2,
+     "z": -0.35,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0.59,
+     "h": 0.07,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.28,
+     "z": -0.3,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0.59,
+     "h": 0.07,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": -0.05,
+     "w": 0.12,
+     "d": 0.45,
+     "y": 0,
+     "h": 0.45,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0.17,
+     "w": 0.1,
+     "d": 0.02,
+     "y": 0.1,
+     "h": 0.25,
+     "color": "#a640ff",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.05,
+     "z": 0.2,
+     "w": 0.35,
+     "d": 0.18,
+     "y": 0.59,
+     "h": 0.01,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0.2,
+     "w": 0.06,
+     "d": 0.1,
+     "y": 0.59,
+     "h": 0.015,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.47,
+     "w": 0.98,
+     "d": 0.03,
+     "y": 0.59,
+     "h": 0.02,
+     "color": "#a640ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "surface": true,
+   "light": "strip"
+  },
+  {
+   "id": "gaming_chair",
+   "name": {
+    "de": "Gaming-Stuhl",
+    "en": "Gaming chair"
+   },
+   "size": [
+    0.7,
+    0.7,
+    1.35
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.04,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.08,
+     "y": 0.04,
+     "h": 0.3,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.7,
+     "d": 0.7,
+     "y": 0.34,
+     "h": 0.1,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": -0.32,
+     "w": 0.7,
+     "d": 0.14,
+     "y": 0.44,
+     "h": 0.56,
+     "color": "dark",
+     "tw": 0.55,
+     "td": 0.12,
+     "tz": -0.36,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.34,
+     "w": 0.2,
+     "d": 0.15,
+     "y": 0.6,
+     "h": 0.25,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0.05,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.44,
+     "h": 0.12,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0.05,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.44,
+     "h": 0.12,
+     "color": "dark"
+    }
+   ]
+  },
+  {
+   "id": "game_console",
+   "name": {
+    "de": "Spielkonsole",
+    "en": "Game console"
+   },
+   "size": [
+    0.4,
+    0.3,
+    0.1
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.02,
+     "y": 0.4,
+     "h": 0.15,
+     "color": "#3ea6ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "arcade",
+   "name": {
+    "de": "Arcade-Automat",
+    "en": "Arcade cabinet"
+   },
+   "size": [
+    0.7,
+    0.8,
+    1.8
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.1,
+     "w": 1,
+     "d": 0.8,
+     "y": 0,
+     "h": 0.55,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0.15,
+     "w": 1,
+     "d": 0.4,
+     "y": 0.55,
+     "h": 0.06,
+     "color": "dark",
+     "tz": 0.05,
+     "td": 0.25
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.15,
+     "w": 1,
+     "d": 0.7,
+     "y": 0.61,
+     "h": 0.33,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.12,
+     "w": 0.8,
+     "d": 0.04,
+     "y": 0.63,
+     "h": 0.28,
+     "color": "dark",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.1,
+     "w": 1,
+     "d": 0.8,
+     "y": 0.94,
+     "h": 0.06,
+     "color": "#ff2e9a",
+     "glow": true
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.08,
+     "y": 0.61,
+     "h": 0.05,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.15,
+     "z": 0.3,
+     "w": 0.06,
+     "d": 0.06,
+     "y": 0.61,
+     "h": 0.02,
+     "color": "#3ea6ff"
+    }
+   ],
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "media_wall",
+   "name": {
+    "de": "Medienwand mit Fernseher",
+    "en": "Media wall with TV"
+   },
+   "size": [
+    3.0,
+    0.45,
+    2.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 1,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.2,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0,
+     "w": 0.16,
+     "d": 1,
+     "y": 0.2,
+     "h": 0.8,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0,
+     "w": 0.16,
+     "d": 1,
+     "y": 0.2,
+     "h": 0.8,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.35,
+     "w": 0.68,
+     "d": 0.3,
+     "y": 0.2,
+     "h": 0.8,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.55,
+     "d": 0.06,
+     "y": 0.3,
+     "h": 0.42,
+     "color": "dark",
+     "screen": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.68,
+     "d": 0.9,
+     "y": 0.97,
+     "h": 0.03,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0.1,
+     "w": 0.12,
+     "d": 0.6,
+     "y": 0.35,
+     "h": 0.12,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0.1,
+     "w": 0.12,
+     "d": 0.6,
+     "y": 0.6,
+     "h": 0.12,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0.1,
+     "w": 0.12,
+     "d": 0.6,
+     "y": 0.35,
+     "h": 0.12,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0.1,
+     "w": 0.12,
+     "d": 0.6,
+     "y": 0.6,
+     "h": 0.12,
+     "color": "accent"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "media_rack",
+   "name": {
+    "de": "Medienregal",
+    "en": "Media rack"
+   },
+   "size": [
+    1.8,
+    0.45,
+    0.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.46,
+     "z": -0.46,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0,
+     "h": 0.1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.46,
+     "z": 0.46,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0,
+     "h": 0.1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.46,
+     "z": -0.46,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0,
+     "h": 0.1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.46,
+     "z": 0.46,
+     "w": 0.03,
+     "d": 0.03,
+     "y": 0,
+     "h": 0.1,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.48,
+     "w": 0.45,
+     "d": 0.04,
+     "y": 0.3,
+     "h": 0.5,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": 0.48,
+     "w": 0.45,
+     "d": 0.04,
+     "y": 0.3,
+     "h": 0.5,
+     "color": "body"
+    }
+   ],
+   "surface": true
+  }
+ ]
+}

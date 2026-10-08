@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16243f"/><stop offset="1" stop-color="#0a1222"/></linearGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5fe0ff"/><stop offset="1" stop-color="#2f8bff"/></linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ab6f5"/><stop offset="1" stop-color="#5e8ad6"/></linearGradient>
+    <linearGradient id="low" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f7fb6"/><stop offset="1" stop-color="#43608f"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- the next floor, not built yet -->
+  <polygon points="106,150 256,66 406,150 256,234" fill="none" stroke="#5fe0ff" stroke-opacity=".55" stroke-width="7" stroke-dasharray="4 16" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="106,382 256,466 256,488 106,404" fill="#34507d"/><polygon points="406,382 256,466 256,488 406,404" fill="#2a4068"/><polygon points="106,382 256,298 406,382 256,466" fill="url(#low)" />
+  <polygon points="106,310 256,394 256,416 106,332" fill="#4a72b8"/><polygon points="406,310 256,394 256,416 406,332" fill="#3b5c98"/><polygon points="106,310 256,226 406,310 256,394" fill="url(#mid)" />
+  <polygon points="106,238 256,322 256,344 106,260" fill="#2a74d8"/><polygon points="406,238 256,322 256,344 406,260" fill="#2161b8"/><polygon points="106,238 256,154 406,238 256,322" fill="url(#top)" />
+  <!-- the light that is on -->
+  <ellipse cx="256" cy="238" rx="40" ry="22" fill="#ffd86b" fill-opacity=".30" filter="url(#glow)"/>
+  <circle cx="256" cy="236" r="14" fill="#ffe08a" filter="url(#glow)"/>
+</svg>

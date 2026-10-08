@@ -1,0 +1,87 @@
+// Builds the two bundles into custom_components/nextfloor/frontend and checks the size budgets.
+
+import { build, context } from "esbuild";
+import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+
+const out = "../custom_components/nextfloor/frontend";
+const watch = process.argv.includes("--watch");
+
+const common = {
+  bundle: true,
+  format: "esm",
+  // older iPads stay on iOS 15/16: Safari 15 is the oldest with WebGL 2 (three.js needs it); newer syntax such as
+  // static class blocks (Safari 16.4) is turned into older code, otherwise the 3D view fails to load there
+  target: ["safari15", "chrome94", "firefox93", "edge94"],
+  minify: !watch,
+  sourcemap: false,
+  legalComments: "eof",
+  banner: { js: "/*! NextFloor, MIT licence. Includes three.js (MIT) and Lit (BSD-3-Clause); see LICENSE and THIRD_PARTY_NOTICES.md */" },
+  logLevel: "info",
+};
+
+const viewerConfig = { ...common, entryPoints: ["src/viewer/viewer3d.ts"], outfile: `${out}/nextfloor-3d.js` };
+// the card's visual editor only loads in the dashboard's card dialog
+// the language files (lang/*.json) are fetched with a hash of their content, so a new text is never stale
+const LANGS = ["fr", "es", "nl", "it", "hu", "da", "sv", "nb", "nn", "fi", "cs", "pl", "ro", "sl"];
+const langHash = createHash("sha256")
+  .update(LANGS.map((l) => (existsSync(`lang/${l}.json`) ? readFileSync(`lang/${l}.json`) : "")).join("\n"))
+  .digest("hex")
+  .slice(0, 12);
+const cardEditorConfig = { ...common, entryPoints: ["src/card-editor.ts"], outfile: `${out}/nextfloor-card-editor.js`, define: { __NF_LANG_HASH__: JSON.stringify(langHash) } };
+// the editor is only needed by admins who open it, so it is a bundle of its own as well
+// (it draws furniture previews with the 3D bundle, so it knows that bundle's hash too)
+const editorConfig = (viewerHash) => ({
+  ...common,
+  entryPoints: ["src/components/editor.ts"],
+  outfile: `${out}/nextfloor-editor.js`,
+  define: { __NF_VIEWER_HASH__: JSON.stringify(viewerHash), __NF_LANG_HASH__: JSON.stringify(langHash) },
+});
+// The main bundle loads the 3D bundle with a hash of its content in the URL, so a new 3D bundle is
+// never taken from the browser cache (the integration version only changes after a restart).
+// the frontend knows its own version, to notice a backend that still runs an older one
+const version = JSON.parse(readFileSync("../custom_components/nextfloor/manifest.json", "utf8")).version;
+const mainConfig = (viewerHash, editorHash, cardEditorHash) => ({
+  ...common,
+  entryPoints: ["src/main.ts"],
+  outfile: `${out}/nextfloor.js`,
+  define: {
+    __NF_VIEWER_HASH__: JSON.stringify(viewerHash),
+    __NF_EDITOR_HASH__: JSON.stringify(editorHash),
+    __NF_CARD_EDITOR_HASH__: JSON.stringify(cardEditorHash),
+    __NF_VERSION__: JSON.stringify(version),
+    __NF_LANG_HASH__: JSON.stringify(langHash),
+  },
+});
+const hashOf = (file) => createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, 12);
+
+function copyAssets() {
+  // the integration folder is what HACS ships as a zip, so the licences have to be inside it
+  for (const f of ["LICENSE", "THIRD_PARTY_NOTICES.md"]) copyFileSync(`../${f}`, `../custom_components/nextfloor/${f}`);
+  // further languages, fetched by the bundles only when Home Assistant runs in them
+  mkdirSync(`${out}/lang`, { recursive: true });
+  for (const l of LANGS) if (existsSync(`lang/${l}.json`)) copyFileSync(`lang/${l}.json`, `${out}/lang/${l}.json`);
+}
+
+// Size budgets, small enough for old wall tablets.
+const BUDGET = { "nextfloor.js": 470 * 1024, "nextfloor-3d.js": 790 * 1024, "nextfloor-editor.js": 560 * 1024, "nextfloor-card-editor.js": 180 * 1024 };
+
+copyAssets();
+if (watch) {
+  // in watch mode the hash is not tracked; a dev reload fetches the bundle anyway
+  for (const c of [viewerConfig, editorConfig("dev"), cardEditorConfig, mainConfig("dev", "dev", "dev")]) await (await context(c)).watch();
+} else {
+  await build(viewerConfig);
+  const editor = editorConfig(hashOf(viewerConfig.outfile));
+  await build(editor);
+  await build(cardEditorConfig);
+  await build(mainConfig(hashOf(viewerConfig.outfile), hashOf(editor.outfile), hashOf(cardEditorConfig.outfile)));
+  let over = false;
+  for (const [file, limit] of Object.entries(BUDGET)) {
+    const size = statSync(`${out}/${file}`).size;
+    const ok = size <= limit;
+    over ||= !ok;
+    console.log(`${ok ? "ok  " : "OVER"} ${file}: ${(size / 1024).toFixed(1)} KB (budget ${limit / 1024} KB)`);
+  }
+  if (over) process.exit(1);
+}

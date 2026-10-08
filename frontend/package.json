@@ -1,0 +1,26 @@
+{
+  "name": "nextfloor-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "screenshot": "node screenshot.mjs",
+    "deploy": "node build.mjs && node ../scripts/deploy.mjs"
+  },
+  "dependencies": {
+    "lit": "^3.3.3",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@types/node": "^26.6.3",
+    "@types/three": "^0.186.0",
+    "esbuild": "^0.28.2",
+    "puppeteer-core": "^25.12.0",
+    "typescript": "^7.0.2"
+  }
+}

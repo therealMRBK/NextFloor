@@ -1,0 +1,42 @@
+# Sorts new issues: the answer to "Which part? / Welcher Teil?" in the issue form becomes a "part: …" label.
+name: Issue labels
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const PARTS = {
+              "Plan editor": "part: editor",
+              "3D view": "part: 3d view",
+              "Dashboard card": "part: card",
+              "Devices & control": "part: devices",
+              "Roof & solar fields": "part: roof & solar",
+              "Outdoor & garden": "part: outdoor",
+              "Furniture & packs": "part: furniture & packs",
+              "Energy flow": "live: energy",
+              "Cameras": "live: camera",
+              "Weather Outside": "live: weather",
+              "Sound": "live: sound",
+              "Car": "live: car",
+              "TV screens": "live: screens",
+              "Installation & update": "part: install & update",
+            };
+            const body = context.payload.issue.body ?? "";
+            // the form writes "### Which part? / Welcher Teil?" and the picked options below, comma-separated
+            const m = body.match(/### Which part\? \/ Welcher Teil\?\s*\n+([^\n]*)/);
+            if (!m) return;
+            const labels = m[1]
+              .split(",")
+              .map((o) => PARTS[o.split(" / ")[0].trim()])
+              .filter(Boolean);
+            if (labels.length) await github.rest.issues.addLabels({ ...context.repo, issue_number: context.payload.issue.number, labels });

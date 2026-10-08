@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Aggiunge una pagina nella barra laterale dove disegni la tua casa e la vedi in 3D."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor è già configurato."
+    }
+  }
+}

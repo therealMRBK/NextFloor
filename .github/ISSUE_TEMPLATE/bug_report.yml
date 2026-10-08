@@ -1,0 +1,74 @@
+name: 🐞 Bug report / Fehler melden
+description: Something does not work as described in the manual. / Etwas funktioniert nicht wie in der Anleitung beschrieben.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! English or German, both are fine. / Danke für die Meldung! Deutsch oder Englisch, beides ist okay.
+        Please do not post private data (addresses, IP addresses, real names of people). / Bitte keine privaten Daten posten.
+  - type: input
+    id: version
+    attributes:
+      label: NextFloor version / Version
+      description: HACS → NextFloor, or Settings → Devices & services → NextFloor.
+      placeholder: "1.2.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.10.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: Which part? / Welcher Teil?
+      description: Pick all that fit – it sorts your report automatically. / Alles auswählen, was passt – so wird die Meldung automatisch einsortiert.
+      multiple: true
+      options:
+        - Plan editor / Grundriss & Editor
+        - 3D view / 3D-Ansicht
+        - Dashboard card / Dashboard-Karte
+        - Devices & control / Geräte & Bedienung
+        - Roof & solar fields / Dach & Solarfelder
+        - Outdoor & garden / Außen & Garten
+        - Furniture & packs / Möbel & Packs
+        - Energy flow / Energiefluss
+        - Cameras / Kameras
+        - Weather Outside / Wetter draußen
+        - Sound / Klang
+        - Car / Auto
+        - TV screens / TV-Bildschirme
+        - Installation & update / Installation & Update
+        - Other / Sonstiges
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens? / Was passiert?
+      description: What did you do, what did you expect, what happened instead? / Was hast du gemacht, was hast du erwartet, was ist stattdessen passiert?
+      placeholder: |
+        1. Open the editor …
+        2. Tap …
+        3. …
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device / Gerät
+      multiple: true
+      options:
+        - Desktop browser
+        - Tablet (wall tablet / Wandtablet)
+        - Phone / Handy
+        - Home Assistant app
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots, browser console or HA log / Screenshots, Browser-Konsole oder HA-Protokoll
+      description: Optional. Drag images in here. Errors from the browser console (F12) help a lot. / Optional. Bilder einfach hineinziehen.

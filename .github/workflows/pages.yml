@@ -1,0 +1,48 @@
+name: Online demo
+
+# Publishes the preview (invented demo data, mock Home Assistant) as the online demo on GitHub Pages.
+# Only the preview page, its demo data and the built bundles go online, nothing from private/.
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "preview/**"
+      - "custom_components/nextfloor/frontend/**"
+      - "custom_components/nextfloor/packs/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble the site
+        run: |
+          mkdir -p _site/preview _site/custom_components/nextfloor
+          cp site/index.html _site/
+          cp preview/index.html preview/demo-data.js _site/preview/
+          cp -r custom_components/nextfloor/frontend _site/custom_components/nextfloor/
+          cp -r custom_components/nextfloor/packs _site/custom_components/nextfloor/
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

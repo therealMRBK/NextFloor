@@ -1,0 +1,781 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.kueche",
+ "name": "Küche extra",
+ "publisher": "NextFloor",
+ "description": "Kaffeevollautomat, Mikrowelle, Dunstabzug, Weinkühlschrank, Küchenmaschine und mehr",
+ "release": 1,
+ "items": [
+  {
+   "id": "coffee_machine",
+   "name": {
+    "de": "Kaffeevollautomat",
+    "en": "Coffee machine"
+   },
+   "size": [
+    0.3,
+    0.45,
+    0.38
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.42,
+     "w": 0.5,
+     "d": 0.16,
+     "y": 0.12,
+     "h": 0.4,
+     "color": "#202634"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.35,
+     "w": 0.4,
+     "d": 0.2,
+     "y": 0,
+     "h": 0.06,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.02,
+     "y": 0.7,
+     "h": 0.18,
+     "color": "#3ea6ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "microwave",
+   "name": {
+    "de": "Mikrowelle",
+    "en": "Microwave"
+   },
+   "size": [
+    0.5,
+    0.4,
+    0.3
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.1,
+     "z": 0.5,
+     "w": 0.7,
+     "d": 0.02,
+     "y": 0.15,
+     "h": 0.7,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.38,
+     "z": 0.5,
+     "w": 0.15,
+     "d": 0.02,
+     "y": 0.2,
+     "h": 0.6,
+     "color": "body"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "hood_island",
+   "name": {
+    "de": "Dunstabzug (Insel)",
+    "en": "Island hood"
+   },
+   "size": [
+    0.9,
+    0.6,
+    1.0
+   ],
+   "parts": [
+    {
+     "shape": "loft",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.15,
+     "color": "metal",
+     "tw": 0.3,
+     "td": 0.4,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.4,
+     "y": 0.15,
+     "h": 0.85,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0,
+     "h": 0.02,
+     "color": "#fff1c9",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true,
+   "light": "spot"
+  },
+  {
+   "id": "wine_fridge",
+   "name": {
+    "de": "Weinkühlschrank",
+    "en": "Wine fridge"
+   },
+   "size": [
+    0.6,
+    0.6,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.06,
+     "h": 0.88,
+     "color": "glass"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.15,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.15,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.15,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.15,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.4,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.65,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.65,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.1,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.65,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.3,
+     "w": 0.08,
+     "d": 0.5,
+     "y": 0.65,
+     "h": 0.08,
+     "color": "#6b1d2a",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.3,
+     "w": 0.9,
+     "d": 0.5,
+     "y": 0.94,
+     "h": 0.02,
+     "color": "#7ab8ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "stand_mixer",
+   "name": {
+    "de": "Küchenmaschine",
+    "en": "Stand mixer"
+   },
+   "size": [
+    0.25,
+    0.35,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.2,
+     "w": 0.8,
+     "d": 0.6,
+     "y": 0,
+     "h": 0.1,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.3,
+     "w": 0.5,
+     "d": 0.3,
+     "y": 0.1,
+     "h": 0.6,
+     "color": "accent"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.05,
+     "w": 0.6,
+     "d": 0.8,
+     "y": 0.7,
+     "h": 0.25,
+     "color": "accent",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0.15,
+     "w": 0.7,
+     "d": 0.55,
+     "y": 0.1,
+     "h": 0.45,
+     "color": "metal"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "toaster",
+   "name": {
+    "de": "Toaster",
+    "en": "Toaster"
+   },
+   "size": [
+    0.3,
+    0.18,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": 0,
+     "w": 0.15,
+     "d": 0.6,
+     "y": 0.95,
+     "h": 0.05,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0,
+     "w": 0.15,
+     "d": 0.6,
+     "y": 0.95,
+     "h": 0.05,
+     "color": "dark"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "kettle",
+   "name": {
+    "de": "Wasserkocher",
+    "en": "Kettle"
+   },
+   "size": [
+    0.2,
+    0.15,
+    0.25
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.9,
+     "d": 1,
+     "y": 0,
+     "h": 0.1,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.8,
+     "d": 0.9,
+     "y": 0.1,
+     "h": 0.8,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0,
+     "w": 0.12,
+     "d": 0.3,
+     "y": 0.3,
+     "h": 0.55,
+     "color": "white"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "long_dining_table",
+   "name": {
+    "de": "Esstisch (lang)",
+    "en": "Long dining table"
+   },
+   "size": [
+    2.4,
+    1.0,
+    0.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.94,
+     "h": 0.06,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.8,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0,
+     "w": 0.04,
+     "d": 0.8,
+     "y": 0,
+     "h": 0.94,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.85,
+     "y": 0,
+     "h": 0.03,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.85,
+     "y": 0,
+     "h": 0.03,
+     "color": "dark"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "bar_cart",
+   "name": {
+    "de": "Barwagen",
+    "en": "Bar cart"
+   },
+   "size": [
+    0.7,
+    0.4,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.9,
+     "h": 0.04,
+     "color": "glass",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.25,
+     "h": 0.04,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": -0.47,
+     "z": -0.47,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "#c9a14a"
+    },
+    {
+     "shape": "box",
+     "x": -0.47,
+     "z": 0.47,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "#c9a14a"
+    },
+    {
+     "shape": "box",
+     "x": 0.47,
+     "z": -0.47,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "#c9a14a"
+    },
+    {
+     "shape": "box",
+     "x": 0.47,
+     "z": 0.47,
+     "w": 0.04,
+     "d": 0.04,
+     "y": 0.1,
+     "h": 0.9,
+     "color": "#c9a14a"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.42,
+     "z": -0.42,
+     "w": 0.1,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.12,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.42,
+     "z": 0.42,
+     "w": 0.1,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.12,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.42,
+     "z": -0.42,
+     "w": 0.1,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.12,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.42,
+     "z": 0.42,
+     "w": 0.1,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.12,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2,
+     "z": 0,
+     "w": 0.1,
+     "d": 0.25,
+     "y": 0.94,
+     "h": 0.06,
+     "color": "#6b1d2a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.05,
+     "z": 0.05,
+     "w": 0.08,
+     "d": 0.2,
+     "y": 0.94,
+     "h": 0.05,
+     "color": "glass"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "trash_station",
+   "name": {
+    "de": "Mülltrennung",
+    "en": "Waste sorting"
+   },
+   "size": [
+    0.6,
+    0.4,
+    0.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.95,
+     "y": 0,
+     "h": 0.92,
+     "color": "#f2c94c",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.95,
+     "y": 0,
+     "h": 0.92,
+     "color": "#3b7bb5",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.95,
+     "y": 0,
+     "h": 0.92,
+     "color": "#5a5f6a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0,
+     "w": 0.31,
+     "d": 0.97,
+     "y": 0.92,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.31,
+     "d": 0.97,
+     "y": 0.92,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0,
+     "w": 0.31,
+     "d": 0.97,
+     "y": 0.92,
+     "h": 0.08,
+     "color": "dark"
+    }
+   ]
+  }
+ ]
+}

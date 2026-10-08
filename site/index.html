@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NextFloor – Online demo</title>
+    <meta name="description" content="Try NextFloor in your browser: a 3D floor plan for Home Assistant with a built-in editor, live lights, covers and cameras. Demo with invented data." />
+    <meta property="og:title" content="NextFloor – Online demo" />
+    <meta property="og:description" content="A 3D floor plan for Home Assistant: draw your home in the built-in editor and control it in a neon 3D view. Try it in your browser." />
+    <meta property="og:image" content="https://raw.githubusercontent.com/therealMRBK/NextFloor/main/docs/images/view-house.jpg" />
+    <style>
+      body { margin: 0; background: #070b14; color: #cfe9ff; font: 16px Roboto, sans-serif; display: grid; place-items: center; height: 100vh; }
+      a { color: #00e5ff; }
+    </style>
+    <script>
+      // German browsers get the German demo, everyone else the English one
+      const lang = (navigator.language || "en").toLowerCase().startsWith("de") ? "de" : "en";
+      location.replace("preview/index.html?site&lang=" + lang);
+    </script>
+  </head>
+  <body>
+    <p>Loading the demo … <a href="preview/index.html?site&amp;lang=en">open it here</a></p>
+  </body>
+</html>

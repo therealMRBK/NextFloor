@@ -1,0 +1,715 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.technik",
+ "name": "Büro & Homelab",
+ "publisher": "NextFloor",
+ "description": "Höhenverstellbarer Schreibtisch, Server-Rack, NAS, 3D-Drucker, Router",
+ "release": 1,
+ "items": [
+  {
+   "id": "standing_desk",
+   "name": {
+    "de": "Schreibtisch höhenverstellbar",
+    "en": "Standing desk"
+   },
+   "size": [
+    1.6,
+    0.8,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.6,
+     "h": 0.03,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": -0.05,
+     "w": 0.05,
+     "d": 0.08,
+     "y": 0,
+     "h": 0.6,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": -0.05,
+     "w": 0.05,
+     "d": 0.08,
+     "y": 0,
+     "h": 0.6,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.4,
+     "z": -0.05,
+     "w": 0.08,
+     "d": 0.7,
+     "y": 0,
+     "h": 0.02,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": -0.05,
+     "w": 0.08,
+     "d": 0.7,
+     "y": 0,
+     "h": 0.02,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.18,
+     "z": -0.32,
+     "w": 0.36,
+     "d": 0.05,
+     "y": 0.71,
+     "h": 0.27,
+     "color": "dark",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": -0.32,
+     "w": 0.36,
+     "d": 0.05,
+     "y": 0.71,
+     "h": 0.27,
+     "color": "dark",
+     "screen": true
+    },
+    {
+     "shape": "cyl",
+     "x": -0.18,
+     "z": -0.36,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0.63,
+     "h": 0.08,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2,
+     "z": -0.36,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0.63,
+     "h": 0.08,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.15,
+     "w": 0.3,
+     "d": 0.18,
+     "y": 0.63,
+     "h": 0.01,
+     "color": "body"
+    }
+   ],
+   "electric": true,
+   "surface": true
+  },
+  {
+   "id": "server_rack",
+   "name": {
+    "de": "Server-Rack (19 Zoll)",
+    "en": "Server rack (19 inch)"
+   },
+   "size": [
+    0.6,
+    0.8,
+    1.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.03,
+     "h": 0.94,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.1,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.2,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.3,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.42,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.55,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.68,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.1,
+     "w": 0.86,
+     "d": 0.8,
+     "y": 0.8,
+     "h": 0.06,
+     "color": "#1d2433",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.12,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.22,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.32,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.44,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.57,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.7,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.46,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.82,
+     "h": 0.02,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "strip"
+  },
+  {
+   "id": "nas",
+   "name": {
+    "de": "NAS",
+    "en": "NAS"
+   },
+   "size": [
+    0.2,
+    0.25,
+    0.22
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.5,
+     "w": 0.18,
+     "d": 0.02,
+     "y": 0.1,
+     "h": 0.8,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": -0.1,
+     "z": 0.5,
+     "w": 0.18,
+     "d": 0.02,
+     "y": 0.1,
+     "h": 0.8,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": 0.1,
+     "z": 0.5,
+     "w": 0.18,
+     "d": 0.02,
+     "y": 0.1,
+     "h": 0.8,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": 0.3,
+     "z": 0.5,
+     "w": 0.18,
+     "d": 0.02,
+     "y": 0.1,
+     "h": 0.8,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": 0.35,
+     "z": 0.5,
+     "w": 0.05,
+     "d": 0.02,
+     "y": 0.85,
+     "h": 0.05,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "printer_3d",
+   "name": {
+    "de": "3D-Drucker",
+    "en": "3D printer"
+   },
+   "size": [
+    0.5,
+    0.5,
+    0.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.12,
+     "color": "dark",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": -0.45,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.1,
+     "y": 0.12,
+     "h": 0.85,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.45,
+     "z": 0,
+     "w": 0.08,
+     "d": 0.1,
+     "y": 0.12,
+     "h": 0.85,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 0.1,
+     "y": 0.92,
+     "h": 0.06,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 0.75,
+     "d": 0.75,
+     "y": 0.25,
+     "h": 0.02,
+     "color": "#d1293d"
+    },
+    {
+     "shape": "box",
+     "x": 0.1,
+     "z": 0,
+     "w": 0.14,
+     "d": 0.14,
+     "y": 0.7,
+     "h": 0.12,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.18,
+     "d": 0.18,
+     "y": 0.27,
+     "h": 0.15,
+     "color": "#38e07b"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "office_printer",
+   "name": {
+    "de": "Drucker",
+    "en": "Printer"
+   },
+   "size": [
+    0.45,
+    0.4,
+    0.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.8,
+     "color": "white",
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.4,
+     "w": 0.7,
+     "d": 0.3,
+     "y": 0.25,
+     "h": 0.04,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": -0.1,
+     "w": 0.8,
+     "d": 0.6,
+     "y": 0.8,
+     "h": 0.2,
+     "color": "#d9dee6"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "router",
+   "name": {
+    "de": "Router / Access Point",
+    "en": "Router / access point"
+   },
+   "size": [
+    0.25,
+    0.25,
+    0.04
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0,
+     "z": 0,
+     "w": 0.3,
+     "d": 0.3,
+     "y": 0.9,
+     "h": 0.12,
+     "color": "#3ea6ff",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true,
+   "light": "downlight"
+  },
+  {
+   "id": "tower_pc",
+   "name": {
+    "de": "PC (Tower)",
+    "en": "Tower PC"
+   },
+   "size": [
+    0.22,
+    0.48,
+    0.48
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": -0.5,
+     "z": 0,
+     "w": 0.02,
+     "d": 0.8,
+     "y": 0.2,
+     "h": 0.7,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": -0.48,
+     "z": 0,
+     "w": 0.02,
+     "d": 0.7,
+     "y": 0.25,
+     "h": 0.6,
+     "color": "#a640ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "strip"
+  },
+  {
+   "id": "filing_cabinet",
+   "name": {
+    "de": "Rollcontainer",
+    "en": "Drawer pedestal"
+   },
+   "size": [
+    0.42,
+    0.55,
+    0.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0,
+     "w": 1,
+     "d": 1,
+     "y": 0.08,
+     "h": 0.92,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.12,
+     "h": 0.26,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.42,
+     "h": 0.26,
+     "color": "body"
+    },
+    {
+     "shape": "box",
+     "x": 0,
+     "z": 0.5,
+     "w": 0.9,
+     "d": 0.02,
+     "y": 0.72,
+     "h": 0.26,
+     "color": "body"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.4,
+     "z": -0.4,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.4,
+     "z": 0.4,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4,
+     "z": -0.4,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.08,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4,
+     "z": 0.4,
+     "w": 0.1,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.08,
+     "color": "dark"
+    }
+   ]
+  }
+ ]
+}

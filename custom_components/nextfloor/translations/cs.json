@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Přidá do postranního panelu stránku, kde nakreslíš svůj domov a uvidíš ho ve 3D."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor je již nastaven."
+    }
+  }
+}

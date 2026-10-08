@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Fügt eine Seite in der Seitenleiste hinzu, auf der du deine Wohnung zeichnest und in 3D siehst."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor ist bereits eingerichtet."
+    }
+  }
+}

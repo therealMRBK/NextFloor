@@ -1,0 +1,36 @@
+name: Release
+
+# On a published GitHub release: check that the tag matches the manifest version, pack the integration
+# as nextfloor.zip (HACS installs this file because hacs.json sets zip_release) and attach it. The
+# asset's download count is the number of HACS installs and updates of that version.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches the manifest version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version=$(python3 -c "import json; print(json.load(open('custom_components/nextfloor/manifest.json'))['version'])")
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match manifest version $version" >&2
+            exit 1
+          fi
+      - name: Pack the integration
+        run: |
+          cd custom_components/nextfloor
+          find . -name '__pycache__' -prune -o -type f -print | sed 's|^\./||' | sort > /tmp/files
+          zip -q -X ../../nextfloor.zip -@ < /tmp/files
+          cd ../..
+          unzip -l nextfloor.zip | tail -1
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" nextfloor.zip --clobber

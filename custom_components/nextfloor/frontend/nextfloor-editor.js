@@ -1,0 +1,3451 @@
+/*! NextFloor, MIT licence. Includes three.js (MIT) and Lit (BSD-3-Clause); see LICENSE and THIRD_PARTY_NOTICES.md */
+var yt=globalThis,kt=yt.ShadowRoot&&(yt.ShadyCSS===void 0||yt.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,jt=Symbol(),ti=new WeakMap,Je=class{constructor(e,t,n){if(this._$cssResult$=!0,n!==jt)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o,t=this.t;if(kt&&e===void 0){let n=t!==void 0&&t.length===1;n&&(e=ti.get(t)),e===void 0&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),n&&ti.set(t,e))}return e}toString(){return this.cssText}},ni=o=>new Je(typeof o=="string"?o:o+"",void 0,jt),se=(o,...e)=>{let t=o.length===1?o[0]:e.reduce((n,i,r)=>n+(s=>{if(s._$cssResult$===!0)return s.cssText;if(typeof s=="number")return s;throw Error("Value passed to 'css' function must be a 'css' function result: "+s+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+o[r+1],o[0]);return new Je(t,o,jt)},ii=(o,e)=>{if(kt)o.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of e){let n=document.createElement("style"),i=yt.litNonce;i!==void 0&&n.setAttribute("nonce",i),n.textContent=t.cssText,o.appendChild(n)}},Ut=kt?o=>o:o=>o instanceof CSSStyleSheet?(e=>{let t="";for(let n of e.cssRules)t+=n.cssText;return ni(t)})(o):o;var{is:ys,defineProperty:ks,getOwnPropertyDescriptor:xs,getOwnPropertyNames:$s,getOwnPropertySymbols:Ss,getPrototypeOf:Ms}=Object,xt=globalThis,ri=xt.trustedTypes,zs=ri?ri.emptyScript:"",Es=xt.reactiveElementPolyfillSupport,et=(o,e)=>o,Zt={toAttribute(o,e){switch(e){case Boolean:o=o?zs:null;break;case Object:case Array:o=o==null?o:JSON.stringify(o)}return o},fromAttribute(o,e){let t=o;switch(e){case Boolean:t=o!==null;break;case Number:t=o===null?null:Number(o);break;case Object:case Array:try{t=JSON.parse(o)}catch{t=null}}return t}},oi=(o,e)=>!ys(o,e),si={attribute:!0,type:String,converter:Zt,reflect:!1,useDefault:!1,hasChanged:oi};Symbol.metadata??=Symbol("metadata"),xt.litPropertyMetadata??=new WeakMap;var fe=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=si){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){let n=Symbol(),i=this.getPropertyDescriptor(e,n,t);i!==void 0&&ks(this.prototype,e,i)}}static getPropertyDescriptor(e,t,n){let{get:i,set:r}=xs(this.prototype,e)??{get(){return this[t]},set(s){this[t]=s}};return{get:i,set(s){let a=i?.call(this);r?.call(this,s),this.requestUpdate(e,a,n)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??si}static _$Ei(){if(this.hasOwnProperty(et("elementProperties")))return;let e=Ms(this);e.finalize(),e.l!==void 0&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty(et("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(et("properties"))){let t=this.properties,n=[...$s(t),...Ss(t)];for(let i of n)this.createProperty(i,t[i])}let e=this[Symbol.metadata];if(e!==null){let t=litPropertyMetadata.get(e);if(t!==void 0)for(let[n,i]of t)this.elementProperties.set(n,i)}this._$Eh=new Map;for(let[t,n]of this.elementProperties){let i=this._$Eu(t,n);i!==void 0&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let n=new Set(e.flat(1/0).reverse());for(let i of n)t.unshift(Ut(i))}else e!==void 0&&t.push(Ut(e));return t}static _$Eu(e,t){let n=t.attribute;return n===!1?void 0:typeof n=="string"?n:typeof e=="string"?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),this.renderRoot!==void 0&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){let e=new Map,t=this.constructor.elementProperties;for(let n of t.keys())this.hasOwnProperty(n)&&(e.set(n,this[n]),delete this[n]);e.size>0&&(this._$Ep=e)}createRenderRoot(){let e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return ii(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,n){this._$AK(e,n)}_$ET(e,t){let n=this.constructor.elementProperties.get(e),i=this.constructor._$Eu(e,n);if(i!==void 0&&n.reflect===!0){let r=(n.converter?.toAttribute!==void 0?n.converter:Zt).toAttribute(t,n.type);this._$Em=e,r==null?this.removeAttribute(i):this.setAttribute(i,r),this._$Em=null}}_$AK(e,t){let n=this.constructor,i=n._$Eh.get(e);if(i!==void 0&&this._$Em!==i){let r=n.getPropertyOptions(i),s=typeof r.converter=="function"?{fromAttribute:r.converter}:r.converter?.fromAttribute!==void 0?r.converter:Zt;this._$Em=i;let a=s.fromAttribute(t,r.type);this[i]=a??this._$Ej?.get(i)??a,this._$Em=null}}requestUpdate(e,t,n,i=!1,r){if(e!==void 0){let s=this.constructor;if(i===!1&&(r=this[e]),n??=s.getPropertyOptions(e),!((n.hasChanged??oi)(r,t)||n.useDefault&&n.reflect&&r===this._$Ej?.get(e)&&!this.hasAttribute(s._$Eu(e,n))))return;this.C(e,t,n)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(e,t,{useDefault:n,reflect:i,wrapped:r},s){n&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,s??t??this[e]),r!==!0||s!==void 0)||(this._$AL.has(e)||(this.hasUpdated||n||(t=void 0),this._$AL.set(e,t)),i===!0&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[i,r]of this._$Ep)this[i]=r;this._$Ep=void 0}let n=this.constructor.elementProperties;if(n.size>0)for(let[i,r]of n){let{wrapped:s}=r,a=this[i];s!==!0||this._$AL.has(i)||a===void 0||this.C(i,void 0,r,a)}}let e=!1,t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(n=>n.hostUpdate?.()),this.update(t)):this._$EM()}catch(n){throw e=!1,this._$EM(),n}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(e){}firstUpdated(e){}};fe.elementStyles=[],fe.shadowRootOptions={mode:"open"},fe[et("elementProperties")]=new Map,fe[et("finalized")]=new Map,Es?.({ReactiveElement:fe}),(xt.reactiveElementVersions??=[]).push("2.1.2");var tn=globalThis,ai=o=>o,$t=tn.trustedTypes,li=$t?$t.createPolicy("lit-html",{createHTML:o=>o}):void 0,pi="$lit$",ye=`lit$${Math.random().toFixed(9).slice(2)}$`,mi="?"+ye,As=`<${mi}>`,Re=document,nt=()=>Re.createComment(""),it=o=>o===null||typeof o!="object"&&typeof o!="function",nn=Array.isArray,Rs=o=>nn(o)||typeof o?.[Symbol.iterator]=="function",qt=`[ 	
+\f\r]`,tt=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ci=/-->/g,hi=/>/g,Ee=RegExp(`>|${qt}(?:([^\\s"'>=/]+)(${qt}*=${qt}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),di=/'/g,ui=/"/g,gi=/^(?:script|style|textarea|title)$/i,rn=o=>(e,...t)=>({_$litType$:o,strings:e,values:t}),g=rn(1),F=rn(2),No=rn(3),pe=Symbol.for("lit-noChange"),v=Symbol.for("lit-nothing"),fi=new WeakMap,Ae=Re.createTreeWalker(Re,129);function _i(o,e){if(!nn(o)||!o.hasOwnProperty("raw"))throw Error("invalid template strings array");return li!==void 0?li.createHTML(e):e}var Fs=(o,e)=>{let t=o.length-1,n=[],i,r=e===2?"<svg>":e===3?"<math>":"",s=tt;for(let a=0;a<t;a++){let l=o[a],c,h,d=-1,u=0;for(;u<l.length&&(s.lastIndex=u,h=s.exec(l),h!==null);)u=s.lastIndex,s===tt?h[1]==="!--"?s=ci:h[1]!==void 0?s=hi:h[2]!==void 0?(gi.test(h[2])&&(i=RegExp("</"+h[2],"g")),s=Ee):h[3]!==void 0&&(s=Ee):s===Ee?h[0]===">"?(s=i??tt,d=-1):h[1]===void 0?d=-2:(d=s.lastIndex-h[2].length,c=h[1],s=h[3]===void 0?Ee:h[3]==='"'?ui:di):s===ui||s===di?s=Ee:s===ci||s===hi?s=tt:(s=Ee,i=void 0);let f=s===Ee&&o[a+1].startsWith("/>")?" ":"";r+=s===tt?l+As:d>=0?(n.push(c),l.slice(0,d)+pi+l.slice(d)+ye+f):l+ye+(d===-2?a:f)}return[_i(o,r+(o[t]||"<?>")+(e===2?"</svg>":e===3?"</math>":"")),n]},rt=class o{constructor({strings:e,_$litType$:t},n){let i;this.parts=[];let r=0,s=0,a=e.length-1,l=this.parts,[c,h]=Fs(e,t);if(this.el=o.createElement(c,n),Ae.currentNode=this.el.content,t===2||t===3){let d=this.el.content.firstChild;d.replaceWith(...d.childNodes)}for(;(i=Ae.nextNode())!==null&&l.length<a;){if(i.nodeType===1){if(i.hasAttributes())for(let d of i.getAttributeNames())if(d.endsWith(pi)){let u=h[s++],f=i.getAttribute(d).split(ye),p=/([.?@])?(.*)/.exec(u);l.push({type:1,index:r,name:p[2],strings:f,ctor:p[1]==="."?Yt:p[1]==="?"?Xt:p[1]==="@"?Jt:He}),i.removeAttribute(d)}else d.startsWith(ye)&&(l.push({type:6,index:r}),i.removeAttribute(d));if(gi.test(i.tagName)){let d=i.textContent.split(ye),u=d.length-1;if(u>0){i.textContent=$t?$t.emptyScript:"";for(let f=0;f<u;f++)i.append(d[f],nt()),Ae.nextNode(),l.push({type:2,index:++r});i.append(d[u],nt())}}}else if(i.nodeType===8)if(i.data===mi)l.push({type:2,index:r});else{let d=-1;for(;(d=i.data.indexOf(ye,d+1))!==-1;)l.push({type:7,index:r}),d+=ye.length-1}r++}}static createElement(e,t){let n=Re.createElement("template");return n.innerHTML=e,n}};function Oe(o,e,t=o,n){if(e===pe)return e;let i=n!==void 0?t._$Co?.[n]:t._$Cl,r=it(e)?void 0:e._$litDirective$;return i?.constructor!==r&&(i?._$AO?.(!1),r===void 0?i=void 0:(i=new r(o),i._$AT(o,t,n)),n!==void 0?(t._$Co??=[])[n]=i:t._$Cl=i),i!==void 0&&(e=Oe(o,i._$AS(o,e.values),i,n)),e}var Qt=class{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){let{el:{content:t},parts:n}=this._$AD,i=(e?.creationScope??Re).importNode(t,!0);Ae.currentNode=i;let r=Ae.nextNode(),s=0,a=0,l=n[0];for(;l!==void 0;){if(s===l.index){let c;l.type===2?c=new st(r,r.nextSibling,this,e):l.type===1?c=new l.ctor(r,l.name,l.strings,this,e):l.type===6&&(c=new en(r,this,e)),this._$AV.push(c),l=n[++a]}s!==l?.index&&(r=Ae.nextNode(),s++)}return Ae.currentNode=Re,i}p(e){let t=0;for(let n of this._$AV)n!==void 0&&(n.strings!==void 0?(n._$AI(e,n,t),t+=n.strings.length-2):n._$AI(e[t])),t++}},st=class o{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,n,i){this.type=2,this._$AH=v,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=n,this.options=i,this._$Cv=i?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e?.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=Oe(this,e,t),it(e)?e===v||e==null||e===""?(this._$AH!==v&&this._$AR(),this._$AH=v):e!==this._$AH&&e!==pe&&this._(e):e._$litType$!==void 0?this.$(e):e.nodeType!==void 0?this.T(e):Rs(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==v&&it(this._$AH)?this._$AA.nextSibling.data=e:this.T(Re.createTextNode(e)),this._$AH=e}$(e){let{values:t,_$litType$:n}=e,i=typeof n=="number"?this._$AC(e):(n.el===void 0&&(n.el=rt.createElement(_i(n.h,n.h[0]),this.options)),n);if(this._$AH?._$AD===i)this._$AH.p(t);else{let r=new Qt(i,this),s=r.u(this.options);r.p(t),this.T(s),this._$AH=r}}_$AC(e){let t=fi.get(e.strings);return t===void 0&&fi.set(e.strings,t=new rt(e)),t}k(e){nn(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,n,i=0;for(let r of e)i===t.length?t.push(n=new o(this.O(nt()),this.O(nt()),this,this.options)):n=t[i],n._$AI(r),i++;i<t.length&&(this._$AR(n&&n._$AB.nextSibling,i),t.length=i)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){let n=ai(e).nextSibling;ai(e).remove(),e=n}}setConnected(e){this._$AM===void 0&&(this._$Cv=e,this._$AP?.(e))}},He=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,n,i,r){this.type=1,this._$AH=v,this._$AN=void 0,this.element=e,this.name=t,this._$AM=i,this.options=r,n.length>2||n[0]!==""||n[1]!==""?(this._$AH=Array(n.length-1).fill(new String),this.strings=n):this._$AH=v}_$AI(e,t=this,n,i){let r=this.strings,s=!1;if(r===void 0)e=Oe(this,e,t,0),s=!it(e)||e!==this._$AH&&e!==pe,s&&(this._$AH=e);else{let a=e,l,c;for(e=r[0],l=0;l<r.length-1;l++)c=Oe(this,a[n+l],t,l),c===pe&&(c=this._$AH[l]),s||=!it(c)||c!==this._$AH[l],c===v?e=v:e!==v&&(e+=(c??"")+r[l+1]),this._$AH[l]=c}s&&!i&&this.j(e)}j(e){e===v?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},Yt=class extends He{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===v?void 0:e}},Xt=class extends He{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==v)}},Jt=class extends He{constructor(e,t,n,i,r){super(e,t,n,i,r),this.type=5}_$AI(e,t=this){if((e=Oe(this,e,t,0)??v)===pe)return;let n=this._$AH,i=e===v&&n!==v||e.capture!==n.capture||e.once!==n.once||e.passive!==n.passive,r=e!==v&&(n===v||i);i&&this.element.removeEventListener(this.name,this,n),r&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}},en=class{constructor(e,t,n){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=n}get _$AU(){return this._$AM._$AU}_$AI(e){Oe(this,e)}};var Is=tn.litHtmlPolyfillSupport;Is?.(rt,st),(tn.litHtmlVersions??=[]).push("3.3.3");var bi=(o,e,t)=>{let n=t?.renderBefore??e,i=n._$litPart$;if(i===void 0){let r=t?.renderBefore??null;n._$litPart$=i=new st(e.insertBefore(nt(),r),r,void 0,t??{})}return i._$AI(o),i};var sn=globalThis,J=class extends fe{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=bi(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return pe}};J._$litElement$=!0,J.finalized=!0,sn.litElementHydrateSupport?.({LitElement:J});var Ps=sn.litElementPolyfillSupport;Ps?.({LitElement:J});(sn.litElementVersions??=[]).push("4.2.2");var vi={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},wi=o=>(...e)=>({_$litDirective$:o,values:e}),St=class{constructor(e){}get _$AU(){return this._$AM._$AU}_$AT(e,t,n){this._$Ct=e,this._$AM=t,this._$Ci=n}_$AS(e,t){return this.update(e,t)}update(e,t){return this.render(...t)}};var ot=class extends St{constructor(e){if(super(e),this.it=v,e.type!==vi.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(e){if(e===v||e==null)return this._t=void 0,this.it=e;if(e===pe)return e;if(typeof e!="string")throw Error(this.constructor.directiveName+"() called with a non-string value");if(e===this.it)return this._t;this.it=e;let t=[e];return t.raw=t,this._t={_$litType$:this.constructor.resultType,strings:t,values:[]}}};ot.directiveName="unsafeHTML",ot.resultType=1;var yi=wi(ot);async function on(o,e){return(await o.callWS({type:"nextfloor/image/get",image_id:e})).data}async function an(o,e,t){await o.callWS({type:"nextfloor/image/set",image_id:e,data:t})}async function ki(o){return(await o.callWS({type:"nextfloor/history/list"})).snapshots}async function xi(o){await o.callWS({type:"nextfloor/history/snapshot"})}async function $i(o,e){return(await o.callWS({type:"nextfloor/history/restore",snapshot_id:e})).revision}async function Si(o,e){return o.callWS({type:"nextfloor/packs/import",pack:e})}async function Mi(o,e){await o.callWS({type:"nextfloor/packs/remove",pack_id:e})}function zi(o){return o.callWS({type:"nextfloor/backup/export"})}function Ei(o,e,t){return o.callWS({type:"nextfloor/backup/import",building:e,packs:t})}var Ts=[],ln=new Map,Ds=0;function Ai(o){Ts=o,ln=new Map(o.flatMap(e=>e.items.map(t=>[We(e.id,t.id),t]))),Ds++}function We(o,e){return`pack:${o}:${e}`}function Be(o){return o.startsWith("pack:")}var Ls={};function Ri(o){return U(o)?.parts.find(e=>e.screen)}function Fi(o){let e=U(o);if(!e)return!1;let[t,n,i]=e.size;return e.parts.some(r=>{if(!r.screen)return!1;let[s,a]=[r.w*t,r.d*n,r.h*i].sort((l,c)=>c-l);return s>=.06&&a>=.06})}function U(o){if(!Be(o))return;let e=ln.get(o);if(e)return e;let[,t,...n]=o.split(":"),i=Ls[t];return i?ln.get(`pack:${i}:${n.join(":")}`):void 0}function Fe(o){return oe[o]??U(o)?.size??[.6,.6,.8]}function at(o){return Di.has(o)||!!U(o)?.electric||!!U(o)?.light}function ke(o,e){let t=e.split("-")[0];return o.name[t]??o.name.en??Object.values(o.name)[0]??o.id}var Os={wohnen:"Living & Pets",kino:"Home Cinema & Gaming",kueche:"Kitchen Extras",bad:"Bathroom Extras",schlafen:"Bedroom & Kids",technik:"Office & Homelab",energie:"Energy & Building Services",garten:"Garden & Terrace",fitness:"Fitness",fahrzeuge:"Vehicles"};function me(o,e){if(e.split("-")[0]==="de")return o.name;let t=/^nextfloor\.(.+)$/.exec(o.id);return t&&Os[t[1]]||o.name}function cn(o,e){let t=U(e.type);if(e.mount_y!=null)return e.mount_y;if(e.type==="lamp_wall")return Ii;if(e.type==="led_strip")return Math.max(0,o.height-.04-Math.max(.02,e.h));switch(t?.mount){case"surface":return Ti(o,e.x,e.z);case"wall":return t.wall_y??1;case"ceiling":return Math.max(0,o.height-e.h);default:return t?0:Pi(e)}}var Li=["always","no_power","never"],Oi=["gable","hip","halfhip","pyramid","mansard","pent","flat","parapet"],Hi=["navigate","more_info","service","fire_dom_event"];function hn(o,e,t){return o?e?!!t.lock_plan:!!o.locked:!1}var Wi=["rain","snow","fog","clouds","lightning","sky"],Bi=["rain","snow","clouds","lightning","sky"],Vi=["lawn","terrace","path","driveway","pool","bed","wild","hedge","fence","pergola"],dn={lawn:.012,terrace:.12,path:.02,driveway:.02,pool:-.25,bed:.15,wild:.03,hedge:1.2,fence:1,pergola:2.2};function un(o){return o==="hedge"||o==="fence"||o==="pergola"}var Ni=["x","-x","z","-z"];function Hs(o,e,t){let n=o.slope??0;if(!n||o.type==="pool")return 0;let i=o.slope_dir??"x",r=(c,h)=>i==="x"?c:i==="-x"?-c:i==="z"?h:-h,s=1/0,a=-1/0;for(let[c,h]of o.points){let d=r(c,h);s=Math.min(s,d),a=Math.max(a,d)}if(a-s<1e-6)return 0;let l=Math.min(1,Math.max(0,(r(e,t)-s)/(a-s)));return n*l}function Ws(o,e,t,n){return Ci(o)+(e.offset??0)+dn[e.type]-Hs(e,t,n)}function Ci(o){return o.elevation>.3?0:-.2}function Ki(o,e,t){let n=(o.outdoor??[]).filter(r=>!un(r.type)&&r.type!=="pool"&&D([e,t],r.points)),i=[...n].reverse().find(r=>r.cut)??n[0];return i?Ws(o,i,e,t):Ci(o)}var Bs={meter:null,grid:null,grid_invert:!1,solar:null,battery:null,battery_invert:!1,battery_soc:null,consumption:null,tariff:null},Gi=["wood","oak","tiles","carpet","stone","concrete"],ji={type:"none",pitch:35,overhang:.4},Vs={wall_exterior:.24,wall_interior:.12,grid:.05,north:0,roof:{...ji}};function Ui(o,e,t){return{id:o,name:e,elevation:t,height:2.5,cut_height:1.15,rooms:[],openings:[],furniture:[],placements:[],background:null,outdoor:[],walls:[],ha_floor:null}}var Ns=2.75;function Zi(o,e){if(e!=null&&Number.isFinite(e))return Math.round(e*Ns*100)/100;let t=o.reduce((n,i)=>!n||i.elevation>n.elevation?i:n,null);return t?Math.round((t.elevation+t.height+.25)*100)/100:0}function qi(o,e,t){let n=o.rooms.flatMap(a=>a.points.map(l=>l[0])),i=o.rooms.flatMap(a=>a.points.map(l=>l[1])),r=n.length?Math.ceil(Math.max(...n))+1:0,s=i.length?Math.floor(Math.min(...i)):0;return e.map((a,l)=>{let c=r+l%3*4.5,h=s+Math.floor(l/3)*3.5;return{id:t(),name:a.name,area_id:a.area_id,points:[[c,h],[c+4,h],[c+4,h+3],[c,h+3]],floor_material:"wood"}})}function Qi(o,e,t,n){let i=o.rotation*Math.PI/180,r=Math.cos(i),s=Math.sin(i),[a,l]=e,c=o.x-a*(o.w/2)*r+l*(o.d/2)*s,h=o.z-a*(o.w/2)*s-l*(o.d/2)*r,d=t[0]-c,u=t[1]-h,f=x=>Math.max(.1,Math.round(x/n)*n),p=f((d*r+u*s)*a),m=f((-d*s+u*r)*l),_=x=>Math.round(x*1e3)/1e3;return{x:_(c+a*(p/2)*r-l*(m/2)*s),z:_(h+a*(p/2)*s+l*(m/2)*r),w:_(p),d:_(m)}}var fn=["lamp_ceiling","lamp_downlight","lamp_spot","lamp_panel","lamp_pendant","lamp_floor","lamp_table","lamp_wall","led_strip","lamp_uplight","lamp_bollard","lamp_garden","radiator","sofa","armchair","stool","coffee_table","tv_board","tv_wall","sideboard","shelf","plant","rug","table","table_round","chair","bench","corner_bench","bar_stool","kitchen","kitchen_wall","kitchen_tall","island","worktop","sink","stove","dishwasher","fridge","bed","bunk_bed","nightstand","wardrobe","dresser","bathtub","shower","wc","washbasin","washer","dryer","desk","office_chair","tall_cabinet","coat_rack","stairs","robot_vacuum","inverter","home_battery","wallbox","meter","grid_point","parking","fridge_smart","stairwell"],pn={lights:["lamp_ceiling","lamp_downlight","lamp_spot","lamp_panel","lamp_pendant","lamp_floor","lamp_uplight","lamp_table","lamp_wall","led_strip","lamp_bollard","lamp_garden"],living:["sofa","armchair","stool","coffee_table","tv_board","tv_wall","sideboard","shelf","plant","rug"],dining:["table","table_round","chair","bench","corner_bench","bar_stool"],kitchen:["kitchen","kitchen_wall","kitchen_tall","island","worktop","sink","stove","dishwasher","fridge"],sleeping:["bed","bunk_bed","nightstand","wardrobe","dresser"],bath:["bathtub","shower","wc","washbasin","washer","dryer"],work:["desk","worktop","office_chair","tall_cabinet","coat_rack","radiator","stairs","robot_vacuum"],vehicles:["parking"]},xe=["meter","inverter","home_battery","wallbox","grid_point"],Yi=new Set(["lamp_ceiling","lamp_downlight","lamp_spot","lamp_panel","lamp_pendant","lamp_floor","lamp_uplight","lamp_table","lamp_wall","led_strip","lamp_bollard","lamp_garden"]),Ii=1.75;function mn(o){return["lamp_ceiling","lamp_downlight","lamp_spot","lamp_panel","lamp_pendant","stairs","stairwell","parking"].includes(o.type)?!1:U(o.type)?.mount!=="ceiling"}function ee(o){return Yi.has(o)||!!U(o)?.light}var Cs=new Set(["table","table_round","coffee_table","desk","nightstand","sideboard","dresser","kitchen","island","worktop","tv_board","dishwasher","washer","dryer"]);function gn(o,e,t,n=0){let i=te(o.points),r=i.x1-i.x0-2*n,s=i.z1-i.z0-2*n,a=[];for(let l=0;l<e;l++)for(let c=0;c<t;c++){let h=[Math.round((i.x0+n+r/t*(c+.5))*1e3)/1e3,Math.round((i.z0+n+s/e*(l+.5))*1e3)/1e3];D(h,o.points)&&a.push(h)}return a}function Ve(o,e,t){let n=s=>Math.round(s*1e3)/1e3,[i,r]={right:[1,0],down:[0,1],left:[-1,0],up:[0,-1]}[t];return[n(o[0]+i*e),n(o[1]+r*e)]}function Pi(o){switch(o.type){case"home_battery":return o.variant==="wall"?.5:0;case"kitchen_wall":return 1.45;case"tv_wall":return Math.max(0,1.3-o.h/2);case"radiator":return .12;case"inverter":return 1.1;case"wallbox":return 1;case"meter":return .4;default:return 0}}function Ti(o,e,t){let n=0;for(let i of o.furniture)!(Cs.has(i.type)||U(i.type)?.surface)||!D([e,t],yn(i))||(n=Math.max(n,i.h));return n}var Di=new Set([...Yi,"radiator","robot_vacuum","inverter","home_battery","wallbox","meter","tv_board","tv_wall","desk","fridge","fridge_smart","stove","kitchen_tall","dishwasher","washer","dryer","kitchen","island","sink"]),oe={sofa:[2.2,.9,.82],armchair:[.85,.85,.8],table:[1.6,.9,.75],chair:[.46,.5,.9],bed:[1.6,2.05,.9],nightstand:[.45,.4,.5],wardrobe:[1.8,.6,2.1],shelf:[.9,.35,1.9],kitchen:[2.4,.62,.92],worktop:[1.2,.62,.91],inverter:[.5,.2,.65],home_battery:[.6,.25,1.1],wallbox:[.3,.15,.42],meter:[.55,.21,1.1],grid_point:[.4,.22,.6],fridge:[.6,.65,1.8],fridge_smart:[.91,.73,1.78],stairwell:[1,2.6,.02],stove:[.6,.62,.92],sink:[.9,.62,.92],bathtub:[1.7,.75,.58],shower:[.9,.9,2],wc:[.38,.6,.8],washbasin:[.6,.46,.85],desk:[1.4,.7,.75],tv_board:[1.8,.42,.5],plant:[.45,.45,1.1],rug:[2,1.4,.01],stairs:[1,3.2,2.75],stool:[.55,.55,.42],lamp_ceiling:[.4,.4,.08],lamp_downlight:[.1,.1,.02],lamp_spot:[.1,.1,.14],lamp_panel:[.6,.6,.03],lamp_uplight:[.35,.35,1.8],lamp_bollard:[.16,.16,.8],lamp_garden:[.12,.12,.3],radiator:[1,.1,.6],robot_vacuum:[.36,.5,.1],parking:[2.6,5.2,.02],lamp_pendant:[.4,.4,.8],lamp_floor:[.4,.4,1.7],lamp_table:[.28,.28,.45],lamp_wall:[.22,.12,.2],led_strip:[2,.04,.03],coffee_table:[1.1,.6,.42],tv_wall:[1.3,.08,.75],sideboard:[1.6,.45,.8],table_round:[1.1,1.1,.75],bench:[1.4,.45,.85],corner_bench:[2,1.6,.9],bar_stool:[.42,.42,.75],kitchen_wall:[.8,.35,.7],kitchen_tall:[.6,.62,2.1],island:[1.8,.9,.92],dishwasher:[.6,.62,.92],bunk_bed:[1,2.05,1.65],dresser:[1,.5,.9],washer:[.6,.6,.85],dryer:[.6,.6,.85],office_chair:[.65,.65,1.1],tall_cabinet:[.6,.6,2.1],coat_rack:[1,.35,1.9]};var _n=["interior","front","front_glass","sidelight","sidelights","glass","sliding","passage"],bn=["standard","bars","glass_wall"];function Mt(o,e){return o.type==="door"?o.style&&_n.includes(o.style)?o.style:e?"front":"interior":o.style&&bn.includes(o.style)?o.style:"standard"}function Xi(o,e,t,n){if(e!=="sidelight"&&e!=="sidelights")return null;let i=e==="sidelights",r=o-.04,s=Math.min(1.05,Math.max(.6,r-(i?.6:.3))),a=(r-s)/(i?2:1),l=n.sidelight_width??a,c=i?n.sidelight_width2??n.sidelight_width??a:0;l=Math.max(.1,l),c=i?Math.max(.1,c):0;let h=r-.5;if(l+c>h){let u=Math.max(0,h)/(l+c);l*=u,c*=u}return i?{panels:[[.02,.02+l],[o-.02-c,o-.02]],x0:.02+l,x1:o-.02-c}:(t?!!n.sidelight_hinge:!n.sidelight_hinge)?{panels:[[.02,.02+l]],x0:.02+l,x1:o-.02}:{panels:[[o-.02-l,o-.02]],x0:.02,x1:o-.02-l}}function vn(o){return o==="front"||o==="front_glass"||o==="sidelight"||o==="sidelights"}var zt={door:{type:"door",leaves:1,width:.9,sill:0,height:2.05,style:"interior"},front:{type:"door",leaves:1,width:1,sill:0,height:2.1,style:"front"},door_double:{type:"door",leaves:2,width:1.6,sill:0,height:2.05},window:{type:"window",leaves:1,width:1.2,sill:.9,height:1.3},window_double:{type:"window",leaves:2,width:1.6,sill:.9,height:1.3},terrace:{type:"window",leaves:1,width:1,sill:0,height:2.1},terrace_double:{type:"window",leaves:2,width:1.8,sill:0,height:2.1},garage:{type:"garage",leaves:1,width:2.5,sill:0,height:2.1},glass_wall:{type:"window",leaves:1,width:2,sill:0,height:2.4,style:"glass_wall"}};function wn(o){if(o.type==="garage")return"garage";if(o.type==="window"&&o.style==="glass_wall")return"glass_wall";let e=o.leaves===2;return o.type==="door"?!e&&o.style&&vn(o.style)?"front":e?"door_double":"door":o.sill<.1?e?"terrace_double":"terrace":e?"window_double":"window"}function Et(o){o.energy={...Bs,...o.energy??{}},o.presence=o.presence??[],o.settings={...Vs,...o.settings,roof:{...ji,...o.settings?.roof??{}}};for(let e of o.floors){e.outdoor=e.outdoor??[],e.walls=e.walls??[],e.rooms=e.rooms.map(n=>({...n,panel:n.panel??[]})),e.ha_floor=e.ha_floor??null,e.placements=e.placements.map(n=>({...n,mount:n.mount??null,rotation:n.rotation??0})),e.furniture=e.furniture.map(n=>({...n,entity:n.entity??null,power:n.power??null}));let t=e.placements.filter(n=>n.entity_id.startsWith("light."));if(t.length){let n={ceiling:"lamp_ceiling",floor:"lamp_floor",table:"lamp_table",wall:"lamp_wall"};for(let i of t){let r=n[i.mount??"ceiling"],[s,a,l]=oe[r];e.furniture.push({id:`lamp_${i.entity_id.slice(6).replace(/[^A-Za-z0-9_\-.]/g,"_")}`.slice(0,64),type:r,x:i.x,z:i.z,rotation:0,w:s,d:a,h:l,variant:null,entity:i.entity_id,power:null})}e.placements=e.placements.filter(i=>!i.entity_id.startsWith("light."))}e.openings=e.openings.map(n=>({...n,hinge:n.hinge??"left",leaves:n.leaves??1,swing:n.swing??"in",style:n.style??null,cover:n.cover??null,contact:n.contact??null,contact2:n.contact2??null,tilt:n.tilt??null}))}return o}function L(o){return`${o}_${Math.random().toString(36).slice(2,10)}`}function Y(o){let e=0;for(let t=0;t<o.length;t++){let[n,i]=o[t],[r,s]=o[(t+1)%o.length];e+=n*s-r*i}return e/2}function ae(o){return Math.abs(Y(o))}function le(o){let e=Y(o);if(Math.abs(e)<1e-9){let i=o.length||1;return[o.reduce((r,s)=>r+s[0],0)/i,o.reduce((r,s)=>r+s[1],0)/i]}let t=0,n=0;for(let i=0;i<o.length;i++){let[r,s]=o[i],[a,l]=o[(i+1)%o.length],c=r*l-a*s;t+=(r+a)*c,n+=(s+l)*c}return[t/(6*e),n/(6*e)]}function At(o){if(o.length!==4)return!1;for(let e=0;e<4;e++){let[t,n]=o[e],[i,r]=o[(e+1)%4];if(Math.abs(t-i)>1e-6&&Math.abs(n-r)>1e-6)return!1}return!0}function te(o){let e=1/0,t=1/0,n=-1/0,i=-1/0;for(let[r,s]of o)e=Math.min(e,r),t=Math.min(t,s),n=Math.max(n,r),i=Math.max(i,s);return{x0:e,z0:t,x1:n,z1:i}}function yn(o){let e=o.rotation*Math.PI/180,t=Math.cos(e),n=Math.sin(e),i=o.w/2,r=o.d/2;return[[-i,-r],[i,-r],[i,r],[-i,r]].map(([s,a])=>[o.x+s*t-a*n,o.z+s*n+a*t])}function D(o,e){let t=!1;for(let n=0,i=e.length-1;n<e.length;i=n++){let[r,s]=e[n],[a,l]=e[i];s>o[1]!=l>o[1]&&o[0]<(a-r)*(o[1]-s)/(l-s)+r&&(t=!t)}return t}var Ji={lamp_ceiling:"ceiling",lamp_downlight:"downlight",lamp_spot:"spot",lamp_panel:"panel",lamp_uplight:"uplight",lamp_bollard:"bollard",lamp_garden:"garden",lamp_pendant:"pendant",lamp_floor:"floor",lamp_table:"table",lamp_wall:"wall",led_strip:"strip"};var er="nextfloor";function Ks(o){let e=structuredClone(o);e.energy={...e.energy,grid:null,solar:null,battery:null,battery_soc:null,tariff:null},e.presence=[];for(let t of e.floors)t.placements=[],t.background=null,t.rooms=t.rooms.map(n=>({...n,area_id:null})),t.furniture=t.furniture.map(n=>({...n,entity:null,power:null})),t.openings=t.openings.map(n=>({...n,cover:null,contact:null,tilt:null}));return e}function tr(o,e){return{format:er,version:1,exported_at:new Date().toISOString(),building:e?Ks(o):structuredClone(o)}}function nr(o){let e;try{e=JSON.parse(o)}catch{throw new Error("not_json")}let t=e,n=t?.format===er?t.building:e;if(!n||n.version!==1||!Array.isArray(n.floors)||!n.settings)throw new Error("not_plan");for(let i of n.floors)i.background=null;return Et(n)}function ir(o){let e=new Set;for(let t of o.floors){t.background?.image_id&&e.add(t.background.image_id);for(let n of t.furniture)for(let i of n.pictures??[])i.image&&!/^https?:\/\//.test(i.image)&&!i.image.startsWith("camera:")&&e.add(i.image)}return[...e]}function kn(o,e){let t=URL.createObjectURL(new Blob([e],{type:"application/json"})),n=document.createElement("a");n.href=t,n.download=o,n.click(),setTimeout(()=>URL.revokeObjectURL(t),1e3)}var Gs={light:"light",switch:"switch",input_boolean:"switch",fan:"fan",cover:"cover",climate:"climate",media_player:"media",lock:"lock",sensor:"sensor",binary_sensor:"binary",camera:"camera",scene:"scene",script:"script"},js=new Set(["temperature","humidity","power","carbon_dioxide","energy","gas","water","volume","volume_storage","volume_flow_rate","illuminance","pressure","atmospheric_pressure","pm1","pm25","pm10","volatile_organic_compounds","volatile_organic_compounds_parts","carbon_monoxide","nitrogen_dioxide","moisture","sound_pressure"]),Us=new Set(["m\xB3","m3","L","l","kWh","Wh","MWh","lx"]),Zs=new Set(["door","window","opening","garage_door","motion","occupancy","presence","smoke","moisture","gas","carbon_monoxide"]),Rt=["light","cover","climate","media","switch","fan","lock","binary","sensor","camera","scene","script"],lr=new Set(["light","switch","fan"]);function cr(o){return o.slice(0,o.indexOf("."))}function H(o){return Gs[cr(o)]??null}function ct(o){return o!==null&&o!=="scene"&&o!=="script"}function ht(o,e){let t=o.entities?.[e];return t?t.area_id?t.area_id:t.device_id&&o.devices?.[t.device_id]?.area_id||null:null}function rr(o,e){let t=H(e);if(!t)return!1;let n=o.entities?.[e];if(n?.hidden||n?.entity_category)return!1;let i=o.states[e];if(!i)return!1;let r=i.attributes.device_class;return t==="sensor"?r?js.has(r):Us.has(String(i.attributes.unit_of_measurement??"")):t==="binary"?r?Zs.has(r):!!n?.area_id:!0}var qs=new Set(["battery","signal_strength","timestamp","date","duration","data_rate","data_size","frequency","enum"]);function sr(o,e){if(H(e)!=="sensor")return!1;let t=o.entities?.[e];if(t?.hidden||t?.entity_category)return!1;let n=o.states[e];return!n||!n.attributes.unit_of_measurement||qs.has(String(n.attributes.device_class??""))?!1:Number.isFinite(Number(n.state))||Mn(n)}var xn=null;function Ne(o){let e=xn;if(e&&e.entities===o.entities&&e.devices===o.devices&&(e.states===o.states||(e.states=o.states,Object.keys(o.states).length===e.stateCount)))return e;let t=new Map,n=new Map,i=[],r=new Map,s=new Map;for(let l of Object.keys(o.entities??{})){let c=o.entities[l],h=c.device_id;h&&c.area_id&&(s.get(h)??s.set(h,new Set).get(h)).add(c.area_id),h&&Rn(o,l)&&(n.get(h)??n.set(h,[]).get(h)).push(l),h&&!c.hidden&&!c.entity_category&&(r.get(h)??r.set(h,new Set).get(h)).add(cr(l));let d=rr(o,l),u=ht(o,l);if(!u){(d||sr(o,l))&&ct(H(l))&&i.push(l);continue}d&&(t.get(u)??t.set(u,[]).get(u)).push(l)}if(o.entities)for(let l of Object.keys(o.states))o.entities[l]||(rr(o,l)||sr(o,l))&&ct(H(l))&&i.push(l);i.sort((l,c)=>Rt.indexOf(H(l))-Rt.indexOf(H(c))||K(o,l).localeCompare(K(o,c)));for(let[l,c]of t){let h=o.areas?.[l]?.name;c.sort((d,u)=>{let f=Rt.indexOf(H(d)),p=Rt.indexOf(H(u));return f-p||K(o,d,h).localeCompare(K(o,u,h))})}let a=new Set([...s].filter(([,l])=>l.size>1).map(([l])=>l));return xn={entities:o.entities,devices:o.devices,states:o.states,stateCount:Object.keys(o.states).length,areas:t,power:n,unassigned:i,domains:r,hubs:a},xn}function Ie(o,e){return!e||!o.entities?[]:Ne(o).areas.get(e)??[]}function hr(o,e){return o.entities?[...Ne(o).areas].filter(([t])=>t!==e).map(([t,n])=>({areaId:t,name:o.areas?.[t]?.name??t,ids:n.filter(i=>ct(H(i)))})).filter(t=>t.ids.length).sort((t,n)=>t.name.localeCompare(n.name)):[]}function dr(o){return o.entities?Ne(o).unassigned:[]}var $n={temperature:"temperature",humidity:"humidity",co2:"carbon_dioxide"},Qs=new Set(["climate","water_heater","switch","button","camera","media_player","vacuum","light","fan","lawn_mower"]),Ys=/(vorlauf|r(ü|ue)cklauf|flow|return|d(ü|ue)se|nozzle|hotend|extruder|druckbett|heatbed|(^|[^a-z])bed($|[^a-z])|chamber|cpu|gpu|chip|soc|akku|batter|wasser|water|kessel|boiler|au(ß|ss)en|outdoor|outside|abgas|exhaust|sole|brine|verdampfer|kondensat|verdichter|compressor|motor|k(ü|ue)hl|freezer|fridge|gefrier)/i;function Sn(o,e){let t=o.entities?.[e]?.device_id,n=t&&!Ne(o).hubs.has(t)?Ne(o).domains.get(t):void 0;return n&&[...n].some(i=>Qs.has(i))?!1:!Ys.test(`${e} ${o.states[e]?.attributes.friendly_name??""}`)}function ur(o,e,t,n){let i=t.climate?.[n];if(i==="none")return[];if(i)return o.states[i]?[i]:[];let r=$n[n],s=(d,u)=>D([d,u],t.points),a=e?.placements.filter(d=>d.entity_id.startsWith("sensor."))??[],l=a.filter(d=>s(d.x,d.z)).map(d=>d.entity_id),c=new Set(a.filter(d=>!s(d.x,d.z)).map(d=>d.entity_id));return[...new Set([...Ie(o,t.area_id).filter(d=>!c.has(d)),...l])].filter(d=>d.startsWith("sensor.")&&o.states[d]?.attributes.device_class===r&&Sn(o,d))}function fr(o,e){return o.entities?Ne(o).power.get(e)??[]:[]}function K(o,e,t){let i=o.states[e]?.attributes.friendly_name??o.entities?.[e]?.name??e;if(t&&i.length>t.length+1&&i.toLowerCase().startsWith(t.toLowerCase()+" ")){let r=i.slice(t.length+1);return r.charAt(0).toUpperCase()+r.slice(1)}return i}function Mn(o){return!o||o.state==="unavailable"||o.state==="unknown"}function pr(o){return!!o&&o.entity_id.startsWith("sensor.")&&o.attributes.device_class==="enum"}function Ft(o,e,t=null){if(o==="camera")return t==="ceiling"?Math.max(.5,e-.05):2.2;if(o==="light"&&t){if(t==="floor")return 1.95;if(t==="table")return 1.25;if(t==="wall")return 1.95}switch(o){case"light":return Math.max(.5,e-.25);case"cover":return Math.min(2,e-.3);case"climate":return .6;case"media":return .9;case"binary":case"sensor":return 1.4;default:return 1.05}}function Xs(o,e){let t=1/0;for(let n=0;n<e.length;n++){let i=e[n],r=e[(n+1)%e.length],s=r[0]-i[0],a=r[1]-i[1],l=s*s+a*a||1,c=Math.min(1,Math.max(0,((o[0]-i[0])*s+(o[1]-i[1])*a)/l));t=Math.min(t,Math.hypot(o[0]-i[0]-s*c,o[1]-i[1]-a*c))}return t}function mr(o,e,t=[]){if(o.points.length<3||!e.length)return[];let n=o.points,i=n.map(b=>b[0]),r=n.map(b=>b[1]),s=Math.min(...i),a=Math.min(...r),l=Math.max(...i),c=Math.max(...r),h=Math.min(l-s,c-a),d=Math.max(.1,Math.min(.25,h/8)),u=Math.min(.35,h/5),f=le(n),p=[];for(let b=s+d/2;b<l;b+=d)for(let w=a+d/2;w<c;w+=d){let $=[b,w];if(!D($,n))continue;let y=Xs($,n);y<u||p.push({p:$,wall:y})}p.length||p.push({p:f,wall:0});let m=[...t],_=[],x=Math.min(.7,h/4);for(let b of e){let w=H(b)==="light",$=p[0].p,y=-1/0;for(let{p:z,wall:k}of p){let M=m.length?Math.min(...m.map(I=>Math.hypot(z[0]-I[0],z[1]-I[1]))):3,R=Math.hypot(z[0]-f[0],z[1]-f[1]),A=Math.min(M,3)*2;R<x&&!w&&(A-=10),A-=w?R*.35:k*1.2,A>y+1e-9&&(y=A,$=z)}let E=[Math.round($[0]*100)/100,Math.round($[1]*100)/100];m.push(E),_.push({entity_id:b,x:E[0],z:E[1],y:null,mount:null})}return _}var Js=new Set([void 0,"shutter","blind","awning","shade","curtain","window"]),eo=new Set(["garage","gate"]),to=new Set(["window","opening"]);function lt(o,e,t=!1){let n=new Map;return e.length&&o.forEach((i,r)=>{let s=t&&e.length===1?e[0]:e[r];s&&n.set(i.id,s)}),n}function gr(o,e){let t=new Map;for(let n of e)for(let i of n.rooms){let r=n.openings.filter(b=>b.room_id===i.id).sort((b,w)=>b.edge-w.edge||b.offset-w.offset);if(!r.length)continue;let s=Ie(o,i.area_id),a=b=>o.states[b]?.attributes.device_class,l=s.filter(b=>H(b)==="cover"&&Js.has(a(b))),c=r.filter(b=>b.type==="window"),h=r.filter(b=>b.type==="door"),d=r.filter(b=>b.type==="garage"),u=lt(c,l,!0),f=lt(c,s.filter(b=>H(b)==="binary"&&to.has(a(b)))),p=lt(h,s.filter(b=>H(b)==="binary"&&a(b)==="door")),m=lt(d,s.filter(b=>H(b)==="cover"&&eo.has(a(b)??""))),_=lt(d,s.filter(b=>H(b)==="binary"&&a(b)==="garage_door")),x=(b,w)=>b==="none"?null:b??w??null;for(let b of r){let w=b.type==="window"?u:b.type==="garage"?m:null,$=b.type==="window"?f:b.type==="garage"?_:p;t.set(b.id,{cover:x(b.cover,w?.get(b.id)),contact:b.sensor==="handle"&&b.contact==null?null:x(b.contact,$.get(b.id)),tilt:b.tilt==="none"?null:b.tilt,contact2:b.leaves===2&&b.contact2&&b.contact2!=="none"?b.contact2:null,tilt2:b.leaves===2&&b.tilt2&&b.tilt2!=="none"?b.tilt2:null,position:b.position&&b.position!=="none"?b.position:null,positionInverted:!!b.position_inverted,tiltAngle:b.tilt_angle&&b.tilt_angle!=="none"?b.tilt_angle:null,tiltMax:b.tilt_max??null,tiltOffset:b.tilt_offset??null,tiltInvert:!!b.tilt_invert,shut:!!b.shut})}}return t}var no=[[/^(tilted|tilt|gekippt|kipp)/i,"tilted"],[/^(open|opened|offen|geöffnet|on)$/i,"open"],[/^(closed|close|geschlossen|zu|off)$/i,"closed"]];function zn(o){if(!o||Mn(o))return null;let e=o.attributes.window_state;for(let t of[typeof e=="string"?e:null,o.state]){if(!t)continue;let n=no.find(([i])=>i.test(t.trim()));if(n)return n[1]}return null}function En(o,e){let t=new Map,n=[];for(let s of e){let a=o.entities?.[s]?.device_id??`entity:${s}`,l=t.get(a);l||(t.set(a,l=[]),n.push(a)),l.push(s)}let i=n.map(s=>{let a=t.get(s),l=a.find(c=>!o.entities?.[c]?.name)??a[0];return{primary:l,others:a.filter(c=>c!==l)}}),r=new Map(e.map((s,a)=>[s,a]));return i.sort((s,a)=>r.get(s.primary)-r.get(a.primary))}function io(o,e){return En(o,e).map(t=>t.primary)}var ro={robot_vacuum:/(saug|vacuum|robo|roomba|roborock|dreame|ecovacs|deebot)/i,tv_board:/\b(tv|fernseh|television|fire ?tv|apple ?tv|chromecast|shield)/i,tv_wall:/\b(tv|fernseh|television|fire ?tv|apple ?tv|chromecast|shield)/i,desk:/\b(pc|computer|rechner|desktop|monitor|workstation)/i,fridge:/(kühl|fridge|gefrier|freezer)/i,fridge_smart:/(kühl|fridge|gefrier|freezer)/i,stove:/(herd|kochfeld|cooktop|stove|induktion)/i,kitchen_tall:/(backofen|oven|ofen)/i,dishwasher:/(spülmaschine|geschirrspül|dishwasher)/i,washer:/(waschmaschine|washer|washing)/i,dryer:/(trockner|dryer)/i,kitchen:/(kaffee|coffee|wasserkocher|kettle)/i,island:/(kochfeld|herd|induktion|cooktop)/i,sink:/(spülmaschine|geschirrspül|dishwasher)/i,radiator:/(heiz|radiator|thermostat|climate|hk|trv)/i},_r=new Set(["tv_board","tv_wall"]);function It(o){return _r.has(o)||!!Ri(o)}function An(o){return It(o)||o==="desk"||o==="fridge_smart"}var or={lamp_ceiling:/(decke|ceiling|haupt|main)/i,lamp_downlight:/(spot|strahler|downlight|einbau)/i,lamp_spot:/(spot|strahler)/i,lamp_panel:/(panel|decke|ceiling)/i,lamp_uplight:/(fluter|uplight|steh)/i,lamp_bollard:/(weg|garten|garden|path|poller|außen|aussen|outdoor)/i,lamp_garden:/(garten|garden|spot|außen|aussen|outdoor|baum|tree)/i,lamp_pendant:/(pendel|pendant|hänge|esstisch|dining)/i,lamp_floor:/(steh|floor)/i,lamp_table:/(tisch|nacht|table|bedside|lese|reading)/i,lamp_wall:/(wand|wall)/i,led_strip:/(led|strip|streifen|leiste|band)/i};function Rn(o,e){return e.startsWith("sensor.")&&o.states[e]?.attributes.device_class==="power"}function so(o,e){if(Rn(o,e))return e;let t=o.entities?.[e]?.device_id;return t?fr(o,t).find(n=>n!==e)??null:null}function Ce(o,e){let t=new Map;for(let n of e){let i=new Set([...n.furniture.flatMap(r=>[r.entity,r.power]),...n.placements.map(r=>r.entity_id)].filter(r=>!!r&&r!=="none"));for(let r of n.furniture){let s=r.type in or,a=s?or[r.type]:ro[r.type];if(!a&&r.entity==null&&r.power==null)continue;let l=n.rooms.find(f=>f.points.length>=3&&D([r.x,r.z],f.points)),c=l?io(o,Ie(o,l.area_id)):[],h=f=>`${f} ${K(o,f)}`,d=r.entity==="none"?null:r.entity??null;if(r.entity==null){let f=c.filter(p=>!i.has(p));if(s){let p=f.filter(m=>H(m)==="light");d=p.find(m=>a.test(h(m)))??p[0]??null}else if(r.type==="robot_vacuum"){let p=l?.area_id??null;d=Object.keys(o.entities??{}).find(m=>m.startsWith("vacuum.")&&!i.has(m)&&ht(o,m)===p)??null}else if(r.type==="radiator"){let p=f.filter(m=>H(m)==="climate");d=p.find(m=>a.test(h(m)))??p[0]??null}else if(It(r.type)){let p=f.filter(m=>H(m)==="media");d=p.find(m=>o.states[m]?.attributes.device_class==="tv")??p.find(m=>a?.test(h(m)))??(_r.has(r.type)?p[0]??null:null)}else a&&(d=f.find(p=>["switch","media","fan"].includes(H(p)??"")&&a.test(h(p)))??null);d&&i.add(d)}let u=r.power==="none"?null:r.power??null;r.power==null&&(u=d?so(o,d):null,!u&&a&&l&&!s&&(u=Ie(o,l.area_id).find(p=>Rn(o,p)&&!i.has(p)&&a.test(h(p)))??null),u&&i.add(u)),(d||u)&&t.set(r.id,{entity:d,power:u})}}return t}var ar=/(^|_)(current_room|current_segment|aktueller_raum|current_area)($|_)/;function br(o,e,t){if(t==="none")return null;if(t)return t;let n=e?o.entities?.[e]?.device_id:null;if(!n||!o.entities)return null;for(let i of Object.values(o.entities))if(!(i.device_id!==n||!i.entity_id.startsWith("sensor."))&&(ar.test(i.translation_key??"")||ar.test(i.entity_id.split(".")[1])))return i.entity_id;return null}var N=(o,e,t,n,i="")=>F`<rect class=${i} x=${Math.min(o,t)} y=${Math.min(e,n)} width=${Math.abs(t-o)} height=${Math.abs(n-e)} />`,V=(o,e,t,n,i="")=>F`<line class=${i} x1=${o} y1=${e} x2=${t} y2=${n} />`,C=(o,e,t,n="")=>F`<circle class=${n} cx=${o} cy=${e} r=${t} />`,Fn=(o,e,t,n,i="")=>F`<ellipse class=${i} cx=${o} cy=${e} rx=${t} ry=${n} />`;function In(o,e,t){let n=[];for(let i=1;i<t;i++){let r=-o/2+o/t*i;n.push(V(r,e/2,r,e/2-Math.min(.12,e*.3)))}return n}function vr(o,e,t,n){let i=Math.min(.24,e*.28),r=n?Math.min(.2,o*.12):0,s=[N(-o/2,-e/2,o/2,-e/2+i,"nf-sym-fill")];n&&s.push(N(-o/2,-e/2,-o/2+r,e/2,"nf-sym-fill"),N(o/2-r,-e/2,o/2,e/2,"nf-sym-fill"));let a=o-2*r;for(let l=1;l<t;l++){let c=-o/2+r+a/t*l;s.push(V(c,-e/2+i,c,e/2-.02))}return s}function wr(o,e,t){switch(o){case"sofa":return vr(e,t,Math.max(1,Math.round((e-.4)/.62)),!0);case"armchair":return vr(e,t,1,!0);case"bench":return[N(-e/2,-t/2,e/2,-t/2+.08,"nf-sym-fill")];case"corner_bench":{let n=Math.min(.5,t*.4);return[N(-e/2,-t/2,e/2,-t/2+.08,"nf-sym-fill"),N(-e/2,-t/2,-e/2+.08,t/2,"nf-sym-fill"),V(-e/2+n,-t/2+n,e/2,-t/2+n),V(-e/2+n,-t/2+n,-e/2+n,t/2)]}case"chair":return[N(-e/2,-t/2,e/2,-t/2+.06,"nf-sym-fill")];case"office_chair":return[C(0,.03,Math.min(e,t)*.36),N(-e*.35,-t/2+.02,e*.35,-t/2+.1,"nf-sym-fill")];case"bar_stool":case"table_round":return[C(0,0,Math.min(e,t)*.42)];case"stool":return[N(-e/2+.04,-t/2+.04,e/2-.04,t/2-.04)];case"table":case"coffee_table":case"desk":{let n=[N(-e/2+.05,-t/2+.05,e/2-.05,t/2-.05)];return o==="desk"&&n.push(V(-.3,-t/2+.1,.3,-t/2+.1,"nf-sym-strong")),n}case"bed":case"bunk_bed":{let n=e>1.2?2:1,i=(e-.2)/n,r=[N(-e/2,-t/2,e/2,-t/2+.07,"nf-sym-fill"),V(-e/2,-t/2+(t-.1)*.36,e/2,-t/2+(t-.1)*.36)];for(let s=0;s<n;s++)r.push(N(-e/2+.13+i*s,-t/2+.12,-e/2+.07+i*(s+1),-t/2+.12+Math.min(.4,t*.18)));return r}case"nightstand":case"wardrobe":case"dresser":case"sideboard":case"tall_cabinet":case"kitchen":case"kitchen_wall":case"kitchen_tall":case"shelf":return In(e,t,o==="nightstand"||o==="tall_cabinet"||o==="kitchen_tall"?1:Math.max(2,Math.round(e/.5)));case"coat_rack":return[N(-e/2,-t/2,e/2,-t/2+.03,"nf-sym-fill"),...In(e,t,Math.max(2,Math.round(e/.5)))];case"island":return[V(-e/2,t/2-.3,e/2,t/2-.3)];case"fridge":return[V(-e/2+.06,t/2-.04,e/2-.06,t/2-.04,"nf-sym-strong")];case"stove":{let n=Math.min(e,t)*.14;return[C(-e*.22,-t*.2,n),C(e*.22,-t*.2,n*.8),C(-e*.22,t*.2,n*.8),C(e*.22,t*.2,n)]}case"sink":{let n=Math.min(.5,e-.2);return[N(-n/2,-t/2+.1,n/2,t/2-.08),C(0,-t/2+.06,.025,"nf-sym-fill")]}case"dishwasher":return[V(-e/2+.08,t/2-.05,e/2-.08,t/2-.05,"nf-sym-strong")];case"washer":case"dryer":return[C(0,.05,Math.min(e,t)*.3),V(-e/2,-t/2+.1,e/2,-t/2+.1)];case"bathtub":return[N(-e/2+.07,-t/2+.07,e/2-.07,t/2-.07),C(-e/2+.14,0,.03,"nf-sym-fill")];case"shower":return[V(-e/2,-t/2,e/2,t/2),V(e/2,-t/2,-e/2,t/2),C(0,0,.04)];case"wc":return[N(-e/2,-t/2,e/2,-t/2+Math.min(.18,t*.3),"nf-sym-fill"),Fn(0,t*.1,e*.36,t*.3)];case"washbasin":return[Fn(0,.03,e*.34,t*.3)];case"tv_board":return[V(-Math.min(e*.4,.72),-t/2+.14,Math.min(e*.4,.72),-t/2+.14,"nf-sym-strong"),...In(e,t,Math.max(2,Math.round(e/.6)))];case"tv_wall":return[V(-e/2,0,e/2,0,"nf-sym-strong")];case"lamp_downlight":case"lamp_spot":return[C(0,0,Math.min(e,t)*.45,"nf-sym-fill"),C(0,0,Math.min(e,t)*1.4)];case"lamp_bollard":case"lamp_garden":return[C(0,0,Math.min(e,t)*.5,"nf-sym-fill"),C(0,0,Math.min(e,t)*1.6)];case"parking":return[N(-e/2+.08,-t/2+.08,e/2-.08,t/2-.08),V(-e*.15,t/2-.5,0,t/2-.22,"nf-sym-strong"),V(0,t/2-.22,e*.15,t/2-.5,"nf-sym-strong")];case"robot_vacuum":return[N(-e*.45,-t/2,e*.45,-t/2+t*.3,"nf-sym-fill"),C(0,t*.14,Math.min(e,t)*.47)];case"radiator":{let n=[],i=Math.max(3,Math.round(e/.1));for(let r=1;r<i;r++)n.push(V(-e/2+e/i*r,-t/2,-e/2+e/i*r,t/2));return n}case"lamp_panel":return[N(-e/2+.03,-t/2+.03,e/2-.03,t/2-.03,"nf-sym-fill")];case"lamp_uplight":case"lamp_ceiling":case"lamp_pendant":case"lamp_floor":case"lamp_table":{let n=Math.min(e,t)/2,i=[C(0,0,n*.9,"nf-sym-fill"),C(0,0,n*.3)];if(o==="lamp_ceiling"||o==="lamp_pendant")for(let r=0;r<8;r++){let s=r/8*Math.PI*2;i.push(V(Math.cos(s)*n*1.05,Math.sin(s)*n*1.05,Math.cos(s)*n*1.35,Math.sin(s)*n*1.35))}return i}case"lamp_wall":return[N(-e/2,-t/2,e/2,-t/2+.03,"nf-sym-fill"),Fn(0,.01,e*.4,t*.4)];case"led_strip":return[V(-e/2,0,e/2,0,"nf-sym-strong")];case"plant":return[C(0,0,Math.min(e,t)*.46),C(0,0,Math.min(e,t)*.25)];case"rug":return[N(-e/2+.1,-t/2+.1,e/2-.1,t/2-.1)];case"stairs":{let n=Math.max(3,Math.round(t/.26)),i=[];for(let r=1;r<n;r++)i.push(V(-e/2,t/2-t/n*r,e/2,t/2-t/n*r));return i.push(V(0,t/2-.1,0,-t/2+.25,"nf-sym-strong"),V(-.15,-t/2+.45,0,-t/2+.25,"nf-sym-strong"),V(.15,-t/2+.45,0,-t/2+.25,"nf-sym-strong")),i}default:{let n=U(o);return n?oo(n,e,t):v}}}function oo(o,e,t){return o.symbol?.length?o.symbol.map(n=>n.shape==="rect"?N((n.x-n.w/2)*e,(n.z-n.d/2)*t,(n.x+n.w/2)*e,(n.z+n.d/2)*t,n.fill?"nf-sym-fill":""):n.shape==="circle"?C(n.x*e,n.z*t,n.r*Math.min(e,t)):V(n.x1*e,n.z1*t,n.x2*e,n.z2*t)):o.parts.filter(n=>n.w<.98||n.d<.98).map(n=>n.shape==="cyl"&&(n.axis??"y")==="y"?C(n.x*e,n.z*t,Math.min(n.w*e,n.d*t)/2):N((n.x-n.w/2)*e,(n.z-n.d/2)*t,(n.x+n.w/2)*e,(n.z+n.d/2)*t))}var ao=.05,lo=.2,co=.12;function ho(o){let e=[];return o.forEach((t,n)=>{let i=t.points;if(i.length<3)return;let r=Y(i)>=0;for(let s=0;s<i.length;s++){let a=i[s],l=i[(s+1)%i.length],c=l[0]-a[0],h=l[1]-a[1],d=Math.hypot(c,h);if(d<.05)continue;let u=[c/d,h/d],f=r?[u[1],-u[0]]:[-u[1],u[0]];(u[1]<-1e-9||Math.abs(u[1])<=1e-9&&u[0]<0)&&(u=[-u[0],-u[1]]);let p=[-u[1],u[0]],m=a[0]*u[0]+a[1]*u[1],_=l[0]*u[0]+l[1]*u[1];e.push({room:n,index:s,dir:u,normal:p,offset:a[0]*p[0]+a[1]*p[1],outside:f[0]*p[0]+f[1]*p[1]>0?1:-1,t0:Math.min(m,_),t1:Math.max(m,_)})}}),e}function yr(o,e=.6){let t=ho(o),n=t.map((h,d)=>d),i=h=>n[h]===h?h:n[h]=i(n[h]),r=[];for(let h=0;h<t.length;h++)for(let d=h+1;d<t.length;d++){let u=t[h],f=t[d];if(u.room===f.room||Math.abs(u.dir[0]*f.dir[1]-u.dir[1]*f.dir[0])>ao||u.outside===f.outside)continue;let p=(f.offset-u.offset)*u.outside;p>e||p<-co||Math.abs(p)<1e-4||Math.min(u.t1,f.t1)-Math.max(u.t0,f.t0)<lo||(r.push(Math.round(p*1e3)/1e3),n[i(h)]=i(d))}if(!r.length)return{rooms:o.map(h=>({...h,points:h.points.map(d=>[d[0],d[1]])})),gaps:r};let s=new Map;t.forEach((h,d)=>{let u=i(d);if(u===d&&!t.some((p,m)=>m!==d&&i(m)===d))return;let f=s.get(u)??[];f.push(d),s.set(u,f)});let a=o.map(h=>h.points.map(()=>new Map));for(let[h,d]of s){let u=d.reduce((f,p)=>f+t[p].offset,0)/d.length;for(let f of d){let p=t[f],m=u-p.offset,_=[p.normal[0]*m,p.normal[1]*m],x=o[p.room].points.length;a[p.room][p.index].set(h,_),a[p.room][(p.index+1)%x].set(h,_)}}let l=h=>Math.round(h*1e3)/1e3;return{rooms:o.map((h,d)=>({...h,points:h.points.map((u,f)=>{let p=u[0],m=u[1];for(let[_,x]of a[d][f].values())p+=_,m+=x;return[l(p),l(m)]})})),gaps:r}}function kr(o){let e=o.filter(n=>n>.04).sort((n,i)=>n-i);if(!e.length)return null;let t=e[Math.floor(e.length/2)];return Math.min(.5,Math.max(.08,Math.round(t*100)/100))}var uo=.25,xr=o=>Math.round(o*1e3)/1e3;function Pn(o,e,t,n,i){let r=o.rooms.find(s=>s.points.length>=3&&D([e,t],s.points));return!r||D([n,i],r.points)?[n,i]:D([n,t],r.points)?[n,t]:D([e,i],r.points)?[e,i]:[e,t]}function Pt(o,e,t,n=uo){let i=o.rooms.find(c=>c.points.length>=3&&D([e.x,e.z],c.points));if(!i)return null;let r=i.points,s=Y(r)>=0?1:-1,a=t/2,l=null;for(let c=0;c<r.length;c++){let h=r[c],d=r[(c+1)%r.length],u=Math.hypot(d[0]-h[0],d[1]-h[1]);if(u<.3)continue;let f=[(d[0]-h[0])/u,(d[1]-h[1])/u],p=[-f[1]*s,f[0]*s],m=(e.x-h[0])*f[0]+(e.z-h[1])*f[1];if(m<0||m>u)continue;let x=o.rooms.some(k=>k.id!==i.id&&k.points.some((M,R)=>{let A=k.points[(R+1)%k.points.length],I=Math.abs((M[0]-h[0])*p[0]+(M[1]-h[1])*p[1]),P=Math.abs((A[0]-h[0])*p[0]+(A[1]-h[1])*p[1]);return I<.02&&P<.02}))?a:0,b=(e.x-h[0])*p[0]+(e.z-h[1])*p[1]-x,w=Math.atan2(-p[0],p[1])*180/Math.PI,$=k=>Math.abs((e.rotation-k+540)%360-180),E=[{rotation:w,extent:e.d/2},{rotation:w+90,extent:e.w/2},{rotation:w-90,extent:e.w/2}].reduce((k,M)=>$(M.rotation)<$(k.rotation)?M:k);if($(E.rotation)>50)continue;let z=b-E.extent;Math.abs(z)>n||l&&Math.abs(z)>=Math.abs(l.gap)||(l={x:xr(e.x-p[0]*z),z:xr(e.z-p[1]*z),rotation:(Math.round(E.rotation)%360+360)%360,gap:z})}return l?{x:l.x,z:l.z,rotation:l.rotation}:null}function fo(o,e,t){let n=t[0]-e[0],i=t[1]-e[1],r=n*n+i*i,s=r?Math.max(0,Math.min(1,((o[0]-e[0])*n+(o[1]-e[1])*i)/r)):0;return Math.hypot(o[0]-e[0]-n*s,o[1]-e[1]-i*s)}function $r(o,e,t=.03){return o.every(n=>D(n,e)||e.some((i,r)=>fo(n,i,e[(r+1)%e.length])<=t))}function Sr(o,e){return e&&o.states[e]?e:Object.keys(o.states).filter(t=>t.startsWith("weather.")).sort()[0]??null}var Mr={view:"3D",editor:"Editor",all_floors:"Alle Etagen",no_building:"Noch kein Grundriss vorhanden.",no_building_admin:"Noch kein Grundriss vorhanden. Im Editor zeichnest du deine erste Etage.",open_editor:"Editor \xF6ffnen",loading:"L\xE4dt \u2026",load_error:"Laden fehlgeschlagen",saving:"Speichert \u2026",saved:"Gespeichert",save_error:"Speichern fehlgeschlagen",save_failed_detail:"Speichern fehlgeschlagen: {error}. Deine \xC4nderungen bleiben in diesem Browser erhalten.",needs_restart:"Eine neue Version von NextFloor ({frontend}) ist installiert, aber Home Assistant l\xE4uft noch mit {version}. Bitte Home Assistant neu starten \u2013 bis dahin kann das Speichern fehlschlagen.",needs_reload:"Diese Seite zeigt noch NextFloor {frontend}, Home Assistant hat schon {backend}. Bitte die Seite neu laden; in der Companion-App: Einstellungen \u2192 Companion-App \u2192 Frontend-Cache zur\xFCcksetzen.",reload_page:"Neu laden",needs_restart_old:"Eine neue Version von NextFloor ist installiert, aber Home Assistant l\xE4uft noch mit einer \xE4lteren. Bitte Home Assistant neu starten \u2013 bis dahin schl\xE4gt das Speichern fehl.",draft_found:"Nicht gespeicherte \xC4nderungen vom {time} gefunden.",draft_restore:"\xDCbernehmen und speichern",draft_discard:"Verwerfen",walls_auto:"W\xE4nde hoch",walls_cut:"Schnitt",reset_view:"\xDCbersicht",back:"Zur\xFCck",floor:"Etage",floors:"Etagen",add_floor:"Etage hinzuf\xFCgen",floor_from_ha:"Etagen aus Home Assistant:",floor_empty:"Leere Etage",level:"Ebene {n}",ha_floor:"Etage in Home Assistant",no_ha_floor:"\u2013 keine \u2013",area_rooms:"R\xE4ume aus HA-Bereichen anlegen ({n})",area_rooms_hint:"Legt f\xFCr jeden Bereich dieser Etage einen Raum an (4 \xD7 3 m) \u2013 danach an die richtige Stelle ziehen und die Ecken anpassen",floor_name:"Name",elevation:"H\xF6he \xFCber Boden (m)",floor_shift:"Etage verschieben (m)",floor_shift_apply:"Verschieben",floor_shift_hint:"Verschiebt alle R\xE4ume, M\xF6bel, Ger\xE4te, Au\xDFenfl\xE4chen, freien W\xE4nde und das Hintergrundbild dieser Etage um X und Z. Dachfl\xE4chen bleiben liegen.",height:"Raumh\xF6he (m)",cut_height:"Schnitth\xF6he (m)",delete_floor:"Etage l\xF6schen",delete_floor_confirm:"Etage \u201E{name}\u201C mit allen R\xE4umen l\xF6schen?",move_up:"Nach oben",move_down:"Nach unten",default_floor:"Erdgeschoss",new_floor:"Etage {n}",tool_select:"Ausw\xE4hlen",tool_rect:"Rechteck",tool_polygon:"Freie Form",undo:"R\xFCckg\xE4ngig",redo:"Wiederholen",fit:"Alles zeigen",room:"Raum",rooms:"R\xE4ume",room_name:"Name",area:"Bereich",no_area:"Kein Bereich",material:"Boden",x:"X (m)",z:"Y (m)",width:"Breite (m)",depth:"Tiefe (m)",points:"Eckpunkte",delete_point:"Punkt l\xF6schen",duplicate:"Duplizieren",delete:"L\xF6schen",new_room:"Raum {n}",settings:"Einstellungen",pendant_shape:"Form",pendant_shade:"Schirm",pendant_globe:"Kugel",pendant_cone:"Kegel",pendant_drum:"Trommel",pkg_open:"Einrichten \u2026",pkg_hint:"Die M\xF6bel kommen an die W\xE4nde des Raums; Leuchten verbinden sich mit den Lichtern des Bereichs. Danach einzeln anpassen \u2013 Strg+Z nimmt alles zur\xFCck.",pkg_done:"{n} M\xF6bel gesetzt \u2013 Strg+Z nimmt es zur\xFCck.",pkg_kitchen_row:"K\xFCchenzeile",pkg_kitchen_row_desc:"Zeile an der R\xFCckwand mit K\xFChlschrank, Backofen, Sp\xFCle, Sp\xFClmaschine und Herd, Oberschrank, Esstisch mit Pendelleuchte",pkg_kitchen_l:"K\xFCche in L-Form",pkg_kitchen_l_desc:"Zeile hinten und links, Kochinsel mit Barhockern",pkg_bath:"Bad",pkg_bath_desc:"Waschtisch, WC, Badewanne, Waschmaschine, Einbauspot",pkg_bedroom:"Schlafzimmer",pkg_bedroom_desc:"Doppelbett mit zwei Nachttischen, Schrank, Kommode, Deckenleuchte",pkg_living:"Wohnzimmer",pkg_living_desc:"TV-Board, Sofa, Couchtisch, Teppich, Sessel, Regal, Stehlampe, Pflanze",pkg_dining:"Esszimmer",pkg_dining_desc:"Esstisch mit vier St\xFChlen, Sideboard, Pendelleuchte",pkg_office:"B\xFCro",pkg_office_desc:"Schreibtisch mit B\xFCrostuhl, zwei Regale, Deckenleuchte",pkg_kids:"Kinderzimmer",pkg_kids_desc:"Einzelbett, Schreibtisch, Regal, Teppich",pkg_hall:"Flur",pkg_hall_desc:"Garderobe, zwei Einbauspots",spots_place:"Spots setzen",spots_type:"Leuchte",spots_cols:"Spalten (links\u2013rechts)",spots_rows:"Reihen (vorne\u2013hinten)",spots_add:"{n} Leuchten setzen",spots_placed:"{n} Leuchten gesetzt.",spots_hint:"Alle Leuchten folgen dem gew\xE4hlten Licht (z. B. Spots an einem Dimmer). Einzeln verschieben und ein anderes Licht w\xE4hlen geht danach wie bei jedem M\xF6bel.",cancel:"Abbrechen",backup:"Sicherung",backup_history:"Wiederherstellungspunkte",backup_none:"Noch keine. Beim Bearbeiten entsteht h\xF6chstens alle 10 Minuten ein Punkt.",backup_summary:"{rooms} R\xE4ume, {furniture} M\xF6bel",backup_restore:"Wiederherstellen",backup_restore_confirm:"Den Stand vom {time} wiederherstellen? Der jetzige Stand bleibt als Wiederherstellungspunkt erhalten.",backup_restored:"Wiederhergestellt.",backup_file:"Datei",backup_export:"Exportieren",backup_export_share:"Als Vorlage teilen",backup_export_share_hint:"Ohne Bereiche, Ger\xE4te, Sensoren und Bilder \u2013 zum Weitergeben an andere.",backup_import:"Importieren \u2026",backup_import_confirm:"Den ganzen Grundriss durch die Datei ersetzen? Der jetzige Stand bleibt als Wiederherstellungspunkt erhalten.",backup_import_error:"Die Datei ist kein NextFloor-Plan ({error}).",backup_imported:"Importiert.",backup_hint:"Hintergrundbilder sind nicht in der Datei enthalten.",backup_full:"Komplett-Backup",backup_full_export:"Alles sichern (Plan, Bilder, Packs)",backup_full_import:"Komplett-Backup wiederherstellen \u2026",backup_full_hint:"Eine Datei mit dem Plan, allen Hintergrund- und Bildschirmbildern und den installierten Packs. Beim Wiederherstellen wird jedes Pack erneut gepr\xFCft; der Lizenzschl\xFCssel ist nicht enthalten.",backup_full_confirm:"Plan, Bilder und Packs durch das Backup ersetzen? Der aktuelle Stand bleibt als Wiederherstellungspunkt erhalten.",backup_full_not_backup:"Das ist kein Komplett-Backup von NextFloor.",backup_full_restored:"Backup wiederhergestellt: {packs} Packs, {pictures} Bilder.",backup_full_skipped:"\xDCbersprungen (nicht lesbar): {packs}.",export_name_full:"komplett",device_confirm:"Vor dem Schalten nachfragen",device_confirm_hint:"Beim Antippen in 3D, im Schnellmen\xFC und im Raumfenster erscheint erst eine R\xFCckfrage. Doppeltipp auf den Raum l\xE4sst dieses Ger\xE4t aus.",cover_confirm_hint:"Auf, Zu und Positionen fragen im Schnellmen\xFC und im Raumfenster erst nach, und Wischen \xFCber das Symbol bewegt den Rollladen nicht mehr (es dreht dann die Ansicht). Stopp fragt nie.",confirm_switch:"{name} wirklich schalten?",split_handle_hint:"Ziehen: Breite von Plan und 3D-Ansicht",wall_exterior:"Au\xDFenwand (m)",wall_interior:"Innenwand (m)",grid:"Raster (m)",background:"Vorlage (Grundriss-Bild)",background_upload:"Bild w\xE4hlen \u2026",background_width:"Breite im Plan (m)",background_opacity:"Deckkraft",background_rotation:"Drehung (\xB0)",background_edit:"Verschieben, skalieren und drehen",background_edit_done:"Fertig",background_edit_hint:"Solange der Modus an ist: Bild ziehen verschiebt es, der Griff unten rechts zieht es gr\xF6\xDFer oder kleiner. Erst das Bild an den Ma\xDFstab anpassen, dann drehen.",background_remove:"Vorlage entfernen",hint_select:"Raum antippen zum Ausw\xE4hlen \xB7 Ecken ziehen \xB7 \u201E+\u201C auf einer Kante f\xFCgt einen Punkt ein \xB7 Pfeiltasten verschieben \xB7 Entf l\xF6scht \xB7 Strg+Z",hint_rect:"Ziehen, um ein Rechteck zu zeichnen",hint_polygon:"Punkte setzen \xB7 auf den ersten Punkt tippen oder Enter schlie\xDFt \xB7 Esc bricht ab",hint_empty:"Lege zuerst eine Etage an.",area_m2:"{a} m\xB2",overlap_warning:"R\xE4ume \xFCberlappen sich \u2013 die W\xE4nde dort sind unvollst\xE4ndig.",read_only:"Nur Administratoren k\xF6nnen den Grundriss bearbeiten.",mat_wood:"Holz",mat_oak:"Eiche",mat_tiles:"Fliesen",mat_carpet:"Teppich",mat_stone:"Stein",mat_concrete:"Beton",card_name:"NextFloor",card_description:"Deine Wohnung in 3D (Neon).",stats:"{calls} Draw-Calls \xB7 {tris} Dreiecke",stats_fps:"{fps} B/s (langsamstes Bild {ms} ms)",stats_idle:"Ruhe (0 B/s)",stats_busy_camera:"Kamera",stats_busy_floors:"Etagen",stats_busy_openings:"T\xFCren/Fenster",stats_busy_flash:"Blitz",stats_busy_roof:"Dach",stats_busy_flow:"Stromfluss",stats_busy_effect:"Farbeffekt",stats_busy_robot:"Roboter",stats_busy_orbit:"Kamerafahrt",stats_busy_tint:"Raumfarbe",stats_low:"Stufe Tablet, Pixeldichte {r}",stats_full:"volle Stufe, Pixeldichte {r}",floors_apart:"Auseinander",floors_stacked:"Gestapelt",roof_keep:"Dach bleibt",roof_keep_hint:"Das Dach bleibt beim Heranzoomen auf dem Haus, statt sich zu heben und auszublenden",floor_rooms_one:"1 Raum",floor_rooms:"{n} R\xE4ume",quality:"Qualit\xE4t",quality_auto:"Auto",quality_low:"Tablet",quality_high:"Hoch",state_on:"An",state_off:"Aus",state_open:"Offen",state_closed:"Zu",state_opening:"\xD6ffnet",state_closing:"Schlie\xDFt",state_playing:"Spielt",state_paused:"Pause",state_idle:"Bereit",state_locked:"Verriegelt",state_unlocked:"Entriegelt",state_detected:"Erkannt",state_clear:"Frei",state_unavailable:"Nicht verf\xFCgbar",state_heat:"Heizen",state_cool:"K\xFChlen",state_auto:"Automatik",state_heat_cool:"Heizen/K\xFChlen",state_dry:"Entfeuchten",state_fan_only:"L\xFCften",devices:"Ger\xE4te",devices_none_area:"Verkn\xFCpfe den Raum mit einem Bereich, dann erscheinen dessen Ger\xE4te hier.",devices_none:"Im Bereich gibt es keine passenden Ger\xE4te.",devices_place_all_n:"Alle {n} platzieren \u2026",devices_place_all_confirm:"{n} Ger\xE4te auf einmal in den Raum setzen? (Strg+Z bzw. \u201ER\xFCckg\xE4ngig\u201C nimmt alle in einem Schritt zur\xFCck.)",devices_src_area:"Dieser Bereich",devices_src_other:"Andere Bereiche",devices_src_none:"Ohne Bereich",panel_hide:"Im Raumfenster ausblenden",panel_unhide:"Im Raumfenster wieder zeigen",panel_state_hide:"Zustand im Raumfenster ausblenden (z. B. ein Rollladen, der nur \u201Eunbekannt\u201C meldet)",panel_state_show:"Zustand im Raumfenster wieder zeigen",devices_place:"Platzieren",devices_remove:"Entfernen",devices_hint:"Platzierte Ger\xE4te erscheinen in 3D. Im Plan lassen sie sich verschieben.",panel_lights:"Licht",panel_covers:"Rolll\xE4den",panel_climate:"Heizung",panel_media:"Medien",panel_switches:"Schalter",panel_sensors:"Sensoren",panel_scenes:"Szenen & Skripte",panel_cameras:"Kameras",camera_live:"Livebild \xF6ffnen",through_camera:"Durch die Kamera schauen",through_back:"Zur\xFCck zur Ansicht",camera_mount:"Montage",camera_mount_wall:"Wand (Blickrichtung = Drehung)",camera_mount_ceiling:"Decke (Dome, rundum)",camera_fov:"Sichtwinkel (\xB0)",camera_reach:"Reichweite (m)",camera_fov_short:"Winkel \xB0",camera_reach_short:"Reichweite m",camera_tilt:"Neigung nach unten (\xB0)",camera_tilt_short:"Neigung \xB0",camera_aim_hint:"Im Plan zeigt der Kegel, wohin die Kamera schaut. Der Griff an seiner Spitze dreht die Kamera und setzt die Reichweite. In 3D endet der Kegel an der ersten Wand.",camera_detect_found:"{n} Erkennungs-Sensoren am Ger\xE4t dieser Kamera: {kinds}. Solange einer etwas meldet, markiert ein Pin es in 3D vor der Kamera.",camera_detect_none:"Am Ger\xE4t dieser Kamera gibt es noch keine Erkennungs-Sensoren. Pins erscheinen, sobald die Integration welche liefert (z. B. Frigate, UniFi Protect, Reolink).",camera_cone:"Sichtkegel in 3D zeigen",state_recording:"Nimmt auf",state_streaming:"Streamt",panel_all_off:"Alle aus",panel_all_on:"Alle an",view_options:"Ansicht: Qualit\xE4t, Look, Symbole, FPS",panel_all_open:"Alle auf",panel_all_close:"Alle zu",central:"Zentral: alle Lichter, Rolll\xE4den und Favoriten",central_house:"Ganzes Haus",central_lights:"Lichter",central_covers:"Rolll\xE4den",central_on:"An",central_off:"Aus",central_open:"Auf",central_close:"Zu",central_sure:"Sicher?",central_favorites:"Favoriten",central_no_favorites:"Noch keine Favoriten. Im Editor unter \u201EFavoriten\u201C legst du Szenen, Skripte und Schalter fest.",card_central:"Stern mit Zentral-Men\xFC",card_central_hint:"Alle Lichter und Rolll\xE4den der Etage oder des Hauses und die Favoriten aus dem Editor.",favorites:"Favoriten",favorites_hint:"Szenen, Skripte, Automationen, Tasten und Schalter f\xFCr das Zentral-Men\xFC (Stern) der 3D-Ansicht \u2013 Party, Anwesenheitssimulation, Verschattung, Bew\xE4sserung.",favorites_add:"Favorit hinzuf\xFCgen",background_handles_hint:"Das Bild hat jetzt Griffe wie ein M\xF6bel: ziehen verschiebt es, die Ecke unten rechts skaliert, der runde Griff oben dreht (mit Umschalt in 15\xB0-Schritten). Passt es, \u201EFertig\u201C tippen \u2013 dann liegt es fest.",background_fixed_hint:"Das Bild liegt fest, du kannst dar\xFCber zeichnen. Zum Anpassen \u201EVerschieben, skalieren und drehen\u201C tippen.",bg_level:"Gerade ausrichten",bg_level_cancel:"Ausrichten abbrechen",bg_level_first:"Tippe auf den Anfang einer Wand im Bild, die gerade (waagerecht oder senkrecht) sein soll.",bg_level_second:"Jetzt auf das Ende dieser Wand tippen \u2013 das Bild dreht sich passend.",bg_ruler:"Ma\xDFstab mit Lineal",bg_ruler_cancel:"Lineal abbrechen",bg_ruler_first:"Tippe im Bild auf den Anfang einer Strecke, deren L\xE4nge du kennst \u2013 etwa eine bema\xDFte Wand.",bg_ruler_second:"Jetzt auf das Ende der Strecke tippen.",bg_ruler_length_hint:"Im Plan gemessen: {m} m. Gib die echte L\xE4nge ein, das Bild wird passend skaliert.",bg_ruler_length:"Echte L\xE4nge (m)",bg_ruler_apply:"Ma\xDFstab \xFCbernehmen",thumbs_fold:"Etagenbilder zu Kn\xF6pfen einklappen",thumbs_show:"Etagenbilder wieder zeigen",room_start_view:"Ansicht als Start des Raums",room_start_view_hint:"Tippst du den Raum in 3D an, fliegt die Kamera genau so hin, wie die 3D-Ansicht rechts gerade steht \u2013 Blickwinkel, Zoom und Bildausschnitt. Erst 3D daneben einschalten, den Raum drehen und heranzoomen, dann tippen.",room_start_view_reset:"Startansicht des Raums entfernen (wieder von oben)",room_start_view_need_pane:"Schalte zuerst \u201E3D daneben\u201C ein und dreh und zoom den Raum so, wie er sich \xF6ffnen soll.",floor_start_view:"Ansicht als Start der Etage",floor_start_view_hint:"Diese Etage \xF6ffnet sich in 3D so, wie die 3D-Ansicht rechts gerade steht \u2013 etwa das Erdgeschoss von vorn und das Obergeschoss von hinten. Erst 3D daneben einschalten, drehen, dann tippen.",floor_start_view_reset:"Startansicht der Etage entfernen (wieder wie das Haus)",floor_start_view_need_pane:"Schalte zuerst \u201E3D daneben\u201C ein und dreh die Etage so, wie sie sich \xF6ffnen soll.",glow_scale:"Leuchtst\xE4rke in 3D (%)",glow_scale_hint:"Wie kr\xE4ftig die Leuchte in 3D leuchtet: unter 100 % d\xE4mpft helle LED-Streifen, damit der Raum nicht \xFCberstrahlt; \xFCber 100 % l\xE4sst eine schwache Lampe st\xE4rker leuchten. Schaltet nichts in Home Assistant.",vehicle_to_spot:"In Stellplatz umwandeln",vehicle_to_spot_hint:"Ein Fahrzeug als einfaches M\xF6bel steht immer da. Als Stellplatz erscheint es nur, wenn ein Sensor das Auto meldet, und dort verkn\xFCpfst du auch das Auto-Ger\xE4t (Ladestand, Reichweite, Schloss, Klima).",as_furniture:"Als M\xF6bel darstellen",as_furniture_hint:"Ersetzt den Pin durch ein M\xF6bel an derselben Stelle, das mit diesem Ger\xE4t verkn\xFCpft ist \u2013 etwa ein Lautsprecher f\xFCr einen Media Player oder eine Leuchte f\xFCr ein Licht. Strg+Z nimmt es zur\xFCck.",as_furniture_pick:"M\xF6bel w\xE4hlen \u2026",as_device:"Wieder als Ger\xE4te-Pin",as_device_hint:"Ersetzt das M\xF6bel durch den einfachen Pin seines Ger\xE4ts an derselben Stelle.",presets:"Sender und Playlists (Klang)",presets_hint:"Erscheinen im Schnellmen\xFC jedes Lautsprechers unter \u201EAbspielen\u201C, neben den Quellen des Players. F\xFCr einen Echo (Alexa Media Player): Art SPOTIFY, AMAZON_MUSIC oder TUNEIN und als Inhalt, was du sagen w\xFCrdest (\u201ERock Antenne\u201C). F\xFCr Sonos, Music Assistant und andere: Art music oder url mit einer Stream-Adresse oder einer URI.",preset_type:"Art",preset_type_hint:"media_content_type von play_media, z. B. music, url, playlist, SPOTIFY, AMAZON_MUSIC, TUNEIN",preset_content:"Inhalt",preset_content_hint:"media_content_id: Stream-URL, URI (spotify:playlist:\u2026) oder bei Alexa ein Suchbegriff",preset_add:"Sender oder Playlist",own_buttons:"Eigene Kn\xF6pfe",own_buttons_hint:"Erscheinen im Zentral-Men\xFC (Stern) unter den Favoriten: eine Dashboard-Seite \xF6ffnen, die Details einer Entit\xE4t zeigen, einen Dienst aufrufen oder ein browser_mod-Popup mit deiner eigenen Karte \xF6ffnen.",own_button_label:"Beschriftung",own_button_action:"Aktion",own_button_new:"Neuer Knopf",own_button_add:"Eigener Knopf",own_action_navigate:"Seite \xF6ffnen",own_action_more_info:"Details einer Entit\xE4t",own_action_service:"Dienst aufrufen",own_action_fire_dom_event:"fire-dom-event (browser_mod)",own_target_navigate:"Pfad",own_target_more_info:"Entit\xE4t",own_target_service:"Dienst (domain.service)",own_data:"Daten (JSON)",own_data_hint:'F\xFCr einen Dienst seine Daten, f\xFCr fire-dom-event der Inhalt des Ereignisses, z. B. {"browser_mod": {"service": "browser_mod.popup", "data": {\u2026}}}.',own_data_bad:"Kein g\xFCltiges JSON-Objekt.",panel_no_area:"Dieser Raum ist mit keinem Bereich verkn\xFCpft. Im Editor kannst du ihn verkn\xFCpfen.",panel_empty:"F\xFCr diesen Raum sind keine Ger\xE4te im Grundriss. Im Editor lassen sich Ger\xE4te platzieren oder mit \u2606 f\xFCrs Raumfenster ausw\xE4hlen.",close:"Schlie\xDFen",brightness:"Helligkeit",color_temp:"Farbtemperatur",color:"Farbe",position:"Position",cover_open:"Auf",cover_stop:"Stopp",cover_tilt:"Lamellen",cover_tilt_open:"Lamellen auf",cover_tilt_close:"Lamellen zu",cover_close:"Zu",target_temp:"Soll",current_temp:"Ist",temp_down:"K\xE4lter",temp_up:"W\xE4rmer",volume:"Lautst\xE4rke",play_pause:"Wiedergabe/Pause",previous:"Zur\xFCck",next:"Weiter",run:"Ausf\xFChren",details:"Details",hold_hint:"Antippen schaltet \xB7 lange dr\xFCcken \xF6ffnet Details",tool_opening:"T\xFCr & Fenster",tool_furniture:"M\xF6bel",qm_off:"Aus",find:"Suchen",find_placeholder:"Wo ist \u2026? Ger\xE4t oder Raum",find_none:"Nichts gefunden",swipe_off:"Aus",panel_pin:"Im Raumfenster zeigen",panel_unpin:"Nicht im Raumfenster zeigen",devices_panel_hint:"Das Raumfenster zeigt die Ger\xE4te im Grundriss. \u2606 nimmt ein Ger\xE4t zus\xE4tzlich ins Raumfenster auf, ohne es zu platzieren.",card_section_view:"Ansicht",card_size:"Gr\xF6\xDFe",card_size_fixed:"Feste H\xF6he",card_size_fill:"Bildschirm f\xFCllen",card_fill_hint:"Am besten in einer Dashboard-Ansicht vom Typ \u201EPanel (1 Karte)\u201C \u2013 dann nimmt die Karte den ganzen Platz ein.",card_controls:"Schalter in der Karte",card_floor_thumbs:"Etagen als Mini-Ansichten",card_floor_thumbs_hint:"Kleine Bilder der Etagen am Rand \u2013 antippen wechselt die Etage",card_floor_thumbs_hint_start:"Die gew\xE4hlte Etage ist dann die Start-Etage \u2013 mit den Bildern am Rand wechselt man zu den anderen",card_room_names:"Raumnamen anzeigen",card_section_kiosk:"Wandtablet (Kiosk)",card_section_features:"Funktionen",card_weather_plan:"wie im Plan eingestellt",card_pro_hint:"Bewegungsspur und Kamerawand geh\xF6ren zum Kameras: Die Spur zeigt die letzte halbe Stunde, die Wand alle Kameras des Plans.",card_idle_return:"Zur\xFCck zur Startansicht nach",card_idle_off:"Nie",card_idle_min:"{n} min ohne Bedienung",card_idle_hint:"Nach der Wartezeit schlie\xDFt die Karte den Raum und zeigt wieder die Startansicht.",card_night:"Nachtdimmung",card_night_off:"Aus",card_night_sun:"Nach Sonnenstand",card_night_time:"Zeitraum",card_night_range:"Zeitraum (z. B. 22:00-06:00)",card_idle_orbit:"Kamerafahrt als Bildschirmschoner",card_idle_orbit_hint:"Nach der R\xFCckkehr dreht sich die Ansicht langsam, bis jemand das Tablet ber\xFChrt",card_dashboard:"Knopf zu einem Dashboard (Pfad)",card_dashboard_label:"Beschriftung des Knopfs",card_dashboard_hint:"Ein Knopf oben rechts in der Karte \xF6ffnet das Dashboard oder die Ansicht mit diesem Pfad, z. B. /lovelace/home oder /dashboard-haus/0. Ohne Beschriftung zeigt er \u2302.",card_alerts:"Warnungen anzeigen",card_alerts_hint:"Rauch, Gas, CO, Wasser, Alarmanlage und offene Fenster bei Regen: der Raum pulsiert, oben erscheint ein Hinweis",card_alert_jump:"Bei neuer Warnung zum Raum springen",card_alert_jump_hint:"Die Ansicht wechselt selbst zur Etage und zum Raum der Warnung",card_scenes:"Szenen-Kn\xF6pfe im Raum",card_scenes_hint:"Szenen und Skripte des Bereichs als Kn\xF6pfe unter der 3D-Ansicht, wenn ein Raum gew\xE4hlt ist",card_motion_trail:"Bewegungsspur",card_camera_wall:"Knopf \u201EKameras\u201C (Kamera-Wand)",card_camera_wall_hint:"Ein Knopf unten in der Karte \xF6ffnet die Kamera-Wand mit allen Livebildern.",card_motion_trail_hint:"Ein Pfad der Bewegungen der letzten halben Stunde durchs Haus, mit Uhrzeiten",trail_short:"Spur",cameras_short:"Kameras",camera_wall_title:"Kamera-Wand",camera_wall_hint:"Alle Kameras nebeneinander. Antippen vergr\xF6\xDFert eine; ein roter Rand hei\xDFt Bewegung.",detect_person:"Person",detect_car:"Fahrzeug",detect_pet:"Tier",detect_motion:"Bewegung",weather_short:"Wetter",weather_entity:"Wetter-Entit\xE4t",weather_effects:"Wetter-Effekte in 3D",weather_effect_rain:"Regen",weather_effect_snow:"Schnee",weather_effect_fog:"Nebel (graut die Szene ein)",weather_effect_clouds:"Wolken dunkeln Himmel und Sonne ab",weather_effect_lightning:"Blitze bei Gewitter",weather_effect_sky:"Sonne und Mond am Himmel",rain_warning:"Warnung: Fenster offen bei Regen",sun_patches:"Sonnenlicht durch die Fenster",sun_patches_hint:"Mit eingestellter Nordrichtung f\xE4llt das Sonnenlicht aus sun.sun als helle Flecken durch die Fenster auf den Boden. Ohne Haken bleibt der Boden ohne Sonnenflecken.",weather_entity_hint:"Welche Wetter-Entit\xE4t den Himmel ums Haus steuert. \u201EAutomatisch\u201C nimmt die erste gefundene.",weather_hint:"Wetter am Haus: Regen und Schnee fallen mit dem echten Wind, Wolken ziehen mit Schatten \xFCbers Grundst\xFCck, Blitze, Nebel, Sonne und Mond",card_weather:"Wetter drau\xDFen",card_weather_hint:"Regen, Schnee, Hagel, Wolken mit Schatten, Blitze und Nebel aus der ersten Wetter-Entit\xE4t (weather_entity w\xE4hlt eine andere); auf Stufe Tablet weniger Teilchen",trail_hint:"Bewegungsspur: wo in den letzten 30 Minuten Bewegung gemeldet wurde, mit Uhrzeit",alerts:"Warnungen",alert_smoke:"Rauch: {name}",alert_gas:"Gas: {name}",alert_co:"Kohlenmonoxid: {name}",alert_water:"Wasser: {name}",alert_alarm:"Alarm ausgel\xF6st",alert_alarm_pending:"Alarm wird ausgel\xF6st",alert_window_rain:"Fenster offen bei Regen: {name}",room_names_short:"Raumnamen",floor_stack_short_dim:"Abgedunkelt",floor_stack_short_stacked:"Gestapelt",floor_stack_short_single:"Einzeln",size_short_w:"B",size_short_d:"T",size_short_h:"H",import_error_not_json:"Die Datei ist kein JSON.",import_error_not_plan:"Die Datei ist kein NextFloor-Plan.",export_name_template:"vorlage",export_name_backup:"sicherung",card_floor_stack:"Etagen darunter",floor_stack_dim:"Abgedunkelt",floor_stack_stacked:"Gestapelt (ganzes Haus bis hier)",floor_stack_single:"Ausgeblendet (nur diese Etage)",card_control_walls:"W\xE4nde hoch/Schnitt",card_control_floors:"Etagen auseinander",card_control_temperature:"Temperatur",card_control_humidity:"Feuchte",card_control_co2:"CO\u2082",card_controls_hint:"W\xE4nde hoch/Schnitt, Etagen auseinander und Temperatur, Feuchte, CO\u2082 zum Umschalten",controls_hide:"Bedienelemente ausblenden \u2013 nur die 3D-Ansicht bleibt",nav_wrap:"Leiste umbrechen: alle Etagen und R\xE4ume auf mehreren Zeilen",nav_row:"Leiste in einer Zeile (seitlich scrollen)",controls_show:"Bedienelemente wieder einblenden",card_controls_hidden:"Mit ausgeblendeten Bedienelementen starten",card_controls_hidden_hint:"Nur die 3D-Ansicht; ein Auge unten links holt Leisten, Werte und Schalter zur\xFCck",card_controls_hide_after:"Bedienelemente ausblenden nach",card_hide_after_s:"{n} s ohne Ber\xFChrung",card_fullscreen_button:"Vollbild-Taste",card_fullscreen_button_hint:"Blendet das Dashboard drumherum aus (z. B. am Wandtablet)",fullscreen:"Vollbild",fullscreen_exit:"Vollbild beenden",card_section_show:"Anzeigen",card_floor:"Etage",card_floor_house:"Ganzes Haus (Etage antippen zum \xD6ffnen)",card_height:"H\xF6he (Pixel)",card_walls:"W\xE4nde",card_quality_hint:"\u201ETablet\u201C ist die sparsamste Stufe \u2013 ideal f\xFCr Fire-Tablets und andere Wandtablets.",card_flows_switch:"Schalter in der Karte",card_flows_on:"Immer an",card_flows_off:"Immer aus",holos:"Karten",holos_hint:"Die Live-Karten \xFCber dem Haus (Energiebilanz, Auto, Medien) ein- oder ausblenden",card_energy:"Energiewerte oben anzeigen",card_room_panel:"Raum-Details beim Antippen",card_room_panel_hint:"Lichter, Rolll\xE4den und Kameras des Raums in einem Seitenfenster",card_explode:"Etagen in der Hausansicht auseinanderziehen",card_roof_fade:"Dach beim Heranzoomen ausblenden",card_roof_fade_hint:"Aus: Das Dach bleibt auf dem Haus, auch wenn die Kamera nah herankommt.",card_stats:"Leistungsanzeige (Bilder pro Sekunde)",card_stats_hint:"Zum Pr\xFCfen, wie fl\xFCssig die Karte auf dem Ger\xE4t l\xE4uft",packs:"M\xF6bel-Packs",packs_hint:"Eigene M\xF6bel-Packs sind JSON-Dateien (Format in docs/packs.md). Die mitgelieferten Packs sind immer da.",lib_badge_light:"Leuchte: l\xE4sst sich mit einem Licht verkn\xFCpfen und in 3D schalten",lib_badge_electric:"Elektrisch: l\xE4sst sich mit Entit\xE4t und Leistungssensor verkn\xFCpfen (schalten, Bild, Verbrauch)",lib_badge_hint:"M\xF6bel mit Symbol lassen sich mit Entit\xE4ten verkn\xFCpfen: Leuchten schalten, Bildschirme zeigen Bilder, Ger\xE4te ihren Verbrauch.",pack_import:"M\xF6bel-Packs importieren \u2026",pack_imported:"\u201E{name}\u201C von {publisher} importiert \u2013 {n} M\xF6bel",packs_imported_n:"{n} von {total} Packs importiert",pack_by:"von {publisher} \xB7 {n} M\xF6bel",feature_text_cameras:"Eine Kamera antippen: die Ansicht fliegt an ihren Platz und schaut in ihre Richtung, dann blendet das Live-Bild ein \u2013 mit dem, was sie gerade erkennt (Person, Fahrzeug, Tier). Die Kamerawand zeigt alle Kameras nebeneinander, die Bewegungsspur zeichnet die letzte halbe Stunde als leuchtenden Pfad durchs Haus, mit Zeiten an jedem Raum.",feature_name_energy:"Energiefluss",feature_name_cameras:"Kameras",feature_name_weather:"Wetter am Haus",feature_name_screens:"TV-Bildschirme",feature_name_sound:"Klang",feature_name_car:"Auto",ext_tab:"Erweiterungen",ext_title:"Erweiterungen",ext_intro:"Was in NextFloor steckt: die gro\xDFen Funktionen und die M\xF6bel-Packs. Alles ist frei und Open Source \u2013 eigene M\xF6bel-Packs kannst du hier importieren.",ext_pro:"Funktionen",ext_open:"Erweiterungen \xF6ffnen",manual:"Anleitung",manual_more:"Mehr erfahren",ext_teaser_title:"Mehr M\xF6bel und Live-Funktionen",ext_teaser_text:"M\xF6bel-Packs und die Live-Erweiterungen (Wetter, Energie, Auto, Klang, Bildschirme, Kameras) findest du oben unter \u201EErweiterungen\u201C.",feature_text_weather:"Regen, Schnee, Hagel und Schneeregen fallen schr\xE4g mit dem echten Wind, Wolken ziehen mit ihren Schatten \xFCbers Grundst\xFCck, Blitze schlagen neben dem Haus ein, dazu Nebel, Sonne und Mond in ihrer echten Richtung.",feature_text_screens:"Ein Fernseher oder Monitor, der l\xE4uft, zeigt im 3D-Modell, was l\xE4uft: Cover, Titel, Interpret oder Serie und die App \u2013 auf einem Verlauf in der App-Farbe. Dahinter leuchtet ein Ambilight an der Wand, das beim Abspielen sanft atmet.",feature_text_energy:"Energieteilchen fliegen in B\xF6gen von den Solarfeldern zum Wechselrichter, zwischen Haus, Akku, Netz und Verbrauchern \u2013 schneller und dichter, je mehr Strom flie\xDFt. Die Module funkeln mit ihrer Produktion, eine Glaskarte \xFCber dem Dach zeigt die Bilanz und wie autark das Haus gerade ist.",feature_text_sound:"\xDCber jedem spielenden Lautsprecher oder Fernseher schwebt eine Karte mit Cover, Titel und Interpret \u2013 antippen f\xFCr Zur\xFCck, Abspielen/Pause, Weiter und Lautst\xE4rke. Schallringe in der Farbe der App (Spotify gr\xFCn, Netflix rot \u2026) breiten sich aus, lauter hei\xDFt weiter, und Lautsprecher einer Multiroom-Gruppe sind mit einem Faden verbunden.",feature_text_car:"Eine Glaskarte \xFCber dem Stellplatz zeigt Ladestand mit Farbring, Reichweite, Laden mit Leistung, Stecker und Innentemperatur \u2013 mit Kn\xF6pfen f\xFCr Schloss, Klima und Laden. L\xE4dt das Auto, fliegen Energieteilchen von der Wallbox hinein; ist es weg, steht da, wo es gerade ist. Die Entit\xE4ten findet NextFloor selbst am Ger\xE4t des Autos.",pack_remove:"Entfernen",pack_builtin:"mitgeliefert",live_autarky:"autark",live_car_away:"Unterwegs",live_car_charging:"L\xE4dt",live_car_plugged:"Eingesteckt",live_car_lock:"Verriegeln",live_car_unlock:"Entriegeln",live_car_unlock_confirm:"{name} wirklich entriegeln?",live_car_climate:"Klimatisierung",live_car_charge:"Laden starten/stoppen",live_media_prev:"Zur\xFCck",live_media_playpause:"Abspielen/Pause",live_media_next:"Weiter",live_media_volume:"Lautst\xE4rke",live_now:"jetzt",live_minutes_ago:"vor {n} min",live_car_device:"Auto (eine Entit\xE4t des Autos)",live_car_device_hint:"Ladestand, Reichweite, Laden, Stecker, Schloss und Klima findet NextFloor selbst am Ger\xE4t des Autos. Ohne Angabe nimmt es den Anwesenheitssensor des Stellplatzes.",pack_remove_confirm:"Pack \u201E{name}\u201C entfernen? M\xF6bel daraus bleiben als einfache K\xE4sten im Plan.",pack_missing_item:"M\xF6bel aus entferntem Pack",pack_error_not_a_pack:"Das ist keine M\xF6bel-Pack-Datei.",pack_error_builtin:"Ein mitgeliefertes Pack hat schon diese ID.",pack_error_invalid_content:"Das Pack enth\xE4lt ung\xFCltige M\xF6bel: {detail}",pack_error_too_large:"Die Datei ist zu gro\xDF.",pack_error_needs_update:"Diese Erweiterung braucht eine neuere Version von NextFloor. Bitte zuerst aktualisieren (HACS \u203A NextFloor \u203A \u22EE \u203A \u201EInformationen aktualisieren\u201C \u203A \u201EHerunterladen\u201C), Home Assistant neu starten und dann noch einmal installieren.",pack_error_other:"Import fehlgeschlagen: {detail}",back_to_room:"Zur\xFCck zu {room}",back_to_floor:"Zur\xFCck zur Etage",hint_furniture:"Raum antippen, dann rechts ein M\xF6belst\xFCck w\xE4hlen \xB7 M\xF6bel ziehen, an den Ecken die Gr\xF6\xDFe \xE4ndern",furniture_into:"Neue M\xF6bel kommen in die Mitte von \u201E{room}\u201C.",furniture_pick_room:"Tipp: Erst einen Raum antippen \u2013 dann landen neue M\xF6bel in seiner Mitte.",flows:"Stromfluss",flows_hint:"Energieb\xF6gen zwischen Solarfeldern, Wechselrichter, Akku, Netz und Verbrauchern ein- oder ausblenden",chk_title:"Einrichtung",chk_hint:"Was der Energiefluss braucht. Antippen springt an die Stelle.",chk_solar:"Solarfeld angelegt",chk_solar_add:"Ein Solarfeld aufs Dach legen",chk_meter:"Stromz\xE4hler mit Netzsensor",chk_meter_sensor:"Stromz\xE4hler: Netzsensor (W) fehlt",chk_meter_add:"Stromz\xE4hler anlegen",chk_inverter:"Wechselrichter mit Leistungssensor",chk_inverter_sensor:"Wechselrichter: Leistungssensor fehlt",chk_inverter_add:"Wechselrichter anlegen",chk_battery:"Stromspeicher mit Leistung und Ladestand",chk_battery_sensor:"Stromspeicher: Leistung oder Ladestand fehlt",chk_battery_opt:"Stromspeicher (optional)",chk_grid:"Netzanschluss gesetzt",chk_grid_opt:"Netzanschluss (optional, sonst automatisch)",energy_sign_grid:"Das Haus zeigt Einspeisung, obwohl die Sonne nichts liefert. Der Netzsensor hat wahrscheinlich das umgekehrte Vorzeichen.",energy_sign_battery:"Der Speicher l\xE4dt ohne Sonne und ohne Netzbezug. Sein Sensor hat wahrscheinlich das umgekehrte Vorzeichen.",energy_sign_flip:"Vorzeichen umkehren",help_title:"Hilfe und R\xFCckmeldung",help_hint:"Fehler bitte als Issue auf GitHub, W\xFCnsche als Diskussion \u2013 so geht nichts verloren, und alle sehen den Stand.",help_issue:"Problem melden",help_idea:"Idee vorschlagen",furn_name:"Name (optional)",furn_mirror:"Spiegeln",furn_mirror_hint:"Links und rechts vertauschen \u2013 das L-Sofa andersherum, der Schrank mit der T\xFCr auf der anderen Seite, die K\xFCchenzeile gespiegelt.",hint_opening:"Auf eine Wand tippen, um eine T\xFCr oder ein Fenster einzusetzen \u2013 die Art w\xE4hlst du danach rechts",preset_door:"T\xFCr",preset_door_double:"Doppelt\xFCr",preset_window:"Fenster",preset_window_double:"Fenster 2-fl\xFCgelig",preset_terrace:"Terrassent\xFCr",preset_terrace_double:"Terrassent\xFCr 2-fl\xFCgelig",preset_garage:"Garagentor",preset_front:"Haust\xFCr",opening_style:"Stil",sidelight_auto:"automatisch",sidelight_hinge:"Seitenteil an der Anschlagseite",sidelight_hinge_hint:"Das Seitenteil sitzt sonst gegen\xFCber dem Anschlag; mit Haken neben den B\xE4ndern.",sidelight_width:"Breite Seitenteil (m)",sidelight_width_left:"Seitenteil links (m)",sidelight_width_right:"Seitenteil rechts (m)",style_auto:"Automatisch ({style})",style_interior:"Zimmert\xFCr",style_front:"Haust\xFCr",style_front_glass:"Haust\xFCr mit Glasausschnitt",style_sidelight:"Haust\xFCr mit Seitenteil",style_sidelights:"Haust\xFCr mit 2 Seitenteilen",style_glass:"Glast\xFCr",style_sliding:"Schiebet\xFCr",style_passage:"Durchbruch (ohne T\xFCr)",style_standard:"Standard",style_bars:"Mit Sprossen",style_glass_wall:"Glaswand (feststehend)",preset_glass_wall:"Glaswand",flip_hinge:"Anschlag wechseln",flip_main_leaf:"Hauptfl\xFCgel wechseln",flip_hinge_hint:"Scharniere auf die andere Seite",flip_swing:"\xD6ffnungsrichtung umdrehen",flip_swing_hint:"Die T\xFCr schwenkt in den Raum oder zur anderen Seite",main_leaf:"Hauptfl\xFCgel (vom Raum aus)",contact_main:"Kontakt Hauptfl\xFCgel",contact_second:"Kontakt zweiter Fl\xFCgel",tool_outdoor:"Au\xDFen",tool_measure:"Nach Ma\xDF",hint_measure:"Startpunkt antippen, dann rechts die Wandl\xE4ngen mit Richtung eingeben",measure:"Raum nach Ma\xDF",measure_start:"Tippe im Plan auf den Startpunkt, z. B. eine Raumecke.",measure_from:"Start bei {x} / {z} m \u2013 antippen verschiebt den Start.",measure_length:"L\xE4nge der n\xE4chsten Wand (m)",measure_close:"Raum schlie\xDFen",measure_undo:"Letzte Wand weg",measure_gap:"L\xFCcke zum Start: {gap} m (wird beim Schlie\xDFen verbunden)",measure_hint:"Tipp: L\xE4nge eintippen und Pfeiltaste dr\xFCcken. Mit gemessenen Innenma\xDFen danach \u201EL\xFCcken schlie\xDFen\u201C.",rect_by_size:"Rechteck nach Ma\xDF",rect_add:"Rechteck anlegen",dir_up:"Nach oben",dir_down:"Nach unten",dir_left:"Nach links",dir_right:"Nach rechts",hint_outdoor:"Ziehen, um eine Au\xDFenfl\xE4che (Rasen, Terrasse, Pool \u2026) aufzuziehen",outdoor:"Au\xDFenfl\xE4che",outdoor_type:"Art",outdoor_height:"H\xF6he (m)",outdoor_offset:"H\xF6henversatz (m, \u2212 = tiefer)",outdoor_outline:"Umrisslinie zeigen",outdoor_outline_hint:"Ohne Haken zeichnet die Fl\xE4che keine Leuchtlinie an ihrem Rand \u2013 f\xFCr gro\xDFe Grundst\xFCcke aus mehreren Rasenfl\xE4chen.",outdoor_hint:"Au\xDFenleuchten (Wegleuchte, Garten-Spot, Wandleuchte au\xDFen) beleuchten alle Au\xDFenfl\xE4chen und die Fassade.",out_lawn:"Rasen",out_terrace:"Terrasse",out_path:"Weg",out_driveway:"Einfahrt",out_pool:"Pool",out_bed:"Beet",out_hedge:"Hecke",out_fence:"Zaun",out_wild:"Wildfl\xE4che",out_pergola:"Pergola / Rahmen",outdoor_open:"Offen (letzte Kante weglassen)",outdoor_open_hint:"Die Kante vom letzten zum ersten Punkt wird nicht gezeichnet \u2013 ein Zaun oder eine Pergola, die ans Haus lehnt.",outdoor_bracing:"X-Verstrebung",outdoor_cut:"Aus Fl\xE4chen darunter ausschneiden",outdoor_cut_hint:"Jede Fl\xE4che, in der diese ganz liegt und die vor ihr gezeichnet wurde, bekommt hier ein Loch \u2013 ein Teich oder eine Wildfl\xE4che im Rasen.",outdoor_slope:"Gef\xE4lle (m)",outdoor_slope_hint:"H\xF6henunterschied von der hohen zur tiefen Kante; die hohe Kante liegt auf dem H\xF6henversatz. Leuchten auf der Fl\xE4che folgen.",outdoor_slope_dir:"F\xE4llt nach",slope_x:"rechts (+X)",slope_nx:"links (\u2212X)",slope_z:"unten (+Z)",slope_nz:"oben (\u2212Z)",north:"Nordrichtung (\xB0 im Uhrzeigersinn von oben)",north_hint:"Die Nordrichtung braucht der Sonnenstand (Licht durch die Fenster).",roof:"Dach",roof_none:"Kein Dach",roof_flat:"Flachdach",roof_gable:"Satteldach",roof_custom:"Dachfl\xE4chen (frei)",roof_sections:"Dachfl\xE4chen",roof_sections_hint:"Jede Dachfl\xE4che deckt ein Rechteck des Hauses ab, etwa das Wohnhaus, die Scheune oder einen Anbau \u2013 jede mit eigener Form, Firstrichtung, Traufh\xF6he und Neigung. Eine neue Fl\xE4che ziehst du im Plan auf; antippen w\xE4hlt sie aus, ziehen verschiebt sie, die Ecken \xE4ndern die Gr\xF6\xDFe.",roof_sections_start:"Dachfl\xE4chen aus den R\xE4umen erzeugen",roof_sections_regen:"Neu aus den R\xE4umen erzeugen",roof_sections_off:"Zur\xFCck zu einem Dach",roof_regen_confirm:"Alle Dachfl\xE4chen durch einen neuen Vorschlag aus den R\xE4umen ersetzen?",roof_section:"Dachfl\xE4che",roof_section_hint:"H\xF6hen z\xE4hlen vom Boden. Eine Seite mit tieferer Traufe zieht weiter herunter (Abschleppdach); Pultd\xE4cher steigen von der ersten Seite an.",roof_shape_gable:"Sattel",roof_shape_hip:"Walm",roof_shape_pent:"Pult",roof_shape_flat:"Flach",roof_shape_halfhip:"Kr\xFCppelwalm",roof_shape_pyramid:"Zelt",roof_shape_mansard:"Mansard",roof_shape_parapet:"Attika",roof_shape:"Form",roof_axis_x:"First \u2194",roof_axis_z:"First \u2195",roof_eave:"Traufe (m)",roof_pitch_short:"Neigung (\xB0)",roof_height:"H\xF6he (m)",roof_base:"Wandoberkante (m)",roof_on_floor:"Sitzt auf Etage",roof_on_floor_hint:"Setzt den Abschnitt auf die Wandoberkante dieser Etage; Grundh\xF6he und Traufen wandern mit. In der 3D-Ansicht geh\xF6rt das Dach zu dieser Etage.",roof_base_hint:"Liegt sie unter der Deckenh\xF6he des Geschosses darunter, enden dessen W\xE4nde an der Dachunterseite: Kniestock an der Traufe, Giebel bis zum First, Innenw\xE4nde an der Schr\xE4ge. Im Grundriss zeigen gestrichelte Linien, wo 1,5 m und 2 m Kopfh\xF6he bleiben.",roof_ridge_height:"Firsth\xF6he",roof_side_top:"oben",roof_side_bottom:"unten",roof_side_left:"links",roof_side_right:"rechts",roof_swap:"Seiten tauschen",roof_open:"\xDCberdachung (Pfosten statt W\xE4nde, durchsichtig)",roof_open_short:"\xDCberdachung",roof_dormer:"Gaube",roof_dormer_hint:"Eine Gaube auf dieser Dachseite: 2 m breit, Front an der Traufwand, Traufe 1,4 m \xFCber der Dachtraufe, Satteldach. Danach verschieben, Breite und H\xF6hen \xE4ndern wie bei jeder Dachfl\xE4che; die Hauptfl\xE4che \xF6ffnet sich darunter, die Wand des Dachgeschosses steigt bis zur Gaube \u2013 dort passt ein Fenster.",roof_outline:"Umriss des Geschosses \xFCbernehmen",roof_outline_hint:"Ein Flachdach als freie Form: \xFCbernimmt den Umriss der R\xE4ume des angezeigten Geschosses (auch L- oder Z-f\xF6rmig) als eine Fl\xE4che ohne Kanten. Die Ecken lassen sich danach ziehen.",roof_points_hint:"Freie Form: Ziehe die Ecken im Plan. Zur\xFCck zum Rechteck l\xF6scht die Form.",roof_rect:"Zur\xFCck zum Rechteck",roof_open_hint:"F\xFCr Terrassendach oder Carport: Statt W\xE4nden tragen Pfosten und Balken das Dach, die Fl\xE4che ist durchsichtig. Wo die \xDCberdachung an die Hauswand st\xF6\xDFt, liegt sie auf der Wand auf.",roof_swap_hint:"Dreht das Dach um: Die beiden Seiten tauschen Traufe und Neigung, ein Pultdach steigt in die andere Richtung.",roof_pitch:"Dachneigung (\xB0)",roof_overhang:"Dach\xFCberstand (m)",roof_ridge:"First",roof_ridge_long:"Entlang der langen Seite",roof_ridge_short:"Entlang der kurzen Seite (z. B. Reihenhaus)",device:"Ger\xE4t",lamp_mount:"Lampe",lamp_ceiling:"Deckenleuchte",lamp_floor:"Stehlampe",lamp_table:"Tischlampe",lamp_wall:"Wandleuchte",marker_height:"H\xF6he des Symbols (m)",height_auto:"H\xF6he automatisch",device_centre:"In Raummitte",lights_spread:"Deckenlampen gleichm\xE4\xDFig verteilen",devices_search:"Ger\xE4te suchen \u2026",devices_more:"+{n} weitere",devices_less:"weniger",panel_more:"Weitere Ger\xE4te des Bereichs ({n})",panel_less:"Weniger anzeigen",gaps_close:"L\xFCcken schlie\xDFen",gaps_hint:"R\xE4ume mit bis zu 60 cm Abstand an einer gemeinsamen Wand zusammenf\xFChren; der Abstand wird die Innenwandst\xE4rke.",gaps_none:"Keine L\xFCcken zwischen R\xE4umen gefunden.",gaps_closed:"{n} Stellen geschlossen.",gaps_closed_wall:"{n} Stellen geschlossen, Innenwand jetzt {t} m.",fps:"FPS",fps_title:"Leistungsanzeige (Bilder pro Sekunde)",hint_garage:"Auf eine Wand tippen, um ein Garagentor einzusetzen",opening_garage:"Garagentor",garage_hint:"Das Tor folgt einem Garagen-Cover (Position oder offen/zu) oder einem Garagentor-Kontakt aus dem Bereich des Raums.",door_hint:"Mit T\xFCrkontakt schwenkt das T\xFCrblatt auf, ohne Sensor steht es halb offen.",hint_door:"Auf eine Wand tippen, um eine T\xFCr einzusetzen",hint_window:"Auf eine Wand tippen, um ein Fenster einzusetzen",opening_door:"T\xFCr",opening_window:"Fenster",opening_type:"Art",opening_position:"Mitte ab Ecke (m)",sill:"Br\xFCstung (m)",opening_height:"H\xF6he (m)",hinge:"Anschlag (vom Raum aus)",hinge_left:"Links",hinge_right:"Rechts",cover_entity:"Rollladen",door_cover:"Antrieb (T\xFCr oder Tor mit Motor)",cover_position_entity:"Positions-Sensor (live)",cover_position_invert:"Sensor z\xE4hlt umgekehrt (0 = offen)",contact_entity:"Kontakt",sensor_kind:"Sensor-Art",sensor_kind_contact:"Fensterkontakt (offen/zu)",sensor_kind_handle:"Griff-Sensor (offen/gekippt/zu)",sensor_kind_contact_tilt:"Kontakt + Kipp-Sensor",handle_entity:"Griff-Sensor",handle_main:"Griff-Sensor Hauptfl\xFCgel",leaf_main:"Hauptfl\xFCgel",leaf_second:"Zweiter Fl\xFCgel",tilt_entity:"Kipp-Sensor",tilt_angle_entity:"Kippwinkel-Sensor (\xB0, optional)",tilt_angle_max:"Winkel f\xFCr \u201Eganz gekippt\u201C (\xB0)",tilt_angle_offset:"Offset: Winkel bei geschlossenem Fenster (\xB0)",tilt_angle_invert:"Winkel z\xE4hlt andersherum",door_shut:"Ohne Sensor geschlossen zeigen",door_shut_hint:"Eine T\xFCr ohne Kontakt steht in 3D halb offen, damit man sie als T\xFCr erkennt. Mit Haken wird sie geschlossen gezeichnet \u2013 Haust\xFCr, Carport, Nebent\xFCr.",entity_auto:"Automatisch ({name})",entity_auto_none:"Automatisch (keiner gefunden)",entity_none:"Keiner",entity_search:"Tippen zum Suchen \u2026",opening_hint:"Sensor-Art: Fensterkontakt (meldet offen/zu), Griff-Sensor (meldet offen, gekippt und zu \u2013 z. B. Homematic-Fenstergriff) oder Kontakt + Kipp-Sensor (ein zweiter Sensor, der nur \u201Egekippt\u201C meldet). Automatisch nimmt Rolll\xE4den und Kontakte aus dem Bereich des Raums. Positions-Sensor: eine Entit\xE4t, die die Rollladen-Position auch w\xE4hrend der Fahrt meldet (z. B. Homematic \u201ELevel\u201C, 0\u2013100 % oder 0\u20131, offen = hoch) \u2013 dann f\xE4hrt der Rollladen in 3D live.",furniture:"M\xF6bel",furniture_add:"M\xF6bel hinzuf\xFCgen",furniture_search:"M\xF6bel suchen \u2026",furniture_search_none:"Nichts gefunden. Versuch ein anderes Wort \u2013 deutsch oder englisch.",furniture_type:"M\xF6belst\xFCck",rotation:"Drehung (\xB0)",strip_tilt:"Neigung um die L\xE4nge (\xB0)",strip_upright:"Senkrecht",strip_upright_hint:"Der Streifen steht hochkant: Seine L\xE4nge l\xE4uft von der H\xF6he \xFCber Boden nach oben \u2013 am T\xFCrrahmen, als Lichts\xE4ule. Die Neigung legt einen liegenden Streifen an die Schr\xE4ge (90\xB0 = Fl\xE4che zeigt zur Seite).",rotate_left:"\u21BA 90\xB0",rotate_right:"\u21BB 90\xB0",height_m:"H\xF6he (m)",furn_sofa:"Sofa",furn_armchair:"Sessel",furn_table:"Tisch",furn_chair:"Stuhl",furn_bed:"Bett",furn_nightstand:"Nachttisch",furn_wardrobe:"Schrank",furn_shelf:"Regal",furn_kitchen:"K\xFCchenzeile",furn_worktop:"Arbeitsplatte",furn_fridge:"K\xFChlschrank",furn_fridge_smart:"Smart-K\xFChlschrank (Side-by-Side)",furn_door_left:"T\xFCrsensor links (Gefrierseite)",furn_door_right:"T\xFCrsensor rechts (K\xFChlseite)",fridge_hint:"Meldet ein T\xFCrsensor \u201Eoffen\u201C, schwingt die T\xFCr in 3D auf.",furn_stove:"Herd",furn_sink:"Sp\xFCle",furn_bathtub:"Badewanne",furn_shower:"Dusche",furn_wc:"WC",furn_washbasin:"Waschtisch",furn_desk:"Schreibtisch",furn_tv_board:"TV-Board",furn_plant:"Pflanze",furn_rug:"Teppich",furn_stairs:"Treppe",furn_stairwell:"Boden\xF6ffnung",stairwell_hint:"Ein Loch im Boden dieser Etage, zum Beispiel \xFCber dem Treppenaufgang oder f\xFCr eine Galerie; von oben sieht man hindurch. Die \xD6ffnung muss ganz in einem Raum liegen; mehrere \xD6ffnungen d\xFCrfen sich \xFCberlappen (zum Beispiel f\xFCr eine L-Form). Eine Treppe auf der Etage darunter, die bis hier hinauf reicht, \xF6ffnet den Boden auch von selbst.",tool_hole:"Boden\xF6ffnung",tool_roof:"Dach",tool_energy:"Energie",tool_wall:"Wand",hint_wall:"Ziehen, um eine einzelne Wand zu zeichnen (Raumteiler, halbe Wand) \xB7 Umschalt h\xE4lt sie gerade \xB7 Alt ohne Fangen",free_wall:"Wand",wall_length:"L\xE4nge (m)",wall_thickness:"Wandst\xE4rke (m)",wall_height:"H\xF6he (m)",wall_height_full:"Volle Raumh\xF6he",wall_none:"Keine Wand",wall_none_hint:"Diese Wand ganz weglassen: f\xFCr offene Grundrisse, bei denen R\xE4ume baulich ein Raum sind, in Home Assistant aber getrennt.",edge_thickness:"Dicke (m)",wall_thickness_hint:"Dicke dieser Wand, z. B. 0,365 an einer dicken Au\xDFenwand oder 0,115 an einer leichten Trennwand. Eine Wand zwischen zwei R\xE4umen nimmt die dickere Angabe.",wall_thickness_reset:"Dicke wie im Haus eingestellt",wall_heights:"Wandh\xF6hen",wall_n:"Wand {a}\u2013{b}",wall_part:"Teil {n}",wall_split_hint:"Wand hier teilen: Das Teilst\xFCck bekommt eine eigene H\xF6he, z. B. 2,5 m neben 1,7 m in einer Flucht",wall_split_at:"Teilpunkt ab Ecke (m)",wall_join_hint:"Teilpunkt entfernen: Das Teilst\xFCck w\xE4chst wieder mit dem davor zusammen",wall_exterior_short:"Au\xDFenwand",room_wall_hint:"Eine niedrigere H\xF6he macht aus der Wand eine Br\xFCstung oder Theke. Teilen sich zwei R\xE4ume die Wand, gilt die niedrigere Einstellung. Fenster und T\xFCren darin enden an der Wandh\xF6he.",free_wall_hint:"Eine frei stehende Wand, zum Beispiel ein Raumteiler. Trifft sie auf eine Raumwand, wird die Ecke verschnitten. Die Endpunkte ziehst du an den Griffen, die ganze Wand verschiebst du an der Linie.",stairwell_outside:"Diese \xD6ffnung ragt \xFCber eine Raumgrenze und wird deshalb nicht ausgeschnitten. Ziehe sie ganz in einen Raum oder verkleinere sie.",hint_hole:"Ziehen, um eine Boden\xF6ffnung aufzuziehen (Treppenaufgang, Galerie)",hint_roof:"Dachfl\xE4che aufziehen \xB7 antippen w\xE4hlt aus \xB7 ziehen verschiebt \xB7 Ecken \xE4ndern die Gr\xF6\xDFe",hint_energy:"Solarfeld antippen w\xE4hlt aus \xB7 ziehen verschiebt, auch auf eine andere Dachfl\xE4che \xB7 neue Felder rechts mit + Solarfeld",furn_parking:"Stellplatz",furn_group_vehicles:"Stellpl\xE4tze",parking_entity:"Sensor \u201EAuto anwesend\u201C",parking_vehicle:"Fahrzeug",parking_vehicle_none:"Keins",parking_no_pack:"Kein Fahrzeug-Pack importiert \u2013 Fahrzeuge kommen aus dem Pack \u201EFahrzeuge\u201C (M\xF6bel \u2192 M\xF6bel-Pack importieren).",parking_scale:"Gr\xF6\xDFe (%)",parking_type_entity:"Fahrzeugtyp-Sensor (optional)",parking_types:"Zustand \u2192 Fahrzeug",parking_type_state:"Zustand (z. B. van)",parking_add_type:"+ Zuordnung",parking_hint:"Ohne Sensor steht das Fahrzeug immer da. Mit Sensor erscheint es, sobald der Sensor \u201Ean\u201C, \u201Ehome\u201C oder \u201Eanwesend\u201C meldet. Ein Fahrzeugtyp-Sensor (z. B. aus einer KI-Kameraauswertung) w\xE4hlt das Modell: Passt sein Zustand zu einer Zuordnung \u2013 auch als Wort im Text \u2013, wird dieses Fahrzeug gezeigt, sonst das Standard-Fahrzeug.",parking_too_tall:"Das Fahrzeug ({car} m) ist h\xF6her als der Raum ({room} m).",furn_lamp_ceiling:"Deckenleuchte",furn_lamp_downlight:"Einbauspot",furn_lamp_spot:"Aufbau-Spot",furn_lamp_panel:"LED-Panel",furn_lamp_uplight:"Deckenfluter",furn_lamp_bollard:"Wegleuchte",furn_lamp_garden:"Garten-Spot",furn_radiator:"Heizk\xF6rper",furn_robot_vacuum:"Saugroboter",furn_entity_vacuum:"Saugroboter",furn_robot_room:"Aktueller Raum (Sensor)",robot_hint:"Saugt der Roboter in Home Assistant, f\xE4hrt er in 3D in Bahnen durch den Raum, den er meldet (Sensor \u201EAktueller Raum\u201C, zugeordnet \xFCber den Raum- oder Bereichsnamen), sonst durch den Raum seiner Station. Die Fahrspur ist simuliert \u2013 Home Assistant kennt meist nicht die genaue Position. Zur\xFCck f\xE4hrt er zur Station.",furn_lamp_pendant:"Pendelleuchte",furn_lamp_floor:"Stehlampe",furn_lamp_table:"Tischlampe",furn_lamp_wall:"Wandleuchte",furn_led_strip:"LED-Streifen",furn_group_lights:"Leuchten",furn_entity_light:"Licht oder Schalter",furn_color_entity:"Farbe und Helligkeit von (optional)",furn_color_entity_hint:"F\xFCr Lampen, die ein Relais (Shelly, Schaltaktor) ein- und ausschaltet, w\xE4hrend die Leuchte selbst Farbe und Helligkeit kennt: An/Aus kommt vom Schalter oben, Farbe und Helligkeit von dieser Entit\xE4t.",furn_entity_climate:"Heizung (Thermostat)",lamp_hint:"Antippen in 3D schaltet die Leuchte, lange dr\xFCcken \xF6ffnet das Schnellmen\xFC. Auch Schalter (z. B. ein Relais f\xFCrs Deckenlicht) sind m\xF6glich \u2013 die Leuchte strahlt dann, solange er an ist. Tischlampen stehen automatisch auf dem M\xF6bel darunter.",lamp_hint_pendant:"H\xF6he = Abh\xE4ngung unter der Decke. Antippen in 3D schaltet, lange dr\xFCcken \xF6ffnet die Details.",theme:"Look",version_hint:"Installierte Version von NextFloor \u2013 Oberfl\xE4che; die Integration in Home Assistant meldet {backend}",accent:"Akzentfarbe",accent_hint:"Eigene Akzentfarbe: Linien und Leuchtkanten im Neon-Look, Kn\xF6pfe und Pins \u2013 \u21BA setzt das Neon-Cyan zur\xFCck",accent_reset:"Zur\xFCck zu Cyan",theme_neon:"Neon",theme_blueprint:"Blueprint",theme_day:"Tag",furnish:"Einrichten",split_3d:"3D daneben",mount_height:"H\xF6he \xFCber Boden (m)",side_open:"Seitenleiste \xF6ffnen",side_close:"Schlie\xDFen",side_details:"Details zur Auswahl",side_pin:"Anheften",side_pinned:"Angeheftet",side_pin_hint:"Angeheftet bleibt die Seitenleiste immer offen; sonst klappt sie neben der 3D-Ansicht zu, solange nichts ausgew\xE4hlt ist",split_3d_hint:"Live-3D neben dem Plan: M\xF6bel und Ger\xE4te dort ziehen und drehen \u2013 mit R\xFCckg\xE4ngig, gespeichert wird mit dem Plan",size_w:"Breite (m)",size_d:"Tiefe (m)",size_h:"H\xF6he (m)",furnish_hint:"M\xF6bel, Leuchten und Ger\xE4te mit dem Finger ziehen \xB7 M\xF6bel rasten an W\xE4nden ein \xB7 antippen zum Drehen, f\xFCr H\xF6he und Montage",done:"Fertig",heatmap:"Heatmap",heat_off:"Normal",heat_short_temperature:"Temp.",heat_short_humidity:"Feuchte",heat_short_co2:"CO\u2082",heat_short_values:"Werte",heat_temperature:"Temperatur",heat_humidity:"Luftfeuchtigkeit",heat_co2:"CO\u2082",heat_values:"Werte am Raumnamen",heat_none_found:"Keine passenden Sensoren in den Bereichen der R\xE4ume.",markers:"Symbole",markers_none:"Keine",markers_important:"Wichtige",markers_all:"Alle",furn_stool:"Hocker",furn_coffee_table:"Couchtisch",furn_tv_wall:"Fernseher (Wand)",furn_sideboard:"Sideboard",furn_table_round:"Runder Tisch",furn_bench:"Sitzbank",furn_corner_bench:"Eckbank",furn_bar_stool:"Barhocker",furn_kitchen_wall:"Oberschrank",furn_kitchen_tall:"Hochschrank mit Backofen",furn_island:"Kochinsel",furn_dishwasher:"Sp\xFClmaschine",furn_bunk_bed:"Etagenbett",furn_dresser:"Kommode",furn_washer:"Waschmaschine",furn_dryer:"Trockner",furn_office_chair:"B\xFCrostuhl",furn_tall_cabinet:"Hochschrank",furn_coat_rack:"Garderobe",furn_group_living:"Wohnen",furn_group_dining:"Essen",furn_group_kitchen:"K\xFCche",furn_group_sleeping:"Schlafen",furn_group_bath:"Bad & Hauswirtschaft",furn_group_work:"Arbeiten & Sonstiges",furn_group_energy:"Energie & Solar",energy_devices:"Ger\xE4te",wallbox_charging:"l\xE4dt",wallbox_plugged:"angesteckt",furn_soc:"Ladestand (%)",furn_export:"Einspeiseleistung (W, separater Sensor, optional)",furn_export_hint:"Meldet dein Z\xE4hler Bezug und Einspeisung in zwei Sensoren (z. B. Growatt, Tibber Pulse), nimm oben den Bezugs-Sensor als Leistung und hier den Einspeise-Sensor. Ein Sensor mit Vorzeichen braucht das nicht.",furn_charge:"Ladeleistung (W, separater Sensor, optional)",furn_charge_hint:"Meldet dein Speicher Laden und Entladen in zwei Sensoren (z. B. Anker Solix), nimm oben den Entlade-Sensor als Leistung und hier den Lade-Sensor. Ein Sensor mit Vorzeichen braucht das nicht.",furn_wallbox_status:"Status (l\xE4dt, angesteckt)",energy_only_note:"\u26A1 Energie: Hier lassen sich nur Solarfelder und Energieger\xE4te verschieben, R\xE4ume und M\xF6bel sind gesperrt.",roof_only_note:"\u{1F3E0} Dach: Hier lassen sich nur Dachfl\xE4chen und Dachfenster verschieben, R\xE4ume und M\xF6bel sind gesperrt.",energy_devices_hint:"Stromz\xE4hler, Wechselrichter, Stromspeicher, Wallbox und Netzanschluss werden hier angelegt: auf der oben gew\xE4hlten Etage, im Grundriss verschiebbar. Mit Leistungssensor zeigen sie ihre Watt; der Z\xE4hler bekommt den Netzsensor, beim Strang w\xE4hlst du den Wechselrichter. Mehrere Wechselrichter und Speicher (etwa eine Balkonanlage dazu) gehen auch: Jeder bekommt seinen eigenen Sensor.",solar_fields:"Solarfelder",solar_hint:"Module aufs Dach legen: Sie liegen in der Neigung der Dachfl\xE4che, auf einem Flachdach stehen sie aufgest\xE4ndert. Im Grundriss l\xE4sst sich ein Feld mit der Maus verschieben.",solar_no_roof:"F\xFCr Solarfelder braucht das Haus ein Dach: unter Einstellungen ein Sattel- oder Flachdach, oder Dachabschnitte hier im Dach-Werkzeug.",solar_face_gone:"Dachfl\xE4che fehlt",solar_summary:"{n} Module \xB7 {kwp} kWp",solar_add:"Solarfeld",solar_field:"Solarfeld",solar_face:"Dachfl\xE4che",solar_rows:"Reihen",solar_cols:"Module pro Reihe",solar_portrait:"Hochformat",solar_landscape:"Querformat",solar_u:"Abstand vom Rand (m)",solar_v:"Abstand von der Traufe (m)",solar_tilt:"Neigung der Aufst\xE4nderung (\xB0)",solar_flip:"In die andere Richtung neigen",solar_partial:"nur {n} von {total} passen auf die Fl\xE4che",solar_form_hint:"Module, die \xFCber die Dachfl\xE4che hinausragen w\xFCrden, fallen weg. \u201EFl\xE4che f\xFCllen\u201C legt so viele Module aufs Dach, wie passen. kWp gerechnet mit 400 W je Modul.",solar_fit:"Fl\xE4che f\xFCllen",roof_windows:"Dachfenster",roof_window:"Dachfenster",roof_windows_hint:"Dachfenster liegen in der Dachfl\xE4che, mit Rollladen und Kontakt wie normale Fenster. Im Grundriss lassen sie sich verschieben, auch auf eine andere Dachfl\xE4che.",roof_window_tilt:"Kippkontakt",roof_window_name:"Name (optional)",roof_window_motor:"Fenstermotor (Cover, optional)",roof_window_motor_hint:"Ein Fenstermotor (Velux, Roto, Fakro) meldet seine Position als Cover: Der Fl\xFCgel \xF6ffnet in 3D so weit, wie der Motor steht. Ein Kontakt oder Kippkontakt geht weiterhin ohne Motor.",roof_window_hint:"Offen klappt der Fl\xFCgel oben angeschlagen nach au\xDFen, gekippt ein St\xFCck, und der Rahmen leuchtet warm; der Rollladen f\xE4hrt von oben \xFCber die Scheibe. In einer Dachfl\xE4che schneidet das Fenster ein Loch in die Schr\xE4ge, so sieht das Dachgeschoss hinaus.",solar_ground:"Frei aufgest\xE4ndert (Garten, Garagendach \u2026)",solar_add_ground:"Frei aufgest\xE4ndert",solar_base:"H\xF6he der Aufstellfl\xE4che (m, 0 = Boden)",solar_add_wall:"An der Wand",solar_wall:"Wand",solar_v_wall:"H\xF6he \xFCber dem Boden (m)",solar_tilt_wall:"Neigung von der Wand (\xB0, 90 = Vordach)",solar_flip_wall:"Unten abstehend statt oben",solar_rotation:"Drehung (\xB0)",solar_name:"Name",solar_name_hint:"z. B. Strang 1 S\xFCd",solar_module_w:"Modulbreite (m)",solar_module_h:"Modulh\xF6he (m)",solar_wp:"Modulleistung (Wp)",solar_string:"Strang",solar_strings:"Str\xE4nge",solar_string_none:"Kein Strang",solar_string_new:"Neuer Strang",solar_string_n:"Strang {n}",solar_string_name:"Name des Strangs",solar_string_entity:"PV-Leistung des Strangs",solar_string_inverter:"Wechselrichter",solar_string_inverter_none:"Kein Wechselrichter gew\xE4hlt",inverter_strings:"Str\xE4nge an diesem Wechselrichter: {names}",inverter_strings_none:"Noch kein Strang an diesem Wechselrichter \u2013 zuordnen beim Solarfeld unter Strang \u203A Wechselrichter.",solar_string_inverter_missing:"Noch kein Wechselrichter im Plan (unten bei Ger\xE4te anlegen)",solar_string_hint:"Felder im selben Strang geh\xF6ren zusammen, auch auf verschiedenen D\xE4chern (z. B. 5 Module auf dem Haus und 5 auf der Garage). Sensor und Wechselrichter gelten f\xFCr den ganzen Strang.",solar_string_sum:"{fields} Felder \xB7 {n} Module \xB7 {kwp} kWp",solar_face_size:"Dachfl\xE4che {w} \xD7 {h} m (entlang der Traufe \xD7 die Schr\xE4ge hoch)",solar_cols_hint:"Eine Zahl f\xFCr gleich lange Reihen, oder eine Liste f\xFCr Reihen eigener L\xE4nge: \u201E4, 4, 3\u201C (von der Traufe aus).",solar_align_left:"Links",solar_align_center:"Mitte",solar_align_right:"Rechts",solar_look_black:"Full Black",solar_look_blue:"Blau",solar_pick:"Module einzeln an/aus",solar_pick_all:"Alle wieder an",solar_pick_hint:"Tippe im Grundriss auf ein Modul, um es wegzunehmen oder wieder dazuzunehmen. Weggenommene sind gestrichelt.",solar_entity:"PV-Leistung dieses Feldes (z. B. sein Strang)",solar_main:"Hauptdach",solar_section:"Abschnitt {n}",solar_flat:"Flachdach",compass_n:"Nord",compass_ne:"Nordost",compass_e:"Ost",compass_se:"S\xFCdost",compass_s:"S\xFCd",compass_sw:"S\xFCdwest",compass_w:"West",compass_nw:"Nordwest",furn_meter:"Stromz\xE4hler",furn_grid_point:"Netzanschluss",grid_point_hint:"Hier steht der Netzanschluss: der \xDCbergabepunkt zum Stromanbieter, zum Beispiel am Ende der Einfahrt. Im Grundriss verschiebbar.",furn_model:"Modell",inverter_std:"Standard (Wandger\xE4t mit Display)",inverter_slim:"Schmal und hoch (Lichtleiste)",inverter_hybrid:"Hybrid (Rund-Display, L\xFCfter)",battery_std:"Turm (gestapelte Module)",battery_wall:"Wandspeicher (flach, h\xE4ngend)",battery_cube:"Kompakt (Balkonspeicher)",furn_inverter:"Wechselrichter",furn_home_battery:"Stromspeicher",furn_wallbox:"Wallbox",furn_entity:"Ger\xE4t (Schalter, Steckdose \u2026)",furn_state_entity:"Zustand von (optional)",furn_state_entity2:"Zweiter Zustand (andere H\xE4lfte)",furn_state_split:"H\xE4lften",furn_state_left_right:"Links / rechts",furn_state_top_bottom:"Unten / oben (Hochbett)",furn_state_hint:"Das M\xF6bel leuchtet, solange die Entit\xE4t an, belegt oder zu Hause meldet \u2013 ein Bett mit Belegungsmatte, ein Sessel, die Sauna. Zwei Entit\xE4ten beleuchten die H\xE4lften: links und rechts, beim Hochbett unten und oben.",furn_entity_tv:"Fernseher (Media-Player oder Steckdose)",fix:"Fixieren",unfix:"L\xF6sen",fix_hint:"Fixiert: l\xE4sst sich nicht mehr versehentlich verschieben (Taste L, Rechtsklick oder langes Dr\xFCcken)",fixed_drag_hint:"\u{1F512} Fixiert \u2013 zum Verschieben erst l\xF6sen (Schloss im Formular, Rechtsklick oder Taste L)",fixed_delete_confirm:"Dieses Element ist fixiert. Trotzdem l\xF6schen?",lock_plan:"\u{1F512} Grundriss",lock_plan_hint:"Grundriss sperren: R\xE4ume, W\xE4nde, T\xFCren, Fenster und Au\xDFenfl\xE4chen lassen sich nicht mehr versehentlich verschieben. M\xF6bel und Ger\xE4te bleiben frei.",start_view:"Startansicht",start_view_hint:"Mit dieser Ansicht \xF6ffnen 3D-Ansicht, Karte und Kiosk das Haus, zum Beispiel von der Gartenseite. Drehe, zoome und verschiebe das Haus in der 3D-Ansicht rechts, bis es passt, und merke sie dir dann.",start_view_card:"Soll eine Karte eine andere Ansicht haben: diese Zeile in ihre YAML-Konfiguration \xFCbernehmen.",start_view_set:"Aktuelle 3D-Ansicht als Start merken",start_view_reset:"Standard",start_view_saved:"Eine eigene Startansicht ist gespeichert.",ctx_rotate:"Drehen 90\xB0",devices_placed_in:"in {room}",devices_narrow:"{n} weitere \u2013 Suche eingrenzen",climate:"Raumklima",climate_temperature:"Temperatur",climate_humidity:"Luftfeuchte",climate_co2:"CO\u2082",climate_hint:"Diese Sensoren gelten f\xFCr die Heatmap und das Raumfenster. \u201EAutomatisch\u201C nimmt die Sensoren des Bereichs und die im Raum platzierten, aber keine Ger\xE4tetemperaturen (3D-Drucker, W\xE4rmepumpe, Vorlauf \u2026).",plan_locked:"Grundriss gesperrt",plan_lock:"Grundriss sperren",plan_unlock:"Grundriss entsperren",opening_mark:"Markieren in 3D",opening_mark_open:"Wenn offen",opening_mark_closed:"Wenn geschlossen (z. B. WC)",opening_mark_hint:"Ein markiertes Fenster oder eine markierte T\xFCr leuchtet warm. \u201EWenn geschlossen\u201C braucht einen Kontakt; ohne Sensor wird nichts markiert.",marker_show:"Symbol in 3D",marker_show_hint:"Automatisch folgt dem Schalter Keine / Wichtige / Alle in der 3D-Ansicht. Immer zeigen und Ausblenden gelten unabh\xE4ngig davon (au\xDFer bei Keine).",marker_show_auto:"Automatisch",marker_show_always:"Immer zeigen",marker_show_no_power:"Ohne Watt",marker_show_never:"Ausblenden",marker_icon:"Eigenes Symbol (Material-Design-Icon)",device_name:"Eigener Name (optional)",show_name:"Name unter dem Symbol in 3D zeigen",card_marker_names:"Eigene Namen an den Symbolen",card_marker_names_hint:"Jedes Ger\xE4t mit eigenem Namen zeigt ihn klein unter seinem Symbol \u2013 drei Thermometer im Garten bleiben unterscheidbar.",device_name_hint:"Ein Name nur f\xFCr den Plan, z. B. \u201EDekolicht Kochinsel\u201C \u2013 die Entit\xE4t in Home Assistant bleibt, wie sie ist.",floor_turn:"90\xB0 drehen",floor_shift_all:"Alle Etagen mitnehmen (ganzes Haus)",floor_shift_all_hint:"Verschieben und Drehen wirken auf alle Etagen samt Dachfl\xE4chen, Au\xDFenfl\xE4chen, Energieger\xE4ten und Z\xE4hler \u2013 das ganze Haus wandert als Ganzes.",floor_turn_hint:"Dreht alles auf der Etage um 90\xB0 im Uhrzeigersinn um die Mitte der R\xE4ume \u2013 wenn eine Etage verdreht gezeichnet wurde. Dreimal = 270\xB0.",marker_icon_hint:"Name eines Material-Design-Icons wie bei Home Assistant, z. B. mdi:thermometer oder mdi:water-alert. Leer = Symbol nach Ger\xE4teart.",furn_power:"Leistungssensor (W)",furn_links_hint:"Mit Leistungssensor zeigt das M\xF6bel seine Watt und nimmt am Energiefluss teil.",furn_links_hint_tv:"Der Bildschirm leuchtet, solange der Fernseher an ist, in der Farbe der App (Netflix, YouTube \u2026); das Schild zeigt App oder Titel.",stairs_hint:"Die Treppe steigt nach hinten an (weg von der markierten Vorderkante) und \xF6ffnet die Decke der Etage dar\xFCber.",floor_lights:"{n} Licht an",floor_open:"{n} offen",floor_persons:"{n} Pers.",energy_consumption:"Verbrauch",energy_grid_import:"Netzbezug",energy_grid_export:"Einspeisung",energy_solar:"Solar",energy_battery:"Akku",energy_tariff:"Tarif",energy:"Energie",energy_meter:"Z\xE4hlerplatz",energy_grid:"Netz (W, + = Bezug)",energy_solar_sensor:"Solar-Erzeugung (W)",energy_battery_sensor:"Akku-Leistung (W, + = Entladen)",energy_battery_soc:"Akku-Ladestand (%)",energy_tariff_sensor:"Tarif (z. B. \u20AC/kWh)",energy_invert:"Vorzeichen umkehren",energy_hint:"Verbraucher sind platzierte Ger\xE4te mit Leistungssensor (W) \u2013 der Sensor selbst oder einer vom selben Ger\xE4t.",energy_balance:"Energiebilanz",energy_balance_hint:"Netz, Solar und Akku kommen von den Ger\xE4ten im Plan: Stromz\xE4hler, Wechselrichter und Stromspeicher. Hier kannst du andere Sensoren w\xE4hlen, Vorzeichen umkehren und den Hausverbrauch angeben.",energy_consumption_sensor:"Hausverbrauch (W, sonst aus der Bilanz)",energy_import_prefs:"Aus dem Energie-Dashboard \xFCbernehmen",energy_import_done:"{n} Sensoren \xFCbernommen \u2013 bitte die Vorzeichen pr\xFCfen.",energy_import_none:"Im Energie-Dashboard sind keine passenden Leistungssensoren (W) zu finden \u2013 bitte von Hand w\xE4hlen.",energy_import_failed:"Das Energie-Dashboard von Home Assistant ist nicht eingerichtet.",tool_meter:"Z\xE4hler",hint_meter:"Auf die Stelle des Z\xE4hlers tippen",presence:"Anwesenheit",presence_hint:"Raumsensor je Person (z. B. ESPresense, Bermuda): sein Zustand nennt den Raum oder Bereich.",presence_sensor:"Raumsensor",no_persons:"In Home Assistant gibt es keine Personen."},zr={view:"3D",editor:"Editor",all_floors:"All floors",no_building:"No floor plan yet.",no_building_admin:"No floor plan yet. Draw your first floor in the editor.",open_editor:"Open editor",loading:"Loading \u2026",load_error:"Loading failed",saving:"Saving \u2026",saved:"Saved",save_error:"Saving failed",save_failed_detail:"Saving failed: {error}. Your changes are kept in this browser.",needs_restart:"A new version of NextFloor ({frontend}) is installed, but Home Assistant still runs {version}. Please restart Home Assistant \u2013 until then saving may fail.",needs_reload:"This page still shows NextFloor {frontend}, Home Assistant already has {backend}. Please reload the page; in the companion app: Settings \u2192 Companion app \u2192 Reset frontend cache.",reload_page:"Reload",needs_restart_old:"A new version of NextFloor is installed, but Home Assistant still runs an older one. Please restart Home Assistant \u2013 until then saving fails.",draft_found:"Unsaved changes from {time} found.",draft_restore:"Restore and save",draft_discard:"Discard",walls_auto:"Tall walls",walls_cut:"Cut",reset_view:"Overview",back:"Back",floor:"Floor",floors:"Floors",add_floor:"Add floor",floor_from_ha:"Floors from Home Assistant:",floor_empty:"Empty floor",level:"Level {n}",ha_floor:"Floor in Home Assistant",no_ha_floor:"\u2013 none \u2013",area_rooms:"Add rooms from HA areas ({n})",area_rooms_hint:"Adds a room (4 \xD7 3 m) for each area of this floor \u2013 then drag it into place and adjust the corners",floor_name:"Name",elevation:"Elevation (m)",floor_shift:"Shift the floor (m)",floor_shift_apply:"Shift",floor_shift_hint:"Moves every room, furniture item, device, outdoor area, free wall and the background image of this floor by X and Z. Roof sections stay.",height:"Ceiling height (m)",cut_height:"Cut height (m)",delete_floor:"Delete floor",delete_floor_confirm:"Delete floor \u201C{name}\u201D with all its rooms?",move_up:"Move up",move_down:"Move down",default_floor:"Ground floor",new_floor:"Floor {n}",tool_select:"Select",tool_rect:"Rectangle",tool_polygon:"Free shape",undo:"Undo",redo:"Redo",fit:"Show all",room:"Room",rooms:"Rooms",room_name:"Name",area:"Area",no_area:"No area",material:"Floor",x:"X (m)",z:"Y (m)",width:"Width (m)",depth:"Depth (m)",points:"Corners",delete_point:"Delete corner",duplicate:"Duplicate",delete:"Delete",new_room:"Room {n}",settings:"Settings",pendant_shape:"Shape",pendant_shade:"Shade",pendant_globe:"Globe",pendant_cone:"Cone",pendant_drum:"Drum",pkg_open:"Furnish \u2026",pkg_hint:"Furniture goes against the room's walls; lamps link to the area's lights. Adjust single items afterwards \u2013 Ctrl+Z takes it all back.",pkg_done:"{n} items placed \u2013 Ctrl+Z takes it back.",pkg_kitchen_row:"Kitchen row",pkg_kitchen_row_desc:"Row on the back wall with fridge, oven, sink, dishwasher and stove, wall cabinet, dining table with pendant",pkg_kitchen_l:"L-shaped kitchen",pkg_kitchen_l_desc:"Rows at the back and left, kitchen island with bar stools",pkg_bath:"Bathroom",pkg_bath_desc:"Washbasin, WC, bathtub, washing machine, downlight",pkg_bedroom:"Bedroom",pkg_bedroom_desc:"Double bed with two nightstands, wardrobe, chest of drawers, ceiling light",pkg_living:"Living room",pkg_living_desc:"TV board, sofa, coffee table, rug, armchair, shelf, floor lamp, plant",pkg_dining:"Dining room",pkg_dining_desc:"Table with four chairs, sideboard, pendant",pkg_office:"Office",pkg_office_desc:"Desk with office chair, two shelves, ceiling light",pkg_kids:"Kids' room",pkg_kids_desc:"Single bed, desk, shelf, rug",pkg_hall:"Hall",pkg_hall_desc:"Coat rack, two downlights",spots_place:"Place spots",spots_type:"Lamp",spots_cols:"Columns (left\u2013right)",spots_rows:"Rows (front\u2013back)",spots_add:"Place {n} lamps",spots_placed:"{n} lamps placed.",spots_hint:"All lamps follow the chosen light (e.g. spots on one dimmer). Afterwards each can be moved and linked to another light like any furniture.",cancel:"Cancel",backup:"Backup",backup_history:"Restore points",backup_none:"None yet. While editing, a restore point is kept at most every 10 minutes.",backup_summary:"{rooms} rooms, {furniture} items",backup_restore:"Restore",backup_restore_confirm:"Restore the state of {time}? The current state is kept as a restore point.",backup_restored:"Restored.",backup_file:"File",backup_export:"Export",backup_export_share:"Share as template",backup_export_share_hint:"Without areas, devices, sensors and images \u2013 for passing on to others.",backup_import:"Import \u2026",backup_import_confirm:"Replace the whole plan with the file? The current state is kept as a restore point.",backup_import_error:"The file is no NextFloor plan ({error}).",backup_imported:"Imported.",backup_hint:"Background images are not part of the file.",backup_full:"Full backup",backup_full_export:"Back up everything (plan, pictures, packs)",backup_full_import:"Restore a full backup \u2026",backup_full_hint:"One file with the plan, every background and screen picture and the installed packs. On restore every pack is checked again; the licence key is not included.",backup_full_confirm:"Replace the plan, the pictures and the packs with the backup? The current state stays as a restore point.",backup_full_not_backup:"This is not a full NextFloor backup.",backup_full_restored:"Backup restored: {packs} packs, {pictures} pictures.",backup_full_skipped:"Skipped (could not be read): {packs}.",export_name_full:"full",device_confirm:"Ask before switching",device_confirm_hint:"A tap in 3D, the quick menu and the room panel ask first. A double tap on the room leaves this device out.",cover_confirm_hint:"Open, close and positions ask first in the quick menu and the room panel, and a swipe on the marker no longer moves the blind (it turns the view instead). Stop never asks.",confirm_switch:"Really switch {name}?",split_handle_hint:"Drag: width of the plan and the 3D view",wall_exterior:"Exterior wall (m)",wall_interior:"Interior wall (m)",grid:"Grid (m)",background:"Template (floor plan image)",background_upload:"Choose image \u2026",background_width:"Width in plan (m)",background_opacity:"Opacity",background_rotation:"Rotation (\xB0)",background_edit:"Move, scale and turn",background_edit_done:"Done",background_edit_hint:"While the mode is on: dragging the picture moves it, the handle at the bottom right scales it. Fit the picture to the scale first, then turn it.",background_remove:"Remove template",hint_select:"Tap a room to select \xB7 drag corners \xB7 \u201C+\u201D on an edge inserts a corner \xB7 arrow keys nudge \xB7 Del deletes \xB7 Ctrl+Z",hint_rect:"Drag to draw a rectangle",hint_polygon:"Place corners \xB7 tap the first corner or press Enter to close \xB7 Esc cancels",hint_empty:"Add a floor first.",area_m2:"{a} m\xB2",overlap_warning:"Rooms overlap \u2013 walls there are incomplete.",read_only:"Only administrators can edit the floor plan.",mat_wood:"Wood",mat_oak:"Oak",mat_tiles:"Tiles",mat_carpet:"Carpet",mat_stone:"Stone",mat_concrete:"Concrete",card_name:"NextFloor",card_description:"Your home in 3D (neon).",stats:"{calls} draw calls \xB7 {tris} triangles",stats_fps:"{fps} fps (slowest frame {ms} ms)",stats_idle:"At rest (0 fps)",stats_busy_camera:"camera",stats_busy_floors:"floors",stats_busy_openings:"doors/windows",stats_busy_flash:"flash",stats_busy_roof:"roof",stats_busy_flow:"power flow",stats_busy_effect:"colour effect",stats_busy_robot:"robot",stats_busy_orbit:"camera turn",stats_busy_tint:"room tint",stats_low:"tablet level, pixel ratio {r}",stats_full:"full level, pixel ratio {r}",floors_apart:"Apart",floors_stacked:"Stacked",roof_keep:"Roof stays",roof_keep_hint:"The roof stays on the house while zooming in instead of lifting and fading out",floor_rooms_one:"1 room",floor_rooms:"{n} rooms",quality:"Quality",quality_auto:"Auto",quality_low:"Tablet",quality_high:"High",state_on:"On",state_off:"Off",state_open:"Open",state_closed:"Closed",state_opening:"Opening",state_closing:"Closing",state_playing:"Playing",state_paused:"Paused",state_idle:"Idle",state_locked:"Locked",state_unlocked:"Unlocked",state_detected:"Detected",state_clear:"Clear",state_unavailable:"Unavailable",state_heat:"Heat",state_cool:"Cool",state_auto:"Auto",state_heat_cool:"Heat/cool",state_dry:"Dry",state_fan_only:"Fan",devices:"Devices",devices_none_area:"Link the room to an area and its devices appear here.",devices_none:"The area has no suitable devices.",devices_place_all_n:"Place all {n} \u2026",devices_place_all_confirm:"Put {n} devices into the room at once? (Ctrl+Z or \u201CUndo\u201D takes them all back in one step.)",devices_src_area:"This area",devices_src_other:"Other areas",devices_src_none:"No area",panel_hide:"Hide from the room panel",panel_unhide:"Show in the room panel again",panel_state_hide:'Hide the state in the room panel (e.g. a cover that only reports "unknown")',panel_state_show:"Show the state in the room panel again",devices_place:"Place",devices_remove:"Remove",devices_hint:"Placed devices appear in 3D. Drag them in the plan to move them.",panel_lights:"Lights",panel_covers:"Covers",panel_climate:"Heating",panel_media:"Media",panel_switches:"Switches",panel_sensors:"Sensors",panel_scenes:"Scenes & scripts",panel_cameras:"Cameras",camera_live:"Open live view",through_camera:"Look through the camera",through_back:"Back to the view",camera_mount:"Mount",camera_mount_wall:"Wall (looks along its rotation)",camera_mount_ceiling:"Ceiling (dome, all round)",camera_fov:"Field of view (\xB0)",camera_reach:"Reach (m)",camera_fov_short:"Angle \xB0",camera_reach_short:"Reach m",camera_tilt:"Tilt down (\xB0)",camera_tilt_short:"Tilt \xB0",camera_aim_hint:"In the plan the wedge shows where the camera looks. The handle at its tip turns the camera and sets its reach. In 3D the wedge ends at the first wall.",camera_detect_found:"{n} detection sensors on this camera's device: {kinds}. While one reports something, a pin marks it in front of the camera in 3D.",camera_detect_none:"This camera's device has no detection sensors yet. Pins show up as soon as the integration offers some (e.g. Frigate, UniFi Protect, Reolink).",camera_cone:"Show the field of view in 3D",state_recording:"Recording",state_streaming:"Streaming",panel_all_off:"All off",panel_all_on:"All on",view_options:"View: quality, look, markers, FPS",panel_all_open:"All up",panel_all_close:"All down",central:"Central: all lights, blinds and favourites",central_house:"Whole house",central_lights:"Lights",central_covers:"Blinds",central_on:"On",central_off:"Off",central_open:"Up",central_close:"Down",central_sure:"Sure?",central_favorites:"Favourites",central_no_favorites:'No favourites yet. Set scenes, scripts and switches in the editor under "Favourites".',card_central:"Star with the central menu",card_central_hint:"All lights and blinds of the floor or the house and the favourites from the editor.",favorites:"Favourites",favorites_hint:"Scenes, scripts, automations, buttons and switches for the central menu (star) of the 3D view \u2013 party, presence simulation, shading, watering.",favorites_add:"Add a favourite",background_handles_hint:'The picture now has handles like a piece of furniture: drag moves it, the lower right corner scales it, the round handle on top turns it (Shift for 15\xB0 steps). When it fits, tap "Done" \u2013 then it stays put.',background_fixed_hint:'The picture stays put, you can draw over it. To adjust it, tap "Move, scale and turn".',bg_level:"Straighten",bg_level_cancel:"Cancel straightening",bg_level_first:"Tap the start of a wall in the picture that should run straight (horizontal or vertical).",bg_level_second:"Now tap the end of that wall \u2013 the picture turns to fit.",bg_ruler:"Scale with a ruler",bg_ruler_cancel:"Cancel the ruler",bg_ruler_first:"Tap the start of a stretch of known length in the picture \u2013 e.g. a dimensioned wall.",bg_ruler_second:"Now tap the end of the stretch.",bg_ruler_length_hint:"Measured in the plan: {m} m. Enter the real length and the picture is scaled to fit.",bg_ruler_length:"Real length (m)",bg_ruler_apply:"Apply the scale",thumbs_fold:"Fold the floor pictures into buttons",thumbs_show:"Show the floor pictures again",room_start_view:"View as this room's start",room_start_view_hint:"When you tap the room in 3D, the camera flies to exactly the view the 3D pane on the right shows now \u2013 angle, zoom and framing. Turn on 3D beside first, turn and zoom in on the room, then tap.",room_start_view_reset:"Remove the room's start view (from above again)",room_start_view_need_pane:'Turn on "3D beside" first, then turn and zoom the room the way it should open.',floor_start_view:"View as this floor's start",floor_start_view_hint:"This floor opens in 3D the way the 3D pane on the right stands right now \u2013 e.g. the ground floor from the front and the upper floor from the back. Turn on 3D beside first, turn it, then tap.",floor_start_view_reset:"Remove the floor's start view (like the house again)",floor_start_view_need_pane:'Turn on "3D beside" first and turn the floor the way it should open.',glow_scale:"Glow in 3D (%)",glow_scale_hint:"How strongly the lamp glows in 3D: below 100 % tones down bright LED strips so the room does not burn out; above 100 % makes a weak lamp glow more. Switches nothing in Home Assistant.",vehicle_to_spot:"Turn into a parking spot",vehicle_to_spot_hint:"A vehicle as plain furniture always stands there. As a parking spot it appears only while a sensor reports the car, and that is where the car device is linked (charge, range, lock, climate).",as_furniture:"Show as furniture",as_furniture_hint:"Replaces the pin by a furniture item in the same place, linked to this device \u2013 a speaker for a media player, a lamp for a light. Ctrl+Z takes it back.",as_furniture_pick:"Pick furniture \u2026",as_device:"Back to a device pin",as_device_hint:"Replaces the furniture by the plain pin of its device in the same place.",presets:"Stations and playlists (Sound)",presets_hint:`Shown in every speaker's quick menu under "Play", next to the player's sources. For an Echo (Alexa Media Player): type SPOTIFY, AMAZON_MUSIC or TUNEIN and as content what you would say ("Rock Antenne"). For Sonos, Music Assistant and others: type music or url with a stream address or a URI.`,preset_type:"Type",preset_type_hint:"media_content_type of play_media, e.g. music, url, playlist, SPOTIFY, AMAZON_MUSIC, TUNEIN",preset_content:"Content",preset_content_hint:"media_content_id: stream URL, URI (spotify:playlist:\u2026) or, for Alexa, a search phrase",preset_add:"Station or playlist",own_buttons:"Own buttons",own_buttons_hint:"Shown in the central menu (star) below the favourites: open a dashboard path, show an entity's details, call a service, or open a browser_mod popup with your own card.",own_button_label:"Label",own_button_action:"Action",own_button_new:"New button",own_button_add:"Own button",own_action_navigate:"Open a path",own_action_more_info:"Entity details",own_action_service:"Call a service",own_action_fire_dom_event:"fire-dom-event (browser_mod)",own_target_navigate:"Path",own_target_more_info:"Entity",own_target_service:"Service (domain.service)",own_data:"Data (JSON)",own_data_hint:`For a service its data, for fire-dom-event the event's content, e.g. {"browser_mod": {"service": "browser_mod.popup", "data": {\u2026}}}.`,own_data_bad:"Not a valid JSON object.",panel_no_area:"This room is not linked to an area. You can link it in the editor.",panel_empty:"No devices of this room are in the plan. In the editor, place devices or pick them for the room panel with \u2606.",close:"Close",brightness:"Brightness",color_temp:"Colour temperature",color:"Colour",position:"Position",cover_open:"Open",cover_stop:"Stop",cover_tilt:"Slats",cover_tilt_open:"Slats open",cover_tilt_close:"Slats closed",cover_close:"Close",target_temp:"Target",current_temp:"Current",temp_down:"Cooler",temp_up:"Warmer",volume:"Volume",play_pause:"Play/pause",previous:"Previous",next:"Next",run:"Run",details:"Details",hold_hint:"Tap toggles \xB7 long press opens details",tool_opening:"Doors & windows",tool_furniture:"Furniture",qm_off:"Off",find:"Search",find_placeholder:"Where is \u2026? Device or room",find_none:"Nothing found",swipe_off:"Off",panel_pin:"Show in the room panel",panel_unpin:"Don't show in the room panel",devices_panel_hint:"The room panel shows the devices in the plan. \u2606 adds a device to the room panel without placing it.",card_section_view:"View",card_size:"Size",card_size_fixed:"Fixed height",card_size_fill:"Fill the screen",card_fill_hint:"Works best in a dashboard view of the type \u201CPanel (single card)\u201D \u2013 the card then takes all the space.",card_controls:"Switches in the card",card_floor_thumbs:"Floors as miniatures",card_floor_thumbs_hint:"Small pictures of the floors at the side \u2013 tap one to switch",card_floor_thumbs_hint_start:"The chosen floor is then where the card starts \u2013 the pictures at the side switch to the others",card_room_names:"Show room names",card_section_kiosk:"Wall tablet (kiosk)",card_section_features:"Features",card_weather_plan:"as set in the plan",card_pro_hint:"Motion trail and camera wall belong to the cameras: the trail shows the last half hour, the wall every camera of the plan.",card_idle_return:"Back to the start view after",card_idle_off:"Never",card_idle_min:"{n} min without a touch",card_idle_hint:"After the wait the card closes the room and shows the start view again.",card_night:"Night dimming",card_night_off:"Off",card_night_sun:"By the sun",card_night_time:"Time range",card_night_range:"Time range (e.g. 22:00-06:00)",card_idle_orbit:"Camera turn as screensaver",card_idle_orbit_hint:"After the return the view turns slowly until someone touches the tablet",card_dashboard:"Button to a dashboard (path)",card_dashboard_label:"Label of the button",card_dashboard_hint:"A button at the top right of the card opens the dashboard or view with this path, e.g. /lovelace/home or /dashboard-house/0. Without a label it shows \u2302.",card_alerts:"Show warnings",card_alerts_hint:"Smoke, gas, CO, water, alarm panel and windows open in the rain: the room pulses, a note appears at the top",card_alert_jump:"Jump to the room of a new warning",card_alert_jump_hint:"The view switches to the floor and room of the warning by itself",card_scenes:"Scene buttons in the room",card_scenes_hint:"Scenes and scripts of the area as buttons under the 3D view while a room is selected",card_motion_trail:"Motion trail",card_camera_wall:'"Cameras" button (camera wall)',card_camera_wall_hint:"A button at the bottom of the card opens the camera wall with every live picture.",card_motion_trail_hint:"A path of the last half hour's motion through the house, with times",trail_short:"Trail",cameras_short:"Cameras",camera_wall_title:"Camera wall",camera_wall_hint:"All cameras side by side. Tap one to enlarge it; a red outline means motion.",detect_person:"Person",detect_car:"Vehicle",detect_pet:"Animal",detect_motion:"Motion",weather_short:"Weather",weather_entity:"Weather entity",weather_effects:"Weather effects in 3D",rain_warning:"Warning: window open while it rains",sun_patches:"Sunlight through the windows",sun_patches_hint:"With north set, the sunlight from sun.sun falls through the windows as bright patches on the floor. Untick it to keep the floor free of sun patches.",weather_effect_rain:"Rain",weather_effect_snow:"Snow",weather_effect_fog:"Fog (greys the scene)",weather_effect_clouds:"Clouds dim the sky and the sun",weather_effect_lightning:"Lightning in storms",weather_effect_sky:"Sun and moon in the sky",weather_entity_hint:"Which weather entity drives the sky around the house. Automatic uses the first one found.",weather_hint:"Weather at the house: rain and snow fall with the real wind, clouds drift over the plot with their shadows, lightning, fog, sun and moon",card_weather:"Weather outside",card_weather_hint:"Rain, snow, hail, clouds with shadows, lightning and fog from the first weather entity (weather_entity picks another); fewer particles on the tablet level",trail_hint:"Motion trail: where motion was reported in the last 30 minutes, with times",alerts:"Warnings",alert_smoke:"Smoke: {name}",alert_gas:"Gas: {name}",alert_co:"Carbon monoxide: {name}",alert_water:"Water: {name}",alert_alarm:"Alarm triggered",alert_alarm_pending:"Alarm pending",alert_window_rain:"Window open in the rain: {name}",room_names_short:"Room names",floor_stack_short_dim:"Dimmed",floor_stack_short_stacked:"Stacked",floor_stack_short_single:"Alone",size_short_w:"W",size_short_d:"D",size_short_h:"H",import_error_not_json:"The file is no JSON.",import_error_not_plan:"The file is no NextFloor plan.",export_name_template:"template",export_name_backup:"backup",card_floor_stack:"Floors below",floor_stack_dim:"Dimmed",floor_stack_stacked:"Stacked (the house up to here)",floor_stack_single:"Hidden (only this floor)",card_control_walls:"Tall walls/cut",card_control_floors:"Floors apart",card_control_temperature:"Temperature",card_control_humidity:"Humidity",card_control_co2:"CO\u2082",card_controls_hint:"Tall walls/cut, floors apart and temperature, humidity, CO\u2082 to switch",controls_hide:"Hide the controls \u2013 only the 3D view remains",nav_wrap:"Wrap the bar: every floor and room on several lines",nav_row:"Bar in one line (scrolls sideways)",controls_show:"Show the controls again",card_controls_hidden:"Start with the controls hidden",card_controls_hidden_hint:"Only the 3D view; an eye at the bottom left brings bars, values and switches back",card_controls_hide_after:"Hide the controls after",card_hide_after_s:"{n} s without a touch",card_fullscreen_button:"Full screen button",card_fullscreen_button_hint:"Hides the dashboard around the card (e.g. on a wall tablet)",fullscreen:"Full screen",fullscreen_exit:"Exit full screen",card_section_show:"Show",card_floor:"Floor",card_floor_house:"Whole house (tap a floor to open it)",card_height:"Height (pixels)",card_walls:"Walls",card_quality_hint:"\u201CTablet\u201D is the lightest setting \u2013 ideal for Fire tablets and other wall tablets.",card_flows_switch:"Switch in the card",card_flows_on:"Always on",card_flows_off:"Always off",holos:"Cards",holos_hint:"Show or hide the live cards over the house (energy balance, car, media)",card_energy:"Show energy values at the top",card_room_panel:"Room details on tap",card_room_panel_hint:"The room's lights, blinds and cameras in a side panel",card_explode:"Pull floors apart in the house view",card_roof_fade:"Fade the roof out while zooming in",card_roof_fade_hint:"Off: the roof stays on the house even when the camera comes close.",card_stats:"Performance display (frames per second)",card_stats_hint:"To check how smoothly the card runs on the device",packs:"Furniture packs",packs_hint:"Your own furniture packs are JSON files (format in docs/packs.md). The packs that come with NextFloor are always there.",lib_badge_light:"Lamp: links to a light and switches in 3D",lib_badge_electric:"Electric: links to an entity and a power sensor (switching, pictures, consumption)",lib_badge_hint:"Items with a symbol link to entities: lamps switch, screens show pictures, appliances show their consumption.",pack_import:"Import furniture packs \u2026",pack_imported:"Imported \u201C{name}\u201D by {publisher} \u2013 {n} items",packs_imported_n:"{n} of {total} packs imported",pack_by:"by {publisher} \xB7 {n} items",feature_text_cameras:"Tap a camera: the view flies to where it hangs and looks its way, then the live picture fades in \u2013 with what it detects right now (person, vehicle, animal). The camera wall shows every camera side by side, the motion trail draws the last half hour as a glowing path through the house, with times at every room.",feature_name_energy:"Energy flow",feature_name_cameras:"Cameras",feature_name_weather:"Weather at the house",feature_name_screens:"TV screens",feature_name_sound:"Sound",feature_name_car:"Car",ext_tab:"Extensions",ext_title:"Extensions",ext_intro:"What NextFloor brings: its larger features and the furniture packs. Everything is free and open source \u2013 import your own furniture packs here.",ext_pro:"Features",ext_open:"Open extensions",manual:"Manual",manual_more:"Learn more",ext_teaser_title:"More furniture and live features",ext_teaser_text:'Furniture packs and the live add-ons (weather, energy, car, sound, screens, cameras) are under "Extensions" at the top.',feature_text_weather:"Rain, snow, hail and sleet fall at an angle with the real wind, clouds drift over the plot with their shadows, lightning strikes beside the house, plus fog, sun and moon in their real direction.",feature_text_screens:"A TV or monitor that plays shows in 3D what plays: cover, title, artist or series and the app \u2013 on a gradient in the app's colour. Behind it an ambilight glows on the wall, breathing gently while it plays.",feature_text_energy:"Energy particles fly in arcs from the solar fields to the inverter, between house, battery, grid and consumers \u2013 faster and denser the more power flows. The modules sparkle with their production, a glass card over the roof shows the balance and how self-sufficient the house is right now.",feature_text_sound:"A card floats over every speaker or TV that plays, with cover, title and artist \u2013 tap it for previous, play/pause, next and volume. Sound rings in the colour of the app (Spotify green, Netflix red \u2026) spread out, louder reaches further, and speakers of a multiroom group are joined by a thread.",feature_text_car:"A glass card over the parking spot shows the charge with a colour ring, range, charging with its power, plug and inside temperature \u2013 with buttons for lock, climate and charging. While the car charges, energy particles fly into it from the wallbox; when it is away, the card says where it is. NextFloor finds the entities on the car's device by itself.",pack_remove:"Remove",pack_builtin:"built in",live_autarky:"self-sufficient",live_car_away:"On the road",live_car_charging:"Charging",live_car_plugged:"Plugged in",live_car_lock:"Lock",live_car_unlock:"Unlock",live_car_unlock_confirm:"Really unlock {name}?",live_car_climate:"Climate",live_car_charge:"Start/stop charging",live_media_prev:"Previous",live_media_playpause:"Play/pause",live_media_next:"Next",live_media_volume:"Volume",live_now:"now",live_minutes_ago:"{n} min ago",live_car_device:"Car (any entity of the car)",live_car_device_hint:"Charge, range, charging, plug, lock and climate are found by NextFloor on the car's device. Without one it takes the spot's presence sensor.",pack_remove_confirm:"Remove the pack \u201C{name}\u201D? Its furniture stays in the plan as plain boxes.",pack_missing_item:"Furniture of a removed pack",pack_error_not_a_pack:"This is not a furniture pack file.",pack_error_builtin:"A pack that comes with NextFloor already has this id.",pack_error_invalid_content:"The pack contains invalid furniture: {detail}",pack_error_too_large:"The file is too large.",pack_error_needs_update:'This add-on needs a newer version of NextFloor. Please update first (HACS \u203A NextFloor \u203A \u22EE \u203A "Update information" \u203A "Download"), restart Home Assistant, then install again.',pack_error_other:"Import failed: {detail}",back_to_room:"Back to {room}",back_to_floor:"Back to the floor",hint_furniture:"Tap a room, then pick an item on the right \xB7 drag items, resize them by their corners",furniture_into:"New items go into the middle of \u201C{room}\u201D.",furniture_pick_room:"Tip: tap a room first \u2013 new items then land in its middle.",flows:"Power flow",flows_hint:"Show or hide the energy arcs between solar fields, inverter, battery, grid and consumers",chk_title:"Setup",chk_hint:"What the energy flow needs. Tap a row to jump there.",chk_solar:"Solar field in place",chk_solar_add:"Put a solar field on the roof",chk_meter:"Meter with grid sensor",chk_meter_sensor:"Meter: grid sensor (W) missing",chk_meter_add:"Add the meter",chk_inverter:"Inverter with power sensor",chk_inverter_sensor:"Inverter: power sensor missing",chk_inverter_add:"Add an inverter",chk_battery:"Home battery with power and charge",chk_battery_sensor:"Home battery: power or charge missing",chk_battery_opt:"Home battery (optional)",chk_grid:"Grid connection set",chk_grid_opt:"Grid connection (optional, else automatic)",energy_sign_grid:"The house shows export while the sun produces nothing. The grid sensor probably has its sign reversed.",energy_sign_battery:"The battery charges with no sun and no grid draw. Its sensor probably has its sign reversed.",energy_sign_flip:"Flip the sign",help_title:"Help and feedback",help_hint:"Please report problems as a GitHub issue and wishes as a discussion \u2013 nothing gets lost, and everyone sees the state.",help_issue:"Report a problem",help_idea:"Propose an idea",furn_name:"Name (optional)",furn_mirror:"Mirror",furn_mirror_hint:"Swap left and right \u2013 the L-sofa the other way round, the cabinet with its door on the other side, the kitchen run mirrored.",hint_opening:"Tap a wall to add a door or window \u2013 choose its kind on the right afterwards",preset_door:"Door",preset_door_double:"Double door",preset_window:"Window",preset_window_double:"Double window",preset_terrace:"Terrace door",preset_terrace_double:"French doors",preset_garage:"Garage door",preset_front:"Front door",opening_style:"Style",sidelight_auto:"automatic",sidelight_hinge:"Sidelight on the hinge side",sidelight_hinge_hint:"The sidelight sits opposite the hinge otherwise; ticked, it sits next to the hinges.",sidelight_width:"Sidelight width (m)",sidelight_width_left:"Left sidelight (m)",sidelight_width_right:"Right sidelight (m)",style_auto:"Automatic ({style})",style_interior:"Room door",style_front:"Front door",style_front_glass:"Front door with glass",style_sidelight:"Front door with sidelight",style_sidelights:"Front door with two sidelights",style_glass:"Glass door",style_sliding:"Sliding door",style_passage:"Opening (no door)",style_standard:"Standard",style_bars:"With glazing bars",style_glass_wall:"Glass wall (fixed)",preset_glass_wall:"Glass wall",flip_hinge:"Swap hinge side",flip_main_leaf:"Swap main leaf",flip_hinge_hint:"Hinges to the other side",flip_swing:"Reverse opening direction",flip_swing_hint:"The door swings into the room or to the other side",main_leaf:"Main leaf (seen from the room)",contact_main:"Contact main leaf",contact_second:"Contact second leaf",tool_outdoor:"Outdoor",tool_measure:"By measure",hint_measure:"Tap the starting point, then type the wall lengths with their direction on the right",measure:"Room by measure",measure_start:"Tap the starting point in the plan, e.g. a room corner.",measure_from:"Start at {x} / {z} m \u2013 tapping moves the start.",measure_length:"Length of the next wall (m)",measure_close:"Close room",measure_undo:"Remove last wall",measure_gap:"Gap to the start: {gap} m (joined when closing)",measure_hint:"Tip: type a length and press an arrow key. With measured inside dimensions, use \u201CClose gaps\u201D afterwards.",rect_by_size:"Rectangle by size",rect_add:"Add rectangle",dir_up:"Up",dir_down:"Down",dir_left:"Left",dir_right:"Right",hint_outdoor:"Drag to draw an outdoor area (lawn, terrace, pool \u2026)",outdoor:"Outdoor area",outdoor_type:"Type",outdoor_height:"Height (m)",outdoor_offset:"Height offset (m, \u2212 = lower)",outdoor_outline:"Show the outline",outdoor_outline_hint:"Unticked, the area draws no glowing line along its edge \u2013 for large plots made of several lawns.",outdoor_hint:"Outdoor lights (path light, garden spot, outdoor wall light) light all outdoor areas and the facade.",out_lawn:"Lawn",out_terrace:"Terrace",out_path:"Path",out_driveway:"Driveway",out_pool:"Pool",out_bed:"Flower bed",out_hedge:"Hedge",out_fence:"Fence",out_wild:"Wild patch",out_pergola:"Pergola / frame",outdoor_open:"Open (leave out the last edge)",outdoor_open_hint:"The edge from the last point back to the first is not drawn \u2013 a fence or pergola leaning against the house.",outdoor_bracing:"X-bracing",outdoor_cut:"Cut out of the areas beneath",outdoor_cut_hint:"Every area drawn before this one that contains it whole gets a hole here \u2013 a pond or a wild patch in the lawn.",outdoor_slope:"Slope (m)",outdoor_slope_hint:"Height difference from the high edge to the low edge; the high edge sits at the height offset. Lamps on the area follow.",outdoor_slope_dir:"Falls towards",slope_x:"right (+X)",slope_nx:"left (\u2212X)",slope_z:"down (+Z)",slope_nz:"up (\u2212Z)",north:"North (\xB0 clockwise from up)",north_hint:"North is needed for the sun (light through the windows).",roof:"Roof",roof_none:"No roof",roof_flat:"Flat roof",roof_gable:"Gable roof",roof_custom:"Roof sections (custom)",roof_sections:"Roof sections",roof_sections_hint:"Each roof section covers a rectangle of the house, e.g. the house, the barn or an extension \u2013 each with its own shape, ridge direction, eave height and pitch. Drag in the plan to draw a new one; tap selects it, dragging moves it, the corners resize it.",roof_sections_start:"Create roof sections from the rooms",roof_sections_regen:"Create again from the rooms",roof_sections_off:"Back to one roof",roof_regen_confirm:"Replace all roof sections with a new proposal from the rooms?",roof_section:"Roof section",roof_section_hint:"Heights count from the ground. A side with a lower eave reaches further down (catslide); pent roofs rise from the first side.",roof_shape_gable:"Gable",roof_shape_hip:"Hip",roof_shape_pent:"Pent",roof_shape_flat:"Flat",roof_shape_halfhip:"Half-hip",roof_shape_pyramid:"Pyramid",roof_shape_mansard:"Mansard",roof_shape_parapet:"Parapet",roof_shape:"Shape",roof_axis_x:"Ridge \u2194",roof_axis_z:"Ridge \u2195",roof_eave:"Eave (m)",roof_pitch_short:"Pitch (\xB0)",roof_height:"Height (m)",roof_base:"Top of walls (m)",roof_on_floor:"Sits on floor",roof_on_floor_hint:"Puts the section on this floor's wall tops; base and eaves move along. In the 3D view the roof belongs to this floor.",roof_base_hint:"Below the ceiling height of the floor underneath, that floor's walls end under the roof: knee walls at the eaves, gables up to the ridge, inner walls cut by the slope. Dashed lines in the plan show where 1.5 m and 2 m of headroom remain.",roof_ridge_height:"Ridge height",roof_side_top:"top",roof_side_bottom:"bottom",roof_side_left:"left",roof_side_right:"right",roof_swap:"Swap sides",roof_open:"Canopy (posts instead of walls, see-through)",roof_open_short:"Canopy",roof_dormer:"Dormer",roof_dormer_hint:"A dormer on this side of the roof: 2 m wide, its front at the eave wall, eaves 1.4 m above the roof's eave, gable roof. Then move it and change its width and heights like any section; the main slope opens under it and the attic wall rises up to the dormer \u2013 a window fits there.",roof_outline:"Take the floor's outline",roof_outline_hint:"A flat roof as a free shape: takes the outline of the shown floor's rooms (L- or Z-shaped too) as one surface without seams. The corners can be dragged afterwards.",roof_points_hint:"Free shape: drag the corners in the plan. Back to the rectangle drops the shape.",roof_rect:"Back to the rectangle",roof_open_hint:"For a terrace roof or a carport: posts and beams carry the roof instead of walls, and it is see-through. Where the canopy meets the house wall, it rests on the wall.",roof_swap_hint:"Turns the roof round: the two sides swap eave and pitch, a pent roof rises the other way.",roof_pitch:"Roof pitch (\xB0)",roof_overhang:"Roof overhang (m)",roof_ridge:"Ridge",roof_ridge_long:"Along the long side",roof_ridge_short:"Along the short side (e.g. terraced house)",device:"Device",lamp_mount:"Lamp",lamp_ceiling:"Ceiling light",lamp_floor:"Floor lamp",lamp_table:"Table lamp",lamp_wall:"Wall light",marker_height:"Marker height (m)",height_auto:"Automatic height",device_centre:"To room centre",lights_spread:"Spread ceiling lights evenly",devices_search:"Search devices \u2026",devices_more:"+{n} more",devices_less:"less",panel_more:"More devices of the area ({n})",panel_less:"Show less",gaps_close:"Close gaps",gaps_hint:"Join rooms up to 60 cm apart at one shared wall; the gap becomes the interior wall thickness.",gaps_none:"No gaps between rooms found.",gaps_closed:"{n} places closed.",gaps_closed_wall:"{n} places closed, interior wall now {t} m.",fps:"FPS",fps_title:"Performance display (frames per second)",hint_garage:"Tap a wall to add a garage door",opening_garage:"Garage door",garage_hint:"The door follows a garage cover (position or open/closed) or a garage door contact of the room's area.",door_hint:"With a door contact the leaf swings open; without a sensor it stands half open.",hint_door:"Tap a wall to add a door",hint_window:"Tap a wall to add a window",opening_door:"Door",opening_window:"Window",opening_type:"Type",opening_position:"Centre from corner (m)",sill:"Sill height (m)",opening_height:"Height (m)",hinge:"Hinge (seen from the room)",hinge_left:"Left",hinge_right:"Right",cover_entity:"Blind",door_cover:"Drive (motorised door or gate)",cover_position_entity:"Position sensor (live)",cover_position_invert:"Sensor counts the other way round (0 = open)",contact_entity:"Contact",sensor_kind:"Sensor type",sensor_kind_contact:"Window contact (open/closed)",sensor_kind_handle:"Handle sensor (open/tilted/closed)",sensor_kind_contact_tilt:"Contact + tilt sensor",handle_entity:"Handle sensor",handle_main:"Handle sensor main leaf",leaf_main:"Main leaf",leaf_second:"Second leaf",tilt_entity:"Tilt sensor",tilt_angle_entity:"Tilt angle sensor (\xB0, optional)",tilt_angle_max:"Angle that counts as fully tilted (\xB0)",tilt_angle_offset:"Offset: angle reported while closed (\xB0)",tilt_angle_invert:"The angle counts the other way round",door_shut:"Show closed without a sensor",door_shut_hint:"A door without a contact stands half open in 3D so it reads as a door. Ticked, it is drawn closed \u2013 front door, carport, side door.",entity_auto:"Automatic ({name})",entity_auto_none:"Automatic (none found)",entity_none:"None",entity_search:"Type to search \u2026",opening_hint:`Sensor type: window contact (reports open/closed), handle sensor (reports open, tilted and closed \u2013 e.g. a Homematic window handle) or contact + tilt sensor (a second sensor that only reports tilted). Automatic uses the blinds and contacts of the room's area. Position sensor: an entity reporting the blind's position while it moves (e.g. a Homematic "level", 0\u2013100 % or 0\u20131, open = high) \u2013 the blind then moves live in 3D.`,furniture:"Furniture",furniture_add:"Add furniture",furniture_search:"Search furniture \u2026",furniture_search_none:"Nothing found. Try another word \u2013 English or German.",furniture_type:"Item",rotation:"Rotation (\xB0)",strip_tilt:"Tilt about its length (\xB0)",strip_upright:"Upright",strip_upright_hint:"The strip stands on end: its length runs up from the height above the floor \u2013 along a door frame, as a light column. The tilt lays a lying strip against a slope (90\xB0 = its face points sideways).",rotate_left:"\u21BA 90\xB0",rotate_right:"\u21BB 90\xB0",height_m:"Height (m)",furn_sofa:"Sofa",furn_armchair:"Armchair",furn_table:"Table",furn_chair:"Chair",furn_bed:"Bed",furn_nightstand:"Nightstand",furn_wardrobe:"Wardrobe",furn_shelf:"Shelf",furn_kitchen:"Kitchen unit",furn_worktop:"Worktop",furn_fridge:"Fridge",furn_fridge_smart:"Smart fridge (side by side)",furn_door_left:"Door sensor left (freezer side)",furn_door_right:"Door sensor right (fridge side)",fridge_hint:"While a door sensor reports open, the door swings open in 3D.",furn_stove:"Stove",furn_sink:"Sink",furn_bathtub:"Bathtub",furn_shower:"Shower",furn_wc:"WC",furn_washbasin:"Washbasin",furn_desk:"Desk",furn_tv_board:"TV board",furn_plant:"Plant",furn_rug:"Rug",furn_stairs:"Stairs",furn_stairwell:"Floor opening",stairwell_hint:"A hole in this floor, for example above the staircase or for a gallery; from above you look through it. The opening must lie within one room; several openings may overlap (for an L shape, for example). Stairs on the floor below that reach up here open the floor by themselves as well.",tool_hole:"Floor opening",tool_roof:"Roof",tool_energy:"Energy",tool_wall:"Wall",hint_wall:"Drag to draw a single wall (partition, half wall) \xB7 Shift keeps it straight \xB7 Alt without snapping",free_wall:"Wall",wall_length:"Length (m)",wall_thickness:"Wall thickness (m)",wall_height:"Height (m)",wall_height_full:"Full room height",wall_none:"No wall",wall_none_hint:"Leave this wall out altogether: for open floor plans whose rooms are one space but separate in Home Assistant.",edge_thickness:"Thickness (m)",wall_thickness_hint:"Thickness of this wall, e.g. 0.365 on a thick outer wall or 0.115 on a light partition. A wall between two rooms takes the thicker setting.",wall_thickness_reset:"Thickness as set for the house",wall_heights:"Wall heights",wall_n:"Wall {a}\u2013{b}",wall_part:"part {n}",wall_split_hint:"Split the wall here: the part gets a height of its own, e.g. 2.5 m next to 1.7 m in line",wall_split_at:"Split point from corner (m)",wall_join_hint:"Remove the split point: the part joins the one before it again",wall_exterior_short:"exterior wall",room_wall_hint:"A lower height turns the wall into a parapet or a counter. If two rooms share the wall, the lower setting applies. Windows and doors in it end at the wall height.",free_wall_hint:"A free-standing wall, e.g. a partition. Where it meets a room wall, the corner is mitred. Drag the handles to move its ends, drag the line to move the whole wall.",stairwell_outside:"This opening reaches across a room boundary and is therefore not cut. Move it fully into one room or make it smaller.",hint_hole:"Drag to draw a floor opening (stairwell, gallery)",hint_roof:"Drag to draw a roof section \xB7 tap selects \xB7 drag moves \xB7 corners resize",hint_energy:"Tap a solar field to select it \xB7 drag to move it, also onto another roof face \xB7 new fields with + Solar field on the right",furn_parking:"Parking spot",furn_group_vehicles:"Parking",parking_entity:'Sensor "car present"',parking_vehicle:"Vehicle",parking_vehicle_none:"None",parking_no_pack:'No vehicle pack imported \u2013 vehicles come from the "Vehicles" pack (Furniture \u2192 Import furniture pack).',parking_scale:"Size (%)",parking_type_entity:"Vehicle type sensor (optional)",parking_types:"State \u2192 vehicle",parking_type_state:"State (e.g. van)",parking_add_type:"+ Mapping",parking_hint:'Without a sensor the vehicle always stands there. With one it appears as soon as the sensor reports "on", "home" or "present". A vehicle type sensor (e.g. from an AI camera analysis) picks the model: when its state matches a mapping \u2013 also as a word in the text \u2013 that vehicle is shown, otherwise the default one.',parking_too_tall:"The vehicle ({car} m) is taller than the room ({room} m).",furn_lamp_ceiling:"Ceiling light",furn_lamp_downlight:"Downlight",furn_lamp_spot:"Surface spot",furn_lamp_panel:"LED panel",furn_lamp_uplight:"Floor uplight",furn_lamp_bollard:"Path light",furn_lamp_garden:"Garden spot",furn_radiator:"Radiator",furn_robot_vacuum:"Robot vacuum",furn_entity_vacuum:"Robot vacuum",furn_robot_room:"Current room (sensor)",robot_hint:"While the robot cleans in Home Assistant it drives lanes in 3D through the room it reports (a \u201Ccurrent room\u201D sensor, matched by room or area name), else through the room of its dock. The track is simulated \u2013 Home Assistant usually does not know the exact position. It drives back to the dock when it returns.",furn_lamp_pendant:"Pendant light",furn_lamp_floor:"Floor lamp",furn_lamp_table:"Table lamp",furn_lamp_wall:"Wall light",furn_led_strip:"LED strip",furn_group_lights:"Lights",furn_entity_light:"Light or switch",furn_color_entity:"Colour and brightness from (optional)",furn_color_entity_hint:"For lights that a relay (Shelly, switch actuator) turns on and off while the bulb itself knows its colour and brightness: on/off comes from the switch above, colour and brightness from this entity.",furn_entity_climate:"Heating (thermostat)",lamp_hint:"Tap the lamp in 3D to switch it, long press for the quick menu. Switches work too (e.g. a relay for the ceiling light) \u2013 the lamp shines while it is on. Table lamps stand on the furniture below them.",lamp_hint_pendant:"Height = drop below the ceiling. Tap in 3D to switch, long press for details.",theme:"Look",version_hint:"Installed version of NextFloor \u2013 the frontend; the integration in Home Assistant reports {backend}",accent:"Accent colour",accent_hint:"An accent colour of your own: lines and glowing edges in the neon look, buttons and pins \u2013 \u21BA brings the neon cyan back",accent_reset:"Back to cyan",theme_neon:"Neon",theme_blueprint:"Blueprint",theme_day:"Day",furnish:"Furnish",split_3d:"3D beside",mount_height:"Height above the floor (m)",side_open:"Open the sidebar",side_close:"Close",side_details:"Details of the selection",side_pin:"Pin",side_pinned:"Pinned",side_pin_hint:"Pinned, the sidebar stays open; otherwise it folds away beside the 3D view while nothing is selected",split_3d_hint:"Live 3D next to the plan: drag and turn furniture and devices there \u2013 with undo, saved with the plan",size_w:"Width (m)",size_d:"Depth (m)",size_h:"Height (m)",furnish_hint:"Drag furniture, lamps and devices \xB7 furniture snaps to walls \xB7 tap one to turn it, set its height and mount",done:"Done",heatmap:"Heatmap",heat_off:"Normal",heat_short_temperature:"Temp.",heat_short_humidity:"Humidity",heat_short_co2:"CO\u2082",heat_short_values:"Values",heat_temperature:"Temperature",heat_humidity:"Humidity",heat_co2:"CO\u2082",heat_values:"Values at the room names",heat_none_found:"No matching sensors in the rooms' areas.",markers:"Markers",markers_none:"None",markers_important:"Important",markers_all:"All",furn_stool:"Stool",furn_coffee_table:"Coffee table",furn_tv_wall:"TV (wall)",furn_sideboard:"Sideboard",furn_table_round:"Round table",furn_bench:"Bench",furn_corner_bench:"Corner bench",furn_bar_stool:"Bar stool",furn_kitchen_wall:"Wall cabinet",furn_kitchen_tall:"Tall unit with oven",furn_island:"Kitchen island",furn_dishwasher:"Dishwasher",furn_bunk_bed:"Bunk bed",furn_dresser:"Chest of drawers",furn_washer:"Washing machine",furn_dryer:"Dryer",furn_office_chair:"Office chair",furn_tall_cabinet:"Tall cabinet",furn_coat_rack:"Coat rack",furn_group_living:"Living",furn_group_dining:"Dining",furn_group_energy:"Energy & solar",energy_devices:"Devices",wallbox_charging:"charging",wallbox_plugged:"plugged in",furn_soc:"State of charge (%)",furn_export:"Export power (W, separate sensor, optional)",furn_export_hint:"If your meter reports import and export in two sensors (e.g. Growatt, Tibber Pulse), take the import sensor as power above and the export sensor here. A signed sensor does not need this.",furn_charge:"Charging power (W, separate sensor, optional)",furn_charge_hint:"If your battery reports charging and discharging in two sensors (e.g. Anker Solix), take the discharging sensor as power above and the charging sensor here. A signed sensor does not need this.",furn_wallbox_status:"Status (charging, plugged in)",energy_only_note:"\u26A1 Energy: only solar fields and energy devices can be moved here; rooms and furniture are locked.",roof_only_note:"\u{1F3E0} Roof: only roof sections and roof windows can be moved here; rooms and furniture are locked.",energy_devices_hint:"Meter, inverters, home batteries, wallboxes and the grid connection are added here: on the floor chosen above, movable in the plan. With a power sensor they show their watts; the meter takes the grid sensor, a string picks its inverter. Several inverters and batteries (say a balcony plant on top) work too: each gets its own sensor.",solar_fields:"Solar fields",solar_hint:"Put modules on the roof: they lie in the slope of the roof face; on a flat roof they stand on frames. Drag a field in the plan to move it.",solar_no_roof:"Solar fields need a roof: a gable or flat roof under Settings, or roof sections here in the Roof tool.",solar_face_gone:"roof face missing",solar_summary:"{n} modules \xB7 {kwp} kWp",solar_add:"Solar field",solar_field:"Solar field",solar_face:"Roof face",solar_rows:"Rows",solar_cols:"Modules per row",solar_portrait:"Portrait",solar_landscape:"Landscape",solar_u:"Distance from the edge (m)",solar_v:"Distance from the eave (m)",solar_tilt:"Tilt of the frames (\xB0)",solar_flip:"Lean the other way",solar_partial:"only {n} of {total} fit on the face",solar_form_hint:"Modules that would reach beyond the roof face are left out. \u201CFill face\u201D puts as many modules on the roof as fit. kWp counted with 400 W per module.",solar_fit:"Fill face",roof_windows:"Roof windows",roof_window:"Roof window",roof_windows_hint:"Roof windows lie in the roof face, with a blind and contacts like windows. Drag them in the plan, also onto another roof face.",roof_window_tilt:"Tilt contact",roof_window_name:"Name (optional)",roof_window_motor:"Window motor (cover, optional)",roof_window_motor_hint:"A window motor (Velux, Roto, Fakro) reports its position as a cover: the sash opens in 3D as far as the motor stands. A contact or tilt contact still works without a motor.",roof_window_hint:"Open, the sash swings out, hinged at the top; tilted, a little; and the frame glows warm; the blind comes down over the glass from the top. In a roof section the window cuts a hole into the slope, so the attic looks out through it.",solar_ground:"Free-standing (garden, garage roof \u2026)",solar_add_ground:"Free-standing",solar_base:"Height of the surface (m, 0 = ground)",solar_add_wall:"On a wall",solar_wall:"Wall",solar_v_wall:"Height above the floor (m)",solar_tilt_wall:"Tilt away from the wall (\xB0, 90 = canopy)",solar_flip_wall:"Standing off at the bottom instead of the top",solar_rotation:"Rotation (\xB0)",solar_name:"Name",solar_name_hint:"e.g. string 1 south",solar_module_w:"Module width (m)",solar_module_h:"Module height (m)",solar_wp:"Module power (Wp)",solar_string:"String",solar_strings:"Strings",solar_string_none:"No string",solar_string_new:"New string",solar_string_n:"String {n}",solar_string_name:"Name of the string",solar_string_entity:"PV power of the string",solar_string_inverter:"Inverter",solar_string_inverter_none:"No inverter chosen",inverter_strings:"Strings on this inverter: {names}",inverter_strings_none:"No string on this inverter yet \u2013 assign it at a solar field under String \u203A Inverter.",solar_string_inverter_missing:"No inverter in the plan yet (add one below under Devices)",solar_string_hint:"Fields in the same string belong together, also on different roofs (e.g. 5 modules on the house and 5 on the garage). Sensor and inverter count for the whole string.",solar_string_sum:"{fields} fields \xB7 {n} modules \xB7 {kwp} kWp",solar_face_size:"Roof face {w} \xD7 {h} m (along the eave \xD7 up the slope)",solar_cols_hint:"One number for rows of equal length, or a list for rows of their own: \u201C4, 4, 3\u201D (from the eave).",solar_align_left:"Left",solar_align_center:"Centre",solar_align_right:"Right",solar_look_black:"Full black",solar_look_blue:"Blue",solar_pick:"Modules on/off one by one",solar_pick_all:"All on again",solar_pick_hint:"Tap a module in the plan to take it away or put it back. Removed ones are dashed.",solar_entity:"PV power of this field (e.g. its string)",solar_main:"Main roof",solar_section:"Section {n}",solar_flat:"flat roof",compass_n:"north",compass_ne:"north-east",compass_e:"east",compass_se:"south-east",compass_s:"south",compass_sw:"south-west",compass_w:"west",compass_nw:"north-west",furn_meter:"Electricity meter",furn_grid_point:"Grid connection",grid_point_hint:"The grid connection stands here: the handover point to the utility, e.g. at the end of the driveway. Movable in the plan.",furn_model:"Model",inverter_std:"Standard (wall unit with display)",inverter_slim:"Slim and tall (light strip)",inverter_hybrid:"Hybrid (round dial, fans)",battery_std:"Tower (stacked modules)",battery_wall:"Wall battery (flat, hanging)",battery_cube:"Compact (balcony battery)",furn_inverter:"Solar inverter",furn_home_battery:"Home battery",furn_wallbox:"Wallbox",furn_group_kitchen:"Kitchen",furn_group_sleeping:"Sleeping",furn_group_bath:"Bath & laundry",furn_group_work:"Work & other",furn_entity:"Device (switch, plug \u2026)",furn_state_entity:"State from (optional)",furn_state_entity2:"Second state (the other half)",furn_state_split:"Halves",furn_state_left_right:"Left / right",furn_state_top_bottom:"Bottom / top (bunk bed)",furn_state_hint:"The item glows while the entity reports on, occupied or home \u2013 a bed with an occupancy mat, an armchair, the sauna. Two entities light the halves: left and right, bottom and top for a bunk bed.",furn_entity_tv:"TV (media player or smart plug)",fix:"Fix",unfix:"Release",fix_hint:"Fixed: cannot be moved by accident any more (key L, right-click or long press)",fixed_drag_hint:"\u{1F512} Fixed \u2013 release it first to move it (lock in the form, right-click or key L)",fixed_delete_confirm:"This item is fixed. Delete it anyway?",lock_plan:"\u{1F512} Floor plan",lock_plan_hint:"Lock the floor plan: rooms, walls, doors, windows and outdoor areas cannot be moved by accident. Furniture and devices stay free.",start_view:"Start view",start_view_hint:"The 3D view, the card and the kiosk open the house with this view, e.g. from the garden side. Turn, zoom and move the house in the 3D pane on the right until it fits, then remember it.",start_view_card:"If a card should open with a different view, put this line into its YAML configuration.",start_view_set:"Remember the current 3D view as the start",start_view_reset:"Default",start_view_saved:"An own start view is saved.",ctx_rotate:"Turn 90\xB0",devices_placed_in:"in {room}",devices_narrow:"{n} more \u2013 narrow the search",climate:"Room climate",climate_temperature:"Temperature",climate_humidity:"Humidity",climate_co2:"CO\u2082",climate_hint:"These sensors count for the heatmap and the room panel. \u201CAutomatic\u201D takes the sensors of the area and the ones placed in the room, but no device temperatures (3D printer, heat pump, flow \u2026).",plan_locked:"Floor plan locked",plan_lock:"Lock floor plan",plan_unlock:"Unlock floor plan",opening_mark:"Highlight in 3D",opening_mark_open:"When open",opening_mark_closed:"When closed (e.g. WC)",opening_mark_hint:"A highlighted window or door glows warm. \u201CWhen closed\u201D needs a contact; without a sensor nothing is highlighted.",marker_show:"Marker in 3D",marker_show_hint:"Automatic follows the None / Important / All switch of the 3D view. Always show and Hide apply regardless (except with None).",marker_show_auto:"Automatic",marker_show_always:"Always show",marker_show_no_power:"Without watts",marker_show_never:"Hide",marker_icon:"Own symbol (Material Design icon)",device_name:"Own name (optional)",show_name:"Show the name under the marker in 3D",card_marker_names:"Own names at the markers",card_marker_names_hint:"Every device with an own name shows it small under its marker \u2013 three thermometers in the garden stay apart.",device_name_hint:'A name for the plan only, e.g. "Island accent light" \u2013 the entity in Home Assistant stays as it is.',floor_turn:"Turn 90\xB0",floor_shift_all:"Take every floor along (whole house)",floor_shift_all_hint:"Shift and turn act on every floor with the roof sections, outdoor areas, energy devices and meter \u2013 the whole house moves as one.",floor_turn_hint:"Turns everything on the floor by 90\xB0 clockwise about the middle of its rooms \u2013 when a floor was drawn the wrong way round. Three times = 270\xB0.",marker_icon_hint:"The name of a Material Design icon as in Home Assistant, e.g. mdi:thermometer or mdi:water-alert. Empty = the symbol of the device kind.",furn_power:"Power sensor (W)",furn_links_hint:"With a power sensor the item shows its watts and takes part in the energy flow.",furn_links_hint_tv:"The screen glows while the TV is on, in the colour of the app (Netflix, YouTube \u2026); the label shows the app or title.",stairs_hint:"The stair rises towards the back (away from the marked front edge) and opens the ceiling of the floor above.",floor_lights:"{n} lights on",floor_open:"{n} open",floor_persons:"{n} people",energy_consumption:"Consumption",energy_grid_import:"Grid import",energy_grid_export:"Export",energy_solar:"Solar",energy_battery:"Battery",energy_tariff:"Tariff",energy:"Energy",energy_meter:"Meter",energy_grid:"Grid (W, + = import)",energy_solar_sensor:"Solar production (W)",energy_battery_sensor:"Battery power (W, + = discharging)",energy_battery_soc:"Battery charge (%)",energy_tariff_sensor:"Tariff (e.g. \u20AC/kWh)",energy_invert:"Invert sign",energy_hint:"Consumers are placed devices with a power sensor (W) \u2013 the sensor itself or one of the same device.",energy_balance:"Energy balance",energy_balance_hint:"Grid, solar and battery come from the devices in the plan: meter, inverter and home battery. Here you can choose other sensors, flip signs and set the house consumption.",energy_consumption_sensor:"House consumption (W, else from the balance)",energy_import_prefs:"Take over from the energy dashboard",energy_import_done:"{n} sensors taken over \u2013 please check the signs.",energy_import_none:"No matching power sensors (W) were found in the energy dashboard \u2013 please choose them by hand.",energy_import_failed:"Home Assistant's energy dashboard is not set up.",tool_meter:"Meter",hint_meter:"Tap the spot of the meter",presence:"Presence",presence_hint:"Room sensor per person (e.g. ESPresense, Bermuda): its state names the room or area.",presence_sensor:"Room sensor",no_persons:"There are no people in Home Assistant."},po=["fr","es","nl","it","hu","da","sv","nb","nn","fi","cs","pl","ro","sl"],dt=new Map,Tn=new Map;function Dn(o){let e=(o??navigator.language).toLowerCase(),t=e.startsWith("no")?"nb":e.slice(0,2);return po.includes(t)?t:null}function Er(o){let e=Dn(o);return!e||dt.has(e)}function Ar(o){let e=Dn(o);if(!e||dt.has(e))return Promise.resolve();let t=Tn.get(e);if(!t){let n=new URL(`./lang/${e}.json?v=be5ce4442bac`,import.meta.url).href;t=fetch(n).then(i=>i.ok?i.json():{}).then(i=>{dt.set(e,i&&typeof i=="object"?i:{})}).catch(()=>{dt.set(e,{})}).finally(()=>Tn.delete(e)),Tn.set(e,t)}return t}function ce(o,e,t={}){let n=o?.language??navigator.language,i=n.startsWith("de")?null:Dn(n),s=(n.startsWith("de")?Mr:i&&dt.get(i)||zr)[e]??zr[e]??Mr[e]??e;for(let[a,l]of Object.entries(t))s=s.replace(`{${a}}`,String(l));return s}function W(o,e,t=2){return e.toLocaleString(o?.language??void 0,{maximumFractionDigits:t})}var mo={light:"M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2v.5h5V16c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z",switch:"M7 4h10a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM12 8v8",fan:"M12 12c0-4 1-8 4-8s2 5-4 8zm0 0c4 0 8 1 8 4s-5 2-8-4zm0 0c0 4-1 8-4 8s-2-5 4-8zm0 0c-4 0-8-1-8-4s5-2 8 4z",cover:"M4 4h16v3H4zM5 7v13M19 7v13M7 10h10M7 13h10M7 16h10",climate:"M12 14.5V5a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0zM10 11v6M16 6h4M16 10h3",media:"M4 6h16v10H4zM9 20h6M12 16v4M10.5 8.8v4.4l3.8-2.2z",lock:"M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3M12 14.5v2",sensor:"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2",binary:"M5 21V4h11v17M16 21H4M8 21V7h5v14M12.5 13.5h.01",camera:"M4 7h11v10H4zM15 10.5l5-3v9l-5-3",scene:"M5 19l9-9M14 4l.8 2.2L17 7l-2.2.8L14 10l-.8-2.2L11 7l2.2-.8zM19 11l.5 1.5L21 13l-1.5.5L19 15l-.5-1.5L17 13l1.5-.5z",script:"M8 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2h9M8 4a2 2 0 0 0-2 2v10M9 9h6M9 12h4"};function ut(o){return mo[o]}function Rr(o,e){let t=`${e} ${String(o.states[e]?.attributes.friendly_name??"")}`.toLowerCase().replace(/[_.-]/g," ");return/person|people|human|pedestrian/.test(t)?"person":/\bcar\b|vehicle|truck|bus|motorcycle|bicycle|fahrzeug|auto\b/.test(t)?"car":/\bdog\b|\bcat\b|\bpet\b|animal|bird|hund|katze|tier/.test(t)?"pet":"motion"}function Fr(o,e){let t=o.entities?.[e]?.device_id;return t?Object.values(o.entities??{}).filter(n=>n.device_id===t&&n.entity_id.startsWith("binary_sensor.")).map(n=>n.entity_id).filter(n=>["motion","occupancy","presence"].includes(String(o.states[n]?.attributes.device_class))):[]}var G=(o,e)=>[o[0]-e[0],o[1]-e[1]],$e=(o,e)=>[o[0]+e[0],o[1]+e[1]],ge=(o,e)=>[o[0]*e,o[1]*e],pt=(o,e)=>o[0]*e[0]+o[1]*e[1],Ke=(o,e)=>o[0]*e[1]-o[1]*e[0],ft=o=>Math.hypot(o[0],o[1]),he=o=>{let e=ft(o)||1;return[o[0]/e,o[1]/e]},Ir=o=>[-o[1],o[0]],Pr=o=>[o[1],-o[0]];function ne(o,e,t=[]){let n=e.eps??.005,i=[],r=t.filter(k=>Math.hypot(k.b[0]-k.a[0],k.b[1]-k.a[1])>.05),s=[],a=k=>{for(let M=0;M<s.length;M++)if(Math.abs(s[M][0]-k[0])<=n&&Math.abs(s[M][1]-k[1])<=n)return M;return s.push([k[0],k[1]]),s.length-1},l=[];for(let k of o){let M=k.points;if(M.length<3||Math.abs(Y(M))<1e-6)continue;let R=Y(M)>0,A=M.map(a);for(let I=0;I<M.length;I++){let P=A[I],T=A[(I+1)%M.length];P!==T&&l.push(R?{u:P,v:T,room:k.id,edge:I,forward:!0}:{u:T,v:P,room:k.id,edge:I,forward:!1})}}let c=r.map(k=>[a(k.a),a(k.b)]),h=new Set;for(let k of o){let M=k.points;M.length<3||(k.wall_splits??[]).forEach((R,A)=>{if(!R||A>=M.length)return;let I=M[A],P=G(M[(A+1)%M.length],I),T=ft(P);for(let B of R)B>n&&B<T-n&&h.add(a($e(I,ge(P,B/T))))})}let d=[];for(let k of l){let M=s[k.u],R=s[k.v],A=G(R,M),I=ft(A),P=ge(A,1/I),T=[];for(let O=0;O<s.length;O++){if(O===k.u||O===k.v)continue;let q=G(s[O],M),Q=pt(q,P);Q<=n||Q>=I-n||Math.abs(Ke(P,q))<=n&&T.push({t:Q,id:O})}T.sort((O,q)=>O.t-q.t);let B=[{t:0,id:k.u},...T,{t:I,id:k.v}];for(let O=0;O+1<B.length;O++){let q=B[O],Q=B[O+1],Z=k.forward?q.t:I-Q.t,X=k.forward?Q.t:I-q.t;d.push({u:q.id,v:Q.id,room:k.room,edge:k.edge,t0:Z,t1:X})}}let u=new Map;for(let k of d){let M=k.u<k.v?`${k.u}-${k.v}`:`${k.v}-${k.u}`,R=u.get(M);R||u.set(M,R=[]),R.push(k)}let f=k=>({room_id:k.room,edge:k.edge,t0:k.t0,t1:k.t1}),p=new Map;for(let k of d){let M=`${k.room}:${k.edge}`;p.set(M,[...p.get(M)??[],k.t0].sort((R,A)=>R-A))}let m=k=>{let M=o.find(A=>A.id===k.room)?.wall_heights?.[k.edge];if(!Array.isArray(M))return M;let R=p.get(`${k.room}:${k.edge}`)??[];return M[R.indexOf(k.t0)]??null},_=k=>{let M=k.map(m).filter(R=>typeof R=="number"&&R>0);return M.length?Math.min(...M):void 0},x=k=>{let M=k.map(R=>o.find(A=>A.id===R.room)?.wall_thickness?.[R.edge]).filter(R=>typeof R=="number"&&R>0);return M.length?Math.max(...M):void 0},b=k=>k.some(M=>m(M)===0),w=[],$=[];for(let k of u.values()){let M=k[0],R=k.find(A=>A!==M&&A.u===M.v&&A.v===M.u&&A.room!==M.room);for(let A of k)A!==M&&A!==R&&A.room!==M.room&&i.push(`overlap:${M.room}:${A.room}`);if(b(R?[M,R]:[M])){R&&w.push([M.room,R.room]);continue}if(R){let A=x([M,R])??e.interior;$.push({a:M.u,b:M.v,left:A/2,right:A/2,exterior:!1,roomLeft:M.room,roomRight:R.room,sources:[f(M),f(R)],height:_([M,R])})}else $.push({a:M.u,b:M.v,left:0,right:x([M])??e.exterior,exterior:!0,roomLeft:M.room,roomRight:null,sources:[f(M)],height:_([M])})}let y=k=>he(G(s[k.b],s[k.a]));for(let k of $){if(k.exterior||k.free)continue;let M=new Set;for(let A of[k.a,k.b])for(let I of $)!I.exterior||I.free||I.a!==A&&I.b!==A||Math.abs(Ke(y(k),y(I)))>1e-6||(I.roomLeft===k.roomLeft?M.add("left"):I.roomLeft===k.roomRight&&M.add("right"));if(M.size!==1)continue;let R=k.left+k.right;M.has("left")?(k.left=0,k.right=R):(k.left=R,k.right=0)}r.forEach((k,M)=>{let[R,A]=c[M];if(R===A)return;let I=[(k.a[0]+k.b[0])/2,(k.a[1]+k.b[1])/2],P=o.find(O=>O.points.length>=3&&D(I,O.points))?.id??null,T=(k.thickness??e.interior)/2,B=typeof k.height=="number"&&k.height>0?k.height:void 0;$.push({free:k.id,a:R,b:A,left:T,right:T,exterior:!1,roomLeft:P,roomRight:P,sources:[],height:B})}),$=_o($,s,h);let E=vo($,s);return{walls:$.map((k,M)=>{let R=s[k.a],A=s[k.b],I=E.get(`${M}:a`),P=E.get(`${M}:b`),T=wo([I.right,P.left,A,P.right,I.left,R],1e-6);return{id:go(R,A),a:[R[0],R[1]],b:[A[0],A[1]],left:k.left,right:k.right,exterior:k.exterior,roomLeft:k.roomLeft,roomRight:k.roomRight,sources:k.sources,footprint:T,...k.free?{free:k.free}:{},...k.height!==void 0?{height:k.height}:{}}}),warnings:[...new Set(i)],open:w}}function go(o,e){let t=r=>Math.round(r*100),[n,i]=o[0]<e[0]||o[0]===e[0]&&o[1]<=e[1]?[o,e]:[e,o];return`w_${t(n[0])}_${t(n[1])}_${t(i[0])}_${t(i[1])}`}function Tr(o){return{...o,a:o.b,b:o.a,left:o.right,right:o.left,roomLeft:o.roomRight,roomRight:o.roomLeft}}function _o(o,e,t=new Set){let n=o.slice(),i=!0;for(;i;){i=!1;let r=new Map;n.forEach((s,a)=>{for(let l of[s.a,s.b]){let c=r.get(l);c||r.set(l,c=[]),c.push(a)}});for(let[s,a]of r){if(a.length!==2||t.has(s))continue;let l=n[a[0]],c=n[a[1]];if(l.b!==s&&(l=Tr(l)),c.a!==s&&(c=Tr(c)),l.a===c.b)continue;let h=he(G(e[l.b],e[l.a])),d=he(G(e[c.b],e[c.a]));if(Math.abs(Ke(h,d))>1e-6||pt(h,d)<=0||l.free||c.free||l.height!==c.height||l.exterior!==c.exterior||l.roomLeft!==c.roomLeft||l.roomRight!==c.roomRight||Math.abs(l.left-c.left)>1e-9||Math.abs(l.right-c.right)>1e-9)continue;let u={...l,b:c.b,sources:bo(l.sources,c.sources)},f=n.filter((p,m)=>m!==a[0]&&m!==a[1]);f.push(u),n.length=0,n.push(...f),i=!0;break}}return n}function bo(o,e){let t=o.map(n=>({...n}));for(let n of e){let i=t.find(r=>r.room_id===n.room_id&&r.edge===n.edge&&(Math.abs(r.t1-n.t0)<1e-6||Math.abs(n.t1-r.t0)<1e-6));i?(i.t0=Math.min(i.t0,n.t0),i.t1=Math.max(i.t1,n.t1)):t.push({...n})}return t}function vo(o,e){let t=new Map;o.forEach((i,r)=>{let s=he(G(e[i.b],e[i.a])),a=[[i.a,{key:`${r}:a`,d:s,left:i.left,right:i.right,angle:Math.atan2(s[1],s[0])}],[i.b,{key:`${r}:b`,d:ge(s,-1),left:i.right,right:i.left,angle:Math.atan2(-s[1],-s[0])}]];for(let[l,c]of a){let h=t.get(l);h||t.set(l,h=[]),h.push(c)}});let n=new Map;for(let[i,r]of t){let s=e[i];r.sort((c,h)=>c.angle-h.angle);let a=c=>({left:$e(s,ge(Ir(c.d),c.left)),right:$e(s,ge(Pr(c.d),c.right))});for(let c of r)n.set(c.key,a(c));if(r.length<2)continue;let l=4*Math.max(...r.map(c=>Math.max(c.left,c.right)))+1e-9;for(let c=0;c<r.length;c++){let h=r[c],d=r[(c+1)%r.length],u=$e(s,ge(Ir(h.d),h.left)),f=$e(s,ge(Pr(d.d),d.right)),p=Ke(h.d,d.d);if(Math.abs(p)<1e-4)continue;let m=Ke(G(f,u),d.d)/p,_=$e(u,ge(h.d,m));ft(G(_,s))>l||(n.get(h.key).left=_,n.get(d.key).right=_)}}return n}function wo(o,e){let t=o.filter((i,r)=>ft(G(i,o[(r+1)%o.length]))>e),n=!0;for(;n&&t.length>3;){n=!1;for(let i=0;i<t.length;i++){let r=t[(i+t.length-1)%t.length],s=t[i],a=t[(i+1)%t.length],l=G(s,r),c=G(a,s);if(Math.abs(Ke(he(l),he(c)))<1e-7&&pt(l,c)>0){t=t.filter((h,d)=>d!==i),n=!0;break}}}return t}function Ge(o,e,t){let n=o.points[e],i=o.points[(e+1)%o.points.length],r=he(G(i,n));return $e(n,ge(r,t))}function je(o,e,t){if(o.wall){let i=t.find(a=>a.id===o.wall);if(!i||Math.hypot(i.b[0]-i.a[0],i.b[1]-i.a[1])<.05)return null;let r=he(G(i.b,i.a));return{room:{id:o.room_id,name:"",area_id:null,points:[i.a,i.b,$e(i.a,[-r[1],r[0]])]},edge:0}}let n=e.find(i=>i.id===o.room_id);return n&&o.edge<n.points.length?{room:n,edge:o.edge}:null}function Ln(o,e,t){if(!e.wall)return yo(o,t.room,t.edge,e.offset);let n=o.find(r=>r.free===e.wall);if(!n)return null;let i=Ge(t.room,0,e.offset);return{wall:n,s:pt(G(i,n.a),he(G(n.b,n.a)))}}function yo(o,e,t,n){for(let i of o){if(!i.sources.find(a=>a.room_id===e.id&&a.edge===t&&n>=a.t0-1e-6&&n<=a.t1+1e-6))continue;let s=Ge(e,t,n);return{wall:i,s:pt(G(s,i.a),he(G(i.b,i.a)))}}return null}var Tt=o=>o&&o!=="none"?o:null;function On(o,e=t=>Tt(t.power)){let t={grid:null,gridExport:null,solar:[],battery:[],charge:[],batteries:[],soc:[]};for(let n of o.floors)for(let i of n.furniture){let r=e(i);if(i.type==="meter")t.grid??=r,t.gridExport??=Tt(i.export);else if(i.type==="inverter"&&r&&!t.solar.includes(r))t.solar.push(r);else if(i.type==="home_battery"){r&&!t.battery.includes(r)&&t.battery.push(r);let s=Tt(i.charge);s&&!t.charge.includes(s)&&t.charge.push(s),(r||s)&&t.batteries.push({power:r,charge:s});let a=Tt(i.soc);a&&!t.soc.includes(a)&&t.soc.push(a)}}return t}function ko(o){for(let e of o.floors){let t=e.furniture.find(n=>n.type==="meter");if(t)return{floor_id:e.id,x:t.x,z:t.z}}return o.energy.meter}function Dt(o,e,t="power"){if(!e)return null;let n=o.entities?.[e]?.device_id;if(!n)return null;let i=Object.keys(o.states).filter(a=>a.startsWith("sensor.")&&o.entities?.[a]?.device_id===n&&o.states[a]?.attributes.device_class===t);if(i.length<=1)return i[0]??null;let r=i.filter(a=>!/(phase|_l[123]\b|_[abc]$|today|daily|heute)/.test(a)),s=e.replace(/^sensor\./,"").replace(/_?(energy|energie|total|today|daily|kwh|import|export|consumption|production)/g,"");return r.find(a=>s&&a.includes(s))??r[0]??i[0]}function Dr(o,e){let t={};for(let n of e.energy_sources??[])if(n.type==="grid"){let i=n.flow_from?.[0]?.stat_energy_from??n.flow_to?.[0]?.stat_energy_to,r=Dt(o,i);r&&!t.grid&&(t.grid=r)}else if(n.type==="solar"){let i=Dt(o,n.stat_energy_from);i&&!t.solar&&(t.solar=i)}else if(n.type==="battery"){let i=Dt(o,n.stat_energy_from??n.stat_energy_to);i&&!t.battery&&(t.battery=i);let r=Dt(o,n.stat_energy_from??n.stat_energy_to,"battery");r&&!t.battery_soc&&(t.battery_soc=r)}return t}function _e(o,e=!1){if(!o)return null;let t=Number(o.state);if(!Number.isFinite(t))return null;let n=String(o.attributes.unit_of_measurement??"W"),i=n==="kW"?t*1e3:n==="MW"?t*1e6:t;return e?-i:i}function Lr(o,e,t,n=On(e)){let i=e.energy,r=i.grid??n.grid,s=r?_e(o.states[r],i.grid_invert):null;if(!i.grid&&n.gridExport){let m=Math.max(0,_e(o.states[n.gridExport])??0);s=Math.max(0,s??0)-m}let a=i.solar?_e(o.states[i.solar]):null;if(!i.solar&&n.solar.length){let m=n.solar.map(_=>_e(o.states[_])).filter(_=>_!==null);a=m.length?m.reduce((_,x)=>_+x,0):null}let l=i.battery?_e(o.states[i.battery],i.battery_invert):null;if(!i.battery&&n.batteries.length){let m=n.batteries.map(_=>{if(_.charge){let x=_.power?Math.max(0,_e(o.states[_.power])??0):0,b=Math.max(0,_e(o.states[_.charge])??0);return x-b}return _.power?_e(o.states[_.power],i.battery_invert):null}).filter(_=>_!==null);l=m.length?m.reduce((_,x)=>_+x,0):null}let h=(i.battery_soc?[i.battery_soc]:n.soc).map(m=>Number(o.states[m]?.state)).filter(m=>Number.isFinite(m)),d=h.length?h.reduce((m,_)=>m+_,0)/h.length:NaN,u=i.tariff?o.states[i.tariff]:void 0,f=Number(u?.state),p=i.consumption?_e(o.states[i.consumption]):null;return p!==null?p=Math.max(0,p):s!==null||a!==null||l!==null?p=Math.max(0,(s??0)+Math.max(0,a??0)+(l??0)):t.length&&(p=t.reduce((m,_)=>m+_.power,0)),{grid:s,solar:a===null?null:Math.max(0,a),battery:l,soc:Number.isFinite(d)?d:null,tariff:u&&Number.isFinite(f)?{value:f,unit:String(u.attributes.unit_of_measurement??"")}:null,consumption:p}}function Or(o){let e=ko(o),t=e?o.floors.find(d=>d.id===e.floor_id):void 0;if(!e||!t)return null;let{wall_exterior:n,wall_interior:i}=o.settings,r=ne(t.rooms,{exterior:n,interior:i},t.walls??[]).walls.filter(d=>d.exterior),s=t.rooms.flatMap(d=>d.points);if(r.length===0||s.length===0)return null;let a=s.reduce((d,u)=>d+u[0],0)/s.length,l=s.reduce((d,u)=>d+u[1],0)/s.length,c=null;for(let d of r){let u=d.b[0]-d.a[0],f=d.b[1]-d.a[1],p=Math.hypot(u,f)||1,m=Math.min(1,Math.max(0,((e.x-d.a[0])*u+(e.z-d.a[1])*f)/(p*p))),_=d.a[0]+u*m,x=d.a[1]+f*m,b=Math.hypot(e.x-_,e.z-x);if(c&&b>=c.d)continue;let w=f/p,$=-u/p;w*(_-a)+$*(x-l)<0&&(w=-w,$=-$),c={x:_,z:x,nx:w,nz:$,d:b}}if(!c)return null;let h=n/2+3;return{floorId:t.id,x:c.x+c.nx*h,z:c.z+c.nz*h}}var be=Math.PI/180;function re(o){let e=Math.min(o.x0,o.x1),t=Math.max(o.x0,o.x1),n=Math.min(o.z0,o.z1),i=Math.max(o.z0,o.z1);return o.axis==="x"?{u0:e,u1:t,w:i-n,at:(r,s)=>[r,o.flip?i-s:n+s]}:{u0:n,u1:i,w:t-e,at:(r,s)=>[o.flip?t-s:e+s,r]}}function Se(o){let e=re(o).w,t=o.eave_a,n=o.eave_b,i=Math.tan(Math.min(80,Math.max(0,o.pitch_a))*be),r=Math.tan(Math.min(80,Math.max(0,o.pitch_b))*be);if(o.shape==="flat"||o.shape==="parapet")return{vr:e/2,rh:t,y:()=>t};if(o.shape==="pent")return{vr:e,rh:t+e*i,y:l=>t+l*i};if(o.shape==="mansard"){let l=Nr(e,t,n,i,r);return{vr:l.vr,rh:l.rh,y:l.y}}let s=i+r>1e-6?Math.min(e,Math.max(0,(n-t+e*r)/(i+r))):e/2,a=t+s*i;return{vr:s,rh:a,y:l=>l<=s?t+l*i:n+(e-l)*r}}var xo=.14;function Wr(o,e){return!o.open&&Math.min(o.base,o.eave_a,o.eave_b)<e-.05}function Br(o,e,t){let n=[];for(let i of o.settings.roof.sections??[]){if(i.open||i.shape==="flat"||i.shape==="parapet"||i.shape==="mansard")continue;let r=re(i),s=Se(i),a=e+t+xo,l=[],c=Math.tan(Math.min(80,Math.max(0,i.pitch_a))*be),h=Math.tan(Math.min(80,Math.max(0,i.pitch_b))*be);c>1e-6&&l.push((a-i.eave_a)/c),i.shape==="gable"&&h>1e-6&&l.push(r.w-(a-i.eave_b)/h);for(let d of l)d<=.01||d>=r.w-.01||i.shape==="gable"&&Math.abs(s.y(d)-a)>1e-6||n.push([r.at(r.u0,d),r.at(r.u1,d)])}return n}function $o(o,e){let t=o.length;if(t<3||Math.abs(e)<1e-9)return o.map(r=>[r[0],r[1]]);let n=ae(o)>=0?1:-1,i=[];for(let r=0;r<t;r++){let s=o[(r+t-1)%t],a=o[r],l=o[(r+1)%t],c=Hr([a[0]-s[0],a[1]-s[1]]),h=Hr([l[0]-a[0],l[1]-a[1]]),d=[c[1]*n,-c[0]*n],u=[h[1]*n,-h[0]*n],f=d[0]+u[0],p=d[1]+u[1],m=Math.hypot(f,p);if(m<1e-6){i.push([a[0]+d[0]*e,a[1]+d[1]*e]);continue}let _=(f*d[0]+p*d[1])/m,x=Math.min(4,1/Math.max(.25,_));i.push([a[0]+f/m*e*x,a[1]+p/m*e*x])}return i}function Hr(o){let e=Math.hypot(o[0],o[1])||1;return[o[0]/e,o[1]/e]}function Hn(o){let e=o.map(n=>n[0]),t=o.map(n=>n[1]);return{x0:Math.min(...e),z0:Math.min(...t),x1:Math.max(...e),z1:Math.max(...t)}}function Vr(o,e,t,n){let i=ne(o,{exterior:t,interior:n},e).walls.filter(d=>d.exterior&&!d.free);if(!i.length)return null;let r=d=>`${Math.round(d[0]*1e3)}:${Math.round(d[1]*1e3)}`,s=new Map,a=i.map(d=>({a:d.a,b:d.b}));for(let d of a)for(let u of[d.a,d.b])s.set(r(u),[...s.get(r(u))??[],d]);let l=new Set,c=null;for(let d of a){if(l.has(d))continue;l.add(d);let u=[d.a,d.b],f=d.b;for(;;){let p=(s.get(r(f))??[]).find(m=>!l.has(m));if(!p||(l.add(p),f=r(p.a)===r(f)?p.b:p.a,r(f)===r(u[0])))break;u.push(f)}u.length>=3&&r(f)===r(u[0])&&(!c||Math.abs(ae(u))>Math.abs(ae(c)))&&(c=u)}if(!c)return null;let h=[];for(let d=0;d<c.length;d++){let u=c[(d+c.length-1)%c.length],f=c[d],p=c[(d+1)%c.length],m=(f[0]-u[0])*(p[1]-f[1])-(f[1]-u[1])*(p[0]-f[0]);Math.abs(m)>1e-6&&h.push(f)}return h.length>=3?$o(h,t):null}var mt=Math.tan(30*be);function Nr(o,e,t,n,i){let r=Math.min(o*.3,n>1e-6?2.4/n:o*.3),s=Math.min(o*.3,i>1e-6?2.4/i:o*.3),a=e+r*n,l=t+s*i,c=Math.min(o-s,Math.max(r,(l-a+mt*(o-s+r))/(2*mt))),h=a+(c-r)*mt;return{vla:r,vlb:s,yla:a,ylb:l,vr:c,rh:h,y:u=>u<=r?e+u*n:u<=c?a+(u-r)*mt:u<=o-s?l+(o-s-u)*mt:t+(o-u)*i}}function Wn(o,e){let t=re(o),n=Se(o),i=t.w,r=Math.max(0,e.a),s=Math.max(0,e.b),a=t.u0-Math.max(0,e.u0),l=t.u1+Math.max(0,e.u1),c=(b,w)=>[b,w,n.y(w)],h=c(a,-r),d=c(l,-r),u=c(l,i+s),f=c(a,i+s),p=Math.tan(Math.min(80,Math.max(0,o.pitch_a))*be),m=Math.tan(Math.min(80,Math.max(0,o.pitch_b))*be);if(o.shape==="pent"){let b=[h,d,u,f];return{faces:[b],rim:b,ridges:[[u,f]],gable:[[0,n.y(0)],[i,n.y(i)]]}}if(o.shape==="hip"||o.shape==="pyramid"){let b=o.shape==="pyramid"?(t.u1-t.u0)/2:Math.min((t.u1-t.u0)/2,Math.min(n.vr,i-n.vr)||i/2),w=[t.u0+b,n.vr,n.rh],$=[t.u1-b,n.vr,n.rh],y=o.shape==="pyramid"?[[h,d,w],[d,u,w],[u,f,w],[f,h,w]]:[[h,d,$,w],[w,$,u,f],[f,h,w],[d,u,$]],E=o.shape==="pyramid"?[[h,w],[f,w],[d,w],[u,w]]:[[w,$],[h,w],[f,w],[d,$],[u,$]];return{faces:y,rim:[h,d,u,f],ridges:E,gable:null}}if(o.shape==="halfhip"){let b=Math.min(n.y(0),n.y(i)),w=b+(n.rh-b)*.55,$=p>1e-6?Math.min(n.vr,(w-o.eave_a)/p):n.vr,y=m>1e-6?Math.max(n.vr,i-(w-o.eave_b)/m):n.vr,E=Math.min((t.u1-t.u0)/2-.1,(n.rh-w)/Math.max(.2,p)),z=[t.u0+E,n.vr,n.rh],k=[t.u1-E,n.vr,n.rh],M=[a,$,w],R=[a,y,w],A=[l,$,w],I=[l,y,w];return{faces:[[h,d,A,k,z,M],[z,k,I,u,f,R],[R,M,z],[A,I,k]],rim:[h,d,A,I,u,f,R,M],ridges:[[z,k],[M,z],[R,z],[A,k],[I,k]],gable:[[0,n.y(0)],[$,w],[y,w],[i,n.y(i)]]}}if(o.shape==="mansard"){let b=Nr(i,o.eave_a,o.eave_b,p,m),w=[a,b.vla,b.yla],$=[l,b.vla,b.yla],y=[a,i-b.vlb,b.ylb],E=[l,i-b.vlb,b.ylb],z=[a,b.vr,b.rh],k=[l,b.vr,b.rh];return{faces:[[h,d,$,w],[w,$,k,z],[z,k,E,y],[y,E,u,f]],rim:[h,d,$,k,E,u,f,y,z,w],ridges:[[z,k],[w,$],[y,E]],gable:[[0,n.y(0)],[b.vla,b.yla],[b.vr,b.rh],[i-b.vlb,b.ylb],[i,n.y(i)]]}}let _=[a,n.vr,n.rh],x=[l,n.vr,n.rh];return{faces:[[h,d,x,_],[_,x,u,f]],rim:[h,d,x,u,f,_],ridges:[[_,x]],gable:[[0,n.y(0)],[n.vr,n.rh],[i,n.y(i)]]}}function So(o,e,t){let n=null;for(let i of o.faces){if(!D([e,t],i.map(b=>[b[0],b[1]])))continue;let[r,s]=i,a=i.slice(2).find(b=>Math.abs((s[0]-r[0])*(b[1]-r[1])-(s[1]-r[1])*(b[0]-r[0]))>1e-9);if(!a)continue;let l=s[0]-r[0],c=s[2]-r[2],h=s[1]-r[1],d=a[0]-r[0],u=a[2]-r[2],f=a[1]-r[1],p=c*f-h*u,m=h*d-l*f,_=l*u-c*d;if(Math.abs(m)<1e-9)continue;let x=r[2]-(p*(e-r[0])+_*(t-r[1]))/m;n=n===null?x:Math.min(n,x)}return n}function Mo(o,e,t){let n=Math.min(o.x0,o.x1),i=Math.max(o.x0,o.x1),r=Math.min(o.z0,o.z1),s=Math.max(o.z0,o.z1);return o.axis==="x"?[e,o.flip?s-t:t-r]:[t,o.flip?i-e:e-n]}function zo(o){return{x0:Math.min(o.x0,o.x1),x1:Math.max(o.x0,o.x1),z0:Math.min(o.z0,o.z1),z1:Math.max(o.z0,o.z1)}}function Cr(o,e){let t=(e.x0+e.x1)/2,n=(e.z0+e.z1)/2,i=s=>Math.abs((s.x1-s.x0)*(s.z1-s.z0)),r=null;for(let s of o){if(s===e||s.dormer||s.open||s.shape==="flat"||s.shape==="parapet"||i(s)<i(e)*1.5)continue;let a=zo(s);t<a.x0||t>a.x1||n<a.z0||n>a.z1||(!r||i(s)<i(r))&&(r=s)}return r}function Kr(o,e,t,n){let i=re(o),r=Se(o),s=2,a=Math.max(i.u0+.3,Math.min(i.u1-s-.3,(n??(i.u0+i.u1)/2)-s/2)),l=e==="a"?o.eave_a:o.eave_b,c=e==="a"?o.pitch_a:o.pitch_b,h=l+1.4,d=s/2*Math.tan(35*be),u=h+d,f=Math.max(.8,Math.min(i.w/2-.2,(u-l)/Math.max(.15,Math.tan(Math.min(80,c)*be)))),p=e==="a"?0:i.w-f,m=e==="a"?f:i.w,_=i.at(a,p),x=i.at(a+s,m);return{id:t,x0:Math.round(Math.min(_[0],x[0])*100)/100,z0:Math.round(Math.min(_[1],x[1])*100)/100,x1:Math.round(Math.max(_[0],x[0])*100)/100,z1:Math.round(Math.max(_[1],x[1])*100)/100,shape:"gable",axis:o.axis==="x"?"z":"x",eave_a:Math.round(h*100)/100,eave_b:Math.round(h*100)/100,pitch_a:35,pitch_b:35,base:Math.round(r.y(e==="a"?0:i.w)*100)/100,overhang:.15,dormer:!0}}function Gr(o,e){if(e.shape==="flat"||e.shape==="parapet")return e;let t=re(e),n=Se(e).rh,i=Wn(o,{u0:0,u1:0,a:0,b:0}),r=Se(o),s=p=>{let[m,_]=t.at(p,t.w/2),[x,b]=Mo(o,m,_);return So(i,x,b)??r.y(b)},a=s(t.u0)<=s(t.u1),l=a?t.u0:t.u1,c=a?t.u1:t.u0,h=a?1:-1,d=Math.abs(c-l),u=c;for(let p=.5;p<d;p+=.05)if(s(l+h*p)>=n-.02){u=l+h*p;break}if(Math.abs(u-c)<.05)return e;let f={...e};return e.axis==="x"?c===t.u1?f.x1=u:f.x0=u:c===t.u1?f.z1=u:f.z0=u,f}function jr(o,e,t){let n=re(e),i=o.floors.flatMap(c=>c.rooms.filter(h=>h.points.length>=3&&c.elevation+c.height>e.base+.05)),r=c=>c.some(h=>i.some(d=>D(h,d.points))),s=.35,a=[.15,.5,.85].map(c=>n.u0+(n.u1-n.u0)*c),l=[.15,.5,.85].map(c=>n.w*c);return{a:r(a.map(c=>n.at(c,-s)))?0:t,b:r(a.map(c=>n.at(c,n.w+s)))?0:t,u0:r(l.map(c=>n.at(n.u0-s,c)))?0:t,u1:r(l.map(c=>n.at(n.u1+s,c)))?0:t}}function Ur(o,e,t,n,i){let r=[];for(let a of[.2,.5,.8])for(let l of[.2,.5,.8])r.push([e+(n-e)*a,t+(i-t)*l]);let s=o.floors.filter(a=>a.rooms.some(l=>l.points.length>=3&&r.some(c=>D(c,l.points)))).map(a=>a.elevation+a.height);return s.length?Math.max(...s):null}function Zr(o,e){let t=o.floors.filter(n=>n.rooms.length>0).sort((n,i)=>n.elevation-i.elevation);return[...t].reverse().find(n=>n.elevation<e.base-.05)??t[0]}function Lt(o){return Se(o).rh}function qr(o,e=t=>`roof_${t+1}`){let t=o.settings.roof?.pitch??35,n=o.settings.wall_exterior,i=o.floors.filter(l=>l.rooms.some(c=>c.points.length>=3)).sort((l,c)=>c.elevation-l.elevation),r=[],s=[],a=l=>Math.round(l*1e3)/1e3;for(let l of i){let c=l.rooms.filter(w=>w.points.length>=3),h=[...new Set(c.flatMap(w=>w.points.map($=>a($[0]))))].sort((w,$)=>w-$),d=[...new Set(c.flatMap(w=>w.points.map($=>a($[1]))))].sort((w,$)=>w-$),u=h.length-1,f=d.length-1,p=(w,$)=>w.some(y=>D($,y.points)),m=[];for(let w=0;w<f;w++){m.push([]);for(let $=0;$<u;$++){let y=[(h[$]+h[$+1])/2,(d[w]+d[w+1])/2];m[w].push(p(c,y)&&!p(s,y))}}let _=m.map(w=>w.map(()=>!1)),x=(w,$)=>m[$][w]&&!_[$][w],b=l.elevation+l.height;for(let w=0;w<f;w++)for(let $=0;$<u;$++){if(!x($,w))continue;let y=$;for(;y+1<u&&x(y+1,w);)y++;let E=w;for(;E+1<f&&Array.from({length:y-$+1},(A,I)=>x($+I,E+1)).every(Boolean);)E++;for(let A=w;A<=E;A++)for(let I=$;I<=y;I++)_[A][I]=!0;let z=h[$]-n,k=h[y+1]+n,M=d[w]-n,R=d[E+1]+n;Math.min(k-z,R-M)<.8||r.push({id:e(r.length),x0:a(z),z0:a(M),x1:a(k),z1:a(R),shape:"gable",axis:k-z>=R-M?"x":"z",eave_a:a(b),eave_b:a(b),pitch_a:t,pitch_b:t,base:a(b),overhang:null})}s.push(...c)}return r}var De=Math.PI/180,Qr=1.13,Bn=1.72,de=.025,Pe=.07,Yr=.25;function Ue(o,e){let t=[];for(let n of o.floors){if(e&&n.id!==e)continue;let{walls:i}=ne(n.rooms,{exterior:o.settings.wall_exterior,interior:o.settings.wall_interior},n.walls??[]);for(let r of i){if(!r.exterior&&!r.free)continue;let s=r.b[0]-r.a[0],a=r.b[1]-r.a[1],l=Math.hypot(s,a);if(l<1.2)continue;let c=a/l,h=-s/l,d=Math.min(n.height,r.height??n.height),u=(f,p,m,_)=>t.push({key:f,section:null,side:"top",flat:!1,o:p,eu:m,es:[0,1,0],n:_,lu:l,ls:d,pitch:90,span:()=>[0,l],facing:[_[0],_[2]],wall:{floorId:n.id}});u(`wall:${n.id}:${r.id}`,[r.a[0]+c*r.right,n.elevation,r.a[1]+h*r.right],[s/l,0,a/l],[c,0,h]),r.free&&u(`wall:${n.id}:${r.id}:back`,[r.b[0]-c*r.left,n.elevation,r.b[1]-h*r.left],[-s/l,0,-a/l],[-c,0,-h])}}return t}var ze="ground";function Eo(o){let e=[...o.floors.filter(t=>t.rooms.some(n=>n.points.length>=3))].sort((t,n)=>t.elevation-n.elevation);return e.find(t=>t.elevation>-.5)??e[0]??o.floors[0]??null}function Xr(o,e){let t=(e.rotation??0)*Math.PI/180,n=[Math.cos(t),0,Math.sin(t)],i=[-Math.sin(t),0,Math.cos(t)],r=Eo(o),s=n[0]*e.u+i[0]*e.v,a=n[2]*e.u+i[2]*e.v,l=r?r.elevation+(e.base!=null?e.base:Ki(r,s,a)):e.base??0;return{key:ze,section:null,side:"top",flat:!0,o:[0,l,0],eu:n,es:i,n:[0,1,0],lu:1e4,ls:1e4,pitch:0,span:()=>[-1e4,1e4],facing:[i[0],i[2]],unbounded:!0}}function ue(o,e,t=j(o)){return e.face===ze?Xr(o,e):e.face.startsWith("wall:")?Ue(o,e.face.split(":")[1]).find(n=>n.key===e.face)??null:t.find(n=>n.key===e.face)??null}function Jr(o,e,t){let n=Ue(o,t),i=o.settings.north??0,r=l=>{let c=Math.atan2(l.facing[0],-l.facing[1])*180/Math.PI-i;return l.lu*(1.3+Math.cos((c-180)*Math.PI/180))},s=[...n].sort((l,c)=>r(c)-r(l))[0];if(!s)return null;let a={...Bt(s,e),portrait:!1,rows:1};return a.cols=Math.max(1,Math.floor((s.lu-.8+de)/(Bn+de))),a.u=Math.round((s.lu-(a.cols*Bn+(a.cols-1)*de))/2*100)/100,a.v=Math.round(Math.max(0,s.ls-Qr-.3)*100)/100,a}function Nn(o,e){let t=o.floors.flatMap(r=>r.rooms.flatMap(s=>s.points)),n=t.length?Math.max(...t.map(r=>r[0]))+3:0,i=t.length?Math.min(...t.map(r=>r[1])):0;return{id:e,face:ze,u:Math.round(n*100)/100,v:Math.round(i*100)/100,rows:2,cols:4,portrait:!0,tilt:25,flip:!0,rotation:(o.settings.north??0)||0,look:"black",entity:null}}function Ao(o){return o.floors.filter(t=>t.rooms.some(n=>n.points.length>=3)).sort((t,n)=>n.elevation-t.elevation)[0]??null}function j(o){let e=o.settings.roof;if(!e||e.type==="none")return[];if(e.type==="custom")return(e.sections??[]).flatMap(b=>Ro(b,jr(o,b,b.overhang??e.overhang)));let t=Ao(o);if(!t)return[];let n=t.rooms.flatMap(b=>b.points.map(w=>w[0])),i=t.rooms.flatMap(b=>b.points.map(w=>w[1])),r=o.settings.wall_exterior+e.overhang,s=Math.min(...n)-r,a=Math.max(...n)+r,l=Math.min(...i)-r,c=Math.max(...i)+r,h=t.elevation+t.height;if(e.type==="flat")return[es("main",null,s,l,a,c,h+Yr)];let d=a-s>=c-l,u=e.ridge==="short"?!d:d,f=(u?c-l:a-s)/2,p=f*Math.tan(e.pitch*De),m=(b,w,$)=>u?[b,h+$,(l+c)/2+w]:[(s+a)/2+w,h+$,b],[_,x]=u?[s,a]:[l,c];return[-1,1].map(b=>Ot(`main:${b<0?"a":"b"}`,null,b<0?"a":"b",m(_,b*f,0),m(x,b*f,0),m(_,0,p),e.pitch,()=>[0,x-_]))}function Ro(o,e){let t=re(o),n=Se(o),i=(m,_,x)=>{let[b,w]=t.at(m,_);return[b,x,w]},r=Math.max(0,e.a),s=Math.max(0,e.b),a=t.u0-Math.max(0,e.u0),l=t.u1+Math.max(0,e.u1),c=l-a;if(o.shape==="flat"||o.shape==="parapet"){let m=t.at(a,-r),_=t.at(l,t.w+s);return[es(o.id,o.id,Math.min(m[0],_[0]),Math.min(m[1],_[1]),Math.max(m[0],_[0]),Math.max(m[1],_[1]),o.eave_a+Yr)]}if(o.shape==="pent")return[Ot(`${o.id}:a`,o.id,"a",i(a,-r,n.y(-r)),i(l,-r,n.y(-r)),i(a,t.w+s,n.y(t.w+s)),o.pitch_a,()=>[0,c])];let h=o.shape==="hip"||o.shape==="pyramid",d=o.shape==="pyramid"?(t.u1-t.u0)/2:h?Math.min((t.u1-t.u0)/2,Math.min(n.vr,t.w-n.vr)||t.w/2):0,u=h?t.u0+d-a:0,f=h?l-(t.u1-d):0,p=[];if(n.vr>.3){let m=Math.hypot(n.vr+r,n.rh-n.y(-r));p.push(Ot(`${o.id}:a`,o.id,"a",i(a,-r,n.y(-r)),i(l,-r,n.y(-r)),i(a,n.vr,n.rh),o.pitch_a,_=>[u*(_/m),c-f*(_/m)]))}if(t.w-n.vr>.3){let m=Math.hypot(t.w+s-n.vr,n.rh-n.y(t.w+s));p.push(Ot(`${o.id}:b`,o.id,"b",i(l,t.w+s,n.y(t.w+s)),i(a,t.w+s,n.y(t.w+s)),i(l,n.vr,n.rh),o.pitch_b,_=>[f*(_/m),c-u*(_/m)]))}if(h){let m=n.y(-r),_=n.y(t.w+s),x=[[`${o.id}:c`,"c",i(a,t.w+s,_),i(a,-r,m),i(t.u0+d,n.vr,n.rh)],[`${o.id}:d`,"d",i(l,-r,m),i(l,t.w+s,_),i(t.u1-d,n.vr,n.rh)]];for(let[b,w,$,y,E]of x){let z=Fo(b,o.id,w,$,y,E);z&&p.push(z)}}return p}function Fo(o,e,t,n,i,r){let s=gt(Te(i,n));if(s<.3)return null;let a=Me(Te(i,n)),l=Te(r,n),c=l[0]*a[0]+l[1]*a[1]+l[2]*a[2],h=[l[0]-a[0]*c,l[1]-a[1]*c,l[2]-a[2]*c],d=gt(h);if(d<.3)return null;let u=Me(h),f=Me(ns(a,u));f[1]<0&&(f=[-f[0],-f[1],-f[2]]);let p=Me([-u[0],0,-u[2]]),m=Math.atan2(u[1],Math.hypot(u[0],u[2]))/De;return{key:o,section:e,side:t,flat:!1,o:n,eu:a,es:u,n:f,lu:s,ls:d,pitch:m,span:x=>{let b=Math.min(1,Math.max(0,x/d));return[c*b,s-(s-c)*b]},facing:[p[0],p[2]]}}function Ot(o,e,t,n,i,r,s,a){let l=Me(Te(i,n)),c=Me(Te(r,n)),h=Me(ns(l,c));h[1]<0&&(h=[-h[0],-h[1],-h[2]]);let d=Me([-c[0],0,-c[2]]);return{key:o,section:e,side:t,flat:!1,o:n,eu:l,es:c,n:h,lu:gt(Te(i,n)),ls:gt(Te(r,n)),pitch:s,span:a,facing:[d[0],d[2]]}}function es(o,e,t,n,i,r,s){let a=i-t>=r-n,l=a?i-t:r-n,c=a?r-n:i-t;return{key:`${o}:top`,section:e,side:"top",flat:!0,o:[t,s,n],eu:a?[1,0,0]:[0,0,1],es:a?[0,0,1]:[1,0,0],n:[0,1,0],lu:l,ls:c,pitch:0,span:()=>[0,l],facing:a?[0,1]:[1,0]}}function _t(o){let e=o.module_w||Qr,t=o.module_h||Bn;return o.portrait===!1?[t,e]:[e,t]}function Ht(o){return o.layout?.length?o.layout.map(e=>Math.max(0,Math.min(60,Math.round(e)))):Array.from({length:Math.max(1,o.rows)},()=>Math.max(1,o.cols))}function Cn(o,e){return o.flat?Math.min(45,Math.max(0,e.tilt??15))*De:o.wall?Math.min(90,Math.max(0,e.tilt??0))*De:0}function Kn(o,e){let[t,n]=_t(e),i=Ht(e),r=Math.max(1,...i),a=(i.length-1)*Gn(o,e)+n*Math.cos(Cn(o,e));return[r*t+(r-1)*de,a]}function Gn(o,e){let[,t]=_t(e),n=Cn(o,e);return o.wall?t*Math.cos(n)+de:o.flat?t*Math.cos(n)+Math.max(.3,2*t*Math.sin(n)):t+de}function ve(o,e,t=!1){let[n,i]=_t(e),r=[],s=Cn(o,e),a=i*Math.cos(s),l=Gn(o,e),c=Ht(e),h=Math.max(1,...c),d=new Set(e.skip??[]),u=(p,m,_)=>[o.o[0]+o.eu[0]*p+o.es[0]*m+o.n[0]*_,o.o[1]+o.eu[1]*p+o.es[1]*m+o.n[1]*_,o.o[2]+o.eu[2]*p+o.es[2]*m+o.n[2]*_],f=(p,m)=>{if(o.unbounded)return!0;if(m<-1e-6||m>o.ls+1e-6)return!1;let[_,x]=o.span(m);return p>=_-1e-6&&p<=x+1e-6};return c.forEach((p,m)=>{let _=e.align==="right"?h-p:e.align==="center"?(h-p)/2:0;for(let x=0;x<p;x++){let b=`${m}:${x}`,w=d.has(b);if(w&&!t)continue;let $=e.u+(x+_)*(n+de),y=e.v+m*l,E=$+n,z=y+(o.flat||o.wall?a:i);if(![[$,y],[E,y],[E,z],[$,z]].every(([P,T])=>f(P,T)))continue;if(o.wall&&s>.001){let P=Pe+i*Math.sin(s),[T,B]=e.flip?[P,Pe]:[Pe,P],O=[u($,y,T),u(E,y,T),u(E,z,B),u($,z,B)],q=e.flip?y:z,Q=[$+.05,E-.05].map(Z=>[u(Z,q,0),u(Z,q,P)]);r.push({corners:O,posts:Q,cell:b,skipped:w});continue}if(!o.flat){r.push({corners:[u($,y,Pe),u(E,y,Pe),u(E,z,Pe),u($,z,Pe)],posts:[],cell:b,skipped:w});continue}let k=.15,M=k+i*Math.sin(s),[R,A]=e.flip?[z,y]:[y,z],I=[u($,R,k),u(E,R,k),u(E,A,M),u($,A,M)];r.push({corners:I,posts:[$+.05,E-.05].flatMap(P=>[[u(P,R,0),u(P,R,k)],[u(P,A,0),u(P,A,M)]]),cell:b,skipped:w})}}),r}function Wt(o,e){let t=[o.eu[0],o.eu[2]],n=[o.es[0],o.es[2]],i=[e[0]-o.o[0],e[1]-o.o[2]],r=t[0]*n[1]-t[1]*n[0];if(Math.abs(r)<1e-9)return null;let s=(i[0]*n[1]-i[1]*n[0])/r,a=(t[0]*i[1]-t[1]*i[0])/r;if(a<0||a>o.ls)return null;let[l,c]=o.span(a);return s>=l&&s<=c?{u:s,s:a}:null}function ts(o,e){let t=null;for(let n of o){if(n.wall){let s=[e[0]-n.o[0],e[1]-n.o[2]],a=s[0]*n.eu[0]+s[1]*n.eu[2],l=s[0]*n.n[0]+s[1]*n.n[2];if(a>=0&&a<=n.lu&&l>=-.05&&l<=.35)return{face:n,u:a,s:Number.NaN};a>=0&&a<=n.lu&&l>.35&&l<=.8&&!t&&(t={face:n,u:a,s:Number.NaN,y:-1/0});continue}let i=Wt(n,e);if(!i)continue;let r=n.o[1]+n.es[1]*i.s;(!t||r>t.y)&&(t={face:n,...i,y:r})}return t?{face:t.face,u:t.u,s:t.s}:null}function Ze(o,e){if(o.unbounded)return{u:e.u,v:e.v};let[t,n]=Kn(o,e),i=r=>Math.floor(r*100+1e-6)/100;return{u:i(Math.min(Math.max(0,e.u),Math.max(0,o.lu-t))),v:i(Math.min(Math.max(0,e.v),Math.max(0,o.ls-n)))}}function Bt(o,e){let t={id:e,face:o.key,u:0,v:0,rows:1,cols:1,portrait:!0,tilt:o.flat?15:null,flip:!1,entity:null,look:"black"},[n]=_t(t),i=.4,r=Gn(o,t),[s,a]=o.span(o.ls/2);for(t.cols=Math.max(1,Math.floor((a-s-2*i+de)/(n+de))),t.rows=Math.max(1,Math.min(4,Math.floor((o.ls-2*i)/r)));t.cols>1&&ve(o,{...t,u:Vn(o,t),v:i}).length<t.rows*t.cols;)t.cols--;return t.u=Vn(o,t),t.v=i,t}function jn(o,e){let t={...e,face:o.key,tilt:o.flat?e.tilt??15:null,rotation:null,flip:!1};return t.u=Vn(o,t),t.v=.4,{...t,...Ze(o,t)}}function Vn(o,e){let[t]=_t(e),n=e.cols*t+(e.cols-1)*de;return Math.round((o.lu-n)/2*100)/100}function Un(o,e){let t=(Math.atan2(o.facing[0],-o.facing[1])/De-e+720)%360;return["n","ne","e","se","s","sw","w","nw"][Math.round(t/45)%8]}function Vt(o,e){let t=n=>{if(n.flat)return n.lu*n.ls*.8;let i=(Math.atan2(n.facing[0],-n.facing[1])/De-e+720)%360,r=Math.cos((i-180)*De);return n.lu*n.ls*(1.2+r)};return[...o].sort((n,i)=>t(i)-t(n))[0]??null}function Te(o,e){return[o[0]-e[0],o[1]-e[1],o[2]-e[2]]}function gt(o){return Math.hypot(o[0],o[1],o[2])}function Me(o){let e=gt(o)||1;return[o[0]/e,o[1]/e,o[2]/e]}function ns(o,e){return[o[1]*e[2]-o[2]*e[1],o[2]*e[0]-o[0]*e[2],o[0]*e[1]-o[1]*e[0]]}var is=.78,rs=1.18;function qe(o){return{id:o.id,face:o.face,u:o.u,v:o.v,rows:1,cols:1,portrait:!0,module_w:o.w||is,module_h:o.h||rs}}function ss(o,e){let t=ve(o,qe(e))[0];if(!t)return null;let n=i=>[i[0]-o.n[0]*.05,i[1]-o.n[1]*.05,i[2]-o.n[2]*.05];return[n(t.corners[0]),n(t.corners[1]),n(t.corners[2]),n(t.corners[3])]}function Zn(o,e){let t=is,n=rs,[i,r]=o.span(o.ls/2);return{id:e,face:o.key,u:Math.round((i+r-t)/2*100)/100,v:Math.round(Math.max(0,Math.min(o.ls-n,o.ls*.45-n/2))*100)/100,w:null,h:null,cover:null,contact:null,tilt:null}}function bt(o,e,t){let n=Xr(o,e),[i,r]=Kn(n,e),s=n.eu[0]*(e.u+i/2)+n.es[0]*(e.v+r/2),a=n.eu[2]*(e.u+i/2)+n.es[2]*(e.v+r/2),l=t*Math.PI/180,c=[Math.cos(l),Math.sin(l)],h=[-Math.sin(l),Math.cos(l)],d=s*c[0]+a*c[1]-i/2,u=s*h[0]+a*h[1]-r/2,f=p=>Math.round(p*100)/100;return{u:f(d),v:f(u),rotation:(Math.round(t)%360+360)%360}}function qn(o,e){let[t,n]=Kn(o,e);return[o.o[0]+o.eu[0]*(e.u+t/2)+o.es[0]*(e.v+n/2),o.o[2]+o.eu[2]*(e.u+t/2)+o.es[2]*(e.v+n/2)]}function Qn(o,e,t){let n=t[0]*o.n[0]+t[1]*o.n[1]+t[2]*o.n[2];if(Math.abs(n)<1e-6)return null;let i=((o.o[0]-e[0])*o.n[0]+(o.o[1]-e[1])*o.n[1]+(o.o[2]-e[2])*o.n[2])/n;if(i<=0)return null;let r=[e[0]+t[0]*i-o.o[0],e[1]+t[1]*i-o.o[1],e[2]+t[2]*i-o.o[2]],s=r[0]*o.eu[0]+r[1]*o.eu[1]+r[2]*o.eu[2],a=r[0]*o.es[0]+r[1]*o.es[1]+r[2]*o.es[2];return{t:i,u:s,s:a}}function os(o,e,t){if(o.unbounded)return!0;if(t<0||t>o.ls)return!1;let[n,i]=o.span(t);return e>=n&&e<=i}function as(o,e,t,n){for(let i of ve(o,e)){let r=i.corners.map(h=>{let d=[h[0]-o.o[0],h[1]-o.o[1],h[2]-o.o[2]];return[d[0]*o.eu[0]+d[1]*o.eu[1]+d[2]*o.eu[2],d[0]*o.es[0]+d[1]*o.es[1]+d[2]*o.es[2]]}),[s,a]=[Math.min(...r.map(h=>h[0])),Math.max(...r.map(h=>h[0]))],[l,c]=[Math.min(...r.map(h=>h[1])),Math.max(...r.map(h=>h[1]))];if(t>=s-.05&&t<=a+.05&&n>=l-.05&&n<=c+.05)return!0}return!1}var cs=["kitchen_row","kitchen_l","bath","bedroom","living","dining","office","kids","hall"],Io={kitchen_row:{rows:[{wall:"back",align:"start",items:[{type:"fridge"},{type:"kitchen_tall"},{type:"kitchen",size:[.9,.62,.92]},{type:"sink"},{type:"dishwasher"},{type:"stove"},{type:"kitchen",size:[.6,.62,.92]}]},{wall:"back",align:"start",items:[{type:"kitchen_wall",size:[1.2,.35,.7]}]}],free:[{type:"table",at:[.5,.72],rotation:0,size:[1.2,.8,.75]},{type:"lamp_pendant",at:[.5,.72],rotation:0},{type:"lamp_ceiling",at:[.5,.3],rotation:0}]},kitchen_l:{rows:[{wall:"back",align:"start",items:[{type:"fridge"},{type:"kitchen_tall"},{type:"sink"},{type:"dishwasher"},{type:"kitchen",size:[.6,.62,.92]}]},{wall:"left",align:"end",items:[{type:"stove"},{type:"kitchen",size:[1.2,.62,.92]}]}],free:[{type:"island",at:[.62,.62],rotation:0,size:[1.6,.9,.92]},{type:"bar_stool",at:[.52,.86],rotation:180},{type:"bar_stool",at:[.72,.86],rotation:180},{type:"lamp_ceiling",at:[.5,.35],rotation:0}]},bath:{rows:[{wall:"back",align:"center",items:[{type:"washbasin"}]},{wall:"back",align:"end",items:[{type:"wc"}]},{wall:"front",align:"start",items:[{type:"bathtub"}]},{wall:"left",align:"start",items:[{type:"washer"}]}],free:[{type:"lamp_downlight",at:[.5,.5],rotation:0}]},bedroom:{rows:[{wall:"back",align:"center",items:[{type:"nightstand"},{type:"bed"},{type:"nightstand"}]},{wall:"left",align:"center",items:[{type:"wardrobe",size:[2,.6,2.1]}]},{wall:"front",align:"end",items:[{type:"dresser"}]}],free:[{type:"lamp_ceiling",at:[.5,.55],rotation:0}]},living:{rows:[{wall:"back",align:"center",items:[{type:"tv_board"}]},{wall:"right",align:"start",items:[{type:"shelf"}]}],free:[{type:"sofa",at:[.5,.72],rotation:180},{type:"coffee_table",at:[.5,.52],rotation:0},{type:"rug",at:[.5,.55],rotation:0,size:[2.2,1.6,.01]},{type:"armchair",at:[.14,.5],rotation:270},{type:"lamp_floor",at:[.86,.8],rotation:0},{type:"plant",at:[.9,.12],rotation:0},{type:"lamp_ceiling",at:[.5,.45],rotation:0}]},dining:{rows:[{wall:"back",align:"center",items:[{type:"sideboard"}]}],free:[{type:"table",at:[.5,.55],rotation:0},{type:"chair",at:[.4,.35],rotation:0},{type:"chair",at:[.6,.35],rotation:0},{type:"chair",at:[.4,.75],rotation:180},{type:"chair",at:[.6,.75],rotation:180},{type:"lamp_pendant",at:[.5,.55],rotation:0}]},office:{rows:[{wall:"back",align:"center",items:[{type:"desk"}]},{wall:"left",align:"center",items:[{type:"shelf"},{type:"shelf"}]}],free:[{type:"office_chair",at:[.5,.38],rotation:180},{type:"lamp_ceiling",at:[.5,.55],rotation:0}]},kids:{rows:[{wall:"left",align:"start",items:[{type:"bed",size:[.9,2,.8]}]},{wall:"back",align:"end",items:[{type:"desk",size:[1.2,.6,.75]}]},{wall:"right",align:"end",items:[{type:"shelf"}]}],free:[{type:"rug",at:[.55,.6],rotation:0,size:[1.6,1.2,.01]},{type:"lamp_ceiling",at:[.5,.5],rotation:0}]},hall:{rows:[{wall:"left",align:"start",items:[{type:"coat_rack"}]}],free:[{type:"lamp_downlight",at:[.5,.3],rotation:0},{type:"lamp_downlight",at:[.5,.7],rotation:0}]}},Po={back:0,right:90,front:180,left:270};function hs(o,e,t){let n=te(o.points),i=n.x1-n.x0,r=n.z1-n.z0,s=Io[e],a=[],l=(h,d,u,f,p)=>{let[m,_,x]=p??oe[h];a.push({id:t(),type:h,x:ls(d),z:ls(u),rotation:f,w:m,d:_,h:x,variant:null,entity:null,power:null})},c=.02;for(let h of s.rows){let d=h.items.map(_=>({type:_.type,size:_.size??oe[_.type]})),u=h.wall==="back"||h.wall==="front"?i:r,f=[],p=0;for(let _ of d){if(p+_.size[0]>u-.1)break;f.push(_),p+=_.size[0]}let m=h.align==="start"?.05:h.align==="end"?u-p-.05:(u-p)/2;for(let _ of f){let[x,b]=_.size,w=m+x/2,$=b/2+c;h.wall==="back"?l(_.type,n.x0+w,n.z0+$,0,_.size):h.wall==="front"?l(_.type,n.x1-w,n.z1-$,180,_.size):h.wall==="right"?l(_.type,n.x1-$,n.z0+w,90,_.size):l(_.type,n.x0+$,n.z1-w,Po.left,_.size),m+=x}}for(let h of s.free){let[d,u]=h.size??oe[h.type],f=Math.min(n.x1-d/2-.05,Math.max(n.x0+d/2+.05,n.x0+i*h.at[0])),p=Math.min(n.z1-u/2-.05,Math.max(n.z0+u/2+.05,n.z0+r*h.at[1]));l(h.type,f,p,h.rotation,h.size)}return a}var ls=o=>Math.round(o*1e3)/1e3;var Qe=se`
+  :host {
+    --nf-text: var(--primary-text-color, #e1e1e1);
+    --nf-muted: var(--secondary-text-color, #9b9b9b);
+    --nf-accent: var(--primary-color, #03a9f4);
+    --nf-accent-text: var(--text-primary-color, #ffffff);
+    --nf-surface: var(--ha-card-background, var(--card-background-color, #1c1c1c));
+    --nf-bg: var(--primary-background-color, #111111);
+    --nf-bg2: var(--secondary-background-color, #1c1c1c);
+    /* floating bars and cards over the 3D view: the card colour, a little see-through */
+    --nf-chrome: color-mix(in srgb, var(--nf-surface) 84%, transparent);
+    --nf-chrome-solid: var(--nf-surface);
+    --nf-line: var(--divider-color, rgba(255, 255, 255, 0.12));
+    /* quiet fills for buttons and fields, and the tonal accent of an active control */
+    --nf-fill: color-mix(in srgb, var(--nf-text) 7%, transparent);
+    --nf-fill-strong: color-mix(in srgb, var(--nf-text) 13%, transparent);
+    --nf-tonal: color-mix(in srgb, var(--nf-accent) 20%, transparent);
+    --nf-soft: var(--info-color, #4a90e2);
+    --nf-warm: var(--state-light-active-color, #ffa726);
+    --nf-danger: var(--error-color, #db4437);
+    --nf-good: var(--success-color, #43a047);
+    --nf-radius: var(--ha-card-border-radius, 12px);
+    --nf-shadow: var(--ha-card-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.18), 0 6px 20px rgba(0, 0, 0, 0.2));
+    --nf-font: var(--primary-font-family, Roboto, "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif);
+    --nf-title-font: var(--nf-font);
+    font-family: var(--nf-font);
+    color: var(--nf-text);
+  }
+`,Nt=se`
+  /* a group of switches: one rounded pill, the active one tinted with the accent */
+  .nf-seg {
+    display: inline-flex;
+    padding: 4px;
+    gap: 2px;
+    border-radius: 999px;
+    background: var(--nf-chrome);
+    box-shadow: var(--nf-shadow);
+    backdrop-filter: blur(10px);
+  }
+  .nf-seg button,
+  .nf-chip {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background: none;
+    color: var(--nf-muted);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 36px;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .nf-seg button:hover:not(:disabled),
+  .nf-chip:hover {
+    background: var(--nf-fill);
+    color: var(--nf-text);
+  }
+  .nf-seg button[aria-pressed="true"],
+  .nf-chip[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--nf-accent) 24%, var(--nf-chrome-solid));
+    color: var(--nf-accent);
+    font-weight: 600;
+  }
+  .nf-seg button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  /* a single pill, like the chips of the Mushroom cards */
+  .nf-chip {
+    background: var(--nf-chrome);
+    color: var(--nf-text);
+    box-shadow: var(--nf-shadow);
+    backdrop-filter: blur(10px);
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--nf-accent);
+    outline-offset: 2px;
+  }
+  /* the round icon badge every row and card starts with */
+  .nf-ico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--nf-tonal);
+    color: var(--nf-accent);
+    --mdc-icon-size: 20px;
+  }
+  .nf-ico.nf-warm {
+    background: color-mix(in srgb, var(--nf-warm) 22%, transparent);
+    color: var(--nf-warm);
+  }
+  .nf-ico.nf-off {
+    background: var(--nf-fill);
+    color: var(--nf-muted);
+  }
+  .nf-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background: var(--nf-fill);
+    color: var(--nf-text);
+    border-radius: var(--nf-radius);
+    padding: 7px 14px;
+    cursor: pointer;
+    min-height: 36px;
+    transition: background 0.15s;
+  }
+  .nf-btn:hover {
+    background: var(--nf-fill-strong);
+  }
+  .nf-btn.nf-danger {
+    color: var(--nf-danger);
+  }
+  .nf-btn.nf-primary {
+    background: var(--nf-accent);
+    color: var(--nf-accent-text);
+  }
+  .nf-btn.nf-primary:hover {
+    background: color-mix(in srgb, var(--nf-accent) 88%, var(--nf-text));
+  }
+  .nf-field {
+    display: grid;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--nf-muted);
+  }
+  .nf-field input,
+  .nf-field select {
+    font: inherit;
+    font-size: 14px;
+    color: var(--nf-text);
+    background: var(--nf-fill);
+    border: none;
+    border-bottom: 1px solid var(--nf-line);
+    border-radius: 10px 10px 4px 4px;
+    padding: 8px 10px;
+    min-width: 0;
+  }
+  .nf-field input:focus,
+  .nf-field select:focus {
+    border-bottom-color: var(--nf-accent);
+  }
+  .nf-field input[type="range"] {
+    padding: 0;
+    accent-color: var(--nf-accent);
+  }
+  .nf-field select option {
+    background: var(--nf-chrome-solid);
+    color: var(--nf-text);
+  }
+  /* fingers need 40 px */
+  @media (pointer: coarse) {
+    .nf-seg button,
+    .nf-chip,
+    .nf-btn {
+      min-height: 40px;
+    }
+  }
+`;var ds=40,Yn=class extends J{static properties={options:{attribute:!1},fixed:{attribute:!1},value:{attribute:!1},disabled:{type:Boolean},placeholder:{attribute:!1},_query:{state:!0},_open:{state:!0},_cursor:{state:!0}};blurTimer;constructor(){super(),this.options=[],this.fixed=[],this.value=null,this.disabled=!1,this.placeholder="",this._query="",this._open=!1,this._cursor=0}get current(){return[...this.fixed,...this.options].find(e=>e.id===this.value)}get hits(){let e=this._query.trim().toLowerCase(),t=e.split(/\s+/).filter(Boolean),n=s=>{let a=`${s.label} ${s.id}`.toLowerCase();return t.every(l=>a.includes(l))},i=this.fixed.filter(s=>!e||n(s)),r=e?this.options.filter(n):this.options;return[...i,...r.slice(0,ds)]}get leftOut(){let e=this._query.trim().toLowerCase(),t=e.split(/\s+/).filter(Boolean),n=e?this.options.filter(i=>t.every(r=>`${i.label} ${i.id}`.toLowerCase().includes(r))).length:this.options.length;return Math.max(0,n-ds)}choose(e){this.value=e,this._query="",this._open=!1,this.dispatchEvent(new CustomEvent("change",{detail:{value:e},bubbles:!0,composed:!0}))}onKey(e){let t=this.hits;e.key==="ArrowDown"?(this._open=!0,this._cursor=Math.min(t.length-1,this._cursor+1),e.preventDefault()):e.key==="ArrowUp"?(this._cursor=Math.max(0,this._cursor-1),e.preventDefault()):e.key==="Enter"?(this._open&&t[this._cursor]&&this.choose(t[this._cursor].id),e.preventDefault()):e.key==="Escape"&&(this._open=!1,this._query="")}render(){let e=this.current,t=this._open?this.hits:[];return g`<div class="wrap">
+      <input
+        type="text"
+        role="combobox"
+        aria-expanded=${this._open}
+        ?disabled=${this.disabled}
+        placeholder=${e?e.label:this.placeholder}
+        .value=${this._open?this._query:e?.label??""}
+        @focus=${()=>{clearTimeout(this.blurTimer),this._open=!0,this._query="",this._cursor=0}}
+        @blur=${()=>{this.blurTimer=setTimeout(()=>this._open=!1,150)}}
+        @input=${n=>{this._query=n.target.value,this._cursor=0,this._open=!0}}
+        @keydown=${this.onKey}
+      />
+      ${this._open?g`<ul class="list" role="listbox">
+            ${t.length?v:g`<li class="empty">–</li>`}
+            ${t.map((n,i)=>g`<li
+                role="option"
+                aria-selected=${n.id===this.value}
+                class="${i===this._cursor?"cursor":""} ${n.id===this.value?"chosen":""}"
+                @mousedown=${r=>r.preventDefault()}
+                @click=${()=>this.choose(n.id)}
+              >
+                <span>${n.label}</span>${n.id.includes(".")?g`<small>${n.id}</small>`:v}
+              </li>`)}
+            ${this.leftOut>0?g`<li class="empty">… +${this.leftOut} · ${this.placeholder}</li>`:v}
+          </ul>`:v}
+    </div>`}static styles=[Qe,se`
+      :host {
+        display: block;
+        position: relative;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        font: inherit;
+        color: var(--nf-text);
+        background: var(--nf-chrome-solid);
+        border: 1px solid var(--nf-line);
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+      input::placeholder {
+        color: var(--nf-text);
+        opacity: 0.9;
+      }
+      input:focus::placeholder {
+        color: var(--nf-muted);
+      }
+      input:focus {
+        outline: 2px solid var(--nf-accent);
+        outline-offset: -1px;
+      }
+      .list {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 4px);
+        z-index: 20;
+        margin: 0;
+        padding: 4px;
+        list-style: none;
+        max-height: 280px;
+        overflow-y: auto;
+        background: var(--nf-chrome-solid);
+        border: 1px solid var(--nf-line);
+        border-radius: 10px;
+        box-shadow: var(--nf-shadow);
+      }
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13.5px;
+      }
+      li small {
+        color: var(--nf-muted);
+        font-size: 11px;
+      }
+      li.cursor,
+      li:hover {
+        background: color-mix(in srgb, var(--nf-accent) 18%, transparent);
+      }
+      li.chosen {
+        color: var(--nf-accent);
+      }
+      li.empty {
+        color: var(--nf-muted);
+        cursor: default;
+      }
+    `]};customElements.get("nf-entity-picker")||customElements.define("nf-entity-picker",Yn);var To=new URL(import.meta.url),Do=new URL("./nextfloor-3d.js?v=aed7bb03307c",To).href,us;function fs(){return us??=import(Do),us}function vt(o,e){if(!Be(e))return ce(o,`furn_${e}`);let t=U(e);return t?ke(t,o?.language??navigator.language):ce(o,"pack_missing_item")}var ps=["weather","energy","car","sound","screens","cameras"],Ct="https://github.com/therealMRBK/NextFloor";var Xn=class extends J{static properties={hass:{attribute:!1},packs:{attribute:!1},_packMsg:{state:!0}};constructor(){super(),this._packMsg=null}get isAdmin(){return this.hass?.user?.is_admin??!1}t(e,t){return ce(this.hass,e,t)}render(){return g`<div class="nf-ext">
+      <header class="nf-ext-head">
+        <h2>${this.t("ext_title")}</h2>
+        <p class="nf-sub">${this.t("ext_intro")}</p>
+        <div class="nf-ext-actions">
+          <a class="nf-btn" href="${Ct}/issues/new/choose" target="_blank" rel="noopener">🐞 ${this.t("help_issue")}</a>
+          <a class="nf-btn" href="${Ct}/discussions" target="_blank" rel="noopener">💡 ${this.t("help_idea")}</a>
+          <a class="nf-btn" href="${Ct}#readme" target="_blank" rel="noopener">📖 ${this.t("manual")}</a>
+        </div>
+      </header>
+      <section class="nf-ext-card">
+        <h3>${this.t("ext_pro")}</h3>
+        <div class="nf-ext-features">
+          ${ps.map(e=>g`<div class="nf-ext-feature nf-ext-on">
+              <b>✓ ${this.t(`feature_name_${e}`)}</b>
+              <span class="nf-sub">${this.t(`feature_text_${e}`)}</span>
+            </div>`)}
+        </div>
+      </section>
+      ${this.renderPacks()}
+    </div>`}renderPacks(){let e=this.packs??[];return g`<section class="nf-ext-card">
+      <h3>${this.t("packs")}</h3>
+      ${e.map(t=>g`<div class="nf-pack">
+          <div>
+            <b>${me(t,this.hass?.language??"de")}</b>
+            <span class="nf-sub">${this.t("pack_by",{publisher:t.publisher,n:t.items.length})}</span>
+            ${t.description?g`<span class="nf-sub">${t.description}</span>`:v}
+          </div>
+          ${t.builtin?g`<span class="nf-ext-state">${this.t("pack_builtin")}</span>`:this.isAdmin?g`<button class="nf-btn nf-danger" @click=${()=>this.deletePack(t)}>${this.t("pack_remove")}</button>`:v}
+        </div>`)}
+      ${this.isAdmin?g`<label class="nf-btn nf-primary nf-pack-import">
+            ${this.t("pack_import")}
+            <input type="file" accept=".nfpack,.json,application/json" multiple hidden @change=${t=>this.importPackFile(t)} />
+          </label>`:v}
+      ${this._packMsg?g`<p class="nf-sub ${this._packMsg.ok?"nf-notice":"nf-pack-error"}">${this._packMsg.text}</p>`:v}
+      <p class="nf-sub">${this.t("packs_hint")}</p>
+    </section>`}async importPackFile(e){let t=e.target,n=[...t.files??[]];if(t.value="",!n.length||!this.hass)return;let i=[],r=[];for(let a of n)try{let l=await Si(this.hass,await a.text());i.push(this.t("pack_imported",{name:l.name,publisher:l.publisher,n:l.items}))}catch(l){let{code:c,message:h}=l??{},d=`pack_error_${c}`,u=this.t(d,{detail:h??String(l)});r.push(`${a.name}: ${u===d?this.t("pack_error_other",{detail:h??String(l)}):u}`)}i.length&&this.dispatchEvent(new CustomEvent("packs-changed",{bubbles:!0,composed:!0}));let s=n.length>1?[this.t("packs_imported_n",{n:i.length,total:n.length})]:[];this._packMsg={ok:r.length===0,text:[...s,...i,...r].join(" \xB7 ")}}async deletePack(e){!this.hass||!confirm(this.t("pack_remove_confirm",{name:me(e,this.hass?.language??"de")}))||(await Mi(this.hass,e.id),this._packMsg=null,this.dispatchEvent(new CustomEvent("packs-changed",{bubbles:!0,composed:!0})))}static styles=[Qe,Nt,se`
+      .nf-updates {
+        border-color: color-mix(in srgb, var(--nf-accent) 60%, transparent);
+        background: color-mix(in srgb, var(--nf-accent) 8%, transparent);
+      }
+      .nf-updates p {
+        margin: 4px 0;
+      }
+      .nf-loyalty {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 6px 0 12px;
+        padding: 10px 12px;
+        border: 1px solid color-mix(in srgb, #ffb547 55%, transparent);
+        border-radius: 12px;
+        background: color-mix(in srgb, #ffb547 10%, transparent);
+      }
+      .nf-loyalty code {
+        font-size: 1.05em;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .nf-offer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .nf-offer {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--nf-line);
+        border-radius: 12px;
+        color: inherit;
+        text-decoration: none;
+        background: color-mix(in srgb, var(--nf-accent) 4%, transparent);
+      }
+      .nf-offer:hover {
+        border-color: var(--nf-accent);
+      }
+      .nf-offer img,
+      .nf-offer-ph {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+      .nf-offer-ph {
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        color: var(--nf-accent);
+      }
+      .nf-offer-body {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 10px 12px;
+      }
+      .nf-offer-new {
+        align-self: flex-start;
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: #ffb547;
+        color: #1a1200;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .nf-offer-kind {
+        color: var(--nf-accent);
+        font-size: 12px;
+      }
+      :host {
+        display: block;
+        overflow: auto;
+      }
+      .nf-ext {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 20px 16px 40px;
+        display: grid;
+        gap: 16px;
+      }
+      .nf-ext-head {
+        display: grid;
+        gap: 8px;
+        justify-items: start;
+      }
+      .nf-ext-head a {
+        text-decoration: none;
+      }
+      .nf-ext-actions,
+      .nf-ext-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .nf-ext-head h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+      .nf-ext-card {
+        padding: 14px 16px;
+        border: 1px solid var(--nf-line);
+        border-radius: 14px;
+        background: var(--nf-chrome);
+      }
+      .nf-ext-card h3 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--nf-soft);
+      }
+      .nf-ext-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+      }
+      .nf-ext-feature {
+        display: grid;
+        gap: 6px;
+        align-content: start;
+        padding: 12px;
+        border: 1px solid var(--nf-line);
+        border-radius: 12px;
+      }
+      .nf-ext-on {
+        border-color: var(--nf-accent);
+      }
+      .nf-ext-state {
+        color: var(--nf-accent);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .nf-ext-link {
+        color: var(--nf-accent);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .nf-sub {
+        color: var(--nf-soft);
+        font-size: 13px;
+      }
+      .nf-notice {
+        color: var(--nf-accent);
+      }
+      .nf-pack {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--nf-line);
+      }
+      .nf-pack div {
+        display: grid;
+        gap: 2px;
+      }
+      .nf-pack-import {
+        display: block;
+        margin-top: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .nf-pack-error {
+        color: var(--nf-danger);
+      }
+    `]};customElements.get("nf-extensions")||customElements.define("nf-extensions",Xn);var ms=new Set(["vertex","room","device","opening","furniture","rotate","resize","outdoor","roofmove","roofcorner","roofvertex","outvertex","solarmove","solarturn","bgmove","bgscale","bgrotate"]),gs=100,Kt=10,S=o=>Math.round(o*1e3)/1e3,_s={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]},Oo=new Set(["parking","stairwell","rug","grid_point"]),Jn=class extends J{static properties={_shiftX:{state:!0},_shiftAll:{state:!0},_bgEdit:{state:!0},_bgRuler:{state:!0},_bgRulerLen:{state:!0},_bgLevel:{state:!0},_bgOpen:{state:!0},_shiftZ:{state:!0},hass:{attribute:!1},building:{attribute:!1},narrow:{type:Boolean},packs:{attribute:!1},_preview:{state:!0},_doc:{state:!0},_doc3d:{state:!0},_split:{state:!0},_splitRatio:{state:!0},_backupBusy:{state:!0},_wall3d:{state:!0},_sidePinned:{state:!0},_sideOpen:{state:!0},_floorId:{state:!0},_roomId:{state:!0},_vertex:{state:!0},_openingId:{state:!0},_furnitureId:{state:!0},_deviceId:{state:!0},_deviceQuery:{state:!0},_devSource:{state:!0},_roofId:{state:!0},_solarId:{state:!0},_solarPick:{state:!0},_roofWinId:{state:!0},_energyNote:{state:!0},_furnQuery:{state:!0},_libOpen:{state:!0},_expanded:{state:!0},_notice:{state:!0},_history:{state:!0},_spots:{state:!0},_outdoorId:{state:!0},_wallId:{state:!0},_edgeHi:{state:!0},_ctx:{state:!0},_fixedHint:{state:!0},_floorMenu:{state:!0},_openingPreset:{state:!0},_measureLen:{state:!0},_packages:{state:!0},_rectSize:{state:!0},_tool:{state:!0},_draft:{state:!0},_cursor:{state:!0},_guides:{state:!0},_view:{state:!0},_size:{state:!0},_images:{state:!0},_canUndo:{state:!0},_canRedo:{state:!0}};doc3dTimer;fixedPan=!1;reframe3d=!1;pressTimer=0;pressStart=null;past=[];future=[];drag=null;pointers=new Map;pinch=null;fitted=!1;resizeObserver;loadingImages=new Set;constructor(){super(),this.narrow=!1,this._floorId=null,this._roomId=null,this._vertex=null,this._openingId=null,this._furnitureId=null,this._deviceId=null,this._deviceQuery="",this._devSource="area",this._roofId=null,this._solarId=null,this._solarPick=!1,this._roofWinId=null,this._energyNote=null,this._furnQuery="",this._libOpen=new Set(["group:lights","group:living"]);try{let n=localStorage.getItem("nextfloor.library");n&&(this._libOpen=new Set(JSON.parse(n)))}catch{}this._expanded=new Set,this._notice=null,this._history=null,this._spots=null,this._outdoorId=null,this._wallId=null,this._edgeHi=null,this._shiftX=0,this._shiftAll=!1,this._bgEdit=!1,this._bgRuler=null,this._bgRulerLen=0,this._bgLevel=null,this._bgOpen=!1,this._shiftZ=0,this._floorMenu=!1,this._openingPreset="door";let e=!1;try{e=localStorage.getItem("nextfloor.editor3d")==="1"}catch{}this._split=e,this._splitRatio=.55;try{let n=Number(localStorage.getItem("nextfloor.editorSplit"));n>=20&&n<=80&&(this._splitRatio=n/100)}catch{}this._backupBusy=!1,this._wall3d="cut",this._doc3d=this._doc,this._sideOpen=!1;let t=!0;try{t=localStorage.getItem("nextfloor.sidePinned")!=="0"}catch{}this._sidePinned=t,this._preview=null,this._measureLen=3,this._packages=!1,this._rectSize=[4,3],this._tool="select",this._draft=[],this._cursor=null,this._guides={},this._view={scale:50,ox:40,oy:40},this._size={w:800,h:600},this._images={},this._canUndo=!1,this._canRedo=!1}t(e,t){return ce(this.hass,e,t)}connectedCallback(){super.connectedCallback(),window.addEventListener("keydown",this.onKey)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("keydown",this.onKey),this.resizeObserver?.disconnect()}willUpdate(e){e.has("packs")&&Ai(this.packs??[]),e.has("hass")&&this.hass&&!Er(this.hass.language)&&Ar(this.hass.language).then(()=>this.requestUpdate()),e.has("_doc")&&this._split&&this.queue3d(),e.has("_split")&&this._split&&(this._doc3d=this._doc),e.has("_tool")&&this.houseTool&&!this._split&&!this.narrow&&(this._split=!0),e.has("_tool")&&(this.houseTool||e.get("_tool")==="roof"||e.get("_tool")==="energy")&&(this.reframe3d=!0),e.has("building")&&this.building!==this._doc&&(this._doc=this.building,this._doc3d=this.building,this._doc.floors.some(t=>t.id===this._floorId)||(this._floorId=this._doc.floors[0]?.id??null),this.floor?.rooms.some(t=>t.id===this._roomId)||(this._roomId=null))}firstUpdated(){let e=this.renderRoot.querySelector(".nf-canvas-wrap");this.resizeObserver=new ResizeObserver(()=>{this._size={w:e.clientWidth,h:e.clientHeight},!this.fitted&&this._size.w>0&&(this.fitted=!0,this.fit())}),this.resizeObserver.observe(e)}queue3d(){clearTimeout(this.doc3dTimer),this.doc3dTimer=setTimeout(()=>this._doc3d=this._doc,150)}onSplitDown(e){let t=e.currentTarget.parentElement,n=e.currentTarget;n.setPointerCapture(e.pointerId);let i=t.getBoundingClientRect(),r=a=>{this._splitRatio=Math.min(.8,Math.max(.2,(a.clientX-i.left)/i.width))},s=()=>{n.removeEventListener("pointermove",r),n.removeEventListener("pointerup",s),n.removeEventListener("pointercancel",s);try{localStorage.setItem("nextfloor.editorSplit",String(Math.round(this._splitRatio*100)))}catch{}};n.addEventListener("pointermove",r),n.addEventListener("pointerup",s),n.addEventListener("pointercancel",s),e.preventDefault()}toggleSplit(){this._split=!this._split;try{localStorage.setItem("nextfloor.editor3d",this._split?"1":"0")}catch{}}onFurnitureMoved3d(e){let{id:t,x:n,z:i}=e.detail,r=this._doc.settings.wall_interior;this.change(s=>{for(let a of s.floors){let l=a.furniture.find(u=>u.id===t);if(!l)continue;let[c,h]=Pn(a,l.x,l.z,n,i);Object.assign(l,{x:c,z:h});let d=Pt(a,l,r);d&&Object.assign(l,d)}})}onDeviceMoved3d(e){let{id:t,x:n,z:i}=e.detail;this.change(r=>{for(let s of r.floors){let a=s.placements.find(h=>h.entity_id===t);if(!a)continue;let[l,c]=Pn(s,a.x,a.z,n,i);Object.assign(a,{x:l,z:c})}})}render3dBar(){if(!this.isAdmin)return v;let e=this.furnitureItem,t=this.device;if(e){let n=mn(e),i=(r,s,a=.05)=>g`<label class="nf-3d-size" title=${this.t(`size_${r}`)}
+        >${s}
+        <input
+          type="number"
+          inputmode="decimal"
+          step="0.05"
+          min=${a}
+          .value=${String(Math.round(e[r]*100)/100)}
+          @change=${l=>{let c=parseFloat(l.target.value.replace(",","."));Number.isFinite(c)&&c>=a&&this.updateFurniture({[r]:Math.round(c*1e3)/1e3})}}
+        />
+      </label>`;return g`<div class="nf-3d-bar">
+        <span>${vt(this.hass,e.type)}</span>
+        ${i("w",this.t("size_short_w"))} ${i("d",this.t("size_short_d"))} ${i("h",this.t("size_short_h"))}
+        ${n?g`<label class="nf-3d-size" title=${this.t("mount_height")}
+              >↕
+              <input
+                type="number"
+                inputmode="decimal"
+                step="0.05"
+                min="0"
+                .value=${String(Math.round((e.mount_y??cn(this.floor,e))*100)/100)}
+                @change=${r=>{let s=parseFloat(r.target.value.replace(",","."));Number.isFinite(s)&&s>=0&&this.updateFurniture({mount_y:Math.round(s*1e3)/1e3})}}
+              />
+            </label>`:v}
+        <button class="nf-chip" @click=${()=>this.rotateFurniture(-45)}>↺ 45°</button>
+        <button class="nf-chip" @click=${()=>this.rotateFurniture(45)}>↻ 45°</button>
+        ${this.fixButton("furniture",e.id)}
+        <button class="nf-chip nf-danger-chip" @click=${()=>this.deleteFurniture()}>${this.t("delete")}</button>
+      </div>`}if(t){let n=H(t.entity_id),i=n==="light",r=n?Ft(n,this.floor?.height??2.5,i?t.mount??"ceiling":null):1;return g`<div class="nf-3d-bar">
+        <span>${K(this.hass,t.entity_id)}</span>
+        ${i?g`<select class="nf-3d-select" title=${this.t("lamp_mount")} @change=${s=>this.updateDevice({mount:s.target.value,y:null})}>
+              ${["ceiling","floor","table","wall"].map(s=>g`<option value=${s} ?selected=${s===(t.mount??"ceiling")}>${this.t(`lamp_${s}`)}</option>`)}
+            </select>`:v}
+        <label class="nf-3d-size" title=${this.t("marker_height")}
+          >${this.t("size_short_h")}
+          <input
+            type="number"
+            inputmode="decimal"
+            step="0.05"
+            min="0"
+            .value=${String(Math.round((t.y??r)*100)/100)}
+            @change=${s=>{let a=parseFloat(s.target.value.replace(",","."));Number.isFinite(a)&&a>=0&&this.updateDevice({y:Math.round(a*1e3)/1e3})}}
+          />
+        </label>
+        <button class="nf-chip" @click=${()=>this.updateDevice({rotation:(((t.rotation??0)-45)%360+360)%360})}>↺ 45°</button>
+        <button class="nf-chip" @click=${()=>this.updateDevice({rotation:((t.rotation??0)+45)%360%360})}>↻ 45°</button>
+        ${this.fixButton("device",t.entity_id)}
+        <button class="nf-chip nf-danger-chip" @click=${()=>this.deleteItem("device",t.entity_id)}>${this.t("delete")}</button>
+      </div>`}return v}grab3d=null;surfaceGrabber={start:e=>this.grab3dStart(e),move:e=>this.grab3dMove(e),end:()=>{let e=this.grab3d;this.grab3d=null,e?.moved&&this.pushHistory(e.base)}};grab3dStart(e){let t=this._doc,n=j(t),i=null,r=(a,l,c,h,d=!1)=>{if(!c||d)return;let u=Qn(c,e.o,e.d);!u||!as(c,h,u.u,u.s)||i&&i.t<=u.t||(i={id:a,win:l,t:u.t,du:u.u-h.u,ds:u.s-h.v})};if(this._tool==="energy")for(let a of t.settings.roof.solar??[])r(a.id,!1,ue(t,a,n),a,!!a.locked);if(this._tool==="roof")for(let a of t.settings.roof.windows??[])r(a.id,!0,n.find(l=>l.key===a.face)??null,qe(a),!!a.locked);if(!i)return!1;let s=i;return this.grab3d={id:s.id,win:s.win,du:s.du,ds:s.ds,base:t,moved:!1},s.win?this._roofWinId=s.id:this.selectSolar(s.id),!0}grab3dMove(e){let t=this.grab3d;if(!t)return;let n=t.base,i=t.win?n.settings.roof.windows?.find(f=>f.id===t.id):void 0,r=t.win?i?qe(i):void 0:n.settings.roof.solar?.find(f=>f.id===t.id);if(!r)return;let s=ue(n,r),a=s?.unbounded?[s]:t.win?j(n):[...j(n),...Ue(n)],l=null;for(let f of a){let p=Qn(f,e.o,e.d);p&&os(f,p.u,p.s)&&(!l||p.t<l.t)&&(l={face:f,...p})}if(!l)return;let c=l.face,h=.05,d=f=>S(Math.round(f/h)*h),u=Ze(c,{...r,face:c.key,u:d(l.u-t.du),v:d(l.s-t.ds),tilt:c.flat?r.tilt??15:r.tilt});t.moved=!0,this.change(f=>{if(t.win){let m=f.settings.roof.windows?.find(_=>_.id===t.id);m&&Object.assign(m,{face:c.key,...u});return}let p=f.settings.roof.solar?.find(m=>m.id===t.id);p&&Object.assign(p,{face:c.key,...u},c.flat&&p.tilt==null?{tilt:15}:{})},t.base,!1)}get houseTool(){return this._tool==="roof"||this._tool==="energy"}render3d(){return g`<div class="nf-editor-3d">
+      ${this.houseTool?v:g`<div class="nf-seg nf-3d-walls">
+            <button aria-pressed=${this._wall3d==="auto"} @click=${()=>this._wall3d="auto"}>${this.t("walls_auto")}</button>
+            <button aria-pressed=${this._wall3d==="cut"} @click=${()=>this._wall3d="cut"}>${this.t("walls_cut")}</button>
+          </div>`}
+      ${this.render3dBar()}
+      <nf-view3d
+        .hass=${this.hass}
+        .building=${this._doc3d}
+        .floorId=${this.houseTool?null:this._floorId}
+        .roomId=${null}
+        .wallMode=${this.houseTool?"auto":this._wall3d}
+        .explode=${!1}
+        .keepRoof=${this._tool==="roof"||this._tool==="energy"}
+        .markerMode=${"important"}
+        .heatMode=${"none"}
+        .theme=${"neon"}
+        .packs=${this.packs}
+        .showEnergy=${!1}
+        .holograms=${this._tool==="energy"?!0:null}
+        .flows=${!1}
+        ?furnish=${this.isAdmin}
+        .surfaceGrab=${this.isAdmin&&this.houseTool?this.surfaceGrabber:null}
+        .furnishTypes=${this._tool==="energy"?xe:this._tool==="roof"?[]:null}
+        .selectedFurniture=${this._furnitureId}
+        .selectedDevice=${this._deviceId}
+        .quality=${"auto"}
+        .floorThumbs=${!1}
+        .roomLabels=${!0}
+        .floorStack=${this.houseTool?"stacked":"single"}
+        .panelOpen=${!1}
+        .alerts=${!1}
+        .scenes=${!1}
+        @furniture-select=${e=>{e.detail.id?this.selectFrom3d("furniture",e.detail.id):this._furnitureId&&this.selectFrom3d("furniture",null)}}
+        @furniture-move=${this.onFurnitureMoved3d}
+        @device-select=${e=>{e.detail.id?this.selectFrom3d("device",e.detail.id):this._deviceId&&this.selectFrom3d("device",null)}}
+        @device-move=${this.onDeviceMoved3d}
+        @floor-tap=${e=>{e.detail.floorId&&(this._floorId=e.detail.floorId),this._sideOpen=!1}}
+        @room-tap=${e=>{e.detail.floorId&&(this._floorId=e.detail.floorId),e.detail.roomId?this.selectFrom3d("room",e.detail.roomId):this._sideOpen=!1}}
+      ></nf-view3d>
+    </div>`}updated(){for(let t of this.renderRoot.querySelectorAll("select option[selected]"))t.selected||(t.selected=!0);this.reframe3d&&(this.reframe3d=!1,setTimeout(()=>this.renderRoot.querySelector("nf-view3d")?.resetView(),250));let e=this.floor?.background;if(e&&!this._images[e.image_id]&&!this.loadingImages.has(e.image_id)&&this.loadImage(e.image_id),this.furnitureItem?.pictures)for(let t of this.storedPictures())!this._images[t]&&!this.loadingImages.has(t)&&this.loadImage(t)}get floor(){return this._doc?.floors.find(e=>e.id===this._floorId)}get room(){return this.floor?.rooms.find(e=>e.id===this._roomId)}get isAdmin(){return this.hass?.user?.is_admin??!0}setDoc(e,t=this._doc){t&&(this.past.push(JSON.stringify(t)),this.past.length>gs&&this.past.shift(),this.future=[]),this._doc=e,this._canUndo=this.past.length>0,this._canRedo=this.future.length>0,this.dispatchEvent(new CustomEvent("building-changed",{detail:{building:e},bubbles:!0,composed:!0}))}change(e,t=this._doc,n=!0){let i=structuredClone(t),r=i.floors.find(s=>s.id===this._floorId);!r&&this._floorId||(e(i,r),this.setDoc(i,n?t:null))}undo(){let e=this.past.pop();e&&(this.future.push(JSON.stringify(this._doc)),this.restore(JSON.parse(e)))}redo(){let e=this.future.pop();e&&(this.past.push(JSON.stringify(this._doc)),this.restore(JSON.parse(e)))}restore(e){this._doc=e,e.floors.some(t=>t.id===this._floorId)||(this._floorId=e.floors[0]?.id??null),this.floor?.rooms.some(t=>t.id===this._roomId)||(this._roomId=null),this._vertex=null,this._canUndo=this.past.length>0,this._canRedo=this.future.length>0,this.dispatchEvent(new CustomEvent("building-changed",{detail:{building:e},bubbles:!0,composed:!0}))}toScreen(e){let{scale:t,ox:n,oy:i}=this._view;return[e[0]*t+n,e[1]*t+i]}toWorld(e,t){let{scale:n,ox:i,oy:r}=this._view;return[(e-i)/n,(t-r)/n]}localPoint(e){let t=this.renderRoot.querySelector("svg").getBoundingClientRect();return[e.clientX-t.left,e.clientY-t.top]}fit(){let e=this.floor?.rooms.flatMap(a=>a.points)??[],t=e.length?te(e):{x0:0,z0:0,x1:10,z1:8},n=1.5,i=t.x1-t.x0+2*n,r=t.z1-t.z0+2*n,s=Math.max(8,Math.min(400,Math.min(this._size.w/i,this._size.h/r)));this._view={scale:s,ox:this._size.w/2-(t.x0+t.x1)/2*s,oy:this._size.h/2-(t.z0+t.z1)/2*s}}showPoint(e,t){let n=Math.max(this._view.scale,70);this._view={scale:n,ox:this._size.w/2-e*n,oy:this._size.h/2-t*n}}zoomAt(e,t,n){let{scale:i,ox:r,oy:s}=this._view,a=Math.max(8,Math.min(600,i*e)),l=a/i;this._view={scale:a,ox:t-(t-r)*l,oy:n-(n-s)*l}}snap(e,t,n=!1){if(this._guides={},n)return e;let i=Kt/this._view.scale,r=this.floor?.rooms??[],s=[];for(let p of r)p.points.forEach((m,_)=>{t&&p.id===t.roomId&&(t.index===void 0||t.index===_)||s.push(m)});let a=null,l=i;for(let p of s){let m=Math.hypot(p[0]-e[0],p[1]-e[1]);m<l&&(l=m,a=p)}if(a)return this._guides={point:a},[a[0],a[1]];for(let p of r)if(!(t&&p.id===t.roomId))for(let m=0;m<p.points.length;m++){let _=p.points[m],x=p.points[(m+1)%p.points.length],b=x[0]-_[0],w=x[1]-_[1],$=b*b+w*w;if($<1e-9)continue;let y=((e[0]-_[0])*b+(e[1]-_[1])*w)/$;if(y<=0||y>=1)continue;let E=[_[0]+y*b,_[1]+y*w],z=Math.hypot(E[0]-e[0],E[1]-e[1]),k=this._doc.settings.grid;Math.abs(w)<1e-9&&(E[0]=Math.min(Math.max(Math.round(E[0]/k)*k,Math.min(_[0],x[0])),Math.max(_[0],x[0]))),Math.abs(b)<1e-9&&(E[1]=Math.min(Math.max(Math.round(E[1]/k)*k,Math.min(_[1],x[1])),Math.max(_[1],x[1]))),z<l&&(l=z,a=E)}if(a)return this._guides={point:a},[S(a[0]),S(a[1])];let c=this._doc.settings.grid,h=[S(Math.round(e[0]/c)*c),S(Math.round(e[1]/c)*c)],d=i,u=i,f={};for(let p of s)Math.abs(p[0]-e[0])<d&&(d=Math.abs(p[0]-e[0]),h[0]=p[0],f.x=p[0]),Math.abs(p[1]-e[1])<u&&(u=Math.abs(p[1]-e[1]),h[1]=p[1],f.z=p[1]);return this._guides=f,h}onPointerDown(e){if(this._ctx=null,this._fixedHint=!1,this.fixedPan=!1,this.pointerDown(e),this.pointers.size!==1){clearTimeout(this.pressTimer);return}if(this.guardFixed(this.localPoint(e)),clearTimeout(this.pressTimer),this.pressStart=null,e.pointerType==="touch"&&(this._tool==="select"||this._tool==="furniture")){let t=this.localPoint(e),n=e.target;this.pressStart=t,this.pressTimer=window.setTimeout(()=>{let i=this.drag;i&&"moved"in i&&i.moved||(this.drag=null,this.openContext(n,t))},550)}}guardFixed(e){let t=this.drag;if(!t)return;let n=null;t.kind==="vertex"||t.kind==="room"?n=["room",t.roomId]:t.kind==="device"||t.kind==="aim"?n=["device",t.entityId]:t.kind==="opening"?n=["opening",t.id]:t.kind==="furniture"||t.kind==="rotate"||t.kind==="resize"?n=["furniture",t.id]:t.kind==="wallmove"?n=["wall",t.id]:t.kind==="outdoor"&&(n=["outdoor",t.id]),!(!n||!this.isFixedItem(...n))&&("moved"in t&&t.moved&&"base"in t&&this.restoreLive(t.base),this.drag={kind:"pan",last:e},this.fixedPan=!0)}pointerDown(e){e.currentTarget.setPointerCapture(e.pointerId);let n=this.localPoint(e);if(this.pointers.set(e.pointerId,n),this.pointers.size===2){this.drag&&ms.has(this.drag.kind)&&"moved"in this.drag&&this.drag.moved&&"base"in this.drag&&this.restoreLive(this.drag.base),this.drag=null,this.pinch=this.pinchState();return}if(this.pointers.size>2)return;if(e.button===1||e.button===2||!this.floor){this.drag={kind:"pan",last:n};return}let i=this.toWorld(...n),r=e.target;if(this._bgLevel&&this.isAdmin&&this.floor?.background){let w=[...this._bgLevel,i];w.length<2?this._bgLevel=w:this.applyBgLevel(w[0],w[1]);return}if(this.bgHandles()&&this.floor.background&&r.closest("[data-bg-rotate]")){let w=this.floor.background,$=this._images[w.image_id],y=w.width*($?.aspect??1),E=[w.x+w.width/2,w.z+y/2];this.drag={kind:"bgrotate",base:this._doc,moved:!1,start:Math.atan2(i[1]-E[1],i[0]-E[0]),rot:w.rotation??0};return}if(this._bgRuler&&this._bgRuler.length<2&&this.isAdmin&&this.floor?.background){this._bgRuler=[...this._bgRuler,i];return}if(this.bgHandles()&&this.floor.background&&!this._bgEdit&&(r.closest("[data-bg-handle]")||r.closest("[data-bg]"))){let w=this.floor.background;this.drag=r.closest("[data-bg-handle]")?{kind:"bgscale",base:this._doc,moved:!1}:{kind:"bgmove",start:i,bx:w.x,bz:w.z,base:this._doc,moved:!1};return}if(this._bgEdit&&this.isAdmin&&this.floor?.background){let w=this.floor.background;if(r.closest("[data-bg-handle]")){this.drag={kind:"bgscale",base:this._doc,moved:!1};return}if(r.closest("[data-bg]")){this.drag={kind:"bgmove",start:i,bx:w.x,bz:w.z,base:this._doc,moved:!1};return}this._bgEdit=!1}if(this._tool==="wall"){let w=this.snap(i,void 0,e.altKey);this.drag={kind:"freewall",start:w,end:w};return}if(this._tool==="roof"||this._tool==="energy"){let w=r.closest("[data-roof-corner]")?.getAttribute("data-roof-corner"),$=r.closest("[data-roof-vertex]")?.getAttribute("data-roof-vertex"),y=r.closest("[data-roof]")?.getAttribute("data-roof"),E=this._tool==="energy"?r.closest("[data-energy-device]")?.getAttribute("data-energy-device"):null;if(E){this._solarId=null,this.selectItem("furniture",E),this.drag=this.isAdmin?{kind:"furniture",id:E,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}let z=this._tool==="energy"?r.closest("[data-solar]")?.getAttribute("data-solar"):null,k=this._tool==="energy"?r.closest("[data-solar-turn]")?.getAttribute("data-solar-turn"):null;if(k&&this.isAdmin){this.drag={kind:"solarturn",id:k,base:this._doc,moved:!1};return}if(z){let A=r.closest("[data-cell]")?.getAttribute("data-cell");if(this._solarPick&&z===this._solarId&&A&&this.isAdmin){this.toggleSolarCell(A),this.drag={kind:"pan",last:n};return}z!==this._solarId&&(this._solarPick=!1),this._solarId=z,this._roofId=null;let I=this._doc.settings.roof.solar?.find(O=>O.id===z),P=I?ue(this._doc,I)??void 0:void 0,T=P?this.faceHit(P,i):null,B=I&&T?{du:T.u-I.u,ds:Number.isNaN(T.s)?0:T.s-I.v}:null;this.drag=this.isAdmin&&!I?.locked?{kind:"solarmove",id:z,start:i,startScreen:n,base:this._doc,moved:!1,grab:B}:{kind:"pan",last:n};return}let M=this._tool==="roof"?r.closest("[data-roofwin]")?.getAttribute("data-roofwin"):null;if(M){this._roofWinId=M,this._roofId=null;let A=this._doc.settings.roof.windows?.find(B=>B.id===M),I=A?j(this._doc).find(B=>B.key===A.face):void 0,P=I?Wt(I,i):null,T=A&&P?{du:P.u-A.u,ds:P.s-A.v}:null;this.drag=this.isAdmin&&!A?.locked?{kind:"solarmove",id:M,start:i,startScreen:n,base:this._doc,moved:!1,grab:T,win:!0}:{kind:"pan",last:n};return}this._tool==="roof"&&(this._roofWinId=null);let R=this._tool==="energy"?r.closest(".nf-energy-item")?.getAttribute("data-furniture"):null;if(R){this._solarId=null,this.selectItem("furniture",R),this.drag=this.isAdmin?{kind:"furniture",id:R,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}if(this._tool==="energy"){this.selectItem("furniture",null),this._solarId=null,this.drag={kind:"pan",last:n};return}if($&&this.isAdmin){let[A,I]=$.split(":");this.drag={kind:"roofvertex",id:A,index:Number(I),base:this._doc,moved:!1}}else if(w&&this.isAdmin){let[A,I,P]=w.split(":");this.drag={kind:"roofcorner",id:A,corner:[I==="1"?1:0,P==="1"?1:0],base:this._doc,moved:!1}}else if(y){let A=this.roofFixed(this._doc.settings.roof.sections?.find(I=>I.id===y));A&&this._roofId===y&&(this._fixedHint=!0),this._roofId=y,this.drag=this.isAdmin&&!A?{kind:"roofmove",id:y,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n}}else if(this.isAdmin){this._roofId=null;let A=this.snap(i,void 0,e.altKey);this.drag={kind:"rect",start:A,end:A,roof:!0}}else this.drag={kind:"pan",last:n};return}if(this._tool==="rect"||this._tool==="outdoor"||this._tool==="hole"){let w=this.snap(i,void 0,e.altKey);this.drag={kind:"rect",start:w,end:w,outdoor:this._tool==="outdoor",hole:this._tool==="hole"};return}if(this._tool==="polygon"||this._tool==="measure"){this.drag={kind:"tap",startScreen:n,last:n,panning:!1};return}if(this._tool==="opening"){this.placeOpening(this._openingPreset,n)||(this.drag={kind:"pan",last:n});return}let s=r.closest("[data-device]");if(s&&this.isAdmin){this.drag={kind:"device",entityId:s.getAttribute("data-device"),start:i,startScreen:n,base:this._doc,moved:!1};return}let a=r.closest("[data-opening]");if(a){let w=a.getAttribute("data-opening");this.selectItem("opening",w),this.drag=this.isAdmin?{kind:"opening",id:w,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}let l=r.closest("[data-resize]");if(l&&this.isAdmin){let[w,$,y]=l.getAttribute("data-resize").split(":");this.drag={kind:"resize",id:w,corner:[$==="1"?1:-1,y==="1"?1:-1],base:this._doc,moved:!1};return}let c=r.closest("[data-rotate]");if(c&&this.isAdmin){this.drag={kind:"rotate",id:c.getAttribute("data-rotate"),base:this._doc,moved:!1};return}let h=r.closest("[data-aim]");if(h&&this.isAdmin){this.drag={kind:"aim",entityId:h.getAttribute("data-aim"),base:this._doc,moved:!1};return}let d=r.closest("[data-furniture]");if(d&&!r.closest("[data-vertex], [data-mid]")){let w=d.getAttribute("data-furniture");this.selectItem("furniture",w),this.drag=this.isAdmin?{kind:"furniture",id:w,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}let u=r.closest("[data-vertex]"),f=r.closest("[data-mid]");if(u&&this.room&&this.isAdmin){this._vertex=Number(u.getAttribute("data-vertex")),this.drag={kind:"vertex",roomId:this.room.id,index:this._vertex,base:this._doc,moved:!1};return}if(f&&this.room&&this.isAdmin){let w=Number(f.getAttribute("data-mid")),$=this.room.points,y=$[w],E=$[(w+1)%$.length],z=[S((y[0]+E[0])/2),S((y[1]+E[1])/2)],k=this._doc,M=this.room.id;this.change((R,A)=>{let I=A.rooms.find(T=>T.id===M);I.points.splice(w+1,0,z),I.wall_heights&&I.wall_heights.splice(w+1,0,I.wall_heights[w]??null),I.wall_thickness&&I.wall_thickness.splice(w+1,0,I.wall_thickness[w]??null);let P=Math.hypot(z[0]-y[0],z[1]-y[1]);for(let T of A.openings)T.room_id!==M||T.wall||(T.edge>w?T.edge+=1:T.edge===w&&T.offset>P&&(T.edge=w+1,T.offset=S(T.offset-P)))},k,!1),this._vertex=w+1,this.drag={kind:"vertex",roomId:M,index:w+1,base:k,moved:!0};return}let p=r.closest("[data-wall-end]");if(p&&this.isAdmin){let[w,$]=p.getAttribute("data-wall-end").split(":");this.drag={kind:"wallmove",id:w,end:$,start:i,startScreen:n,base:this._doc,moved:!1};return}let m=r.closest("[data-free-wall]");if(m){let w=m.getAttribute("data-free-wall");this.selectItem("wall",w),this.drag=this.isAdmin?{kind:"wallmove",id:w,end:null,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}let _=r.closest("[data-out-vertex]");if(_&&this.isAdmin){let[w,$]=_.getAttribute("data-out-vertex").split(":");this.drag={kind:"outvertex",id:w,index:Number($),base:this._doc,moved:!1};return}let x=r.closest("[data-outdoor]");if(x&&!r.closest("[data-room]")&&!this.roomAt(i)){let w=x.getAttribute("data-outdoor");this.selectItem("outdoor",w),this.drag=this.isAdmin?{kind:"outdoor",id:w,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}let b=r.closest("[data-room]")?.getAttribute("data-room")??this.roomAt(i);if(b){b!==this._roomId&&(this._vertex=null),this.selectItem("room",b),this.drag=this.isAdmin&&this._tool!=="furniture"?{kind:"room",roomId:b,start:i,startScreen:n,base:this._doc,moved:!1}:{kind:"pan",last:n};return}this.selectItem("room",null),this.drag={kind:"pan",last:n}}onPointerMove(e){if(this.pressStart){let r=this.localPoint(e);Math.hypot(r[0]-this.pressStart[0],r[1]-this.pressStart[1])>8&&(clearTimeout(this.pressTimer),this.pressStart=null,this.fixedPan&&(this._fixedHint=!0))}else this.fixedPan&&!this._fixedHint&&this.drag?.kind==="pan"&&(this._fixedHint=!0);let t=this.localPoint(e);if(this.pointers.has(e.pointerId)&&this.pointers.set(e.pointerId,t),this.pinch){let r=this.pinchState();r&&(this.zoomAt(r.dist/Math.max(1,this.pinch.dist),...r.mid),this._view={...this._view,ox:this._view.ox+r.mid[0]-this.pinch.mid[0],oy:this._view.oy+r.mid[1]-this.pinch.mid[1]},this.pinch=r);return}let n=this.toWorld(...t),i=this.drag;if(!i){this._tool!=="select"&&this._tool!=="furniture"&&this.floor&&(this._cursor=this.snap(n,void 0,e.altKey));return}switch(i.kind){case"pan":this._view={...this._view,ox:this._view.ox+t[0]-i.last[0],oy:this._view.oy+t[1]-i.last[1]},i.last=t;break;case"tap":(i.panning||Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])>6)&&(i.panning=!0,this._view={...this._view,ox:this._view.ox+t[0]-i.last[0],oy:this._view.oy+t[1]-i.last[1]}),i.last=t;break;case"rect":i.end=this.snap(n,void 0,e.altKey),this.requestUpdate();break;case"freewall":{let r=this.snap(n,void 0,e.altKey);e.shiftKey&&(r=Math.abs(r[0]-i.start[0])>Math.abs(r[1]-i.start[1])?[r[0],i.start[1]]:[i.start[0],r[1]]),i.end=r,this.requestUpdate();break}case"wallmove":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=(i.base.floors.find(a=>a.id===this._floorId)?.walls??[]).find(a=>a.id===i.id);if(!r)return;let s;if(i.end){let a=this.snap(n,void 0,e.altKey);s=i.end==="a"?{a,b:r.b}:{a:r.a,b:a}}else{let a=e.altKey?.01:this._doc.settings.grid,l=Math.round((n[0]-i.start[0])/a)*a,c=Math.round((n[1]-i.start[1])/a)*a;s={a:[S(r.a[0]+l),S(r.a[1]+c)],b:[S(r.b[0]+l),S(r.b[1]+c)]}}this.change((a,l)=>Object.assign((l.walls??[]).find(c=>c.id===i.id),s),i.base,!1);break}case"vertex":{let r=this.snap(n,{roomId:i.roomId,index:i.index},e.altKey);i.moved=!0,this.change((s,a)=>{a.rooms.find(l=>l.id===i.roomId).points[i.index]=r},i.base,!1);break}case"room":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.base.floors.find(c=>c.id===this._floorId)?.rooms.find(c=>c.id===i.roomId);if(!r)return;let s=this.roomDelta(r,[n[0]-i.start[0],n[1]-i.start[1]],e.altKey),a=i.base.floors.find(c=>c.id===this._floorId),l=new Set(a.placements.filter(c=>D([c.x,c.z],r.points)).map(c=>c.entity_id));this.change((c,h)=>{let d=h.rooms.find(u=>u.id===i.roomId);d.points=r.points.map(([u,f])=>[S(u+s[0]),S(f+s[1])]),h.placements=a.placements.map(u=>l.has(u.entity_id)?{...u,x:S(u.x+s[0]),z:S(u.z+s[1])}:u)},i.base,!1);break}case"roofmove":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=e.altKey?.01:this._doc.settings.grid,s=S(Math.round((n[0]-i.start[0])/r)*r),a=S(Math.round((n[1]-i.start[1])/r)*r),l=i.base.settings.roof.sections?.find(c=>c.id===i.id);if(!l)return;this.change(c=>{let h=c.settings.roof.sections?.find(d=>d.id===i.id);h&&(Object.assign(h,{x0:S(l.x0+s),x1:S(l.x1+s),z0:S(l.z0+a),z1:S(l.z1+a)}),l.points&&(h.points=l.points.map(([d,u])=>[S(d+s),S(u+a)])))},i.base,!1);break}case"solarturn":{i.moved=!0;let r=i.base.settings.roof.solar?.find(u=>u.id===i.id),s=r?ue(i.base,r):null;if(!r||!s)return;let[a,l]=qn(s,r),c=Math.atan2(n[0]-a,-(n[1]-l))*180/Math.PI,h=e.altKey?1:15;c=Math.round(c/h)*h;let d=bt(i.base,r,c);this.change(u=>{let f=u.settings.roof.solar?.find(p=>p.id===i.id);f&&Object.assign(f,d)},i.base,!1);break}case"solarmove":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.win?i.base.settings.roof.windows?.find(_=>_.id===i.id):void 0,s=i.win?r?qe(r):void 0:i.base.settings.roof.solar?.find(_=>_.id===i.id),a=i.win?j(i.base):[...j(i.base),...this._floorId?Ue(i.base,this._floorId):[]],l=s?ue(i.base,s,a):null;if(!s||!l)return;let c=e.altKey?.01:.05,h=_=>S(Math.round(_/c)*c),d=l.unbounded?null:ts(a,n),u=l,f,p;if(d&&i.grab)u=d.face,f=h(d.u-i.grab.du),p=Number.isNaN(d.s)?d.face.key===s.face?s.v:Math.max(0,d.face.ls-1.5):h(d.s-i.grab.ds);else{let _=n[0]-i.start[0],x=n[1]-i.start[1],b=[l.es[0],l.es[2]],w=b[0]*b[0]+b[1]*b[1]||1;f=h(s.u+_*l.eu[0]+x*l.eu[2]),p=h(s.v+(_*b[0]+x*b[1])/w)}let m=Ze(u,{...s,face:u.key,u:f,v:p,tilt:u.flat?s.tilt??15:s.tilt});this.change(_=>{if(i.win){let b=_.settings.roof.windows?.find(w=>w.id===i.id);b&&Object.assign(b,{face:u.key,...m});return}let x=_.settings.roof.solar?.find(b=>b.id===i.id);x&&Object.assign(x,{face:u.key,...m},u.flat&&x.tilt==null?{tilt:15}:{})},i.base,!1);break}case"outvertex":{i.moved=!0;let r=this.snap(n,void 0,e.altKey),s=i.base.floors.find(l=>l.id===this._floorId)?.outdoor.find(l=>l.id===i.id);if(!s)return;let a=At(s.points);this.change((l,c)=>{let h=c.outdoor.find(p=>p.id===i.id);if(!h)return;let d=s.points.map(p=>[...p]),u=i.index,f=s.points[u];d[u]=[S(r[0]),S(r[1])],a&&s.points.forEach((p,m)=>{m!==u&&(Math.abs(p[0]-f[0])<1e-6&&(d[m][0]=S(r[0])),Math.abs(p[1]-f[1])<1e-6&&(d[m][1]=S(r[1])))}),h.points=d},i.base,!1);break}case"bgmove":{i.moved=!0;let r=n[0]-i.start[0],s=n[1]-i.start[1];this.change((a,l)=>{l.background&&(l.background.x=S(i.bx+r),l.background.z=S(i.bz+s))},i.base,!1);break}case"bgrotate":{i.moved=!0;let r=this.floor?.background,s=r?this._images[r.image_id]:void 0;if(!r||!s)break;let a=r.width*s.aspect,l=[r.x+r.width/2,r.z+a/2],c=Math.atan2(n[1]-l[1],n[0]-l[0]),h=i.rot+(c-i.start)*180/Math.PI;h=e.shiftKey?Math.round(h/15)*15:Math.round(h*10)/10,h=((h+180)%360+360)%360-180,this.change((d,u)=>{u.background&&(u.background.rotation=h)},i.base,!1);break}case"bgscale":{i.moved=!0;let r=this.floor?.background,s=r?this._images[r.image_id]:void 0;if(!r||!s)break;let[a]=this.bgLocal(r,n,s.aspect),l=Math.max(.5,S(a));this.change((c,h)=>{h.background&&(h.background.width=l)},i.base,!1);break}case"roofvertex":{i.moved=!0;let r=this.snap(n,void 0,e.altKey);this.change(s=>{let a=s.settings.roof.sections?.find(l=>l.id===i.id);!a?.points||i.index>=a.points.length||(a.points[i.index]=[S(r[0]),S(r[1])],Object.assign(a,Hn(a.points)))},i.base,!1);break}case"roofcorner":{i.moved=!0;let r=this.snap(n,void 0,e.altKey);this.change(s=>{let a=s.settings.roof.sections?.find(l=>l.id===i.id);a&&(i.corner[0]?a.x1=S(r[0]):a.x0=S(r[0]),i.corner[1]?a.z1=S(r[1]):a.z0=S(r[1]))},i.base,!1);break}case"opening":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.base.floors.find(c=>c.id===this._floorId),s=r?.openings.find(c=>c.id===i.id),a=s&&r?je(s,r.rooms,r.walls??[]):null;if(!s||!a)return;let l=this.offsetOnEdge(a.room,a.edge,n,s.width,e.altKey);this.change((c,h)=>Object.assign(h.openings.find(d=>d.id===i.id),{offset:l}),i.base,!1);break}case"furniture":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.base.floors.find(d=>d.id===this._floorId)?.furniture.find(d=>d.id===i.id);if(!r)return;let s=e.altKey?.01:this._doc.settings.grid,a=S(Math.round((r.x+n[0]-i.start[0])/s)*s),l=S(Math.round((r.z+n[1]-i.start[1])/s)*s),c=r.rotation,h=e.altKey?null:this.snapToWall({...r,x:a,z:l});h&&({x:a,z:l,rotation:c}=h),this.change((d,u)=>Object.assign(u.furniture.find(f=>f.id===i.id),{x:a,z:l,rotation:c}),i.base,!1);break}case"outdoor":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.base.floors.find(c=>c.id===this._floorId)?.outdoor.find(c=>c.id===i.id);if(!r)return;let s=e.altKey?.01:this._doc.settings.grid,a=Math.round((n[0]-i.start[0])/s)*s,l=Math.round((n[1]-i.start[1])/s)*s;this.change((c,h)=>h.outdoor.find(d=>d.id===i.id).points=r.points.map(([d,u])=>[S(d+a),S(u+l)]),i.base,!1);break}case"resize":{i.moved=!0;let r=i.base.floors.find(a=>a.id===this._floorId)?.furniture.find(a=>a.id===i.id);if(!r)return;let s=Qi(r,i.corner,n,e.altKey?.01:this._doc.settings.grid);this.change((a,l)=>Object.assign(l.furniture.find(c=>c.id===i.id),s),i.base,!1);break}case"rotate":{i.moved=!0;let r=i.base.floors.find(l=>l.id===this._floorId)?.furniture.find(l=>l.id===i.id);if(!r)return;let s=Math.atan2(-(n[0]-r.x),n[1]-r.z)*180/Math.PI,a=e.altKey?1:15;s=(Math.round(s/a)*a%360+360)%360,this.change((l,c)=>Object.assign(c.furniture.find(h=>h.id===i.id),{rotation:s}),i.base,!1);break}case"aim":{i.moved=!0;let r=i.base.floors.find(c=>c.id===this._floorId)?.placements.find(c=>c.entity_id===i.entityId);if(!r)return;let s=Math.atan2(-(n[0]-r.x),n[1]-r.z)*180/Math.PI,a=e.altKey?1:5;s=(Math.round(s/a)*a%360+360)%360;let l=Math.min(50,Math.max(.5,Math.round(Math.hypot(n[0]-r.x,n[1]-r.z)*10)/10));this.change((c,h)=>Object.assign(h.placements.find(d=>d.entity_id===i.entityId),{rotation:s,reach:l}),i.base,!1);break}case"device":{if(!i.moved&&Math.hypot(t[0]-i.startScreen[0],t[1]-i.startScreen[1])<5)return;i.moved=!0;let r=i.base.floors.find(c=>c.id===this._floorId)?.placements.find(c=>c.entity_id===i.entityId);if(!r)return;let s=e.altKey?.01:this._doc.settings.grid,a=S(Math.round((r.x+n[0]-i.start[0])/s)*s),l=S(Math.round((r.z+n[1]-i.start[1])/s)*s);this.change((c,h)=>Object.assign(h.placements.find(d=>d.entity_id===i.entityId),{x:a,z:l}),i.base,!1);break}}}onPointerUp(e){if(clearTimeout(this.pressTimer),this.pressStart=null,this.fixedPan=!1,this.pointers.delete(e.pointerId),this.pinch){this.pointers.size<2&&(this.pinch=null);return}let t=this.drag;if(this.drag=null,!t||e.type==="pointercancel"){t&&ms.has(t.kind)&&"moved"in t&&t.moved&&"base"in t&&this.restoreLive(t.base);return}let n=this.localPoint(e);switch(t.kind){case"freewall":{Math.hypot(t.end[0]-t.start[0],t.end[1]-t.start[1])>=.2&&this.addFreeWall(t.start,t.end),this._guides={};break}case"wallmove":t.moved&&this.pushHistory(t.base),this._guides={};break;case"rect":{let[i,r]=t.start,[s,a]=t.end;if(Math.abs(s-i)>=.2&&Math.abs(a-r)>=.2){let l=[Math.min(i,s),Math.min(r,a)],c=[Math.max(i,s),Math.max(r,a)],h=[l,[c[0],l[1]],c,[l[0],c[1]]];t.outdoor?this.addOutdoor(h):t.hole?this.addHole(l,c):t.roof?this.addRoofSection(l,c):this.addRoom(h)}this._guides={};break}case"tap":if(t.panning)break;this._tool==="measure"?this._draft=[this.snap(this.toWorld(...n),void 0,e.altKey)]:this.addDraftPoint(this.snap(this.toWorld(...n),void 0,e.altKey),n);break;case"opening":case"furniture":case"rotate":case"aim":case"resize":case"outdoor":case"solarmove":case"solarturn":case"roofmove":case"roofcorner":case"roofvertex":case"bgmove":case"bgscale":case"bgrotate":t.moved&&this.pushHistory(t.base);break;case"device":t.moved?this.pushHistory(t.base):this.selectItem("device",t.entityId);break;case"vertex":case"room":t.moved&&this.pushHistory(t.base),this._guides={};break;default:break}}onWheel(e){e.preventDefault();let[t,n]=this.localPoint(e);this.zoomAt(Math.exp(-e.deltaY*(e.deltaMode===1?.05:.0015)),t,n)}pinchState(){let e=[...this.pointers.values()];if(e.length<2)return null;let[t,n]=e;return{dist:Math.hypot(t[0]-n[0],t[1]-n[1]),mid:[(t[0]+n[0])/2,(t[1]+n[1])/2]}}pushHistory(e){this.past.push(JSON.stringify(e)),this.past.length>gs&&this.past.shift(),this.future=[],this._canUndo=!0,this._canRedo=!1}restoreLive(e){this._doc=e,this.dispatchEvent(new CustomEvent("building-changed",{detail:{building:e},bubbles:!0,composed:!0}))}roomDelta(e,t,n){if(n)return t;let i=this._doc.settings.grid,r=[Math.round(t[0]/i)*i,Math.round(t[1]/i)*i],a=Kt/this._view.scale;this._guides={};for(let l of this.floor?.rooms??[])if(l.id!==e.id)for(let c of l.points)for(let h of e.points){let d=Math.hypot(h[0]+t[0]-c[0],h[1]+t[1]-c[1]);d<a&&(a=d,r=[c[0]-h[0],c[1]-h[1]],this._guides={point:c})}return r}roomAt(e){return(this.floor?.rooms??[]).filter(i=>D(e,i.points)).sort((i,r)=>ae(i.points)-ae(r.points))[0]?.id??null}addDraftPoint(e,t){let n=this._draft;if(n.length>=3){let[r,s]=this.toScreen(n[0]);if(Math.hypot(r-t[0],s-t[1])<14){this.closeDraft();return}}let i=n[n.length-1];i&&Math.hypot(i[0]-e[0],i[1]-e[1])<1e-6||(this._draft=[...n,e])}closeDraft(){this._draft.length>=3&&ae(this._draft)>.05&&this.addRoom(this._draft),this._draft=[],this._cursor=null,this._guides={}}measureStep(e){let t=this._draft[this._draft.length-1];if(!t||!(this._measureLen>0))return;let n=Ve(t,this._measureLen,e),i=this._draft[0];if(this._draft.length>=3&&Math.hypot(n[0]-i[0],n[1]-i[1])<.01){this.closeDraft();return}this._draft=[...this._draft,n]}rectBySize(){let e=this._draft[0]??[0,0],[t,n]=this._rectSize;t>.1&&n>.1&&(this.addRoom([e,Ve(e,t,"right"),Ve(Ve(e,t,"right"),n,"down"),Ve(e,n,"down")]),this._draft=[])}renderMeasureForm(){let e=this._draft,t=e[0],n=e[e.length-1],i=t&&n&&e.length>1?Math.hypot(n[0]-t[0],n[1]-t[1]):0,r=[["up","\u2191"],["left","\u2190"],["right","\u2192"],["down","\u2193"]],s=a=>W(this.hass,a,2);return g`<section>
+      <h3>${this.t("measure")}</h3>
+      ${t?g`<p class="nf-sub">${this.t("measure_from",{x:s(t[0]),z:s(t[1])})}</p>
+            <div class="nf-form">
+              <label class="nf-field nf-wide"
+                >${this.t("measure_length")}
+                <input
+                  class="nf-measure-input"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.01"
+                  min="0.05"
+                  .value=${String(this._measureLen)}
+                  @input=${a=>this._measureLen=parseFloat(a.target.value.replace(",","."))||0}
+                  @keydown=${a=>{let l={ArrowRight:"right",ArrowLeft:"left",ArrowUp:"up",ArrowDown:"down"}[a.key];l?(a.preventDefault(),this.measureStep(l)):a.key==="Enter"&&this.closeDraft()}}
+              /></label>
+              <div class="nf-arrows nf-wide">
+                ${r.map(([a,l])=>g`<button class="nf-btn nf-arrow-${a}" title=${this.t(`dir_${a}`)} @click=${()=>this.measureStep(a)}>${l}</button>`)}
+              </div>
+            </div>
+            ${e.length>1?g`<ol class="nf-measure-list">
+                  ${e.slice(1).map((a,l)=>g`<li>${s(Math.hypot(a[0]-e[l][0],a[1]-e[l][1]))} m</li>`)}
+                </ol>`:v}
+            <div class="nf-actions">
+              <button class="nf-btn nf-primary" ?disabled=${e.length<3} @click=${()=>this.closeDraft()}>${this.t("measure_close")}</button>
+              <button class="nf-btn" ?disabled=${e.length<2} @click=${()=>this._draft=e.slice(0,-1)}>${this.t("measure_undo")}</button>
+            </div>
+            ${e.length>=3?g`<p class="nf-sub">${this.t("measure_gap",{gap:s(i)})}</p>`:v}`:g`<p class="nf-sub">${this.t("measure_start")}</p>`}
+      <h4 class="nf-lib-head">${this.t("rect_by_size")}</h4>
+      <div class="nf-form">
+        ${this.num(this.t("width"),this._rectSize[0],a=>this._rectSize=[Math.max(.1,a),this._rectSize[1]],.01,.1)}
+        ${this.num(this.t("depth"),this._rectSize[1],a=>this._rectSize=[this._rectSize[0],Math.max(.1,a)],.01,.1)}
+        <button class="nf-btn nf-wide" @click=${()=>this.rectBySize()}>${this.t("rect_add")}</button>
+      </div>
+      <p class="nf-sub">${this.t("measure_hint")}</p>
+    </section>`}addFreeWall(e,t){if(!this.floor)return;let n={id:L("wall"),a:[S(e[0]),S(e[1])],b:[S(t[0]),S(t[1])],thickness:null};this.change((i,r)=>r.walls=[...r.walls??[],n]),this.selectItem("wall",n.id)}get freeWall(){return this._wallId?(this.floor?.walls??[]).find(e=>e.id===this._wallId):void 0}updateFreeWall(e){let t=this._wallId;t&&this.change((n,i)=>Object.assign((i.walls??[]).find(r=>r.id===t),e))}deleteFreeWall(){let e=this._wallId;!e||!this.isAdmin||!this.confirmFixedDelete("wall",e)||(this.change((t,n)=>{n.walls=(n.walls??[]).filter(i=>i.id!==e),n.openings=n.openings.filter(i=>i.wall!==e)}),this._wallId=null)}renderFreeWalls(e){return F`<g>${(e.walls??[]).map(t=>{let[n,i]=this.toScreen(t.a),[r,s]=this.toScreen(t.b),a=t.id===this._wallId;return F`<g data-free-wall=${t.id} class=${`nf-free-wall${a?" nf-free-wall-sel":""}`}>
+        <line class="nf-hit" x1=${n} y1=${i} x2=${r} y2=${s} />
+        <line class="nf-free-wall-line" x1=${n} y1=${i} x2=${r} y2=${s} />
+      </g>
+      ${a&&this.isAdmin&&!hn(t,!0,this._doc.settings)?F`<g class="nf-vertex" data-wall-end=${`${t.id}:a`}><circle cx=${n} cy=${i} r="16" class="nf-hit" /><circle cx=${n} cy=${i} r="6" /></g>
+            <g class="nf-vertex" data-wall-end=${`${t.id}:b`}><circle cx=${r} cy=${s} r="16" class="nf-hit" /><circle cx=${r} cy=${s} r="6" /></g>`:v}`})}</g>`}renderFreeWallForm(e){let t=this.isAdmin,n=Math.hypot(e.b[0]-e.a[0],e.b[1]-e.a[1]),i=r=>{let a=Math.max(.1,r)/(n||1);this.updateFreeWall({b:[S(e.a[0]+(e.b[0]-e.a[0])*a),S(e.a[1]+(e.b[1]-e.a[1])*a)]})};return g`<section>
+      <div class="nf-h3row"><h3>${this.t("free_wall")}</h3>${this.fixButton("wall",e.id)}</div>
+      <div class="nf-form">
+        ${this.num(this.t("wall_length"),n,i,.01,.1)}
+        ${this.num(this.t("wall_thickness"),e.thickness??this._doc.settings.wall_interior,r=>this.updateFreeWall({thickness:Math.min(1,Math.max(.02,r))}),.01,.02)}
+        ${this.num(this.t("wall_height"),e.height??this.floor?.height??2.5,r=>this.updateFreeWall({height:r>=(this.floor?.height??2.5)-.005?null:Math.max(.05,r)}),.05,.05)}
+      </div>
+      ${t?g`<div class="nf-actions">
+            <button class="nf-btn nf-danger" @click=${()=>this.deleteFreeWall()}>${this.t("delete")}</button>
+          </div>`:v}
+      <p class="nf-sub">${this.t("free_wall_hint")}</p>
+    </section>`}addHole(e,t){if(!this.floor)return;let n={id:L("hole"),type:"stairwell",x:S((e[0]+t[0])/2),z:S((e[1]+t[1])/2),w:S(t[0]-e[0]),d:S(t[1]-e[1]),h:.02,rotation:0,variant:null};this.change((i,r)=>r.furniture.push(n)),this.selectItem("furniture",n.id),this._tool="select"}addOutdoor(e){if(!this.floor)return;let t={id:L("outdoor"),type:"lawn",points:e.map(([n,i])=>[S(n),S(i)])};this.change((n,i)=>i.outdoor.push(t)),this.selectItem("outdoor",t.id),this._tool="select"}get outdoorArea(){return this._outdoorId?this.floor?.outdoor.find(e=>e.id===this._outdoorId):void 0}updateOutdoor(e){let t=this._outdoorId;this.change((n,i)=>Object.assign(i.outdoor.find(r=>r.id===t),e))}deleteOutdoor(){let e=this._outdoorId;!e||!this.isAdmin||!this.confirmFixedDelete("outdoor",e)||(this.change((t,n)=>n.outdoor=n.outdoor.filter(i=>i.id!==e)),this._outdoorId=null)}duplicateOutdoor(){let e=this.outdoorArea;if(!e||!this.isAdmin)return;let t={...e,id:L("outdoor"),points:e.points.map(([n,i])=>[S(n+.5),S(i+.5)])};this.change((n,i)=>i.outdoor.push(t)),this.selectItem("outdoor",t.id)}addRoom(e){if(!this.floor)return;let t=L("room"),n=this.floor.rooms.length+1;this.change((i,r)=>r.rooms.push({id:t,name:this.t("new_room",{n}),area_id:null,points:e.map(([s,a])=>[S(s),S(a)]),floor_material:"wood"})),this._roomId=t,this._vertex=null,this._tool="select"}onKey=e=>{if(e.composedPath().some(i=>i instanceof HTMLInputElement||i instanceof HTMLSelectElement||i instanceof HTMLTextAreaElement)||!this.isConnected||!this.offsetParent)return;let n=e.ctrlKey||e.metaKey;if(n&&e.key.toLowerCase()==="z")e.preventDefault(),e.shiftKey?this.redo():this.undo();else if(n&&e.key.toLowerCase()==="y")e.preventDefault(),this.redo();else if(n&&e.key.toLowerCase()==="d")e.preventDefault(),this.duplicateRoom();else if(e.key==="Delete"||e.key==="Backspace"&&(this._tool==="select"||this._tool==="furniture"))this._deviceId?this.deleteItem("device",this._deviceId):this._outdoorId?this.deleteOutdoor():this._wallId?this.deleteFreeWall():this._openingId?this.deleteOpening():this._furnitureId?this.deleteFurniture():this._vertex!==null?this.deleteVertex(this._vertex):this.deleteRoom();else if(e.key.toLowerCase()==="l"&&!n&&this._tool==="roof"&&this.roofSection&&!this._doc.settings.lock_plan)this.updateRoofSection({locked:!this.roofSection.locked});else if(e.key.toLowerCase()==="l"&&!n&&(this._furnitureId||this._deviceId)){let i=this.selectedFix;this.toggleFixed(i.kind,i.id)}else if(Object.hasOwn(_s,e.key)&&!n&&(this._tool==="select"||this._tool==="furniture")){let i=e.altKey?.01:e.shiftKey?.1:this._doc.settings.grid,[r,s]=_s[e.key];this.nudge(r*i,s*i)&&e.preventDefault()}else if(e.key.toLowerCase()==="r"&&!n&&this._furnitureId)this.rotateFurniture(e.shiftKey?-90:90);else if(e.key==="Backspace"&&this._tool==="polygon")this._draft=this._draft.slice(0,-1);else if(e.key==="Enter"&&this._tool==="polygon")this.closeDraft();else if(e.key==="Escape"){if(this._ctx){this._ctx=null;return}this._draft.length?this._draft=[]:this._tool!=="select"?this._tool="select":this.selectItem("room",null),this._cursor=null}};nudge(e,t){let n=this.floor;if(!n||!this.isAdmin)return!1;let i=this.selectedFix;if(i&&this.isFixedItem(i.kind,i.id))return this._fixedHint=!0,!0;let r=s=>[S(s[0]+e),S(s[1]+t)];if(this._deviceId){let s=this._deviceId;if(!n.placements.some(a=>a.entity_id===s))return!1;this.change((a,l)=>{let c=l.placements.find(h=>h.entity_id===s);[c.x,c.z]=r([c.x,c.z])})}else if(this._furnitureId){let s=this._furnitureId;this.change((a,l)=>{let c=l.furniture.find(h=>h.id===s);c&&([c.x,c.z]=r([c.x,c.z]))})}else if(this._openingId){let s=this.opening,a=s?je(s,n.rooms,n.walls??[]):null;if(!s||!a)return!1;let l=a.room.points[a.edge],c=a.room.points[(a.edge+1)%a.room.points.length],h=Math.hypot(c[0]-l[0],c[1]-l[1])||1,d=(e*(c[0]-l[0])+t*(c[1]-l[1]))/h;if(Math.abs(d)<1e-9)return!0;let u=Math.min(s.width,h)/2;this.updateOpening({offset:S(Math.min(h-u,Math.max(u,s.offset+d)))})}else if(this._wallId){let s=this._wallId;this.change((a,l)=>{let c=(l.walls??[]).find(h=>h.id===s);c&&([c.a,c.b]=[r(c.a),r(c.b)])})}else if(this._outdoorId){let s=this._outdoorId;this.change((a,l)=>{let c=l.outdoor.find(h=>h.id===s);c&&(c.points=c.points.map(r))})}else if(this._roomId){let s=this._roomId,a=this._vertex,l=n.rooms.find(h=>h.id===s);if(!l)return!1;let c=new Set(n.placements.filter(h=>D([h.x,h.z],l.points)).map(h=>h.entity_id));this.change((h,d)=>{let u=d.rooms.find(f=>f.id===s);if(a!==null&&a<u.points.length){u.points[a]=r(u.points[a]);return}u.points=u.points.map(r);for(let f of d.placements)c.has(f.entity_id)&&([f.x,f.z]=r([f.x,f.z]))})}else return!1;return!0}get freeHaFloors(){let e=new Set(this._doc.floors.map(t=>t.ha_floor));return Object.values(this.hass?.floors??{}).filter(t=>!e.has(t.floor_id)).sort((t,n)=>(t.level??99)-(n.level??99)||t.name.localeCompare(n.name))}unplacedAreas(e){if(!e.ha_floor)return[];let t=new Set(this._doc.floors.flatMap(n=>n.rooms.map(i=>i.area_id)));return Object.values(this.hass?.areas??{}).filter(n=>n.floor_id===e.ha_floor&&!t.has(n.area_id)).sort((n,i)=>n.name.localeCompare(i.name))}addFloor(e=null){let t=this._doc.floors,n=L("floor"),i=e?.name??(t.length===0?this.t("default_floor"):this.t("new_floor",{n:t.length})),r={...Ui(n,i,Zi(t,e?.level)),ha_floor:e?.floor_id??null},s=structuredClone(this._doc),a=s.floors.findIndex(l=>l.elevation>r.elevation);s.floors.splice(a<0?s.floors.length:a,0,r),this.setDoc(s),this._floorId=n,this._roomId=null,this._floorMenu=!1,this.fit()}addAreaRooms(e){let t=this.unplacedAreas(e);if(!t.length)return;let n=qi(e,t,()=>L("room"));this.change((i,r)=>r.rooms.push(...n)),this.fit()}moveFloor(e){let t=this._doc.floors.findIndex(r=>r.id===this._floorId),n=t+e;if(t<0||n<0||n>=this._doc.floors.length)return;let i=structuredClone(this._doc);[i.floors[t],i.floors[n]]=[i.floors[n],i.floors[t]],this.setDoc(i)}deleteFloor(){let e=this.floor;if(!e||!confirm(this.t("delete_floor_confirm",{name:e.name})))return;let t=structuredClone(this._doc);t.floors=t.floors.filter(n=>n.id!==e.id),this.setDoc(t),this._floorId=t.floors[0]?.id??null,this._roomId=null}deleteRoom(){let e=this._roomId;!e||!this.isAdmin||!this.confirmFixedDelete("room",e)||(this.change((t,n)=>{let i=n.rooms.find(r=>r.id===e);n.rooms=n.rooms.filter(r=>r.id!==e),n.openings=n.openings.filter(r=>r.room_id!==e||r.wall),i&&(n.placements=n.placements.filter(r=>!D([r.x,r.z],i.points)))}),this._roomId=null,this._vertex=null)}duplicateRoom(){let e=this.room;if(!e||!this.isAdmin)return;let t=L("room");this.change((n,i)=>i.rooms.push({...structuredClone(e),id:t,points:e.points.map(([r,s])=>[S(r+.5),S(s+.5)])})),this._roomId=t}roofFixed(e){return!!e&&(!!e.locked||!!this._doc.settings.lock_plan)}renderRoofFloors(){let e=[...this._doc.floors].sort((t,n)=>n.elevation-t.elevation);return e.length<2?v:g`<div class="nf-seg nf-dev-source">
+      ${e.map(t=>g`<button aria-pressed=${t.id===this._floorId} @click=${()=>this._floorId=t.id}>${t.name}</button>`)}
+    </div>`}get roofSection(){return this._roofId?this._doc.settings.roof.sections?.find(e=>e.id===this._roofId):void 0}useRoofSections(e=!1){if(!this.isAdmin)return;let t=(this._doc.settings.roof.sections??[]).length>0;e&&t&&!confirm(this.t("roof_regen_confirm"))||(this.change(n=>{n.settings.roof.type="custom",(e||!t)&&(n.settings.roof.sections=qr(n,()=>L("roof")))}),this._roofId=null)}addRoofSection(e,t){if(!this.isAdmin)return;let n=Ur(this._doc,e[0],e[1],t[0],t[1]),i=Math.min(...this._doc.floors.map(c=>c.elevation)),r=n===null,s=S(n??i+2.4),a=r?6:this._doc.settings.roof.pitch||35,l={id:L("roof"),x0:S(e[0]),z0:S(e[1]),x1:S(t[0]),z1:S(t[1]),shape:r?"pent":"gable",axis:t[0]-e[0]>=t[1]-e[1]?"x":"z",eave_a:s,eave_b:s,pitch_a:a,pitch_b:a,base:s,overhang:r?.15:null,...r?{open:!0}:{}};this.change(c=>{c.settings.roof.type="custom",c.settings.roof.sections=[...c.settings.roof.sections??[],l]}),this._roofId=l.id}takeRoofOutline(){let e=this.floor,t=this._roofId;if(!e||!t||!this.isAdmin)return;let n=Vr(e.rooms,e.walls??[],this._doc.settings.wall_exterior,this._doc.settings.wall_interior);if(!n)return;let i=n.map(([r,s])=>[S(r),S(s)]);this.updateRoofSection({shape:"flat",points:i,...Hn(i)})}addDormer(e){let t=this.roofSection;if(!t||!this.isAdmin)return;let n=Kr(t,e,L("roof"));this.change(i=>{i.settings.roof.sections=[...i.settings.roof.sections??[],n]}),this._roofId=n.id}updateRoofSection(e){let t=this._roofId;!t||!this.isAdmin||this.change(n=>{let i=n.settings.roof.sections?.find(r=>r.id===t);i&&Object.assign(i,e)})}deleteRoofSection(){let e=this._roofId;!e||!this.isAdmin||(this.change(t=>t.settings.roof.sections=(t.settings.roof.sections??[]).filter(n=>n.id!==e)),this._roofId=null)}duplicateRoofSection(){let e=this.roofSection;if(!e||!this.isAdmin)return;let t={...structuredClone(e),id:L("roof"),x0:S(e.x0+1),x1:S(e.x1+1),z0:S(e.z0+1),z1:S(e.z1+1)};this.change(n=>n.settings.roof.sections=[...n.settings.roof.sections??[],t]),this._roofId=t.id}renderRoofSections(){let e=this._doc.settings.roof,t=e.type==="custom"?e.sections??[]:[];return F`<g class="nf-roof-layer">${t.map((n,i)=>{let r=n.id===this._roofId,s=re(n),a=n.shape==="flat"&&n.points&&n.points.length>=3?n.points:null,l=Cr(t,n),c=l?re(Gr(l,n)):s,h=(a??[c.at(c.u0,0),c.at(c.u1,0),c.at(c.u1,c.w),c.at(c.u0,c.w)]).map(x=>this.toScreen(x)),d=(x,b)=>{let[w,$]=this.toScreen(x),[y,E]=this.toScreen(b);return F`<line x1=${w} y1=${$} x2=${y} y2=${E} />`},u=n.shape==="flat"||n.shape==="parapet"?null:Wn(n,{u0:0,u1:0,a:0,b:0}),f=u?F`${u.ridges.map(([x,b])=>d(s.at(x[0],x[1]),s.at(b[0],b[1])))}`:v,[p,m]=this.toScreen(s.at((s.u0+s.u1)/2,s.w/2)),_=`${this.roofFixed(n)?"\u{1F512} ":""}${i+1} \xB7 ${n.dormer?this.t("roof_dormer"):n.open?this.t("roof_open_short"):this.t(`roof_shape_${n.shape}`)} \xB7 ${W(this.hass,Lt(n),1)} m`;return F`<g data-roof=${n.id} class=${`nf-roof-sec${r?" nf-roof-sel":""}`}>
+          <polygon points=${h.map(x=>x.join(",")).join(" ")} />
+          <g class="nf-roof-ridge">${f}</g>
+          <text x=${p} y=${m-14}>${_}</text>
+        </g>
+        ${r&&this.isAdmin&&!this.roofFixed(n)&&a?a.map((x,b)=>{let[w,$]=this.toScreen(x);return F`<g class="nf-vertex" data-roof-vertex=${`${n.id}:${b}`}><circle cx=${w} cy=${$} r="16" class="nf-hit" /><circle cx=${w} cy=${$} r="6" /></g>`}):v}
+        ${r&&this.isAdmin&&!this.roofFixed(n)&&!a?[[0,0],[1,0],[1,1],[0,1]].map(([x,b])=>{let[w,$]=this.toScreen([x?Math.max(n.x0,n.x1):Math.min(n.x0,n.x1),b?Math.max(n.z0,n.z1):Math.min(n.z0,n.z1)]);return F`<g class="nf-vertex" data-roof-corner=${`${n.id}:${x}:${b}`}><circle cx=${w} cy=${$} r="16" class="nf-hit" /><circle cx=${w} cy=${$} r="6" /></g>`}):v}`})}</g>`}faceHit(e,t){return e.wall?{u:(t[0]-e.o[0])*e.eu[0]+(t[1]-e.o[2])*e.eu[2],s:Number.NaN}:Wt(e,t)}renderSolarFields(){let e=this._doc.settings.roof.solar??[];if(!e.length)return v;let t=j(this._doc);return F`<g class="nf-solar-layer">${e.map(n=>{let i=ue(this._doc,n,t);if(!i||i.wall&&i.wall.floorId!==this._floorId)return v;let r=n.id===this._solarId,s=v;if(r&&i.unbounded&&this.isAdmin&&!n.locked){let[a,l]=qn(i,n),c=(n.rotation??0)*Math.PI/180,h=.9+Math.max(...ve(i,n,!0).flatMap(m=>m.corners.map(_=>Math.hypot(_[0]-a,_[2]-l))))*.5,[d,u]=this.toScreen([a,l]),[f,p]=this.toScreen([a+Math.sin(c)*h,l-Math.cos(c)*h]);s=F`<g class="nf-rotate" data-solar-turn=${n.id}>
+          <line x1=${d} y1=${u} x2=${f} y2=${p} />
+          <circle cx=${f} cy=${p} r="16" class="nf-hit" />
+          <circle cx=${f} cy=${p} r="8" />
+          <path d="M${f-4} ${p-1}a4 4 0 1 1 2 3.5" />
+        </g>`}return F`<g data-solar=${n.id} class=${`nf-solar${r?" nf-solar-sel":""}${r&&this._solarPick?" nf-solar-pick":""}`}>${ve(i,n,r).map(a=>{let l=i.wall?Math.max(.3,...a.corners.map(h=>(h[0]-i.o[0])*i.n[0]+(h[2]-i.o[2])*i.n[2])):0,c=i.wall?[a.corners[0],a.corners[1]].flatMap((h,d)=>{let u=[h[0],h[2]],f=[h[0]+i.n[0]*l,h[2]+i.n[2]*l];return d===0?[u,f]:[f,u]}):a.corners.map(h=>[h[0],h[2]]);return F`<polygon data-cell=${a.cell} class=${a.skipped?"nf-solar-off":""} points=${c.map(h=>this.toScreen(h).join(",")).join(" ")} />`})}</g>${s}`})}</g>`}renderRoofWindows(){let e=this._doc.settings.roof.windows??[];if(!e.length)return v;let t=new Map(j(this._doc).map(n=>[n.key,n]));return F`<g class="nf-roofwin-layer">${e.map(n=>{let i=t.get(n.face),r=i?ss(i,n):null;return r?F`<g data-roofwin=${n.id} class=${`nf-roofwin${n.id===this._roofWinId?" nf-roofwin-sel":""}`}><polygon points=${r.map(s=>this.toScreen([s[0],s[2]]).join(",")).join(" ")} /></g>`:v})}</g>`}addRoofWindow(){if(!this.isAdmin)return;let e=j(this._doc).filter(i=>!i.flat),t=Vt(e,this._doc.settings.north??0)??j(this._doc)[0];if(!t)return;let n=Zn(t,L("rwin"));this.change(i=>i.settings.roof.windows=[...i.settings.roof.windows??[],n]),this._roofWinId=n.id,this._roofId=null}updateRoofWindow(e){let t=this._roofWinId;!t||!this.isAdmin||this.change(n=>{let i=n.settings.roof.windows?.find(s=>s.id===t);if(!i)return;Object.assign(i,e);let r=j(n).find(s=>s.key===i.face);r&&Object.assign(i,Ze(r,qe(i)))})}deleteRoofWindow(){let e=this._roofWinId;!e||!this.isAdmin||(this.change(t=>t.settings.roof.windows=(t.settings.roof.windows??[]).filter(n=>n.id!==e)),this._roofWinId=null)}renderRoofWindowList(){let e=this._doc.settings.roof.windows??[],t=new Map(j(this._doc).map(n=>[n.key,n]));return g`<section>
+      <h3>🪟 ${this.t("roof_windows")}</h3>
+      <p class="nf-sub">${this.t(t.size?"roof_windows_hint":"solar_no_roof")}</p>
+      ${e.length?g`<div class="nf-room-list">
+            ${e.map((n,i)=>{let r=t.get(n.face);return g`<div class="nf-row">
+                <button class="nf-dev-name" @click=${()=>{this._roofWinId=n.id,this._roofId=null}}>
+                  <span>${this.t("roof_window")} ${i+1} · ${r?this.faceLabel(r):this.t("solar_face_gone")}</span>
+                </button>
+              </div>`})}
+          </div>`:v}
+      <div class="nf-actions"><button class="nf-btn" ?disabled=${!this.isAdmin||!t.size} @click=${()=>this.addRoofWindow()}>+ ${this.t("roof_window")}</button></div>
+    </section>`}renderRoofWindowForm(e){let t=this.isAdmin,n=j(this._doc),i=l=>this.updateRoofWindow(l),r=(this._doc.settings.roof.windows??[]).findIndex(l=>l.id===e.id)+1,s=this.entityOptions(l=>l.startsWith("cover.")),a=this.entityOptions(l=>vs(l)||ie(l));return g`<button class="nf-btn nf-back" @click=${()=>this._roofWinId=null}>‹ ${this.t("roof_sections")}</button>
+      <section>
+        <div class="nf-h3row">
+          <h3>🪟 ${this.t("roof_window")} ${r}</h3>
+          ${t?g`<button class="nf-btn nf-fix" aria-pressed=${!!e.locked} title=${this.t("fix_hint")} @click=${()=>i({locked:!e.locked})}>
+                ${e.locked?`\u{1F512} ${this.t("unfix")}`:`\u{1F513} ${this.t("fix")}`}
+              </button>`:v}
+        </div>
+        <div class="nf-form">
+          <label class="nf-field nf-wide"
+            >${this.t("solar_face")}
+            <select ?disabled=${!t} @change=${l=>{let c=n.find(h=>h.key===l.target.value);c&&i({...Zn(c,e.id),w:e.w,h:e.h,cover:e.cover,contact:e.contact,tilt:e.tilt,window:e.window,name:e.name})}}>
+              ${n.map(l=>g`<option value=${l.key} ?selected=${l.key===e.face}>${this.faceLabel(l)}</option>`)}
+            </select></label
+          >
+          ${this.num(this.t("width"),e.w??.78,l=>i({w:Math.max(.3,Math.min(4,S(l)))}),.01,.3)}
+          ${this.num(this.t("height_m"),e.h??1.18,l=>i({h:Math.max(.3,Math.min(4,S(l)))}),.01,.3)}
+          ${this.num(this.t("solar_u"),e.u,l=>i({u:S(l)}),.05)}
+          ${this.num(this.t("solar_v"),e.v,l=>i({v:S(l)}),.05)}
+          ${this.entitySelect(this.t("cover_entity"),e.cover??null,void 0,s,l=>i({cover:l==="none"?null:l}))}
+          ${this.entitySelect(this.t("contact_entity"),e.contact??null,void 0,a,l=>i({contact:l==="none"?null:l}))}
+          ${this.entitySelect(this.t("roof_window_tilt"),e.tilt??null,void 0,a,l=>i({tilt:l==="none"?null:l}))}
+          ${this.entitySelect(this.t("roof_window_motor"),e.window??null,void 0,s,l=>i({window:l==="none"?null:l}))}
+          <label class="nf-field nf-wide"
+            >${this.t("roof_window_name")}
+            <input .value=${e.name??""} ?disabled=${!t} maxlength="64" @change=${l=>i({name:l.target.value.trim()||null})}
+          /></label>
+        </div>
+        <p class="nf-sub">${this.t("roof_window_motor_hint")}</p>
+        <p class="nf-sub">${this.t("roof_window_hint")}</p>
+        ${t?g`<div class="nf-actions"><button class="nf-btn nf-danger" @click=${()=>this.deleteRoofWindow()}>${this.t("delete")}</button></div>`:v}
+      </section>`}renderEnergyMarkers(){let e=this.floor;if(!e)return v;let t={inverter:"\u26A1",home_battery:"\u{1F50B}",wallbox:"\u{1F50C}",meter:"\u{1F4DF}",grid_point:"\u{1F3C1}"};return F`<g class="nf-energy-markers">${e.furniture.filter(n=>xe.includes(n.type)).map(n=>{let[i,r]=this.toScreen([n.x,n.z]),s=n.id===this._furnitureId;return F`<g data-energy-device=${n.id} class=${`nf-energy-marker${s?" nf-energy-marker-sel":""}`}>
+          <circle cx=${i} cy=${r} r="17" />
+          <text x=${i} y=${r+6} class="nf-energy-icon">${t[n.type]??"\u26A1"}</text>
+          ${s?F`<text x=${i} y=${r+32} class="nf-energy-name">${this.t(`furn_${n.type}`)}</text>`:v}
+          <title>${this.t(`furn_${n.type}`)}</title>
+        </g>`})}</g>`}faceLabel(e){if(e.key===ze)return this.t("solar_ground");if(e.wall){let i=this._doc.floors.find(r=>r.id===e.wall.floorId);return`${this.t("solar_wall")} ${i?.name??""} \xB7 ${this.t(`compass_${Un(e,this._doc.settings.north??0)}`)} \xB7 ${W(this.hass,e.lu,1)} m`}let t=this._doc.settings.roof.sections??[],n=e.section?this.t("solar_section",{n:t.findIndex(i=>i.id===e.section)+1}):this.t("solar_main");return e.flat?`${n} \xB7 ${this.t("solar_flat")}`:`${n} \xB7 ${this.t(`compass_${Un(e,this._doc.settings.north??0)}`)} \xB7 ${Math.round(e.pitch)}\xB0`}addSolarField(){if(!this.isAdmin)return;let e=j(this._doc),t=new Set((this._doc.settings.roof.solar??[]).map(s=>s.face)),n=this._doc.settings.north??0,i=Vt(e.filter(s=>!t.has(s.key)),n)??Vt(e,n);if(!i)return;let r=Bt(i,L("pv"));this.change(s=>s.settings.roof.solar=[...s.settings.roof.solar??[],r]),this._solarId=r.id,this._roofId=null}selectSolar(e){this._solarId=e,this._roofId=null;let t=this._doc.settings.roof.solar?.find(n=>n.id===e);t?.face.startsWith("wall:")&&(this._floorId=t.face.split(":")[1])}addWallField(){if(!this.isAdmin)return;let e=this._floorId??this._doc.floors[0]?.id,t=e?Jr(this._doc,L("pv"),e):null;t&&(this.change(n=>n.settings.roof.solar=[...n.settings.roof.solar??[],t]),this._solarId=t.id)}addGroundField(){if(!this.isAdmin)return;let e=Nn(this._doc,L("pv"));this.change(t=>t.settings.roof.solar=[...t.settings.roof.solar??[],e]),this._solarId=e.id}updateSolar(e){let t=this._solarId;!t||!this.isAdmin||this.change(n=>{let i=n.settings.roof.solar?.find(s=>s.id===t);if(!i)return;Object.assign(i,e);let r=ue(n,i);r&&Object.assign(i,Ze(r,i))})}setSolarString(e){let t=this._solarId;!t||!this.isAdmin||this.change(n=>{let i=n.settings.roof,r=i.solar?.find(a=>a.id===t);if(!r)return;if(e==="new"){let a=i.strings??[],l={id:L("str"),name:this.t("solar_string_n",{n:a.length+1}),entity:r.entity??null,inverter:null};i.strings=[...a,l],r.string=l.id}else r.string=e;let s=new Set((i.solar??[]).map(a=>a.string).filter(Boolean));i.strings=(i.strings??[]).filter(a=>s.has(a.id))})}updateSolarString(e){let n=this._doc.settings.roof.solar?.find(i=>i.id===this._solarId)?.string;!n||!this.isAdmin||this.change(i=>{let r=i.settings.roof.strings?.find(s=>s.id===n);r&&Object.assign(r,e)})}toggleSolarCell(e){this.updateSolarField(t=>{let n=new Set(t.skip??[]);n.has(e)?n.delete(e):n.add(e),t.skip=n.size?[...n].sort():null})}updateSolarField(e){let t=this._solarId;!t||!this.isAdmin||this.change(n=>{let i=n.settings.roof.solar?.find(r=>r.id===t);i&&e(i)})}deleteSolar(){let e=this._solarId;!e||!this.isAdmin||(this.change(t=>{let n=t.settings.roof;n.solar=(n.solar??[]).filter(r=>r.id!==e);let i=new Set(n.solar.map(r=>r.string).filter(Boolean));n.strings=(n.strings??[]).filter(r=>i.has(r.id))}),this._solarId=null)}renderSolarList(){let e=this._doc.settings.roof.solar??[],t=j(this._doc),n=new Map(e.map(r=>[r.id,ue(this._doc,r,t)])),i=this.isAdmin;return g`<section>
+      ${this.renderRoofFloors()}
+      <h3>☀ ${this.t("solar_fields")}</h3>
+      <p class="nf-sub">${this.t(t.length?"solar_hint":"solar_no_roof")}</p>
+      ${e.length?g`<div class="nf-room-list">
+            ${e.map((r,s)=>{let a=n.get(r.id),l=a?ve(a,r).length:0;return g`<div class="nf-row">
+                <button
+                  class="nf-dev-name"
+                  @click=${()=>this.selectSolar(r.id)}
+                >
+                  <span>${r.name||`${this.t("solar_field")} ${s+1}`} · ${a?this.faceLabel(a):this.t("solar_face_gone")} · ${this.t("solar_summary",{n:l,kwp:W(this.hass,l*(r.wp??400)/1e3,1)})}</span>
+                </button>
+              </div>`})}
+          </div>`:v}
+      <div class="nf-actions">
+        <button class="nf-btn nf-primary" ?disabled=${!i||!t.length} @click=${()=>this.addSolarField()}>+ ${this.t("solar_add")}</button>
+        <button class="nf-btn" ?disabled=${!i} @click=${()=>this.addGroundField()}>+ ${this.t("solar_add_ground")}</button>
+        <button class="nf-btn" ?disabled=${!i||!this._floorId} @click=${()=>this.addWallField()}>+ ${this.t("solar_add_wall")}</button>
+      </div>
+      ${(this._doc.settings.roof.strings??[]).length?g`<h4 class="nf-lib-head">${this.t("solar_strings")}</h4>
+            ${(this._doc.settings.roof.strings??[]).map(r=>{let s=e.filter(h=>h.string===r.id),a=s.map(h=>n.get(h.id)?ve(n.get(h.id),h).length:0),l=a.reduce((h,d)=>h+d,0),c=s.reduce((h,d,u)=>h+a[u]*(d.wp??400)/1e3,0);return g`<p class="nf-sub">🔗 <b>${r.name}</b> · ${this.t("solar_string_sum",{fields:s.length,n:l,kwp:W(this.hass,c,1)})}</p>`})}`:v}
+    </section>`}renderSolarForm(e){let t=this.isAdmin,n=j(this._doc),i=Ue(this._doc),r=ue(this._doc,e,n),s=e.face===ze,a=r?ve(r,e).length:0,l=Ht(e),c=l.reduce((f,p)=>f+p,0)-(e.skip?.length??0),h=this.entityOptions(f=>this.isPowerSensor(f)),d=f=>this.updateSolar(f),u=(this._doc.settings.roof.solar??[]).findIndex(f=>f.id===e.id)+1;return g`<button class="nf-btn nf-back" @click=${()=>this._solarId=null}>‹ ${this.t("solar_fields")}</button>
+      <section>
+        ${this.renderRoofFloors()}
+        <div class="nf-h3row">
+          <h3>☀ ${e.name||`${this.t("solar_field")} ${u}`}</h3>
+          ${t?g`<button class="nf-btn nf-fix" aria-pressed=${!!e.locked} title=${this.t("fix_hint")} @click=${()=>this.updateSolar({locked:!e.locked})}>
+                ${e.locked?`\u{1F512} ${this.t("unfix")}`:`\u{1F513} ${this.t("fix")}`}
+              </button>`:v}
+        </div>
+        <div class="nf-form">
+          <label class="nf-field nf-wide"
+            >${this.t("solar_name")}
+            <input
+              type="text"
+              ?disabled=${!t}
+              .value=${e.name??""}
+              placeholder=${this.t("solar_name_hint")}
+              @change=${f=>d({name:f.target.value.trim()||null})}
+          /></label>
+          <label class="nf-field nf-wide"
+            >${this.t("solar_face")}
+            <select
+              ?disabled=${!t}
+              @change=${f=>{let p=f.target.value,m={portrait:e.portrait,look:e.look,name:e.name,string:e.string,entity:e.entity,module_w:e.module_w,module_h:e.module_h,wp:e.wp};p===ze&&d({...Nn(this._doc,e.id),...m,rows:e.rows,cols:e.cols});let _=n.find(b=>b.key===p);_&&d(jn(_,{...e,...m}));let x=i.find(b=>b.key===p);x&&d(jn(x,{...e,...m,rows:1}))}}
+            >
+              ${r?v:g`<option selected>${this.t("solar_face_gone")}</option>`}
+              ${n.map(f=>g`<option value=${f.key} ?selected=${f.key===e.face}>${this.faceLabel(f)}</option>`)}
+              <option value=${ze} ?selected=${s}>${this.t("solar_ground")}</option>
+              ${i.map(f=>g`<option value=${f.key} ?selected=${f.key===e.face}>${this.faceLabel(f)}</option>`)}
+            </select></label
+          >
+          ${this.num(this.t("solar_rows"),l.length,f=>{let p=Math.max(1,Math.min(40,Math.round(f)));d(e.layout?.length?{layout:Array.from({length:p},(m,_)=>e.layout[_]??e.layout[e.layout.length-1]),rows:p}:{rows:p})},1,1)}
+          <label class="nf-field"
+            >${this.t("solar_cols")}
+            <input
+              type="text"
+              inputmode="numeric"
+              ?disabled=${!t}
+              .value=${e.layout?.length?e.layout.join(", "):String(e.cols)}
+              title=${this.t("solar_cols_hint")}
+              @change=${f=>{let p=f.target.value.split(/[,;\s]+/).map(m=>parseInt(m,10)).filter(m=>Number.isFinite(m)&&m>=0);p.length&&(p.length===1?d({cols:Math.max(1,Math.min(60,p[0])),layout:null,skip:null}):d({layout:p.slice(0,40).map(m=>Math.min(60,m)),rows:Math.min(40,p.length),cols:Math.max(1,...p),skip:null}))}}
+          /></label>
+        </div>
+        <p class="nf-sub">
+          ${r&&!r.unbounded?g`${this.t("solar_face_size",{w:W(this.hass,r.lu,1),h:W(this.hass,r.ls,1)})} · `:v}${this.t("solar_cols_hint")}
+        </p>
+        ${e.layout?.length&&new Set(e.layout).size>1?g`<div class="nf-seg nf-dev-source">
+              ${["left","center","right"].map(f=>g`<button aria-pressed=${(e.align??"left")===f} ?disabled=${!t} @click=${()=>d({align:f})}>${this.t(`solar_align_${f}`)}</button>`)}
+            </div>`:v}
+        <div class="nf-seg nf-dev-source">
+          <button aria-pressed=${e.portrait!==!1} ?disabled=${!t} @click=${()=>d({portrait:!0})}>${this.t("solar_portrait")}</button>
+          <button aria-pressed=${e.portrait===!1} ?disabled=${!t} @click=${()=>d({portrait:!1})}>${this.t("solar_landscape")}</button>
+        </div>
+        <div class="nf-seg nf-dev-source">
+          <button aria-pressed=${e.look!=="blue"} ?disabled=${!t} @click=${()=>d({look:"black"})}>${this.t("solar_look_black")}</button>
+          <button aria-pressed=${e.look==="blue"} ?disabled=${!t} @click=${()=>d({look:"blue"})}>${this.t("solar_look_blue")}</button>
+        </div>
+        <div class="nf-form">
+          ${this.num(this.t("solar_module_w"),e.module_w??1.13,f=>d({module_w:Math.max(.3,Math.min(3,S(f)))}),.01,.3)}
+          ${this.num(this.t("solar_module_h"),e.module_h??1.72,f=>d({module_h:Math.max(.3,Math.min(3,S(f)))}),.01,.3)}
+          ${this.num(this.t("solar_wp"),e.wp??400,f=>d({wp:Math.max(50,Math.min(1500,Math.round(f)))}),5,50)}
+        </div>
+        <div class="nf-actions">
+          <button class="nf-btn" aria-pressed=${this._solarPick} ?disabled=${!t} @click=${()=>this._solarPick=!this._solarPick}>${this._solarPick?"\u2713 ":""}${this.t("solar_pick")}</button>
+          ${e.skip?.length?g`<button class="nf-btn" ?disabled=${!t} @click=${()=>d({skip:null})}>${this.t("solar_pick_all")}</button>`:v}
+        </div>
+        ${this._solarPick?g`<p class="nf-sub">${this.t("solar_pick_hint")}</p>`:v}
+        <div class="nf-form">
+          ${s?g`${this.num(this.t("solar_base"),e.base??0,f=>d({base:f>.001?Math.min(60,S(f)):null}),.05,0)}
+                ${this.num(this.t("solar_rotation"),e.rotation??0,f=>d(bt(this._doc,e,f)),5)}
+                <div class="nf-actions">
+                  <button class="nf-chip" ?disabled=${!t} @click=${()=>d(bt(this._doc,e,(e.rotation??0)-15))}>↺ 15°</button>
+                  <button class="nf-chip" ?disabled=${!t} @click=${()=>d(bt(this._doc,e,(e.rotation??0)+15))}>↻ 15°</button>
+                </div>`:g`${this.num(this.t("solar_u"),e.u,f=>d({u:S(f)}),.05)} ${this.num(this.t(r?.wall?"solar_v_wall":"solar_v"),e.v,f=>d({v:S(f)}),.05)}`}
+          ${r?.wall?g`${this.num(this.t("solar_tilt_wall"),e.tilt??0,f=>d({tilt:Math.max(0,Math.min(90,Math.round(f)))}),5,0)}
+                <label class="nf-check nf-wide"
+                  ><input type="checkbox" ?disabled=${!t} .checked=${!!e.flip} @change=${f=>d({flip:f.target.checked})} />
+                  ${this.t("solar_flip_wall")}</label
+                >`:v}
+          ${r?.flat?g`${this.num(this.t("solar_tilt"),e.tilt??15,f=>d({tilt:Math.max(0,Math.min(45,Math.round(f)))}),1,0)}
+                <label class="nf-check nf-wide"
+                  ><input type="checkbox" ?disabled=${!t} .checked=${!!e.flip} @change=${f=>d({flip:f.target.checked})} />
+                  ${this.t("solar_flip")}</label
+                >`:v}
+        </div>
+        <p class="nf-sub">
+          ${this.t("solar_summary",{n:a,kwp:W(this.hass,a*(e.wp??400)/1e3,1)})}${a<c?g` · <b>${this.t("solar_partial",{n:a,total:c})}</b>`:v}
+        </p>
+        <h4 class="nf-lib-head">🔗 ${this.t("solar_string")}</h4>
+        <div class="nf-form">
+          <label class="nf-field nf-wide"
+            >${this.t("solar_string")}
+            <select ?disabled=${!t} @change=${f=>{let p=f.target.value;this.setSolarString(p===""?null:p)}}>
+              <option value="" ?selected=${!e.string}>${this.t("solar_string_none")}</option>
+              ${(this._doc.settings.roof.strings??[]).map(f=>g`<option value=${f.id} ?selected=${f.id===e.string}>${f.name}</option>`)}
+              <option value="new">+ ${this.t("solar_string_new")}</option>
+            </select></label
+          >
+          ${(()=>{let f=this._doc.settings.roof.strings?.find(_=>_.id===e.string);if(!f)return this.entitySelect(this.t("solar_entity"),e.entity??null,void 0,h,_=>d({entity:_==="none"?null:_}));let p=this.hass?Ce(this.hass,this._doc.floors):null,m=this._doc.floors.flatMap(_=>_.furniture.filter(x=>x.type==="inverter").map(x=>({m:x,fl:_}))).map(({m:_,fl:x},b)=>{let w=p?.get(_.id)?.entity,$=_.name?.trim()||(w&&this.hass?K(this.hass,w):"");return{id:_.id,label:`${$||`${this.t("furn_inverter")} ${b+1}`} \xB7 ${x.name}`}});return g`<label class="nf-field nf-wide"
+                >${this.t("solar_string_name")}
+                <input type="text" ?disabled=${!t} .value=${f.name} @change=${_=>this.updateSolarString({name:_.target.value.trim()||f.name})}
+              /></label>
+              ${this.entitySelect(this.t("solar_string_entity"),f.entity??null,void 0,h,_=>this.updateSolarString({entity:_==="none"?null:_}))}
+              <label class="nf-field nf-wide"
+                >${this.t("solar_string_inverter")}
+                <select ?disabled=${!t} @change=${_=>this.updateSolarString({inverter:_.target.value||null})}>
+                  <option value="" ?selected=${!f.inverter}>${this.t(m.length?"solar_string_inverter_none":"solar_string_inverter_missing")}</option>
+                  ${m.map(_=>g`<option value=${_.id} ?selected=${_.id===f.inverter}>${_.label}</option>`)}
+                </select></label
+              >`})()}
+        </div>
+        <p class="nf-sub">${this.t("solar_string_hint")}</p>
+        <p class="nf-sub">${this.t("solar_form_hint")}</p>
+        ${t?g`<div class="nf-actions">
+              <button class="nf-btn" ?disabled=${!r} @click=${()=>r&&d({...Bt(r,e.id),portrait:e.portrait})}>${this.t("solar_fit")}</button>
+              <button class="nf-btn nf-danger" @click=${()=>this.deleteSolar()}>${this.t("delete")}</button>
+            </div>`:v}
+      </section>`}renderRoofPanel(){let e=this._doc.settings.roof,t=this.isAdmin,n=e.type==="custom"?this.roofSection:void 0,i=this._roofWinId?e.windows?.find(s=>s.id===this._roofWinId):void 0;if(i)return this.renderRoofWindowForm(i);if(n)return this.renderRoofSectionForm(n);let r=e.type==="custom"?e.sections??[]:[];return g`<section>
+      ${this.renderRoofFloors()}
+      <h3>${this.t("roof_sections")}</h3>
+      <p class="nf-sub">${this.t("roof_sections_hint")}</p>
+      ${e.type!=="custom"?g`<div class="nf-actions"><button class="nf-btn nf-primary" ?disabled=${!t} @click=${()=>this.useRoofSections()}>${this.t("roof_sections_start")}</button></div>`:g`<div class="nf-room-list">
+              ${r.map((s,a)=>g`<div class="nf-row">
+                  <button class="nf-dev-name" @click=${()=>this._roofId=s.id}>
+                    <span>${a+1} · ${s.dormer?this.t("roof_dormer"):this.t(`roof_shape_${s.shape}`)} · ${W(this.hass,Math.abs(s.x1-s.x0),1)} × ${W(this.hass,Math.abs(s.z1-s.z0),1)} m · ${this.t("roof_ridge_height")} ${W(this.hass,Lt(s),1)} m</span>
+                  </button>
+                </div>`)}
+            </div>
+            <div class="nf-actions">
+              <button class="nf-btn" ?disabled=${!t} @click=${()=>this.useRoofSections(!0)}>${this.t("roof_sections_regen")}</button>
+              <button class="nf-btn" ?disabled=${!t} @click=${()=>this.change(s=>s.settings.roof.type="gable")}>${this.t("roof_sections_off")}</button>
+            </div>`}
+    </section>
+    ${this.renderRoofWindowList()}`}renderEnergyPanel(){let e=this._solarId?this._doc.settings.roof.solar?.find(n=>n.id===this._solarId):void 0;if(e)return this.renderSolarForm(e);let t=this._furnitureId?this.floor?.furniture.find(n=>n.id===this._furnitureId&&xe.includes(n.type)):void 0;return t?g`<button class="nf-btn nf-back" @click=${()=>this.selectItem("furniture",null)}>‹ ${this.t("tool_energy")}</button>
+        ${this.renderFurnitureForm(t)}`:g`${this.renderEnergyChecklist()}${this.renderSolarList()}${this.renderEnergyDevices()}${this.renderEnergyBalance()}${this.renderProCard()}`}renderProCard(){return g`<section class="nf-teaser nf-teaser-on">
+      <div class="nf-teaser-head"><b>⚡ ${this.t("feature_name_energy")}</b></div>
+      <p class="nf-sub">${this.t("feature_text_energy")}</p>
+    </section>`}renderCarForm(e){if(!this.hass)return v;let t=e.car??{},n=this.entityOptions(i=>/^(device_tracker|sensor|binary_sensor|lock|climate)\./.test(i));return g`${this.entitySelect(this.t("live_car_device"),t.device??null,null,n,i=>this.updateFurniture({car:{...t,device:i}}))}
+      <p class="nf-sub nf-wide">${this.t("live_car_device_hint")}</p>`}isPowerSensor(e){if(!ie(e))return!1;let t=this.hass?.states[e]?.attributes;return t?.device_class==="power"||t?.unit_of_measurement==="W"||t?.unit_of_measurement==="kW"}devicePower(e,t){return e.power&&e.power!=="none"?e.power:t.get(e.id)?.power??null}renderEnergyChecklist(){let e=this._doc,t=this.hass?Ce(this.hass,e.floors):new Map,n=e.floors.flatMap(_=>_.furniture.map(x=>({m:x,fl:_}))),i=_=>n.filter(x=>x.m.type===_),r=_=>{this._floorId=_.fl.id,this._solarId=null,this.selectItem("furniture",_.m.id),this.showPoint(_.m.x,_.m.z)},s=e.settings.roof.solar??[],a=i("meter"),l=i("inverter"),c=i("home_battery"),h=i("grid_point"),d=!!e.energy.grid||a.some(_=>this.devicePower(_.m,t)),u=!!e.energy.solar||l.length>0&&l.every(_=>this.devicePower(_.m,t)),f=c.every(_=>this.devicePower(_.m,t)&&_.m.soc&&_.m.soc!=="none")||!!e.energy.battery,p=[{state:s.length?"ok":"todo",label:this.t(s.length?"chk_solar":"chk_solar_add"),action:s.length?()=>this._solarId=s[0].id:()=>this.addSolarField()},a.length?{state:d?"ok":"todo",label:this.t(d?"chk_meter":"chk_meter_sensor"),action:()=>r(a[0])}:{state:"todo",label:this.t("chk_meter_add"),action:()=>this.addEnergyDevice("meter")},l.length?{state:u?"ok":"todo",label:this.t(u?"chk_inverter":"chk_inverter_sensor"),action:()=>r(l.find(_=>!this.devicePower(_.m,t))??l[0])}:{state:"todo",label:this.t("chk_inverter_add"),action:()=>this.addEnergyDevice("inverter")},c.length?{state:f?"ok":"todo",label:this.t(f?"chk_battery":"chk_battery_sensor"),action:()=>r(c[0])}:{state:"opt",label:this.t("chk_battery_opt"),action:()=>this.addEnergyDevice("home_battery")},h.length?{state:"ok",label:this.t("chk_grid"),action:()=>r(h[0])}:{state:"opt",label:this.t("chk_grid_opt"),action:()=>this.addEnergyDevice("grid_point")}],m=p.filter(_=>_.state==="ok").length;return g`<section class="nf-checklist">
+      <h3>☑ ${this.t("chk_title")} <span class="nf-sub">${m}/${p.length}</span></h3>
+      <p class="nf-sub">${this.t("chk_hint")}</p>
+      ${p.map(_=>_.href?g`<a class="nf-chk nf-chk-${_.state}" href=${_.href} target="_blank" rel="noopener"><span>${_.state==="ok"?"\u2713":_.state==="todo"?"\u25CB":"\xB7"}</span>${_.label}</a>`:g`<button class="nf-chk nf-chk-${_.state}" ?disabled=${!this.isAdmin&&!!_.action&&_.state!=="ok"} @click=${_.action}><span>${_.state==="ok"?"\u2713":_.state==="todo"?"\u25CB":"\xB7"}</span>${_.label}</button>`)}
+    </section>`}renderHelpLinks(){return g`<section class="nf-help">
+      <h3>${this.t("help_title")}</h3>
+      <p class="nf-sub">${this.t("help_hint")}</p>
+      <div class="nf-actions">
+        <a class="nf-btn" href="https://github.com/therealMRBK/NextFloor/issues/new/choose" target="_blank" rel="noopener">🐞 ${this.t("help_issue")}</a>
+        <a class="nf-btn" href="https://github.com/therealMRBK/NextFloor/discussions/categories/ideas" target="_blank" rel="noopener">💡 ${this.t("help_idea")}</a>
+      </div>
+    </section>`}addEnergyDevice(e){let t=this.floor;if(!t||!this.isAdmin)return;if(e==="grid_point"){let b=Or(this._doc),[w,$,y]=Fe(e),[E,z]=b?[b.x,b.z]:this.toWorld(this._size.w/2,this._size.h/2),k={id:L("furniture"),type:e,x:S(E),z:S(z),rotation:0,w,d:$,h:y,variant:null};this.change((M,R)=>R.furniture.push(k)),this.selectItem("furniture",k.id),this.showPoint(k.x,k.z);return}let n=b=>`${b.name} ${b.area_id&&this.hass?.areas?.[b.area_id]?.name||""} ${b.area_id??""}`.toLowerCase(),i=t.rooms.filter(b=>b.points.length>=3),r=b=>i.find(w=>b.test(n(w))),s=i.find(b=>t.furniture.some(w=>w.type==="parking"&&D([w.x,w.z],b.points))),a=r(/garage|carport/)??s,l=r(/hwr|hauswirt|technik|keller|abstell|utility|basement|boiler|heiz/),c=r(/flur|diele|eingang|hall|entr|lobby/),h=(e==="wallbox"?a:e==="meter"?l??c??a:l??a)??this.room??i.sort((b,w)=>Math.abs(Y(w.points))-Math.abs(Y(b.points)))[0],[d,u,f]=Fe(e),[p,m]=h?le(h.points):this.toWorld(this._size.w/2,this._size.h/2);if(h){let[b,w]=le(h.points),$=null,y=new Set(t.openings.filter(k=>k.room_id===h.id).map(k=>k.edge)),E=h.points.some((k,M)=>!y.has(M));h.points.forEach((k,M)=>{if(E&&y.has(M))return;let R=h.points[(M+1)%h.points.length],A=Math.hypot(R[0]-k[0],R[1]-k[1]);if($&&A<=$.l)return;let I=(k[0]+R[0])/2,P=(k[1]+R[1])/2,T=-(R[1]-k[1])/A,B=(R[0]-k[0])/A;(b-I)*T+(w-P)*B<0&&([T,B]=[-T,-B]),$={mx:I,mz:P,nx:T,nz:B,l:A}});let z=$;z&&([p,m]=[z.mx+z.nx*(u/2+.25),z.mz+z.nz*(u/2+.25)])}let _={id:L("furniture"),type:e,x:S(p),z:S(m),rotation:0,w:d,d:u,h:f,variant:null},x=h?Pt({...t,furniture:[...t.furniture,_]},_,this._doc.settings.wall_interior):null;x&&Object.assign(_,{x:S(x.x),z:S(x.z),rotation:x.rotation}),this.change((b,w)=>w.furniture.push(_)),this.selectItem("furniture",_.id),this.showPoint(_.x,_.z)}renderEnergyDevices(){let e=this.isAdmin,t=this._doc.floors.flatMap(n=>n.furniture.filter(i=>xe.includes(i.type)).map(i=>({fl:n,m:i})));return g`<section>
+      <h3>⚡ ${this.t("energy_devices")}</h3>
+      <p class="nf-sub">${this.t("energy_devices_hint")}</p>
+      ${t.length?g`<div class="nf-room-list">
+            ${t.map(({fl:n,m:i})=>g`<div class="nf-row">
+                <button
+                  class="nf-dev-name"
+                  @click=${()=>{this._floorId=n.id,this._solarId=null,this.selectItem("furniture",i.id),this.showPoint(i.x,i.z)}}
+                >
+                  <span>${i.name||this.t(`furn_${i.type}`)} · ${n.name}</span>
+                </button>
+              </div>`)}
+          </div>`:v}
+      <div class="nf-actions">
+        ${xe.map(n=>g`<button
+            class="nf-btn"
+            ?disabled=${!e||!this.floor}
+            @click=${()=>{this._solarId=null,this.addEnergyDevice(n)}}
+          >
+            + ${this.t(`furn_${n}`)}
+          </button>`)}
+      </div>
+    </section>`}renderRoofSectionForm(e){let t=this.isAdmin,n=u=>this.updateRoofSection(u),i=e.axis==="x"?[this.t("roof_side_top"),this.t("roof_side_bottom")]:[this.t("roof_side_left"),this.t("roof_side_right")],[r,s]=e.flip?[i[1],i[0]]:i,a=e.shape==="flat"||e.shape==="parapet",l=e.shape==="pent",c=u=>u.findIndex(f=>f.id===e.id)+1,h=(u,f,p,m=.05,_=0)=>this.num(u,f,x=>p(Math.max(_,S(x))),m,_),d=!!this._doc.settings.lock_plan;return g`<button class="nf-btn nf-back" @click=${()=>this._roofId=null}>‹ ${this.t("roof_sections")}</button>
+      <section>
+        ${this.renderRoofFloors()}
+        <div class="nf-h3row">
+          <h3>${e.dormer?this.t("roof_dormer"):this.t("roof_section")} ${c(this._doc.settings.roof.sections??[])}</h3>
+          ${t?d?g`<button class="nf-btn nf-fix" aria-pressed="true" title=${this.t("lock_plan_hint")} @click=${()=>this.toggleLockPlan()}>🔒 ${this.t("plan_locked")}</button>`:g`<button class="nf-btn nf-fix" aria-pressed=${!!e.locked} title=${this.t("fix_hint")} @click=${()=>n({locked:!e.locked})}>
+                  ${e.locked?`\u{1F512} ${this.t("unfix")}`:`\u{1F513} ${this.t("fix")}`}
+                </button>`:v}
+        </div>
+        <label class="nf-field nf-wide"
+          >${this.t("roof_shape")}
+          <select ?disabled=${!t} @change=${u=>n({shape:u.target.value})}>
+            ${Oi.map(u=>g`<option value=${u} ?selected=${e.shape===u}>${this.t(`roof_shape_${u}`)}</option>`)}
+          </select>
+        </label>
+        ${a?v:g`<div class="nf-seg nf-dev-source">
+              <button aria-pressed=${e.axis==="x"} ?disabled=${!t} @click=${()=>n({axis:"x"})}>${this.t("roof_axis_x")}</button>
+              <button aria-pressed=${e.axis==="z"} ?disabled=${!t} @click=${()=>n({axis:"z"})}>${this.t("roof_axis_z")}</button>
+            </div>`}
+        <label class="nf-check nf-wide" title=${this.t("roof_open_hint")}
+          ><input type="checkbox" .checked=${!!e.open} ?disabled=${!t} @change=${u=>n({open:u.target.checked})} />
+          ${this.t("roof_open")}</label
+        >
+        <div class="nf-form">
+          ${a?h(this.t("roof_height"),e.eave_a,u=>n({eave_a:u,eave_b:u})):g`${h(`${this.t("roof_eave")} ${l?"":r}`,e.eave_a,u=>n({eave_a:u}))}
+              ${l?v:h(`${this.t("roof_eave")} ${s}`,e.eave_b,u=>n({eave_b:u}))}
+              ${h(`${this.t("roof_pitch_short")} ${l?"":r}`,e.pitch_a,u=>n({pitch_a:Math.min(75,u)}),1,0)}
+              ${l?v:h(`${this.t("roof_pitch_short")} ${s}`,e.pitch_b,u=>n({pitch_b:Math.min(75,u)}),1,0)}`}
+          ${h(this.t("roof_base"),e.base,u=>n({base:u}))}
+          <label class="nf-field" title=${this.t("roof_on_floor_hint")}
+            >${this.t("roof_on_floor")}
+            <select
+              ?disabled=${!t}
+              @change=${u=>{let f=this._doc.floors.find(_=>_.id===u.target.value);if(!f)return;let p=S(f.elevation+f.height),m=p-e.base;n({base:p,eave_a:S(e.eave_a+m),eave_b:S(e.eave_b+m)})}}
+            >
+              ${[...this._doc.floors].filter(u=>u.rooms.length).sort((u,f)=>f.elevation-u.elevation).map(u=>g`<option value=${u.id} ?selected=${Zr(this._doc,e)?.id===u.id}>${u.name}</option>`)}
+            </select></label
+          >
+          <p class="nf-sub nf-wide">${this.t("roof_base_hint")}</p>
+          ${h(this.t("roof_overhang"),e.overhang??this._doc.settings.roof.overhang,u=>n({overhang:Math.min(2,u)}),.05,0)}
+        </div>
+        ${a&&t?g`<div class="nf-actions">
+              <button class="nf-btn" title=${this.t("roof_outline_hint")} @click=${()=>this.takeRoofOutline()}>${this.t("roof_outline")}</button>
+              ${e.points?g`<button class="nf-btn" @click=${()=>n({points:null})}>${this.t("roof_rect")}</button>`:v}
+            </div>
+            <p class="nf-sub">${this.t(e.points?"roof_points_hint":"roof_outline_hint")}</p>`:v}
+        <p class="nf-sub">${this.t("roof_ridge_height")}: ${W(this.hass,Lt(e),2)} m · ${this.t("roof_section_hint")}</p>
+        ${t?g`<div class="nf-actions">
+              ${a?v:g`<button class="nf-btn" title=${this.t("roof_swap_hint")} @click=${()=>n({flip:!e.flip})}>⇅ ${this.t("roof_swap")}</button>`}
+              ${!a&&!e.dormer&&!e.open?g`<button class="nf-btn" title=${this.t("roof_dormer_hint")} @click=${()=>this.addDormer("a")}>+ ${this.t("roof_dormer")} ${r}</button>
+                  ${l?v:g`<button class="nf-btn" title=${this.t("roof_dormer_hint")} @click=${()=>this.addDormer("b")}>+ ${this.t("roof_dormer")} ${s}</button>`}`:v}
+              <button class="nf-btn" @click=${()=>this.duplicateRoofSection()}>${this.t("duplicate")}</button>
+              <button class="nf-btn nf-danger" @click=${()=>this.deleteRoofSection()}>${this.t("delete")}</button>
+            </div>`:v}
+      </section>`}fixItem(e,t,n){if(e)switch(t){case"room":return e.rooms.find(i=>i.id===n);case"opening":return e.openings.find(i=>i.id===n);case"furniture":return e.furniture.find(i=>i.id===n);case"device":return e.placements.find(i=>i.entity_id===n);case"wall":return(e.walls??[]).find(i=>i.id===n);case"outdoor":return e.outdoor.find(i=>i.id===n)}}isFixedItem(e,t){return hn(this.fixItem(this.floor,e,t),e!=="furniture"&&e!=="device",this._doc.settings)}toggleFixed(e,t){if(!this.isAdmin||e!=="furniture"&&e!=="device")return;let n=!this.isFixedItem(e,t);this.change((i,r)=>{let s=this.fixItem(r,e,t);s&&(s.locked=n)})}toggleLockPlan(){this.isAdmin&&this.change(e=>e.settings.lock_plan=!e.settings.lock_plan)}get selectedFix(){return this._deviceId?{kind:"device",id:this._deviceId}:this._openingId?{kind:"opening",id:this._openingId}:this._furnitureId?{kind:"furniture",id:this._furnitureId}:this._wallId?{kind:"wall",id:this._wallId}:this._outdoorId?{kind:"outdoor",id:this._outdoorId}:this._roomId?{kind:"room",id:this._roomId}:null}confirmFixedDelete(e,t){return!this.isFixedItem(e,t)||confirm(this.t("fixed_delete_confirm"))}onContextMenu(e){e.preventDefault(),!(this._tool!=="select"&&this._tool!=="furniture")&&(this.drag=null,this.openContext(e.target,this.localPoint(e)))}openContext(e,t){if(!this.isAdmin||!this.floor)return;let n=this.toWorld(...t),i=p=>e.closest(`[${p}]`)?.getAttribute(p)??null,r=null,s=i("data-device"),a=i("data-opening"),l=e.closest("[data-vertex], [data-mid]")?null:i("data-furniture"),c=i("data-free-wall"),h=i("data-outdoor"),d=i("data-room")??this.roomAt(n);if(s?r=["device",s]:a?r=["opening",a]:l?r=["furniture",l]:c?r=["wall",c]:h&&!d?r=["outdoor",h]:d&&(r=["room",d]),!r){this._ctx=null;return}let[u,f]=r;this.selectItem(u,f),(u==="opening"||u==="furniture")&&(this._roomId=this._roomId??d),this._ctx={x:t[0],y:t[1],kind:u,id:f}}deleteItem(e,t){if(e==="device"){if(!this.confirmFixedDelete(e,t))return;this.removeDevice(t),this._deviceId=null;return}e==="room"?this.deleteRoom():e==="opening"?this.deleteOpening():e==="furniture"?this.deleteFurniture():e==="wall"?this.deleteFreeWall():this.deleteOutdoor()}renderContext(){let e=this._ctx;if(!e)return v;let t=this.isFixedItem(e.kind,e.id),n=this.renderRoot.querySelector(".nf-canvas-wrap"),i=Math.max(4,Math.min(e.x,(n?.clientWidth??800)-190)),r=Math.max(4,Math.min(e.y,(n?.clientHeight??600)-190)),s=a=>()=>{this._ctx=null,a()};return g`<div class="nf-ctx" style=${`left:${i}px;top:${r}px`} @pointerdown=${a=>a.stopPropagation()} @contextmenu=${a=>a.preventDefault()}>
+      ${e.kind==="furniture"||e.kind==="device"?g`<button title=${this.t("fix_hint")} @click=${s(()=>this.toggleFixed(e.kind,e.id))}>${t?`\u{1F513} ${this.t("unfix")}`:`\u{1F512} ${this.t("fix")}`}</button>`:g`<button title=${this.t("lock_plan_hint")} @click=${s(()=>this.toggleLockPlan())}>${this._doc.settings.lock_plan?`\u{1F513} ${this.t("plan_unlock")}`:`\u{1F512} ${this.t("plan_lock")}`}</button>`}
+      ${e.kind==="room"?g`<button @click=${s(()=>this.duplicateRoom())}>⧉ ${this.t("duplicate")}</button>`:v}
+      ${e.kind==="furniture"?g`<button @click=${s(()=>this.duplicateFurniture())}>⧉ ${this.t("duplicate")}</button>
+            <button ?disabled=${t} @click=${s(()=>this.rotateFurniture(90))}>↻ ${this.t("ctx_rotate")}</button>
+            <button ?disabled=${t} @click=${s(()=>this.mirrorFurniture())}>⇋ ${this.t("furn_mirror")}</button>`:v}
+      <button class="nf-ctx-danger" @click=${s(()=>this.deleteItem(e.kind,e.id))}>✕ ${this.t("delete")}</button>
+    </div>`}fixButton(e,t){if(!this.isAdmin)return v;if(e!=="furniture"&&e!=="device")return this._doc.settings.lock_plan?g`<button class="nf-btn nf-fix" aria-pressed="true" title=${this.t("lock_plan_hint")} @click=${()=>this.toggleLockPlan()}>
+            🔒 ${this.t("plan_locked")}
+          </button>`:v;let n=this.isFixedItem(e,t);return g`<button class="nf-btn nf-fix" aria-pressed=${n} title=${this.t("fix_hint")} @click=${()=>this.toggleFixed(e,t)}>
+      ${n?`\u{1F512} ${this.t("unfix")}`:`\u{1F513} ${this.t("fix")}`}
+    </button>`}selectItem(e,t){if(this._notice=null,t&&(this._sideOpen=!0),this._outdoorId=e==="outdoor"?t:null,this._wallId=e==="wall"?t:null,this._edgeHi=null,(e==="outdoor"||e==="wall")&&(this._roomId=null),(e!=="room"||t!==this._roomId)&&(this._vertex=null),this._roomId=e==="room"?t:this._roomId,this._openingId=e==="opening"?t:null,this._furnitureId=e==="furniture"?t:null,this._deviceId=e==="device"?t:null,e==="device"&&t){let n=this.floor?.placements.find(i=>i.entity_id===t);this._roomId=(n&&this.roomAt([n.x,n.z]))??this._roomId}e==="opening"&&t&&(this._roomId=this.floor?.openings.find(n=>n.id===t)?.room_id??this._roomId)}get opening(){return this._openingId?this.floor?.openings.find(e=>e.id===this._openingId):void 0}get furnitureItem(){return this._furnitureId?this.floor?.furniture.find(e=>e.id===this._furnitureId):void 0}offsetOnEdge(e,t,n,i,r){let s=e.points[t],a=e.points[(t+1)%e.points.length],l=Math.hypot(a[0]-s[0],a[1]-s[1])||1,c=((n[0]-s[0])*(a[0]-s[0])+(n[1]-s[1])*(a[1]-s[1]))/l,h=r?.01:this._doc.settings.grid,d=Math.min(i,l)/2;return S(Math.min(l-d,Math.max(d,Math.round(c/h)*h)))}placeOpening(e,t){let n=this.floor;if(!n||!this.isAdmin)return!1;let i=null;for(let m of n.walls??[]){let _=je({room_id:"",edge:0,wall:m.id},n.rooms,n.walls??[]);if(!_)continue;let[x,b]=this.toScreen(m.a),[w,$]=this.toScreen(m.b),y=(w-x)**2+($-b)**2||1,E=Math.min(1,Math.max(0,((t[0]-x)*(w-x)+(t[1]-b)*($-b))/y)),z=Math.hypot(t[0]-x-(w-x)*E,t[1]-b-($-b)*E),k=[(m.a[0]+m.b[0])/2,(m.a[1]+m.b[1])/2],M=n.rooms.find(R=>R.points.length>=3&&D(k,R.points));z<Kt*2.2&&(!i||z-1<i.d)&&(i={room:_.room,edge:0,d:z-1,wall:m.id,roomId:M?.id??m.id})}for(let m of n.rooms)for(let _=0;_<m.points.length;_++){let[x,b]=this.toScreen(m.points[_]),[w,$]=this.toScreen(m.points[(_+1)%m.points.length]),y=(w-x)**2+($-b)**2||1,E=Math.min(1,Math.max(0,((t[0]-x)*(w-x)+(t[1]-b)*($-b))/y)),z=Math.hypot(t[0]-x-(w-x)*E,t[1]-b-($-b)*E),k=z-(m.id===this._roomId?.5:0);z<Kt*2.2&&(!i||k<i.d)&&(i={room:m,edge:_,d:k})}if(!i)return!1;let{room:r,edge:s,wall:a}=i,l=r.points[s],c=r.points[(s+1)%r.points.length],h=Math.hypot(c[0]-l[0],c[1]-l[1]),d=zt[e],u=d.type,f=S(Math.min(d.width,Math.max(.3,h-.1))),p={id:L("opening"),room_id:i.roomId??r.id,edge:s,...a?{wall:a}:{},offset:this.offsetOnEdge(r,s,this.toWorld(...t),f,!1),width:f,type:u,sill:d.sill,height:d.height,hinge:"left",leaves:d.leaves,swing:"in",cover:null,contact:null,contact2:null,tilt:null};return this.change((m,_)=>_.openings.push(p)),this._tool="select",this.selectItem("opening",p.id),!0}setOpeningPreset(e,t){let n=zt[t];this._openingPreset=t;let i=wn(e)===t,r="style"in n?n.style:null;this.updateOpening({type:n.type,leaves:n.leaves,sill:n.sill,height:n.height,style:r,...i?{}:{width:n.width}})}updateOpening(e){let t=this._openingId;this.change((n,i)=>Object.assign(i.openings.find(r=>r.id===t),e))}deleteOpening(){let e=this._openingId;!e||!this.isAdmin||!this.confirmFixedDelete("opening",e)||(this.change((t,n)=>n.openings=n.openings.filter(i=>i.id!==e)),this._openingId=null)}glowScaleField(e,t){return g`<label class="nf-field" title=${this.t("glow_scale_hint")}
+      >${this.t("glow_scale")}
+      <input
+        type="number"
+        min="10"
+        max="150"
+        step="5"
+        .value=${String(Math.round((e??1)*100))}
+        ?disabled=${!this.isAdmin}
+        @change=${n=>{let i=Math.min(150,Math.max(10,Number(n.target.value)||100))/100;t(Math.abs(i-1)<.001?null:i)}}
+    /></label>`}furnitureFor(e){let t=H(e),n=this.hass?.language??"en",i=[...fn.map(a=>({type:a,label:this.t(`furn_${a}`)})),...(this.packs??[]).flatMap(a=>a.items.map(l=>({type:We(a.id,l.id),label:`${ke(l,n)} \xB7 ${me(a,n)}`})))],r=/speaker|sound|subwoofer|receiver|smart_|display|tv|media|turntable|projector|console/,s=a=>t==="light"?ee(a):t==="climate"?a==="radiator":e.startsWith("vacuum.")?a==="robot_vacuum"||Be(a)&&a.endsWith(":robot_vacuum"):t==="media"?An(a)||at(a)&&r.test(a):at(a)&&!ee(a);return i.filter(a=>s(a.type)).sort((a,l)=>a.label.localeCompare(l.label))}vehicleToSpot(e){if(!this.isAdmin)return;let[t,n,i]=Fe("parking"),r={id:L("furniture"),type:"parking",x:e.x,z:e.z,rotation:e.rotation,w:Math.max(t,S(e.w+.5)),d:Math.max(n,S(e.d+.4)),h:i,variant:null,vehicle:e.type,...e.name?{name:e.name}:{}};this.change((s,a)=>{a.furniture=a.furniture.filter(l=>l.id!==e.id),a.furniture.push(r)}),this.selectItem("furniture",r.id)}deviceToFurniture(e,t){if(!this.isAdmin)return;let[n,i,r]=Fe(t),s={id:L("furniture"),type:t,x:e.x,z:e.z,rotation:e.rotation??0,w:n,d:i,h:r,variant:null,entity:e.entity_id,name:e.name??null,...e.locked?{locked:!0}:{}};this.change((a,l)=>{l.placements=l.placements.filter(c=>c.entity_id!==e.entity_id),l.furniture.push(s)}),this._deviceId=null,this.selectItem("furniture",s.id)}furnitureToDevice(e){let t=e.entity;if(!this.isAdmin||!t||t==="none")return;let n={entity_id:t,x:e.x,z:e.z,y:null,rotation:e.rotation,...e.name?{name:e.name}:{}};this.change((i,r)=>{r.furniture=r.furniture.filter(s=>s.id!==e.id),r.placements.some(s=>s.entity_id===t)||r.placements.push(n)}),this._furnitureId=null,this.selectItem("device",t)}renderAsFurniture(e){if(!this.isAdmin)return v;let t=this.furnitureFor(e.entity_id);return t.length?g`<label class="nf-field nf-wide" title=${this.t("as_furniture_hint")}
+      >${this.t("as_furniture")}
+      <select
+        @change=${n=>{let i=n.target.value;i&&this.deviceToFurniture(e,i)}}
+      >
+        <option value="" selected>${this.t("as_furniture_pick")}</option>
+        ${t.map(n=>g`<option value=${n.type}>${n.label}</option>`)}
+      </select></label
+    >`:v}addFurniture(e){let t=this.floor;if(!t||!this.isAdmin)return;let[n,i,r]=Fe(e),s=this._doc.floors.filter(u=>u.elevation>t.elevation).sort((u,f)=>u.elevation-f.elevation)[0],a=e==="stairs"?S(s?s.elevation-t.elevation:t.height+.25):r,l=this.room,[c,h]=l?le(l.points):this.toWorld(this._size.w/2,this._size.h/2),d={id:L("furniture"),type:e,x:S(c),z:S(h),rotation:0,w:n,d:i,h:a,variant:null};this.change((u,f)=>f.furniture.push(d)),this.selectItem("furniture",d.id),this.showPoint(d.x,d.z)}snapToWall(e){return this.floor?Pt(this.floor,e,this._doc.settings.wall_interior):null}updateFurniture(e){let t=this._furnitureId;this.change((n,i)=>Object.assign(i.furniture.find(r=>r.id===t),e))}mirrorFurniture(){let e=this.furnitureItem;!e||!this.isAdmin||this.updateFurniture({mirror:!e.mirror})}rotateFurniture(e){let t=this.furnitureItem;!t||!this.isAdmin||this.updateFurniture({rotation:((t.rotation+e)%360+360)%360})}deleteFurniture(){let e=this._furnitureId;!e||!this.isAdmin||!this.confirmFixedDelete("furniture",e)||(this.change((t,n)=>n.furniture=n.furniture.filter(i=>i.id!==e)),this._furnitureId=null)}duplicateFurniture(){let e=this.furnitureItem;if(!e||!this.isAdmin)return;let t={...structuredClone(e),id:L("furniture"),x:S(e.x+.3),z:S(e.z+.3)};this.change((n,i)=>i.furniture.push(t)),this.selectItem("furniture",t.id)}placeDevices(e){let t=this.room;if(!t||!e.length||!this.isAdmin)return;let n=new Set(e);this.change((i,r)=>{for(let a of i.floors)a.placements=a.placements.filter(l=>!n.has(l.entity_id)),a.furniture=a.furniture.filter(l=>!(ee(l.type)&&l.entity&&n.has(l.entity)));let s=[...r.placements.map(a=>[a.x,a.z]),...r.furniture.filter(a=>ee(a.type)).map(a=>[a.x,a.z])];for(let a of mr(t,e,s)){if(!a.entity_id.startsWith("light.")){r.placements.push(a);continue}let[l,c,h]=oe.lamp_ceiling;r.furniture.push({id:L("furniture"),type:"lamp_ceiling",x:a.x,z:a.z,rotation:0,w:l,d:c,h,variant:null,entity:a.entity_id,power:null})}})}get device(){return this._deviceId?this.floor?.placements.find(e=>e.entity_id===this._deviceId):void 0}updateDevice(e){let t=this._deviceId;this.change((n,i)=>Object.assign(i.placements.find(r=>r.entity_id===t),e))}centreDevice(){let e=this.device,t=e?this.roomAt([e.x,e.z]):null,n=this.floor?.rooms.find(s=>s.id===t);if(!e||!n)return;let[i,r]=le(n.points);this.updateDevice({x:S(i),z:S(r)})}spreadCeilingLights(e){let t=this.floor;if(!t)return;let n=t.placements.filter(d=>H(d.entity_id)==="light"&&(d.mount??"ceiling")==="ceiling"&&D([d.x,d.z],e.points));if(n.length<2)return;let i=te(e.points),r=i.x1-i.x0,s=i.z1-i.z0,a=Math.max(1,Math.round(Math.sqrt(n.length*r/Math.max(.1,s)))),l=Math.ceil(n.length/a),c=n.map((d,u)=>{let f=Math.floor(u/a),p=f===l-1?n.length-a*(l-1):a,m=u-f*a;return[S(i.x0+r/p*(m+.5)),S(i.z0+s/l*(f+.5))]}),h=n.map(d=>d.entity_id);this.change((d,u)=>{h.forEach((f,p)=>Object.assign(u.placements.find(m=>m.entity_id===f),{x:c[p][0],z:c[p][1]}))})}closeFloorGaps(){let e=this.floor;if(!e||!this.isAdmin)return;let{rooms:t,gaps:n}=yr(e.rooms);if(!n.length){this._notice=this.t("gaps_none");return}let i=kr(n);this.change((r,s)=>{s.rooms=t,i&&(r.settings.wall_interior=i)}),this._notice=i?this.t("gaps_closed_wall",{n:n.length,t:W(this.hass,i,2)}):this.t("gaps_closed",{n:n.length})}removeDevice(e){this.change(t=>{for(let n of t.floors)n.placements=n.placements.filter(i=>i.entity_id!==e),n.furniture=n.furniture.filter(i=>!(ee(i.type)&&i.entity===e))})}deleteVertex(e){let t=this.room;if(!t||t.points.length<=3)return;let n=t.points.length,i=(e-1+n)%n;this.change((r,s)=>{let a=s.rooms.find(l=>l.id===t.id);a.points.splice(e,1),a.wall_heights&&a.wall_heights.splice(e,1),a.wall_thickness&&a.wall_thickness.splice(e,1),s.openings=s.openings.filter(l=>l.room_id!==t.id||l.wall||l.edge!==e&&l.edge!==i).map(l=>l.room_id===t.id&&!l.wall&&l.edge>e?{...l,edge:l.edge-1}:l)}),this._vertex=null}shiftFloor(e,t){if(!this.isAdmin||!e&&!t)return;let n=r=>[S(r[0]+e),S(r[1]+t)],i=r=>{for(let s of r.rooms)s.points=s.points.map(n);for(let s of r.furniture)s.x=S(s.x+e),s.z=S(s.z+t);for(let s of r.placements)s.x=S(s.x+e),s.z=S(s.z+t);for(let s of r.outdoor)s.points=s.points.map(n);for(let s of r.walls??[])s.a=n(s.a),s.b=n(s.b);r.background&&(r.background.x=S(r.background.x+e),r.background.z=S(r.background.z+t))};this._shiftAll?this.change(r=>{for(let s of r.floors)i(s);this.moveHouseExtras(r,n)}):this.change((r,s)=>i(s)),this._shiftX=0,this._shiftZ=0}moveHouseExtras(e,t){for(let n of e.settings.roof.sections??[]){let i=[t([n.x0,n.z0]),t([n.x1,n.z0]),t([n.x1,n.z1]),t([n.x0,n.z1])];n.x0=Math.min(...i.map(r=>r[0])),n.x1=Math.max(...i.map(r=>r[0])),n.z0=Math.min(...i.map(r=>r[1])),n.z1=Math.max(...i.map(r=>r[1])),n.points&&(n.points=n.points.map(t))}e.energy.meter&&([e.energy.meter.x,e.energy.meter.z]=t([e.energy.meter.x,e.energy.meter.z]))}turnFloor(){let e=this.floor;if(!e||!this.isAdmin)return;let t=(this._shiftAll?this._doc.floors:[e]).flatMap(c=>c.rooms.flatMap(h=>h.points));if(!t.length)return;let n=t.map(c=>c[0]),i=t.map(c=>c[1]),r=(Math.min(...n)+Math.max(...n))/2,s=(Math.min(...i)+Math.max(...i))/2,a=c=>[S(r-(c[1]-s)),S(s+(c[0]-r))],l=c=>{for(let h of c.rooms)h.points=h.points.map(a);for(let h of c.furniture)[h.x,h.z]=a([h.x,h.z]),h.rotation=(h.rotation+90)%360;for(let h of c.placements)[h.x,h.z]=a([h.x,h.z]),h.rotation=((h.rotation??0)+90)%360;for(let h of c.outdoor)h.points=h.points.map(a);for(let h of c.walls??[])h.a=a(h.a),h.b=a(h.b);c.background&&([c.background.x,c.background.z]=a([c.background.x,c.background.z]),c.background.rotation=((c.background.rotation??0)+90)%360)};this._shiftAll?this.change(c=>{for(let h of c.floors)l(h);this.moveHouseExtras(c,a)}):this.change((c,h)=>l(h))}updateFloor(e){this.change((t,n)=>Object.assign(n,e))}updateRoom(e){let t=this._roomId;this.change((n,i)=>Object.assign(i.rooms.find(r=>r.id===t),e))}setArea(e){let t=this.room;if(!t)return;let n=e?this.hass?.areas?.[e]:void 0,i=!t.name||/^(Raum|Room) \d+$/.test(t.name)||Object.values(this.hass?.areas??{}).some(r=>r.name===t.name);this.updateRoom({area_id:e||null,...n&&i?{name:n.name}:{}})}setRect(e,t){let n=this.room;if(!n||!Number.isFinite(t))return;let i=te(n.points),{x0:r,z0:s,x1:a,z1:l}=i;e==="x"&&([r,a]=[t,t+(a-r)]),e==="z"&&([s,l]=[t,t+(l-s)]),e==="w"&&t>.05&&(a=r+t),e==="d"&&t>.05&&(l=s+t),this.updateRoom({points:[[S(r),S(s)],[S(a),S(s)],[S(a),S(l)],[S(r),S(l)]]})}setPoint(e,t,n){let i=this.room;if(!i||!Number.isFinite(n))return;let r=i.points.map(s=>[...s]);r[e][t]=S(n),this.updateRoom({points:r})}async loadImage(e){this.loadingImages.add(e);try{let t=await on(this.hass,e),n=new Image;n.src=t,await n.decode(),this._images={...this._images,[e]:{url:t,aspect:n.naturalHeight/n.naturalWidth}}}catch{}}async uploadBackground(e){let t=e.target,n=t.files?.[0];if(t.value="",!n)return;let i=await createImageBitmap(n),r=Math.min(1,2048/Math.max(i.width,i.height)),s=document.createElement("canvas");s.width=Math.round(i.width*r),s.height=Math.round(i.height*r),s.getContext("2d").drawImage(i,0,0,s.width,s.height);let a=s.toDataURL("image/jpeg",.85),l=L("img");await an(this.hass,l,a),this._images={...this._images,[l]:{url:a,aspect:s.height/s.width}};let c=this.floor?.rooms.length?te(this.floor.rooms.flatMap(h=>h.points)):null;this.updateFloor({background:{image_id:l,x:c?c.x0:0,z:c?c.z0:0,width:c?Math.max(4,S(c.x1-c.x0)):12,opacity:.5}})}render(){let e=this.floor,t=e?ne(e.rooms,{exterior:this._doc.settings.wall_exterior,interior:this._doc.settings.wall_interior},e.walls??[]):null;return g`
+      ${this.renderPreview()}
+      <div class="nf-editor ${this.narrow?"nf-narrow":""}">
+        <div class="nf-main">
+          <div class="nf-toolbar">
+            <div class="nf-seg" role="group" aria-label=${this.t("tool_select")}>
+              ${["select","rect","polygon","wall","opening","furniture","outdoor","hole","roof","energy"].map(n=>g`<button
+                  aria-pressed=${this._tool===n}
+                  ?disabled=${!e||!this.isAdmin&&n!=="select"}
+                  @click=${()=>{this._tool=n,this._draft=[],this._cursor=null,this._sideOpen=n!=="select"}}
+                >
+                  ${this.t(`tool_${n}`)}
+                </button>`)}
+            </div>
+            <div class="nf-seg">
+              <button ?disabled=${!this._canUndo} @click=${()=>this.undo()} title="Ctrl+Z">${this.t("undo")}</button>
+              <button ?disabled=${!this._canRedo} @click=${()=>this.redo()} title="Ctrl+Y">${this.t("redo")}</button>
+              <button @click=${()=>this.fit()}>${this.t("fit")}</button>
+              <button aria-pressed=${this._split} title=${this.t("split_3d_hint")} @click=${()=>this.toggleSplit()}>${this.t("split_3d")}</button>
+              ${this.isAdmin?g`<button aria-pressed=${!!this._doc.settings.lock_plan} title=${this.t("lock_plan_hint")} @click=${()=>this.toggleLockPlan()}>${this.t("lock_plan")}</button>`:v}
+            </div>
+            ${t?.warnings.length?g`<span class="nf-warn">${this.t("overlap_warning")}</span>`:v}
+          </div>
+          <div class="nf-stage-pair ${this._split?"nf-split":""}" style=${this._split&&!this.narrow?`--nf-split:${Math.round(this._splitRatio*100)}%`:""}>
+          <div class="nf-canvas-wrap">
+            ${this.houseTool?g`<div class="nf-tool-note">${this.t(this._tool==="energy"?"energy_only_note":"roof_only_note")}</div>`:v}
+            <svg
+              class="nf-plan nf-tool-${this._tool}"
+              @pointerdown=${this.onPointerDown}
+              @pointermove=${this.onPointerMove}
+              @pointerup=${this.onPointerUp}
+              @pointercancel=${this.onPointerUp}
+              @pointerleave=${()=>{this.drag||(this._cursor=null)}}
+              @wheel=${this.onWheel}
+              @contextmenu=${this.onContextMenu}
+            >
+              ${this.renderBackground(e)} ${this.renderGrid()} ${this.renderGhost()} ${t?this.renderWalls(t.walls):v}
+              ${e?this.renderOutdoor(e):v} ${e?this.renderRooms(e):v} ${e?this.renderFurniture(e):v}
+              ${e?this.renderFreeWalls(e):v}
+              ${e&&t?this.renderOpenings(e,t.walls):v} ${e?this.renderMeter(e):v}
+              ${e&&this._tool==="select"?this.renderDevices(e):v}
+              ${this.room&&this.isAdmin&&this._tool==="select"&&!this._openingId&&!this._furnitureId&&!this.isFixedItem("room",this.room.id)?this.renderHandles(this.room):v}
+              ${e?this.renderOutdoorHandles(e):v}
+              ${this.room&&this._tool==="select"?this.renderSplitMarks(this.room):v}
+              ${e?this.renderHeadroom(e):v}
+              ${this._tool==="roof"?F`${this.renderRoofSections()}${this.renderRoofWindows()}`:this._tool==="energy"?F`${this.renderRoofSections()}${this.renderSolarFields()}${this.renderEnergyMarkers()}`:v} ${this.renderDraft()} ${this.renderGuides()}
+            </svg>
+            ${this.renderContext()}
+            <p class="nf-hint ${this._fixedHint?"nf-hint-fixed":""}">${e?this._fixedHint?this.t("fixed_drag_hint"):this.t(`hint_${this._tool}`):this.t("hint_empty")}</p>
+          </div>
+          ${this._split&&!this.narrow?g`<div class="nf-split-handle" title=${this.t("split_handle_hint")} @pointerdown=${this.onSplitDown}></div>`:v}
+          ${this._split?this.render3d():v}
+          </div>
+        </div>
+        ${this.renderAside(e)}
+      </div>
+    `}renderBackground(e){let t=e?.background,n=t?this._images[t.image_id]:void 0;if(!t||!n)return v;let[i,r]=this.toScreen([t.x,t.z]),s=t.width*this._view.scale,a=s*n.aspect,l=t.rotation??0,c=this.bgHandles();return F`<g transform="rotate(${l} ${i+s/2} ${r+a/2})">
+      <image href=${n.url} x=${i} y=${r} width=${s} height=${a} opacity=${t.opacity} preserveAspectRatio="none" pointer-events=${c?"auto":"none"} data-bg="1" style=${c?"cursor:move":""} />
+      ${c?F`<rect class="nf-bg-frame" x=${i} y=${r} width=${s} height=${a} />
+          <circle class="nf-bg-handle" data-bg-handle="1" cx=${i+s} cy=${r+a} r="9" />
+          <g class="nf-rotate" data-bg-rotate="1">
+            <line x1=${i+s/2} y1=${r} x2=${i+s/2} y2=${r-30} />
+            <circle cx=${i+s/2} cy=${r-30} r="16" class="nf-hit" />
+            <circle cx=${i+s/2} cy=${r-30} r="8" />
+            <path d="M${i+s/2-4} ${r-31}a4 4 0 1 1 2 3.5" />
+          </g>`:v}
+    </g>${this.renderBgRuler()}`}bgHandles(){return!!this.floor?.background&&this.isAdmin&&this._tool==="select"&&this._bgEdit}renderBgRuler(){let e=this._bgLevel?.length?this._bgLevel:this._bgRuler;if(!e?.length)return v;let t=e.map(n=>this.toScreen(n));return F`<g class="nf-bg-ruler">
+      ${t.length===2?F`<line x1=${t[0][0]} y1=${t[0][1]} x2=${t[1][0]} y2=${t[1][1]} />`:v}
+      ${t.map(([n,i])=>F`<circle cx=${n} cy=${i} r="6" />`)}
+    </g>`}applyBgLevel(e,t){let n=this.floor?.background,i=n?this._images[n.image_id]:void 0;if(this._bgLevel=null,!n||!i||Math.hypot(t[0]-e[0],t[1]-e[1])<.05)return;let r=Math.atan2(t[1]-e[1],t[0]-e[0]),s=Math.round(r/(Math.PI/2))*(Math.PI/2)-r;if(Math.abs(s)<1e-4)return;let a=n.width*i.aspect,l=[n.x+n.width/2,n.z+a/2],c=l[0]-e[0],h=l[1]-e[1],d=[e[0]+c*Math.cos(s)-h*Math.sin(s),e[1]+c*Math.sin(s)+h*Math.cos(s)],u=(n.rotation??0)+s*180/Math.PI;u=Math.round((((u+180)%360+360)%360-180)*100)/100,this.updateFloor({background:{...n,rotation:u,x:S(d[0]-n.width/2),z:S(d[1]-a/2)}})}applyBgRuler(e){let n=this.floor?.background,i=this._bgRuler,r=n?this._images[n.image_id]:void 0;if(!n||!r||!i||i.length<2||!(e>0))return;let s=Math.hypot(i[1][0]-i[0][0],i[1][1]-i[0][1]);if(s<1e-4)return;let a=e/s,l=n.width*r.aspect,c=[n.x+n.width/2,n.z+l/2],h=i[0],d=[h[0]+a*(c[0]-h[0]),h[1]+a*(c[1]-h[1])],u=n.width*a,f=l*a;this.updateFloor({background:{...n,width:S(u),x:S(d[0]-u/2),z:S(d[1]-f/2)}}),this._bgRuler=null,this._bgRulerLen=0}bgLocal(e,t,n){let i=e.width*n,r=e.x+e.width/2,s=e.z+i/2,a=-(e.rotation??0)*Math.PI/180,l=t[0]-r,c=t[1]-s;return[r+l*Math.cos(a)-c*Math.sin(a)-e.x,s+l*Math.sin(a)+c*Math.cos(a)-e.z]}renderGrid(){let{scale:e}=this._view,{w:t,h:n}=this._size,i=e>=90?.1:e>=30?.5:1,r=e>=20?1:5,[s,a]=this.toWorld(0,0),[l,c]=this.toWorld(t,n),h=[],d=(p,m)=>{for(let _=Math.ceil(s/p)*p;_<=l;_+=p){let x=this.toScreen([_,0])[0];h.push(F`<line class=${m} x1=${x} y1="0" x2=${x} y2=${n} />`)}for(let _=Math.ceil(a/p)*p;_<=c;_+=p){let x=this.toScreen([0,_])[1];h.push(F`<line class=${m} x1="0" y1=${x} x2=${t} y2=${x} />`)}};i<r&&d(i,"nf-grid-minor"),d(r,"nf-grid-major");let[u,f]=this.toScreen([0,0]);return h.push(F`<circle class="nf-origin" cx=${u} cy=${f} r="3" />`),F`<g pointer-events="none">${h}</g>`}renderGhost(){let e=this._doc?.floors.findIndex(n=>n.id===this._floorId)??-1,t=e>0?this._doc.floors[e-1]:void 0;return t?F`<g pointer-events="none">${t.rooms.map(n=>F`<polygon class="nf-ghost" points=${n.points.map(i=>this.toScreen(i).join(",")).join(" ")} />`)}</g>`:v}renderWalls(e){let t=this.floor?.height??2.5;return F`<g pointer-events="none">${e.map(n=>{let i=n.height!==void 0&&n.height<t-.01,r=`nf-wall${n.exterior?" nf-wall-ext":""}${i?" nf-wall-low":""}`;return F`<polygon class=${r} points=${n.footprint.map(s=>this.toScreen(s).join(",")).join(" ")} />`})}</g>`}edgeParts(e,t){let n=this.floor;if(!n)return[0];let r=ne(n.rooms,{exterior:this._doc.settings.wall_exterior,interior:this._doc.settings.wall_interior},n.walls??[]).walls.flatMap(s=>s.sources.filter(a=>a.room_id===e.id&&a.edge===t).map(a=>a.t0));return r.length?[...new Set(r)].sort((s,a)=>s-a):[0]}setEdgeHeight(e,t,n,i){let r=this.floor;if(!r||!this.isAdmin)return;if(i!==void 0){let l=this.edgeParts(e,t).length;this.change((c,h)=>{let d=h.rooms.find(m=>m.id===e.id);if(!d)return;let u=(d.wall_heights??[]).slice(0,d.points.length);for(;u.length<d.points.length;)u.push(null);let f=u[t],p=Array.isArray(f)?[...f]:new Array(l).fill(typeof f=="number"?f:null);for(;p.length<l;)p.push(null);p[i]=n,u[t]=p.every(m=>m===p[0])?p[0]:p,d.wall_heights=u.every(m=>m===null)?void 0:u});return}let a=ne(r.rooms,{exterior:this._doc.settings.wall_exterior,interior:this._doc.settings.wall_interior},r.walls??[]).walls.filter(l=>l.sources.some(c=>c.room_id===e.id&&c.edge===t)).flatMap(l=>l.sources);a.some(l=>l.room_id===e.id&&l.edge===t)||a.push({room_id:e.id,edge:t,t0:0,t1:0}),this.change((l,c)=>{for(let h of a){let d=c.rooms.find(f=>f.id===h.room_id);if(!d)continue;let u=(d.wall_heights??[]).slice(0,d.points.length);for(;u.length<d.points.length;)u.push(null);u[h.edge]=n,d.wall_heights=u.every(f=>f===null)?void 0:u}})}renderCameraDetections(e){if(!this.hass)return v;let t=this.hass,n=Fr(t,e),i=[...new Set(n.map(r=>Rr(t,r)))];return g`<p class="nf-sub nf-wide">
+      ${n.length?g`${this.t("camera_detect_found",{kinds:i.map(r=>this.t(`detect_${r}`)).join(", "),n:n.length})}`:this.t("camera_detect_none")}
+    </p>`}splitEdge(e,t,n){if(!this.isAdmin)return;let i=e.points,r=Math.hypot(i[(t+1)%i.length][0]-i[t][0],i[(t+1)%i.length][1]-i[t][1]),s=this.edgeParts(e,t),a=n===void 0?0:s[n],l=n===void 0?r:s[n+1]??r;if(l-a<.4)return;let c=Math.round((a+l)/2*100)/100;this.change((h,d)=>{let u=d.rooms.find(m=>m.id===e.id);if(!u)return;let f=(u.wall_splits??[]).slice(0,u.points.length);for(;f.length<u.points.length;)f.push(null);f[t]=[...f[t]??[],c].sort((m,_)=>m-_),u.wall_splits=f;let p=u.wall_heights?.[t];if(Array.isArray(p)){let m=n??0;p.splice(m+1,0,p[m]??null)}})}moveSplit(e,t,n,i){let r=e.points,s=Math.hypot(r[(t+1)%r.length][0]-r[t][0],r[(t+1)%r.length][1]-r[t][1]),a=this.edgeParts(e,t).filter(c=>Math.abs(c-n)>.001&&c>0),l=Math.max(.1,Math.min(s-.1,Math.round(i*100)/100));a.some(c=>Math.abs(c-l)<.1)&&(l=n),this.change((c,h)=>{let u=h.rooms.find(p=>p.id===e.id)?.wall_splits?.[t];if(!u)return;let f=u.findIndex(p=>Math.abs(p-n)<.001);f>=0&&(u[f]=l),u.sort((p,m)=>p-m)})}joinSplit(e,t,n,i){this.change((r,s)=>{let a=s.rooms.find(h=>h.id===e.id);if(!a?.wall_splits?.[t])return;let l=a.wall_splits[t].filter(h=>Math.abs(h-n)>.001);a.wall_splits[t]=l.length?l:null,a.wall_splits.every(h=>!h)&&(a.wall_splits=void 0);let c=a.wall_heights?.[t];Array.isArray(c)&&(c.splice(i,1),c.every(h=>h===c[0])&&(a.wall_heights[t]=c[0]??null))})}renderSplitMarks(e){let t=e.points;return F`${(e.wall_splits??[]).flatMap((n,i)=>{if(!n||i>=t.length)return[];let r=t[i],s=t[(i+1)%t.length],a=Math.hypot(s[0]-r[0],s[1]-r[1])||1,l=(s[0]-r[0])/a,c=(s[1]-r[1])/a;return n.map(h=>{let[d,u]=this.toScreen([r[0]+l*h,r[1]+c*h]);return F`<line class="nf-split-mark" x1=${d-c*7} y1=${u+l*7} x2=${d+c*7} y2=${u-l*7} />`})})}`}renderEdgeHeights(e){let t=this.floor.height,n=e.points.length,i=this._doc.settings,r=new Set;for(let a of ne(this.floor.rooms,{exterior:i.wall_exterior,interior:i.wall_interior},this.floor.walls??[]).walls)if(a.exterior)for(let l of a.sources)l.room_id===e.id&&r.add(l.edge);let s=(a,l)=>this.change((c,h)=>{let d=h.rooms.find(f=>f.id===e.id);if(!d)return;let u=(d.wall_thickness??[]).slice(0,d.points.length);for(;u.length<d.points.length;)u.push(null);u[a]=l,d.wall_thickness=u.every(f=>f===null)?void 0:u});return g`<div class="nf-edge-box">
+      <h4>${this.t("wall_heights")}</h4>
+      ${e.points.flatMap((a,l)=>{let c=e.points[(l+1)%n],h=Math.hypot(c[0]-a[0],c[1]-a[1]),d=e.wall_heights?.[l]??null,u=()=>this._edgeHi=l,f=()=>this._edgeHi=null,p=this.edgeParts(e,l);return(p.length>1?p.map((_,x)=>x):[void 0]).map(_=>{let x=_===void 0?Array.isArray(d)?d[0]??null:d:Array.isArray(d)?d[_]??null:d,b=_===void 0?h:(p[_+1]??h)-p[_],w=$=>this.setEdgeHeight(e,l,$,_);return g`<div
+            class="nf-edge-height${l===this._edgeHi?" nf-edge-on":""}${x!==null?" nf-edge-low":""}"
+            @mouseenter=${u}
+            @mouseleave=${f}
+            @focusin=${u}
+            @focusout=${f}
+          >
+            <span
+              ><b>${this.t("wall_n",{a:l+1,b:(l+1)%n+1})}${_===void 0?"":` \xB7 ${this.t("wall_part",{n:_+1})}`}</b><br /><span class="nf-muted"
+                >${W(this.hass,b,2)} m</span
+              ></span
+            >
+            ${x===0?g`<span class="nf-muted">${this.t("wall_none")}</span>`:this.num(this.t("wall_height"),x??t,$=>w($>=t-.005?null:Math.max(.05,$)),.05,.05)}
+            ${this.isAdmin&&x!==null?g`<button class="nf-btn" title=${this.t("wall_height_full")} @click=${()=>w(null)}>↥</button>`:v}
+            ${this.isAdmin&&x!==0?g`<button class="nf-btn" title=${this.t("wall_none_hint")} @click=${()=>w(0)}>${this.t("wall_none")}</button>`:v}
+            ${this.isAdmin&&b>=.4?g`<button class="nf-btn" title=${this.t("wall_split_hint")} @click=${()=>this.splitEdge(e,l,_)}>✂</button>`:v}
+            ${(_===void 0||_===0)&&x!==0?g`<span class="nf-wide nf-split-row" title=${this.t("wall_thickness_hint")}
+                  >${this.num(this.t("edge_thickness"),e.wall_thickness?.[l]??(r.has(l)?i.wall_exterior:i.wall_interior),$=>{let y=r.has(l)?i.wall_exterior:i.wall_interior,E=Math.min(1.5,Math.max(.02,Math.round($*1e3)/1e3));s(l,Math.abs(E-y)<5e-4?null:E)},.01,.02)}
+                  ${this.isAdmin&&e.wall_thickness?.[l]!=null?g`<button class="nf-btn" title=${this.t("wall_thickness_reset")} @click=${()=>s(l,null)}>↺</button>`:v}</span
+                >`:v}
+            ${_!==void 0&&_>0&&(e.wall_splits?.[l]??[]).some($=>Math.abs($-p[_])<.001)?g`<span class="nf-wide nf-split-row"
+                  >${this.num(this.t("wall_split_at"),p[_],$=>this.moveSplit(e,l,p[_],$),.05,.1)}
+                  ${this.isAdmin?g`<button class="nf-btn" title=${this.t("wall_join_hint")} @click=${()=>this.joinSplit(e,l,p[_],_)}>⨉</button>`:v}</span
+                >`:v}
+          </div>`})})}
+      <p class="nf-sub">${this.t("room_wall_hint")}</p>
+    </div>`}renderOutdoorHandles(e){let t=this._outdoorId?e.outdoor.find(n=>n.id===this._outdoorId):void 0;return!t||!this.isAdmin||this._tool!=="select"||this._doc.settings.lock_plan?v:F`${t.points.map((n,i)=>{let[r,s]=this.toScreen(n);return F`<g class="nf-vertex" data-out-vertex=${`${t.id}:${i}`}><circle cx=${r} cy=${s} r="16" class="nf-hit" /><circle cx=${r} cy=${s} r="6" /></g>`})}`}renderOutdoor(e){return F`<g>${e.outdoor.map(t=>{let n=t.points.map(l=>this.toScreen(l).join(",")).join(" "),[i,r]=this.toScreen(le(t.points)),s=te(t.points),a=Math.min(s.x1-s.x0,s.z1-s.z0)*this._view.scale>40;return F`<g data-outdoor=${t.id} class=${`nf-out nf-out-${t.type}${t.id===this._outdoorId?" nf-out-sel":""}`}>
+        <polygon points=${n} />
+        ${a?F`<text x=${i} y=${r+4}>${this.t(`out_${t.type}`)}</text>`:v}
+      </g>`})}</g>`}renderOutdoorForm(e){let t=this.isAdmin,n=At(e.points),i=te(e.points),r=(s,a)=>{let{x0:l,z0:c,x1:h,z1:d}=i;s==="x"&&([l,h]=[a,a+(h-l)]),s==="z"&&([c,d]=[a,a+(d-c)]),s==="w"&&(h=l+Math.max(.1,a)),s==="d"&&(d=c+Math.max(.1,a)),this.updateOutdoor({points:[[l,c],[h,c],[h,d],[l,d]].map(([u,f])=>[S(u),S(f)])})};return g`<section>
+      <div class="nf-h3row"><h3>${this.t("outdoor")}</h3>${this.fixButton("outdoor",e.id)}</div>
+      <div class="nf-form">
+        <label class="nf-field nf-wide"
+          >${this.t("outdoor_type")}
+          <select ?disabled=${!t} @change=${s=>this.updateOutdoor({type:s.target.value})}>
+            ${Vi.map(s=>g`<option value=${s} ?selected=${s===e.type}>${this.t(`out_${s}`)}</option>`)}
+          </select></label
+        >
+        ${n?g`${this.num(this.t("x"),i.x0,s=>r("x",s))} ${this.num(this.t("z"),i.z0,s=>r("z",s))}
+            ${this.num(this.t("width"),i.x1-i.x0,s=>r("w",s),.01,.1)} ${this.num(this.t("depth"),i.z1-i.z0,s=>r("d",s),.01,.1)}`:v}
+        ${un(e.type)?this.num(this.t("outdoor_height"),e.height??dn[e.type],s=>this.updateOutdoor({height:Math.min(6,Math.max(.1,S(s)))}),.05,.1):v}
+        ${this.num(this.t("outdoor_offset"),e.offset??0,s=>this.updateOutdoor({offset:Math.min(10,Math.max(-10,S(s)))||null}),.05)}
+        ${e.type!=="pool"?g`${this.num(this.t("outdoor_slope"),e.slope??0,s=>this.updateOutdoor({slope:Math.min(20,Math.max(0,S(s)))||null}),.05,0)}
+              <label class="nf-field"
+                >${this.t("outdoor_slope_dir")}
+                <select ?disabled=${!t} @change=${s=>this.updateOutdoor({slope_dir:s.target.value})}>
+                  ${Ni.map(s=>g`<option value=${s} ?selected=${s===(e.slope_dir??"x")}>${this.t(`slope_${s.replace("-","n")}`)}</option>`)}
+                </select></label
+              >`:v}
+        <label class="nf-check nf-wide" title=${this.t("outdoor_outline_hint")}
+          ><input type="checkbox" .checked=${e.outline!==!1} ?disabled=${!t} @change=${s=>this.updateOutdoor({outline:s.target.checked?void 0:!1})} />
+          ${this.t("outdoor_outline")}</label
+        >
+        ${e.type==="fence"||e.type==="pergola"?g`<label class="nf-check nf-wide" title=${this.t("outdoor_open_hint")}
+              ><input type="checkbox" .checked=${!!e.open} ?disabled=${!t} @change=${s=>this.updateOutdoor({open:s.target.checked||void 0})} />
+              ${this.t("outdoor_open")}</label
+            >`:v}
+        ${e.type==="pergola"?g`<label class="nf-check nf-wide"
+              ><input type="checkbox" .checked=${!!e.bracing} ?disabled=${!t} @change=${s=>this.updateOutdoor({bracing:s.target.checked||void 0})} />
+              ${this.t("outdoor_bracing")}</label
+            >`:v}
+        <label class="nf-check nf-wide" title=${this.t("outdoor_cut_hint")}
+          ><input type="checkbox" .checked=${!!e.cut} ?disabled=${!t} @change=${s=>this.updateOutdoor({cut:s.target.checked||void 0})} />
+          ${this.t("outdoor_cut")}</label
+        >
+      </div>
+      ${e.slope?g`<p class="nf-sub">${this.t("outdoor_slope_hint")}</p>`:v}
+      <p class="nf-sub">${this.t("outdoor_hint")}</p>
+      ${t?g`<div class="nf-actions">
+            <button class="nf-btn" @click=${()=>this.duplicateOutdoor()}>${this.t("duplicate")}</button>
+            <button class="nf-btn nf-danger" @click=${()=>this.deleteOutdoor()}>${this.t("delete")}</button>
+          </div>`:v}
+    </section>`}renderRooms(e){return F`
+      <g>${e.rooms.map(t=>{let n=t.points.map(i=>this.toScreen(i).join(",")).join(" ");return F`<polygon data-room=${t.id} class=${t.id===this._roomId?"nf-room nf-room-sel":"nf-room"} points=${n} />`})}</g>
+      ${this.renderEdgeHighlight()}
+      <g pointer-events="none">${e.rooms.map(t=>{let[n,i]=this.toScreen(le(t.points));return F`<text class="nf-room-name" x=${n} y=${i-2}>${t.name}</text>
+          <text class="nf-room-area" x=${n} y=${i+14}>${this.t("area_m2",{a:W(this.hass,ae(t.points),1)})}</text>`})}</g>
+    `}renderEdgeHighlight(){let e=this.room,t=this._edgeHi;if(!e||t===null||t>=e.points.length)return v;let[n,i]=this.toScreen(e.points[t]),[r,s]=this.toScreen(e.points[(t+1)%e.points.length]);return F`<line class="nf-edge-hi" pointer-events="none" x1=${n} y1=${i} x2=${r} y2=${s} />`}renderMeter(e){let t=this._doc.energy?.meter;if(!t||t.floor_id!==e.id)return v;let[n,i]=this.toScreen([t.x,t.z]);return F`<g class="nf-meter" transform="translate(${n} ${i})" pointer-events="none">
+      <rect x="-11" y="-11" width="22" height="22" rx="5" />
+      <path d="M1.5 -7 L-4 1 H0 L-1.5 7 L4 -1 H0 Z" />
+    </g>`}renderFurniture(e){let t=this._view.scale;return F`<g>${e.furniture.map(n=>{let i=n.id===this._furnitureId,[r,s]=this.toScreen([n.x,n.z]),a=Math.min(n.w,n.d)*t>44,l=n.rotation*Math.PI/180,c=n.d/2+Math.max(.3,26/t),[h,d]=this.toScreen([n.x-Math.sin(l)*c,n.z+Math.cos(l)*c]),[u,f]=this.toScreen([n.x-Math.sin(l)*(n.d/2),n.z+Math.cos(l)*(n.d/2)]),p=ee(n.type)&&!!n.entity&&n.entity!=="none"&&this.hass?.states[n.entity]?.state==="on";return F`<g data-furniture=${n.id} class=${`nf-furn${i?" nf-furn-sel":""}${p?" nf-furn-lit":""}${xe.includes(n.type)?" nf-energy-item":""}`}>
+        <g transform="translate(${r} ${s}) rotate(${n.rotation}) scale(${n.mirror?-t:t} ${t})">
+          <rect class="nf-furn-body" x=${-n.w/2} y=${-n.d/2} width=${n.w} height=${n.d} />
+          <g class="nf-furn-sym">${wr(n.type,n.w,n.d)}</g>
+          <line class="nf-furn-front" x1=${-n.w/2} y1=${n.d/2} x2=${n.w/2} y2=${n.d/2} />
+        </g>
+        ${a?F`<text x=${r} y=${s+4}>${vt(this.hass,n.type)}</text>`:v}
+      </g>
+      ${i&&this.isAdmin&&!n.locked?[[-1,-1],[1,-1],[1,1],[-1,1]].map(([m,_])=>{let[x,b]=this.toScreen([n.x+m*n.w*Math.cos(l)/2-_*n.d*Math.sin(l)/2,n.z+m*n.w*Math.sin(l)/2+_*n.d*Math.cos(l)/2]);return F`<g class="nf-resize" data-resize=${`${n.id}:${m}:${_}`}>
+              <circle cx=${x} cy=${b} r="14" class="nf-hit" />
+              <rect x=${x-5} y=${b-5} width="10" height="10" rx="2" />
+            </g>`}):v}
+      ${i?(()=>{let[m,_]=this.toScreen([n.x+Math.sin(l)*(n.d/2+18/t),n.z-Math.cos(l)*(n.d/2+18/t)]);return F`<text class="nf-dim" x=${m} y=${_+4}>${W(this.hass,n.w,2)} × ${W(this.hass,n.d,2)} m</text>`})():v}
+      ${i&&n.locked?F`<text class="nf-lock" x=${h} y=${d+5}>🔒</text>`:v}
+      ${i&&this.isAdmin&&!n.locked?F`<g class="nf-rotate" data-rotate=${n.id}>
+            <line x1=${u} y1=${f} x2=${h} y2=${d} />
+            <circle cx=${h} cy=${d} r="16" class="nf-hit" />
+            <circle cx=${h} cy=${d} r="8" />
+            <path d="M${h-4} ${d-1}a4 4 0 1 1 2 3.5" />
+          </g>`:v}`})}</g>`}renderOpenings(e,t){return F`<g>${e.openings.map(n=>{let i=je(n,e.rooms,e.walls??[]);if(!i)return v;let{room:r,edge:s}=i,a=Ln(t,n,i),l=Ge(r,s,n.offset-n.width/2),c=Ge(r,s,n.offset+n.width/2),h=(c[0]-l[0])/(n.width||1),d=(c[1]-l[1])/(n.width||1),u=Y(r.points)>=0?1:-1,f=[-d*u,h*u],p=[.06,.06];a&&(p=a.wall.free||a.wall.roomLeft===r.id?[a.wall.left,a.wall.right]:[a.wall.right,a.wall.left]);let m=(E,z)=>this.toScreen([E[0]+f[0]*z,E[1]+f[1]*z]),_=[m(l,p[0]+.01),m(c,p[0]+.01),m(c,-p[1]-.01),m(l,-p[1]-.01)],x=n.id===this._openingId,b=Mt(n,a?.wall.exterior??!1),w=n.type==="door"&&vn(b),$=`nf-open nf-open-${n.type}${w?" nf-open-front":""}${x?" nf-open-sel":""}`,y;if(n.type==="garage"){let E=m(l,p[0]-.04),z=m(c,p[0]-.04),k=m(l,p[0]+Math.min(2,n.height)),M=m(c,p[0]+Math.min(2,n.height));y=F`<line x1=${E[0]} y1=${E[1]} x2=${z[0]} y2=${z[1]} />
+          <path class="nf-open-track" d="M${E[0]} ${E[1]}L${k[0]} ${k[1]}M${z[0]} ${z[1]}L${M[0]} ${M[1]}" />`}else if(n.type==="door"){let E=n.swing==="out",z=E?-p[1]:p[0],k=n.hinge==="left"==u>0,M=n.leaves===2,R=l,A=c,I=[],P=Xi(n.width,b,k,n);if(P){let Z=X=>X<=.02?l:X>=n.width-.02?c:Ge(r,s,n.offset-n.width/2+X);R=Z(P.x0),A=Z(P.x1),I=P.panels.map(([X,we])=>[Z(X),Z(we)])}let T=[(R[0]+A[0])/2,(R[1]+A[1])/2],B=(M?.5:1)*Math.hypot(A[0]-R[0],A[1]-R[1]),O=(p[0]-p[1])/2,q=I.map(([Z,X])=>{let we=m(Z,O+.035),Le=m(X,O+.035),Ye=m(Z,O-.035),Xe=m(X,O-.035);return F`<line class="nf-open-pane" x1=${we[0]} y1=${we[1]} x2=${Le[0]} y2=${Le[1]} /><line class="nf-open-pane" x1=${Ye[0]} y1=${Ye[1]} x2=${Xe[0]} y2=${Xe[1]} />`}),Q=(Z,X)=>{let[we,Le]=m(Z,z),[Ye,Xe]=m(X,z),wt=m(Z,z+(E?-B:B)),ei=B*this._view.scale,ws=(wt[0]-we)*(Xe-Le)-(wt[1]-Le)*(Ye-we);return F`<path d="M${we} ${Le}L${wt[0]} ${wt[1]}A${ei} ${ei} 0 0 ${ws>0?1:0} ${Ye} ${Xe}" />`};y=F`${q}${b==="passage"?F`<line class="nf-open-passage" x1=${m(l,O)[0]} y1=${m(l,O)[1]} x2=${m(c,O)[0]} y2=${m(c,O)[1]} />`:b==="sliding"?F`<line x1=${m(R,z)[0]} y1=${m(R,z)[1]} x2=${m(A,z)[0]} y2=${m(A,z)[1]} />`:M?F`${Q(R,T)}${Q(A,T)}`:Q(k?R:A,k?A:R)}`}else{let E=(p[0]-p[1])/2,z=m(l,E+.035),k=m(c,E+.035),M=m(l,E-.035),R=m(c,E-.035),A=[(l[0]+c[0])/2,(l[1]+c[1])/2],I=m(A,p[0]),P=m(A,-p[1]);y=F`<line x1=${z[0]} y1=${z[1]} x2=${k[0]} y2=${k[1]} /><line x1=${M[0]} y1=${M[1]} x2=${R[0]} y2=${R[1]} />${n.leaves===2?F`<line x1=${I[0]} y1=${I[1]} x2=${P[0]} y2=${P[1]} />`:v}`}return F`<g data-opening=${n.id} class=${$}>
+        <polygon class="nf-open-gap" points=${_.map(E=>E.join(",")).join(" ")} />
+        ${y}
+      </g>`})}</g>`}renderDevices(e){return F`<g>${e.placements.map(t=>{let n=H(t.entity_id);if(!n)return v;let[i,r]=this.toScreen([t.x,t.z]),s=this.hass?.states[t.entity_id]?.state==="on",a=t.entity_id===this._deviceId,l=`nf-device${s?" nf-device-on":""}${a?" nf-device-sel":""}`;return F`${n==="camera"?this.renderCameraWedge(t,a):v}<g data-device=${t.entity_id} class=${l} transform="translate(${i} ${r})">
+        <title>${K(this.hass,t.entity_id)}</title>
+        <circle r="18" class="nf-hit" /><circle r="12" />
+        <path d=${ut(n)} transform="translate(-7.2 -7.2) scale(0.6)" />
+      </g>
+      ${a&&t.locked?F`<text class="nf-lock" x=${i+16} y=${r-12}>🔒</text>`:v}`})}</g>`}renderCameraWedge(e,t){let n=e.mount==="ceiling",i=e.fov??(n?360:90),r=e.reach??(n?3:4.5),s=(e.rotation??0)*Math.PI/180,a=(w,$)=>this.toScreen([e.x-Math.sin(s+w)*$,e.z+Math.cos(s+w)*$]),[l,c]=this.toScreen([e.x,e.z]),h=Math.min(i,359.9)*Math.PI/180/2,[d,u]=a(-h,r),[f,p]=a(h,r),m=r*this._view.scale,_=i>=360?"":`M${l} ${c}L${d} ${u}A${m} ${m} 0 ${h>Math.PI/2?1:0} 1 ${f} ${p}Z`,[x,b]=a(0,r);return F`<g class="nf-wedge ${t?"nf-wedge-sel":""}">
+      ${i>=360?F`<circle cx=${l} cy=${c} r=${m} />`:F`<path d=${_} />`}
+      ${t&&this.isAdmin&&!e.locked?F`<g class="nf-rotate" data-aim=${e.entity_id}>
+            <line x1=${l} y1=${c} x2=${x} y2=${b} />
+            <circle cx=${x} cy=${b} r="16" class="nf-hit" />
+            <circle cx=${x} cy=${b} r="8" />
+            <path d="M${x-4} ${b-1}a4 4 0 1 1 2 3.5" />
+          </g>`:v}
+    </g>`}renderHandles(e){let t=e.points,n=t.length,i=t.map((s,a)=>{let l=t[(a+1)%n],[c,h]=this.toScreen(s),[d,u]=this.toScreen(l),f=Math.hypot(l[0]-s[0],l[1]-s[1]),p=(c+d)/2,m=(h+u)/2,[_,x]=this.toScreen(le(t)),b=-(u-h),w=d-c,$=Math.hypot(b,w)||1;b/=$,w/=$,b*(p-_)+w*(m-x)<0&&(b=-b,w=-w);let y=Math.hypot(d-c,u-h);return F`
+        ${y>50?F`<text class="nf-dim" x=${p+b*16} y=${m+w*16+4}>${W(this.hass,f,2)} m</text>`:v}
+        ${y>36?F`<g data-mid=${a} class="nf-mid"><circle cx=${p} cy=${m} r="14" class="nf-hit" /><circle cx=${p} cy=${m} r="6" /><path d="M${p-3} ${m}h6M${p} ${m-3}v6" /></g>`:v}
+      `}),r=t.map((s,a)=>{let[l,c]=this.toScreen(s);return F`<g data-vertex=${a} class=${a===this._vertex?"nf-vertex nf-vertex-sel":"nf-vertex"}><circle cx=${l} cy=${c} r="16" class="nf-hit" /><circle cx=${l} cy=${c} r="6" /></g>
+        <text class="nf-vertex-no" x=${l+9} y=${c-9}>${a+1}</text>`});return F`<g>${i}${r}</g>`}renderDraft(){let e=this.drag;if(e?.kind==="freewall"){let[n,i]=this.toScreen(e.start),[r,s]=this.toScreen(e.end),a=Math.hypot(e.end[0]-e.start[0],e.end[1]-e.start[1]);return F`<g pointer-events="none">
+        <line class="nf-draft nf-draft-wall" x1=${n} y1=${i} x2=${r} y2=${s} />
+        <text class="nf-dim" x=${(n+r)/2} y=${(i+s)/2-10}>${W(this.hass,a,2)} m</text>
+      </g>`}if(e?.kind==="rect"){let[n,i]=this.toScreen(e.start),[r,s]=this.toScreen(e.end),a=Math.abs(e.end[0]-e.start[0]),l=Math.abs(e.end[1]-e.start[1]);return F`<g pointer-events="none">
+        <rect class="nf-draft" x=${Math.min(n,r)} y=${Math.min(i,s)} width=${Math.abs(r-n)} height=${Math.abs(s-i)} />
+        <text class="nf-dim" x=${(n+r)/2} y=${Math.min(i,s)-8}>${W(this.hass,a,2)} × ${W(this.hass,l,2)} m</text>
+      </g>`}if(this._tool!=="polygon"&&this._tool!=="measure")return v;let t=[...this._draft,...this._cursor?[this._cursor]:[]].map(n=>this.toScreen(n));return F`<g pointer-events="none">
+      ${t.length>1?F`<polyline class="nf-draft" points=${t.map(n=>n.join(",")).join(" ")} />`:v}
+      ${this._tool==="measure"?this._draft.slice(1).map((n,i)=>{let r=this.toScreen(this._draft[i]),s=this.toScreen(n);return F`<text class="nf-dim" x=${(r[0]+s[0])/2} y=${(r[1]+s[1])/2-6}>${W(this.hass,Math.hypot(n[0]-this._draft[i][0],n[1]-this._draft[i][1]),2)} m</text>`}):v}
+      ${this._draft.map((n,i)=>{let[r,s]=this.toScreen(n);return F`<circle class=${i===0&&this._draft.length>=3?"nf-draft-pt nf-draft-first":"nf-draft-pt"} cx=${r} cy=${s} r=${i===0&&this._draft.length>=3?9:5} />`})}
+      ${this._cursor?F`<circle class="nf-cursor" cx=${this.toScreen(this._cursor)[0]} cy=${this.toScreen(this._cursor)[1]} r="4" />`:v}
+    </g>`}renderGuides(){let e=this._guides,{w:t,h:n}=this._size;return F`<g pointer-events="none">
+      ${e.x!==void 0?F`<line class="nf-guide" x1=${this.toScreen([e.x,0])[0]} y1="0" x2=${this.toScreen([e.x,0])[0]} y2=${n} />`:v}
+      ${e.z!==void 0?F`<line class="nf-guide" x1="0" y1=${this.toScreen([0,e.z])[1]} x2=${t} y2=${this.toScreen([0,e.z])[1]} />`:v}
+      ${e.point?F`<circle class="nf-snap" cx=${this.toScreen(e.point)[0]} cy=${this.toScreen(e.point)[1]} r="9" />`:v}
+    </g>`}num(e,t,n,i=.01,r){return g`<label class="nf-field"
+      >${e}
+      <input
+        type="number"
+        inputmode="decimal"
+        step=${i}
+        min=${r??v}
+        .value=${String(S(t))}
+        ?disabled=${!this.isAdmin}
+        @change=${s=>{let a=parseFloat(s.target.value.replace(",","."));Number.isFinite(a)&&n(a)}}
+    /></label>`}selectFrom3d(e,t){this.selectItem(e,t),this._sideOpen=!1}setSidePinned(e){this._sidePinned=e,this._sideOpen=!1;try{localStorage.setItem("nextfloor.sidePinned",e?"1":"0")}catch{}}renderAside(e){return this._split&&!this._sidePinned&&!this.narrow?this._sideOpen?g`<aside class="nf-side nf-side-strip"></aside>
+      <aside class="nf-side nf-side-overlay">
+        ${this.renderPinRow(!0)}
+        ${this.renderSide(e)}
+      </aside>`:g`<aside class="nf-side nf-side-strip">
+        <button class="nf-strip-btn" title=${this.t("side_open")} @click=${()=>this._sideOpen=!0}>☰</button>
+        ${this._furnitureId||this._deviceId||this._openingId?g`<button class="nf-strip-btn nf-strip-hot" title=${this.t("side_details")} @click=${()=>this._sideOpen=!0}>⚙</button>`:v}
+        <button class="nf-strip-btn" title=${this.t("tool_furniture")} @click=${()=>(this._tool="furniture",this._draft=[],this._sideOpen=!0)}>🛋</button>
+        <button class="nf-strip-btn" title=${this.t("tool_opening")} @click=${()=>(this._tool="opening",this._draft=[],this._sideOpen=!0)}>🚪</button>
+      </aside>`:g`<aside class="nf-side">${this.renderPinRow()}${this.renderSide(e)}</aside>`}renderPinRow(e=!1){return!this._split||this.narrow?v:g`<div class="nf-pin-row">
+      ${e?g`<button class="nf-btn" @click=${()=>this._sideOpen=!1}>${this.t("side_close")}</button>`:v}
+      <button class="nf-btn" aria-pressed=${this._sidePinned} title=${this.t("side_pin_hint")} @click=${()=>this.setSidePinned(!this._sidePinned)}>
+        📌 ${this.t(this._sidePinned?"side_pinned":"side_pin")}
+      </button>
+    </div>`}renderSide(e){let t=this._doc?.floors??[],n=this.room,i=this.isAdmin,r=Object.values(this.hass?.areas??{}).sort((a,l)=>a.name.localeCompare(l.name));if(this._tool==="roof")return this.renderRoofPanel();if(this._tool==="energy")return this.renderEnergyPanel();if(this._tool==="furniture"&&e&&i)return g`${this.furnitureItem?this.renderFurnitureForm(this.furnitureItem):v} ${this.renderFurnitureLibrary()}`;let s=this._tool==="measure"?null:this.furnitureItem?this.renderFurnitureForm(this.furnitureItem):this.opening?this.renderOpeningForm(this.opening):this.device?this.renderDeviceForm(this.device):this.outdoorArea?this.renderOutdoorForm(this.outdoorArea):this.freeWall?this.renderFreeWallForm(this.freeWall):null;return s?g`<button class="nf-btn nf-back" @click=${()=>this.selectItem("room",this._roomId)}>‹ ${this.t(n?"back_to_room":"back_to_floor",{room:n?.name??""})}</button>
+        ${s}`:n&&this._tool!=="measure"?g`<button class="nf-btn nf-back" @click=${()=>this.selectItem("room",null)}>‹ ${this.t("back_to_floor")}</button>
+        ${this.renderRoomForm(n,r)} ${this.renderDeviceList(n)}`:g`
+      ${i?v:g`<p class="nf-note">${this.t("read_only")}</p>`}
+      <section>
+        <h3>${this.t("floors")}</h3>
+        <div class="nf-floor-list">
+          ${[...t].reverse().map(a=>g`<button
+              class="nf-chip"
+              aria-pressed=${a.id===this._floorId}
+              @click=${()=>{this._floorId=a.id,this._roomId=null,this._vertex=null,this._draft=[],this.fit()}}
+            >
+              ${a.name}
+            </button>`)}
+          ${i?g`<button
+                class="nf-btn"
+                aria-expanded=${this._floorMenu}
+                @click=${()=>this.freeHaFloors.length?this._floorMenu=!this._floorMenu:this.addFloor()}
+              >
+                + ${this.t("add_floor")}
+              </button>`:v}
+        </div>
+        ${i&&this._floorMenu?g`<div class="nf-floor-menu">
+              <p class="nf-sub">${this.t("floor_from_ha")}</p>
+              ${this.freeHaFloors.map(a=>g`<button class="nf-btn" @click=${()=>this.addFloor(a)}>
+                  ${a.name}${a.level!=null?g` <span class="nf-sub">· ${this.t("level",{n:a.level})}</span>`:v}
+                </button>`)}
+              <button class="nf-btn" @click=${()=>this.addFloor()}>${this.t("floor_empty")}</button>
+            </div>`:v}
+        ${e?g`<div class="nf-form">
+              <label class="nf-field nf-wide"
+                >${this.t("floor_name")}
+                <input .value=${e.name} ?disabled=${!i} @change=${a=>this.updateFloor({name:a.target.value})}
+              /></label>
+              ${this.num(this.t("elevation"),e.elevation,a=>this.updateFloor({elevation:a}))}
+              ${i?g`<div class="nf-field nf-wide nf-shift" title=${this.t("floor_shift_hint")}>
+                    <span>${this.t("floor_shift")}</span>
+                    <input type="number" step="0.05" .value=${String(this._shiftX)} aria-label="X" @change=${a=>this._shiftX=Number(a.target.value)||0} />
+                    <input type="number" step="0.05" .value=${String(this._shiftZ)} aria-label="Z" @change=${a=>this._shiftZ=Number(a.target.value)||0} />
+                    <button class="nf-btn" ?disabled=${!this._shiftX&&!this._shiftZ} @click=${()=>this.shiftFloor(this._shiftX,this._shiftZ)}>${this.t("floor_shift_apply")}</button>
+                    <button class="nf-btn" title=${this.t("floor_turn_hint")} @click=${()=>this.turnFloor()}>${this.t("floor_turn")}</button>
+                    <button class="nf-btn" title=${this.t("floor_start_view_hint")} @click=${()=>this.rememberFloorView()}>${this.t("floor_start_view")}</button>
+                    ${e.start_view?g`<button class="nf-btn" title=${this.t("floor_start_view_reset")} @click=${()=>this.updateFloor({start_view:null})}>↺</button>`:v}
+                    <label class="nf-check nf-wide" title=${this.t("floor_shift_all_hint")}
+                      ><input type="checkbox" .checked=${this._shiftAll} @change=${a=>this._shiftAll=a.target.checked} />
+                      ${this.t("floor_shift_all")}</label
+                    >
+                  </div>`:v}
+              ${this.num(this.t("height"),e.height,a=>this.updateFloor({height:Math.max(1,a)}),.05,1)}
+              ${Object.keys(this.hass?.floors??{}).length?g`<label class="nf-field nf-wide"
+                    >${this.t("ha_floor")}
+                    <select ?disabled=${!i} @change=${a=>this.updateFloor({ha_floor:a.target.value||null})}>
+                      <option value="" ?selected=${!e.ha_floor}>${this.t("no_ha_floor")}</option>
+                      ${Object.values(this.hass?.floors??{}).filter(a=>a.floor_id===e.ha_floor||!t.some(l=>l.ha_floor===a.floor_id)).map(a=>g`<option value=${a.floor_id} ?selected=${a.floor_id===e.ha_floor}>${a.name}</option>`)}
+                    </select></label
+                  >`:v}
+              ${i&&this.unplacedAreas(e).length?g`<div class="nf-actions nf-wide">
+                    <button class="nf-btn nf-primary" title=${this.t("area_rooms_hint")} @click=${()=>this.addAreaRooms(e)}>
+                      ${this.t("area_rooms",{n:this.unplacedAreas(e).length})}
+                    </button>
+                  </div>`:v}
+              ${i?g`<div class="nf-actions nf-wide">
+                    <button class="nf-btn" @click=${()=>this.moveFloor(1)}>${this.t("move_up")}</button>
+                    <button class="nf-btn" @click=${()=>this.moveFloor(-1)}>${this.t("move_down")}</button>
+                    <button class="nf-btn nf-danger" @click=${()=>this.deleteFloor()}>${this.t("delete_floor")}</button>
+                  </div>
+                  <div class="nf-actions nf-wide">
+                    <button class="nf-btn" title=${this.t("gaps_hint")} ?disabled=${e.rooms.length<2} @click=${()=>this.closeFloorGaps()}>
+                      ${this.t("gaps_close")}
+                    </button>
+                  </div>
+                  ${this._notice?g`<p class="nf-sub nf-wide nf-notice">${this._notice}</p>`:v}`:v}
+            </div>`:v}
+      </section>
+      ${this._tool==="measure"&&e?this.renderMeasureForm():this.freeWall?this.renderFreeWallForm(this.freeWall):this.outdoorArea?this.renderOutdoorForm(this.outdoorArea):this.opening?this.renderOpeningForm(this.opening):this.furnitureItem?this.renderFurnitureForm(this.furnitureItem):this.device?this.renderDeviceForm(this.device):n?g`${this.renderRoomForm(n,r)} ${this.renderDeviceList(n)}`:e?this.renderRoomList(e):v}
+      ${i?this.renderStartView():v} ${i?this.renderFavorites():v}
+      ${this.renderHelpLinks()}
+      ${i&&!1?this.renderPresenceSettings():v}
+      ${e&&i?this.renderBackgroundForm(e):v} ${i?this.renderSettings():v}
+      ${i?this.renderBackup():v}
+    `}renderRoomList(e){return e.rooms.length?g`<section>
+      <h3>${this.t("rooms")}</h3>
+      <div class="nf-room-list">
+        ${e.rooms.map(t=>g`<button class="nf-row" @click=${()=>this.selectItem("room",t.id)}>
+            <span>${t.name}</span><span class="nf-muted">${this.t("area_m2",{a:W(this.hass,ae(t.points),1)})}</span>
+          </button>`)}
+      </div>
+    </section>`:v}renderRoomForm(e,t){let n=this.isAdmin,i=At(e.points),r=te(e.points);return g`<section>
+      <div class="nf-h3row"><h3>${this.t("room")}</h3>${this.fixButton("room",e.id)}</div>
+      <div class="nf-form">
+        <label class="nf-field nf-wide"
+          >${this.t("room_name")}
+          <input .value=${e.name} ?disabled=${!n} @change=${s=>this.updateRoom({name:s.target.value})}
+        /></label>
+        <label class="nf-field nf-wide"
+          >${this.t("area")}
+          <select ?disabled=${!n} @change=${s=>this.setArea(s.target.value)}>
+            <option value="" ?selected=${!e.area_id}>${this.t("no_area")}</option>
+            ${t.map(s=>g`<option value=${s.area_id} ?selected=${s.area_id===e.area_id}>${s.name}</option>`)}
+          </select></label
+        >
+        <label class="nf-field nf-wide"
+          >${this.t("material")}
+          <select ?disabled=${!n} @change=${s=>this.updateRoom({floor_material:s.target.value})}>
+            ${Gi.map(s=>g`<option value=${s} ?selected=${s===e.floor_material}>${this.t(`mat_${s}`)}</option>`)}
+          </select></label
+        >
+        ${i?g`${this.num(this.t("x"),r.x0,s=>this.setRect("x",s))} ${this.num(this.t("z"),r.z0,s=>this.setRect("z",s))}
+            ${this.num(this.t("width"),r.x1-r.x0,s=>this.setRect("w",s),.01,.05)}
+            ${this.num(this.t("depth"),r.z1-r.z0,s=>this.setRect("d",s),.01,.05)}`:v}
+      </div>
+      <div class="nf-actions">
+        <button class="nf-btn" title=${this.t("room_start_view_hint")} ?disabled=${!n} @click=${()=>this.rememberRoomView()}>${this.t("room_start_view")}</button>
+        ${e.start_view?g`<button class="nf-btn" title=${this.t("room_start_view_reset")} ?disabled=${!n} @click=${()=>this.updateRoom({start_view:null})}>↺</button>`:v}
+      </div>
+      ${this.renderEdgeHeights(e)} ${this.renderRoomClimate(e)}
+      <details class="nf-points" ?open=${!i}>
+        <summary>${this.t("points")} (${e.points.length})</summary>
+        ${e.points.map((s,a)=>g`<div class="nf-point ${a===this._vertex?"nf-point-sel":""}">
+            <span class="nf-muted">${a+1}</span>
+            ${this.num(this.t("x"),s[0],l=>this.setPoint(a,0,l))} ${this.num(this.t("z"),s[1],l=>this.setPoint(a,1,l))}
+            ${n?g`<button class="nf-btn" title=${this.t("delete_point")} ?disabled=${e.points.length<=3} @click=${()=>this.deleteVertex(a)}>
+                  ×
+                </button>`:v}
+          </div>`)}
+      </details>
+      ${n?g`<div class="nf-actions">
+            <button class="nf-btn nf-primary" @click=${()=>this._packages=!this._packages}>${this.t("pkg_open")}</button>
+            <button class="nf-btn" @click=${()=>this.openSpotForm(e)}>${this.t("spots_place")}</button>
+            <button class="nf-btn" @click=${()=>this.duplicateRoom()}>${this.t("duplicate")}</button>
+            <button class="nf-btn nf-danger" @click=${()=>this.deleteRoom()}>${this.t("delete")}</button>
+          </div>`:v}
+      ${this._spots?this.renderSpotForm(e):v}
+      ${this._packages?g`<div class="nf-packages">
+            ${cs.map(s=>g`<button class="nf-btn" @click=${()=>this.applyPackage(e,s)}>
+                <b>${this.t(`pkg_${s}`)}</b><span>${this.t(`pkg_${s}_desc`)}</span>
+              </button>`)}
+            <p class="nf-sub">${this.t("pkg_hint")}</p>
+          </div>`:v}
+    </section>`}applyPackage(e,t){if(!this.isAdmin)return;let n=hs(e,t,()=>L("furniture"));this.change((i,r)=>r.furniture.push(...n)),this._packages=!1,this._notice=this.t("pkg_done",{n:n.length})}openSpotForm(e){let t=te(e.points),n=this.hass?Ie(this.hass,e.area_id).filter(i=>i.startsWith("light.")):[];this._spots={type:"lamp_downlight",rows:Math.max(1,Math.round((t.z1-t.z0)/1.2)),cols:Math.max(1,Math.round((t.x1-t.x0)/1.2)),entity:n[0]??null}}placeSpots(e){let t=this._spots;if(!t||!this.isAdmin)return;let[n,i,r]=oe[t.type],s=gn(e,t.rows,t.cols).map(([a,l])=>({id:L("furniture"),type:t.type,x:a,z:l,rotation:0,w:n,d:i,h:r,variant:null,entity:t.entity??"none",power:null}));this.change((a,l)=>l.furniture.push(...s)),this._spots=null,this._notice=this.t("spots_placed",{n:s.length})}renderSpotForm(e){let t=this._spots,n=gn(e,t.rows,t.cols).length,i=this.entityOptions(s=>/^(light|switch|input_boolean)\./.test(s)),r=s=>this._spots={...t,...s};return g`<div class="nf-form nf-spot-form">
+      <label class="nf-field nf-wide"
+        >${this.t("spots_type")}
+        <select @change=${s=>r({type:s.target.value})}>
+          ${["lamp_downlight","lamp_spot","lamp_panel","lamp_ceiling"].map(s=>g`<option value=${s} ?selected=${s===t.type}>${this.t(`furn_${s}`)}</option>`)}
+        </select></label
+      >
+      ${this.num(this.t("spots_cols"),t.cols,s=>r({cols:Math.max(1,Math.min(12,Math.round(s)))}),1,1)}
+      ${this.num(this.t("spots_rows"),t.rows,s=>r({rows:Math.max(1,Math.min(12,Math.round(s)))}),1,1)}
+      ${this.entitySelect(this.t("furn_entity_light"),t.entity,void 0,i,s=>r({entity:s==="none"?null:s}))}
+      <div class="nf-actions nf-wide">
+        <button class="nf-btn nf-primary" ?disabled=${!n} @click=${()=>this.placeSpots(e)}>${this.t("spots_add",{n})}</button>
+        <button class="nf-btn" @click=${()=>this._spots=null}>${this.t("cancel")}</button>
+      </div>
+      <p class="nf-sub nf-wide">${this.t("spots_hint")}</p>
+    </div>`}iconInput(e,t){let n=e?e.startsWith("mdi:")?e:`mdi:${e}`:"";return g`<label class="nf-field nf-wide" title=${this.t("marker_icon_hint")}
+      >${this.t("marker_icon")}
+      <span class="nf-icon-row">
+        <input type="text" placeholder="mdi:thermometer" .value=${e??""} ?disabled=${!this.isAdmin} @change=${i=>t(i.target.value.trim().replace(/^mdi:/,"")||null)} />
+        ${n?yi(`<ha-icon icon="${n.replace(/[^a-z0-9:-]/gi,"")}"></ha-icon>`):v}
+      </span></label
+    >`}markerSelect(e,t){return g`<label class="nf-field nf-wide" title=${this.t("marker_show_hint")}
+      >${this.t("marker_show")}
+      <select ?disabled=${!this.isAdmin} @change=${n=>t(n.target.value||null)}>
+        <option value="" ?selected=${!e}>${this.t("marker_show_auto")}</option>
+        ${Li.map(n=>g`<option value=${n} ?selected=${n===e}>${this.t(`marker_show_${n}`)}</option>`)}
+      </select></label
+    >`}entityOptions(e){let t=n=>{let i=this.hass?.entities?.[n],r=i?.area_id??(i?.device_id?this.hass?.devices?.[i.device_id]?.area_id:null);return r?this.hass?.areas?.[r]?.name:void 0};return Object.keys(this.hass?.states??{}).filter(e).map(n=>({id:n,label:`${K(this.hass,n)}${t(n)?` \xB7 ${t(n)}`:""}`})).sort((n,i)=>n.label.localeCompare(i.label))}entitySelect(e,t,n,i,r){let s=n===void 0?null:n?this.t("entity_auto",{name:K(this.hass,n)}):this.t("entity_auto_none"),a=[...s!==null?[{id:"__auto",label:s}]:[],{id:"none",label:this.t("entity_none")}];return g`<label class="nf-field nf-wide"
+      >${e}
+      <nf-entity-picker
+        .options=${i}
+        .fixed=${a}
+        .value=${t===null?s!==null?"__auto":"none":t}
+        .placeholder=${this.t("entity_search")}
+        ?disabled=${!this.isAdmin}
+        @change=${c=>{c.stopPropagation(),r(c.detail.value==="__auto"?null:c.detail.value)}}
+      ></nf-entity-picker></label
+    >`}openingIsExterior(e){let t=this.floor,n=t?je(e,t.rooms,t.walls??[]):null;if(!t||!n)return!1;let i=ne(t.rooms,{exterior:this._doc.settings.wall_exterior,interior:this._doc.settings.wall_interior},t.walls??[]);return Ln(i.walls,e,n)?.wall.exterior??!1}renderSidelightFields(e){if(e.type!=="door")return v;let t=Mt(e,this.openingIsExterior(e));if(t!=="sidelight"&&t!=="sidelights")return v;let n=this.isAdmin,i=(r,s)=>g`<label class="nf-field"
+      >${this.t(s)}
+      <input
+        type="number"
+        step="0.05"
+        min="0.1"
+        max="3"
+        placeholder=${this.t("sidelight_auto")}
+        .value=${e[r]==null?"":String(e[r])}
+        ?disabled=${!n}
+        @change=${a=>{let l=Number(a.target.value);this.updateOpening({[r]:Number.isFinite(l)&&l>0?Math.min(3,Math.max(.1,Math.round(l*100)/100)):null})}}
+      />
+    </label>`;return t==="sidelight"?g`<label class="nf-check" title=${this.t("sidelight_hinge_hint")}
+            ><input type="checkbox" .checked=${!!e.sidelight_hinge} ?disabled=${!n} @change=${r=>this.updateOpening({sidelight_hinge:r.target.checked})} />
+            ${this.t("sidelight_hinge")}</label
+          >
+          ${i("sidelight_width","sidelight_width")}`:g`${i("sidelight_width","sidelight_width_left")} ${i("sidelight_width2","sidelight_width_right")}`}renderStyleSelect(e){let t=e.type==="door"?_n:bn,n=Mt({type:e.type,style:null},this.openingIsExterior(e)),i=e.style&&t.includes(e.style)?e.style:"";return g`<label class="nf-field nf-wide"
+      >${this.t("opening_style")}
+      <select ?disabled=${!this.isAdmin} @change=${r=>this.updateOpening({style:r.target.value||null})}>
+        <option value="" ?selected=${!i}>${this.t("style_auto",{style:this.t(`style_${n}`)})}</option>
+        ${t.map(r=>g`<option value=${r} ?selected=${r===i}>${this.t(`style_${r}`)}</option>`)}
+      </select></label
+    >`}renderOpeningForm(e){let t=this.isAdmin,n=e.type==="window",i=e.type==="garage",r=m=>{if(!this.hass)return null;let _=structuredClone(this._doc.floors);for(let x of _)for(let b of x.openings)b.id===e.id&&(b[m]=null);return gr(this.hass,_).get(e.id)?.[m]??null},s=m=>this.hass?.states[m]?.attributes.device_class,a=this.entityOptions(m=>m.startsWith("cover.")),l=this.entityOptions(m=>/^(sensor|number|input_number)\./.test(m)&&Number.isFinite(Number(this.hass?.states[m]?.state))),c=this.entityOptions(m=>m.startsWith("binary_sensor.")&&["door","window","opening","garage_door"].includes(s(m)??"")||ie(m)&&zn(this.hass?.states[m])!==null),h=this.entityOptions(m=>{let _=this.hass?.states[m];return m.startsWith("binary_sensor.")?typeof _?.attributes.window_state=="string":ie(m)&&(zn(_)!==null||/griff|handle|fenster|window|drehgriff/i.test(`${m} ${K(this.hass,m)}`))}),d=this.entityOptions(m=>m.startsWith("binary_sensor.")&&["door","window","opening","garage_door"].includes(s(m)??"")),u=m=>{let _=m===1,x=_?e.tilt:e.tilt2??null,b=_?e.contact:e.contact2,w=(_?e.sensor:e.sensor2)??(x&&x!=="none"?"contact_tilt":"contact"),$=y=>this.updateOpening(_?{contact:y}:{contact2:y==="none"?null:y});return g`<label class="nf-field nf-wide"
+          >${this.t("sensor_kind")}
+          <select
+            ?disabled=${!t}
+            @change=${y=>{let E=y.target.value,z=E==="contact_tilt"?{}:_?{tilt:null}:{tilt2:null};this.updateOpening({..._?{sensor:E}:{sensor2:E},...z})}}
+          >
+            ${["contact","handle","contact_tilt"].map(y=>g`<option value=${y} ?selected=${y===w}>${this.t(`sensor_kind_${y}`)}</option>`)}
+          </select></label
+        >
+        ${w==="handle"?this.entitySelect(this.t("handle_entity"),b,void 0,h,y=>$(y==="none"?_?"none":null:y)):this.entitySelect(this.t("contact_entity"),b,_?r("contact"):void 0,d,$)}
+        ${w==="contact_tilt"?this.entitySelect(this.t("tilt_entity"),x,void 0,c,y=>this.updateOpening(_?{tilt:y==="none"?null:y}:{tilt2:y==="none"?null:y})):v}
+        ${_?g`${this.entitySelect(this.t("tilt_angle_entity"),e.tilt_angle??null,void 0,this.entityOptions(y=>ie(y)),y=>this.updateOpening({tilt_angle:y==="none"?null:y}))}
+            ${e.tilt_angle&&e.tilt_angle!=="none"?g`${this.num(this.t("tilt_angle_max"),e.tilt_max??15,y=>this.updateOpening({tilt_max:Math.min(90,Math.max(1,y))}),1,1)}
+                ${this.num(this.t("tilt_angle_offset"),e.tilt_offset??0,y=>this.updateOpening({tilt_offset:y}),.5)}
+                <label class="nf-check nf-wide"
+                  ><input type="checkbox" .checked=${!!e.tilt_invert} ?disabled=${!t} @change=${y=>this.updateOpening({tilt_invert:y.target.checked})} />
+                  ${this.t("tilt_angle_invert")}</label
+                >`:v}`:v}`},f=wn(e),p=e.type==="door";return g`<section>
+      <div class="nf-h3row"><h3>${this.t(`preset_${f}`)}</h3>${this.fixButton("opening",e.id)}</div>
+      ${t?g`<div class="nf-presets" role="group" aria-label=${this.t("opening_type")}>
+            ${Object.keys(zt).map(m=>g`<button class="nf-chip" aria-pressed=${m===f} @click=${()=>this.setOpeningPreset(e,m)}>${this.t(`preset_${m}`)}</button>`)}
+          </div>`:v}
+      ${t&&!i?g`<div class="nf-actions">
+            <button class="nf-btn" title=${this.t("flip_hinge_hint")} @click=${()=>this.updateOpening({hinge:e.hinge==="left"?"right":"left"})}>
+              ⇆ ${this.t(e.leaves===2?"flip_main_leaf":"flip_hinge")}
+            </button>
+            ${p?g`<button class="nf-btn" title=${this.t("flip_swing_hint")} @click=${()=>this.updateOpening({swing:e.swing==="out"?"in":"out"})}>
+                  ⇅ ${this.t("flip_swing")}
+                </button>`:v}
+          </div>`:v}
+      <div class="nf-form">
+        ${this.num(this.t("width"),e.width,m=>this.updateOpening({width:Math.max(.3,m)}),.01,.3)}
+        ${this.num(this.t("opening_position"),e.offset,m=>this.updateOpening({offset:Math.max(0,m)}),.01,0)}
+        ${n?this.num(this.t("sill"),e.sill,m=>this.updateOpening({sill:Math.max(0,m)}),.01,0):v}
+        ${this.num(this.t("opening_height"),e.height,m=>this.updateOpening({height:Math.max(.3,m)}),.01,.3)}
+        ${i?v:this.renderStyleSelect(e)}
+        ${this.renderSidelightFields(e)}
+        <label class="nf-field nf-wide" title=${this.t("opening_mark_hint")}
+          >${this.t("opening_mark")}
+          <select ?disabled=${!this.isAdmin} @change=${m=>this.updateOpening({mark:m.target.value==="closed"?"closed":null})}>
+            <option value="" ?selected=${e.mark!=="closed"}>${this.t("opening_mark_open")}</option>
+            <option value="closed" ?selected=${e.mark==="closed"}>${this.t("opening_mark_closed")}</option>
+          </select></label
+        >
+        ${i?v:g`<label class="nf-field nf-wide"
+          >${this.t(e.leaves===2?"main_leaf":"hinge")}
+          <select ?disabled=${!t} @change=${m=>this.updateOpening({hinge:m.target.value})}>
+            <option value="left" ?selected=${e.hinge==="left"}>${this.t("hinge_left")}</option>
+            <option value="right" ?selected=${e.hinge==="right"}>${this.t("hinge_right")}</option>
+          </select></label
+        >`}
+        ${n||i||p?this.entitySelect(this.t(n?"cover_entity":"door_cover"),e.cover,r("cover"),a,m=>this.updateOpening({cover:m})):v}
+        ${(n||i||p)&&e.cover!=="none"&&(e.cover||r("cover"))?g`${this.entitySelect(this.t("cover_position_entity"),e.position??null,void 0,l,m=>this.updateOpening({position:m==="none"?null:m}))}
+              ${e.position?g`<label class="nf-check nf-wide"
+                    ><input
+                      type="checkbox"
+                      ?disabled=${!t}
+                      .checked=${!!e.position_inverted}
+                      @change=${m=>this.updateOpening({position_inverted:m.target.checked})}
+                    />
+                    ${this.t("cover_position_invert")}</label
+                  >`:v}
+              <label class="nf-check nf-wide" title=${this.t("cover_confirm_hint")}
+                ><input type="checkbox" ?disabled=${!t} .checked=${!!e.confirm} @change=${m=>this.updateOpening({confirm:m.target.checked})} />
+                ${this.t("device_confirm")}</label
+              >`:v}
+        ${n?g`${e.leaves===2?g`<h4 class="nf-lib-head nf-wide">${this.t("leaf_main")}</h4>`:v}
+              ${u(1)} ${e.leaves===2?g`<h4 class="nf-lib-head nf-wide">${this.t("leaf_second")}</h4>${u(2)}`:v}`:g`${this.entitySelect(this.t(e.leaves===2?"contact_main":"contact_entity"),e.contact,r("contact"),c,m=>this.updateOpening({contact:m}))}
+              ${e.leaves===2&&!i?this.entitySelect(this.t("contact_second"),e.contact2,void 0,c,m=>this.updateOpening({contact2:m==="none"?null:m})):v}
+              ${p?g`<label class="nf-check nf-wide" title=${this.t("door_shut_hint")}
+                    ><input type="checkbox" .checked=${!!e.shut} ?disabled=${!t} @change=${m=>this.updateOpening({shut:m.target.checked})} />
+                    ${this.t("door_shut")}</label
+                  >`:v}`}
+      </div>
+      <p class="nf-sub">${this.t(n?"opening_hint":i?"garage_hint":"door_hint")}</p>
+      ${t?g`<div class="nf-actions"><button class="nf-btn nf-danger" @click=${()=>this.deleteOpening()}>${this.t("delete")}</button></div>`:v}
+    </section>`}renderFurnitureForm(e){let t=this.isAdmin;return g`<section>
+      <div class="nf-h3row"><h3>${e.name||this.t("furniture")}</h3>${this.fixButton("furniture",e.id)}</div>
+      <div class="nf-form">
+        <label class="nf-field nf-wide"
+          >${this.t("furn_name")}
+          <input type="text" maxlength="60" .value=${e.name??""} ?disabled=${!t} placeholder=${this.t(`furn_${e.type}`)===`furn_${e.type}`?"":this.t(`furn_${e.type}`)} @change=${n=>this.updateFurniture({name:n.target.value.trim()||null})} />
+        </label>
+        ${e.name?g`<label class="nf-check nf-wide"
+              ><input type="checkbox" .checked=${!!e.show_name} ?disabled=${!t} @change=${n=>this.updateFurniture({show_name:n.target.checked||void 0})} />
+              ${this.t("show_name")}</label
+            >`:v}
+        <label class="nf-field nf-wide"
+          >${this.t("furniture_type")}
+          <select ?disabled=${!t} @change=${n=>this.updateFurniture({type:n.target.value})}>
+            ${fn.map(n=>g`<option value=${n} ?selected=${n===e.type}>${this.t(`furn_${n}`)}</option>`)}
+            ${(this.packs??[]).map(n=>g`<optgroup label=${me(n,this.hass?.language??"de")}>
+                ${n.items.map(i=>{let r=We(n.id,i.id);return g`<option value=${r} ?selected=${r===e.type}>${ke(i,this.hass?.language??"en")}</option>`})}
+              </optgroup>`)}
+            ${e.type.startsWith("pack:")&&!(this.packs??[]).some(n=>e.type.startsWith(`pack:${n.id}:`))?g`<option value=${e.type} selected>${vt(this.hass,e.type)}</option>`:v}
+          </select></label
+        >
+        ${this.num(this.t("x"),e.x,n=>this.updateFurniture({x:n}))} ${this.num(this.t("z"),e.z,n=>this.updateFurniture({z:n}))}
+        ${this.num(this.t("width"),e.w,n=>this.updateFurniture({w:Math.max(.05,n)}),.01,.05)}
+        ${this.num(this.t("depth"),e.d,n=>this.updateFurniture({d:Math.max(.05,n)}),.01,.05)}
+        ${this.num(this.t("height_m"),e.h,n=>this.updateFurniture({h:Math.max(.005,n)}),.01,0)}
+        ${this.num(this.t("rotation"),e.rotation,n=>this.updateFurniture({rotation:(n%360+360)%360}),1)}
+        ${ee(e.type)?v:g`<label class="nf-check" title=${this.t("furn_mirror_hint")}
+              ><input type="checkbox" .checked=${!!e.mirror} ?disabled=${!t} @change=${n=>this.updateFurniture({mirror:n.target.checked})} />
+              ${this.t("furn_mirror")}</label
+            >`}
+        ${e.type==="led_strip"?g`${this.num(this.t("strip_tilt"),e.tilt??0,n=>this.updateFurniture({tilt:Math.max(-90,Math.min(90,Math.round(n)))}),5)}
+              <label class="nf-check" title=${this.t("strip_upright_hint")}
+                ><input type="checkbox" .checked=${!!e.upright} ?disabled=${!t} @change=${n=>this.updateFurniture({upright:n.target.checked})} />
+                ${this.t("strip_upright")}</label
+              >`:v}
+        ${mn(e)&&this.floor?g`${this.num(this.t("mount_height"),e.mount_y??cn(this.floor,e),n=>this.updateFurniture({mount_y:Math.max(0,n)}),.01,0)}
+              ${e.mount_y!=null?g`<button class="nf-btn nf-field-btn" ?disabled=${!t} @click=${()=>this.updateFurniture({mount_y:null})}>${this.t("height_auto")}</button>`:v}`:v}
+      </div>
+      ${e.type==="stairs"?g`<p class="nf-sub">${this.t("stairs_hint")}</p>`:v}
+      ${e.type==="stairwell"?g`<p class="nf-sub">${this.t("stairwell_hint")}</p>
+            ${this.floor&&!this.floor.rooms.some(n=>n.points.length>=3&&$r(yn(e),n.points))?g`<p class="nf-sub nf-pack-error">${this.t("stairwell_outside")}</p>`:v}`:v}
+      ${e.type==="inverter"||e.type==="home_battery"?g`<div class="nf-form">
+            <label class="nf-field nf-wide"
+              >${this.t("furn_model")}
+              <select ?disabled=${!t} @change=${n=>this.updateFurniture({variant:n.target.value||null})}>
+                ${(e.type==="inverter"?["","slim","hybrid"]:["","wall","cube"]).map(n=>g`<option value=${n} ?selected=${(e.variant??"")===n}>${this.t(`${e.type==="inverter"?"inverter":"battery"}_${n||"std"}`)}</option>`)}
+              </select></label
+            >
+          </div>`:v}
+      ${e.type==="lamp_pendant"?g`<div class="nf-form">
+            <label class="nf-field nf-wide"
+              >${this.t("pendant_shape")}
+              <select ?disabled=${!t} @change=${n=>this.updateFurniture({variant:n.target.value||null})}>
+                ${["","globe","cone","drum"].map(n=>g`<option value=${n} ?selected=${(e.variant??"")===n}>${this.t(`pendant_${n||"shade"}`)}</option>`)}
+              </select></label
+            >
+          </div>`:v}
+      ${at(e.type)?this.renderFurnitureLinks(e):Oo.has(e.type)?v:g`<div class="nf-form nf-links">${this.renderStateLinks(e)}</div>`} ${e.type==="parking"?this.renderParkingForm(e):v}
+      ${e.type.startsWith("pack:nextfloor.fahrzeuge:")&&this.isAdmin?g`<section>
+            <p class="nf-sub">${this.t("vehicle_to_spot_hint")}</p>
+            <div class="nf-actions"><button class="nf-btn nf-primary" @click=${()=>this.vehicleToSpot(e)}>🅿 ${this.t("vehicle_to_spot")}</button></div>
+          </section>`:v}
+      ${t?g`<div class="nf-actions">
+            <button class="nf-btn" @click=${()=>this.rotateFurniture(-90)}>${this.t("rotate_left")}</button>
+            <button class="nf-btn" @click=${()=>this.rotateFurniture(90)}>${this.t("rotate_right")}</button>
+            ${e.entity&&e.entity!=="none"&&e.type!=="parking"?g`<button class="nf-btn" title=${this.t("as_device_hint")} @click=${()=>this.furnitureToDevice(e)}>${this.t("as_device")}</button>`:v}
+            <button class="nf-btn" @click=${()=>this.duplicateFurniture()}>${this.t("duplicate")}</button>
+            <button class="nf-btn nf-danger" @click=${()=>this.deleteFurniture()}>${this.t("delete")}</button>
+          </div>`:v}
+    </section>`}setEnergy(e){let t=structuredClone(this._doc);t.energy={...t.energy,...e},this.setDoc(t)}async importEnergyPrefs(){if(!this.hass)return;let e;try{e=await this.hass.callWS({type:"energy/get_prefs"})}catch{this._energyNote=this.t("energy_import_failed");return}let t=Dr(this.hass,e),n=0,i=s=>this._doc.floors.flatMap(a=>a.furniture).find(a=>a.type===s),r=(s,a,l)=>{if(!l)return;let c=i(s);if(!c&&this.floor&&(this.addEnergyDevice(s),c=i(s)),!c||c[a]&&c[a]!=="none")return;let h=c.id;this.change(d=>{let u=d.floors.flatMap(f=>f.furniture).find(f=>f.id===h);u&&(u[a]=l)}),n++};r("meter","power",t.grid),r("inverter","power",t.solar),r("home_battery","power",t.battery),r("home_battery","soc",t.battery_soc),this.selectItem("furniture",null),this._energyNote=n?this.t("energy_import_done",{n}):this.t("energy_import_none")}renderEnergyBalance(){let e=this._doc.energy,t=this.isAdmin,n=(p,m)=>this.hass?.states[p]?.attributes[m],i=this.entityOptions(p=>this.isPowerSensor(p)),r=this.entityOptions(p=>ie(p)&&n(p,"device_class")==="battery"),s=this.entityOptions(p=>ie(p)&&(n(p,"device_class")==="monetary"||/\/(kWh|MWh)$/.test(n(p,"unit_of_measurement")??""))),a=p=>m=>this.setEnergy({[p]:m==="none"?null:m}),l=this.hass?Ce(this.hass,this._doc.floors):new Map,c=On(this._doc,p=>this.devicePower(p,l)),h=this.hass?Lr(this.hass,this._doc,[],c):null,d=!!h&&(h.solar??0)<20,u=d&&h.grid!==null&&h.grid<-50,f=d&&h.battery!==null&&h.battery<-50&&(h.grid??0)<=0;return g`<section>
+      <h3>⚖ ${this.t("energy_balance")}</h3>
+      <p class="nf-sub">${this.t("energy_balance_hint")}</p>
+      ${u?g`<p class="nf-sub nf-pack-error">${this.t("energy_sign_grid")} <button class="nf-btn" ?disabled=${!t} @click=${()=>this.setEnergy({grid_invert:!e.grid_invert})}>${this.t("energy_sign_flip")}</button></p>`:v}
+      ${f?g`<p class="nf-sub nf-pack-error">${this.t("energy_sign_battery")} <button class="nf-btn" ?disabled=${!t} @click=${()=>this.setEnergy({battery_invert:!e.battery_invert})}>${this.t("energy_sign_flip")}</button></p>`:v}
+      <div class="nf-form">
+        ${this.entitySelect(this.t("energy_grid"),e.grid,c.grid,i,a("grid"))}
+        <label class="nf-check nf-wide"
+          ><input type="checkbox" .checked=${e.grid_invert} ?disabled=${!t} @change=${p=>this.setEnergy({grid_invert:p.target.checked})} />
+          ${this.t("energy_invert")}</label
+        >
+        ${this.entitySelect(this.t("energy_solar_sensor"),e.solar,c.solar[0]??null,i,a("solar"))}
+        ${this.entitySelect(this.t("energy_battery_sensor"),e.battery,c.battery[0]??null,i,a("battery"))}
+        <label class="nf-check nf-wide"
+          ><input type="checkbox" .checked=${e.battery_invert} ?disabled=${!t} @change=${p=>this.setEnergy({battery_invert:p.target.checked})} />
+          ${this.t("energy_invert")}</label
+        >
+        ${this.entitySelect(this.t("energy_battery_soc"),e.battery_soc,c.soc[0]??null,r,a("battery_soc"))}
+        ${this.entitySelect(this.t("energy_consumption_sensor"),e.consumption,null,i,a("consumption"))}
+        ${this.entitySelect(this.t("energy_tariff_sensor"),e.tariff,void 0,s,a("tariff"))}
+      </div>
+      <div class="nf-actions">
+        <button class="nf-btn" ?disabled=${!t||!this.hass} @click=${()=>this.importEnergyPrefs()}>${this.t("energy_import_prefs")}</button>
+      </div>
+      ${this._energyNote?g`<p class="nf-sub">${this._energyNote}</p>`:v}
+      <p class="nf-sub">${this.t("energy_hint")}</p>
+    </section>`}renderHeadroom(e){let t=e.elevation+e.height;if(!(this._doc.settings.roof.sections??[]).some(r=>Wr(r,t)))return v;let i={settings:this._doc.settings};return F`${[1.5,2].map(r=>Br(i,e.elevation,r).map(([s,a])=>{let[l,c]=this.toScreen(s),[h,d]=this.toScreen(a);return F`<line class="nf-headroom" x1=${l} y1=${c} x2=${h} y2=${d} />
+          <text class="nf-headroom-label" x=${(l+h)/2} y=${(c+d)/2-4}>${W(this.hass,r,1)} m</text>`}))}`}renderFavorites(){let e=this._doc.settings.favorites??[],t=["scene","script","automation","button","input_button","switch","input_boolean","light","fan","cover","lock"],n=this.entityOptions(s=>t.includes(s.split(".")[0])&&!e.includes(s)),i=s=>this.change(a=>a.settings.favorites=s.length?s:void 0),r=(s,a)=>{let l=[...e],[c]=l.splice(s,1);l.splice(Math.max(0,Math.min(l.length,s+a)),0,c),i(l)};return g`<details class="nf-section">
+      <summary>${this.t("favorites")}${e.length?g` <span class="nf-lib-count">${e.length}</span>`:v}</summary>
+      <p class="nf-sub">${this.t("favorites_hint")}</p>
+      ${e.map((s,a)=>g`<div class="nf-row nf-dev-row">
+          <span class="nf-dev-name"><span>${K(this.hass,s)}</span></span>
+          <button class="nf-pin" title=${this.t("move_up")} ?disabled=${a===0} @click=${()=>r(a,-1)}>↑</button>
+          <button class="nf-pin" title=${this.t("move_down")} ?disabled=${a===e.length-1} @click=${()=>r(a,1)}>↓</button>
+          <button class="nf-pin" title=${this.t("delete")} @click=${()=>i(e.filter(l=>l!==s))}>✕</button>
+        </div>`)}
+      ${e.length<40?g`<div class="nf-form">
+            ${this.entitySelect(this.t("favorites_add"),null,void 0,n,s=>{s&&s!=="none"&&!e.includes(s)&&i([...e,s])})}
+          </div>`:v}
+      ${this.renderOwnButtons()} ${this.renderMediaPresets()}
+    </details>`}renderMediaPresets(){let e=this._doc.settings.media_presets??[],t=i=>this.change(r=>r.settings.media_presets=i.length?i:void 0),n=(i,r)=>t(e.map((s,a)=>a===i?{...s,...r}:s));return g`<h4>${this.t("presets")}</h4>
+      <p class="nf-sub">${this.t("presets_hint")}</p>
+      <datalist id="nf-preset-types">
+        ${["music","url","playlist","SPOTIFY","AMAZON_MUSIC","TUNEIN","APPLE_MUSIC"].map(i=>g`<option value=${i}></option>`)}
+      </datalist>
+      ${e.map((i,r)=>g`<div class="nf-form nf-own-button">
+          <label class="nf-field"
+            >${this.t("own_button_label")}
+            <input type="text" maxlength="60" .value=${i.label} @change=${s=>n(r,{label:s.target.value.trim()||"Radio"})}
+          /></label>
+          <label class="nf-field" title=${this.t("preset_type_hint")}
+            >${this.t("preset_type")}
+            <input type="text" list="nf-preset-types" .value=${i.type} @change=${s=>n(r,{type:s.target.value.trim()||"music"})}
+          /></label>
+          <label class="nf-field nf-wide" title=${this.t("preset_content_hint")}
+            >${this.t("preset_content")}
+            <input type="text" .value=${i.content} placeholder="https://… · spotify:playlist:… · Rock Antenne" @change=${s=>n(r,{content:s.target.value.trim()})}
+          /></label>
+          <div class="nf-actions nf-wide">
+            <button class="nf-btn nf-danger" @click=${()=>t(e.filter((s,a)=>a!==r))}>${this.t("delete")}</button>
+          </div>
+        </div>`)}
+      ${e.length<30?g`<div class="nf-actions">
+            <button class="nf-btn" @click=${()=>t([...e,{id:L("preset"),label:"Radio",type:"music",content:""}])}>+ ${this.t("preset_add")}</button>
+          </div>`:v}`}renderOwnButtons(){let e=this._doc.settings.buttons??[],t=r=>this.change(s=>s.settings.buttons=r.length?r:void 0),n=(r,s)=>t(e.map((a,l)=>l===r?{...a,...s}:a)),i={navigate:"/lovelace/rollos",more_info:"cover.wohnzimmer",service:"script.turn_on",fire_dom_event:""};return g`<h4>${this.t("own_buttons")}</h4>
+      <p class="nf-sub">${this.t("own_buttons_hint")}</p>
+      ${e.map((r,s)=>g`<div class="nf-form nf-own-button">
+          <label class="nf-field"
+            >${this.t("own_button_label")}
+            <input type="text" maxlength="60" .value=${r.label} @change=${a=>n(s,{label:a.target.value.trim()||this.t("own_button_new")})}
+          /></label>
+          <label class="nf-field"
+            >${this.t("own_button_action")}
+            <select @change=${a=>n(s,{action:a.target.value})}>
+              ${Hi.map(a=>g`<option value=${a} ?selected=${a===r.action}>${this.t(`own_action_${a}`)}</option>`)}
+            </select></label
+          >
+          ${this.iconInput(r.icon??null,a=>n(s,{icon:a}))}
+          ${r.action!=="fire_dom_event"?g`<label class="nf-field nf-wide"
+                >${this.t(`own_target_${r.action}`)}
+                <input type="text" .value=${r.target??""} placeholder=${i[r.action]} @change=${a=>n(s,{target:a.target.value.trim()||null})}
+              /></label>`:v}
+          ${r.action==="service"||r.action==="fire_dom_event"?g`<label class="nf-field nf-wide" title=${this.t("own_data_hint")}
+                >${this.t("own_data")}
+                <textarea
+                  rows="4"
+                  spellcheck="false"
+                  placeholder=${r.action==="fire_dom_event"?'{"browser_mod": {"service": "browser_mod.popup", "data": {"title": "Rollos", "content": {"type": "custom:my-cover-card"}}}}':'{"entity_id": "script.party"}'}
+                  .value=${r.data?JSON.stringify(r.data,null,1):""}
+                  @change=${a=>{a.target.setCustomValidity("");let l=a.target.value.trim();if(!l)return n(s,{data:null});try{let c=JSON.parse(l);c&&typeof c=="object"&&!Array.isArray(c)&&n(s,{data:c})}catch{a.target.setCustomValidity(this.t("own_data_bad")),a.target.reportValidity()}}}
+                ></textarea></label
+              >`:v}
+          <div class="nf-actions nf-wide">
+            <button class="nf-btn" ?disabled=${s===0} @click=${()=>t([...e.slice(0,s-1),r,e[s-1],...e.slice(s+1)])}>↑</button>
+            <button class="nf-btn nf-danger" @click=${()=>t(e.filter((a,l)=>l!==s))}>${this.t("delete")}</button>
+          </div>
+        </div>`)}
+      ${e.length<20?g`<div class="nf-actions">
+            <button class="nf-btn" @click=${()=>t([...e,{id:L("btn"),label:this.t("own_button_new"),action:"navigate",target:null}])}>+ ${this.t("own_button_add")}</button>
+          </div>`:v}`}paneView(){let t=this.renderRoot.querySelector("nf-view3d")?.currentView();if(!t)return null;let n=t.target;return{theta:S(t.theta),phi:S(t.phi),radius:S(t.radius),...n?{target:{x:S(n.x),y:S(n.y),z:S(n.z)}}:{}}}rememberFloorView(){let e=this.paneView();if(!e){alert(this.t("floor_start_view_need_pane"));return}this.updateFloor({start_view:e})}rememberRoomView(){let e=this.paneView();if(!e){alert(this.t("room_start_view_need_pane"));return}this.updateRoom({start_view:e})}renderStartView(){let e=this._doc.settings.start_view??null,t=()=>{let n=this.paneView();n&&this.change(i=>i.settings.start_view=n)};return g`<details class="nf-section">
+      <summary>${this.t("start_view")}</summary>
+      <p class="nf-sub">${this.t("start_view_hint")}</p>
+      <div class="nf-actions">
+        <button class="nf-btn nf-primary" @click=${t}>${this.t("start_view_set")}</button>
+        ${e?g`<button class="nf-btn" @click=${()=>this.change(n=>n.settings.start_view=null)}>${this.t("start_view_reset")}</button>`:v}
+      </div>
+      ${e?g`<p class="nf-sub">${this.t("start_view_saved")}</p>
+            <p class="nf-sub">${this.t("start_view_card")}</p>
+            <code class="nf-code"
+              >start_view: { theta: ${e.theta}, phi: ${e.phi}, radius: ${e.radius}${e.target?`, target: { x: ${e.target.x}, y: ${e.target.y}, z: ${e.target.z} }`:""} }</code
+            >`:v}
+    </details>`}renderPresenceSettings(){let e=Object.keys(this.hass?.states??{}).filter(i=>i.startsWith("person.")).sort(),t=i=>{let r=i.slice(7),s=this.entityOptions(l=>ie(l)),a=l=>l.includes(r)&&/(area|room|raum|bermuda|espresense)/.test(l);return[...s.filter(l=>a(l.id)),...s.filter(l=>!a(l.id))]},n=(i,r)=>{let s=structuredClone(this._doc);s.presence=s.presence.filter(a=>a.person!==i),r&&r!=="none"&&s.presence.push({person:i,sensor:r}),this.setDoc(s)};return g`<details class="nf-section">
+      <summary>${this.t("presence")}</summary>
+      <div class="nf-form">
+        ${e.length?e.map(i=>this.entitySelect(`${K(this.hass,i)} \xB7 ${this.t("presence_sensor")}`,this._doc.presence.find(r=>r.person===i)?.sensor??null,void 0,t(i),r=>n(i,r))):g`<p class="nf-sub nf-wide">${this.t("no_persons")}</p>`}
+      </div>
+      <p class="nf-sub">${this.t("presence_hint")}</p>
+    </details>`}renderStateLinks(e){return g`${this.entitySelect(this.t("furn_state_entity"),e.state_entity??null,void 0,this.entityOptions(t=>/^(binary_sensor|switch|input_boolean|light|fan|person|device_tracker|sensor)\./.test(t)),t=>this.updateFurniture({state_entity:t==="none"?null:t}))}
+              ${e.state_entity&&e.state_entity!=="none"?g`${this.entitySelect(this.t("furn_state_entity2"),e.state_entity2??null,void 0,this.entityOptions(t=>/^(binary_sensor|switch|input_boolean|light|fan|person|device_tracker|sensor)\./.test(t)),t=>this.updateFurniture({state_entity2:t==="none"?null:t}))}
+                    ${e.state_entity2&&e.state_entity2!=="none"?g`<label class="nf-field"
+                          >${this.t("furn_state_split")}
+                          <select ?disabled=${!this.isAdmin} @change=${t=>this.updateFurniture({state_split:t.target.value==="top_bottom"?"top_bottom":"left_right"})}>
+                            <option value="left_right" ?selected=${e.state_split!=="top_bottom"}>${this.t("furn_state_left_right")}</option>
+                            <option value="top_bottom" ?selected=${e.state_split==="top_bottom"}>${this.t("furn_state_top_bottom")}</option>
+                          </select></label
+                        >`:v}`:v}
+              <p class="nf-sub nf-wide">${this.t("furn_state_hint")}</p>`}renderFurnitureLinks(e){if(!this.hass)return v;let t=this.hass,n=h=>{let d=structuredClone(this._doc.floors);for(let u of d)for(let f of u.furniture)f.id===e.id&&(f[h]=null);return Ce(t,d).get(e.id)?.[h]??null},i=It(e.type),r=i&&(!Be(e.type)||Fi(e.type)),s=ee(e.type),a=this.entityOptions(h=>s?/^(light|switch|input_boolean)\./.test(h):r?/^(media_player|switch|input_boolean|light)\./.test(h):e.type==="radiator"?h.startsWith("climate."):e.type==="robot_vacuum"?h.startsWith("vacuum."):/^(switch|media_player|fan|input_boolean|climate|vacuum|cover)\./.test(h)||pr(t.states[h])),l=this.entityOptions(h=>this.isPowerSensor(h)),c=e.type==="fridge_smart"?this.entityOptions(h=>h.startsWith("binary_sensor.")):[];return g`<div class="nf-form nf-links">
+        ${e.type==="grid_point"?g`<p class="nf-sub nf-wide">${this.t("grid_point_hint")}</p>`:this.entitySelect(this.t(s?"furn_entity_light":r?"furn_entity_tv":e.type==="radiator"?"furn_entity_climate":e.type==="robot_vacuum"?"furn_entity_vacuum":"furn_entity"),e.entity??null,n("entity"),a,h=>this.updateFurniture({entity:h}))}
+        ${!s&&!xe.includes(e.type)&&!An(e.type)?this.renderStateLinks(e):v}
+        ${s&&e.entity&&e.entity!=="none"?g`${this.entitySelect(this.t("furn_color_entity"),e.color_entity??null,void 0,this.entityOptions(h=>h.startsWith("light.")&&h!==e.entity),h=>this.updateFurniture({color_entity:h==="none"?null:h}))}
+              <p class="nf-sub nf-wide">${this.t("furn_color_entity_hint")}</p>`:v}
+        ${s?this.glowScaleField(e.glow_scale,h=>this.updateFurniture({glow_scale:h})):v}
+        ${s||e.type==="grid_point"?v:this.entitySelect(this.t(e.type==="meter"?"energy_grid":e.type==="inverter"?"energy_solar_sensor":e.type==="home_battery"?"energy_battery_sensor":"furn_power"),e.power??null,n("power"),l,h=>this.updateFurniture({power:h}))}
+
+      </div>
+      ${e.type==="meter"?g`<div class="nf-form nf-links">
+            ${this.entitySelect(this.t("furn_export"),e.export??null,void 0,l,h=>this.updateFurniture({export:h==="none"?null:h}))}
+            <p class="nf-sub nf-wide">${this.t("furn_export_hint")}</p>
+          </div>`:v}
+      ${e.type==="inverter"&&(this._doc.settings.roof.solar??[]).length?(()=>{let h=(this._doc.settings.roof.strings??[]).filter(d=>d.inverter===e.id).map(d=>d.name);return g`<p class="nf-sub nf-wide">${h.length?this.t("inverter_strings",{names:h.join(", ")}):this.t("inverter_strings_none")}</p>`})():v}
+      ${e.type==="home_battery"?g`<div class="nf-form nf-links">
+            ${this.entitySelect(this.t("furn_soc"),e.soc??null,void 0,this.entityOptions(h=>ie(h)&&(t.states[h]?.attributes.device_class==="battery"||t.states[h]?.attributes.unit_of_measurement==="%")),h=>this.updateFurniture({soc:h==="none"?null:h}))}
+            ${this.entitySelect(this.t("furn_charge"),e.charge??null,void 0,l,h=>this.updateFurniture({charge:h==="none"?null:h}))}
+            <p class="nf-sub nf-wide">${this.t("furn_charge_hint")}</p>
+          </div>`:v}
+      ${e.type==="wallbox"?g`<div class="nf-form nf-links">
+            ${this.entitySelect(this.t("furn_wallbox_status"),e.status??null,void 0,this.entityOptions(h=>vs(h)||ie(h)),h=>this.updateFurniture({status:h==="none"?null:h}))}
+          </div>`:v}
+      ${!s||e.entity?g`<label class="nf-check nf-wide" title=${this.t("device_confirm_hint")}
+            ><input type="checkbox" .checked=${!!e.confirm} ?disabled=${!this.isAdmin} @change=${h=>this.updateFurniture({confirm:h.target.checked})} />
+            ${this.t("device_confirm")}</label
+          >
+          <div class="nf-form">${this.markerSelect(e.marker??null,h=>this.updateFurniture({marker:h}))}${this.iconInput(e.icon,h=>this.updateFurniture({icon:h}))}</div>`:v}
+      ${e.type==="robot_vacuum"?g`<div class="nf-form nf-links">
+            ${this.entitySelect(this.t("furn_robot_room"),e.room_sensor??null,br(t,Ce(t,this._doc.floors).get(e.id)?.entity??null,null),this.entityOptions(h=>ie(h)),h=>this.updateFurniture({room_sensor:h}))}
+          </div>`:v}
+      ${e.type==="fridge_smart"?g`<div class="nf-form nf-links">
+              ${this.entitySelect(this.t("furn_door_left"),e.door_left??null,void 0,c,h=>this.updateFurniture({door_left:h}))}
+              ${this.entitySelect(this.t("furn_door_right"),e.door_right??null,void 0,c,h=>this.updateFurniture({door_right:h}))}
+            </div>
+            <p class="nf-sub">${this.t("fridge_hint")}</p>`:v}
+      <p class="nf-sub">${this.t(s?e.type==="lamp_pendant"?"lamp_hint_pendant":"lamp_hint":i?"furn_links_hint_tv":e.type==="robot_vacuum"?"robot_hint":"furn_links_hint")}</p>`}renderParkingForm(e){let t=this.isAdmin,n=this.hass?.language??"en",i=(this.packs??[]).flatMap(b=>b.items.filter(w=>w.vehicle).map(w=>({id:We(b.id,w.id),label:`${ke(w,n)} \xB7 ${me(b,n)}`}))),r=b=>b.startsWith("device_tracker.")?this.hass?.states[b]?.attributes.source_type==="router"?2:0:1,s=this.entityOptions(b=>/^(binary_sensor|device_tracker|input_boolean|switch|sensor)\./.test(b)).sort((b,w)=>r(b.id)-r(w.id)),a=this.entityOptions(b=>/^(sensor|input_select|select|input_text)\./.test(b)),l=e.type_entity?this.hass?.states[e.type_entity]:void 0,c=Array.isArray(l?.attributes.options)?l.attributes.options:[],h=e.types??[],d=b=>this.updateFurniture({types:b}),u=(b,w)=>g`<select ?disabled=${!t} @change=${$=>w($.target.value||null)}>
+        <option value="" ?selected=${!b}>${this.t("parking_vehicle_none")}</option>
+        ${i.map($=>g`<option value=${$.id} ?selected=${$.id===b}>${$.label}</option>`)}
+      </select>`,f=this.floor,p=f?.rooms.find(b=>b.points.length>=3&&D([e.x,e.z],b.points)),m=e.vehicle?U(e.vehicle):void 0,_=m?m.size[2]*(e.scale??1):0,x=!!p&&!!f&&_>f.height+1e-6;return g`<div class="nf-form nf-links">
+        ${this.entitySelect(this.t("parking_entity"),e.entity??null,void 0,s,b=>this.updateFurniture({entity:b==="none"?null:b}))}
+        <label class="nf-field nf-wide">${this.t("parking_vehicle")} ${u(e.vehicle??null,b=>this.updateFurniture({vehicle:b}))}</label>
+        ${i.length?v:g`<p class="nf-sub nf-wide">${this.t("parking_no_pack")}</p>`}
+        ${this.num(this.t("parking_scale"),Math.round((e.scale??1)*100),b=>this.updateFurniture({scale:Math.min(150,Math.max(30,b))/100}),5,30)}
+        ${this.entitySelect(this.t("parking_type_entity"),e.type_entity??null,void 0,a,b=>this.updateFurniture({type_entity:b==="none"?null:b}))}
+        ${e.type_entity?g`<div class="nf-wide">
+              <div class="nf-sub">${this.t("parking_types")}</div>
+              ${h.map((b,w)=>g`<div class="nf-parking-row">
+                  <input
+                    type="text"
+                    list="nf-parking-states"
+                    placeholder=${this.t("parking_type_state")}
+                    .value=${b.state}
+                    ?disabled=${!t}
+                    @change=${$=>d(h.map((y,E)=>E===w?{...y,state:$.target.value}:y))}
+                  />
+                  ${u(b.vehicle,$=>d(h.map((y,E)=>E===w?{...y,vehicle:$??""}:y)))}
+                  <button class="nf-btn" ?disabled=${!t} title=${this.t("delete")} @click=${()=>d(h.filter(($,y)=>y!==w))}>✕</button>
+                </div>`)}
+              <datalist id="nf-parking-states">${c.map(b=>g`<option value=${b}></option>`)}</datalist>
+              ${t?g`<button class="nf-btn" @click=${()=>d([...h,{state:c[h.length]??"",vehicle:i[0]?.id??""}])}>${this.t("parking_add_type")}</button>`:v}
+            </div>`:v}
+      </div>
+      ${x?g`<p class="nf-sub nf-warn">${this.t("parking_too_tall",{car:W(this.hass,_,2),room:W(this.hass,f.height,2)})}</p>`:v}
+      <p class="nf-sub">${this.t("parking_hint")}</p>
+      ${this.renderCarForm(e)}`}toggleLibrary(e){let t=new Set(this._libOpen);t.has(e)?t.delete(e):t.add(e),this._libOpen=t;try{localStorage.setItem("nextfloor.library",JSON.stringify([...t]))}catch{}}librarySection(e,t,n,i){let r=Gt(i).split(/\s+/).filter(Boolean),s=r.length?n.filter(l=>{let c=Gt(`${l.label} ${l.search??""} ${l.type.replace(/[_:.]/g," ")} ${t}`);return r.every(h=>c.includes(h))}):n;if(i&&!s.length)return v;let a=i?!0:this._libOpen.has(e);return g`<button class="nf-lib-head nf-lib-toggle" aria-expanded=${a} @click=${()=>this.toggleLibrary(e)}>
+        <span class="nf-lib-caret">${a?"\u25BE":"\u25B8"}</span>${t} <span class="nf-lib-count">${s.length}</span>
+      </button>
+      ${a?g`<div class="nf-library">${s.map(l=>this.libraryButton(l.type,l.label))}</div>`:v}`}libraryHasHits(e){let t=Gt(e).split(/\s+/).filter(Boolean),n=this.hass?.language??"en";return[...Object.entries(pn).flatMap(([r,s])=>s.map(a=>`${this.t(`furn_${a}`)} ${ce(bs,`furn_${a}`)} ${a.replace(/_/g," ")} ${this.t(`furn_group_${r}`)}`)),...(this.packs??[]).flatMap(r=>r.items.map(s=>`${ke(s,n)} ${Object.values(s.name).join(" ")} ${s.id.replace(/_/g," ")} ${r.name} ${me(r,"en")}`))].some(r=>{let s=Gt(r);return t.every(a=>s.includes(a))})}storedPictures(){let e=[];for(let t of this._doc.floors)for(let n of t.furniture)for(let i of n.pictures??[])i.image&&!/^https?:\/\//.test(i.image)&&!i.image.startsWith("camera:")&&!e.includes(i.image)&&e.push(i.image);return e}renderFurnitureLibrary(){let e=this.room,t=this._furnQuery.trim().toLowerCase(),n=this.hass?.language??"en";return g`<section>
+      <h3>${this.t("furniture_add")}</h3>
+      <p class="nf-sub">${e?this.t("furniture_into",{room:e.name}):this.t("furniture_pick_room")}</p>
+      <input
+        class="nf-search"
+        type="search"
+        placeholder=${this.t("furniture_search")}
+        .value=${this._furnQuery}
+        @input=${i=>this._furnQuery=i.target.value}
+        @keydown=${i=>{i.key==="Escape"&&(this._furnQuery="")}}
+      />
+      ${t&&!this.libraryHasHits(t)?g`<p class="nf-sub">${this.t("furniture_search_none")}</p>`:v}
+      ${Object.entries(pn).map(([i,r])=>this.librarySection(`group:${i}`,this.t(`furn_group_${i}`),r.map(s=>({type:s,label:this.t(`furn_${s}`),search:ce(bs,`furn_${s}`)})),t))}
+      ${(this.packs??[]).map(i=>this.librarySection(`pack:${i.id}`,me(i,n),i.items.map(r=>({type:We(i.id,r.id),label:ke(r,n),search:Object.values(r.name).join(" ")})),t))}
+    </section>
+    <div class="nf-ext-teaser">
+      <b>${this.t("ext_teaser_title")}</b>
+      <span class="nf-sub">${this.t("ext_teaser_text")}</span>
+      <button class="nf-btn nf-primary" @click=${()=>this.dispatchEvent(new CustomEvent("open-extensions",{bubbles:!0,composed:!0}))}>${this.t("ext_open")}</button>
+    </div>`}libraryButton(e,t){let n=r=>{this.showPreview(e,r.currentTarget)},i=ee(e)?"light":at(e)?"switch":null;return g`<button
+      class="nf-btn ${i?"nf-lib-electric":""}"
+      title=${i?this.t(i==="light"?"lib_badge_light":"lib_badge_electric"):t}
+      @click=${()=>this.addFurniture(e)}
+      @mouseenter=${n}
+      @focus=${n}
+      @mouseleave=${()=>this._preview=null}
+      @blur=${()=>this._preview=null}
+    >
+      ${t}
+      ${i?g`<svg class="nf-lib-badge" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d=${ut(i)} />
+          </svg>`:v}
+    </button>`}async showPreview(e,t){let n=t.getBoundingClientRect(),i={left:Math.max(8,n.left-196),top:Math.max(8,Math.min(window.innerHeight-200,n.top+n.height/2-95))};this._preview={type:e,url:null,...i};try{let r=await fs(),[s,a,l]=Fe(e),c=r.furniturePreview({type:e,w:s,d:a,h:l,variant:null,lamp:Ji[e]??null},180,this.packs??[]);this._preview?.type===e&&(this._preview={type:e,url:c,...i})}catch{this._preview=null}}renderPreview(){let e=this._preview;return e?g`<div class="nf-preview" style="left:${e.left}px;top:${e.top}px" aria-hidden="true">
+      ${e.url?g`<img src=${e.url} alt="" />`:g`<span class="nf-preview-wait"></span>`}
+      <b>${vt(this.hass,e.type)}</b>
+    </div>`:v}renderDeviceForm(e){let t=this.isAdmin,n=H(e.entity_id),i=n==="light",r=e.mount??"ceiling",s=n?Ft(n,this.floor?.height??2.5,i?r:null):1;return g`<section>
+      <div class="nf-h3row"><h3>${this.t("device")}</h3>${this.fixButton("device",e.entity_id)}</div>
+      <p class="nf-dev-title">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d=${n?ut(n):""} />
+        </svg>
+        ${K(this.hass,e.entity_id)}
+      </p>
+      <div class="nf-form">
+        ${i?g`<label class="nf-field nf-wide"
+              >${this.t("lamp_mount")}
+              <select ?disabled=${!t} @change=${a=>this.updateDevice({mount:a.target.value,y:null})}>
+                ${["ceiling","floor","table","wall"].map(a=>g`<option value=${a} ?selected=${a===r}>${this.t(`lamp_${a}`)}</option>`)}
+              </select></label
+            >
+            ${this.glowScaleField(e.glow_scale,a=>this.updateDevice({glow_scale:a}))}`:n==="camera"?g`<label class="nf-field nf-wide"
+                >${this.t("camera_mount")}
+                <select ?disabled=${!t} @change=${a=>this.updateDevice({mount:a.target.value,y:null})}>
+                  <option value="wall" ?selected=${(e.mount??"wall")==="wall"}>${this.t("camera_mount_wall")}</option>
+                  <option value="ceiling" ?selected=${e.mount==="ceiling"}>${this.t("camera_mount_ceiling")}</option>
+                </select></label
+              >`:v}
+        ${this.num(this.t("x"),e.x,a=>this.updateDevice({x:a}))} ${this.num(this.t("z"),e.z,a=>this.updateDevice({z:a}))}
+        ${this.num(this.t("marker_height"),e.y??s,a=>this.updateDevice({y:Math.max(0,a)}),.05,0)}
+        ${this.num(this.t("rotation"),e.rotation??0,a=>this.updateDevice({rotation:(a%360+360)%360}),1)}
+        ${n==="camera"?g`${this.num(this.t("camera_fov"),e.fov??(e.mount==="ceiling"?360:90),a=>this.updateDevice({fov:Math.min(360,Math.max(10,a))}),5,10)}
+            ${this.num(this.t("camera_reach"),e.reach??(e.mount==="ceiling"?3:4.5),a=>this.updateDevice({reach:Math.min(50,Math.max(.5,a))}),.5,.5)}
+            ${this.num(this.t("camera_tilt"),e.tilt??(e.mount==="ceiling"?65:20),a=>this.updateDevice({tilt:Math.min(90,Math.max(0,a))}),5,0)}
+            <label class="nf-check nf-wide"
+              ><input type="checkbox" .checked=${e.cone!==!1} ?disabled=${!t} @change=${a=>this.updateDevice({cone:a.target.checked?null:!1})} />
+              ${this.t("camera_cone")}</label
+            >
+            <p class="nf-sub nf-wide">${this.t("camera_aim_hint")}</p>
+            ${this.renderCameraDetections(e.entity_id)}`:v}
+        ${n&&lr.has(n)?g`<label class="nf-check nf-wide" title=${this.t("device_confirm_hint")}
+              ><input type="checkbox" .checked=${!!e.confirm} ?disabled=${!t} @change=${a=>this.updateDevice({confirm:a.target.checked})} />
+              ${this.t("device_confirm")}</label
+            >`:v}
+
+        ${this.markerSelect(e.marker??null,a=>this.updateDevice({marker:a}))}
+        <label class="nf-field nf-wide" title=${this.t("device_name_hint")}
+          >${this.t("device_name")}
+          <input type="text" .value=${e.name??""} ?disabled=${!t} maxlength="60" placeholder=${K(this.hass,e.entity_id)} @change=${a=>this.updateDevice({name:a.target.value.trim()||null})}
+        /></label>
+        ${e.name?g`<label class="nf-check nf-wide"
+              ><input type="checkbox" .checked=${!!e.show_name} ?disabled=${!t} @change=${a=>this.updateDevice({show_name:a.target.checked||void 0})} />
+              ${this.t("show_name")}</label
+            >`:v}
+        ${this.iconInput(e.icon,a=>this.updateDevice({icon:a}))}
+      </div>
+      ${t?g`<div class="nf-actions">
+            <button class="nf-btn" @click=${()=>this.centreDevice()}>${this.t("device_centre")}</button>
+            ${e.y!==null?g`<button class="nf-btn" @click=${()=>this.updateDevice({y:null})}>${this.t("height_auto")}</button>`:v}
+            ${this.renderAsFurniture(e)}
+            <button
+              class="nf-btn nf-danger"
+              @click=${()=>{this.removeDevice(e.entity_id),this._deviceId=null}}
+            >
+              ${this.t("devices_remove")}
+            </button>
+          </div>`:v}
+    </section>`}renderDeviceList(e){let t=this.isAdmin,n=this.hass,i=e.area_id?n?.areas?.[e.area_id]?.name:void 0,r=n?Ie(n,e.area_id).filter(y=>ct(H(y))):[],s=new Set([...this.floor?.placements.filter(y=>D([y.x,y.z],e.points)).map(y=>y.entity_id)??[],...this.floor?.furniture.filter(y=>ee(y.type)&&y.entity&&D([y.x,y.z],e.points)).map(y=>y.entity)??[]]),a=n?En(n,r):[],l=a.map(y=>y.primary).filter(y=>!s.has(y)),c=this._deviceQuery.trim().toLowerCase(),h=y=>!c||K(n,y,i).toLowerCase().includes(c)||y.includes(c),d=this.floor?.placements.filter(y=>H(y.entity_id)==="light"&&(y.mount??"ceiling")==="ceiling"&&D([y.x,y.z],e.points)).length,u=new Set(e.panel??[]),f=new Set(e.hidden??[]),p=new Set(e.no_state??[]),m=new Map;for(let y of this._doc.floors)for(let E of[...y.placements.map(z=>[z.entity_id,z.x,z.z]),...y.furniture.filter(z=>ee(z.type)&&z.entity).map(z=>[z.entity,z.x,z.z])]){let z=y.rooms.find(k=>D([E[1],E[2]],k.points));z&&z.id!==e.id&&m.set(E[0],z.name)}let _=(y,E=!1,z=i)=>{let k=s.has(y),M=k?void 0:m.get(y);return g`<div class="nf-row nf-dev-row ${E?"nf-dev-extra":""} ${f.has(y)?"nf-dev-hidden":""}">
+        <button class="nf-dev-name ${k?"":"nf-muted"}" ?disabled=${!k} @click=${()=>this.selectItem("device",y)}>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d=${ut(H(y))} />
+          </svg>
+          <span>${K(n,y,z)}${M?g`<small class="nf-muted"> · ${this.t("devices_placed_in",{room:M})}</small>`:v}</span>
+        </button>
+        ${t&&!E?g`<button
+              class="nf-pin ${f.has(y)?"nf-pin-on":""}"
+              aria-pressed=${f.has(y)}
+              title=${this.t(f.has(y)?"panel_unhide":"panel_hide")}
+              @click=${()=>this.updateRoom({hidden:f.has(y)?[...f].filter(R=>R!==y):[...f,y]})}
+            >
+              ${f.has(y)?"\u{1F648}":"\u{1F441}"}
+            </button>`:v}
+        ${t&&!E&&!f.has(y)?g`<button
+              class="nf-pin ${p.has(y)?"nf-pin-on":""}"
+              aria-pressed=${p.has(y)}
+              title=${this.t(p.has(y)?"panel_state_show":"panel_state_hide")}
+              @click=${()=>this.updateRoom({no_state:p.has(y)?[...p].filter(R=>R!==y):[...p,y]})}
+            >
+              ${p.has(y)?"\u2205":"Aa"}
+            </button>`:v}
+        ${t&&!k?g`<button
+              class="nf-pin ${u.has(y)?"nf-pin-on":""}"
+              aria-pressed=${u.has(y)}
+              title=${this.t(u.has(y)?"panel_unpin":"panel_pin")}
+              @click=${()=>this.updateRoom({panel:u.has(y)?[...u].filter(R=>R!==y):[...u,y]})}
+            >
+              ${u.has(y)?"\u2605":"\u2606"}
+            </button>`:v}
+        ${t?k?g`<button class="nf-link" @click=${()=>this.removeDevice(y)}>${this.t("devices_remove")}</button>`:g`<button class="nf-link" @click=${()=>this.placeDevices([y])}>${this.t("devices_place")}</button>`:v}
+      </div>`},x=t?this._devSource:"area",b=y=>{this._devSource=y,this._deviceQuery=""},w=g`<input
+      class="nf-search"
+      type="search"
+      placeholder=${this.t("devices_search")}
+      .value=${this._deviceQuery}
+      @input=${y=>this._deviceQuery=y.target.value}
+    />`,$=()=>{confirm(this.t("devices_place_all_confirm",{n:l.length}))&&this.placeDevices(l)};return g`<section>
+      <h3>${this.t("devices")}</h3>
+      <p class="nf-sub">${this.t("devices_panel_hint")}</p>
+      ${t?g`<div class="nf-seg nf-dev-source">
+            <button aria-pressed=${x==="area"} @click=${()=>b("area")}>${this.t("devices_src_area")}${r.length?` (${a.length})`:""}</button>
+            <button aria-pressed=${x==="other"} @click=${()=>b("other")}>${this.t("devices_src_other")}</button>
+            <button aria-pressed=${x==="none"} @click=${()=>b("none")}>${this.t("devices_src_none")}</button>
+          </div>`:v}
+      ${x!=="area"?g`${w}${this.renderDeviceExtras(e,_,x)}`:e.area_id?r.length?g`${t&&(d??0)>=2?g`<button class="nf-btn nf-wide-btn" @click=${()=>this.spreadCeilingLights(e)}>${this.t("lights_spread")}</button>`:v}
+              ${r.length>8?w:v}
+              <div class="nf-room-list">
+                ${a.map(y=>{let E=y.others.filter(h),z=this._expanded.has(y.primary)||!!c&&E.length>0;return!h(y.primary)&&!E.length?v:g`${_(y.primary)}
+                  ${y.others.length?g`<button
+                        class="nf-more"
+                        @click=${()=>{let k=new Set(this._expanded);k.has(y.primary)?k.delete(y.primary):k.add(y.primary),this._expanded=k}}
+                      >
+                        ${z?this.t("devices_less"):this.t("devices_more",{n:y.others.length})}
+                      </button>`:v}
+                  ${z?(c?E:y.others).map(k=>_(k,!0)):v}`})}
+              </div>
+              ${t&&l.length>1?g`<button class="nf-link nf-place-all" @click=${$}>${this.t("devices_place_all_n",{n:l.length})}</button>`:v}
+              <p class="nf-sub">${this.t("devices_hint")}</p>`:g`<p class="nf-sub">${this.t("devices_none")}</p>`:g`<p class="nf-sub">${this.t("devices_none_area")}</p>`}
+    </section>`}renderDeviceExtras(e,t,n){let i=this.hass;if(!i)return v;let r=50,s=this._deviceQuery.trim().toLowerCase(),a=(h,d)=>!s||`${K(i,h,d)} ${h} ${d??""}`.toLowerCase().includes(s),l=h=>h>0?g`<p class="nf-sub">${this.t("devices_narrow",{n:h})}</p>`:v;if(n==="other"){let h=0,d=0,u=hr(i,e.area_id).map(f=>{let p=f.ids.filter(_=>a(_,f.name)),m=p.slice(0,Math.max(0,r-h));return h+=m.length,d+=p.length-m.length,m.length?g`<div class="nf-dev-area">${f.name}</div>${m.map(_=>t(_,!1,f.name))}`:v});return h?g`<div class="nf-room-list">${u}</div>${l(d)}`:g`<p class="nf-sub">${this.t("devices_none")}</p>`}let c=dr(i).filter(h=>a(h));return c.length?g`<div class="nf-room-list">${c.slice(0,r).map(h=>t(h))}</div>${l(c.length-Math.min(c.length,r))}`:g`<p class="nf-sub">${this.t("devices_none")}</p>`}renderRoomClimate(e){let t=this.hass;if(!t)return v;let n=(s,a)=>{let l={...e.climate??{},[s]:a},c=Object.values(l).every(h=>h==null);this.updateRoom({climate:c?null:l})},i=!!e.climate&&Object.values(e.climate).some(s=>s!=null),r=(s,a)=>{let l=$n[s],c=ur(t,this.floor??null,{...e,climate:null},s),h=this.entityOptions(d=>ie(d)&&t.states[d]?.attributes.device_class===l).map(d=>({...d,rank:(ht(t,d.id)===e.area_id?0:1)+(Sn(t,d.id)?0:2)})).sort((d,u)=>d.rank-u.rank).map(({id:d,label:u})=>({id:d,label:u}));return this.entitySelect(a,e.climate?.[s]??null,c[0]??null,h,d=>n(s,d))};return g`<details class="nf-points" ?open=${i}>
+      <summary>${this.t("climate")}</summary>
+      <div class="nf-form">
+        ${r("temperature",this.t("climate_temperature"))} ${r("humidity",this.t("climate_humidity"))} ${r("co2",this.t("climate_co2"))}
+      </div>
+      <p class="nf-sub">${this.t("climate_hint")}</p>
+    </details>`}renderBackgroundForm(e){let t=e.background;return g`<details class="nf-section" ?open=${this._bgOpen} @toggle=${n=>this._bgOpen=n.target.open}>
+      <summary>${this.t("background")}</summary>
+      <div class="nf-form">
+        <label class="nf-btn nf-wide nf-upload"
+          >${this.t("background_upload")}<input type="file" accept="image/png,image/jpeg,image/webp" @change=${this.uploadBackground}
+        /></label>
+        ${t?g`${this.num(this.t("x"),t.x,n=>this.updateFloor({background:{...t,x:n}}))}
+              ${this.num(this.t("z"),t.z,n=>this.updateFloor({background:{...t,z:n}}))}
+              ${this.num(this.t("background_width"),t.width,n=>this.updateFloor({background:{...t,width:Math.max(.1,n)}}),.01,.1)}
+              ${this.num(this.t("background_rotation"),t.rotation??0,n=>this.updateFloor({background:{...t,rotation:Math.round(n*10)/10}}),.5)}
+              ${this.isAdmin?g`<button
+                      class="nf-btn nf-wide ${this._bgEdit?"nf-primary":""}"
+                      aria-pressed=${this._bgEdit}
+                      @click=${()=>{this._bgEdit=!this._bgEdit,this._bgEdit&&(this._tool="select")}}
+                    >
+                      ${this.t(this._bgEdit?"background_edit_done":"background_edit")}
+                    </button>
+                    <p class="nf-sub nf-wide">${this.t(this._bgEdit?"background_handles_hint":"background_fixed_hint")}</p>
+                  <button class="nf-btn nf-wide ${this._bgLevel?"nf-primary":""}" aria-pressed=${!!this._bgLevel} @click=${()=>{this._bgLevel=this._bgLevel?null:[],this._bgRuler=null,this._bgEdit=!1}}>📐 ${this.t(this._bgLevel?"bg_level_cancel":"bg_level")}</button>
+                  ${this._bgLevel?g`<p class="nf-sub nf-wide">${this.t(this._bgLevel.length?"bg_level_second":"bg_level_first")}</p>`:v}
+                  <button class="nf-btn nf-wide ${this._bgRuler?"nf-primary":""}" aria-pressed=${!!this._bgRuler} @click=${()=>{this._bgRuler=this._bgRuler?null:[],this._bgLevel=null,this._bgEdit=!1}}>📏 ${this.t(this._bgRuler?"bg_ruler_cancel":"bg_ruler")}</button>
+                  ${this._bgRuler?this._bgRuler.length<2?g`<p class="nf-sub nf-wide">${this.t(this._bgRuler.length?"bg_ruler_second":"bg_ruler_first")}</p>`:g`<p class="nf-sub nf-wide">${this.t("bg_ruler_length_hint",{m:W(this.hass,Math.hypot(this._bgRuler[1][0]-this._bgRuler[0][0],this._bgRuler[1][1]-this._bgRuler[0][1]),2)})}</p>
+                          <label class="nf-field"
+                            >${this.t("bg_ruler_length")}
+                            <input type="number" min="0.01" step="0.01" .value=${this._bgRulerLen?String(this._bgRulerLen):""} @input=${n=>this._bgRulerLen=Number(n.target.value.replace(",","."))||0} @keydown=${n=>n.key==="Enter"&&this.applyBgRuler(this._bgRulerLen)}
+                          /></label>
+                          <button class="nf-btn nf-primary" ?disabled=${!(this._bgRulerLen>0)} @click=${()=>this.applyBgRuler(this._bgRulerLen)}>${this.t("bg_ruler_apply")}</button>`:v}`:v}
+              <label class="nf-field"
+                >${this.t("background_opacity")}
+                <input
+                  type="range"
+                  min="0.05"
+                  max="1"
+                  step="0.05"
+                  .value=${String(t.opacity)}
+                  @change=${n=>this.updateFloor({background:{...t,opacity:parseFloat(n.target.value)}})}
+              /></label>
+              <button class="nf-btn nf-danger nf-wide" @click=${()=>this.updateFloor({background:null})}>${this.t("background_remove")}</button>`:v}
+      </div>
+    </details>`}async loadHistory(){if(this.hass)try{this._history=await ki(this.hass)}catch{this._history=[]}}async restoreFromHistory(e){!this.hass||!confirm(this.t("backup_restore_confirm",{time:this.snapshotTime(e)}))||(await $i(this.hass,e.id),this._notice=this.t("backup_restored"),await this.loadHistory())}async exportBackup(){if(this.hass){this._backupBusy=!0;try{let e=await zi(this.hass),t={};for(let i of ir(e.building))try{t[i]=await on(this.hass,i)}catch{}let n=new Date().toISOString().slice(0,10);kn(`nextfloor-${this.t("export_name_full")}-${n}.json`,JSON.stringify({...e,exported_at:new Date().toISOString(),images:t}))}catch(e){alert(this.t("backup_import_error",{error:String(e?.message??e)}))}finally{this._backupBusy=!1}}}async importBackup(e){let t=e.target,n=t.files?.[0];if(t.value="",!n||!this.hass)return;let i;try{i=JSON.parse(await n.text())}catch{alert(this.t("import_error_not_json"));return}if(i?.format!=="nextfloor-backup"||!i.building){alert(this.t("backup_full_not_backup"));return}if(confirm(this.t("backup_full_confirm"))){this._backupBusy=!0;try{let r=await Ei(this.hass,i.building,i.packs??[]),s=0;for(let[l,c]of Object.entries(i.images??{}))try{await an(this.hass,l,c),s++}catch{}this.setDoc(Et(r.building)),this._floorId=r.building.floors[0]?.id??null,this.selectItem("room",null),this.fit(),this.dispatchEvent(new CustomEvent("packs-changed",{bubbles:!0,composed:!0}));let a=r.skipped.length?` ${this.t("backup_full_skipped",{packs:r.skipped.map(l=>l.id).join(", ")})}`:"";this._notice=this.t("backup_full_restored",{packs:r.packs,pictures:s})+a}catch(r){let{code:s,message:a}=r??{};alert(this.t("backup_import_error",{error:a??s??String(r)}))}finally{this._backupBusy=!1}}}exportPlan(e){let t=new Date().toISOString().slice(0,10);kn(`nextfloor-${this.t(e?"export_name_template":"export_name_backup")}-${t}.json`,JSON.stringify(tr(this._doc,e),null,2))}async importPlan(e){let t=e.target,n=t.files?.[0];if(t.value="",!n||!this.hass)return;let i;try{i=nr(await n.text())}catch(r){let s=r.message;alert(s==="not_json"?this.t("import_error_not_json"):s==="not_plan"?this.t("import_error_not_plan"):this.t("backup_import_error",{error:s}));return}confirm(this.t("backup_import_confirm"))&&(await xi(this.hass).catch(()=>{}),this.setDoc(i),this._floorId=i.floors[0]?.id??null,this.selectItem("room",null),this.fit(),this._notice=this.t("backup_imported"))}snapshotTime(e){return new Date(e.saved_at*1e3).toLocaleString(this.hass?.language,{dateStyle:"short",timeStyle:"short"})}renderBackup(){return g`<details
+      class="nf-section"
+      @toggle=${e=>{e.target.open&&this.loadHistory()}}
+    >
+      <summary>${this.t("backup")}</summary>
+      <h4 class="nf-lib-head">${this.t("backup_history")}</h4>
+      ${this._history===null?g`<p class="nf-sub">${this.t("loading")}</p>`:this._history.length?g`<div class="nf-room-list">
+              ${this._history.map(e=>g`<div class="nf-row nf-dev-row">
+                  <span>${this.snapshotTime(e)} <span class="nf-muted">· ${this.t("backup_summary",{rooms:e.rooms,furniture:e.furniture})}</span></span>
+                  <button class="nf-link" @click=${()=>this.restoreFromHistory(e)}>${this.t("backup_restore")}</button>
+                </div>`)}
+            </div>`:g`<p class="nf-sub">${this.t("backup_none")}</p>`}
+      <h4 class="nf-lib-head">${this.t("backup_file")}</h4>
+      <div class="nf-actions">
+        <button class="nf-btn" @click=${()=>this.exportPlan(!1)}>${this.t("backup_export")}</button>
+        <button class="nf-btn" title=${this.t("backup_export_share_hint")} @click=${()=>this.exportPlan(!0)}>${this.t("backup_export_share")}</button>
+        <label class="nf-btn nf-upload"
+          >${this.t("backup_import")}<input type="file" accept="application/json,.json" @change=${this.importPlan}
+        /></label>
+      </div>
+      <p class="nf-sub">${this.t("backup_hint")}</p>
+      <h4 class="nf-lib-head">${this.t("backup_full")}</h4>
+      <div class="nf-actions">
+        <button class="nf-btn" ?disabled=${this._backupBusy} @click=${()=>this.exportBackup()}>${this._backupBusy?"\u2026":this.t("backup_full_export")}</button>
+        <label class="nf-btn nf-upload"
+          >${this.t("backup_full_import")}<input type="file" accept="application/json,.json" @change=${this.importBackup}
+        /></label>
+      </div>
+      <p class="nf-sub">${this.t("backup_full_hint")}</p>
+    </details>`}renderSettings(){let e=this._doc.settings,t=n=>{let i=structuredClone(this._doc);Object.assign(i.settings,n),this.setDoc(i)};return g`<details class="nf-section">
+      <summary>${this.t("settings")}</summary>
+      <div class="nf-form">
+        ${this.num(this.t("wall_exterior"),e.wall_exterior,n=>t({wall_exterior:Math.min(1,Math.max(.02,n))}),.01,.02)}
+        ${this.num(this.t("wall_interior"),e.wall_interior,n=>t({wall_interior:Math.min(1,Math.max(.02,n))}),.01,.02)}
+        ${this.num(this.t("grid"),e.grid,n=>t({grid:Math.min(1,Math.max(.01,n))}),.01,.01)}
+        ${this.num(this.t("north"),e.north,n=>t({north:(Math.round(n)%360+360)%360}),1)}
+        <label class="nf-field nf-wide"
+          >${this.t("roof")}
+          <select
+            @change=${n=>{let i=n.target.value;i==="custom"?(this.useRoofSections(),this._tool="roof"):t({roof:{...e.roof,type:i}})}}
+          >
+            ${["none","flat","gable","custom"].map(n=>g`<option value=${n} ?selected=${n===e.roof.type}>${this.t(`roof_${n}`)}</option>`)}
+          </select></label
+        >
+        ${e.roof.type==="gable"?g`<label class="nf-field nf-wide"
+              >${this.t("roof_ridge")}
+              <select @change=${n=>t({roof:{...e.roof,ridge:n.target.value==="short"?"short":null}})}>
+                <option value="long" ?selected=${e.roof.ridge!=="short"}>${this.t("roof_ridge_long")}</option>
+                <option value="short" ?selected=${e.roof.ridge==="short"}>${this.t("roof_ridge_short")}</option>
+              </select></label
+            >`:v}
+        ${e.roof.type==="gable"?this.num(this.t("roof_pitch"),e.roof.pitch,n=>t({roof:{...e.roof,pitch:Math.min(60,Math.max(5,n))}}),1,5):v}
+        ${e.roof.type!=="none"?this.num(this.t("roof_overhang"),e.roof.overhang,n=>t({roof:{...e.roof,overhang:Math.min(2,Math.max(0,n))}}),.05,0):v}
+        ${this.hass?this.entitySelect(this.t("weather_entity"),e.weather_entity??null,Sr(this.hass,null),this.entityOptions(n=>n.startsWith("weather.")),n=>t({weather_entity:n})):v}
+        <div class="nf-sub nf-wide">${this.t("weather_effects")}</div>
+        ${Wi.map(n=>{let i=e.weather_effects??Bi;return g`<label class="nf-check"
+            ><input
+              type="checkbox"
+              .checked=${i.includes(n)}
+              @change=${r=>{let s=r.target.checked;t({weather_effects:s?[...new Set([...i,n])]:i.filter(a=>a!==n)})}}
+            />
+            ${this.t(`weather_effect_${n}`)}</label
+          >`})}
+        <label class="nf-check nf-wide"
+          ><input type="checkbox" .checked=${e.rain_warning!==!1} @change=${n=>t({rain_warning:n.target.checked})} />
+          ${this.t("rain_warning")}</label
+        >
+        <label class="nf-check nf-wide" title=${this.t("sun_patches_hint")}
+          ><input type="checkbox" .checked=${e.sun_patches!==!1} @change=${n=>t({sun_patches:n.target.checked})} />
+          ${this.t("sun_patches")}</label
+        >
+      </div>
+      <p class="nf-sub">${this.t("north_hint")} ${this.t("weather_entity_hint")}</p>
+    </details>`}static styles=[Qe,Nt,se`
+      :host {
+        display: block;
+        height: 100%;
+      }
+      .nf-editor {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        height: 100%;
+        min-height: 0;
+      }
+      .nf-editor:has(> .nf-side-strip) {
+        grid-template-columns: 1fr 52px;
+      }
+      .nf-side-strip {
+        padding: 10px 6px;
+        gap: 8px;
+        align-items: center;
+      }
+      .nf-strip-btn {
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--nf-line);
+        border-radius: 12px;
+        background: var(--nf-chrome);
+        color: var(--nf-text);
+        font-size: 18px;
+        cursor: pointer;
+      }
+      .nf-strip-hot {
+        border-color: var(--nf-accent);
+        color: var(--nf-accent);
+      }
+      .nf-side-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(340px, 60%);
+        z-index: 6;
+        box-shadow: -12px 0 32px rgba(0, 0, 0, 0.45);
+      }
+      .nf-pin-row {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .nf-3d-size {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--nf-muted);
+        font-size: 12px;
+      }
+      .nf-3d-size input {
+        width: 58px;
+        padding: 4px 6px;
+        font: inherit;
+        color: var(--nf-text);
+        background: var(--nf-chrome-solid);
+        border: 1px solid var(--nf-line);
+        border-radius: 8px;
+      }
+      .nf-3d-select {
+        font: inherit;
+        color: var(--nf-text);
+        background: var(--nf-chrome-solid);
+        border: 1px solid var(--nf-line);
+        border-radius: 999px;
+        padding: 4px 10px;
+      }
+      .nf-editor.nf-narrow {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(360px, 62vh) auto;
+        height: auto;
+      }
+      .nf-main {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 0;
+        min-width: 0;
+      }
+      .nf-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 12px;
+      }
+      .nf-warn {
+        color: var(--nf-warm);
+        font-size: 12.5px;
+      }
+      .nf-picture-group {
+        display: grid;
+        gap: 6px;
+        margin: 6px 0 10px;
+        padding: 8px;
+        border: 1px solid var(--nf-line);
+        border-radius: 10px;
+      }
+      .nf-picture-group > select {
+        min-width: 0;
+      }
+      .nf-picture-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 6px;
+        align-items: center;
+        padding: 6px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--nf-line) 40%, transparent);
+      }
+      .nf-picture-row input[type="url"] {
+        grid-column: 1 / -1;
+        min-width: 0;
+      }
+      .nf-picture-row > .nf-sub,
+      .nf-picture-row > .nf-picture-camera {
+        grid-column: 1 / -1;
+      }
+      .nf-picture-row.nf-rule-hit {
+        outline: 1px solid var(--nf-accent);
+      }
+      .nf-rule-now {
+        grid-column: 1 / -1;
+      }
+      .nf-rule-hit {
+        color: var(--nf-accent);
+      }
+      .nf-picture-reuse {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .nf-picture-reuse-btn {
+        padding: 2px;
+        border: 1px solid var(--nf-line);
+        border-radius: 6px;
+        background: var(--nf-chrome-solid);
+        cursor: pointer;
+      }
+      .nf-picture-reuse-btn img {
+        display: block;
+        height: 28px;
+        max-width: 60px;
+        object-fit: contain;
+      }
+      .nf-picture-reuse-btn:hover {
+        border-color: var(--nf-accent);
+      }
+      .nf-picture-thumb {
+        max-height: 60px;
+        max-width: 100%;
+        border-radius: 6px;
+        justify-self: start;
+      }
+      .nf-picture-pick {
+        justify-self: start;
+      }
+      .nf-parking-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin: 4px 0;
+      }
+      .nf-parking-row input,
+      .nf-parking-row select {
+        flex: 1;
+        min-width: 0;
+      }
+      .nf-stage-pair {
+        display: flex;
+        min-height: 0;
+        min-width: 0;
+      }
+      .nf-stage-pair > .nf-canvas-wrap {
+        flex: 1 1 var(--nf-split, 55%);
+        min-width: 0;
+      }
+      .nf-split > .nf-canvas-wrap {
+        flex: 0 0 var(--nf-split, 55%);
+      }
+      .nf-split-handle {
+        flex: 0 0 8px;
+        cursor: col-resize;
+        background: var(--nf-line);
+        touch-action: none;
+      }
+      .nf-split-handle:hover {
+        background: var(--nf-accent);
+      }
+      .nf-editor-3d {
+        position: relative;
+        flex: 1 1 0;
+        min-width: 240px;
+        min-height: 0;
+        border-left: 1px solid var(--nf-line);
+        container-type: size;
+        container-name: nf;
+      }
+      .nf-editor-3d nf-view3d {
+        display: block;
+        height: 100%;
+      }
+      .nf-3d-walls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 3;
+      }
+      .nf-3d-bar {
+        position: absolute;
+        left: 50%;
+        bottom: 12px;
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        max-width: calc(100% - 24px);
+        padding: 6px 8px 6px 14px;
+        border-radius: 999px;
+        background: var(--nf-chrome);
+        box-shadow: var(--nf-shadow);
+        font-size: 13px;
+      }
+      .nf-danger-chip {
+        color: var(--nf-danger, #ff6b7a);
+      }
+      .nf-narrow .nf-stage-pair.nf-split {
+        flex-direction: column;
+      }
+      .nf-narrow .nf-split > .nf-canvas-wrap {
+        flex: 1 1 auto;
+      }
+      .nf-narrow .nf-editor-3d {
+        flex: 0 0 42%;
+        min-width: 0;
+        border-left: none;
+        border-top: 1px solid var(--nf-line);
+      }
+      .nf-canvas-wrap {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+        background: radial-gradient(ellipse at 50% 35%, var(--nf-bg2), var(--nf-bg) 75%);
+      }
+      svg.nf-plan {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: default;
+      }
+      svg.nf-tool-rect,
+      svg.nf-tool-polygon {
+        cursor: crosshair;
+      }
+      .nf-grid-minor {
+        stroke: color-mix(in srgb, var(--nf-accent) 5%, transparent);
+        stroke-width: 1;
+      }
+      .nf-grid-major {
+        stroke: color-mix(in srgb, var(--nf-soft) 16%, transparent);
+        stroke-width: 1;
+      }
+      .nf-origin {
+        fill: color-mix(in srgb, var(--nf-soft) 50%, transparent);
+      }
+      .nf-ghost {
+        fill: none;
+        stroke: rgba(138, 155, 184, 0.35);
+        stroke-dasharray: 4 4;
+      }
+      .nf-wall {
+        fill: #1b2a47;
+      }
+      .nf-wall-ext {
+        fill: #22345a;
+      }
+      .nf-room {
+        fill: color-mix(in srgb, var(--nf-accent) 5%, transparent);
+        stroke: color-mix(in srgb, var(--nf-accent) 75%, transparent);
+        stroke-width: 1.5;
+        stroke-linejoin: round;
+        cursor: pointer;
+      }
+      .nf-room:hover {
+        fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+      }
+      .nf-room-sel {
+        fill: color-mix(in srgb, var(--nf-accent) 14%, transparent);
+        stroke: var(--nf-accent);
+        stroke-width: 2.5;
+      }
+      .nf-room-name {
+        fill: var(--nf-text);
+        font: 600 13px var(--nf-title-font);
+        text-anchor: middle;
+      }
+      .nf-room-area {
+        fill: var(--nf-muted);
+        font: 500 11.5px var(--nf-font);
+        text-anchor: middle;
+        font-variant-numeric: tabular-nums;
+      }
+      .nf-dim {
+        fill: var(--nf-accent);
+        font: 600 11.5px var(--nf-font);
+        text-anchor: middle;
+        font-variant-numeric: tabular-nums;
+        paint-order: stroke;
+        stroke: var(--nf-bg);
+        stroke-width: 3px;
+      }
+      .nf-vertex circle:not(.nf-hit) {
+        fill: var(--nf-bg);
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-vertex-sel circle:not(.nf-hit) {
+        fill: var(--nf-accent);
+      }
+      .nf-vertex,
+      .nf-mid {
+        cursor: grab;
+      }
+      .nf-hit {
+        fill: transparent;
+      }
+      .nf-mid circle:not(.nf-hit) {
+        fill: color-mix(in srgb, var(--nf-soft) 35%, transparent);
+        stroke: var(--nf-soft);
+      }
+      .nf-mid path {
+        stroke: var(--nf-text);
+        stroke-width: 1.5;
+      }
+      .nf-draft {
+        fill: rgba(255, 181, 71, 0.08);
+        stroke: var(--nf-warm);
+        stroke-width: 2;
+        stroke-dasharray: 6 4;
+      }
+      polyline.nf-draft {
+        fill: none;
+      }
+      .nf-draft-pt {
+        fill: var(--nf-warm);
+      }
+      .nf-draft-first {
+        fill: transparent;
+        stroke: var(--nf-warm);
+        stroke-width: 2;
+      }
+      .nf-cursor {
+        fill: var(--nf-warm);
+      }
+      .nf-guide {
+        stroke: rgba(255, 95, 210, 0.55);
+        stroke-dasharray: 3 5;
+      }
+      .nf-snap {
+        fill: none;
+        stroke: #ff5fd2;
+        stroke-width: 2;
+      }
+      .nf-hint {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 8px;
+        margin: 0;
+        font-size: 12px;
+        color: var(--nf-muted);
+        pointer-events: none;
+      }
+      .nf-side {
+        border-left: 1px solid var(--nf-line);
+        background: var(--nf-chrome-solid);
+        overflow-y: auto;
+        padding: 12px 14px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        min-height: 0;
+      }
+      .nf-narrow .nf-side {
+        border-left: none;
+        border-top: 1px solid var(--nf-line);
+      }
+      h3,
+      summary {
+        margin: 0 0 8px;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--nf-muted);
+        font-weight: 600;
+      }
+      summary {
+        cursor: pointer;
+        margin: 0;
+      }
+      details[open] > summary {
+        margin-bottom: 8px;
+      }
+      .nf-floor-list,
+      .nf-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .nf-floor-list .nf-chip {
+        box-shadow: none;
+        border: 1px solid var(--nf-line);
+      }
+      .nf-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .nf-wide {
+        grid-column: 1 / -1;
+      }
+      .nf-room-list {
+        display: grid;
+        gap: 2px;
+      }
+      .nf-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font: inherit;
+        color: var(--nf-text);
+        background: none;
+        border: none;
+        border-bottom: 1px solid var(--nf-line);
+        padding: 9px 2px;
+        cursor: pointer;
+        text-align: left;
+      }
+      .nf-row:hover {
+        color: var(--nf-accent);
+      }
+      .nf-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--nf-muted);
+      }
+      .nf-check input {
+        accent-color: var(--nf-accent);
+      }
+      .nf-meter rect {
+        fill: #2a2a10;
+        stroke: #ffc633;
+        stroke-width: 1.5;
+      }
+      .nf-meter path {
+        fill: #ffc633;
+      }
+      .nf-packages {
+        display: grid;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .nf-packages .nf-btn {
+        display: grid;
+        text-align: left;
+        gap: 2px;
+      }
+      .nf-packages .nf-btn span {
+        font-weight: 400;
+        font-size: 12px;
+        color: var(--nf-muted);
+      }
+      .nf-arrows {
+        display: grid;
+        grid-template-columns: repeat(3, 52px);
+        grid-template-areas: ". up ." "left . right" ". down .";
+        gap: 6px;
+        justify-content: center;
+      }
+      .nf-arrows .nf-btn {
+        font-size: 20px;
+        padding: 6px 0;
+      }
+      .nf-arrow-up {
+        grid-area: up;
+      }
+      .nf-arrow-left {
+        grid-area: left;
+      }
+      .nf-arrow-right {
+        grid-area: right;
+      }
+      .nf-arrow-down {
+        grid-area: down;
+      }
+      .nf-measure-list {
+        margin: 8px 0;
+        padding-left: 22px;
+        color: var(--nf-muted);
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+      .nf-library {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .nf-library .nf-btn {
+        font-weight: 500;
+        font-size: 13px;
+      }
+      /* the background picture while it is edited: a dashed frame and a corner handle */
+      .nf-bg-frame {
+        fill: none;
+        stroke: var(--nf-accent);
+        stroke-width: 1.5;
+        stroke-dasharray: 6 4;
+        pointer-events: none;
+      }
+      .nf-bg-handle {
+        fill: var(--nf-accent);
+        stroke: #041018;
+        stroke-width: 2;
+        cursor: nwse-resize;
+      }
+      .nf-furn-body {
+        fill: color-mix(in srgb, var(--nf-soft) 10%, transparent);
+        stroke: color-mix(in srgb, var(--nf-soft) 55%, transparent);
+        stroke-width: 1.2;
+        vector-effect: non-scaling-stroke;
+        cursor: grab;
+      }
+      .nf-furn-sym * {
+        fill: none;
+        stroke: rgba(150, 175, 255, 0.55);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+        pointer-events: none;
+      }
+      .nf-furn-sym .nf-sym-fill {
+        fill: color-mix(in srgb, var(--nf-soft) 28%, transparent);
+      }
+      .nf-furn-sym .nf-sym-strong {
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-out polygon {
+        fill: color-mix(in srgb, var(--nf-soft) 6%, transparent);
+        stroke: color-mix(in srgb, var(--nf-soft) 40%, transparent);
+        stroke-width: 1;
+        stroke-dasharray: 4 3;
+        cursor: grab;
+      }
+      .nf-out-lawn polygon,
+      .nf-out-bed polygon,
+      .nf-out-wild polygon,
+      .nf-out-hedge polygon {
+        fill: rgba(61, 224, 160, 0.1);
+        stroke: rgba(61, 224, 160, 0.5);
+      }
+      .nf-out-pool polygon {
+        fill: color-mix(in srgb, var(--nf-accent) 18%, transparent);
+        stroke: var(--nf-accent);
+      }
+      .nf-out-terrace polygon {
+        fill: rgba(150, 130, 255, 0.12);
+      }
+      .nf-free-wall {
+        cursor: grab;
+      }
+      .nf-vertex-no {
+        fill: var(--nf-accent);
+        font-size: 11px;
+        font-weight: 700;
+        pointer-events: none;
+      }
+      .nf-edge-box {
+        margin: 12px 0;
+        padding: 10px 12px;
+        border: 1px solid color-mix(in srgb, var(--nf-accent) 45%, transparent);
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--nf-accent) 6%, transparent);
+      }
+      .nf-edge-box h4 {
+        margin: 0 0 4px;
+        color: var(--nf-accent);
+        font-size: 13px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      /* a wall row: name and length, the height, then the buttons (full height, no wall, cut) in one line;
+         a split point gets a line of its own below */
+      .nf-edge-height {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: end;
+        padding: 4px 6px;
+        margin: 0 -6px;
+        border-radius: 8px;
+      }
+      .nf-edge-height > span:first-child {
+        flex: 1 1 84px;
+        min-width: 84px;
+      }
+      .nf-edge-height > .nf-field {
+        flex: 1 1 90px;
+        min-width: 0;
+      }
+      .nf-edge-height > .nf-muted {
+        flex: 1 1 90px;
+        align-self: center;
+      }
+      .nf-edge-height > .nf-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .nf-edge-height > .nf-split-row {
+        flex: 1 1 100%;
+        display: flex;
+        gap: 6px;
+        align-items: end;
+      }
+      .nf-edge-height > .nf-split-row > .nf-field {
+        flex: 1;
+      }
+      .nf-edge-on {
+        background: color-mix(in srgb, var(--nf-accent) 14%, transparent);
+      }
+      .nf-edge-low b {
+        color: var(--nf-accent);
+      }
+      .nf-wall-low {
+        opacity: 0.55;
+      }
+      .nf-dev-source {
+        display: flex;
+        margin: 8px 0;
+      }
+      .nf-dev-source button {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 6px 4px;
+        font-size: 12px;
+        line-height: 1.2;
+        white-space: normal;
+        text-align: center;
+        border-radius: 10px;
+      }
+      .nf-place-all {
+        margin: 10px 0 0;
+      }
+      .nf-roof-sec polygon {
+        fill: color-mix(in srgb, #ffb547 10%, transparent);
+        stroke: #ffb547;
+        stroke-width: 2;
+        stroke-dasharray: 8 6;
+        cursor: move;
+      }
+      .nf-roof-sel polygon {
+        fill: color-mix(in srgb, var(--nf-accent) 14%, transparent);
+        stroke: var(--nf-accent);
+        stroke-dasharray: none;
+      }
+      /* solar modules: dark blue panes with a light frame, so they do not look like a selected room */
+      .nf-roofwin polygon {
+        fill: color-mix(in srgb, #2b6b8f 70%, transparent);
+        stroke: #e3e9f5;
+        stroke-width: 2;
+        cursor: move;
+      }
+      .nf-roofwin-sel polygon {
+        stroke: #ffd75a;
+      }
+      .nf-tool-energy .nf-roof-layer {
+        opacity: 0.45;
+      }
+      .nf-tool-energy .nf-energy-item {
+        pointer-events: auto;
+      }
+      .nf-energy-marker {
+        cursor: move;
+      }
+      .nf-checklist .nf-chk {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin: 2px 0;
+        padding: 6px 8px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .nf-checklist .nf-chk:hover {
+        background: rgba(127, 127, 127, 0.12);
+      }
+      .nf-checklist .nf-chk span {
+        width: 18px;
+        text-align: center;
+        font-weight: 700;
+      }
+      .nf-chk-ok span {
+        color: #59ff8c;
+      }
+      .nf-chk-todo span {
+        color: #ffc633;
+      }
+      .nf-chk-opt {
+        opacity: 0.75;
+      }
+      .nf-teaser-on {
+        border-color: rgba(89, 255, 140, 0.5);
+      }
+      .nf-teaser {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid color-mix(in srgb, #ffd75a 45%, transparent);
+        background: linear-gradient(160deg, color-mix(in srgb, #ffd75a 10%, transparent), transparent 60%);
+      }
+      .nf-teaser-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .nf-teaser-soon {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--nf-chrome-solid);
+        background: #ffd75a;
+        border-radius: 999px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .nf-teaser img {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid color-mix(in srgb, var(--nf-accent) 40%, transparent);
+      }
+      .nf-teaser ul {
+        margin: 8px 0 4px;
+        padding-left: 18px;
+        font-size: 13px;
+      }
+      /* the roof and energy tools say what can be moved there (everything else is locked) */
+      .nf-tool-note {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        max-width: calc(100% - 24px);
+        padding: 5px 12px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--nf-chrome-solid) 85%, transparent);
+        border: 1px solid color-mix(in srgb, #ffd75a 60%, transparent);
+        color: #ffe7a3;
+        font-size: 12px;
+        text-align: center;
+        pointer-events: none;
+      }
+      .nf-energy-marker circle {
+        fill: color-mix(in srgb, var(--nf-chrome-solid) 80%, transparent);
+        stroke: #ffd75a;
+        stroke-width: 2;
+      }
+      .nf-energy-marker-sel circle {
+        stroke: var(--nf-accent);
+        stroke-width: 3;
+        fill: color-mix(in srgb, var(--nf-accent) 25%, var(--nf-chrome-solid));
+      }
+      .nf-energy-marker text {
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .nf-energy-icon {
+        font-size: 17px;
+      }
+      .nf-energy-name {
+        font-size: 11px;
+        font-weight: 700;
+        fill: #ffd75a;
+        paint-order: stroke;
+        stroke: rgba(0, 0, 0, 0.65);
+        stroke-width: 3px;
+      }
+      .nf-solar polygon {
+        fill: color-mix(in srgb, #1b3a8f 75%, transparent);
+        stroke: #9fb8ff;
+        stroke-width: 1.5;
+        cursor: move;
+      }
+      .nf-solar-sel polygon {
+        fill: color-mix(in srgb, #1b3a8f 80%, transparent);
+        stroke: #ffd75a;
+        stroke-width: 2;
+      }
+      .nf-solar polygon.nf-solar-off {
+        fill: transparent;
+        stroke-dasharray: 4 4;
+        stroke-width: 1.5;
+      }
+      .nf-solar-pick polygon {
+        cursor: pointer;
+      }
+      .nf-roof-ridge line {
+        stroke: #ffb547;
+        stroke-width: 2.5;
+        pointer-events: none;
+      }
+      .nf-roof-sel .nf-roof-ridge line {
+        stroke: var(--nf-accent);
+      }
+      .nf-roof-sec text {
+        fill: #ffd28a;
+        font-size: 12px;
+        font-weight: 700;
+        text-anchor: middle;
+        paint-order: stroke;
+        stroke: rgba(0, 0, 0, 0.6);
+        stroke-width: 3px;
+        pointer-events: none;
+      }
+      .nf-tool-energy .nf-room,
+      .nf-tool-energy [data-furniture],
+      .nf-tool-energy [data-device],
+      .nf-tool-energy [data-opening],
+      .nf-tool-energy [data-free-wall],
+      .nf-tool-energy [data-outdoor],
+      .nf-tool-energy .nf-roof-layer,
+      .nf-tool-roof .nf-room,
+      .nf-tool-roof [data-furniture],
+      .nf-tool-roof [data-device],
+      .nf-tool-roof [data-opening],
+      .nf-tool-roof [data-free-wall],
+      .nf-tool-roof [data-outdoor] {
+        pointer-events: none;
+      }
+      .nf-dev-area {
+        margin: 10px 0 2px;
+        color: var(--nf-muted);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .nf-h3row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .nf-h3row h3 {
+        margin-bottom: 0;
+      }
+      .nf-fix {
+        min-height: 30px;
+        padding: 4px 10px;
+        font-size: 13px;
+      }
+      .nf-fix[aria-pressed="true"] {
+        border-color: var(--nf-accent);
+        color: var(--nf-accent);
+      }
+      .nf-lock {
+        font-size: 13px;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .nf-hint-fixed {
+        color: var(--nf-accent);
+      }
+      .nf-ctx {
+        position: absolute;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        min-width: 170px;
+        padding: 4px;
+        border: 1px solid var(--nf-line);
+        border-radius: 10px;
+        background: var(--nf-panel, #111a2e);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      }
+      .nf-ctx button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 7px;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      .nf-ctx button:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+      }
+      .nf-ctx button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .nf-ctx-danger {
+        color: var(--nf-danger, #ff6b7a) !important;
+      }
+      .nf-edge-hi {
+        stroke: var(--nf-accent);
+        stroke-width: 6;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 6px var(--nf-accent));
+      }
+      .nf-free-wall .nf-hit {
+        stroke: transparent;
+        stroke-width: 18;
+      }
+      .nf-free-wall-line {
+        stroke: transparent;
+        stroke-width: 1;
+      }
+      .nf-free-wall-sel .nf-free-wall-line {
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+        stroke-dasharray: 6 4;
+      }
+      .nf-draft-wall {
+        stroke-width: 4;
+      }
+      .nf-open-passage {
+        stroke-dasharray: 4 4;
+      }
+      .nf-out-sel polygon {
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+        stroke-dasharray: none;
+      }
+      .nf-out text {
+        fill: var(--nf-muted);
+        font-size: 11px;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .nf-furn-lit .nf-furn-body {
+        fill: rgba(255, 181, 71, 0.35);
+        stroke: var(--nf-warm);
+      }
+      .nf-rotate {
+        cursor: grab;
+      }
+      .nf-preview {
+        position: fixed;
+        z-index: 20;
+        width: 180px;
+        padding: 8px 8px 10px;
+        border-radius: 16px;
+        background: var(--nf-bg2);
+        box-shadow: var(--nf-shadow), 0 0 0 1px var(--nf-line);
+        text-align: center;
+        pointer-events: none;
+        animation: nf-pop 120ms ease-out;
+      }
+      @keyframes nf-pop {
+        from {
+          opacity: 0;
+          transform: translateX(8px);
+        }
+      }
+      .nf-preview img,
+      .nf-preview-wait {
+        display: block;
+        width: 164px;
+        height: 164px;
+      }
+      .nf-preview-wait {
+        margin: 0 auto;
+        border-radius: 12px;
+        background: rgba(127, 127, 127, 0.1);
+      }
+      .nf-preview b {
+        display: block;
+        margin-top: 2px;
+        font-size: 13px;
+        color: #e8eeff;
+      }
+      .nf-lib-badge {
+        margin-left: 4px;
+        color: var(--nf-accent);
+        vertical-align: -2px;
+      }
+      .nf-ext-teaser {
+        display: grid;
+        gap: 6px;
+        margin: 12px 0;
+        padding: 12px;
+        border: 1px solid var(--nf-accent);
+        border-radius: 12px;
+        background: linear-gradient(135deg, color-mix(in srgb, var(--nf-accent) 8%, transparent), color-mix(in srgb, var(--nf-soft) 8%, transparent));
+      }
+      .nf-pin {
+        border: 0;
+        background: none;
+        padding: 2px 6px;
+        font-size: 17px;
+        line-height: 1;
+        color: var(--nf-muted);
+        cursor: pointer;
+      }
+      .nf-pin-on {
+        color: var(--nf-warm);
+      }
+      .nf-back {
+        margin-bottom: 12px;
+      }
+      .nf-presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .nf-resize {
+        cursor: nwse-resize;
+      }
+      .nf-resize rect {
+        fill: var(--nf-accent);
+        stroke: var(--nf-chrome-solid);
+        stroke-width: 1.5;
+      }
+      .nf-code {
+        display: block;
+        font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: rgba(127, 127, 127, 0.12);
+        user-select: all;
+        word-break: break-all;
+      }
+      .nf-shift {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .nf-shift input {
+        width: 5.5em;
+      }
+      .nf-headroom {
+        stroke: rgba(255, 214, 90, 0.55);
+        stroke-width: 1;
+        stroke-dasharray: 6 4;
+        pointer-events: none;
+      }
+      .nf-headroom-label {
+        font-size: 10px;
+        fill: rgba(255, 214, 90, 0.75);
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .nf-split-mark {
+        stroke: color-mix(in srgb, var(--nf-accent) 90%, transparent);
+        stroke-width: 2;
+        pointer-events: none;
+      }
+      .nf-floor-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(127, 127, 127, 0.1);
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .nf-icon-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nf-icon-row input {
+        flex: 1;
+        min-width: 0;
+      }
+      .nf-icon-row ha-icon {
+        --mdc-icon-size: 22px;
+        color: var(--nf-accent);
+      }
+      .nf-floor-menu .nf-btn {
+        text-align: left;
+        width: 100%;
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      .nf-rotate line {
+        stroke: var(--nf-accent);
+        stroke-dasharray: 3 3;
+      }
+      .nf-rotate circle:not(.nf-hit) {
+        fill: var(--nf-chrome-solid);
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-rotate path {
+        fill: none;
+        stroke: var(--nf-accent);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
+      .nf-lib-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        padding: 6px 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        cursor: pointer;
+        text-align: left;
+      }
+      .nf-lib-toggle:hover {
+        color: var(--nf-text);
+      }
+      .nf-lib-caret {
+        width: 12px;
+        color: var(--nf-accent);
+      }
+      .nf-lib-count {
+        margin-left: auto;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+        opacity: 0.7;
+      }
+      .nf-lib-head {
+        margin: 10px 0 0;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--nf-muted);
+      }
+      .nf-furn-front {
+        stroke: var(--nf-accent);
+        stroke-width: 2.5;
+        vector-effect: non-scaling-stroke;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+      .nf-furn text {
+        fill: var(--nf-muted);
+        font-size: 11px;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+      .nf-furn-sel .nf-furn-body {
+        fill: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-open {
+        cursor: grab;
+      }
+      .nf-open-gap {
+        fill: var(--nf-chrome-solid);
+        stroke: none;
+      }
+      .nf-open path,
+      .nf-open line {
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+      }
+      .nf-open-door path {
+        stroke: var(--nf-warm);
+        stroke-dasharray: 3 3;
+      }
+      .nf-open-front path,
+      .nf-open-door line {
+        stroke: var(--nf-warm);
+        stroke-width: 3;
+        stroke-dasharray: none;
+      }
+      .nf-open-door line.nf-open-pane {
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-open-garage line {
+        stroke: var(--nf-warm);
+        stroke-width: 3;
+      }
+      .nf-open-track {
+        stroke: var(--nf-warm);
+        stroke-dasharray: 4 4;
+        opacity: 0.6;
+      }
+      .nf-open-window line {
+        stroke: var(--nf-accent);
+        stroke-width: 2;
+      }
+      .nf-open-sel .nf-open-gap {
+        fill: color-mix(in srgb, var(--nf-accent) 25%, transparent);
+      }
+      .nf-open-sel path,
+      .nf-open-sel line {
+        stroke-width: 2.4;
+      }
+      .nf-bg-rotate {
+        cursor: grab;
+      }
+      .nf-bg-ruler line {
+        stroke: #ffb020;
+        stroke-width: 2.5;
+        stroke-dasharray: 6 4;
+      }
+      .nf-bg-ruler circle {
+        fill: #ffb020;
+        stroke: #1a1000;
+        stroke-width: 1.5;
+      }
+      .nf-own-button {
+        padding: 10px 0;
+        border-top: 1px solid var(--nf-line);
+      }
+      .nf-own-button textarea {
+        font: 12px/1.4 ui-monospace, monospace;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px 8px;
+        color: var(--nf-text);
+        background: color-mix(in srgb, var(--nf-text) 4%, transparent);
+        border: 1px solid var(--nf-line);
+        border-radius: 8px;
+      }
+      .nf-search {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--nf-panel, #0d1424);
+        width: 100%;
+        box-sizing: border-box;
+        font: inherit;
+        font-size: 14px;
+        color: var(--nf-text);
+        background: color-mix(in srgb, var(--nf-text) 4%, transparent);
+        border: 1px solid var(--nf-line);
+        border-radius: 8px;
+        padding: 7px 9px;
+        margin: 2px 0 6px;
+      }
+      .nf-more {
+        font: inherit;
+        font-size: 12px;
+        color: var(--nf-muted);
+        background: none;
+        border: none;
+        text-align: left;
+        padding: 2px 26px 8px;
+        cursor: pointer;
+      }
+      .nf-more:hover {
+        color: var(--nf-accent);
+      }
+      .nf-dev-hidden .nf-dev-name {
+        opacity: 0.45;
+        text-decoration: line-through;
+      }
+      .nf-dev-extra {
+        padding-left: 18px;
+        font-size: 13px;
+      }
+      .nf-dev-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 8px;
+        font-weight: 600;
+      }
+      .nf-notice {
+        color: var(--nf-accent);
+      }
+      .nf-device-sel circle:not(.nf-hit) {
+        stroke: var(--nf-accent);
+        stroke-width: 3;
+      }
+      .nf-dev-row {
+        align-items: center;
+        cursor: default;
+      }
+      .nf-dev-row:hover {
+        color: var(--nf-text);
+      }
+      .nf-dev-name {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: none;
+        padding: 0;
+        text-align: left;
+        cursor: pointer;
+      }
+      .nf-dev-name:disabled {
+        cursor: default;
+      }
+      .nf-dev-name span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .nf-dev-name svg {
+        flex: none;
+      }
+      .nf-link {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--nf-accent);
+        background: none;
+        border: none;
+        padding: 4px 2px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .nf-wide-btn {
+        width: 100%;
+        margin-bottom: 6px;
+      }
+      .nf-device {
+        cursor: grab;
+      }
+      .nf-wedge path,
+      .nf-wedge circle:not(.nf-hit) {
+        fill: color-mix(in srgb, var(--nf-accent) 12%, transparent);
+        stroke: color-mix(in srgb, var(--nf-accent) 45%, transparent);
+        stroke-width: 1;
+        pointer-events: none;
+      }
+      .nf-wedge-sel path,
+      .nf-wedge-sel > circle {
+        fill: color-mix(in srgb, var(--nf-accent) 20%, transparent);
+        stroke: var(--nf-accent);
+      }
+      .nf-wedge .nf-rotate circle {
+        pointer-events: auto;
+      }
+      .nf-device circle:not(.nf-hit) {
+        fill: #111a2e;
+        stroke: var(--nf-soft);
+        stroke-width: 1.5;
+        vector-effect: non-scaling-stroke;
+      }
+      .nf-device path {
+        fill: none;
+        stroke: var(--nf-text);
+        stroke-width: 2.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .nf-device-on circle:not(.nf-hit) {
+        fill: var(--nf-warm);
+        stroke: var(--nf-warm);
+      }
+      .nf-device-on path {
+        stroke: #2a1a00;
+      }
+      .nf-muted {
+        color: var(--nf-muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .nf-points {
+        margin: 12px 0;
+      }
+      .nf-point {
+        display: grid;
+        grid-template-columns: 18px 1fr 1fr auto;
+        gap: 6px;
+        align-items: end;
+        padding: 4px 0;
+      }
+      .nf-point-sel .nf-muted {
+        color: var(--nf-accent);
+      }
+      .nf-point .nf-btn {
+        min-height: 34px;
+        padding: 4px 10px;
+      }
+      .nf-upload {
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+      }
+      .nf-upload input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .nf-sub {
+        margin: 8px 0 0;
+        font-size: 12.5px;
+        color: var(--nf-muted);
+      }
+      .nf-note {
+        margin: 0;
+        font-size: 12.5px;
+        color: var(--nf-warm);
+      }
+    `]};customElements.get("nf-editor")||customElements.define("nf-editor",Jn);function Gt(o){return o.toLowerCase().normalize("NFD").replace(new RegExp("\\p{M}","gu"),"")}var bs={language:"en"};function ie(o){return/^(sensor|input_number|number)\./.test(o)}function vs(o){return/^(binary_sensor|input_boolean)\./.test(o)}export{Jn as NfEditor};
+/*! Bundled license information:
+
+@lit/reactive-element/css-tag.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+
+@lit/reactive-element/reactive-element.js:
+lit-html/lit-html.js:
+lit-element/lit-element.js:
+lit-html/directive.js:
+lit-html/directives/unsafe-html.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+
+lit-html/is-server.js:
+  (**
+   * @license
+   * Copyright 2022 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   *)
+*/

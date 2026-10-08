@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Adds a sidebar page where you draw your home and see it in 3D."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor is already set up."
+    }
+  }
+}
