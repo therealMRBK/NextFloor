@@ -49,7 +49,7 @@ entfernen, und ein importiertes Pack darf nicht dieselbe ID haben.
 
 - `size`: Standardgröße in Metern (Breite, Tiefe, Höhe). Im Plan lässt sich jedes Möbel danach frei
   skalieren; alle Teile wachsen mit.
-- `parts` (max. 60): `box`, `cyl` oder `loft`. Alle Maße sind **Anteile der Möbelgröße**: `x`/`z`
+- `parts` (max. 60): `box`, `cyl`, `loft` oder `sweep`. Alle Maße sind **Anteile der Möbelgröße**: `x`/`z`
   Mitte (−0,5 … 0,5, vorne ist +z), `w`/`d` Breite/Tiefe (0 … 1), `y` Unterkante und `h` Höhe (0 … 1
   der Höhe). Ein Zylinder hat den kleineren Wert von `w` und `d` als Durchmesser; mit `axis: "x"` oder
   `"z"` liegt er (Räder, Rollen – die Länge ist die Ausdehnung entlang der Achse, der Durchmesser der
@@ -59,6 +59,12 @@ entfernen, und ein importiertes Pack darf nicht dieselbe ID haben.
   Ein Teil mit `rot` (Grad) ist um seine eigene Mitte um die Hochachse gedreht – für Wendeltreppen
   oder diagonale Streben; ein schmaler `loft` mit versetzter Oberseite ergibt eine schräge Stange
   (Handlauf).
+- `sweep` (glatter Körper): Querschnitte entlang der Tiefe (z), zwischen denen die Haut gespannt wird – für alles
+  Runde wie Autos, Boote oder Kotflügel. `stations` ist eine Liste von `[z, unten, oben, breite]`: `z` Mitte des
+  Querschnitts (−0,5 … 0,5), `unten` und `oben` als Anteil der Höhe, `breite` als Anteil der Breite. `x` verschiebt den
+  Körper seitlich. `exp` formt den Querschnitt (2 = Ellipse, höhere Werte werden kantiger, Standard 2,6) und `n` ist die
+  Zahl der Punkte rundherum (6 … 32, Standard 16). Die Fahrzeuge des Packs „Fahrzeuge“ sind so gebaut, siehe
+  `tools/build_packs.py`.
 - `color`: `#rrggbb` oder eine Rolle der eingebauten Palette (`body`, `fabric`, `cushion`, `wood`,
   `white`, `metal`, `dark`, `glass`, `plant`, `pot`, `accent`) – Rollen passen zum Look. `top` setzt
   eine eigene Farbe für die Oberseite, `edges` zeichnet leuchtende Kanten (`true`: dezent blau,

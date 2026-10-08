@@ -138,3 +138,40 @@ async def test_import_list_and_remove(hass: HomeAssistant, hass_ws_client) -> No
     assert not (await client.receive_json())["success"]
     await client.send_json_auto_id({"type": "nextfloor/packs/list"})
     assert [p["id"] for p in (await client.receive_json())["result"]["packs"]] == builtin
+
+
+def _sweep_pack(stations):
+    item = {
+        "id": "boat",
+        "name": {"de": "Boot", "en": "Boat"},
+        "size": [2, 6, 1.5],
+        "parts": [
+            {
+                "shape": "sweep",
+                "x": 0,
+                "z": 0,
+                "w": 1,
+                "d": 1,
+                "y": 0,
+                "h": 1,
+                "color": "body",
+                "stations": stations,
+                "exp": 3,
+                "n": 12,
+            }
+        ],
+    }
+    return {**PAYLOAD, "items": [item]}
+
+
+def test_a_swept_body_needs_valid_stations() -> None:
+    ok = packs.validate_payload(_sweep_pack([[-0.5, 0, 0.3, 0.2], [0, 0, 0.6, 1], [0.5, 0.1, 0.3, 0.1]]))
+    assert ok["items"][0]["parts"][0]["stations"][1] == [0.0, 0.0, 0.6, 1.0]
+    for bad in ([[-0.5, 0, 0.3, 0.2]], [[-0.5, 0, 0.3, 0.2], [0.9, 0, 0.3, 0.2]], [[-0.5, 0, 0.3], [0, 0, 0.3, 0.2]]):
+        with pytest.raises(packs.PackError):
+            packs.validate_payload(_sweep_pack(bad))
+    # without stations it is no body at all
+    broken = _sweep_pack([[-0.5, 0, 0.3, 0.2], [0.5, 0, 0.3, 0.2]])
+    del broken["items"][0]["parts"][0]["stations"]
+    with pytest.raises(packs.PackError):
+        packs.validate_payload(broken)

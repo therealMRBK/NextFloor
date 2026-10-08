@@ -6,8 +6,8 @@ import { builtinBase, ELECTRIC_FURNITURE, FURNITURE_SIZE, surfaceHeight, WALL_LA
 import type { LampModel } from "./viewer/viewer3d.ts";
 
 export interface PackPart {
-  /** A box, a cylinder, or a loft: a box whose top face is another rectangle (sloped sides). */
-  shape: "box" | "cyl" | "loft";
+  /** A box, a cylinder, a loft (a box whose top face is another rectangle) or a sweep (a smooth body along z). */
+  shape: "box" | "cyl" | "loft" | "sweep";
   /** Centre across and in depth (fractions -0.5..0.5 of the item's width and depth, front at +z). */
   x: number;
   z: number;
@@ -33,6 +33,11 @@ export interface PackPart {
   td?: number;
   /** Cylinder axis: upright (y, default) or lying along x or z (wheels, pipes, rollers). */
   axis?: "x" | "y" | "z";
+  /** Sweep: cross sections along z as [z, bottom, top, width] in fractions of the item's depth, height and width. */
+  stations?: [number, number, number, number][];
+  /** Sweep: how boxy the cross section is (2 = ellipse) and how many points go round it. */
+  exp?: number;
+  n?: number;
   /** Turn of the part around its own centre (degrees around the vertical axis). */
   rot?: number;
 }

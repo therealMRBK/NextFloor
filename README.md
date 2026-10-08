@@ -26,7 +26,8 @@ NextFloor sits in Home Assistant like one of its own pages: it takes the colours
 |---|---|
 | ![Editor](docs/images/editor.jpg) | **Plan editor in Home Assistant**: floors, rooms as rectangles or free shapes, automatic walls and free-standing partitions, doors, windows, garage doors, stairs, floor openings, outdoor areas and a roof. The 3D view runs next to the plan while you draw. |
 | ![Room](docs/images/view-room.jpg) | **Live 3D view**: tap a lamp to switch it, swipe to dim, long press for colours. Blinds follow their position, windows tilt and open, doors swing. A room panel lists everything in the room's area. |
-| ![Furniture](docs/images/editor-furniture.jpg) | **Furniture and lamps**: 40 basic models plus 10 built-in packs with about 100 more (living, kitchen, bath, bedroom, home cinema, office and homelab, fitness, garden, energy, vehicles). Lamps light their room in their own colour; TVs, washing machines and radiators glow while they run. |
+| ![Furniture](docs/images/editor-furniture.jpg) | **Furniture and lamps**: 40 basic models plus 10 built-in packs with over 100 more (living, kitchen, bath, bedroom, home cinema, office and homelab, fitness, garden, energy, and vehicles with the Tesla models). Lamps light their room in their own colour; TVs, washing machines and radiators glow while they run. |
+| ![Tesla models](docs/images/vehicles-tesla.jpg) | **Vehicles**: Tesla Model S, 3, X, Y, Cybertruck, Roadster and Semi with their real outer dimensions, plus an electric SUV, a small car, a van, bikes and a trailer. Put one on a parking spot and its car card follows it. |
 | ![Floors](docs/images/view-stacked.jpg) | **Floors and looks**: open a single floor, stack them or cut the walls. Three looks (*Neon*, *Blueprint*, *Day*), a heatmap for temperature, humidity and CO₂, and sunlight through the windows from `sun.sun`. |
 | ![Tablet](docs/images/tablet.jpg) | **Wall tablet ready**: warnings for smoke, gas, water, alarm and windows open in the rain, a kiosk mode with idle return and night dimming, scene buttons, and a *Tablet* quality level for Fire tablets. |
 | ![Card](docs/images/card.jpg) | **Dashboard card**: `custom:nextfloor-card` with a visual editor, loaded automatically. |
@@ -129,4 +130,4 @@ npm run screenshot  # renders preview/index.html (invented demo data) with a loc
 
 MIT, see [LICENSE](LICENSE). NextFloor ships [three.js](https://threejs.org) (MIT), [Lit](https://lit.dev) (BSD-3-Clause); their notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-"Home Assistant" is a trademark of its owners. NextFloor is an independent community project and not affiliated with or endorsed by Nabu Casa.
+"Home Assistant" is a trademark of its owners; "Tesla" and the Tesla model names are trademarks of Tesla, Inc. and are used here only to name the vehicle models. NextFloor is an independent community project and not affiliated with or endorsed by Nabu Casa or Tesla.

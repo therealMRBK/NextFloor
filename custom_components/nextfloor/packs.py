@@ -29,11 +29,22 @@ _SPAN = vol.All(vol.Coerce(float), vol.Range(min=0.001, max=1))
 _LEVEL = vol.All(vol.Coerce(float), vol.Range(min=0, max=1))
 _METRES = vol.All(vol.Coerce(float), vol.Range(min=0.01, max=10))
 
+
+def _station(value: Any) -> list[float]:
+    """A cross section of a sweep: [z, bottom, top, width] in fractions of the item's depth, height and width."""
+    if not isinstance(value, (list, tuple)) or len(value) != 4:
+        raise vol.Invalid("a station is [z, bottom, top, width]")
+    z, y0, y1, w = (float(v) for v in value)
+    if not (-0.5 <= z <= 0.5 and 0 <= y0 <= 1 and 0 <= y1 <= 1 and 0.001 <= w <= 1):
+        raise vol.Invalid("station out of range")
+    return [z, y0, y1, w]
+
+
 # Parts in fractions of the item's size: x/z centre (-0.5..0.5, front at +z), w/d extent, y/h bottom
 # and height of the item height. A cylinder's diameter is the smaller of w and d.
 PART_SCHEMA = vol.Schema(
     {
-        vol.Required("shape"): vol.In(["box", "cyl", "loft"]),
+        vol.Required("shape"): vol.In(["box", "cyl", "loft", "sweep"]),
         vol.Required("x"): _FRACTION,
         vol.Required("z"): _FRACTION,
         vol.Required("w"): _SPAN,
@@ -53,6 +64,11 @@ PART_SCHEMA = vol.Schema(
         vol.Optional("tz"): _FRACTION,
         vol.Optional("tw"): _SPAN,
         vol.Optional("td"): _SPAN,
+        # sweep: cross sections along z, each [z, bottom, top, width] in fractions of the item's depth, height, width
+        vol.Optional("stations"): vol.All([_station], vol.Length(min=2, max=48)),
+        # sweep: how boxy the cross section is (2 = ellipse) and how many points go round it
+        vol.Optional("exp"): vol.All(vol.Coerce(float), vol.Range(min=1.5, max=8)),
+        vol.Optional("n"): vol.All(vol.Coerce(int), vol.Range(min=6, max=32)),
         # cylinder axis: upright (default) or lying along x or z (wheels, rollers)
         vol.Optional("axis"): vol.In(["x", "y", "z"]),
         # turn of the part around its own centre (degrees around the vertical axis): spiral steps, diagonals
@@ -140,6 +156,13 @@ class PackError(Exception):
         self.detail = detail
 
 
+def _sweeps_have_stations(clean: dict[str, Any]) -> None:
+    for item in clean["items"]:
+        for part in item["parts"]:
+            if part["shape"] == "sweep" and not part.get("stations"):
+                raise PackError("invalid_content", f"{item['id']}: a sweep needs stations")
+
+
 def validate_payload(payload: Any) -> dict[str, Any]:
     """Check the content of a pack; raises PackError."""
     try:
@@ -152,6 +175,7 @@ def validate_payload(payload: Any) -> dict[str, Any]:
     ids = [item["id"] for item in clean["items"]]
     if len(ids) != len(set(ids)):
         raise PackError("invalid_content", "item ids must be unique")
+    _sweeps_have_stations(clean)
     return clean
 
 

@@ -52,7 +52,15 @@ const shots = [
   { name: "view-floor-eg", query: "?pv=5400&flows", width: 1280, height: 800, click: "Erdgeschoss" },
   { name: "view-room", query: "", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
   { name: "view-stacked", query: "", width: 1280, height: 800, click: "Gestapelt" },
-  { name: "view-room-light", query: "", ha: "light", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
+  ...["tesla_model_s", "tesla_model_3", "tesla_model_x", "tesla_model_y", "tesla_cybertruck", "tesla_roadster", "tesla_semi"].flatMap((id, i) =>
+    [["a", -0.9, 0.95], ["b", 0.6, 0.55], ["c", 3.14, 1.15]].map(([k, theta, phi]) => ({
+      name: `car-${i}${k}`, dev: true, query: "?cars", width: 760, height: 520,
+      viewScript: `document.querySelector("nextfloor-panel")._clean = true; const w = v.viewer.getView(); w.target.set(${1.9 + i * 3.4}, 0.7, 3.5); w.theta = ${theta}; w.phi = ${phi}; w.radius = ${i === 6 ? 13 : 8.5}; v.viewer.flyTo(w, 1);`,
+    })),
+  ),
+  { name: "cars-plan", dev: true, query: "?cars", width: 1500, height: 700, editor: true, editorScript: "e.fit();" },
+  { name: "cars-3q", dev: true, query: "?cars", width: 1500, height: 640, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(12, 0.5, 3.5); w.theta = -0.35; w.phi = 1.0; w.radius = 19; v.viewer.flyTo(w, 1);" },
+      { name: "view-room-light", query: "", ha: "light", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
   { name: "card-light", query: "?card", ha: "light", width: 1400, height: 820 },
   { name: "view-day", query: "", width: 1280, height: 800, click: "Tag" },
   { name: "view-blueprint", query: "", width: 1280, height: 800, click: "Blueprint" },
@@ -81,7 +89,7 @@ const shots = [
 
 const errors = [];
 const only = process.env.SHOTS?.split(",");
-for (const shot of shots.filter((s) => !only || only.includes(s.name))) {
+for (const shot of shots.filter((s) => (only ? only.includes(s.name) : !s.dev))) {
   const page = await browser.newPage();
   page.on("pageerror", (e) => errors.push(`${shot.name}: ${e.message}`));
   page.on("console", (m) => m.type() === "error" && !m.location()?.url?.endsWith("favicon.ico") && errors.push(`${shot.name}: ${m.text()}`));

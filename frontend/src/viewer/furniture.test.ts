@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import type { Furniture } from "../model.ts";
 import { mountBase, setPacks, type FurniturePack } from "../packs.ts";
@@ -123,3 +124,25 @@ test("a mirrored pack lamp is drawn mirrored and still faces outwards", async ()
 function near2(a: number, b: number) {
   assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
 }
+
+test("every vehicle of the vehicles pack builds finite geometry inside its size, the smooth bodies included", () => {
+  const pack = JSON.parse(readFileSync(new URL("../../../custom_components/nextfloor/packs/nextfloor.fahrzeuge.json", import.meta.url), "utf8")) as FurniturePack;
+  setPacks([pack]);
+  for (const it of pack.items) {
+    const f: Furniture = { id: "f", type: `pack:${pack.id}:${it.id}`, x: 0, z: 0, rotation: 0, w: it.size[0], d: it.size[1], h: it.size[2], variant: null, entity: null, power: null };
+    const buf = new GeoBuffer();
+    pushFurniture(buf, new LineBuffer(), new GeoBuffer(), f);
+    assert.ok(buf.count > 30, `${it.id}: triangles`);
+    assert.ok(buf.p.every(Number.isFinite), `${it.id}: finite`);
+    const ys = buf.p.filter((_, i) => i % 3 === 1);
+    assert.ok(Math.min(...ys) >= -1e-6 && Math.max(...ys) <= it.size[2] + 1e-6, `${it.id}: within its height`);
+    const xs = buf.p.filter((_, i) => i % 3 === 0);
+    assert.ok(Math.max(...xs.map(Math.abs)) <= it.size[0] / 2 + 0.1, `${it.id}: within its width (wheels stand a hair outside)`);
+    const sweeps = it.parts.filter((p) => p.shape === "sweep");
+    if (sweeps.length) {
+      // the swept body adds a skin of triangles: at least stations x points x 2 per sweep
+      const need = sweeps.reduce((m, p) => m + ((p.stations?.length ?? 0) - 1) * (p.n ?? 16) * 2, 0);
+      assert.ok(buf.count >= need, `${it.id}: ${buf.count} triangles for ${need} expected from the sweeps`);
+    }
+  }
+});

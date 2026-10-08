@@ -8,7 +8,7 @@ import type { Furniture, Vec2 } from "../model.ts";
 import { builtinBase } from "../model.ts";
 import { mountBase, packItem, packScreen, type PackItem } from "../packs.ts";
 import type { Floor } from "../model.ts";
-import { ALWAYS, DEG, EDGE_TOP, GeoBuffer, LineBuffer, pushLoft, pushLyingCyl, pushPrism, shade } from "./geo.ts";
+import { ALWAYS, DEG, EDGE_TOP, GeoBuffer, LineBuffer, pushLoft, pushLyingCyl, pushPrism, pushSkin, shade } from "./geo.ts";
 
 const C = {
   body: 0x172238,
@@ -80,6 +80,38 @@ class Builder {
       for (let i = 0; i < 4; i++) {
         this.line(hi[i], hi[(i + 1) % 4], y1, y1, edges);
         this.line(lo[i], hi[i], y0, y1, edges);
+      }
+    }
+  }
+
+  /**
+   * A smooth body swept along z: at every station a rounded cross section from `y0` to `y1`, `hw` wide to each side
+   * of the centre `x` (cars, boats, anything with a curved hull). `exp` shapes the section: 2 is an ellipse, higher
+   * values get boxier. `edges` draws the ridge along the top.
+   */
+  sweep(stations: { x: number; z: number; y0: number; y1: number; hw: number }[], side: number, top = side, n = 16, exp = 2.6, edges: Color | null = null): void {
+    if (stations.length < 2) return;
+    const rings: number[][][] = stations.map((st) => {
+      const hh = Math.max(0.004, (st.y1 - st.y0) / 2);
+      const hw = Math.max(0.004, st.hw);
+      const ym = (st.y0 + st.y1) / 2;
+      const ring: number[][] = [];
+      for (let i = 0; i < n; i++) {
+        const t = (i / n) * Math.PI * 2;
+        const c = Math.cos(t);
+        const sn = Math.sin(t);
+        const [wx, wz] = this.tf(st.x + hw * Math.sign(c) * Math.abs(c) ** (2 / exp), st.z);
+        ring.push([wx, ym + hh * Math.sign(sn) * Math.abs(sn) ** (2 / exp), wz]);
+      }
+      return ring;
+    });
+    pushSkin(this.buf, rings, side, top);
+    if (edges) {
+      const ridge = Math.round(n / 4);
+      for (let s = 0; s + 1 < rings.length; s++) {
+        const a = rings[s][ridge];
+        const b = rings[s + 1][ridge];
+        this.lines.seg(a, b, edges, ALWAYS);
       }
     }
   }
@@ -1155,6 +1187,9 @@ function packModel(b: Builder, item: PackItem, w: number, d: number, h: number, 
       const tw = p.tw ?? p.w;
       const td = p.td ?? p.d;
       bb.loft([(p.x - p.w / 2) * w, (p.x + p.w / 2) * w, (p.z - p.d / 2) * d, (p.z + p.d / 2) * d], [(tx - tw / 2) * w, (tx + tw / 2) * w, (tz - td / 2) * d, (tz + td / 2) * d], y0, y1, side, top, edges);
+    } else if (p.shape === "sweep") {
+      const stations = (p.stations ?? []).map(([z, sy0, sy1, sw]) => ({ x: p.x * w, z: z * d, y0: base + sy0 * h, y1: base + sy1 * h, hw: (sw * w) / 2 }));
+      bb.sweep(stations, side, top, p.n ?? 16, p.exp ?? 2.6, edges);
     } else bb.box((p.x - p.w / 2) * w, (p.x + p.w / 2) * w, y0, y1, (p.z - p.d / 2) * d, (p.z + p.d / 2) * d, side, top, edges);
   }
 }

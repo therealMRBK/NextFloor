@@ -32,6 +32,20 @@
         localStorage.setItem("nextfloor.flows", params.has("flows") ? "1" : "0");
       } catch {}
       let building = params.has("empty") ? { version: 1, floors: [], settings: { wall_exterior: 0.24, wall_interior: 0.12, grid: 0.05 } } : DEMO_BUILDING;
+      if (params.has("cars")) {
+        // development view: the vehicles of the vehicles pack side by side on a plain floor (?cars)
+        const pack = await (await fetch("../custom_components/nextfloor/packs/nextfloor.fahrzeuge.json")).json();
+        const eg = structuredClone(DEMO_BUILDING.floors[0]);
+        const items = pack.items.filter((i) => i.id.startsWith(params.get("cars") || "tesla"));
+        const gap = 3.4;
+        eg.rooms = [{ ...eg.rooms[0], id: "room_cars", name: "Garage", area_id: null, points: [[0, 0], [items.length * gap + 0.6, 0], [items.length * gap + 0.6, 7], [0, 7]] }];
+        eg.openings = [];
+        eg.placements = [];
+        eg.outdoor = [];
+        eg.walls = [];
+        eg.furniture = items.map((it, i) => ({ id: `car${i}`, type: `pack:${pack.id}:${it.id}`, x: 1.9 + i * gap, z: 3.5, w: it.size[0], d: it.size[1], h: it.size[2], rotation: 0, variant: null }));
+        building = { ...DEMO_BUILDING, floors: [eg], settings: { ...DEMO_BUILDING.settings, roof: { type: "none" } } };
+      }
       let revision = 1;
       const images = { ...DEMO_PICTURES };
       const listeners = new Set();
@@ -41,19 +55,23 @@
       // furniture packs: the invented demo pack and the packs that come with NextFloor
       const BUILTIN = ["bad", "energie", "fahrzeuge", "fitness", "garten", "kino", "kueche", "schlafen", "technik", "wohnen"];
       let importedPacks = null;
-      async function previewPacks() {
-        if (importedPacks === null) {
-          importedPacks = [DEMO_PACK];
+      // one shared load: parallel callers must not see the list half filled
+      let packsLoad = null;
+      function previewPacks() {
+        packsLoad ??= (async () => {
+          const list = [DEMO_PACK];
           for (const name of BUILTIN) {
             try {
               const res = await fetch(`../custom_components/nextfloor/packs/nextfloor.${name}.json`);
-              if (res.ok) importedPacks.push({ licensee: null, builtin: true, ...(await res.json()) });
+              if (res.ok) list.push({ builtin: true, ...(await res.json()) });
             } catch {
               // served without the packs: the demo pack alone
             }
           }
-        }
-        return importedPacks;
+          importedPacks = list;
+          return list;
+        })();
+        return packsLoad.then(() => importedPacks);
       }
 
       const hass = {

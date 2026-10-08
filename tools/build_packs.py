@@ -1447,12 +1447,285 @@ pack(
     ],
 )
 
+
+# ------------------------------------------------------------------ Tesla (Maße in Metern)
+def curve(keys, smooth=True):
+    """A function through the (x, y) keys: smooth (monotone cubic, no overshoot) or straight between them."""
+    xs = [k[0] for k in keys]
+    ys = [k[1] for k in keys]
+    n = len(xs)
+    d = [(ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]) for i in range(n - 1)]
+    m = (
+        [d[0]]
+        + [0.0 if d[i - 1] * d[i] <= 0 else 2 * d[i - 1] * d[i] / (d[i - 1] + d[i]) for i in range(1, n - 1)]
+        + [d[-1]]
+    )
+
+    def f(x):
+        x = min(xs[-1], max(xs[0], x))
+        i = max(0, min(n - 2, next((j for j in range(n - 1) if x <= xs[j + 1]), n - 2)))
+        h = xs[i + 1] - xs[i]
+        t = (x - xs[i]) / h
+        if not smooth:
+            return ys[i] + (ys[i + 1] - ys[i]) * t
+        h00, h10, h01, h11 = 2 * t**3 - 3 * t**2 + 1, t**3 - 2 * t**2 + t, -2 * t**3 + 3 * t**2, t**3 - t**2
+        return h00 * ys[i] + h10 * h * m[i] + h01 * ys[i + 1] + h11 * h * m[i + 1]
+
+    return f
+
+
+class Car:
+    """Builds the parts of a vehicle in metres: x across, z along (front at +z), y up from the ground."""
+
+    def __init__(self, length, width, height):
+        self.L, self.W, self.H = length, width, height
+
+    def size(self):
+        return [self.W, self.L, self.H]
+
+    def body(
+        self, z0, z1, bottom, top, half_width, color, steps=22, exp=2.6, n=16, smooth=True, edges=False, glass=False
+    ):
+        """A smooth body from z0 to z1. bottom, top and half_width are (z, value) keys in metres."""
+        fb, ft, fw = curve(bottom, smooth), curve(top, smooth), curve(half_width, smooth)
+        zs = [z0 + (z1 - z0) * i / (steps - 1) for i in range(steps)]
+        stations = [
+            [
+                round(z / self.L, 4),
+                round(min(1.0, max(0.0, fb(z) / self.H)), 4),
+                round(min(1.0, max(fb(z) + 0.02, ft(z)) / self.H), 4),
+                round(min(1.0, 2 * fw(z) / self.W), 4),
+            ]
+            for z in zs
+        ]
+        part = {
+            "shape": "sweep",
+            "x": 0,
+            "z": round((z0 + z1) / 2 / self.L, 4),
+            "w": max(st[3] for st in stations),
+            "d": round(abs(z1 - z0) / self.L, 4),
+            "y": min(st[1] for st in stations),
+            "h": round(max(st[2] for st in stations) - min(st[1] for st in stations), 4),
+            "color": color,
+            "stations": stations,
+            "exp": exp,
+            "n": n,
+        }
+        if edges:
+            part["edges"] = True
+        return part
+
+    def box(self, x, zc, w, d, y0, y1, color, **kw):
+        return B(x / self.W, zc / self.L, w / self.W, d / self.L, y0 / self.H, (y1 - y0) / self.H, color, **kw)
+
+    def wheels(self, axles, dia, thick, dual=False):
+        """Tyre and rim on both sides of every axle (z in metres); the tyres stand a little outside the body."""
+        parts = []
+        for z in axles:
+            for sx in (-1, 1):
+                for k in (0, 1) if dual else (0,):
+                    x = sx * (self.W / 2 - thick / 2 + 0.06 - k * (thick + 0.03))
+                    parts.append(
+                        C(x / self.W, z / self.L, thick / self.W, dia / self.L, 0, dia / self.H, "#15171a", axis="x")
+                    )
+                    parts.append(
+                        C(
+                            (x + sx * (thick / 2 - 0.01)) / self.W,
+                            z / self.L,
+                            0.04 / self.W,
+                            dia * 0.62 / self.L,
+                            dia * 0.19 / self.H,
+                            dia * 0.62 / self.H,
+                            "#aeb6c0",
+                            axis="x",
+                        )
+                    )
+        return parts
+
+    def lights(self, y_front, y_rear, width_front, width_rear, h=0.05):
+        """A white light strip at the front and a red one at the back."""
+        return [
+            self.box(0, self.L / 2 - 0.01, width_front, 0.02, y_front, y_front + h, "#ffffff", glow=True),
+            self.box(0, -self.L / 2 + 0.01, width_rear, 0.02, y_rear, y_rear + h, "#ff2b2b", glow=True),
+        ]
+
+
+GLASS = "glass"
+STEEL = "#c5cad1"
+WHITE = "#eceff3"
+
+
+def tesla_sedan(
+    L, W, H, color, wheelbase, front_over, dia, belt, nose, tail, cab_front, cab_back, roof_a, roof_b, tail_drop
+):
+    """Model S, 3, Y, X and the Roadster: a smooth body and a glass cabin with a glass roof, on four wheels.
+
+    cab_front / cab_back: z of the windshield's and the rear window's base; the roof is flat between roof_a (front) and
+    roof_b (rear); tail_drop is how high the rear window ends above the belt line.
+    """
+    c = Car(L, W, H)
+    z_front = L / 2 - front_over
+    z_rear = z_front - wheelbase
+    ride = 0.15
+    end = 0.55
+    bottom = [(-L / 2, ride + 0.22), (-L / 2 + end, ride), (L / 2 - end, ride), (L / 2, ride + 0.2)]
+    top = [
+        (-L / 2, tail),
+        (-L / 2 + 0.25, belt - 0.02),
+        (cab_back, belt),
+        (cab_front, belt),
+        (cab_front + 0.55, belt - 0.04),
+        (L / 2 - 0.35, nose + 0.1),
+        (L / 2, nose),
+    ]
+    half = [
+        (-L / 2, W * 0.36),
+        (-L / 2 + 0.45, W * 0.47),
+        (-L / 2 + 1.1, W * 0.495),
+        (L / 2 - 1.1, W * 0.495),
+        (L / 2 - 0.45, W * 0.47),
+        (L / 2, W * 0.38),
+    ]
+    cabin_top = [
+        (cab_back - 0.05, belt + tail_drop),
+        (roof_b, H - 0.02),
+        (roof_a, H),
+        (cab_front - 0.3, H - 0.2),
+        (cab_front + 0.1, belt + 0.02),
+    ]
+    cabin_half = [
+        (cab_back - 0.05, W * 0.36),
+        (cab_back + 0.35, W * 0.44),
+        (cab_front - 0.4, W * 0.44),
+        (cab_front + 0.1, W * 0.38),
+    ]
+    return c, [
+        c.body(-L / 2 + 0.01, L / 2 - 0.01, bottom, top, half, color, edges=True),
+        c.body(
+            cab_back - 0.05,
+            cab_front + 0.1,
+            [(cab_back - 0.1, belt - 0.25), (cab_front + 0.1, belt - 0.25)],
+            cabin_top,
+            cabin_half,
+            GLASS,
+            steps=16,
+            exp=3.0,
+        ),
+        *c.wheels([z_front, z_rear], dia, 0.25),
+        *c.lights(belt - 0.36, belt - 0.3, W * 0.78, W * 0.8),
+    ]
+
+
+def tesla_cybertruck():
+    c = Car(5.68, 2.03, 1.79)
+    L = 5.68
+    ride = 0.3
+    # one straight wedge: from the nose up to the roof in a line, a short drop behind the cab, the flat bed
+    top = [(-L / 2, 1.32), (-1.0, 1.35), (-0.4, 1.79), (0.4, 1.79), (L / 2, 0.95)]
+    half = [(-L / 2, 0.98), (-1.0, 1.0), (1.0, 1.0), (L / 2, 0.9)]
+    # the glass runs over the whole front slope and the roof, a little above the steel so it shows
+    cab_top = [(-0.4, 1.81), (0.4, 1.81), (1.75, 1.36)]
+    return c, [
+        c.body(
+            -L / 2 + 0.01,
+            L / 2 - 0.01,
+            [(-L / 2, ride), (L / 2, ride)],
+            top,
+            half,
+            STEEL,
+            steps=10,
+            exp=6,
+            n=12,
+            smooth=False,
+            edges=True,
+        ),
+        c.body(
+            -0.4,
+            1.75,
+            [(-0.4, 1.1), (1.75, 1.1)],
+            cab_top,
+            [(-0.4, 0.8), (1.75, 0.78)],
+            GLASS,
+            steps=8,
+            exp=5,
+            n=12,
+            smooth=False,
+        ),
+        *c.wheels([1.77, -1.78], 0.88, 0.27),
+        c.box(0, L / 2 - 0.01, 1.7, 0.02, 1.0, 1.05, "#ffffff", glow=True),
+        c.box(0, -L / 2 + 0.01, 1.8, 0.02, 1.15, 1.2, "#ff2b2b", glow=True),
+    ]
+
+
+def tesla_semi():
+    c = Car(7.2, 2.55, 3.7)
+    L = 7.2
+    cab_top = [(0.0, 3.55), (1.1, 3.7), (2.3, 3.45), (3.1, 2.55), (3.6, 1.55)]
+    cab_half = [(0.0, 1.2), (1.5, 1.25), (3.0, 1.22), (3.6, 0.95)]
+    return c, [
+        c.box(0, -0.7, 1.1, 5.6, 0.55, 0.95, "#2b2f36"),
+        c.body(0.0, 3.6, [(0.0, 0.85), (3.6, 0.85)], cab_top, cab_half, WHITE, steps=14, exp=4.5, edges=True),
+        c.body(
+            1.9,
+            3.35,
+            [(1.9, 2.0), (3.35, 1.6)],
+            [(1.9, 3.45), (2.5, 3.5), (3.35, 2.1)],
+            [(1.9, 1.0), (3.35, 0.8)],
+            GLASS,
+            steps=8,
+            exp=4,
+        ),
+        c.box(0, -1.4, 1.0, 1.0, 0.95, 1.05, "#1b1d21"),
+        *c.wheels([2.4], 1.0, 0.3),
+        *c.wheels([-1.3, -2.55], 1.0, 0.3, dual=True),
+        c.box(0, L / 2 - 0.01, 1.9, 0.02, 0.95, 1.0, "#ffffff", glow=True),
+    ]
+
+
+def tesla_items():
+    out = []
+    models = [
+        (
+            "tesla_model_s",
+            "Tesla Model S",
+            tesla_sedan(4.98, 1.96, 1.44, "#f4f5f7", 2.96, 0.93, 0.70, 0.98, 0.62, 0.9, 0.95, -1.45, 0.1, -0.75, 0.18),
+        ),
+        (
+            "tesla_model_3",
+            "Tesla Model 3",
+            tesla_sedan(4.72, 1.85, 1.44, "#b3202c", 2.875, 0.85, 0.68, 0.95, 0.6, 0.95, 0.8, -1.35, 0.0, -0.8, 0.15),
+        ),
+        (
+            "tesla_model_x",
+            "Tesla Model X",
+            tesla_sedan(5.04, 2.0, 1.68, "#263b73", 2.96, 0.95, 0.74, 1.08, 0.7, 1.08, 0.85, -1.9, 0.25, -1.4, 0.2),
+        ),
+        (
+            "tesla_model_y",
+            "Tesla Model Y",
+            tesla_sedan(4.75, 1.92, 1.62, "#8d95a1", 2.89, 0.9, 0.72, 1.02, 0.66, 1.02, 0.82, -1.65, 0.15, -1.1, 0.25),
+        ),
+        ("tesla_cybertruck", "Tesla Cybertruck", tesla_cybertruck()),
+        (
+            "tesla_roadster",
+            "Tesla Roadster",
+            tesla_sedan(4.4, 1.98, 1.12, "#1f4fbf", 2.65, 0.85, 0.66, 0.74, 0.5, 0.78, 0.7, -0.85, -0.05, -0.5, 0.08),
+        ),
+        ("tesla_semi", "Tesla Semi", tesla_semi()),
+    ]
+    for id_, name, (car, parts) in models:
+        out.append(item(id_, name, name, car.size(), parts, vehicle=True, electric=True))
+    return out
+
+
 # ------------------------------------------------------------------ Fahrzeuge
 pack(
     "nextfloor.fahrzeuge",
     "Fahrzeuge",
-    "SUV (Elektro), Kleinwagen, Kombi, Fahrrad, E-Bike, Motorrad, Anhänger - für Stellplätze",
+    "Tesla Model S, 3, X, Y, Cybertruck, Roadster und Semi, Elektro-SUV, Kleinwagen, Kombi, Fahrrad, E-Bike, "
+    "Motorrad, Anhänger - für Stellplätze",
     [
+        *tesla_items(),
         item(
             "ev_suv",
             "Elektro-SUV (Model-Y-Größe)",

@@ -2,6 +2,11 @@
 
 All notable changes to NextFloor. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.2.0
+
+- **Tesla models in 3D:** Model S, 3, X, Y, Cybertruck, Roadster and Semi in the vehicles pack, with their real outer dimensions. Put one on a parking spot and the car card follows it.
+- **Smooth bodies for packs:** a new part shape, `sweep`, stretches a rounded skin over cross sections along the length. The Teslas are built with it; the format is described in [docs/packs.md](docs/packs.md).
+
 ## 0.1.0
 
 The first release.

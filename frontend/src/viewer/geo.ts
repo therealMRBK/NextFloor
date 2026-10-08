@@ -267,6 +267,76 @@ export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1:
   }
 }
 
+
+/**
+ * A smooth body: `rings` are cross sections along the body (every ring the same number of points, going round the
+ * section), joined into a skin with a shade per point from its own surface direction, so curves look round. Both
+ * ends are closed. The winding is fixed from the geometry, so mirrored items need no extra care.
+ */
+export function pushSkin(buf: GeoBuffer, rings: number[][][], side: number, top: number): void {
+  const S = rings.length;
+  if (S < 2) return;
+  const n = rings[0].length;
+  const topC = new Color(top);
+  const sub = (a: number[], b: number[]) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const cross = (a: number[], b: number[]) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const unit = (a: number[]) => {
+    const l = Math.hypot(a[0], a[1], a[2]) || 1;
+    return [a[0] / l, a[1] / l, a[2] / l];
+  };
+  const center = rings.map((r) => [0, 1, 2].map((k) => r.reduce((m, p) => m + p[k], 0) / n));
+  // an outward normal for every point of every ring
+  const normals = rings.map((ring, s) =>
+    ring.map((p, i) => {
+      const along = sub(rings[Math.min(S - 1, s + 1)][i], rings[Math.max(0, s - 1)][i]);
+      const around = sub(ring[(i + 1) % n], ring[(i + n - 1) % n]);
+      let nrm = unit(cross(along, around));
+      const out = sub(p, center[s]);
+      if (nrm[0] * out[0] + nrm[1] * out[1] + nrm[2] * out[2] < 0) nrm = [-nrm[0], -nrm[1], -nrm[2]];
+      return nrm;
+    }),
+  );
+  const colorOf = (p: number[], nrm: number[]) => {
+    const k = 0.5 + 0.5 * Math.min(1, Math.max(0, p[1] / 1.6));
+    const facing = (nrm[0] * LIGHT[0] + nrm[2] * LIGHT[1] + 1) / 2;
+    return shade(side, k * (0.8 + 0.28 * facing)).lerp(topC, Math.max(0, nrm[1]) * 0.9);
+  };
+  // pushes a triangle so that it faces `want` (the average outward normal)
+  const face = (a: number[], b: number[], c: number[], want: number[], ca: Color, cb: Color, cc: Color) => {
+    const g = cross(sub(b, a), sub(c, a));
+    if (g[0] * want[0] + g[1] * want[1] + g[2] * want[2] >= 0) buf.tri(a, b, c, ca, cb, cc);
+    else buf.tri(a, c, b, ca, cc, cb);
+  };
+  for (let s = 0; s + 1 < S; s++) {
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      const a = rings[s][i];
+      const b = rings[s][j];
+      const c = rings[s + 1][j];
+      const d = rings[s + 1][i];
+      const na = normals[s][i];
+      const nb = normals[s][j];
+      const nc = normals[s + 1][j];
+      const nd = normals[s + 1][i];
+      const ca = colorOf(a, na);
+      const cb = colorOf(b, nb);
+      const cc = colorOf(c, nc);
+      const cd = colorOf(d, nd);
+      const want = [na[0] + nb[0] + nc[0] + nd[0], na[1] + nb[1] + nc[1] + nd[1], na[2] + nb[2] + nc[2] + nd[2]];
+      face(a, b, c, want, ca, cb, cc);
+      face(a, c, d, want, ca, cc, cd);
+    }
+  }
+  for (const [s, dir] of [[0, -1], [S - 1, 1]] as const) {
+    const ring = rings[s];
+    const c0 = center[s];
+    const along = sub(rings[s === 0 ? 1 : S - 2][0], ring[0]);
+    const nrm = unit([along[0] * -dir, along[1] * -dir, along[2] * -dir]);
+    const col = colorOf(c0, nrm);
+    for (let i = 0; i < n; i++) face(ring[i], ring[(i + 1) % n], c0, nrm, col, col, col);
+  }
+}
+
 /**
  * A cylinder lying along the x or z axis (wheels, rollers, pipes): `at` maps the along-axis value
  * and the across value to world (x, z); `c` is the across-centre, `cy` the centre height.

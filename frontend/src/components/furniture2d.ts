@@ -8,6 +8,7 @@ type Part = SVGTemplateResult;
 
 const rect = (x0: number, z0: number, x1: number, z1: number, cls = "") => svg`<rect class=${cls} x=${Math.min(x0, x1)} y=${Math.min(z0, z1)} width=${Math.abs(x1 - x0)} height=${Math.abs(z1 - z0)} />`;
 const line = (x0: number, z0: number, x1: number, z1: number, cls = "") => svg`<line class=${cls} x1=${x0} y1=${z0} x2=${x1} y2=${z1} />`;
+const poly = (pts: [number, number][], cls = "") => svg`<polygon class=${cls} points=${pts.map((q) => q.join(",")).join(" ")} />`;
 const circle = (x: number, z: number, r: number, cls = "") => svg`<circle class=${cls} cx=${x} cy=${z} r=${r} />`;
 const ellipse = (x: number, z: number, rx: number, rz: number, cls = "") => svg`<ellipse class=${cls} cx=${x} cy=${z} rx=${rx} ry=${rz} />`;
 
@@ -190,9 +191,15 @@ function packSymbol(item: PackItem, w: number, d: number): Part[] {
     );
   }
   return item.parts
-    .filter((p) => p.w < 0.98 || p.d < 0.98)
+    .filter((p) => p.shape === "sweep" || p.w < 0.98 || p.d < 0.98)
     .map((p) =>
-      p.shape === "cyl" && (p.axis ?? "y") === "y"
+      p.shape === "sweep" && p.stations?.length
+        ? // the outline seen from above: down one side and back up the other
+          poly([
+            ...p.stations.map((st): [number, number] => [(p.x + st[3] / 2) * w, st[0] * d]),
+            ...[...p.stations].reverse().map((st): [number, number] => [(p.x - st[3] / 2) * w, st[0] * d]),
+          ])
+        : p.shape === "cyl" && (p.axis ?? "y") === "y"
         ? circle(p.x * w, p.z * d, Math.min(p.w * w, p.d * d) / 2)
         : rect((p.x - p.w / 2) * w, (p.z - p.d / 2) * d, (p.x + p.w / 2) * w, (p.z + p.d / 2) * d),
     );
