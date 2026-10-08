@@ -590,7 +590,7 @@ The **✦ Extensions** tab shows what NextFloor brings: the six live features of
 
 ### 7.1 Built-in packs
 
-Ten packs come with the integration and are always there:
+Eleven packs come with the integration and are always there:
 
 | Pack | Contents |
 |---|---|
@@ -603,7 +603,8 @@ Ten packs come with the integration and are always there:
 | Fitness | Training equipment |
 | Garden & terrace | Garden furniture, grill, pool, hot tub, greenhouse, robotic mower, trees and hedges |
 | Energy & building services | Heat pump, pellet boiler, tanks, home battery, inverter, wallbox, meter cabinet, ventilation |
-| Vehicles | Cars and other vehicles for parking spots |
+| Vehicles | Tesla models, an electric SUV, small car, van, bikes and a trailer for parking spots |
+| IKEA sizes | Bookcases, cube shelves, beds, chests of drawers, wardrobes, sofas, desk and tables in popular IKEA sizes |
 
 Devices in packs have a small glowing part (display, status LED): linked to a media player, a switch or a light, it lights up while the device runs.
 

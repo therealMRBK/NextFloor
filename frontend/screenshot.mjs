@@ -52,15 +52,11 @@ const shots = [
   { name: "view-floor-eg", query: "?pv=5400&flows", width: 1280, height: 800, click: "Erdgeschoss" },
   { name: "view-room", query: "", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
   { name: "view-stacked", query: "", width: 1280, height: 800, click: "Gestapelt" },
-  ...["tesla_model_s", "tesla_model_3", "tesla_model_x", "tesla_model_y", "tesla_cybertruck", "tesla_roadster", "tesla_semi"].flatMap((id, i) =>
-    [["a", -0.9, 0.95], ["b", 0.6, 0.55], ["c", 3.14, 1.15]].map(([k, theta, phi]) => ({
-      name: `car-${i}${k}`, dev: true, query: "?cars", width: 760, height: 520,
-      viewScript: `document.querySelector("nextfloor-panel")._clean = true; const w = v.viewer.getView(); w.target.set(${1.9 + i * 3.4}, 0.7, 3.5); w.theta = ${theta}; w.phi = ${phi}; w.radius = ${i === 6 ? 13 : 8.5}; v.viewer.flyTo(w, 1);`,
-    })),
-  ),
-  { name: "cars-plan", dev: true, query: "?cars", width: 1500, height: 700, editor: true, editorScript: "e.fit();" },
-  { name: "cars-3q", dev: true, query: "?cars", width: 1500, height: 640, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(12, 0.5, 3.5); w.theta = -0.35; w.phi = 1.0; w.radius = 19; v.viewer.flyTo(w, 1);" },
-      { name: "view-room-light", query: "", ha: "light", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
+  // development views of a whole pack (PACK=nextfloor.ikea): the room from above, and three zooms along it
+  { name: "pack-iso", dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1500, height: 760, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.cx, 0.6, s.cz); w.theta = -0.45; w.phi = 0.95; w.radius = Math.max(s.width, s.depth * 1.5) * 0.95; v.viewer.flyTo(w, 1);" },
+  { name: "pack-plan", dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1500, height: 700, editor: true, editorScript: "e.fit();" },
+  ...[0, 1, 2].map((i) => ({ name: `pack-zoom-${i}`, dev: true, query: `?pack=${process.env.PACK ?? "nextfloor.ikea"}`, width: 1100, height: 700, viewScript: `document.querySelector("nextfloor-panel")._clean = true; const s = window.nfShowcase; const w = v.viewer.getView(); w.target.set(s.width * ${(i + 0.5) / 3}, 0.7, s.cz); w.theta = -0.55; w.phi = 0.85; w.radius = Math.max(5, s.width / 3 * 1.35); v.viewer.flyTo(w, 1);` })),
+  { name: "view-room-light", query: "", ha: "light", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer" },
   { name: "card-light", query: "?card", ha: "light", width: 1400, height: 820 },
   { name: "view-day", query: "", width: 1280, height: 800, click: "Tag" },
   { name: "view-blueprint", query: "", width: 1280, height: 800, click: "Blueprint" },

@@ -1474,14 +1474,44 @@ def curve(keys, smooth=True):
     return f
 
 
-class Car:
-    """Builds the parts of a vehicle in metres: x across, z along (front at +z), y up from the ground."""
+class Metric:
+    """Builds parts in metres from the item's centre: x across, z in depth (front at +z), y up from the floor."""
 
-    def __init__(self, length, width, height):
-        self.L, self.W, self.H = length, width, height
+    def __init__(self, width, depth, height):
+        self.W, self.D, self.H = width, depth, height
 
     def size(self):
-        return [self.W, self.L, self.H]
+        return [self.W, self.D, self.H]
+
+    def box(self, x, z, w, d, y0, y1, color, **kw):
+        return B(x / self.W, z / self.D, w / self.W, d / self.D, y0 / self.H, (y1 - y0) / self.H, color, **kw)
+
+    def loft(self, x, z, w, d, y0, y1, color, tw=None, td=None, tx=None, tz=None, **kw):
+        return L(
+            x / self.W,
+            z / self.D,
+            w / self.W,
+            d / self.D,
+            y0 / self.H,
+            (y1 - y0) / self.H,
+            color,
+            tw=(w if tw is None else tw) / self.W,
+            td=(d if td is None else td) / self.D,
+            tx=(x if tx is None else tx) / self.W,
+            tz=(z if tz is None else tz) / self.D,
+            **kw,
+        )
+
+    def cyl(self, x, z, dia, y0, y1, color, **kw):
+        return C(x / self.W, z / self.D, dia / self.W, dia / self.D, y0 / self.H, (y1 - y0) / self.H, color, **kw)
+
+
+class Car(Metric):
+    """A vehicle: length along z, front at +z."""
+
+    def __init__(self, length, width, height):
+        super().__init__(width, length, height)
+        self.L = length
 
     def body(
         self, z0, z1, bottom, top, half_width, color, steps=22, exp=2.6, n=16, smooth=True, edges=False, glass=False
@@ -1514,9 +1544,6 @@ class Car:
         if edges:
             part["edges"] = True
         return part
-
-    def box(self, x, zc, w, d, y0, y1, color, **kw):
-        return B(x / self.W, zc / self.L, w / self.W, d / self.L, y0 / self.H, (y1 - y0) / self.H, color, **kw)
 
     def wheels(self, axles, dia, thick, dual=False):
         """Tyre and rim on both sides of every axle (z in metres); the tyres stand a little outside the body."""
@@ -1841,6 +1868,248 @@ pack(
             vehicle=True,
         ),
     ],
+)
+
+# ------------------------------------------------------------------ IKEA-Maße
+# Popular flat-pack furniture in its published outer dimensions, rebuilt from boxes. These are our own simple models of
+# the sizes, not IKEA's designs or files; the names only say which size is meant.
+I_WHITE = "#f0f0ec"
+I_OAK = "#cfae74"
+I_BLACKBROWN = "#2e2926"
+I_GREY = "#6f737b"
+I_PINE = "#dbb883"
+I_BACK = "#d8d8d3"
+I_PLINTH = "#cdccc6"
+
+
+def i_bookcase(w, d, h, shelves, color=I_WHITE):
+    m, t = Metric(w, d, h), 0.02
+    parts = [
+        m.box(0, -d / 2 + 0.004, w, 0.008, 0, h, I_BACK),
+        m.box(-w / 2 + t / 2, 0, t, d, 0, h, color, edges=True),
+        m.box(w / 2 - t / 2, 0, t, d, 0, h, color, edges=True),
+        m.box(0, 0, w - 2 * t, d - 0.01, h - t, h, color),
+        m.box(0, 0, w - 2 * t, d - 0.02, 0.02, 0.02 + t, color),
+    ]
+    for k in range(1, shelves + 1):
+        y = k * h / (shelves + 1)
+        parts.append(m.box(0, 0, w - 2 * t, d - 0.02, y - t / 2, y + t / 2, color))
+    return m, parts
+
+
+def i_cubes(cols, rows, w, d, h, color=I_WHITE):
+    """A grid of square cells: outer frame, dividers, thin back."""
+    m, t = Metric(w, d, h), 0.025
+    parts = [
+        m.box(0, -d / 2 + 0.004, w, 0.008, 0, h, I_BACK),
+        m.box(-w / 2 + t / 2, 0, t, d, 0, h, color, edges=True),
+        m.box(w / 2 - t / 2, 0, t, d, 0, h, color, edges=True),
+        m.box(0, 0, w - 2 * t, d, 0, t, color),
+        m.box(0, 0, w - 2 * t, d, h - t, h, color),
+    ]
+    cell_w = (w - (cols + 1) * t) / cols
+    cell_h = (h - (rows + 1) * t) / rows
+    for c in range(1, cols):
+        parts.append(m.box(-w / 2 + t + c * cell_w + (c - 0.5) * t, 0, t, d - 0.01, t, h - t, color))
+    for r in range(1, rows):
+        y = t + r * cell_h + (r - 0.5) * t
+        parts.append(m.box(0, 0, w - 2 * t, d - 0.01, y - t / 2, y + t / 2, color))
+    return m, parts
+
+
+def i_chest(w, d, h, cols, rows, color=I_WHITE):
+    m = Metric(w, d, h)
+    parts = [
+        m.box(0, 0, w - 0.02, d - 0.04, 0, 0.08, I_PLINTH),
+        m.box(0, 0, w, d, 0.08, h - 0.02, color, edges=True),
+        m.box(0, 0, w + 0.01, d + 0.01, h - 0.02, h, color),
+    ]
+    fw = (w - 0.04) / cols
+    fh = (h - 0.12) / rows
+    for c in range(cols):
+        for r in range(rows):
+            x = -w / 2 + 0.02 + fw * (c + 0.5)
+            y0 = 0.09 + fh * r
+            parts.append(m.box(x, d / 2 - 0.004, fw - 0.008, 0.024, y0, y0 + fh - 0.008, color, edges="faint"))
+            parts.append(m.box(x, d / 2 + 0.012, 0.09, 0.012, y0 + fh - 0.05, y0 + fh - 0.04, "#9c9a93"))
+    return m, parts
+
+
+def i_wardrobe(w, d, h, doors):
+    m = Metric(w, d, h)
+    parts = [m.box(0, 0, w - 0.04, d - 0.05, 0, 0.1, I_PLINTH), m.box(0, 0, w, d - 0.02, 0.1, h, I_WHITE, edges=True)]
+    dw = w / doors
+    for k in range(doors):
+        x = -w / 2 + dw * (k + 0.5)
+        parts.append(m.box(x, d / 2 - 0.012, dw - 0.006, 0.02, 0.1, h - 0.02, I_WHITE, edges="faint"))
+        side = 1 if k % 2 == 0 else -1
+        parts.append(m.box(x + side * (dw / 2 - 0.05), d / 2 + 0.012, 0.012, 0.025, 1.0, 1.45, "#a7a5a0"))
+    return m, parts
+
+
+def i_sofa(w, color=I_GREY):
+    d, h = 0.88, 0.88
+    m = Metric(w, d, h)
+    arm = 0.18
+    inner = w - 2 * arm
+    seats = 3 if w > 2 else 2
+    parts = [
+        *[
+            m.box(sx * (w / 2 - 0.06), sz * (d / 2 - 0.06), 0.04, 0.04, 0, 0.1, "#3a3a3a")
+            for sx in (-1, 1)
+            for sz in (-1, 1)
+        ],
+        m.box(0, 0, w, d, 0.1, 0.4, color, edges=True),
+        m.box(-w / 2 + arm / 2, 0, arm, d, 0.1, 0.66, color, edges=True),
+        m.box(w / 2 - arm / 2, 0, arm, d, 0.1, 0.66, color, edges=True),
+        m.box(0, -d / 2 + 0.1, inner, 0.2, 0.4, 0.86, color),
+    ]
+    sw = inner / seats
+    for k in range(seats):
+        x = -inner / 2 + sw * (k + 0.5)
+        parts.append(m.box(x, 0.08, sw - 0.012, d - 0.26, 0.4, 0.5, color, edges="faint"))
+        parts.append(m.loft(x, -0.2, sw - 0.012, 0.16, 0.5, 0.82, color, tw=sw - 0.05, td=0.1, tz=-0.26))
+    return m, parts
+
+
+def i_bed(w):
+    d, h = 2.09, 1.0
+    m = Metric(w, d, h)
+    inner = w - 0.16
+    return m, [
+        m.box(0, 0, w - 0.02, d - 0.08, 0, 0.12, I_PLINTH),
+        m.box(-w / 2 + 0.03, 0, 0.06, d - 0.04, 0.12, 0.38, I_WHITE, edges=True),
+        m.box(w / 2 - 0.03, 0, 0.06, d - 0.04, 0.12, 0.38, I_WHITE, edges=True),
+        m.box(0, d / 2 - 0.03, w, 0.06, 0.12, 0.38, I_WHITE, edges=True),
+        m.box(0, -d / 2 + 0.03, w, 0.06, 0, h, I_WHITE, edges=True),
+        m.box(0, 0.02, inner, 2.0, 0.34, 0.6, "#e7e8ee", edges="faint"),
+        m.box(0, 0.35, inner - 0.04, 1.4, 0.6, 0.67, "#cfd6e4"),
+        m.box(-inner / 4, -d / 2 + 0.35, inner / 2 - 0.1, 0.4, 0.6, 0.72, "#f4f4f6"),
+        m.box(inner / 4, -d / 2 + 0.35, inner / 2 - 0.1, 0.4, 0.6, 0.72, "#f4f4f6"),
+    ]
+
+
+def i_table(w, d, h, shelf=False):
+    m = Metric(w, d, h)
+    parts = [m.box(0, 0, w, d, h - 0.055, h, I_BLACKBROWN, edges=True)]
+    parts += [
+        m.box(sx * (w / 2 - 0.05), sz * (d / 2 - 0.05), 0.05, 0.05, 0, h - 0.055, I_BLACKBROWN)
+        for sx in (-1, 1)
+        for sz in (-1, 1)
+    ]
+    if shelf:
+        parts.append(m.box(0, 0, w - 0.12, d - 0.12, 0.1, 0.12, I_BLACKBROWN))
+    return m, parts
+
+
+def i_armchair():
+    m = Metric(0.68, 0.82, 1.0)
+    birch = "#d8b98a"
+    return m, [
+        *[m.box(sx * 0.3, 0, 0.04, 0.82, 0, 0.04, birch) for sx in (-1, 1)],
+        *[m.box(sx * 0.3, 0.05, 0.04, 0.5, 0.45, 0.49, birch) for sx in (-1, 1)],
+        *[m.box(sx * 0.3, z, 0.04, 0.04, 0.04, 0.45, birch) for sx in (-1, 1) for z in (0.28, -0.1)],
+        *[m.box(sx * 0.3, -0.32, 0.04, 0.05, 0.04, 1.0, birch) for sx in (-1, 1)],
+        m.loft(0, 0.02, 0.58, 0.6, 0.3, 0.42, I_GREY, tw=0.55, td=0.57, edges="faint"),
+        m.loft(0, -0.27, 0.58, 0.16, 0.42, 0.98, I_GREY, tw=0.5, td=0.1, tz=-0.33, edges="faint"),
+    ]
+
+
+def i_desk():
+    m = Metric(1.6, 0.8, 0.75)
+    return m, [
+        m.box(0, 0, 1.6, 0.8, 0.725, 0.75, "#f2f2ee", edges=True),
+        *[m.box(sx * 0.7, 0, 0.05, 0.72, 0.04, 0.725, "#2a2a2a") for sx in (-1, 1)],
+        *[m.box(sx * 0.7, 0, 0.06, 0.74, 0, 0.04, "#2a2a2a") for sx in (-1, 1)],
+        m.box(0, -0.3, 1.34, 0.04, 0.55, 0.62, "#2a2a2a"),
+    ]
+
+
+def i_drawer_unit():
+    m = Metric(0.36, 0.58, 0.70)
+    parts = [m.box(0, 0, 0.36, 0.58, 0.05, 0.7, I_WHITE, edges=True), m.box(0, 0, 0.32, 0.54, 0, 0.05, I_PLINTH)]
+    for k in range(5):
+        y0 = 0.065 + k * 0.125
+        parts.append(m.box(0, 0.285, 0.34, 0.02, y0, y0 + 0.118, I_WHITE, edges="faint"))
+        parts.append(m.box(0, 0.30, 0.1, 0.012, y0 + 0.08, y0 + 0.09, "#a7a5a0"))
+    return m, parts
+
+
+def i_tv_bench():
+    m = Metric(1.8, 0.42, 0.38)
+    parts = [
+        *[m.box(sx * 0.84, sz * 0.17, 0.05, 0.05, 0, 0.06, "#3a3a3a") for sx in (-1, 1) for sz in (-1, 1)],
+        m.box(0, 0, 1.8, 0.42, 0.06, 0.38, I_WHITE, edges=True),
+    ]
+    for k in range(2):
+        x = -0.45 + k * 0.9
+        parts.append(m.box(x, 0.205, 0.89, 0.02, 0.07, 0.37, I_WHITE, edges="faint"))
+        parts.append(m.box(x + (0.4 if k == 0 else -0.4), 0.22, 0.012, 0.02, 0.19, 0.26, "#a7a5a0"))
+    return m, parts
+
+
+def i_open_shelf():
+    m = Metric(0.89, 0.30, 1.79)
+    parts = [
+        m.box(sx * 0.4, sz * 0.12, 0.034, 0.034, 0, 1.79, I_PINE, edges="faint") for sx in (-1, 1) for sz in (-1, 1)
+    ]
+    for y in (0.05, 0.4, 0.75, 1.1, 1.45, 1.76):
+        parts.append(m.box(0, 0, 0.89, 0.3, y - 0.012, y + 0.012, I_PINE, edges="faint"))
+    parts.append(m.box(0, -0.13, 0.8, 0.012, 0.05, 1.7, "#c9a46f"))
+    return m, parts
+
+
+def ikea_items():
+    entries = [
+        ("billy", "Regal 80x202 (Billy-Maß)", "Bookcase 80x202 (Billy size)", i_bookcase(0.80, 0.28, 2.02, 5)),
+        ("billy_low", "Regal 80x106 (Billy-Maß)", "Bookcase 80x106 (Billy size)", i_bookcase(0.80, 0.28, 1.06, 2)),
+        ("kallax_2x2", "Würfelregal 2x2 (Kallax-Maß)", "Cube shelf 2x2 (Kallax size)", i_cubes(2, 2, 0.77, 0.39, 0.77)),
+        ("kallax_2x4", "Würfelregal 2x4 (Kallax-Maß)", "Cube shelf 2x4 (Kallax size)", i_cubes(2, 4, 0.77, 0.39, 1.47)),
+        ("kallax_4x4", "Würfelregal 4x4 (Kallax-Maß)", "Cube shelf 4x4 (Kallax size)", i_cubes(4, 4, 1.47, 0.39, 1.47)),
+        ("lack_side", "Beistelltisch 55x55 (Lack-Maß)", "Side table 55x55 (Lack size)", i_table(0.55, 0.55, 0.45)),
+        (
+            "lack_coffee",
+            "Couchtisch 90x55 (Lack-Maß)",
+            "Coffee table 90x55 (Lack size)",
+            i_table(0.90, 0.55, 0.45, True),
+        ),
+        ("malm_bed_140", "Bett 140x200 (Malm-Maß)", "Bed 140x200 (Malm size)", i_bed(1.56)),
+        ("malm_bed_160", "Bett 160x200 (Malm-Maß)", "Bed 160x200 (Malm size)", i_bed(1.76)),
+        (
+            "malm_chest_6",
+            "Kommode 6 Schubladen (Malm-Maß)",
+            "Chest of 6 drawers (Malm size)",
+            i_chest(1.60, 0.48, 0.78, 2, 3),
+        ),
+        (
+            "malm_chest_4",
+            "Kommode 4 Schubladen (Malm-Maß)",
+            "Chest of 4 drawers (Malm size)",
+            i_chest(0.80, 0.48, 1.00, 1, 4),
+        ),
+        ("pax_100", "Kleiderschrank 100x236 (Pax-Maß)", "Wardrobe 100x236 (Pax size)", i_wardrobe(1.00, 0.58, 2.36, 2)),
+        ("pax_150", "Kleiderschrank 150x236 (Pax-Maß)", "Wardrobe 150x236 (Pax size)", i_wardrobe(1.50, 0.58, 2.36, 3)),
+        ("poang", "Sessel (Poäng-Maß)", "Armchair (Poäng size)", i_armchair()),
+        ("ektorp_2", "Sofa 2-Sitzer (Ektorp-Maß)", "2-seat sofa (Ektorp size)", i_sofa(1.63)),
+        ("ektorp_3", "Sofa 3-Sitzer (Ektorp-Maß)", "3-seat sofa (Ektorp size)", i_sofa(2.18)),
+        ("bekant", "Schreibtisch 160x80 (Bekant-Maß)", "Desk 160x80 (Bekant size)", i_desk()),
+        ("alex", "Schubladenelement (Alex-Maß)", "Drawer unit (Alex size)", i_drawer_unit()),
+        ("besta_tv", "TV-Bank 180x42 (Bestå-Maß)", "TV bench 180x42 (Bestå size)", i_tv_bench()),
+        ("ivar", "Regal 89x179 aus Kiefer (Ivar-Maß)", "Pine shelf 89x179 (Ivar size)", i_open_shelf()),
+    ]
+    out = []
+    for id_, de, en, (m, parts) in entries:
+        extra = {"surface": True} if id_ in ("lack_side", "lack_coffee", "bekant", "besta_tv") else {}
+        out.append(item(id_, de, en, [round(v, 3) for v in m.size()], parts, **extra))
+    return out
+
+
+pack(
+    "nextfloor.ikea",
+    "IKEA-Maße",
+    "Beliebte Möbel in den Originalmaßen, nachgebaut aus einfachen Formen (nicht von IKEA): "
+    "Regale, Betten, Sofas, Schränke",
+    ikea_items(),
 )
 
 if __name__ == "__main__":

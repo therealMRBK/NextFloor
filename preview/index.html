@@ -32,18 +32,30 @@
         localStorage.setItem("nextfloor.flows", params.has("flows") ? "1" : "0");
       } catch {}
       let building = params.has("empty") ? { version: 1, floors: [], settings: { wall_exterior: 0.24, wall_interior: 0.12, grid: 0.05 } } : DEMO_BUILDING;
-      if (params.has("cars")) {
-        // development view: the vehicles of the vehicles pack side by side on a plain floor (?cars)
-        const pack = await (await fetch("../custom_components/nextfloor/packs/nextfloor.fahrzeuge.json")).json();
+      // development view: a whole pack laid out in rows on a plain floor (?pack=nextfloor.ikea, or ?cars for the Teslas)
+      const showPack = params.get("pack") || (params.has("cars") ? "nextfloor.fahrzeuge" : null);
+      if (showPack) {
+        const pack = await (await fetch(`../custom_components/nextfloor/packs/${showPack}.json`)).json();
+        const prefix = params.get("cars") || (params.has("cars") ? "tesla" : params.get("only") || "");
+        const items = pack.items.filter((i) => i.id.startsWith(prefix));
         const eg = structuredClone(DEMO_BUILDING.floors[0]);
-        const items = pack.items.filter((i) => i.id.startsWith(params.get("cars") || "tesla"));
-        const gap = 3.4;
-        eg.rooms = [{ ...eg.rooms[0], id: "room_cars", name: "Garage", area_id: null, points: [[0, 0], [items.length * gap + 0.6, 0], [items.length * gap + 0.6, 7], [0, 7]] }];
+        const rowWidth = Number(params.get("row")) || 30;
+        let x = 0.6, z = 0.6, rowDepth = 0, maxX = 0;
+        const furniture = [];
+        items.forEach((it, i) => {
+          const [w, d, h] = it.size;
+          if (x + w > rowWidth && x > 0.6) { x = 0.6; z += rowDepth + 0.8; rowDepth = 0; }
+          furniture.push({ id: `show${i}`, type: `pack:${pack.id}:${it.id}`, x: x + w / 2, z: z + d / 2, w, d, h, rotation: 0, variant: null });
+          x += w + 0.7; rowDepth = Math.max(rowDepth, d); maxX = Math.max(maxX, x);
+        });
+        const width = maxX + 0.2, depth = z + rowDepth + 0.6;
+        eg.rooms = [{ ...eg.rooms[0], id: "room_show", name: "Showcase", area_id: null, points: [[0, 0], [width, 0], [width, depth], [0, depth]] }];
         eg.openings = [];
         eg.placements = [];
         eg.outdoor = [];
         eg.walls = [];
-        eg.furniture = items.map((it, i) => ({ id: `car${i}`, type: `pack:${pack.id}:${it.id}`, x: 1.9 + i * gap, z: 3.5, w: it.size[0], d: it.size[1], h: it.size[2], rotation: 0, variant: null }));
+        eg.furniture = furniture;
+        window.nfShowcase = { cx: width / 2, cz: depth / 2, width, depth };
         building = { ...DEMO_BUILDING, floors: [eg], settings: { ...DEMO_BUILDING.settings, roof: { type: "none" } } };
       }
       let revision = 1;
@@ -53,7 +65,7 @@
       const history = [{ id: "s0", revision: 0, saved_at: Date.now() / 1000 - 3600, building: structuredClone(building) }];
 
       // furniture packs: the invented demo pack and the packs that come with NextFloor
-      const BUILTIN = ["bad", "energie", "fahrzeuge", "fitness", "garten", "kino", "kueche", "schlafen", "technik", "wohnen"];
+      const BUILTIN = ["bad", "energie", "fahrzeuge", "ikea", "fitness", "garten", "kino", "kueche", "schlafen", "technik", "wohnen"];
       let importedPacks = null;
       // one shared load: parallel callers must not see the list half filled
       let packsLoad = null;

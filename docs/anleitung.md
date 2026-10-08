@@ -592,7 +592,7 @@ Der Reiter **✦ Erweiterungen** zeigt, was in NextFloor steckt: die sechs Live-
 
 ### 7.1 Mitgelieferte Packs
 
-Zehn Packs kommen mit der Integration und sind immer da:
+Elf Packs kommen mit der Integration und sind immer da:
 
 | Pack | Inhalt |
 |---|---|
@@ -605,7 +605,8 @@ Zehn Packs kommen mit der Integration und sind immer da:
 | Fitness | Trainingsgeräte |
 | Garten & Terrasse | Gartenmöbel, Grill, Pool, Whirlpool, Gewächshaus, Mähroboter, Bäume und Hecken |
 | Energie & Haustechnik | Wärmepumpe, Pelletkessel, Speicher, Hausakku, Wechselrichter, Wallbox, Zählerschrank, Lüftung |
-| Fahrzeuge | Autos und andere Fahrzeuge für Stellplätze |
+| Fahrzeuge | Tesla-Modelle, Elektro-SUV, Kleinwagen, Transporter, Fahrräder und Anhänger für Stellplätze |
+| IKEA-Maße | Regale, Würfelregale, Betten, Kommoden, Schränke, Sofas, Schreibtisch und Tische in beliebten IKEA-Maßen |
 
 Geräte in Packs haben ein kleines leuchtendes Teil (Display, Status-LED): Mit einem Media Player, Schalter oder Licht verknüpft, leuchtet es, solange das Gerät läuft.
 
