@@ -5469,6 +5469,23 @@ export class NfEditor extends LitElement {
             >
           </div>`
         : nothing}
+      ${(() => {
+        // a car's paint: pick one of the colours the pack offers (kept as the furniture's variant)
+        const colors = packItem(f.type)?.colors;
+        if (!colors?.length) return nothing;
+        const current = colors.find((c) => c.id === f.variant) ?? colors[0];
+        const label = (c: (typeof colors)[number]) => c.name[this.hass?.language ?? "en"] ?? c.name.en ?? Object.values(c.name)[0];
+        return html`<div class="nf-form">
+          <div class="nf-field nf-wide">
+            <span>${this.t("paint_colour")}: ${label(current)}</span>
+            <div class="nf-swatches" role="radiogroup" aria-label=${this.t("paint_colour")}>
+              ${colors.map(
+                (c, i) => html`<button type="button" class="nf-swatch" role="radio" aria-checked=${c.id === current.id} title=${label(c)} style=${`--sw:${c.hex}`} ?disabled=${!admin} @click=${() => this.updateFurniture({ variant: i === 0 ? null : c.id })}></button>`,
+              )}
+            </div>
+          </div>
+        </div>`;
+      })()}
       ${isElectric(f.type) ? this.renderFurnitureLinks(f) : !NO_STATE_TYPES.has(f.type) ? html`<div class="nf-form nf-links">${this.renderStateLinks(f)}</div>` : nothing} ${f.type === "parking" ? this.renderParkingForm(f) : nothing}
       ${f.type.startsWith("pack:nextfloor.fahrzeuge:") && this.isAdmin
         ? html`<section>
@@ -7433,6 +7450,26 @@ export class NfEditor extends LitElement {
       }
       .nf-tool-energy .nf-energy-item {
         pointer-events: auto;
+      }
+      .nf-swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 4px;
+      }
+      .nf-swatch {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border-radius: 50%;
+        border: 2px solid var(--nf-line);
+        background: var(--sw);
+        cursor: pointer;
+      }
+      .nf-swatch[aria-checked="true"] {
+        border-color: var(--nf-text);
+        outline: 2px solid var(--nf-accent);
+        outline-offset: 2px;
       }
       .nf-energy-marker {
         cursor: move;

@@ -1514,7 +1514,7 @@ class Car(Metric):
         self.L = length
 
     def body(
-        self, z0, z1, bottom, top, half_width, color, steps=22, exp=2.6, n=16, smooth=True, edges=False, glass=False
+        self, z0, z1, bottom, top, half_width, color, steps=22, exp=2.6, n=16, smooth=True, edges=False, paint=False
     ):
         """A smooth body from z0 to z1. bottom, top and half_width are (z, value) keys in metres."""
         fb, ft, fw = curve(bottom, smooth), curve(top, smooth), curve(half_width, smooth)
@@ -1543,6 +1543,8 @@ class Car(Metric):
         }
         if edges:
             part["edges"] = True
+        if paint:
+            part["paint"] = True
         return part
 
     def wheels(self, axles, dia, thick, dual=False):
@@ -1627,7 +1629,7 @@ def tesla_sedan(
         (cab_front + 0.1, W * 0.38),
     ]
     return c, [
-        c.body(-L / 2 + 0.01, L / 2 - 0.01, bottom, top, half, color, edges=True),
+        c.body(-L / 2 + 0.01, L / 2 - 0.01, bottom, top, half, color, edges=True, paint=True),
         c.body(
             cab_back - 0.05,
             cab_front + 0.1,
@@ -1665,6 +1667,7 @@ def tesla_cybertruck():
             n=12,
             smooth=False,
             edges=True,
+            paint=True,
         ),
         c.body(
             -0.4,
@@ -1691,7 +1694,9 @@ def tesla_semi():
     cab_half = [(0.0, 1.2), (1.5, 1.25), (3.0, 1.22), (3.6, 0.95)]
     return c, [
         c.box(0, -0.7, 1.1, 5.6, 0.55, 0.95, "#2b2f36"),
-        c.body(0.0, 3.6, [(0.0, 0.85), (3.6, 0.85)], cab_top, cab_half, WHITE, steps=14, exp=4.5, edges=True),
+        c.body(
+            0.0, 3.6, [(0.0, 0.85), (3.6, 0.85)], cab_top, cab_half, WHITE, steps=14, exp=4.5, edges=True, paint=True
+        ),
         c.body(
             1.9,
             3.35,
@@ -1707,6 +1712,33 @@ def tesla_semi():
         *c.wheels([-1.3, -2.55], 1.0, 0.3, dual=True),
         c.box(0, L / 2 - 0.01, 1.9, 0.02, 0.95, 1.0, "#ffffff", glow=True),
     ]
+
+
+def colorway(id_, de, en, hex_):
+    return {"id": id_, "name": {"de": de, "en": en}, "hex": hex_}
+
+
+# the paints Tesla offers (rounded to what shows well in the 3D view); the first one of a list is the default
+PAINT = {
+    "white": colorway("pearl_white", "Perlweiß", "Pearl White", "#f1f2f1"),
+    "black": colorway("solid_black", "Tiefschwarz", "Solid Black", "#25272b"),
+    "midnight": colorway("midnight_silver", "Mitternachtssilber", "Midnight Silver", "#565d66"),
+    "stealth": colorway("stealth_grey", "Stealth-Grau", "Stealth Grey", "#6e7279"),
+    "quicksilver": colorway("quicksilver", "Quicksilber", "Quicksilver", "#b9bec4"),
+    "blue": colorway("deep_blue", "Tiefblau", "Deep Blue", "#264580"),
+    "red": colorway("red", "Rot Multi-Coat", "Red Multi-Coat", "#b3202c"),
+    "ultrared": colorway("ultra_red", "Ultrarot", "Ultra Red", "#c1121f"),
+    "cherry": colorway("midnight_cherry", "Mitternachtskirsch", "Midnight Cherry Red", "#5e0f1d"),
+    "steel": colorway("stainless", "Edelstahl", "Stainless Steel", "#c5cad1"),
+    "wrap_black": colorway("wrap_black", "Folie Satinschwarz", "Satin Black wrap", "#1e1f22"),
+    "wrap_white": colorway("wrap_white", "Folie Satinweiß", "Satin White wrap", "#e6e8ea"),
+    "wrap_grey": colorway("wrap_grey", "Folie Satingrau", "Satin Grey wrap", "#4b4f56"),
+    "wrap_blue": colorway("wrap_blue", "Folie Satinblau", "Satin Blue wrap", "#2c4a7a"),
+}
+
+
+def paints(*names):
+    return [PAINT[n] for n in names]
 
 
 def tesla_items():
@@ -1740,8 +1772,20 @@ def tesla_items():
         ),
         ("tesla_semi", "Tesla Semi", tesla_semi()),
     ]
+    colors = {
+        "tesla_model_s": paints("white", "black", "midnight", "quicksilver", "blue", "ultrared", "cherry"),
+        "tesla_model_3": paints("red", "white", "black", "midnight", "stealth", "blue", "quicksilver"),
+        "tesla_model_x": paints("blue", "white", "black", "midnight", "quicksilver", "red", "ultrared"),
+        "tesla_model_y": paints("quicksilver", "white", "black", "stealth", "blue", "ultrared", "midnight"),
+        "tesla_cybertruck": paints("steel", "wrap_black", "wrap_white", "wrap_grey", "wrap_blue"),
+        "tesla_roadster": paints("blue", "ultrared", "white", "black", "quicksilver"),
+        "tesla_semi": paints("white", "black", "red", "blue", "stealth"),
+    }
     for id_, name, (car, parts) in models:
-        out.append(item(id_, name, name, car.size(), parts, vehicle=True, electric=True))
+        for part in parts:
+            if part.get("paint"):
+                part["color"] = colors[id_][0]["hex"]
+        out.append(item(id_, name, name, car.size(), parts, vehicle=True, electric=True, colors=colors[id_]))
     return out
 
 

@@ -37,7 +37,9 @@
       if (showPack) {
         const pack = await (await fetch(`../custom_components/nextfloor/packs/${showPack}.json`)).json();
         const prefix = params.get("cars") || (params.has("cars") ? "tesla" : params.get("only") || "");
-        const items = pack.items.filter((i) => i.id.startsWith(prefix));
+        let items = pack.items.filter((i) => i.id.startsWith(prefix));
+        // &colors: one of every colour of every item
+        if (params.has("colors")) items = items.flatMap((it) => (it.colors ?? [null]).map((c, k) => ({ ...it, variant: k === 0 ? null : c?.id ?? null })));
         const eg = structuredClone(DEMO_BUILDING.floors[0]);
         const rowWidth = Number(params.get("row")) || 30;
         let x = 0.6, z = 0.6, rowDepth = 0, maxX = 0;
@@ -45,7 +47,7 @@
         items.forEach((it, i) => {
           const [w, d, h] = it.size;
           if (x + w > rowWidth && x > 0.6) { x = 0.6; z += rowDepth + 0.8; rowDepth = 0; }
-          furniture.push({ id: `show${i}`, type: `pack:${pack.id}:${it.id}`, x: x + w / 2, z: z + d / 2, w, d, h, rotation: 0, variant: null });
+          furniture.push({ id: `show${i}`, type: `pack:${pack.id}:${it.id}`, x: x + w / 2, z: z + d / 2, w, d, h, rotation: 0, variant: it.variant ?? null });
           x += w + 0.7; rowDepth = Math.max(rowDepth, d); maxX = Math.max(maxX, x);
         });
         const width = maxX + 0.2, depth = z + rowDepth + 0.6;

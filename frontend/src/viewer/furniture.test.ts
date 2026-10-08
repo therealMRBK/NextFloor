@@ -146,3 +146,32 @@ test("every vehicle of the vehicles pack builds finite geometry inside its size,
     }
   }
 });
+
+test("the chosen colour recolours the painted parts of a pack item and nothing else", () => {
+  const item = {
+    id: "car",
+    name: { en: "Car" },
+    size: [2, 4, 1.5] as [number, number, number],
+    colors: [
+      { id: "white", name: { en: "White" }, hex: "#f0f0f0" },
+      { id: "red", name: { en: "Red" }, hex: "#c01020" },
+    ],
+    parts: [
+      { shape: "box", x: 0, z: 0, w: 1, d: 1, y: 0, h: 0.5, color: "#f0f0f0", paint: true },
+      { shape: "box", x: 0, z: 0, w: 0.5, d: 0.5, y: 0.5, h: 0.5, color: "#101010" },
+    ],
+  } as FurniturePack["items"][number];
+  setPacks([{ id: "t.paint", name: "Paint", publisher: "t", items: [item] }]);
+  const reds = (variant: string | null) => {
+    const f: Furniture = { id: "f", type: "pack:t.paint:car", x: 0, z: 0, rotation: 0, w: 2, d: 4, h: 1.5, variant, entity: null, power: null };
+    const buf = new GeoBuffer();
+    pushFurniture(buf, new LineBuffer(), new GeoBuffer(), f);
+    // vertex colours: count the ones where red clearly beats green
+    let n = 0;
+    for (let i = 0; i < buf.c.length; i += 3) if (buf.c[i] > buf.c[i + 1] * 2.5) n++;
+    return n;
+  };
+  assert.equal(reds(null), 0, "the first colour is the default");
+  assert.ok(reds("red") > 10, "the red paint shows");
+  assert.equal(reds("unknown"), 0, "an unknown colour falls back to the default");
+});

@@ -27,7 +27,7 @@
      "d": 0.996,
      "y": 0.1042,
      "h": 0.5764,
-     "color": "#f4f5f7",
+     "color": "#f1f2f1",
      "stations": [
       [
        -0.498,
@@ -164,7 +164,8 @@
      ],
      "exp": 2.6,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -388,7 +389,65 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "midnight_silver",
+     "name": {
+      "de": "Mitternachtssilber",
+      "en": "Midnight Silver"
+     },
+     "hex": "#565d66"
+    },
+    {
+     "id": "quicksilver",
+     "name": {
+      "de": "Quicksilber",
+      "en": "Quicksilver"
+     },
+     "hex": "#b9bec4"
+    },
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "ultra_red",
+     "name": {
+      "de": "Ultrarot",
+      "en": "Ultra Red"
+     },
+     "hex": "#c1121f"
+    },
+    {
+     "id": "midnight_cherry",
+     "name": {
+      "de": "Mitternachtskirsch",
+      "en": "Midnight Cherry Red"
+     },
+     "hex": "#5e0f1d"
+    }
+   ]
   },
   {
    "id": "tesla_model_3",
@@ -547,7 +606,8 @@
      ],
      "exp": 2.6,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -771,7 +831,65 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot Multi-Coat",
+      "en": "Red Multi-Coat"
+     },
+     "hex": "#b3202c"
+    },
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "midnight_silver",
+     "name": {
+      "de": "Mitternachtssilber",
+      "en": "Midnight Silver"
+     },
+     "hex": "#565d66"
+    },
+    {
+     "id": "stealth_grey",
+     "name": {
+      "de": "Stealth-Grau",
+      "en": "Stealth Grey"
+     },
+     "hex": "#6e7279"
+    },
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "quicksilver",
+     "name": {
+      "de": "Quicksilber",
+      "en": "Quicksilver"
+     },
+     "hex": "#b9bec4"
+    }
+   ]
   },
   {
    "id": "tesla_model_x",
@@ -793,7 +911,7 @@
      "d": 0.996,
      "y": 0.0893,
      "h": 0.5536,
-     "color": "#263b73",
+     "color": "#264580",
      "stations": [
       [
        -0.498,
@@ -930,7 +1048,8 @@
      ],
      "exp": 2.6,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -1154,7 +1273,65 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "midnight_silver",
+     "name": {
+      "de": "Mitternachtssilber",
+      "en": "Midnight Silver"
+     },
+     "hex": "#565d66"
+    },
+    {
+     "id": "quicksilver",
+     "name": {
+      "de": "Quicksilber",
+      "en": "Quicksilver"
+     },
+     "hex": "#b9bec4"
+    },
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot Multi-Coat",
+      "en": "Red Multi-Coat"
+     },
+     "hex": "#b3202c"
+    },
+    {
+     "id": "ultra_red",
+     "name": {
+      "de": "Ultrarot",
+      "en": "Ultra Red"
+     },
+     "hex": "#c1121f"
+    }
+   ]
   },
   {
    "id": "tesla_model_y",
@@ -1176,7 +1353,7 @@
      "d": 0.9958,
      "y": 0.0926,
      "h": 0.537,
-     "color": "#8d95a1",
+     "color": "#b9bec4",
      "stations": [
       [
        -0.4979,
@@ -1313,7 +1490,8 @@
      ],
      "exp": 2.6,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -1537,7 +1715,65 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "quicksilver",
+     "name": {
+      "de": "Quicksilber",
+      "en": "Quicksilver"
+     },
+     "hex": "#b9bec4"
+    },
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "stealth_grey",
+     "name": {
+      "de": "Stealth-Grau",
+      "en": "Stealth Grey"
+     },
+     "hex": "#6e7279"
+    },
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "ultra_red",
+     "name": {
+      "de": "Ultrarot",
+      "en": "Ultra Red"
+     },
+     "hex": "#c1121f"
+    },
+    {
+     "id": "midnight_silver",
+     "name": {
+      "de": "Mitternachtssilber",
+      "en": "Midnight Silver"
+     },
+     "hex": "#565d66"
+    }
+   ]
   },
   {
    "id": "tesla_cybertruck",
@@ -1624,7 +1860,8 @@
      ],
      "exp": 6,
      "n": 12,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -1800,7 +2037,49 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "stainless",
+     "name": {
+      "de": "Edelstahl",
+      "en": "Stainless Steel"
+     },
+     "hex": "#c5cad1"
+    },
+    {
+     "id": "wrap_black",
+     "name": {
+      "de": "Folie Satinschwarz",
+      "en": "Satin Black wrap"
+     },
+     "hex": "#1e1f22"
+    },
+    {
+     "id": "wrap_white",
+     "name": {
+      "de": "Folie Satinweiß",
+      "en": "Satin White wrap"
+     },
+     "hex": "#e6e8ea"
+    },
+    {
+     "id": "wrap_grey",
+     "name": {
+      "de": "Folie Satingrau",
+      "en": "Satin Grey wrap"
+     },
+     "hex": "#4b4f56"
+    },
+    {
+     "id": "wrap_blue",
+     "name": {
+      "de": "Folie Satinblau",
+      "en": "Satin Blue wrap"
+     },
+     "hex": "#2c4a7a"
+    }
+   ]
   },
   {
    "id": "tesla_roadster",
@@ -1822,7 +2101,7 @@
      "d": 0.9955,
      "y": 0.1339,
      "h": 0.5603,
-     "color": "#1f4fbf",
+     "color": "#264580",
      "stations": [
       [
        -0.4977,
@@ -1959,7 +2238,8 @@
      ],
      "exp": 2.6,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -2183,7 +2463,49 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "ultra_red",
+     "name": {
+      "de": "Ultrarot",
+      "en": "Ultra Red"
+     },
+     "hex": "#c1121f"
+    },
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "quicksilver",
+     "name": {
+      "de": "Quicksilber",
+      "en": "Quicksilver"
+     },
+     "hex": "#b9bec4"
+    }
+   ]
   },
   {
    "id": "tesla_semi",
@@ -2215,7 +2537,7 @@
      "d": 0.5,
      "y": 0.2297,
      "h": 0.7703,
-     "color": "#eceff3",
+     "color": "#f1f2f1",
      "stations": [
       [
        0.0,
@@ -2304,7 +2626,8 @@
      ],
      "exp": 4.5,
      "n": 16,
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "sweep",
@@ -2611,7 +2934,49 @@
     }
    ],
    "vehicle": true,
-   "electric": true
+   "electric": true,
+   "colors": [
+    {
+     "id": "pearl_white",
+     "name": {
+      "de": "Perlweiß",
+      "en": "Pearl White"
+     },
+     "hex": "#f1f2f1"
+    },
+    {
+     "id": "solid_black",
+     "name": {
+      "de": "Tiefschwarz",
+      "en": "Solid Black"
+     },
+     "hex": "#25272b"
+    },
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot Multi-Coat",
+      "en": "Red Multi-Coat"
+     },
+     "hex": "#b3202c"
+    },
+    {
+     "id": "deep_blue",
+     "name": {
+      "de": "Tiefblau",
+      "en": "Deep Blue"
+     },
+     "hex": "#264580"
+    },
+    {
+     "id": "stealth_grey",
+     "name": {
+      "de": "Stealth-Grau",
+      "en": "Stealth Grey"
+     },
+     "hex": "#6e7279"
+    }
+   ]
   },
   {
    "id": "ev_suv",

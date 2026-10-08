@@ -38,6 +38,8 @@ export interface PackPart {
   /** Sweep: how boxy the cross section is (2 = ellipse) and how many points go round it. */
   exp?: number;
   n?: number;
+  /** A body part drawn in the colour the item's owner picked (see PackItem.colors). */
+  paint?: boolean;
   /** Turn of the part around its own centre (degrees around the vertical axis). */
   rot?: number;
 }
@@ -67,6 +69,8 @@ export interface PackItem {
   light?: LampModel;
   parts: PackPart[];
   symbol?: PackSymbol[];
+  /** Colours to choose from (stored as the furniture's variant); the first one is the default. */
+  colors?: { id: string; name: Record<string, string>; hex: string }[];
 }
 
 export interface FurniturePack {

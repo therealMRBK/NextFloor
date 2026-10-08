@@ -73,6 +73,8 @@ PART_SCHEMA = vol.Schema(
         vol.Optional("axis"): vol.In(["x", "y", "z"]),
         # turn of the part around its own centre (degrees around the vertical axis): spiral steps, diagonals
         vol.Optional("rot"): vol.All(vol.Coerce(float), vol.Range(min=-360, max=360)),
+        # a body part that takes the item's chosen colour (see "colors" of the item)
+        vol.Optional("paint"): bool,
     }
 )
 
@@ -90,6 +92,15 @@ SYMBOL_SCHEMA = vol.Any(
     ),
     vol.Schema({vol.Required("shape"): "circle", "x": _FRACTION, "z": _FRACTION, "r": _SPAN}),
     vol.Schema({vol.Required("shape"): "line", "x1": _FRACTION, "z1": _FRACTION, "x2": _FRACTION, "z2": _FRACTION}),
+)
+
+# A choosable colour of an item (a car's paint): parts with "paint": true are drawn in the chosen one.
+COLORWAY_SCHEMA = vol.Schema(
+    {
+        vol.Required("id"): vol.All(str, vol.Match(r"^[a-z0-9_]{1,24}$")),
+        vol.Required("name"): vol.All({vol.All(str, vol.Length(min=2, max=5)): _TEXT}, vol.Length(min=1, max=10)),
+        vol.Required("hex"): vol.Match(r"^#[0-9a-fA-F]{6}$"),
+    }
 )
 
 ITEM_SCHEMA = vol.Schema(
@@ -128,6 +139,8 @@ ITEM_SCHEMA = vol.Schema(
         ),
         vol.Required("parts"): vol.All([PART_SCHEMA], vol.Length(min=1, max=60)),
         vol.Optional("symbol"): vol.All([SYMBOL_SCHEMA], vol.Length(max=40)),
+        # colours to choose from; the first one is the default
+        vol.Optional("colors"): vol.All([COLORWAY_SCHEMA], vol.Length(min=2, max=24)),
     }
 )
 
@@ -176,6 +189,10 @@ def validate_payload(payload: Any) -> dict[str, Any]:
     if len(ids) != len(set(ids)):
         raise PackError("invalid_content", "item ids must be unique")
     _sweeps_have_stations(clean)
+    for it in clean["items"]:
+        colors = [c["id"] for c in it.get("colors", [])]
+        if len(colors) != len(set(colors)):
+            raise PackError("invalid_content", f"{it['id']}: colour ids must be unique")
     return clean
 
 

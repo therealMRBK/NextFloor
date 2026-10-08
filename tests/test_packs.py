@@ -175,3 +175,22 @@ def test_a_swept_body_needs_valid_stations() -> None:
     del broken["items"][0]["parts"][0]["stations"]
     with pytest.raises(packs.PackError):
         packs.validate_payload(broken)
+
+
+def test_colours_of_an_item_are_checked() -> None:
+    def pack(colors):
+        item = {
+            "id": "car",
+            "name": {"en": "Car"},
+            "size": [2, 4, 1.5],
+            "colors": colors,
+            "parts": [{"shape": "box", "x": 0, "z": 0, "w": 1, "d": 1, "y": 0, "h": 1, "color": "body", "paint": True}],
+        }
+        return {**PAYLOAD, "items": [item]}
+
+    white = {"id": "white", "name": {"en": "White"}, "hex": "#ffffff"}
+    red = {"id": "red", "name": {"en": "Red", "de": "Rot"}, "hex": "#c01020"}
+    assert packs.validate_payload(pack([white, red]))["items"][0]["colors"][1]["id"] == "red"
+    for bad in ([white], [white, white], [white, {**red, "hex": "red"}], [white, {**red, "id": "Rot Rot"}]):
+        with pytest.raises(packs.PackError):
+            packs.validate_payload(pack(bad))

@@ -1144,7 +1144,7 @@ function buildFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f:
     default: {
       const item = packItem(f.type);
       if (item) {
-        packModel(b, item, w, d, h, base, null);
+        packModel(b, item, w, d, h, base, null, null, f.variant ?? null);
         // items on furniture, walls or ceilings cast no shadow on the floor
         if (base > 0.05) return;
       } else b.box(-w / 2, w / 2, 0, h, -d / 2, d / 2, C.body, C.bodyTop, EDGE_FURN);
@@ -1162,16 +1162,19 @@ function packColor(value: string | undefined, top: boolean): number | null {
 }
 
 /** Model of a pack item: its parts scaled to the item's size; glowing parts take `glow` (a lit lamp). */
-function packModel(b: Builder, item: PackItem, w: number, d: number, h: number, base: number, glow: number | null, only: ((p: PackItem["parts"][number]) => boolean) | null = null): void {
+function packModel(b: Builder, item: PackItem, w: number, d: number, h: number, base: number, glow: number | null, only: ((p: PackItem["parts"][number]) => boolean) | null = null, variant: string | null = null): void {
+  // the colour picked for the item (its first one by default), for the parts that carry paint
+  const paint = item.colors?.length ? (item.colors.find((c) => c.id === variant) ?? item.colors[0]).hex : null;
   const onlyGlow = !!only;
   for (const q of item.parts) {
     // only some parts (the glowing ones of a speaker, a car's windows), a hair larger so they cover the item's own
     if (only && !only(q)) continue;
     const p = onlyGlow ? { ...q, glow: true, w: q.w + 0.006 / w, d: q.d + 0.006 / d, y: Math.max(0, q.y - 0.002 / h), h: q.h + 0.004 / h } : q;
     const lit = p.glow && glow !== null;
-    const side = lit ? glow : (packColor(p.color, false) ?? C.body);
+    const body = p.paint && paint ? paint : p.color;
+    const side = lit ? glow : (packColor(body, false) ?? C.body);
     // without a top colour, the top is the role's top shade or a little lighter
-    const top = lit ? glow : (packColor(p.top, false) ?? packColor(p.color, true) ?? shade(side, 1.25).getHex());
+    const top = lit ? glow : (packColor(p.paint && paint ? undefined : p.top, false) ?? packColor(body, true) ?? shade(side, 1.25).getHex());
     const y0 = base + p.y * h;
     const y1 = base + Math.min(h, (p.y + p.h) * h);
     // "glow" lines are as bright as the wall lines, so a pack item can be drawn like the walls
