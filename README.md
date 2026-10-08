@@ -8,7 +8,9 @@ Free and open source (MIT). No account, no cloud, no licence keys.
 
 [![Open your Home Assistant instance and open the NextFloor repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=therealMRBK&repository=NextFloor&category=integration)
 
-![NextFloor: the house in 3D with the live cards](docs/images/view-house.jpg)
+[![Release](https://img.shields.io/github/v/release/therealMRBK/NextFloor?style=flat-square)](https://github.com/therealMRBK/NextFloor/releases) [![CI](https://img.shields.io/github/actions/workflow/status/therealMRBK/NextFloor/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/therealMRBK/NextFloor/actions) [![HACS](https://img.shields.io/badge/HACS-custom-orange?style=flat-square)](https://hacs.xyz) [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue?style=flat-square)](LICENSE) [![Built with AI](https://img.shields.io/badge/built%20with-AI%20assistance-8a63d2?style=flat-square)](#made-with-ai)
+
+![NextFloor: the house turns in 3D, then the camera goes into the living room](docs/images/demo.gif)
 
 NextFloor sits in Home Assistant like one of its own pages: it takes the colours, the font and the corner radius from your theme and follows light and dark mode.
 
@@ -26,9 +28,9 @@ NextFloor sits in Home Assistant like one of its own pages: it takes the colours
 |---|---|
 | ![Editor](docs/images/editor.jpg) | **Plan editor in Home Assistant**: floors, rooms as rectangles or free shapes, automatic walls and free-standing partitions, doors, windows, garage doors, stairs, floor openings, outdoor areas and a roof. The 3D view runs next to the plan while you draw. |
 | ![Room](docs/images/view-room.jpg) | **Live 3D view**: tap a lamp to switch it, swipe to dim, long press for colours. Blinds follow their position, windows tilt and open, doors swing. A room panel lists everything in the room's area. |
-| ![Furniture](docs/images/editor-furniture.jpg) | **Furniture and lamps**: 40 basic models plus 10 built-in packs with over 100 more (living, kitchen, bath, bedroom, home cinema, office and homelab, fitness, garden, energy, vehicles with the Tesla models, and a pack of popular furniture sizes). Lamps light their room in their own colour; TVs, washing machines and radiators glow while they run. |
+| ![Furniture](docs/images/editor-furniture.jpg) | **Furniture and lamps**: 40 basic models plus 11 built-in packs with over 130 more (living, kitchen, bath, bedroom, home cinema, office and homelab, fitness, garden, energy, vehicles with the Tesla models, and a pack of popular furniture sizes). Lamps light their room in their own colour; TVs, washing machines and radiators glow while they run. |
 | ![IKEA sizes](docs/images/furniture-ikea.jpg) | **Furniture in familiar sizes**: bookcases, cube shelves, beds, chests of drawers, wardrobes, sofas and desks in the published outer dimensions of popular IKEA pieces (Billy, Kallax, Malm, Pax, Ektorp …). They are simple models of those sizes, not IKEA's designs. |
-| ![Tesla models](docs/images/vehicles-tesla.jpg) | **Vehicles**: Tesla Model S, 3, X, Y, Cybertruck, Roadster and Semi with their real outer dimensions, plus an electric SUV, a small car, a van, bikes and a trailer. Put one on a parking spot and its car card follows it. |
+| ![Tesla models](docs/images/vehicles-tesla.jpg) | **Vehicles**: Tesla Model S, 3, X, Y, Cybertruck, Roadster and Semi with their real outer dimensions and their paint colours, plus an electric SUV, a small car, a van, bikes and a trailer. Put one on a parking spot and its car card follows it. |
 | ![Floors](docs/images/view-stacked.jpg) | **Floors and looks**: open a single floor, stack them or cut the walls. Three looks (*Neon*, *Blueprint*, *Day*), a heatmap for temperature, humidity and CO₂, and sunlight through the windows from `sun.sun`. |
 | ![Tablet](docs/images/tablet.jpg) | **Wall tablet ready**: warnings for smoke, gas, water, alarm and windows open in the rain, a kiosk mode with idle return and night dimming, scene buttons, and a *Tablet* quality level for Fire tablets. |
 | ![Card](docs/images/card.jpg) | **Dashboard card**: `custom:nextfloor-card` with a visual editor, loaded automatically. |
@@ -102,9 +104,23 @@ night: "off"            # optional: kiosk, dim at night: off | sun | "22:00-06:0
 idle_orbit: false       # optional: kiosk, slow camera turn after the idle return
 ```
 
+## Your own 3D models
+
+If you own a 3D model of a vehicle (a `.glb` file), you can put it on your own Home Assistant and NextFloor shows it instead of the simple shape, in the paint colour you pick. NextFloor ships no models. See [docs/models.md](docs/models.md).
+
 ## Privacy
 
 NextFloor stores the plan, its pictures and the packs in Home Assistant's `.storage`. It does not talk to the internet. Camera pictures and history come from your own Home Assistant.
+
+## Made with AI
+
+NextFloor was built entirely with AI assistance. The idea, the decisions and the testing in a real house come from a person; the design, the code, the tests and the documentation were written together with [Claude](https://www.anthropic.com/claude) (Anthropic) in [Claude Code](https://www.anthropic.com/claude-code). I would rather say so openly than let you guess.
+
+What that means for you:
+
+- **It is tested, but young.** There are automated tests (frontend logic, the furniture packs, the Home Assistant side) and releases are looked at in a real browser and installed on a real Home Assistant, but it has far fewer users than most integrations. Expect rough edges and report them.
+- **Back up before you trust it.** The plan lives in Home Assistant's `.storage`; the editor has a backup and restore of the whole plan.
+- **Read the code if it matters to you.** It is MIT licensed and small enough to read. Pull requests are welcome, also ones written with AI, as long as you say so and have run the checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## Development
 
@@ -132,7 +148,3 @@ npm run screenshot  # renders preview/index.html (invented demo data) with a loc
 MIT, see [LICENSE](LICENSE). NextFloor ships [three.js](https://threejs.org) (MIT), [Lit](https://lit.dev) (BSD-3-Clause); their notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 "Home Assistant" is a trademark of its owners; "Tesla" and the Tesla model names are trademarks of Tesla, Inc., and "IKEA" and its product names are trademarks of Inter IKEA Systems B.V.; they are used here only to name the sizes and models. NextFloor is an independent community project and not affiliated with or endorsed by Nabu Casa, Tesla or IKEA.
-
-## Your own 3D models
-
-If you own a 3D model of a vehicle (a `.glb` file), you can put it on your own Home Assistant and NextFloor shows it instead of the simple shape, in the paint colour you pick. NextFloor ships no models. See [docs/models.md](docs/models.md).
