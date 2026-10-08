@@ -1,6 +1,6 @@
 """Makes the README's animated demo from the frames that frontend/record-demo.mjs saves.
 
-python tools/make-gif.py <frame-dir> docs/images/demo-loop.gif
+python tools/make-gif.py <frame-dir> docs/images/demo-live.gif
 """
 
 from pathlib import Path

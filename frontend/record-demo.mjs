@@ -49,7 +49,7 @@ const click = async (text) => {
 };
 await click("Erdgeschoss");
 for (let i = 0; i < 6; i++) { await new Promise((r) => setTimeout(r, 250)); await frame(); }
-await click("Wohnzimmer");
+await click(process.env.ROOM ?? "Wohnzimmer");
 for (let i = 0; i < 14; i++) { await new Promise((r) => setTimeout(r, 220)); await frame(); }
 console.log(`${n} frames in ${out}`);
 await browser.close();
