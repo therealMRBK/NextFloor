@@ -10,9 +10,9 @@ from PIL import Image
 
 frames_dir, out = Path(sys.argv[1]), Path(sys.argv[2])
 files = sorted(frames_dir.glob("f*.png"))
-frames = [Image.open(f).convert("RGB").resize((840, 473), Image.Resampling.LANCZOS) for f in files]
+frames = [Image.open(f).convert("RGB").resize((720, 405), Image.Resampling.LANCZOS) for f in files]
 # one shared palette keeps the colours steady from frame to frame and the file small
-palette = frames[0].quantize(colors=80, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+palette = frames[0].quantize(colors=56, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
 quantized = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
 durations = [110] * len(quantized)
 durations[0], durations[-1] = 600, 1500
