@@ -155,6 +155,13 @@ export class NextFloorCardEditor extends LitElement {
                 ${weatherEntities.map((id) => html`<option value=${id} ?selected=${id === f.value.weather_entity}>${String(this.hass?.states[id]?.attributes.friendly_name ?? id)}</option>`)}
               </select>
             </label>
+            <label class="field"
+              >${f.t("card_weather_density")}
+              <select @change=${(e: Event) => f.set("weather_density", Number((e.target as HTMLSelectElement).value))}>
+                ${[1, 0.75, 0.5, 0.3, 0.15].map((d) => html`<option value=${d} ?selected=${(f.value.weather_density ?? 1) === d}>${Math.round(d * 100)} %</option>`)}
+              </select>
+            </label>
+            <p class="hint wide">${f.t("card_weather_density_hint")}</p>
           </div>`
         : nothing}
       <p class="hint">${f.t("card_pro_hint")}</p>`;

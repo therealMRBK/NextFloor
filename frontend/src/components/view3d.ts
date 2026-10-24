@@ -45,7 +45,7 @@ import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { getPacks, mountBase, packItem, packsVersion } from "../packs.ts";
 import { parkedVehicle, parkedVehicles, vehicleFurniture } from "../parking.ts";
 import { weatherEntity } from "../weather.ts";
-import { chosenEffects, readSkyWeather } from "../live/sky-weather.ts";
+import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.ts";
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
@@ -91,6 +91,7 @@ export class NfView3d extends LitElement {
     furnishTypes: { attribute: false },
     weather: { type: Boolean },
     weatherEntityId: { attribute: false },
+    weatherDensity: { attribute: false },
     selectedFurniture: { attribute: false },
     selectedDevice: { attribute: false },
     _sky: { state: true },
@@ -169,6 +170,8 @@ export class NfView3d extends LitElement {
   declare weather: boolean;
   /** The weather entity to use (null: the first one). */
   declare weatherEntityId: string | null;
+  /** How much of the rain, hail and snow falls (1: all of it). */
+  declare weatherDensity: number;
   /** A lightning flash lights the stage for a moment. */
   private cloud = 0;
   /** Entities that ask before a tap switches them. */
@@ -297,6 +300,7 @@ export class NfView3d extends LitElement {
     this.furnish = false;
     this.weather = true;
     this.weatherEntityId = null;
+    this.weatherDensity = 1;
     this.showEnergy = true;
     this.flows = null;
     this._liveEnergy = null;
@@ -511,7 +515,7 @@ export class NfView3d extends LitElement {
     }
     if (changed.has("selectedFurniture")) v.selectFurniture(this.selectedFurniture);
     if (changed.has("selectedDevice")) v.setSelectedDevice(this.selectedDevice);
-    if (changed.has("weather") || changed.has("weatherEntityId")) this.syncDevices(true);
+    if (changed.has("weather") || changed.has("weatherEntityId") || changed.has("weatherDensity")) this.syncDevices(true);
     if (changed.has("quality") && changed.get("quality") !== undefined) {
       v.setQuality(this.quality);
       this._low = v.low;
@@ -623,7 +627,7 @@ export class NfView3d extends LitElement {
     v.setSun(sunNow);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
     const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;
-    const weather = raw ? chosenEffects(raw, b.settings.weather_effects) : null;
+    const weather = raw ? withDensity(chosenEffects(raw, b.settings.weather_effects), this.weatherDensity) : null;
     this.cloud = weather?.cloud ?? 0;
     this._sky = skyLightness(sunNow?.elevation ?? null, this.cloud);
     v.setSky(

@@ -308,6 +308,7 @@ export class NextFloorCard extends LitElement {
       @clean-toggle=${clean}
       ?weather=${c?.weather !== false}
       .weatherEntityId=${c?.weather_entity ?? null}
+      .weatherDensity=${c?.weather_density ?? 1}
       .dimmed=${this._night}
       .autoOrbit=${this._orbit}
       .startView=${c?.start_view ?? null}

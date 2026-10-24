@@ -27,6 +27,7 @@ export const DEFAULTS: Partial<CardConfig> = {
   alert_jump: false,
   scenes: true,
   weather: true,
+  weather_density: 1,
   idle_return: 0,
   controls_hidden: false,
   controls_hide_after: 0,

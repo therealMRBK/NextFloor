@@ -72,6 +72,8 @@ export interface CardConfig {
   weather?: boolean;
   /** The weather entity to use (default: the first one). */
   weather_entity?: string;
+  /** How much rain, hail and snow falls, 0.1 … 1 (default 1, as much as the weather says). */
+  weather_density?: number;
   /** Kiosk: seconds without a touch after which the card returns to its start view (0 = never). */
   idle_return?: number;
   /** Kiosk: dim at night – "off", "sun" (sun.sun below the horizon) or a time range "22:00-06:00". */

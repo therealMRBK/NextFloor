@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { HomeAssistant } from "../types.ts";
-import { bearing, chosenEffects, readSkyWeather, windKmh } from "./sky-weather.ts";
+import { bearing, chosenEffects, readSkyWeather, windKmh, withDensity } from "./sky-weather.ts";
 
 function hassWith(state: string, attributes: Record<string, unknown> = {}): HomeAssistant {
   return {
@@ -65,4 +65,18 @@ test("only the chosen effects stay", () => {
   assert.equal(only.fog, 0);
   assert.ok(only.cloud > 0);
   assert.equal(chosenEffects({ ...storm, fog: 0.5 }, null).fog, 0);
+});
+
+test("the density thins out rain, hail and snow, and leaves clouds and lightning alone", () => {
+  const storm = readSkyWeather(hassWith("lightning-rainy"), "weather.home")!;
+  const thin = withDensity(storm, 0.3);
+  assert.equal(thin.rain, storm.rain * 0.3);
+  assert.equal(thin.snow, storm.snow * 0.3);
+  assert.equal(thin.cloud, storm.cloud);
+  assert.equal(thin.lightning, storm.lightning);
+  assert.equal(withDensity(storm, 1), storm);
+  assert.equal(withDensity(storm, undefined), storm);
+  // out of range: never less than a tenth, never more than the weather says
+  assert.equal(withDensity(storm, 0).rain, storm.rain * 0.1);
+  assert.equal(withDensity(storm, 5), storm);
 });
