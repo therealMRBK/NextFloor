@@ -54,6 +54,10 @@ export const isUnavailable = (st: HassEntity | undefined): boolean => !st || st.
 /** A cover that only sends commands (assumed state, a garage remote) and so stays unknown: its buttons still work. */
 export const assumedCover = (st: HassEntity | undefined): boolean => !!st && st.entity_id.startsWith("cover.") && st.state === "unknown" && st.attributes.assumed_state === true;
 
+/** The covers "open all" / "close all" move at once: those that answer (a garage remote included), but never one that asks first. */
+export const groupCovers = (covers: readonly HassEntity[], asking: ReadonlySet<string> | null | undefined): string[] =>
+  covers.filter((c) => (!isUnavailable(c) || assumedCover(c)) && !asking?.has(c.entity_id)).map((c) => c.entity_id);
+
 /** The entity's name without the area in front of it: "Lounge Ceiling light" in the Lounge reads "Ceiling light". */
 export function entityName(hass: HomeAssistant | undefined, entityId: string, areaName?: string): string {
   // a friendly_name set in YAML can be a number: the name is always text

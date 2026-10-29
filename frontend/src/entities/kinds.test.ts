@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { appColor, assumedCover, defaultHeight, domainOf, entityName, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, lightGlow, markerKind, tempUnit, toCelsius } from "./kinds.ts";
+import { appColor, assumedCover, defaultHeight, domainOf, entityName, groupCovers, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, markerKind, lightGlow, tempUnit, toCelsius } from "./kinds.ts";
 import { entity, hassOf } from "./fixtures.ts";
 
 test("the domain decides the kind; unknown domains have none", () => {
@@ -125,4 +125,14 @@ test("a marker's kind: its entity's, or NextFloor's own markers", () => {
   assert.equal(markerKind("binary_sensor.door"), "binary");
   assert.equal(markerKind("vacuum.robot"), "other");
   assert.equal(markerKind("script.x"), "other");
+});
+
+test("open all / close all take a garage remote along, but never a cover that asks first", () => {
+  const blind = entity("cover.blind", "closed");
+  const remote = entity("cover.remote", "unknown", { assumed_state: true });
+  const garage = entity("cover.garage", "unknown", { assumed_state: true });
+  const lost = entity("cover.lost", "unavailable");
+  const silent = entity("cover.silent", "unknown");
+  assert.deepEqual(groupCovers([blind, remote, garage, lost, silent], new Set(["cover.garage"])), ["cover.blind", "cover.remote"]);
+  assert.deepEqual(groupCovers([blind, garage], null), ["cover.blind", "cover.garage"]);
 });
