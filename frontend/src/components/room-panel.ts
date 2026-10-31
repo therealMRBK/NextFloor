@@ -2,7 +2,7 @@
 // scenes and scripts). Shown next to the 3D view when a room is selected.
 
 import { css, html, LitElement, nothing, svg, type TemplateResult } from "lit";
-import { areaEntities, entityName, groupByDevice, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind } from "../devices.ts";
+import { areaEntities, assumedCover, entityName, groupByDevice, groupCovers, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind } from "../devices.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
@@ -181,10 +181,10 @@ export class NfRoomPanel extends LitElement {
           ? this.section(
               "panel_covers",
               covers.map((st) => this.coverRow(st)),
-              covers.length > 1
-                ? html`<button class="nf-btn nf-rp-small" @click=${() => this.call("cover", "open_cover", { entity_id: covers.filter((c) => !isUnavailable(c)).map((c) => c.entity_id) })}>
+              covers.length > 1 && groupCovers(covers, this.confirmEntities).length
+                ? html`<button class="nf-btn nf-rp-small" @click=${() => this.call("cover", "open_cover", { entity_id: groupCovers(covers, this.confirmEntities) })}>
                       ${this.t("panel_all_open")}</button
-                    ><button class="nf-btn nf-rp-small" @click=${() => this.call("cover", "close_cover", { entity_id: covers.filter((c) => !isUnavailable(c)).map((c) => c.entity_id) })}>
+                    ><button class="nf-btn nf-rp-small" @click=${() => this.call("cover", "close_cover", { entity_id: groupCovers(covers, this.confirmEntities) })}>
                       ${this.t("panel_all_close")}
                     </button>`
                 : nothing,
@@ -319,7 +319,8 @@ export class NfRoomPanel extends LitElement {
     const a = st.attributes;
     const features = (a.supported_features as number | undefined) ?? 0;
     const id = st.entity_id;
-    const na = isUnavailable(st);
+    // a cover without feedback (a garage remote) stays unknown, but its buttons still work
+    const na = isUnavailable(st) && !assumedCover(st);
     return html`<div class="nf-rp-row">
       <span class="nf-rp-icon">${icon("cover")}</span>
       ${this.nameButton(id)}
