@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Fixed
+
+- **Plugin devices show their own icon in the editor** by @Mika2108 ([#28](https://github.com/therealMRBK/NextFloor/pull/28)): the plan, the device's form and the room's device list use the icon picked in the plan, else the plugin's Material Design icon, else the kind's symbol, as the 3D view does. Cameras no longer show as clocks.
+
 ## 0.15.0
 
 ### Added
