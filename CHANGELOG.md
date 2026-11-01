@@ -2,6 +2,13 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.16.1
+
+### Fixed
+
+- **TVs that only report "on"** (Samsung, LG on live TV, and others) show their channel, input and logo on the screen in the plan, and appear in the live media card, instead of staying blank. Thanks to @Luca-Bachini-Barr ([#31](https://github.com/therealMRBK/NextFloor/issues/31)).
+- **Heaters from furniture packs glow while they heat**, as the built-in radiator does: link a towel radiator (or any pack heater) to a thermostat and it glows orange while that thermostat heats; a thermostat or A/C unit with a display glows on its display. Thanks to @Luca-Bachini-Barr ([#32](https://github.com/therealMRBK/NextFloor/issues/32)).
+
 ## 0.16.0
 
 ### Added

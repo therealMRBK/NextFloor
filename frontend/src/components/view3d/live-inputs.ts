@@ -2,7 +2,7 @@
 // which sprinklers water, and where the sun is.
 
 import { hasScreen, isActive, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
-import { appColor } from "../../live/media.ts";
+import { appColor, isLive, showsSomething } from "../../live/media.ts";
 import type { Building, Floor, Furniture } from "../../model.ts";
 import type { HomeAssistant } from "../../types.ts";
 import { mountBase } from "../../packs.ts";
@@ -65,7 +65,7 @@ function playerBeside(floor: Floor, screen: Furniture): string | null {
 
 const text = (attributes: Record<string, unknown>, key: string): string => (typeof attributes[key] === "string" ? (attributes[key] as string) : "");
 
-/** What each TV or monitor shows right now: a screen linked to a media player (or with one beside it) that plays or is paused. */
+/** What each TV or monitor shows right now: a screen linked to a media player (or with one beside it) that plays, is paused, or is a TV that is on with something showing. */
 export function liveScreens(hass: HomeAssistant, building: Building, links: ReadonlyMap<string, FurnitureLinks> | null): LiveScreenInput[] {
   const screens: LiveScreenInput[] = [];
   for (const floor of building.floors) {
@@ -74,7 +74,7 @@ export function liveScreens(hass: HomeAssistant, building: Building, links: Read
       const linked = links?.get(furniture.id)?.entity ?? null;
       const player = linked?.startsWith("media_player.") ? linked : playerBeside(floor, furniture);
       const state = player ? hass.states[player] : undefined;
-      if (!state || !["playing", "paused"].includes(state.state)) continue;
+      if (!state || !showsSomething(state)) continue;
       const attributes = state.attributes as Record<string, unknown>;
       const app = text(attributes, "app_name") || text(attributes, "source") || null;
       screens.push({
@@ -86,7 +86,7 @@ export function liveScreens(hass: HomeAssistant, building: Building, links: Read
         subtitle: text(attributes, "media_artist") || text(attributes, "media_series_title") || text(attributes, "media_album_name"),
         app,
         picture: text(attributes, "entity_picture") || null,
-        playing: state.state === "playing",
+        playing: isLive(state),
         ambilight: furniture.ambilight ?? 1,
       });
     }

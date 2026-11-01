@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { HomeAssistant } from "../types.ts";
-import { appColor, mediaNow, multiroom } from "./media.ts";
+import { appColor, isLive, mediaNow, multiroom } from "./media.ts";
 
 const at = { floorId: "eg", x: 1, y: 1, z: 1 };
 function hass(states: Record<string, { state: string; attributes: Record<string, unknown> }>): HomeAssistant {
@@ -40,4 +40,12 @@ test("players in the plan with what they play, in their app's colour", () => {
   assert.equal(multiroom(list).length, 1);
   assert.deepEqual(appColor("Netflix"), [229, 9, 20]);
   assert.deepEqual(appColor(null), appColor("Unbekannt"));
+});
+
+test("a TV that is 'on' with a channel counts as live, without one it does not", () => {
+  assert.equal(isLive({ state: "on", attributes: { media_title: "ITV1 HD" } }), true);
+  assert.equal(isLive({ state: "on", attributes: { source: "HDMI 1" } }), true);
+  assert.equal(isLive({ state: "on", attributes: {} }), false);
+  assert.equal(isLive({ state: "paused", attributes: { media_title: "x" } }), false);
+  assert.equal(isLive({ state: "playing", attributes: {} }), true);
 });

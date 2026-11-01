@@ -1015,12 +1015,14 @@ export class NfView3d extends LitElement {
           consumers.push({ id, powerEntity: link.power, floorId: floor.id, x: f.x, z: f.z, power: Math.max(0, power), wallbox: f.type === "wallbox" || undefined });
         }
         const running = (power ?? 0) > 10 || st?.state === "on" || st?.state === "running" || (isStatusSensor(st) && isActive(st));
-        if (f.type === "radiator" && st && kindOf(st.entity_id) === "climate") {
-          // glows while it heats; brighter the further the room is below its target
+        if ((f.type === "radiator" || plate) && st && kindOf(st.entity_id) === "climate") {
+          // glows while it heats; brighter the further the room is below its target. A pack item glows on its screen
+          // part (a thermostat's display), or as a whole when it has none (a towel radiator)
           const a = st.attributes;
           if (a.hvac_action === "heating") {
             const gap = typeof a.temperature === "number" && typeof a.current_temperature === "number" ? a.temperature - a.current_temperature : 1;
-            screens.set(f.id, { color: [1, 0.42, 0.1], level: Math.min(1, 0.45 + 0.25 * Math.max(0, gap)) });
+            const heat = !!plate && !plate.parts.some((p) => p.screen);
+            screens.set(f.id, { color: [1, 0.42, 0.1], level: Math.min(1, 0.45 + 0.25 * Math.max(0, gap)), heat: heat || undefined });
           }
         } else if ((f.type === "washer" || f.type === "dryer" || f.type === "dishwasher") && running) {
           screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8 });

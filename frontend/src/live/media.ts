@@ -42,6 +42,19 @@ export function appColor(app: string | null): [number, number, number] {
   return APPS.find(([re]) => re.test(app))?.[1] ?? DEFAULT;
 }
 
+/**
+ * Whether a player has something on its screen: it plays or is paused, or it is "on" with a title, input or app – many TV
+ * integrations (Samsung, LG on live TV) only ever report "on".
+ */
+export function showsSomething(st: { state: string; attributes: Record<string, unknown> }): boolean {
+  if (st.state === "playing" || st.state === "paused") return true;
+  const str = (k: string) => typeof st.attributes[k] === "string" && (st.attributes[k] as string) !== "";
+  return st.state === "on" && (str("media_title") || str("media_channel") || str("source") || str("app_name"));
+}
+
+/** Whether a player is running now: playing, or a TV that is "on" with something showing (live TV, an input). */
+export const isLive = (st: { state: string; attributes: Record<string, unknown> }): boolean => st.state === "playing" || (st.state === "on" && showsSomething(st));
+
 /** Media players placed in the plan (as a device, or linked to furniture such as a TV or a speaker). */
 export function mediaNow(hass: HomeAssistant, spots: readonly { entity: string; name: string; at: PlanPoint }[]): MediaNow[] {
   const out: MediaNow[] = [];
@@ -59,7 +72,7 @@ export function mediaNow(hass: HomeAssistant, spots: readonly { entity: string; 
       entity: s.entity,
       name: s.name,
       at: s.at,
-      playing: st.state === "playing",
+      playing: isLive(st),
       title: str("media_title") || str("media_channel") || app || "",
       artist: str("media_artist") || str("media_album_name") || str("media_series_title"),
       picture: str("entity_picture") || null,

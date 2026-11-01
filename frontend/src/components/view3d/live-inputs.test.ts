@@ -22,6 +22,14 @@ test("a player placed beside the screen counts, a far one does not, and idle pla
   assert.deepEqual(liveScreens(hass, house([{ ...tv(), type: "sofa" }]), null), [], "only furniture with a screen");
 });
 
+test("a TV that only reports 'on' shows its channel or input, a bare 'on' shows nothing", () => {
+  const live = entity("media_player.tv", "on", { device_class: "tv", media_title: "ITV1 HD", source: "TV/HDMI", entity_picture: "/logo" });
+  const [screen] = liveScreens(hassOf([live]), house([tv()]), new Map([["tv", { entity: "media_player.tv", power: null }]]) as never);
+  assert.deepEqual([screen.title, screen.app, screen.picture, screen.playing], ["ITV1 HD", "TV/HDMI", "/logo", true]);
+  const bare = hassOf([entity("media_player.tv", "on", { device_class: "tv" })]);
+  assert.deepEqual(liveScreens(bare, house([tv()]), new Map([["tv", { entity: "media_player.tv", power: null }]]) as never), []);
+});
+
 test("a roof window motor sets the sash by its position, or open and closed by its state", () => {
   const windows = [{ id: "a", face: "main:a", u: 0, v: 0, window: "cover.motor" }, { id: "b", face: "main:a", u: 0, v: 0, window: "cover.plain" }, { id: "c", face: "main:a", u: 0, v: 0, window: "none" }];
   const hass = hassOf([entity("cover.motor", "open", { current_position: 40 }), entity("cover.plain", "opening")]);

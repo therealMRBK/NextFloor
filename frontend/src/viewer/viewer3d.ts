@@ -220,6 +220,8 @@ export interface ScreenState {
   faces?: { part: "all" | "left" | "right" | "top" | "bottom"; color: [number, number, number]; level: number }[];
   /** Light switches and sockets: the buttons (gangs) that are on glow in their colour. */
   gangs?: { gang: number; color: [number, number, number]; level: number }[];
+  /** A heater from a pack without a screen part (a towel radiator): the whole item glows in the colour while it heats. */
+  heat?: boolean;
 }
 
 /** Position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
@@ -2014,6 +2016,13 @@ export class NextFloorViewer {
           const col = new Color(...g.color.map((v) => Math.min(1, v * (0.45 + 0.55 * g.level))) as [number, number, number]);
           pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => p.gang === g.gang);
         }
+        continue;
+      }
+      if (st.heat) {
+        const item = packItem(f.type);
+        if (!item) continue;
+        const col = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
+        pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), () => true);
         continue;
       }
       if (st.faces) {
