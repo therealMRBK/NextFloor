@@ -225,6 +225,8 @@ export interface Furniture extends LightEffectConfig {
   gang_entities?: (string | null)[];
   /** Lamps: a second entity whose colour and brightness the lamp shows while the linked switch is on (a relay switches the light, the bulb itself knows its colour). */
   color_entity?: EntityRef;
+  /** Lawn sprinkler: how far its water reaches in m (null = 3 m). */
+  spray?: number | null;
   /** Mirrored (left-right) – an L-sofa the other way round, a cabinet with its door on the other side. */
   mirror?: boolean;
   /** LED strip: tilt about its length (°; 0 = lying flat, 90 = its face points sideways, e.g. along a roof slope). */

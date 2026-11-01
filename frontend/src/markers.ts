@@ -73,6 +73,8 @@ export function stateText(hass: Hass, st: HassEntity | undefined): string {
       return lightText(hass, st);
     case "switch":
     case "fan":
+      // a valve says open or closed, like a blind
+      if (st.entity_id.startsWith("valve.")) return coverText(hass, st);
       return onOff(hass, st.state === "on");
     case "cover":
       return coverText(hass, st);

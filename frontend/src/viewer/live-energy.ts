@@ -41,7 +41,8 @@ export type FloorLift = (floorId: string | null) => { y: number; dy: number; vis
 const MAX_PER_ARC = 46;
 const SPARKS = 900;
 
-function dotTexture(): CanvasTexture {
+/** A soft round dot for point sprites (sparks, droplets). */
+export function dotTexture(): CanvasTexture {
   const c = document.createElement("canvas");
   c.width = c.height = 32;
   const g = c.getContext("2d")!;

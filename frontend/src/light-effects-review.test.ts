@@ -164,7 +164,7 @@ test("one shared effect timer stops for no participants, hidden views/document, 
     assert.equal(lamps, 2);
     viewer.scheduleEffects();
     const noop = { dispose() {}, disconnect() {}, remove() {} };
-    for (const key of ["weatherLayer", "mapLayer", "energyLayer", "soundLayer", "screenLayer", "resizeObserver", "controls", "patternTexture", "blindTexture", "haloTexture", "labels"]) viewer[key] = noop;
+    for (const key of ["weatherLayer", "mapLayer", "energyLayer", "soundLayer", "screenLayer", "waterLayer", "resizeObserver", "controls", "patternTexture", "blindTexture", "haloTexture", "labels"]) viewer[key] = noop;
     viewer.ground = { geometry: noop, material: noop }; viewer.robots = new Map(); viewer.clear = () => {}; viewer.buildRoofMesh = () => {};
     viewer.renderer = { dispose() {}, forceContextLoss() {}, domElement: noop };
     const previousCancel = globalThis.cancelAnimationFrame;

@@ -284,6 +284,8 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("color_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # mirrored left-right
         vol.Optional("mirror", default=False): bool,
+        # lawn sprinkler: how far its water reaches (m)
+        vol.Optional("spray"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=15))),
         # LED strip: tilt about its length (degrees) and standing upright
         vol.Optional("tilt", default=0.0): vol.All(vol.Coerce(float), vol.Range(min=-90, max=90)),
         vol.Optional("upright", default=False): bool,

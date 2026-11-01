@@ -75,6 +75,7 @@ import { buildOpeningParts, CLOSED, type OpeningState } from "./openings.ts";
 import { WeatherLayer, type SkyView } from "./live-weather.ts";
 import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./live-energy.ts";
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
+import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
 import { circlePath, cleaningPath, stepRobot, type RobotInfo, type RobotMotion } from "./robot.ts";
@@ -519,6 +520,7 @@ export class NextFloorViewer {
   private readonly energyLayer: EnergyLayer;
   /** Sound rings around playing speakers and multiroom threads (live-sound.ts). */
   private readonly soundLayer: SoundLayer;
+  private readonly waterLayer: WaterLayer;
   /** Pictures on TVs that play, with an ambilight behind (live-screens.ts). */
   private readonly screenLayer: ScreenLayer;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
@@ -550,6 +552,7 @@ export class NextFloorViewer {
     this.mapLayer.onChange = () => this.invalidate();
     this.energyLayer = new EnergyLayer(this.scene, this.liftOf);
     this.soundLayer = new SoundLayer(this.scene, this.liftOf);
+    this.waterLayer = new WaterLayer(this.scene, this.liftOf);
     this.screenLayer = new ScreenLayer(this.scene, this.liftOf);
     this.screenLayer.onChange = () => this.invalidate();
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
@@ -995,6 +998,12 @@ export class NextFloorViewer {
     this.invalidate();
   }
 
+  /** Lawn sprinklers that water now: droplets in arcs around each one. */
+  setLiveWater(spots: SpraySpot[]): void {
+    this.waterLayer.set(spots);
+    this.invalidate();
+  }
+
   /** TVs and monitors that play: their picture and the ambilight behind them. */
   setLiveScreens(list: LiveScreenInput[]): void {
     const out: LiveScreen[] = [];
@@ -1232,6 +1241,7 @@ export class NextFloorViewer {
     this.mapLayer.dispose();
     this.energyLayer.dispose();
     this.soundLayer.dispose();
+    this.waterLayer.dispose();
     this.screenLayer.dispose();
     this.resizeObserver.disconnect();
     this.intersection?.disconnect();
@@ -2813,7 +2823,7 @@ export class NextFloorViewer {
     const roofMoving = this.placeRoof(dt);
     const robotsMoving = this.stepRobots(now);
     // NextFloor's layers: each one steps every frame (no short-circuit), any of them moving keeps the frames coming
-    const liveMoving = [this.weatherLayer, this.energyLayer, this.soundLayer, this.screenLayer].map((l) => l.step(now));
+    const liveMoving = [this.weatherLayer, this.energyLayer, this.soundLayer, this.screenLayer, this.waterLayer].map((l) => l.step(now));
     const weatherMoving = liveMoving.some(Boolean);
     const moving = cameraMoving || floorsMoving || openingsMoving || flashing || roofMoving;
     const busy: string[] = [];

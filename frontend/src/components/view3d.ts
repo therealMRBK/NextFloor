@@ -44,7 +44,7 @@ import {
   favoriteCall,
   runButton,
 } from "../devices.ts";
-import { liveScreens, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
+import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { ownTaps } from "./view3d/own-taps.ts";
 import { lightAnimation, lightEffectSource } from "../light-effects.ts";
@@ -761,6 +761,8 @@ export class NfView3d extends LitElement {
     this.syncLhCards(v, b, livePic, liveCars, playing);
     // TV screens: a TV or monitor linked to a media player that runs shows what runs
     v.setLiveScreens(this.dimmed ? [] : liveScreens(hass, b, this.furnitureLinks));
+    // lawn sprinklers that water now (at night on the wall tablet effects rest)
+    v.setLiveWater(this.dimmed ? [] : liveSprays(hass, b, this.furnitureLinks));
     const persons = SHOW_PRESENCE ? personsInRooms(hass, b) : [];
     v.setPersons(persons);
     const counts = floorCounts(hass, b, this.openingLinks!, persons);

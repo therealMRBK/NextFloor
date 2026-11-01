@@ -13,6 +13,8 @@ const KIND_OF_DOMAIN: Record<string, DeviceKind> = {
   light: "light",
   switch: "switch",
   input_boolean: "switch",
+  // a water valve (irrigation, the main water) opens and closes like a switch turns on and off
+  valve: "switch",
   fan: "fan",
   cover: "cover",
   climate: "climate",
@@ -87,6 +89,7 @@ export function isActive(st: HassEntity | undefined): boolean {
   if (!st) return false;
   // a robot vacuum counts as active while it cleans or drives back to its dock
   if (st.entity_id.startsWith("vacuum.")) return ["cleaning", "returning"].includes(st.state);
+  if (st.entity_id.startsWith("valve.")) return st.state === "open" || st.state === "opening";
   const kind = kindOf(st.entity_id);
   if (kind === "light" || kind === "switch" || kind === "fan" || kind === "binary") return st.state === "on";
   if (kind === "cover") return st.state === "open" || st.state === "opening";

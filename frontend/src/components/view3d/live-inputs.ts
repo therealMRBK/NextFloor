@@ -1,11 +1,30 @@
-// What the 3D view reads from Home Assistant each time something changed: the state of roof windows, which screens show what, and
-// where the sun is.
+// What the 3D view reads from Home Assistant each time something changed: the state of roof windows, which screens show what,
+// which sprinklers water, and where the sun is.
 
-import { hasScreen, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
+import { hasScreen, isActive, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
 import { appColor } from "../../live/media.ts";
 import type { Building, Floor, Furniture } from "../../model.ts";
 import type { HomeAssistant } from "../../types.ts";
+import { mountBase } from "../../packs.ts";
 import type { LiveScreenInput } from "../../viewer/viewer3d.ts";
+import type { SpraySpot } from "../../viewer/live-water.ts";
+
+/** How far a lawn sprinkler reaches when its form does not say (m). */
+export const SPRAY_REACH = 3;
+
+/** Lawn sprinklers whose valve or switch is on now: where their nozzle is and how far they reach. */
+export function liveSprays(hass: HomeAssistant, building: Building, links: ReadonlyMap<string, FurnitureLinks> | null): SpraySpot[] {
+  const out: SpraySpot[] = [];
+  for (const floor of building.floors) {
+    for (const f of floor.furniture) {
+      if (!f.type.endsWith(":sprinkler")) continue;
+      const entity = links?.get(f.id)?.entity ?? null;
+      if (!entity || !isActive(hass.states[entity])) continue;
+      out.push({ id: f.id, at: { floorId: floor.id, x: f.x, y: mountBase(floor, f) + f.h, z: f.z }, reach: Math.min(15, Math.max(0.5, f.spray ?? SPRAY_REACH)) });
+    }
+  }
+  return out;
+}
 
 const real = (id: string | null | undefined): string | null => (id && id !== "none" ? id : null);
 

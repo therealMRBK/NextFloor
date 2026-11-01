@@ -2,7 +2,7 @@
 // scenes and scripts). Shown next to the 3D view when a room is selected.
 
 import { css, html, LitElement, nothing, svg, type TemplateResult } from "lit";
-import { areaEntities, assumedCover, entityName, groupByDevice, groupCovers, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind } from "../devices.ts";
+import { areaEntities, assumedCover, entityName, groupByDevice, groupCovers, isActive, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind } from "../devices.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
@@ -496,7 +496,7 @@ export class NfRoomPanel extends LitElement {
     const id = st.entity_id;
     const kind = kindOf(id)!;
     const domain = id.slice(0, id.indexOf("."));
-    const on = kind === "lock" ? st.state === "unlocked" || st.state === "open" : st.state === "on";
+    const on = kind === "lock" ? st.state === "unlocked" || st.state === "open" : isActive(st);
     const act = () => (kind === "lock" ? this.call("lock", on ? "lock" : "unlock", { entity_id: id }) : this.call(domain, "toggle", { entity_id: id }));
     return html`<div class="nf-rp-row">
       <span class="nf-rp-icon ${on ? "nf-rp-on" : ""}">${icon(kind)}</span>
