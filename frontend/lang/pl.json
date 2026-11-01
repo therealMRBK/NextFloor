@@ -2145,5 +2145,11 @@
   "stair_upgrade": "Ustaw kształt",
   "stair_upgrade_hint": "Zmienia je w schody z kształtem (zabiegowe, L, U, kręcone), konstrukcją, balustradą i liczbą stopni.",
   "tool_stairs": "Schody",
-  "hint_stairs": "Przeciągnij tam, gdzie mają stać schody – biegną wzdłuż dłuższego boku; potem po prawej ustaw kształt, kierunek i konstrukcję"
+  "hint_stairs": "Przeciągnij tam, gdzie mają stać schody – biegną wzdłuż dłuższego boku; potem po prawej ustaw kształt, kierunek i konstrukcję",
+  "stair_opening": "Otwór w stropie",
+  "stair_opening_headroom": "Według prześwitu (tylko gdzie trzeba)",
+  "stair_opening_full": "Nad całymi schodami",
+  "stair_opening_none": "Brak (właz, zamknięta klatka)",
+  "stair_opening_hint": "Jak bardzo schody otwierają strop, do którego sięgają: piętro wyżej albo własne piętro przy schodach w dół. Według prześwitu otwiera tylko nad stopniami, nad którymi zostaje mniej niż 2,2 m.",
+  "stair_up_note_plain": "Schody zaczynają się przy zaznaczonej przedniej krawędzi i wznoszą się do tyłu."
 }

@@ -122,6 +122,6 @@ def test_shaped_stair_round_trips() -> None:
 
 
 def test_shaped_stair_rejects_unknown_shapes() -> None:
-    for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}):
+    for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}, {"opening": "wide"}):
         with pytest.raises(vol.Invalid):
             FURNITURE_SCHEMA({**STAIRS, "stair": bad})

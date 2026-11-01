@@ -82,3 +82,16 @@ test("convex hull", () => {
   const hull = convexHull([[0, 0], [1, 0], [1, 1], [0, 1], [0.5, 0.5]]);
   assert.equal(hull.length, 4);
 });
+
+test("the opening can cover the whole stair or nothing", () => {
+  const layout = stairLayout(cfg({ down: true }), 1, 4, 2.8);
+  const zs = (ring: [number, number][]) => ring.map((p) => p[1]);
+  // by headroom a stair going down leaves its lower end under the floor; "full" opens all of it
+  assert.ok(Math.min(...zs(stairOpening(layout, 2.8, true))) > -1.9);
+  const full = stairOpening(layout, 2.8, true, "full");
+  assert.ok(Math.min(...zs(full)) <= -1.99 && Math.max(...zs(full)) >= 1.99);
+  assert.deepEqual(stairOpening(layout, 2.8, true, "none"), []);
+  assert.equal(stairConfig({ stair: { opening: "full" } }).opening, "full");
+  assert.equal(stairConfig({ stair: { opening: "wide" as never } }).opening, "headroom");
+  assert.deepEqual(stairOpeningInPlan({ x: 0, z: 0, rotation: 0, w: 1, d: 4, h: 2.8, stair: { opening: "none" } }), []);
+});

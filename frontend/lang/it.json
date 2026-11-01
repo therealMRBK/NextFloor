@@ -2145,5 +2145,11 @@
   "stair_upgrade": "Scegli la forma",
   "stair_upgrade_hint": "La trasforma in una scala con forma (a ventaglio, L, U, chiocciola), costruzione, ringhiera e numero di gradini.",
   "tool_stairs": "Scala",
-  "hint_stairs": "Trascina dove deve stare la scala – segue il lato lungo; poi imposta forma, verso e costruzione a destra"
+  "hint_stairs": "Trascina dove deve stare la scala – segue il lato lungo; poi imposta forma, verso e costruzione a destra",
+  "stair_opening": "Apertura del solaio",
+  "stair_opening_headroom": "In base all'altezza libera (solo dove serve)",
+  "stair_opening_full": "Sopra tutta la scala",
+  "stair_opening_none": "Nessuna (botola, vano chiuso)",
+  "stair_opening_hint": "Quanto la scala apre il pavimento che raggiunge: il piano di sopra, o il proprio se scende. In base all'altezza libera apre solo sopra i gradini con meno di 2,2 m.",
+  "stair_up_note_plain": "La scala inizia dal bordo anteriore segnato e sale verso il retro."
 }

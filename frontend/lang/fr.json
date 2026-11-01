@@ -2145,5 +2145,11 @@
  "stair_upgrade": "Choisir la forme",
  "stair_upgrade_hint": "En fait un escalier avec une forme (balancé, L, U, hélicoïdal), une construction, un garde-corps et un nombre de marches.",
  "tool_stairs": "Escalier",
- "hint_stairs": "Faites glisser là où l'escalier doit se trouver – il suit le grand côté ; réglez ensuite forme, sens et construction à droite"
+ "hint_stairs": "Faites glisser là où l'escalier doit se trouver – il suit le grand côté ; réglez ensuite forme, sens et construction à droite",
+ "stair_opening": "Trémie",
+ "stair_opening_headroom": "Selon l'échappée (seulement si nécessaire)",
+ "stair_opening_full": "Au-dessus de tout l'escalier",
+ "stair_opening_none": "Aucune (trappe, cage fermée)",
+ "stair_opening_hint": "Jusqu'où l'escalier ouvre le sol qu'il atteint : l'étage au-dessus, ou son propre étage pour un escalier qui descend. Selon l'échappée n'ouvre qu'au-dessus des marches où il reste moins de 2,2 m.",
+ "stair_up_note_plain": "L'escalier commence au bord avant marqué et monte vers l'arrière."
 }

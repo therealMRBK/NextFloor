@@ -2,7 +2,7 @@
 // resulting rise, going and step measure with a warning when they are uncomfortable.
 
 import { html, svg, type TemplateResult } from "lit";
-import { DEFAULT_STAIR, STAIR_BUILDS, STAIR_RAILS, STAIR_SHAPES, STAIR_SIZES, stairConfig, stairLayout, treadCentre, type StairConfig, type StairShape } from "../../../geometry/stairs.ts";
+import { DEFAULT_STAIR, STAIR_BUILDS, STAIR_OPENINGS, STAIR_RAILS, STAIR_SHAPES, STAIR_SIZES, stairConfig, stairLayout, treadCentre, type StairConfig, type StairShape } from "../../../geometry/stairs.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import type { Furniture } from "../../../model.ts";
 import { formatNumber } from "../../../i18n.ts";
@@ -75,9 +75,10 @@ export function stairForm(host: EditorHost, item: Furniture, actions: StairActio
       : ""}
     ${selectField(host, t("stair_rail"), cfg.rail, STAIR_RAILS.map((r) => [r, t(`stair_rail_${r}` as I18nKey)] as const), (rail) => set({ rail }))}
     ${checkField(host, t("stair_down"), cfg.down, toggleDown, { title: t("stair_down_hint") })}
+    ${selectField(host, t("stair_opening"), cfg.opening, STAIR_OPENINGS.map((o) => [o, t(`stair_opening_${o}` as I18nKey)] as const), (opening) => set({ opening }), { wide: true, title: t("stair_opening_hint") })}
     <p class="nf-sub nf-wide ${comfortable ? "" : "nf-pack-error"}">
       ${t("stair_measures", { steps: m.steps, rise: cm(m.rise), going: cm(m.going), measure: cm(m.measure) })} ${comfortable ? "✓" : `– ${t("stair_uncomfortable")}`}
     </p>
-    ${hint(t(cfg.down ? "stair_down_note" : "stair_up_note"), "nf-wide")}
+    ${hint(t(cfg.down ? "stair_down_note" : cfg.opening === "headroom" ? "stair_up_note" : "stair_up_note_plain"), "nf-wide")}
   </div>`;
 }

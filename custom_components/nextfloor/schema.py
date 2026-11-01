@@ -223,6 +223,7 @@ _STAIR_SCHEMA = vol.Schema(
         vol.Optional("run_width"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.3, max=5))),
         vol.Optional("down"): bool,
         vol.Optional("rail"): vol.In(["none", "left", "right", "both"]),
+        vol.Optional("opening"): vol.In(["headroom", "full", "none"]),
     }
 )
 

@@ -2145,5 +2145,11 @@
   "stair_upgrade": "Vorm instellen",
   "stair_upgrade_hint": "Maakt er een trap van met een vorm (gedraaid, L, U, wenteltrap), constructie, leuning en aantal treden.",
   "tool_stairs": "Trap",
-  "hint_stairs": "Sleep waar de trap moet komen – hij loopt langs de lange zijde; stel daarna rechts vorm, draairichting en constructie in"
+  "hint_stairs": "Sleep waar de trap moet komen – hij loopt langs de lange zijde; stel daarna rechts vorm, draairichting en constructie in",
+  "stair_opening": "Trapgat",
+  "stair_opening_headroom": "Naar hoofdruimte (alleen waar nodig)",
+  "stair_opening_full": "Boven de hele trap",
+  "stair_opening_none": "Geen (luik, gesloten trappenhuis)",
+  "stair_opening_hint": "Hoeveel de trap de vloer opent die hij bereikt: de verdieping erboven, of de eigen verdieping bij een trap naar beneden. Naar hoofdruimte opent alleen boven de treden met minder dan 2,2 m.",
+  "stair_up_note_plain": "De trap begint aan de gemarkeerde voorkant en stijgt naar achteren."
 }

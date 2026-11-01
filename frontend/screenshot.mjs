@@ -81,7 +81,7 @@ const STAIRS_DOC = `
   const xs = g.rooms.flatMap((r) => r.points.map((p) => p[0])), zs = g.rooms.flatMap((r) => r.points.map((p) => p[1]));
   const x0 = Math.max(...xs) + 2.2, z0 = Math.min(...zs);
   const kinds = [["straight", "right", "solid", 1.0, 3.2, "both"], ["quarter", "left", "stringer", 2.2, 2.6, "left"], ["l", "right", "mono", 2.2, 2.8, "right"], ["half", "right", "cantilever", 2.0, 2.6, "none"], ["u", "left", "stringer", 2.2, 2.6, "both"], ["spiral", "right", "mono", 1.6, 1.6, "left"], ["straight", "right", "stringer", 1.0, 3.6, "right"]];
-  kinds.forEach(([shape, turn, build, w, d, rail], i) => g.furniture.push({ id: "stair_demo_" + i, type: "stairs", x: x0 + (i % 4) * 3, z: z0 + 1.8 + Math.floor(i / 4) * 3.6, rotation: 0, w, d, h: 2.8, variant: null, stair: { shape, turn, build, rail, risers: i % 2 === 0, steps: null, run_width: null, down: i === 6 } }));
+  kinds.forEach(([shape, turn, build, w, d, rail], i) => g.furniture.push({ id: "stair_demo_" + i, type: "stairs", x: x0 + (i % 4) * 3, z: z0 + 1.8 + Math.floor(i / 4) * 3.6, rotation: 0, w, d, h: 2.8, variant: null, stair: { shape, turn, build, rail, risers: i % 2 === 0, steps: null, run_width: null, down: i === 6, opening: i === 6 ? "full" : "headroom" } }));
 `;
 const PACK_SCRIPT = `
   const f = e._doc.floors[0];

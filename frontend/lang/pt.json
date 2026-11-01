@@ -2145,5 +2145,11 @@
   "stair_upgrade": "Definir a forma",
   "stair_upgrade_hint": "Transforma-a numa escada com forma (em leque, L, U, caracol), construção, corrimão e número de degraus.",
   "tool_stairs": "Escada",
-  "hint_stairs": "Arraste onde a escada deve ficar – segue o lado comprido; depois defina forma, sentido e construção à direita"
+  "hint_stairs": "Arraste onde a escada deve ficar – segue o lado comprido; depois defina forma, sentido e construção à direita",
+  "stair_opening": "Abertura no piso",
+  "stair_opening_headroom": "Pela altura livre (só onde é preciso)",
+  "stair_opening_full": "Sobre toda a escada",
+  "stair_opening_none": "Nenhuma (alçapão, caixa fechada)",
+  "stair_opening_hint": "Quanto a escada abre o piso que alcança: o piso de cima, ou o próprio se descer. Pela altura livre só abre sobre os degraus com menos de 2,2 m.",
+  "stair_up_note_plain": "A escada começa no bordo da frente marcado e sobe para trás."
 }

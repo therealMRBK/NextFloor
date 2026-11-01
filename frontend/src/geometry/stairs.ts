@@ -16,6 +16,10 @@ export type StairRail = (typeof STAIR_RAILS)[number];
 
 export type StairTurn = "left" | "right";
 
+/** How much of the floor a stair opens: where its treads lack headroom, over the whole stair, or nothing (a hatch or a closed stairwell). */
+export const STAIR_OPENINGS = ["headroom", "full", "none"] as const;
+export type StairOpening = (typeof STAIR_OPENINGS)[number];
+
 export interface StairConfig {
   shape: StairShape;
   /** The way a turned stair turns while walking up it. */
@@ -30,9 +34,11 @@ export interface StairConfig {
   /** Leads down from this floor (into a cellar that need not be drawn) instead of up. */
   down: boolean;
   rail: StairRail;
+  /** The opening in the floor the stair reaches (the floor above, or its own floor going down). */
+  opening: StairOpening;
 }
 
-export const DEFAULT_STAIR: StairConfig = { shape: "straight", turn: "right", build: "solid", risers: true, steps: null, run_width: null, down: false, rail: "none" };
+export const DEFAULT_STAIR: StairConfig = { shape: "straight", turn: "right", build: "solid", risers: true, steps: null, run_width: null, down: false, rail: "none", opening: "headroom" };
 
 /** A good starting size [w, d] for each shape, used when the shape is changed in the editor. */
 export const STAIR_SIZES: Record<StairShape, [number, number]> = {
@@ -65,6 +71,7 @@ export function stairConfig(item: { stair?: Partial<StairConfig> | null }): Stai
     run_width: run,
     down: s.down === true,
     rail: isOneOf(STAIR_RAILS, s.rail) ? s.rail : DEFAULT_STAIR.rail,
+    opening: isOneOf(STAIR_OPENINGS, s.opening) ? s.opening : DEFAULT_STAIR.opening,
   };
 }
 
@@ -261,9 +268,10 @@ export function convexHull(points: readonly Vec2[]): Vec2[] {
  * The opening a stair needs in the floor it reaches (local coordinates): around every tread that lies less than the
  * headroom below that floor. For stairs going up that floor is the one above (at h), for stairs going down the stair's own (at 0).
  */
-export function stairOpening(layout: StairLayout, h: number, down: boolean): Vec2[] {
+export function stairOpening(layout: StairLayout, h: number, down: boolean, opening: StairOpening = "headroom"): Vec2[] {
+  if (opening === "none") return [];
   const level = down ? 0 : Math.abs(h);
-  const near = layout.treads.filter((t, i) => t.top > level - HEADROOM || (!down && i === layout.treads.length - 1) || (down && i === 0));
+  const near = opening === "full" ? layout.treads : layout.treads.filter((t, i) => t.top > level - HEADROOM || (!down && i === layout.treads.length - 1) || (down && i === 0));
   const hull = convexHull(near.flatMap((t) => t.poly));
   return hull.length >= 3 ? hull : [];
 }
@@ -271,7 +279,7 @@ export function stairOpening(layout: StairLayout, h: number, down: boolean): Vec
 /** The floor opening of a shaped stair in plan coordinates (the same transform the 3D model uses, mirror included). */
 export function stairOpeningInPlan(item: { x: number; z: number; rotation: number; w: number; d: number; h: number; mirror?: boolean; stair?: Partial<StairConfig> | null }): Vec2[] {
   const cfg = stairConfig(item);
-  const local = stairOpening(stairLayout(cfg, item.w, item.d, item.h), item.h, cfg.down);
+  const local = stairOpening(stairLayout(cfg, item.w, item.d, item.h), item.h, cfg.down, cfg.opening);
   const a = (item.rotation * Math.PI) / 180;
   const [c, s] = [Math.cos(a), Math.sin(a)];
   const mx = item.mirror ? -1 : 1;

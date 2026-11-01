@@ -2145,5 +2145,11 @@
   "stair_upgrade": "Välj form",
   "stair_upgrade_hint": "Gör den till en trappa med form (vindlad, L, U, spiral), konstruktion, räcke och antal steg.",
   "tool_stairs": "Trappa",
-  "hint_stairs": "Dra där trappan ska stå – den löper längs långsidan; ställ sedan in form, svängning och konstruktion till höger"
+  "hint_stairs": "Dra där trappan ska stå – den löper längs långsidan; ställ sedan in form, svängning och konstruktion till höger",
+  "stair_opening": "Bjälklagsöppning",
+  "stair_opening_headroom": "Efter fri höjd (bara där det behövs)",
+  "stair_opening_full": "Över hela trappan",
+  "stair_opening_none": "Ingen (lucka, stängt trapphus)",
+  "stair_opening_hint": "Hur mycket trappan öppnar golvet den når: planet ovanför, eller sitt eget plan när den leder nedåt. Efter fri höjd öppnar bara över steg där mindre än 2,2 m finns kvar.",
+  "stair_up_note_plain": "Trappan börjar vid den markerade framkanten och stiger bakåt."
 }
