@@ -4,6 +4,7 @@
 import type { PluginRef } from "./plugins/api.ts";
 import { packItem } from "./packs.ts";
 import type { LightEffectConfig } from "./light-effects.ts";
+import type { StairConfig } from "./geometry/stairs.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
 
 export type Vec2 = [number, number];
@@ -232,6 +233,8 @@ export interface Furniture extends LightEffectConfig {
   spray?: number | null;
   /** Mirrored (left-right) – an L-sofa the other way round, a cabinet with its door on the other side. */
   mirror?: boolean;
+  /** Stairs: shape, turn, build, steps and direction (missing on older plans: the simple straight stair). */
+  stair?: Partial<StairConfig> | null;
   /** LED strip: tilt about its length (°; 0 = lying flat, 90 = its face points sideways, e.g. along a roof slope). */
   tilt?: number;
   /** LED strip: standing upright – its length runs up from the mount height (door frame, light column). */

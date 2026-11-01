@@ -87,6 +87,14 @@ export class Builder {
     }
   }
 
+  /** An upright prism over any outline given in local coordinates (stair treads, winders, landings). */
+  prism(outline: readonly Vec2[], y0: number, y1: number, material: Material, edges: Color | null = null): void {
+    if (outline.length < 3 || y1 - y0 < 1e-4) return;
+    const footprint = outline.map(([x, z]) => this.plan(x, z));
+    pushPrism(this.buf, counterClockwise(footprint), y0, y1, material.side, material.top, { aoFrom: Math.min(0, y0), bottom: true });
+    if (edges) footprint.forEach((a, i) => this.edge(a, footprint[(i + 1) % footprint.length], y1, y1, edges));
+  }
+
   /** A box whose top face is another rectangle (sloped sides): hoods, windscreens, tapered shades. Rectangles are [x0, x1, z0, z1]. */
   loft(base: [number, number, number, number], top: [number, number, number, number], y0: number, y1: number, material: Material, edges: Color | null = null): void {
     if (y1 - y0 < 1e-4) return;

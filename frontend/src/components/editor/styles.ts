@@ -722,6 +722,9 @@ export const editorStyles = css`
   .nf-furn-sym .nf-sym-fill {
     fill: color-mix(in srgb, var(--nf-soft) 28%, transparent);
   }
+  .nf-furn-sym .nf-sym-dash {
+    stroke-dasharray: 6 4;
+  }
   .nf-furn-sym .nf-sym-strong {
     stroke: var(--nf-accent);
     stroke-width: 2;
@@ -897,6 +900,26 @@ export const editorStyles = css`
     flex-wrap: wrap;
     gap: 8px;
     padding-top: 4px;
+  }
+  .nf-stair-shapes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .nf-stair-shape {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .nf-stair-shape[aria-checked="true"] {
+    border-color: var(--nf-accent);
+    color: var(--nf-accent);
+    box-shadow: 0 0 0 1px var(--nf-accent) inset;
   }
   .nf-swatch {
     width: 30px;

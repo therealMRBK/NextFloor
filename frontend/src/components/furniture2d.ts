@@ -3,6 +3,7 @@
 
 import { nothing, svg, type SVGTemplateResult } from "lit";
 import { fittedParts, packItem, type PackItem } from "../packs.ts";
+import { stairConfig, stairLayout, treadCentre, type StairConfig } from "../geometry/stairs.ts";
 
 type Part = SVGTemplateResult;
 
@@ -36,7 +37,8 @@ function seating(w: number, d: number, seats: number, arms: boolean): Part[] {
 }
 
 /** Symbol parts for a furniture type of size w × d (metres). */
-export function furnitureSymbol(type: string, w: number, d: number): Part[] | typeof nothing {
+export function furnitureSymbol(type: string, w: number, d: number, item?: { h: number; stair?: Partial<StairConfig> | null }): Part[] | typeof nothing {
+  if (type === "stairs" && item?.stair) return shapedStairSymbol(item, w, d);
   switch (type) {
     case "sofa":
       return seating(w, d, Math.max(1, Math.round((w - 0.4) / 0.62)), true);
@@ -187,6 +189,29 @@ export function furnitureSymbol(type: string, w: number, d: number): Part[] | ty
       return item ? packSymbol(item, w, d) : nothing;
     }
   }
+}
+
+/**
+ * A shaped stair from above: every tread and landing, and the walking line from the first tread to the arrow at the last.
+ * Stairs going down are drawn dashed; their arrow points down the stair as well, away from this floor.
+ */
+function shapedStairSymbol(item: { h: number; stair?: Partial<StairConfig> | null }, w: number, d: number): Part[] {
+  const cfg = stairConfig(item);
+  const layout = stairLayout(cfg, w, d, item.h);
+  const cls = cfg.down ? "nf-sym-dash" : "";
+  const out: Part[] = layout.treads.map((t) => poly(t.poly, t.landing ? `nf-sym-fill ${cls}` : cls));
+  if (layout.column > 0) out.push(circle(0, 0, layout.column, "nf-sym-fill"));
+  const walk = layout.treads.map(treadCentre);
+  for (let i = 1; i < walk.length; i++) out.push(line(walk[i - 1][0], walk[i - 1][1], walk[i][0], walk[i][1], "nf-sym-strong"));
+  if (walk.length) out.unshift(circle(walk[0][0], walk[0][1], 0.05, "nf-sym-fill"));
+  if (walk.length >= 2) {
+    const [p, q] = [walk[walk.length - 2], walk[walk.length - 1]];
+    const length = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+    const [ux, uz] = [(q[0] - p[0]) / length, (q[1] - p[1]) / length];
+    const size = Math.min(0.2, layout.flight * 0.3);
+    for (const side of [-1, 1]) out.push(line(q[0], q[1], q[0] - ux * size + uz * size * 0.6 * side, q[1] - uz * size - ux * size * 0.6 * side, "nf-sym-strong"));
+  }
+  return out;
 }
 
 /** Plan symbol of a pack item: its own symbol, or its parts seen from above (except the full-size base). */

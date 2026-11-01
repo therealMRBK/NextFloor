@@ -6,6 +6,9 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Stairs with a shape**: a stair placed from the library now has a shape (straight, quarter turn with winders, L with a landing, half turn with winders, U with a landing, spiral), turns to the left or right, and is built solid, on stringers, on one spine or as floating steps, with or without risers and with a railing on either or both sides. The number of risers comes from the floor height and can be set by hand; the form shows rise, going and step measure and warns when the stair would be uncomfortable. The plan draws every tread with the walking line. Older stairs keep their look until you press **Set the shape**.
+- **Stairs going down**: a stair can lead down from its floor, for example into a cellar that is not drawn. It opens its own floor and is drawn dashed in the plan.
+- **Openings that fit the stair**: a shaped stair opens the floor above only where its steps lack 2.2 m of headroom, following its shape, instead of the whole rectangle.
 - **Wall buttons in the plan**: `event.*` entities (Homematic, Hue or Zigbee wall buttons and remotes) can be placed like any device. Their marker shows when the button was last pressed, and a tap opens its details. Thanks to @jan74berlin ([#35](https://github.com/therealMRBK/NextFloor/issues/35)).
 
 ### Changed
