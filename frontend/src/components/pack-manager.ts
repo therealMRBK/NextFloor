@@ -8,6 +8,10 @@ import { REPO_URL } from "../features.ts";
 import { translate, type I18nKey } from "../i18n.ts";
 import { packLabel } from "../furniture-names.ts";
 import type { FurniturePack } from "../packs.ts";
+import { downloadStorePack, fetchStorePacks, storePackState, STORE_REPO, type StorePack } from "../plugins/store.ts";
+
+/** The furniture builder on the project's site. */
+const BUILDER_URL = "https://therealmrbk.github.io/NextFloor/builder/";
 import { controls, tokens } from "../styles.ts";
 import type { HomeAssistant } from "../types.ts";
 
@@ -17,17 +21,82 @@ export class PackManager extends LitElement {
     packs: { attribute: false },
     _msg: { state: true },
     _busy: { state: true },
+    _store: { state: true },
+    _storeError: { state: true },
   };
 
   declare hass: HomeAssistant | undefined;
   declare packs: FurniturePack[] | undefined;
   declare _msg: { ok: boolean; text: string } | null;
   declare _busy: boolean;
+  /** The community furniture of the store, once loaded (null: not asked for yet, "loading" while it comes). */
+  declare _store: StorePack[] | "loading" | null;
+  declare _storeError: string | null;
 
   constructor() {
     super();
     this._msg = null;
     this._busy = false;
+    this._store = null;
+    this._storeError = null;
+  }
+
+  /** The store's list is fetched only when asked for (no request to GitHub unless the user wants it). */
+  private async loadStore(): Promise<void> {
+    this._store = "loading";
+    this._storeError = null;
+    try {
+      this._store = await fetchStorePacks();
+    } catch (err) {
+      this._store = null;
+      this._storeError = this.t("community_failed", { detail: (err as Error)?.message ?? String(err) });
+    }
+  }
+
+  private async installStore(entry: StorePack): Promise<void> {
+    this._busy = true;
+    this._msg = null;
+    try {
+      const res = await importPack(this.hass!, await downloadStorePack(entry));
+      this._msg = { ok: true, text: this.t("pack_imported", { name: res.name, publisher: res.publisher, n: res.items }) };
+      this.changed();
+    } catch (err) {
+      this._msg = { ok: false, text: this.errorText(err) };
+    } finally {
+      this._busy = false;
+    }
+  }
+
+  private renderStore() {
+    const installed = this.packs ?? [];
+    const store = this._store;
+    return html`<h4>${this.t("community_title")}</h4>
+      <p class="nf-sub">
+        ${this.t("community_intro")} <a href=${BUILDER_URL} target="_blank" rel="noopener">${this.t("community_builder")}</a> ·
+        <a href=${`https://github.com/${STORE_REPO}#community-furniture`} target="_blank" rel="noopener">${this.t("community_how")}</a>
+      </p>
+      ${store === null
+        ? html`<div><button class="nf-btn" @click=${() => void this.loadStore()}>${this.t("community_load")}</button></div>`
+        : store === "loading"
+          ? html`<p class="nf-sub">${this.t("loading")}</p>`
+          : store.length
+            ? html`<ul>
+                ${store.map((entry) => {
+                  const state = storePackState(entry, installed);
+                  return html`<li>
+                    <div class="nf-pack-main">
+                      <strong>${entry.name}</strong>
+                      <span class="nf-detail">${entry.id} · ${this.t("pack_by", { publisher: entry.author, n: entry.items })}</span>
+                      ${entry.description ? html`<span class="nf-detail">${entry.description}</span>` : nothing}
+                    </div>
+                    <button class="nf-btn ${state === "installed" ? "" : "nf-primary"}" ?disabled=${this._busy || state === "installed"} @click=${() => void this.installStore(entry)}>
+                      ${this.t(state === "installed" ? "community_installed" : state === "update" ? "community_update" : "community_install")}
+                    </button>
+                  </li>`;
+                })}
+              </ul>`
+            : html`<p class="nf-sub">${this.t("community_none")}</p>`}
+      ${this._storeError ? html`<p class="nf-error" role="alert">${this._storeError}</p>` : nothing}`;
   }
 
   private t(key: I18nKey, vars?: Record<string, string | number>): string {
@@ -127,6 +196,7 @@ export class PackManager extends LitElement {
         <button class="nf-btn nf-primary" ?disabled=${this._busy} @click=${() => this.importPasted()}>${this.t("pack_paste")}</button>
       </div>
       ${this._msg ? html`<p class=${this._msg.ok ? "nf-ok" : "nf-error"} role=${this._msg.ok ? "status" : "alert"}>${this._msg.text}</p>` : nothing}
+      ${this.hass ? this.renderStore() : nothing}
     </section>`;
   }
 
@@ -160,6 +230,10 @@ export class PackManager extends LitElement {
       .nf-error {
         color: var(--error-color, #c62828);
         overflow-wrap: anywhere;
+      }
+      h4 {
+        margin: 14px 0 0;
+        font-size: 15px;
       }
       ul {
         list-style: none;

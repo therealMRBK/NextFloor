@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
 import { loadPlugins, resetLoads, resolveModuleUrl } from "./loader.ts";
-import { isStoreFileUrl, parseStoreIndex, storeState, withStoreEntry, type StoreEntry } from "./store.ts";
+import { downloadStorePack, isStoreFileUrl, parseStoreIndex, parseStorePacks, storePackState, storeState, withStoreEntry, type StoreEntry } from "./store.ts";
 
 afterEach(resetLoads);
 
@@ -67,4 +67,33 @@ test("a file that does not match its checksum is refused and never imported", as
   let imported = 0;
   await loadPlugins([{ url: FILE, enabled: true, sha256: SHA }], async () => void imported++, serving(bytes));
   assert.equal(imported, 0);
+});
+
+test("community furniture: only packs from the store's own folder, with a checksum, no reserved ids", () => {
+  const ok = { id: "anna.kitchen", name: "Kitchen", author: "Anna", release: 2, items: 5, url: "https://raw.githubusercontent.com/therealMRBK/NextFloor-Plugins/main/packs/anna.kitchen.json", sha256: "a".repeat(64) };
+  const packs = parseStorePacks({
+    packs: [
+      ok,
+      { ...ok, id: "elsewhere", url: "https://example.com/elsewhere.json" },
+      { ...ok, id: "nextfloor.fake", url: "https://raw.githubusercontent.com/therealMRBK/NextFloor-Plugins/main/packs/nextfloor.fake.json" },
+      { ...ok, id: "other.pack", url: "https://raw.githubusercontent.com/therealMRBK/NextFloor-Plugins/main/packs/anna.kitchen.json" },
+      { ...ok, id: "no.sum", url: "https://raw.githubusercontent.com/therealMRBK/NextFloor-Plugins/main/packs/no.sum.json", sha256: "x" },
+      ok,
+    ],
+  });
+  assert.deepEqual(packs.map((p) => p.id), ["anna.kitchen"]);
+  assert.deepEqual(parseStorePacks({ plugins: [] }), []);
+  assert.equal(storePackState(packs[0], []), "available");
+  assert.equal(storePackState(packs[0], [{ id: "anna.kitchen", release: 2 }]), "installed");
+  assert.equal(storePackState(packs[0], [{ id: "anna.kitchen", release: 1 }]), "update");
+  assert.equal(storePackState(packs[0], [{ id: "anna.kitchen" }]), "update");
+});
+
+test("a store pack is refused when it is not the reviewed file", async () => {
+  const body = new TextEncoder().encode('{"format":"nfpack"}');
+  const sum = [...new Uint8Array(await crypto.subtle.digest("SHA-256", body))].map((b) => b.toString(16).padStart(2, "0")).join("");
+  const entry = { id: "a.b", name: "A", description: "", author: "", release: 1, items: 1, url: "https://raw.githubusercontent.com/therealMRBK/NextFloor-Plugins/main/packs/a.b.json", sha256: sum };
+  const fetcher = (async () => new Response(body)) as unknown as typeof fetch;
+  assert.equal(await downloadStorePack(entry, fetcher), '{"format":"nfpack"}');
+  await assert.rejects(downloadStorePack({ ...entry, sha256: "0".repeat(64) }, fetcher), /checksum/);
 });

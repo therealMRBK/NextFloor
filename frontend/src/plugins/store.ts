@@ -71,3 +71,69 @@ export function withStoreEntry(refs: PluginRef[] | undefined, entry: StoreEntry)
   if (at < 0) return [...list, next];
   return list.map((r, i) => (i === at ? { ...next, enabled: r.enabled } : r));
 }
+
+// ---------------------------------------------------------------- community furniture
+
+/** A furniture pack of the store: a data file in the store's repository (packs/<id>.json), with its checksum. */
+export interface StorePack {
+  id: string;
+  name: string;
+  description: string;
+  author: string;
+  release: number;
+  items: number;
+  url: string;
+  sha256: string;
+}
+
+/** Furniture packs come only from the store's own packs folder. */
+export const isStorePackUrl = (url: string, id: string): boolean => url === `https://raw.githubusercontent.com/${STORE_REPO}/main/packs/${id}.json`;
+
+/** The furniture packs of the downloaded index; anything malformed is dropped. */
+export function parseStorePacks(json: unknown): StorePack[] {
+  const list = (json as { packs?: unknown } | null)?.packs;
+  if (!Array.isArray(list)) return [];
+  const seen = new Set<string>();
+  const out: StorePack[] = [];
+  for (const raw of list as Record<string, unknown>[]) {
+    if (!raw || typeof raw !== "object") continue;
+    const id = text(raw.id, 40);
+    const url = text(raw.url, 300);
+    const sha256 = text(raw.sha256, 64).toLowerCase();
+    const name = text(raw.name, 80);
+    if (!/^[a-z0-9][a-z0-9_.-]{0,39}$/.test(id) || id.startsWith("nextfloor.") || seen.has(id) || !name) continue;
+    if (!isStorePackUrl(url, id) || !/^[0-9a-f]{64}$/.test(sha256)) continue;
+    seen.add(id);
+    const num = (v: unknown, fallback: number) => (typeof v === "number" && Number.isInteger(v) && v > 0 ? v : fallback);
+    out.push({ id, name, description: text(raw.description, 400), author: text(raw.author, 80), release: num(raw.release, 1), items: num(raw.items, 0), url, sha256 });
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function fetchStorePacks(fetcher: typeof fetch = (...args) => fetch(...args)): Promise<StorePack[]> {
+  const res = await fetcher(STORE_INDEX_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return parseStorePacks(await res.json());
+}
+
+/** Where a store pack stands against the installed packs: not there, there in this release, or a newer release listed. */
+export function storePackState(entry: StorePack, installed: readonly { id: string; release?: number }[]): StoreState {
+  const own = installed.find((p) => p.id === entry.id);
+  if (!own) return "available";
+  return (own.release ?? 1) >= entry.release ? "installed" : "update";
+}
+
+const hex = (buf: ArrayBuffer) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+
+/**
+ * Downloads a store pack and checks it against its checksum. Browsers without `crypto.subtle` (plain http) cannot check;
+ * the integration checks every pack's content again when it imports it.
+ */
+export async function downloadStorePack(entry: StorePack, fetcher: typeof fetch = (...args) => fetch(...args)): Promise<string> {
+  const res = await fetcher(entry.url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const bytes = await res.arrayBuffer();
+  const subtle = globalThis.crypto?.subtle;
+  if (subtle && hex(await subtle.digest("SHA-256", bytes)) !== entry.sha256) throw new Error("checksum mismatch: the file is not the one that was reviewed");
+  return new TextDecoder().decode(bytes);
+}

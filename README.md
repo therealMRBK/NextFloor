@@ -46,6 +46,7 @@ Free, open source, no cloud, no account. Made for wall tablets.</p>
 | 🎨 **Fits your theme** | Takes colours, font and corner radius from Home Assistant; three looks (*Neon*, *Blueprint*, *Day*) and a heatmap. |
 | 🧩 **Dashboard card** | `custom:nextfloor-card` with a visual editor. |
 | 🌍 **Nine languages** | German, English, French, Spanish, Italian, Dutch, Polish, Portuguese and Swedish, following the language of your Home Assistant user. |
+| 🪑 **Furniture builder** | Build your own furniture in the browser with the [furniture builder](https://therealmrbk.github.io/NextFloor/builder/), share it in the community store and install others' furniture with one tap (Extensions → Community furniture). |
 | 📦 **Own 3D models** | Upload a `.glb` of your own on the Extensions page; NextFloor prepares it for you. Import plans from Sweet Home 3D or let an AI write one in NextFloor's plan format. |
 | 🧩 **Plugins** | New device kinds from plugins and a plugin store on the Extensions page (cameras with their field of view, alarm panels). |
 

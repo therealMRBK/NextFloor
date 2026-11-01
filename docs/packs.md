@@ -5,6 +5,14 @@ Quadern, Zylindern und Lofts gebaut und laufen deshalb genauso flüssig auf schw
 
 Ein Pack ist eine einfache JSON-Datei. Jeder kann eigene Packs bauen, weitergeben und importieren.
 
+## Möbel-Baukasten und Community-Möbel
+
+Am einfachsten baust du Möbel im **[Möbel-Baukasten](https://therealmrbk.github.io/NextFloor/builder/)** im Browser:
+Teile hinzufügen, Maße in Zentimetern eintragen, Farben wählen – die 3D-Vorschau zeichnet das Möbel genau so wie
+NextFloor. Der Baukasten prüft das Pack wie der Import, speichert es als Datei und teilt es mit einem Knopf im
+**Community-Store** ([NextFloor-Plugins](https://github.com/therealMRBK/NextFloor-Plugins#community-furniture)). Geteilte
+Packs stehen danach in NextFloor unter **Erweiterungen → Community-Möbel** zum Installieren bereit.
+
 ## Mitgelieferte Packs
 
 26 Packs kommen mit der Integration (`custom_components/nextfloor/packs/nextfloor.*.json`) und sind
