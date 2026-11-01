@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Kontaktrony i czujki",
   "marker_kind_sensor": "Czujniki",
   "marker_kind_tap": "Meble z akcją",
-  "marker_kind_other": "Inne"
+  "marker_kind_other": "Inne",
+  "floor_copy": "Duplikuj piętro",
+  "floor_copy_hint": "Kopia trafia na górę domu ze wszystkimi pomieszczeniami, ścianami, drzwiami i oknami. Pomieszczenia i piętro tracą powiązanie z Home Assistant, meble swoje encje; urządzenia energetyczne zostają na starym piętrze.",
+  "floor_copy_furniture": "Kopiuj meble",
+  "floor_copy_devices": "Kopiuj znaczniki urządzeń",
+  "floor_copy_devices_hint": "Ta sama encja pojawi się wtedy na obu piętrach.",
+  "floor_copy_outdoor": "Kopiuj tereny zewnętrzne",
+  "floor_copy_make": "Utwórz kopię",
+  "floor_copy_name": "{name} (kopia)",
+  "furn_to_floor": "Przenieś na piętro",
+  "furn_to_floor_hint": "Mebel trafia w to samo miejsce na wybranym piętrze."
 }

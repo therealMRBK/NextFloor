@@ -24,6 +24,7 @@ export class SideState {
   private query = "";
   private source: "area" | "other" | "none" = "area";
   private unfolded = new Set<string>();
+  private copyChoice: { furniture: boolean; devices: boolean; outdoor: boolean } | null = null;
 
   constructor(onChange: () => void) {
     this.onChange = onChange;
@@ -35,6 +36,15 @@ export class SideState {
   }
   set floorMenu(open: boolean) {
     this.menuOpen = open;
+    this.onChange();
+  }
+
+  /** The choices for copying the floor while that dialog is open, else null. */
+  get floorCopy(): { furniture: boolean; devices: boolean; outdoor: boolean } | null {
+    return this.copyChoice;
+  }
+  set floorCopy(choice: { furniture: boolean; devices: boolean; outdoor: boolean } | null) {
+    this.copyChoice = choice;
     this.onChange();
   }
 

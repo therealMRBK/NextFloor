@@ -94,7 +94,7 @@ import { Selection, type ItemKind } from "./editor/selection.ts";
 import { SideState } from "./editor/side-state.ts";
 import { renderFloors, type FloorActions } from "./editor/forms/floor.ts";
 import { renderRoomForm, renderRoomList, type RoomActions } from "./editor/forms/room.ts";
-import { floorsSwapped, floorsWith, newFloorFor, unplacedAreas } from "./editor/ops/floors.ts";
+import { copyOfFloor, floorsSwapped, floorsWith, moveFurnitureToFloor, newFloorFor, unplacedAreas, type FloorCopyOptions } from "./editor/ops/floors.ts";
 import { spotItems, suggestedSpots } from "./editor/ops/spots.ts";
 import { editorStyles } from "./editor/styles.ts";
 import "./entity-picker.ts";
@@ -385,6 +385,17 @@ export class NfEditor extends LitElement {
     };
   }
 
+  /** Moves the selected piece of furniture to another floor and follows it there. */
+  private furnitureToFloor(floorId: string): void {
+    const [from, id] = [this._floorId, this.sel.furniture];
+    if (!from || !id || !this.isAdmin) return;
+    const next = structuredClone(this._doc);
+    if (!moveFurnitureToFloor(next, from, id, floorId)) return;
+    this.setDoc(next);
+    this._floorId = floorId;
+    this.selectItem("furniture", id);
+  }
+
   private furnitureActions(): FurnitureActions {
     return {
       update: (patch) => this.updateFurniture(patch),
@@ -393,6 +404,7 @@ export class NfEditor extends LitElement {
       remove: () => this.deleteFurniture(),
       toDevice: (item) => this.furnitureToDevice(item),
       toSpot: (item) => this.vehicleToSpot(item),
+      toFloor: (floorId) => this.furnitureToFloor(floorId),
       packs: this.packs ?? [],
       lockButton: this.fixButton("furniture", this.sel.furniture ?? ""),
     };
@@ -1984,6 +1996,20 @@ export class NfEditor extends LitElement {
     this.fit();
   }
 
+  /** A copy of the open floor on top of the house; the copy opens. */
+  private duplicateFloor(options: FloorCopyOptions): void {
+    const floor = this.floor;
+    if (!floor || !this.isAdmin) return;
+    const copy = copyOfFloor(this._doc, floor, this.t("floor_copy_name", { name: floor.name }), options);
+    const next = structuredClone(this._doc);
+    next.floors = floorsWith(next.floors, copy);
+    this.setDoc(next);
+    this._floorId = copy.id;
+    this.sel.room = null;
+    this.side.floorCopy = null;
+    this.fit();
+  }
+
   private moveFloor(direction: -1 | 1): void {
     const id = this._floorId;
     if (!id) return;
@@ -2006,6 +2032,7 @@ export class NfEditor extends LitElement {
       addFloor: (from) => this.addFloor(from),
       moveFloor: (direction) => this.moveFloor(direction),
       deleteFloor: () => this.deleteFloor(),
+      duplicateFloor: (options) => this.duplicateFloor(options),
       addAreaRooms: (floor) => this.addAreaRooms(floor),
       closeGaps: () => this.closeFloorGaps(),
       shift: () => this.shiftFloor(this.side.shiftX, this.side.shiftZ),

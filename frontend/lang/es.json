@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Contactos y detectores",
   "marker_kind_sensor": "Sensores",
   "marker_kind_tap": "Muebles con acción",
-  "marker_kind_other": "Otros"
+  "marker_kind_other": "Otros",
+  "floor_copy": "Duplicar planta",
+  "floor_copy_hint": "La copia va encima de la casa con todas las habitaciones, paredes, puertas y ventanas. Las habitaciones y la planta pierden su enlace con Home Assistant, los muebles sus entidades; los equipos de energía se quedan en la planta antigua.",
+  "floor_copy_furniture": "Copiar los muebles",
+  "floor_copy_devices": "Copiar los marcadores de dispositivos",
+  "floor_copy_devices_hint": "La misma entidad aparecerá entonces en ambas plantas.",
+  "floor_copy_outdoor": "Copiar las zonas exteriores",
+  "floor_copy_make": "Crear la copia",
+  "floor_copy_name": "{name} (copia)",
+  "furn_to_floor": "Mover a la planta",
+  "furn_to_floor_hint": "El mueble pasa al mismo sitio en la planta elegida."
 }

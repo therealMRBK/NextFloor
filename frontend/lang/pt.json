@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Contactos e detetores",
   "marker_kind_sensor": "Sensores",
   "marker_kind_tap": "Móveis com ação",
-  "marker_kind_other": "Outros"
+  "marker_kind_other": "Outros",
+  "floor_copy": "Duplicar piso",
+  "floor_copy_hint": "A cópia vai para o topo da casa com todas as divisões, paredes, portas e janelas. As divisões e o piso perdem a ligação ao Home Assistant, os móveis as suas entidades; os equipamentos de energia ficam no piso antigo.",
+  "floor_copy_furniture": "Copiar os móveis",
+  "floor_copy_devices": "Copiar os marcadores de dispositivos",
+  "floor_copy_devices_hint": "A mesma entidade aparece então nos dois pisos.",
+  "floor_copy_outdoor": "Copiar as áreas exteriores",
+  "floor_copy_make": "Criar a cópia",
+  "floor_copy_name": "{name} (cópia)",
+  "furn_to_floor": "Mover para o piso",
+  "furn_to_floor_hint": "O móvel passa para o mesmo sítio no piso escolhido."
 }
