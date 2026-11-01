@@ -42,6 +42,8 @@ export function isRelevant(hass: HomeAssistant, entityId: string): boolean {
   // an entity a plugin takes care of is shown, whatever its class
   if (!kind) return pluginKind(entityId, state) !== null;
   const deviceClass = state.attributes.device_class as string | undefined;
+  // wall buttons, remotes and doorbells (event entities) count, other events are integration internals
+  if (entityId.startsWith("event.")) return !deviceClass || deviceClass === "button" || deviceClass === "doorbell";
   if (kind === "sensor") return deviceClass ? SHOWN_SENSOR_CLASSES.has(deviceClass) : METER_UNITS.has(String(state.attributes.unit_of_measurement ?? ""));
   // a binary sensor without a class is mostly integration noise, unless someone gave that entity an area by hand
   if (kind === "binary") return deviceClass ? SHOWN_BINARY_CLASSES.has(deviceClass) : !!hass.entities?.[entityId]?.area_id;

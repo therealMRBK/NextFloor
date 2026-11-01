@@ -164,3 +164,11 @@ test("entities a plugin gives a kind are offered like the others, in their area 
     resetPlugins();
   }
 });
+
+test("wall buttons and doorbells (event entities) are offered, other events are not", () => {
+  const hass = hassOf([entity("event.hall_button", "unknown", { device_class: "button" }), entity("event.bell", "unknown", { device_class: "doorbell" }), entity("event.remote", "unknown"), entity("event.motion", "unknown", { device_class: "motion" })]);
+  assert.equal(isRelevant(hass, "event.hall_button"), true);
+  assert.equal(isRelevant(hass, "event.bell"), true);
+  assert.equal(isRelevant(hass, "event.remote"), true);
+  assert.equal(isRelevant(hass, "event.motion"), false);
+});

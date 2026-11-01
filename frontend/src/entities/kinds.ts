@@ -22,6 +22,8 @@ const KIND_OF_DOMAIN: Record<string, DeviceKind> = {
   lock: "lock",
   sensor: "sensor",
   binary_sensor: "binary",
+  // a wall button or remote: its state is the time of its last press, shown like a reading
+  event: "sensor",
   scene: "scene",
   script: "script",
 };
@@ -51,7 +53,8 @@ export const TOGGLE_KINDS = new Set<DeviceKind>(["light", "switch", "fan"]);
 /** Scenes and scripts live in the room panel; they have no place in the room. */
 export const isPlaceable = (kind: DeviceKind | null): boolean => kind !== null && kind !== "scene" && kind !== "script";
 
-export const isUnavailable = (st: HassEntity | undefined): boolean => !st || st.state === "unavailable" || st.state === "unknown";
+/** Gone or unknown; an event entity (a wall button) is "unknown" until its first press and is there all the same. */
+export const isUnavailable = (st: HassEntity | undefined): boolean => !st || st.state === "unavailable" || (st.state === "unknown" && !st.entity_id.startsWith("event."));
 
 const MOTION_CLASSES = new Set(["motion", "occupancy", "presence", "moving"]);
 

@@ -56,7 +56,18 @@ function binaryText(hass: Hass, st: HassEntity): string {
   return say(hass, on ? "state_detected" : "state_clear");
 }
 
+/** When a wall button (event entity) was last pressed: the time today, else the day and time; a dash before its first press. */
+export function eventText(hass: Hass, st: HassEntity, now = new Date()): string {
+  const when = new Date(st.state);
+  if (Number.isNaN(when.getTime())) return "–";
+  const locale = hass?.language ?? navigator.language;
+  const today = when.toDateString() === now.toDateString();
+  const options: Intl.DateTimeFormatOptions = today ? { hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" };
+  return new Intl.DateTimeFormat(locale, options).format(when);
+}
+
 function sensorText(hass: Hass, st: HassEntity): string {
+  if (st.entity_id.startsWith("event.")) return eventText(hass, st);
   const value = Number(st.state);
   if (!Number.isFinite(value)) return st.state;
   // the decimals chosen in Home Assistant win (a gas meter reads 1234.567 m³)

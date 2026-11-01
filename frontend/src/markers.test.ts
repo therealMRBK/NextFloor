@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildMarkers, placedEntities, scaleGlow, stateText, toggleEntity } from "./markers.ts";
+import { buildMarkers, eventText, placedEntities, scaleGlow, stateText, toggleEntity } from "./markers.ts";
 import { emptyBuilding, newFloor } from "./model.ts";
 import type { HassEntity, HomeAssistant } from "./types.ts";
 
@@ -88,4 +88,24 @@ test("toggling uses the service of the entity's own domain", async () => {
   const hass = hassOf([]) as HomeAssistant & { calls: unknown[][] };
   await toggleEntity(hass, "switch.pump");
   assert.deepEqual(hass.calls[0], ["switch", "toggle", { entity_id: "switch.pump" }]);
+});
+
+test("a wall button (event entity) shows when it was last pressed, and a dash before its first press", () => {
+  const hass = hassOf([]);
+  const now = new Date(2026, 10, 1, 18, 0);
+  const pressed = state("event.hall_button", new Date(2026, 10, 1, 14, 32).toISOString(), { event_type: "press_short" });
+  assert.match(eventText(hass, pressed, now), /14:32|2:32/);
+  assert.match(eventText(hass, state("event.hall_button", new Date(2026, 9, 30, 8, 5).toISOString()), now), /30/);
+  assert.equal(stateText(hass, state("event.hall_button", "unknown")), "–");
+  assert.equal(stateText(hass, state("event.hall_button", "unavailable")), "Unavailable");
+});
+
+test("a placed wall button gets a marker", () => {
+  const building = emptyBuilding();
+  const floor = newFloor("g", "Ground", 0);
+  floor.placements = [{ entity_id: "event.hall_button", x: 1, z: 1, y: null, mount: null }];
+  building.floors = [floor];
+  const markers = buildMarkers(hassOf([state("event.hall_button", "unknown")]), building);
+  assert.equal(markers.length, 1);
+  assert.equal(markers[0].unavailable, false);
 });
