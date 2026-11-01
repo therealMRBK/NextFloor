@@ -4,9 +4,14 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## Unreleased
 
+### Changed
+
+- **Furniture with an own tap action keeps showing its state** by @Mika2108 ([#30](https://github.com/therealMRBK/NextFloor/pull/30)): an item linked to an entity (a meter with its power, a lamp, a washing machine, a light switch, a bin) keeps its usual marker, glow and energy flow when *Tapping the item* is set; only a tap on the item or its marker runs the action, a long press still opens the details. Example: the meter shows the grid power and a tap opens the energy dashboard. Items without a marker of their own still get the tap marker.
+
 ### Fixed
 
 - **Plugin devices show their own icon in the editor** by @Mika2108 ([#28](https://github.com/therealMRBK/NextFloor/pull/28)): the plan, the device's form and the room's device list use the icon picked in the plan, else the plugin's Material Design icon, else the kind's symbol, as the 3D view does. Cameras no longer show as clocks.
+- **A garage remote keeps its buttons in the room panel** by @Mika2108 ([#29](https://github.com/therealMRBK/NextFloor/pull/29)): a cover that only sends commands and never reports its position is no longer greyed out there, as in the quick menu since 0.14.0. *Open all* / *Close all* now leave out covers set to ask first, so a garage door no longer moves along without the confirmation, and they are hidden when no cover is left.
 
 ## 0.15.0
 
