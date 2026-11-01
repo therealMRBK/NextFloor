@@ -11,6 +11,8 @@ import type { EditorHost } from "../host.ts";
 import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
 import { parkingForm } from "./parking.ts";
+import { stairForm } from "./stairs.ts";
+import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 
 export interface FurnitureActions extends FurnitureLinkActions {
   rotate(delta: number): void;
@@ -117,8 +119,10 @@ function geometryFields(host: EditorHost, item: Furniture, actions: FurnitureAct
 const hangs = (item: Furniture): boolean => CEILING_TYPES.has(item.type) || packItem(item.type)?.mount === "ceiling";
 
 /** Notes under the form for stairs and stairwells, with a warning when a stairwell lies outside every room. */
-function typeNotes(host: EditorHost, item: Furniture): TemplateResult | typeof nothing {
-  if (item.type === "stairs") return hint(host.t("stairs_hint"));
+function typeNotes(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult | typeof nothing {
+  if (item.type === "stairs" && item.stair) return nothing;
+  if (item.type === "stairs")
+    return html`${hint(host.t("stairs_hint"))}${host.admin ? html`<div class="nf-actions"><button class="nf-btn nf-primary" title=${host.t("stair_upgrade_hint")} @click=${() => actions.update({ stair: { ...DEFAULT_STAIR } })}>${host.t("stair_upgrade")}</button></div>` : nothing}`;
   if (item.type !== "stairwell") return nothing;
   const outside = host.floor && !host.floor.rooms.some((r) => r.points.length >= 3 && holeInRoom(furnitureFootprint(item), r.points));
   return html`${hint(host.t("stairwell_hint"))}${outside ? html`<p class="nf-sub nf-pack-error">${host.t("stairwell_outside")}</p>` : nothing}`;
@@ -162,7 +166,7 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
   return html`<section>
     <div class="nf-h3row"><h3>${item.name || host.t("furniture")}</h3>${actions.lockButton}</div>
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>
-    ${typeNotes(host, item)} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
+    ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
     ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
     ${householdKind(item.type) ? careLink(host, item, householdKind(item.type)!, actions) : nothing} ${hasMovingParts(packItem(item.type)) ? coverLink(host, item, actions) : nothing} ${item.type === "parking" ? parkingForm(host, item, actions.packs, actions) : nothing}
     ${item.type.startsWith("pack:nextfloor.fahrzeuge:") && host.admin

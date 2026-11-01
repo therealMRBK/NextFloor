@@ -75,6 +75,14 @@ const SUB_METER_VIEW = (unmetered) => `const panel = document.querySelector("nex
 // selects an item in the editor and scrolls the side bar to a text of its form
 const SUB_METER_FORM = (select, text) => `const b = structuredClone(e._doc); ${SUB_METER(true)} e.setDoc(b); ${select}
   setTimeout(() => [...e.renderRoot.querySelectorAll("label, h3")].find((x) => x.textContent.includes("${text}"))?.scrollIntoView({ block: "center" }), 600);`;
+// every shape of the shaped stairs beside the house on the ground floor (with all builds, turns and railings) and one going down
+const STAIRS_DOC = `
+  const g = b.floors[0];
+  const xs = g.rooms.flatMap((r) => r.points.map((p) => p[0])), zs = g.rooms.flatMap((r) => r.points.map((p) => p[1]));
+  const x0 = Math.max(...xs) + 2.2, z0 = Math.min(...zs);
+  const kinds = [["straight", "right", "solid", 1.0, 3.2, "both"], ["quarter", "left", "stringer", 2.2, 2.6, "left"], ["l", "right", "mono", 2.2, 2.8, "right"], ["half", "right", "cantilever", 2.0, 2.6, "none"], ["u", "left", "stringer", 2.2, 2.6, "both"], ["spiral", "right", "mono", 1.6, 1.6, "left"], ["straight", "right", "stringer", 1.0, 3.6, "right"]];
+  kinds.forEach(([shape, turn, build, w, d, rail], i) => g.furniture.push({ id: "stair_demo_" + i, type: "stairs", x: x0 + (i % 4) * 3, z: z0 + 1.8 + Math.floor(i / 4) * 3.6, rotation: 0, w, d, h: 2.8, variant: null, stair: { shape, turn, build, rail, risers: i % 2 === 0, steps: null, run_width: null, down: i === 6 } }));
+`;
 const PACK_SCRIPT = `
   const f = e._doc.floors[0];
   e._floorId = f.id;
@@ -124,6 +132,10 @@ const shots = [
   { name: "dev-ceilings-edit", dev: true, query: "", width: 1500, height: 950, editor: true, editorScript: `const b = structuredClone(e._doc); ${CEILING_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.selectItem("room", b.floors[0].rooms.find((r) => r.name === "Bad").id);`, openDetails: true },
   { name: "dev-fan-form", dev: true, query: "", width: 1500, height: 1300, editor: true, editorScript: `const b = structuredClone(e._doc); ${CEILING_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.selectItem("furniture", "fan_demo");`, openDetails: true },
   { name: "dev-plan-example", dev: true, query: "?state=/preview/screenshots/plan-example.json&noshowcase", width: 1400, height: 800 },
+  { name: "dev-stairs-plan", dev: true, query: "", width: 1500, height: 950, editor: true, editorScript: `const b = structuredClone(e._doc); ${STAIRS_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.fit();` },
+  { name: "dev-stairs-tool", dev: true, query: "", width: 1500, height: 950, editor: true, editorScript: "e._floorId = e._doc.floors[0].id; e.fit();", click: "Treppe", mouseDrag: [[860, 640], [940, 800]] },
+  { name: "dev-stairs-form", dev: true, query: "", width: 1500, height: 1200, editor: true, editorScript: `const b = structuredClone(e._doc); ${STAIRS_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.selectItem("furniture", "stair_demo_2");` },
+  { name: "dev-stairs-3d", dev: true, query: "", width: 1500, height: 900, click: "Erdgeschoss", settle: 2500, viewScript: `const panel = document.querySelector("nextfloor-panel"); panel._clean = true; const b = structuredClone(panel.data.building); ${STAIRS_DOC} panel.data.edit(b); setTimeout(() => { const w = v.viewer.getView(); w.target.set(x0 + 4.5, 0.8, z0 + 3.5); w.theta = -0.5; w.phi = 0.9; w.radius = 13; v.viewer.flyTo(w, 1); }, 400);`, afterWait: 2000 },
   { name: "dev-library", dev: true, query: "", width: 1500, height: 950, editor: true, click: "Möbel", wait: 500 },
   { name: "dev-library-kitchen", dev: true, query: "", width: 1500, height: 950, editor: true, click: "Möbel", tapAt: [690, 520], wait: 500, settle: 6000 },
   // ../preview/screenshots/stretch.json: a pack sofa and table at their size and resized (keeps arms, legs and plates)

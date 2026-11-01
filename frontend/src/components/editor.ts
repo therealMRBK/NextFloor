@@ -118,7 +118,7 @@ interface Press {
 type Gesture = Drag | typeof NO_GESTURE;
 const NO_GESTURE = "handled";
 
-type Tool = "select" | "rect" | "polygon" | "measure" | "opening" | "furniture" | "outdoor" | "hole" | "wall" | "roof" | "energy";
+type Tool = "select" | "rect" | "polygon" | "measure" | "opening" | "furniture" | "outdoor" | "hole" | "stairs" | "wall" | "roof" | "energy";
 
 type Drag =
   | { kind: "pan"; last: [number, number] }
@@ -130,7 +130,7 @@ type Drag =
   | { kind: "aim"; entityId: string; base: Building; moved: boolean }
   | { kind: "resize"; id: string; corner: [1 | -1, 1 | -1]; base: Building; moved: boolean }
   | { kind: "room"; roomId: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean }
-  | { kind: "rect"; start: Vec2; end: Vec2; outdoor?: boolean; hole?: boolean; roof?: boolean }
+  | { kind: "rect"; start: Vec2; end: Vec2; outdoor?: boolean; hole?: boolean; stairs?: boolean; roof?: boolean }
   | { kind: "roofmove"; id: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean }
   | { kind: "solarturn"; id: string; base: Building; moved: boolean }
   | { kind: "solarmove"; id: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean; grab: { du: number; ds: number } | null; win?: boolean }
@@ -1155,9 +1155,9 @@ export class NfEditor extends LitElement {
   /** The tools that draw: rectangles, outdoor areas, floor openings, outlines, measuring, and placing doors and windows. */
   private pressDrawingTool(press: Press): Gesture | undefined {
     const tool = this._tool;
-    if (tool === "rect" || tool === "outdoor" || tool === "hole") {
+    if (tool === "rect" || tool === "outdoor" || tool === "hole" || tool === "stairs") {
       const start = this.snap(press.world, undefined, press.fine);
-      return { kind: "rect", start, end: start, outdoor: tool === "outdoor", hole: tool === "hole" };
+      return { kind: "rect", start, end: start, outdoor: tool === "outdoor", hole: tool === "hole", stairs: tool === "stairs" };
     }
     if (tool === "polygon" || tool === "measure") return { kind: "tap", startScreen: press.local, last: press.local, panning: false };
     if (tool === "opening") return this.placeOpening(this._openingPreset, press.local) ? NO_GESTURE : this.pan(press);
@@ -1634,6 +1634,7 @@ export class NfEditor extends LitElement {
           const pts: Vec2[] = [lo, [hi[0], lo[1]], hi, [lo[0], hi[1]]];
           if (drag.outdoor) this.addOutdoor(pts);
           else if (drag.hole) this.addHole(lo, hi);
+          else if (drag.stairs) this.addStairs(lo, hi);
           else if (drag.roof) this.roof.addSection(lo, hi);
           else this.addRoom(pts);
         }
@@ -2077,6 +2078,19 @@ export class NfEditor extends LitElement {
     const hole = newFloorOpening(lo, hi);
     this.change((_, floor) => floor.furniture.push(hole));
     this.selectItem("furniture", hole.id);
+    this._tool = "select";
+  }
+
+  /** A shaped stair filling the dragged rectangle, running along its long side; its form opens to pick the shape. */
+  private addStairs(lo: Vec2, hi: Vec2): void {
+    const floor = this.floor;
+    if (!floor) return;
+    const [width, depth] = [hi[0] - lo[0], hi[1] - lo[1]];
+    const item = newFurniture("stairs", this._doc, floor, [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2]);
+    const across = width > depth * 1.2;
+    Object.assign(item, { w: Math.round((across ? depth : width) * 1000) / 1000, d: Math.round((across ? width : depth) * 1000) / 1000, rotation: across ? 90 : 0 });
+    this.change((_, f) => f.furniture.push(item));
+    this.selectItem("furniture", item.id);
     this._tool = "select";
   }
 
@@ -2679,7 +2693,7 @@ export class NfEditor extends LitElement {
         <div class="nf-main">
           <div class="nf-toolbar">
             <div class="nf-seg" role="group" aria-label=${this.t("tool_select")}>
-              ${(["select", "rect", "polygon", "wall", "opening", "furniture", "outdoor", "hole", "roof", "energy"] as Tool[]).map(
+              ${(["select", "rect", "polygon", "wall", "opening", "furniture", "stairs", "outdoor", "hole", "roof", "energy"] as Tool[]).map(
                 (tool) => html`<button
                   aria-pressed=${this._tool === tool}
                   ?disabled=${!floor || (!this.isAdmin && tool !== "select")}

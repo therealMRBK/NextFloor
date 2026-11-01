@@ -52,7 +52,7 @@ export function furnitureLayer(ctx: CanvasContext, floor: Floor, selectedId: str
     return svg`<g data-furniture=${item.id} class=${klass}>
         <g transform="translate(${cx} ${cy}) rotate(${item.rotation}) scale(${item.mirror ? -scale : scale} ${scale})">
           <rect class="nf-furn-body" x=${-item.w / 2} y=${-item.d / 2} width=${item.w} height=${item.d} />
-          <g class="nf-furn-sym">${furnitureSymbol(item.type, item.w, item.d)}</g>
+          <g class="nf-furn-sym">${furnitureSymbol(item.type, item.w, item.d, item)}</g>
           <line class="nf-furn-front" x1=${-item.w / 2} y1=${item.d / 2} x2=${item.w / 2} y2=${item.d / 2} />
         </g>
         ${labelled ? svg`<text x=${cx} y=${cy + 4}>${furnitureName(host.hass, item.type)}</text>` : nothing}
