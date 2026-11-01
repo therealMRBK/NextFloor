@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnólia",
  "pack:nextfloor.x_garten:tree_cherry": "Cerejeira ornamental",
  "pack:nextfloor.x_garten:tree_willow": "Salgueiro-chorão",
- "pack:nextfloor.x_garten:boxwood_ball": "Bola de buxo em vaso"
+ "pack:nextfloor.x_garten:boxwood_ball": "Bola de buxo em vaso",
+ "tool_stairs": "Escada",
+ "hint_stairs": "Arraste onde a escada deve ficar – segue o lado comprido; depois defina forma, sentido e construção à direita"
 }

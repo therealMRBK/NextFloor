@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolia",
  "pack:nextfloor.x_garten:tree_cherry": "Wiśnia ozdobna",
  "pack:nextfloor.x_garten:tree_willow": "Wierzba płacząca",
- "pack:nextfloor.x_garten:boxwood_ball": "Kula bukszpanu w donicy"
+ "pack:nextfloor.x_garten:boxwood_ball": "Kula bukszpanu w donicy",
+ "tool_stairs": "Schody",
+ "hint_stairs": "Przeciągnij tam, gdzie mają stać schody – biegną wzdłuż dłuższego boku; potem po prawej ustaw kształt, kierunek i konstrukcję"
 }

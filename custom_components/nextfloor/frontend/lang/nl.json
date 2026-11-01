@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolia",
  "pack:nextfloor.x_garten:tree_cherry": "Japanse sierkers",
  "pack:nextfloor.x_garten:tree_willow": "Treurwilg",
- "pack:nextfloor.x_garten:boxwood_ball": "Buxusbol in pot"
+ "pack:nextfloor.x_garten:boxwood_ball": "Buxusbol in pot",
+ "tool_stairs": "Trap",
+ "hint_stairs": "Sleep waar de trap moet komen – hij loopt langs de lange zijde; stel daarna rechts vorm, draairichting en constructie in"
 }

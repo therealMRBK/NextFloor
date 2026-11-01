@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolia",
  "pack:nextfloor.x_garten:tree_cherry": "Cerisier d'ornement",
  "pack:nextfloor.x_garten:tree_willow": "Saule pleureur",
- "pack:nextfloor.x_garten:boxwood_ball": "Boule de buis en pot"
+ "pack:nextfloor.x_garten:boxwood_ball": "Boule de buis en pot",
+ "tool_stairs": "Escalier",
+ "hint_stairs": "Faites glisser là où l'escalier doit se trouver – il suit le grand côté ; réglez ensuite forme, sens et construction à droite"
 }

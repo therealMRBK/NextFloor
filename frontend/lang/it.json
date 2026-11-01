@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolia",
  "pack:nextfloor.x_garten:tree_cherry": "Ciliegio ornamentale",
  "pack:nextfloor.x_garten:tree_willow": "Salice piangente",
- "pack:nextfloor.x_garten:boxwood_ball": "Palla di bosso in vaso"
+ "pack:nextfloor.x_garten:boxwood_ball": "Palla di bosso in vaso",
+ "tool_stairs": "Scala",
+ "hint_stairs": "Trascina dove deve stare la scala – segue il lato lungo; poi imposta forma, verso e costruzione a destra"
 }

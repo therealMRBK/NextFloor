@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolio",
  "pack:nextfloor.x_garten:tree_cherry": "Cerezo ornamental",
  "pack:nextfloor.x_garten:tree_willow": "Sauce llorón",
- "pack:nextfloor.x_garten:boxwood_ball": "Bola de boj en maceta"
+ "pack:nextfloor.x_garten:boxwood_ball": "Bola de boj en maceta",
+ "tool_stairs": "Escalera",
+ "hint_stairs": "Arrastra donde debe ir la escalera – sigue el lado largo; después ajusta forma, giro y construcción a la derecha"
 }

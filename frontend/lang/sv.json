@@ -2354,5 +2354,7 @@
  "pack:nextfloor.x_garten:tree_magnolia": "Magnolia",
  "pack:nextfloor.x_garten:tree_cherry": "Prydnadskörsbär",
  "pack:nextfloor.x_garten:tree_willow": "Tårpil",
- "pack:nextfloor.x_garten:boxwood_ball": "Buxboll i kruka"
+ "pack:nextfloor.x_garten:boxwood_ball": "Buxboll i kruka",
+ "tool_stairs": "Trappa",
+ "hint_stairs": "Dra där trappan ska stå – den löper längs långsidan; ställ sedan in form, svängning och konstruktion till höger"
 }
