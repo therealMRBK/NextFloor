@@ -71,6 +71,16 @@ export const controls = css`
     background: var(--nf-fill);
     color: var(--nf-text);
   }
+  /* on a small stage (a small window, a zoomed browser, a dashboard column) the switches at the bottom take less room */
+  @container nf ((max-width: 1360px) or (max-height: 640px)) {
+    :is(.nf-overlay, .nf-card-controls) .nf-seg {
+      padding: 3px;
+    }
+    :is(.nf-overlay, .nf-card-controls) :is(.nf-seg button, .nf-chip) {
+      font-size: 12.5px;
+      padding: 5px 10px;
+    }
+  }
   .nf-seg button[aria-pressed="true"],
   .nf-chip[aria-pressed="true"] {
     background: color-mix(in srgb, var(--nf-accent) 24%, var(--nf-chrome-solid));

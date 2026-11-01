@@ -479,6 +479,8 @@
  "card_controls_hint": "Murs hauts/coupe, étages écartés et température, humidité, CO₂ à basculer",
  "controls_hide": "Masquer les commandes – seule la vue 3D reste",
  "nav_wrap": "Répartir la barre : chaque étage et chaque pièce sur plusieurs lignes",
+ "bars_fold": "Replier les commandes",
+ "bars_unfold": "Commandes",
  "nav_row": "Barre sur une ligne (défilement latéral)",
  "controls_show": "Réafficher les commandes",
  "card_controls_hidden": "Démarrer avec les commandes masquées",

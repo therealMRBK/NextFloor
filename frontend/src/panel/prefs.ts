@@ -22,6 +22,8 @@ export interface DevicePrefs {
   roomNames: boolean;
   clean: boolean;
   navWrap: boolean;
+  /** The switches at the bottom of the 3D view folded into one button. */
+  barsFolded: boolean;
   weather: boolean;
   /** A clock in a corner of the 3D view, or none. */
   clock: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
@@ -72,6 +74,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   roomNames: flag("room_names", true),
   clean: flag("clean", false),
   navWrap: flag("nav_wrap", false),
+  barsFolded: flag("bars_folded", false),
   weather: flag("weather", true),
   screenName: { name: "screen_name", fallback: "", read: (raw) => raw.slice(0, 60), write: (value) => value.trim().slice(0, 60) },
   announceMuted: flag("announce_muted", false),

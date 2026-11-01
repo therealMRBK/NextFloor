@@ -375,7 +375,14 @@ export class NextFloorPanel extends LitElement {
     const heats: HeatMode[] = ["none", "temperature", "humidity", "co2", "values"];
     const stacks: FloorStack[] = ["dim", "stacked", "single"];
     const several = building.floors.length > 1;
+    // folded: one button stands for all switches, so a small screen keeps the house in view
+    if (p.barsFolded)
+      return html`<div class="nf-overlay">
+        <button class="nf-chip" title=${t("bars_unfold")} @click=${() => this.setPref("barsFolded", false)}>☰ ${t("bars_unfold")}</button>
+        ${this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing}
+      </div>`;
     return html`<div class="nf-overlay">
+      <button class="nf-chip" title=${t("bars_fold")} aria-label=${t("bars_fold")} @click=${() => this.setPref("barsFolded", true)}>▾</button>
       <div class="nf-seg">
         ${(["auto", "cut", "slope"] as const).map(
           (m) => html`<button aria-pressed=${this._wallMode === m} title=${m === "slope" ? t("walls_slope_hint") : nothing} @click=${() => (this._wallMode = m)}>${t(`walls_${m}`)}</button>`,

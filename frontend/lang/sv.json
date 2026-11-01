@@ -503,6 +503,8 @@
   "card_controls_hint": "Höga väggar/snitt, våningar isär och temperatur, luftfuktighet, CO₂ att växla",
   "controls_hide": "Dölj kontrollerna – bara 3D-vyn finns kvar",
   "nav_wrap": "Radbryt fältet: alla våningar och rum på flera rader",
+  "bars_fold": "Fäll ihop reglagen",
+  "bars_unfold": "Reglage",
   "nav_row": "Fält på en rad (rullar i sidled)",
   "controls_show": "Visa kontrollerna igen",
   "card_controls_hidden": "Starta med dolda kontroller",

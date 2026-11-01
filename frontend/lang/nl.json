@@ -503,6 +503,8 @@
   "card_controls_hint": "Hoge muren/doorsnede, verdiepingen uit elkaar en temperatuur, luchtvochtigheid, CO₂ om te schakelen",
   "controls_hide": "Bedieningen verbergen; alleen de 3D-weergave blijft",
   "nav_wrap": "Balk afbreken: alle verdiepingen en ruimtes op meerdere regels",
+  "bars_fold": "Schakelaars inklappen",
+  "bars_unfold": "Schakelaars",
   "nav_row": "Balk op één regel (scrolt zijwaarts)",
   "controls_show": "Bedieningen weer tonen",
   "card_controls_hidden": "Starten met verborgen bedieningen",

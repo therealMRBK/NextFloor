@@ -503,6 +503,8 @@
   "card_controls_hint": "Wysokie ściany/przekrój, rozsunięte piętra oraz temperatura, wilgotność, CO₂ do przełączania",
   "controls_hide": "Ukryj sterowanie – zostaje tylko widok 3D",
   "nav_wrap": "Zawijaj pasek: wszystkie piętra i pomieszczenia w kilku wierszach",
+  "bars_fold": "Zwiń przełączniki",
+  "bars_unfold": "Przełączniki",
   "nav_row": "Pasek w jednym wierszu (przewija się w bok)",
   "controls_show": "Pokaż ponownie sterowanie",
   "card_controls_hidden": "Zacznij z ukrytym sterowaniem",

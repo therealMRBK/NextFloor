@@ -503,6 +503,8 @@
   "card_controls_hint": "Pareti alte/sezione, piani separati e temperatura, umidità, CO₂ da commutare",
   "controls_hide": "Nascondi i controlli: resta solo la vista 3D",
   "nav_wrap": "Barra a capo: tutti i piani e le stanze su più righe",
+  "bars_fold": "Comprimi i comandi",
+  "bars_unfold": "Comandi",
   "nav_row": "Barra su una riga (scorre di lato)",
   "controls_show": "Mostra di nuovo i controlli",
   "card_controls_hidden": "Inizia con i controlli nascosti",
