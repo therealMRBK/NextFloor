@@ -16,6 +16,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **Sweet Home 3D import no longer doubles walls**: a wall that runs along a room for only part of its length was taken over whole as a free wall, so it stood twice along that room (windows in it could face the wrong way). Now only the stretches beyond the rooms become free walls. Re-import the plan to get the clean walls. Thanks to @alexhass ([#40](https://github.com/therealMRBK/NextFloor/issues/40)).
 - **The roof sits on its walls**: at rest in the house view it hovered 13 cm above them, and while zooming in the walls under it showed through. It now rests exactly on its height and keeps hiding what is below until it has mostly faded. Thanks to @LDSign ([#41](https://github.com/therealMRBK/NextFloor/issues/41)).
 - **A roof section stays on the floor under it**: on a slope, a flat garage roof could ride with a higher floor beside it ("Pulled apart" lifted it off the garage). A section now belongs to the floor whose rooms lie under it. Thanks to @LDSign ([#42](https://github.com/therealMRBK/NextFloor/issues/42)).
 - **Device names under markers are readable again**: the caption of a device with its own name ("Show the name under the marker in 3D") was dark text on a dark plate in some themes; it is now light text on the dark plate in every theme. Thanks to @jan74berlin ([#34](https://github.com/therealMRBK/NextFloor/issues/34)).

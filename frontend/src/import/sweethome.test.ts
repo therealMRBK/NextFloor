@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { deflateRawSync } from "node:zlib";
-import { importSweetHome, readHomeXml, roomOnWallLines } from "./sweethome.ts";
+import { homeToBuilding, importSweetHome, readHomeXml, roomOnWallLines } from "./sweethome.ts";
 import { zipEntries } from "./zip.ts";
 
 /** A ZIP file with one deflated entry, built by hand like Sweet Home 3D writes it. */
@@ -91,4 +91,17 @@ test("a room drawn along the inner wall faces moves out onto the walls' centre l
   ] as { a: [number, number]; b: [number, number]; thickness: number }[];
   const moved = roomOnWallLines([[0, 0], [4, 0], [4, 3], [0, 3]], walls).map(([x, z]) => [Math.round(x * 100) / 100, Math.round(z * 100) / 100]);
   assert.deepEqual(moved, [[0, -0.1], [4.1, -0.1], [4.1, 3.1], [0, 3.1]], "three edges move, the edge without a wall stays");
+});
+
+test("a wall that is a room edge for part of its length becomes a free wall only beyond the room (#40)", () => {
+  const tags = readHomeXml(`<home>
+  <room name="Wohnen"><point x="0" y="0"/><point x="400" y="0"/><point x="400" y="300"/><point x="0" y="300"/></room>
+  <wall xStart="0" yStart="0" xEnd="1000" yEnd="0" height="250" thickness="20"/>
+</home>`);
+  const { building } = homeToBuilding(tags);
+  const walls = building.floors[0].walls ?? [];
+  assert.equal(walls.length, 1, "one free wall, past the room");
+  const [w] = walls;
+  assert.ok(Math.min(w.a[0], w.b[0]) > 3.5 && Math.min(w.a[0], w.b[0]) < 4.4, `it starts at the room's corner, not at 0 (${w.a[0]})`);
+  assert.equal(Math.max(w.a[0], w.b[0]), 10);
 });

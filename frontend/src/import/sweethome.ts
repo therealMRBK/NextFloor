@@ -178,11 +178,25 @@ export function homeToBuilding(tags: readonly Tag[]): { building: Building; repo
       const tolerance = Math.max(0.15, num(t.attrs, "thickness", 10) / 100);
       // a wall that runs along room edges (also one long wall along several rooms) is already built by those rooms
       const nearEdge = (p: Vec2) => rooms.some((room) => room.points.some((r, i) => toSegment(p, r, room.points[(i + 1) % room.points.length]).dist < tolerance));
-      const samples = 12;
-      let covered = 0;
-      for (let i = 0; i <= samples; i++) if (nearEdge([a[0] + ((e[0] - a[0]) * i) / samples, a[1] + ((e[1] - a[1]) * i) / samples])) covered++;
-      if (covered / (samples + 1) >= 0.6) continue;
-      free.push({ id: uid("wall"), a: [r2(a[0]), r2(a[1])], b: [r2(e[0]), r2(e[1])], thickness: r2(num(t.attrs, "thickness", 10) / 100), height: t.attrs.height ? r2(num(t.attrs, "height", 250) / 100) : null });
+      // only the stretches that run along no room edge become free walls: a wall that is a room edge for part of its
+      // length would otherwise stand twice there, once as the room's wall and once on its own (#40)
+      const length = Math.hypot(e[0] - a[0], e[1] - a[1]);
+      const samples = Math.max(12, Math.ceil(length / 0.1));
+      const at = (i: number): Vec2 => [a[0] + ((e[0] - a[0]) * i) / samples, a[1] + ((e[1] - a[1]) * i) / samples];
+      const open = Array.from({ length: samples + 1 }, (_, i) => !nearEdge(at(i)));
+      for (let i = 0; i <= samples; ) {
+        if (!open[i]) {
+          i++;
+          continue;
+        }
+        let j = i;
+        while (j + 1 <= samples && open[j + 1]) j++;
+        // a stretch reaches to the neighbouring covered sample, where the room's wall takes over
+        const [from, to] = [at(Math.max(0, i - 1)), at(Math.min(samples, j + 1))];
+        if (Math.hypot(to[0] - from[0], to[1] - from[1]) >= 0.3)
+          free.push({ id: uid("wall"), a: [r2(from[0]), r2(from[1])], b: [r2(to[0]), r2(to[1])], thickness: r2(num(t.attrs, "thickness", 10) / 100), height: t.attrs.height ? r2(num(t.attrs, "height", 250) / 100) : null });
+        i = j + 1;
+      }
     }
     floor.walls = free;
 
