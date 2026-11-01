@@ -4,7 +4,10 @@
 
 <p align="center"><b>Draw your home inside Home Assistant and watch it live in 3D.</b><br>
 Lamps light their room, blinds move, doors open, the TV shows what plays, rain falls outside.<br>
-Free, open source, no cloud, no account. Made for wall tablets.</p>
+No cloud, no account. Made for wall tablets.</p>
+
+<p align="center"><b>💚 Free forever. Every feature, every furniture pack, every update – for everyone, and it stays that way.</b><br>
+No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 
 <p align="center">
 <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=therealMRBK&repository=NextFloor&category=integration"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open in HACS"></a>
@@ -17,6 +20,7 @@ Free, open source, no cloud, no account. Made for wall tablets.</p>
 <a href="https://github.com/therealMRBK/NextFloor/releases"><img src="https://img.shields.io/github/v/release/therealMRBK/NextFloor?style=flat-square" alt="Release"></a>
 <a href="https://github.com/therealMRBK/NextFloor/actions"><img src="https://img.shields.io/github/actions/workflow/status/therealMRBK/NextFloor/ci.yml?branch=main&style=flat-square&label=CI" alt="CI"></a>
 <a href="https://hacs.xyz"><img src="https://img.shields.io/badge/HACS-custom-orange?style=flat-square" alt="HACS"></a>
+<a href="#-free-forever--a-promise"><img src="https://img.shields.io/badge/price-free%20forever-2ea44f?style=flat-square" alt="Free forever"></a>
 <a href="https://github.com/therealMRBK/NextFloor/blob/main/LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue?style=flat-square" alt="MIT"></a>
 <a href="#made-with-ai"><img src="https://img.shields.io/badge/built%20with-AI%20assistance-8a63d2?style=flat-square" alt="Built with AI"></a>
 </p>
@@ -50,11 +54,18 @@ Free, open source, no cloud, no account. Made for wall tablets.</p>
 | 📦 **Own 3D models** | Upload a `.glb` of your own on the Extensions page; NextFloor prepares it for you. Import plans from Sweet Home 3D or let an AI write one in NextFloor's plan format. |
 | 🧩 **Plugins** | New device kinds from plugins and a plugin store on the Extensions page (cameras with their field of view, alarm panels). |
 
-## 💚 Free and open, for good
+## 💚 Free forever – a promise
 
-I believe in open source: software that anyone may read, change and share, and that every home can use without paying a cent. That conviction is the reason NextFloor exists. It began as a fork of NeonPlan 3D, carried by one simple promise: every feature, every model pack and every update belongs to everyone, free and open, and it will stay that way. No paywall, no account, no subscription, just your home drawn by you and coming alive in 3D, shaped together by the people who use it.
+NextFloor is free, and it stays free. Not "free to try", not "free with a paid Pro", not "free until the next version": **free, for everyone, forever.** Every feature, every furniture pack and every update belongs to everyone the day it comes out.
 
-**Everything is included:** the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden, all furniture packs and every plugin in the store. Nothing is sold separately, nothing is held back for supporters, and NextFloor sends no usage data anywhere.
+- **Nothing to buy, ever.** No Pro version, no paid modules, no packs sold one by one, no supporter pass that gets features first, no licence key, no shop. What others sell as add-ons – the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden – is simply part of NextFloor.
+- **New furniture all the time, for free.** 26 packs with over 620 models come with it, and new packs keep coming with the updates.
+- **Build your own furniture.** The [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) runs in your browser: build it, see it exactly as NextFloor draws it, and share it in the community store, where everyone installs it with one tap.
+- **Extend it yourself.** A [plugin system](https://github.com/therealMRBK/NextFloor/blob/main/docs/plugins.md) with a reviewed [plugin store](https://github.com/therealMRBK/NextFloor-Plugins): new device kinds, light animations, room cards – from anyone.
+- **Your data stays home.** No account, no cloud, no usage data sent anywhere.
+- **The promise is in the licence.** NextFloor is MIT licensed: anyone may read, change and share it. Nobody can ever take it away from you – not even me.
+
+I believe in open source: software that anyone may read, change and share, and that every home can use without paying a cent. That conviction is the reason NextFloor exists. It began as a fork of NeonPlan 3D and went its own way, carried by this one promise and shaped together by the people who use it.
 
 ## 🖼️ Gallery
 
