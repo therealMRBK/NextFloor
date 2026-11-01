@@ -111,6 +111,17 @@ test("a door follows its contact, or stands half open, or is shut when told so",
   assert.equal(openingState(hass, plain({ shut: true }), "door").open, 0);
 });
 
+test("a door with its own opening angle stands at it without a sensor, but is not taken for open", () => {
+  const hass = hassOf([entity("binary_sensor.closed", "off")]);
+  const free = openingState(hass, plain({ angled: true }), "door");
+  assert.equal(free.open, 1);
+  assert.equal(free.assumed, true);
+  assert.equal(openingState(hass, plain({ angled: true, shut: true }), "door").open, 0);
+  const sensed = openingState(hass, plain({ angled: true, contact: "binary_sensor.closed" }), "door");
+  assert.equal(sensed.open, 0);
+  assert.equal(sensed.assumed, false);
+});
+
 test("a door with a roller shutter reports the blind as well", () => {
   const hass = hassOf([entity("cover.shutter", "open", { current_position: 25 })]);
   const state = openingState(hass, plain({ cover: "cover.shutter", shut: true }), "door");

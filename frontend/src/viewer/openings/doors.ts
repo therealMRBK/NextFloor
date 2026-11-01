@@ -2,7 +2,7 @@
 
 import { Color } from "three";
 import { isFrontDoor, openingStyle, sidelightLayout } from "../../model.ts";
-import { ALWAYS, shade } from "../geo.ts";
+import { ALWAYS, DEG, shade } from "../geo.ts";
 import type { Ctx } from "./context.ts";
 import { DOOR_ANGLE, FRAME, FRAME_TOP, GLASS, HANDLE, HANDLE_TOP, LEAF, LEAF_FRONT, LEAF_FRONT_TOP, LEAF_TOP, OPEN_WARM, SILL, UNLOCKED } from "./palette.ts";
 import { flatPanel, panel, splitBox, type Frame } from "./primitives.ts";
@@ -58,11 +58,13 @@ export function doorLeaves(c: Ctx): void {
     if (info.exterior) splitBox(c.frames, frame, { x0: W / 2 - 0.08, x1: W / 2 + 0.08, n0: -info.faceOut - 0.1, n1: -info.faceOut, y0: T + 0.1, y1: T + 0.17 }, shade(OPEN_WARM, 0.55), shade(OPEN_WARM, 0.85), { cut: fold.cut, bucket: ALWAYS });
   }
 
+  // the leaf's full swing: its own opening angle, else the usual one
+  const swingAngle = info.opening.open_angle ? Math.min(180, Math.max(5, info.opening.open_angle)) * DEG : DOOR_ANGLE;
   const leaves: [boolean, number][] = passage ? [] : [[info.hingeAtStart, state.open]];
   if (double && !passage) leaves.push([!info.hingeAtStart, state.open2 ?? 0]);
   for (const [atStart, openness] of leaves) {
     const open = Math.min(1, Math.max(0, openness));
-    const theta = style === "sliding" ? 0 : open * DOOR_ANGLE;
+    const theta = style === "sliding" ? 0 : open * swingAngle;
     // a sliding leaf runs along the wall face past the hinge side instead of turning
     const slide = style === "sliding" ? open * leafWidth : 0;
     const leafFrame: Frame = (u, n, y) => {
@@ -72,7 +74,7 @@ export function doorLeaves(c: Ctx): void {
     };
     // an open leaf has left its wall: keep it visible when the wall folds away
     const leafFold = { cut: fold.cut, bucket: open > 0.05 ? ALWAYS : fold.bucket };
-    const warm = c.markClosed ? !!state.sensed && open < 0.05 : open > 0.9;
+    const warm = c.markClosed ? !!state.sensed && open < 0.05 : open > 0.9 && !(atStart === info.hingeAtStart && state.assumed);
     const side = warm ? shade(OPEN_WARM, 0.7) : new Color(front ? LEAF_FRONT : LEAF);
     const top = warm ? shade(OPEN_WARM, 0.9) : new Color(front ? LEAF_FRONT_TOP : LEAF_TOP);
     const part = (xa: number, xb: number, ya: number, yb: number, na = -thickness, nb = 0) => splitBox(c.frames, leafFrame, { x0: xa, x1: xb, n0: na, n1: nb, y0: ya, y1: yb }, side, top, leafFold);

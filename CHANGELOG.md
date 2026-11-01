@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Added
+
+- **Opening angle for doors**: every door has an *Opening angle* (default, 15° to 180°). With a contact the leaf opens that far as soon as it reports open; without one it stands that far open instead of half open. A door that is only assumed to stand open no longer glows as open. *Default* keeps everything as it was.
+
 ## 0.15.1
 
 ### Changed

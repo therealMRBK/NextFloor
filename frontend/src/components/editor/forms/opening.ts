@@ -25,6 +25,13 @@ type SensorKind = NonNullable<Opening["sensor"]>;
 const CONTACT_CLASSES = ["door", "window", "opening", "garage_door"];
 const HANDLE_NAME = /griff|handle|fenster|window|drehgriff/i;
 
+/** The opening angles a door offers (null = the usual swing), with an angle set by hand or in an imported plan kept in the list. */
+function doorAngles(current: number | null | undefined): (number | null)[] {
+  const angles: (number | null)[] = [null, 15, 30, 45, 60, 90, 120, 180];
+  if (current && !angles.includes(current)) angles.push(current);
+  return angles.sort((a, b) => (a ?? 0) - (b ?? 0));
+}
+
 /** The entity lists the form offers, worked out once per draw. */
 function choices(host: EditorHost) {
   const { hass } = host;
@@ -149,6 +156,9 @@ function doorContacts(host: EditorHost, o: Opening, actions: OpeningActions, lis
   return html`${entityField(host, t(two ? "contact_main" : "contact_entity"), o.contact, automaticLink(host, o, "contact"), lists.contacts, (v) => actions.update({ contact: v }))}
     ${two && o.type !== "garage" ? entityField(host, t("contact_second"), o.contact2, undefined, lists.contacts, (v) => actions.update({ contact2: noneAsNull(v) })) : nothing}
     ${o.type === "door" ? checkField(host, t("door_shut"), !!o.shut, (on) => actions.update({ shut: on }), { title: t("door_shut_hint") }) : nothing}
+    ${o.type === "door" && o.style !== "sliding" && o.style !== "passage"
+      ? selectField(host, t("door_angle"), String(o.open_angle ?? ""), doorAngles(o.open_angle).map((a) => [String(a ?? ""), a ? `${a}°` : t("door_angle_default")] as const), (v) => actions.update({ open_angle: v ? Number(v) : null }), { title: t("door_angle_hint") })
+      : nothing}
     ${o.type === "door" ? html`${entityField(host, t("opening_lock"), o.lock ?? null, undefined, lists.locks, (v) => actions.update({ lock: noneAsNull(v) }))}${hint(t("opening_lock_hint"), "nf-wide")}` : nothing}`;
 }
 

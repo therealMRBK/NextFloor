@@ -16,7 +16,7 @@ const sameNumber = (a: number | null | undefined, b: number | null | undefined):
 
 /** Whether the opening already shows what it should: nothing to do for it (the usual case). */
 export function atTarget(now: OpeningState, target: OpeningState): boolean {
-  return PARTS.every((part) => sameNumber(target[part] ?? 0, now[part] ?? 0)) && sameNumber(target.cover, now.cover) && !!target.sensed === !!now.sensed && !!target.unlocked === !!now.unlocked;
+  return PARTS.every((part) => sameNumber(target[part] ?? 0, now[part] ?? 0)) && sameNumber(target.cover, now.cover) && !!target.sensed === !!now.sensed && !!target.unlocked === !!now.unlocked && !!target.assumed === !!now.assumed;
 }
 
 export interface Step {
@@ -27,7 +27,7 @@ export interface Step {
 
 /** One frame towards the target. The blind jumps when it appears or goes (no blind is null), and otherwise moves like the rest. */
 export function stepOpening(now: OpeningState, target: OpeningState, share: number): Step {
-  const state: OpeningState = { ...now, open2: now.open2 ?? 0, tilt2: now.tilt2 ?? 0, sensed: target.sensed, unlocked: target.unlocked };
+  const state: OpeningState = { ...now, open2: now.open2 ?? 0, tilt2: now.tilt2 ?? 0, sensed: target.sensed, unlocked: target.unlocked, assumed: target.assumed };
   let moving = false;
   const approach = (from: number, to: number): number => {
     if (Math.abs(to - from) < ARRIVED) return to;

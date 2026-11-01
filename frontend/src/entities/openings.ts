@@ -22,6 +22,8 @@ export interface OpeningEntities {
   tiltInvert?: boolean;
   /** A door without a sensor is drawn closed. */
   shut?: boolean;
+  /** A door with its own opening angle stands at that angle without a sensor, instead of half open. */
+  angled?: boolean;
   /** A door's smart lock. */
   lock?: string | null;
 }
@@ -84,6 +86,7 @@ export function openingEntities(hass: HomeAssistant, floors: readonly Floor[]): 
           tiltOffset: o.tilt_offset ?? null,
           tiltInvert: !!o.tilt_invert,
           shut: !!o.shut,
+          angled: o.type === "door" && !!o.open_angle,
           lock: o.type === "door" ? unlessNone(o.lock) : null,
         });
       }
@@ -157,6 +160,8 @@ export interface OpeningState {
   sensed: boolean;
   /** A door whose smart lock is unlocked (or open). */
   unlocked?: boolean;
+  /** A door leaf drawn where it is assumed to stand, as no sensor tells: it does not glow as open. */
+  assumed?: boolean;
 }
 
 /**
@@ -172,8 +177,8 @@ export function openingState(hass: HomeAssistant, e: OpeningEntities, type: Open
   if (type === "door") {
     // a door with a roller shutter (front door, patio door): the blind comes down over it
     const leaf = positionOf(e.contact);
-    const open = leaf === null ? (e.shut ? 0 : DOOR_DEFAULT_OPEN) : leaf === "closed" ? 0 : 1;
-    return { open, open2: positionOf(e.contact2) === "open" ? 1 : 0, tilt: 0, tilt2: 0, cover, sensed: leaf !== null || cover !== null, unlocked: isUnlocked(hass, e.lock) };
+    const open = leaf === null ? (e.shut ? 0 : e.angled ? 1 : DOOR_DEFAULT_OPEN) : leaf === "closed" ? 0 : 1;
+    return { open, open2: positionOf(e.contact2) === "open" ? 1 : 0, tilt: 0, tilt2: 0, cover, sensed: leaf !== null || cover !== null, unlocked: isUnlocked(hass, e.lock), assumed: leaf === null };
   }
   if (type === "garage") {
     // a garage door without a cover shows its contact: open or closed; so does one whose cover cannot tell (a remote without

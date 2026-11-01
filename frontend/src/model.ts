@@ -114,6 +114,8 @@ export interface Opening {
   tilt_invert?: boolean;
   /** Door: drawn closed when no sensor says otherwise (default: half open, so the door is seen). */
   shut?: boolean;
+  /** Door: how far the leaf opens, in degrees (null = the usual swing, a door without a sensor half of it). Set, a door without a sensor stands that far open. */
+  open_angle?: number | null;
   /** Highlight in 3D while open (null, default) or while closed (a WC or a child's room door). */
   mark?: "closed" | null;
   /** Ask before moving the blind or garage door; it then does not follow a swipe either. */

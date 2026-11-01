@@ -42,3 +42,9 @@ test("the second leaf and the sensed flag follow the target", () => {
   assert.equal(step.state.open2, 0.4);
   assert.equal(step.state.sensed, true);
 });
+
+test("a door leaf no sensor reports keeps that mark while it moves, and losing it is a change", () => {
+  const step = stepOpening(closed, { ...closed, open: 1, assumed: true }, 0.5);
+  assert.equal(step.state.assumed, true);
+  assert.equal(atTarget({ ...closed, assumed: true }, closed), false);
+});

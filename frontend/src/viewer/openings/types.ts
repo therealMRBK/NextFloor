@@ -15,6 +15,8 @@ export interface OpeningState {
   sensed?: boolean;
   /** A door with a smart lock that stands unlocked: its free edge glows. */
   unlocked?: boolean;
+  /** The door leaf stands where it is assumed to, as no sensor tells: it does not glow as open. */
+  assumed?: boolean;
 }
 
 export const CLOSED: OpeningState = { open: 0, open2: 0, tilt: 0, tilt2: 0, cover: null };
