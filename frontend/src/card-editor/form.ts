@@ -27,6 +27,7 @@ export const DEFAULTS: Partial<CardConfig> = {
   alerts: true,
   alert_jump: false,
   scenes: true,
+  announcements: true,
   weather: true,
   weather_density: 1,
   idle_return: 0,
@@ -40,7 +41,7 @@ export const DEFAULTS: Partial<CardConfig> = {
 };
 
 /** The yes/no options that get a plain checkbox. */
-export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "idle_orbit" | "weather" | "tap_in_room";
+export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "idle_orbit" | "weather" | "tap_in_room";
 
 export type Choice = [value: string, label: I18nKey];
 
@@ -91,7 +92,7 @@ export function numberChoice(form: FormContext, key: "idle_return" | "controls_h
 }
 
 /** A text field; an empty text removes the option. */
-export function textField(form: FormContext, key: "dashboard" | "dashboard_label", label: I18nKey, placeholder = ""): TemplateResult {
+export function textField(form: FormContext, key: "dashboard" | "dashboard_label" | "screen_name", label: I18nKey, placeholder = ""): TemplateResult {
   return html`<label class="field wide"
     >${form.t(label)}
     <input type="text" placeholder=${placeholder} .value=${form.value[key] ?? ""} @change=${(e: Event) => form.set(key, inputValue(e).trim() || undefined)} />

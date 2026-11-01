@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor ya está configurado."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Anuncio",
+      "description": "Dice un mensaje en habitaciones del plano, cada una por su propio altavoz, y lo muestra y dice en cada pantalla de NextFloor abierta.",
+      "fields": {
+        "message": {
+          "name": "Mensaje",
+          "description": "Lo que se dice."
+        },
+        "rooms": {
+          "name": "Habitaciones",
+          "description": "Habitaciones por nombre, id de habitación o id de área. Vacío: cada habitación con altavoz (las que están en su hora de silencio quedan fuera)."
+        },
+        "floor": {
+          "name": "Planta",
+          "description": "Solo las habitaciones de esta planta (nombre o id)."
+        },
+        "on_speakers": {
+          "name": "En los altavoces",
+          "description": "Hablar en las habitaciones."
+        },
+        "on_screens": {
+          "name": "En las pantallas",
+          "description": "Mostrar y decir en las pantallas de NextFloor abiertas."
+        },
+        "screens": {
+          "name": "Solo estas pantallas",
+          "description": "Nombres de pantallas de NextFloor (fijados en cada pantalla). Vacío: todas."
+        },
+        "tts_entity": {
+          "name": "Texto a voz",
+          "description": "En lugar del elegido en el plano, o el primero."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Ninguna habitación del plano coincide con las indicadas."
+    },
+    "no_tts": {
+      "message": "Ningún altavoz pudo decirlo: configura una entidad de texto a voz en Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor no está configurado."
+    }
   }
 }

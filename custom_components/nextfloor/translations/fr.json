@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor est déjà configuré."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Annonce",
+      "description": "Prononce un message dans des pièces du plan, chacune par son propre haut-parleur, et l'affiche et le prononce sur chaque écran NextFloor ouvert.",
+      "fields": {
+        "message": {
+          "name": "Message",
+          "description": "Ce qui est dit."
+        },
+        "rooms": {
+          "name": "Pièces",
+          "description": "Pièces par nom, id de pièce ou id de zone. Vide : chaque pièce avec un haut-parleur (les pièces en heure calme sont exclues)."
+        },
+        "floor": {
+          "name": "Étage",
+          "description": "Seulement les pièces de cet étage (nom ou id)."
+        },
+        "on_speakers": {
+          "name": "Sur les haut-parleurs",
+          "description": "Parler dans les pièces."
+        },
+        "on_screens": {
+          "name": "Sur les écrans",
+          "description": "Afficher et prononcer sur les écrans NextFloor ouverts."
+        },
+        "screens": {
+          "name": "Seulement ces écrans",
+          "description": "Noms d'écrans NextFloor (définis sur chaque écran). Vide : tous les écrans."
+        },
+        "tts_entity": {
+          "name": "Synthèse vocale",
+          "description": "Au lieu de celle choisie dans le plan, ou de la première."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Aucune pièce du plan ne correspond aux pièces indiquées."
+    },
+    "no_tts": {
+      "message": "Aucun haut-parleur n'a pu le dire : configurez une entité de synthèse vocale dans Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor n'est pas configuré."
+    }
   }
 }

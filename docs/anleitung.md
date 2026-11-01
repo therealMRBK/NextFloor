@@ -153,6 +153,27 @@ Eingebaut und kostenlos; sie brauchen nur die Geräte, die du schon hast.
 - **Waschmaschine, Trockner, Spülmaschine:** Hat das Gerät in Home Assistant einen Restlaufzeit-Sensor, steht am Pin „Noch 25 min“.
 - **Haustiere** (Pack Haustiere: Katze, Hund, Kaninchen): laufen in ihrem Raum um die Möbel herum und machen zwischendurch Pausen.
 
+## Durchsagen
+
+*„Essen ist fertig!“* – und genau der Raum, der es hören soll, hört es.
+
+- **Aus einem Raum:** Hat der Raum einen Lautsprecher, gibt es im Raum-Panel den Abschnitt **📢 Durchsage**. Einen Satz antippen oder einen eigenen tippen; der Lautsprecher des Raums sagt ihn. Eigene Sätze stehen unter *Editor → Einstellungen* (einer pro Zeile).
+- **Der Lautsprecher des Raums:** im Formular des Raums gewählt, sonst ein im Raum platzierter Lautsprecher, sonst ein Sprachassistent (Voice PE und andere Satelliten), ein Echo oder ein Lautsprecher des Bereichs. Ein Fernseher oder ein ausgeschalteter Lautsprecher wird nie von selbst gewählt. Sprachassistenten sagen es mit ihrem Gong, Echos als echte Durchsage (Alexa Devices oder Alexa Media Player), Lautsprecher, die das können (Sonos und andere), senken ihre Musik und spielen danach weiter; jeder andere spricht über Text-zu-Sprache von Home Assistant.
+- **Ruhezeit je Raum:** im Formular des Raums, z. B. 20:00–07:00 fürs Kinderzimmer. Durchsagen an mehrere Räume lassen den Raum dann aus; eine Durchsage nur für ihn kommt trotzdem an.
+- **Auf den Bildschirmen:** Jede offene NextFloor-Seite (Panel oder Karte) zeigt die Nachricht groß über dem Haus, spielt einen sanften Gong und spricht sie – ein altes Wandtablet wird zum Durchsage-Lautsprecher. Unter ⚙ → 📢 bekommt ein Bildschirm einen Namen (z. B. *Flur*), damit Durchsagen auch nur an ihn gehen können, oder bleibt ohne Haken still. Browser spielen Ton erst nach dem ersten Antippen der Seite; in Fully Kiosk *Autoplay Audio* einschalten (Web Content Settings).
+- **In Automationen:** die Aktion **NextFloor: Durchsage**.
+
+```yaml
+action: nextfloor.announce
+data:
+  message: "Es hat geklingelt!"
+  rooms: [Küche, Wohnzimmer]   # nach Name, Raum-ID oder Bereichs-ID; weglassen = jeder Raum mit Lautsprecher
+  on_screens: true             # die offenen NextFloor-Bildschirme zeigen und sprechen es auch
+  screens: [Flur]              # optional: nur diese Bildschirme
+```
+
+`floor` beschränkt es auf eine Etage, `on_speakers: false` lässt die Lautsprecher still, `tts_entity` wählt die Stimme. Die Aktion meldet zurück, welcher Lautsprecher es gesagt hat und welche Räume (und warum) ausgelassen wurden.
+
 ## Dashboard-Karte
 
 Im Karten-Dialog des Dashboards *NextFloor* hinzufügen (`type: custom:nextfloor-card`). Der visuelle Editor stellt Etage, Größe, Aussehen, Akzent, Wände, Qualität, Etagen darunter, Symbole, Heatmap, Stromfluss, Karten, Schalter in der Karte, Raum-Knöpfe, zentralen Stern, Raumnamen, Energiewerte, Raumdetails beim Antippen, Vollbild, Etagen auseinander, Dach ausblenden, Warnungen, Szenen-Knöpfe und Wetter ein. Dieselben Optionen gibt es in YAML unter den im Editor gezeigten Namen.

@@ -25,6 +25,10 @@ export interface DevicePrefs {
   weather: boolean;
   /** A clock in a corner of the 3D view, or none. */
   clock: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
+  /** The name of this screen for announcements meant for some screens only ("" = none). */
+  screenName: string;
+  /** Announcements are not shown or spoken on this device. */
+  announceMuted: boolean;
 }
 
 interface Codec<T> {
@@ -67,7 +71,26 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   clean: flag("clean", false),
   navWrap: flag("nav_wrap", false),
   weather: flag("weather", true),
+  screenName: { name: "screen_name", fallback: "", read: (raw) => raw.slice(0, 60), write: (value) => value.trim().slice(0, 60) },
+  announceMuted: flag("announce_muted", false),
 };
+
+/** This device's screen name and mute switch, also for cards (which have no preferences of their own). */
+export function screenName(storage: PrefsStorage | null = browserStorage()): string | null {
+  try {
+    return storage?.getItem("nextfloor.screen_name")?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export function screenMuted(storage: PrefsStorage | null = browserStorage()): boolean {
+  try {
+    return storage?.getItem("nextfloor.announce_muted") === "1";
+  } catch {
+    return false;
+  }
+}
 
 export type PrefsStorage = Pick<Storage, "getItem" | "setItem">;
 

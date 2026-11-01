@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor ist bereits eingerichtet."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Durchsage",
+      "description": "Spricht eine Nachricht in Räumen des Plans, jeweils über deren eigenen Lautsprecher, und zeigt und spricht sie auf jedem offenen NextFloor-Bildschirm.",
+      "fields": {
+        "message": {
+          "name": "Nachricht",
+          "description": "Was gesagt wird."
+        },
+        "rooms": {
+          "name": "Räume",
+          "description": "Räume nach Name, Raum-ID oder Bereichs-ID. Leer: jeder Raum mit Lautsprecher (Räume in ihrer Ruhezeit bleiben aus)."
+        },
+        "floor": {
+          "name": "Etage",
+          "description": "Nur die Räume dieser Etage (Name oder ID)."
+        },
+        "on_speakers": {
+          "name": "Auf den Lautsprechern",
+          "description": "In den Räumen sprechen."
+        },
+        "on_screens": {
+          "name": "Auf den Bildschirmen",
+          "description": "Auf den offenen NextFloor-Bildschirmen zeigen und sprechen."
+        },
+        "screens": {
+          "name": "Nur diese Bildschirme",
+          "description": "Namen von NextFloor-Bildschirmen (an jedem Bildschirm vergeben). Leer: alle Bildschirme."
+        },
+        "tts_entity": {
+          "name": "Text-zu-Sprache",
+          "description": "Statt der im Plan gewählten oder der ersten."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Kein Raum des Plans passt zu den angegebenen Räumen."
+    },
+    "no_tts": {
+      "message": "Kein Lautsprecher konnte es sagen: Richte in Home Assistant eine Text-zu-Sprache-Entität ein."
+    },
+    "not_loaded": {
+      "message": "NextFloor ist nicht eingerichtet."
+    }
   }
 }

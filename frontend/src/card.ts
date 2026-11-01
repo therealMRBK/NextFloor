@@ -11,6 +11,7 @@ import "./components/view3d.ts";
 import { confirmEntities } from "./devices.ts";
 import { awaitingLanguage, translate } from "./i18n.ts";
 import { nightActive } from "./kiosk.ts";
+import { screenMuted, screenName } from "./panel/prefs.ts";
 import { loadCardEditor } from "./load-card-editor.ts";
 import { colorSchemeOf, controls, tokens } from "./styles.ts";
 import type { HomeAssistant } from "./types.ts";
@@ -309,6 +310,8 @@ export class NextFloorCard extends LitElement {
       .panelOpen=${!!this._roomId && c?.room_panel !== false}
       .alerts=${c?.alerts !== false}
       .alertJump=${!!c?.alert_jump}
+      .announcements=${c?.announcements !== false && !screenMuted()}
+      .screenName=${c?.screen_name ?? screenName()}
       .scenes=${c?.scenes !== false}
       .clean=${this._clean}
       .cleanButton=${eye}
@@ -343,6 +346,7 @@ export class NextFloorCard extends LitElement {
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}
       .floor=${b.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
       .confirmEntities=${confirmEntities(this.hass, b.floors)}
+      .phrases=${b.settings.announce_phrases ?? null}
       @close=${() => (this._roomId = null)}
     ></nf-room-panel>`;
   }

@@ -1,0 +1,34 @@
+announce:
+  fields:
+    message:
+      required: true
+      example: "Dinner is ready!"
+      selector:
+        text:
+          multiline: true
+    rooms:
+      example: "Kitchen, Living room"
+      selector:
+        text:
+          multiple: true
+    floor:
+      example: "Ground floor"
+      selector:
+        text:
+    on_speakers:
+      default: true
+      selector:
+        boolean:
+    on_screens:
+      default: true
+      selector:
+        boolean:
+    screens:
+      example: "Hallway"
+      selector:
+        text:
+          multiple: true
+    tts_entity:
+      selector:
+        entity:
+          domain: tts

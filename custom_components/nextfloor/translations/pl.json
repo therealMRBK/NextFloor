@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor jest już skonfigurowany."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Komunikat",
+      "description": "Wypowiada wiadomość w pomieszczeniach planu, każdym przez jego własny głośnik, i pokazuje ją oraz wypowiada na każdym otwartym ekranie NextFloor.",
+      "fields": {
+        "message": {
+          "name": "Wiadomość",
+          "description": "Co zostanie powiedziane."
+        },
+        "rooms": {
+          "name": "Pomieszczenia",
+          "description": "Pomieszczenia po nazwie, id pomieszczenia lub id obszaru. Puste: każde pomieszczenie z głośnikiem (te w czasie ciszy są pomijane)."
+        },
+        "floor": {
+          "name": "Piętro",
+          "description": "Tylko pomieszczenia tego piętra (nazwa lub id)."
+        },
+        "on_speakers": {
+          "name": "Na głośnikach",
+          "description": "Mówić w pomieszczeniach."
+        },
+        "on_screens": {
+          "name": "Na ekranach",
+          "description": "Pokazać i wypowiedzieć na otwartych ekranach NextFloor."
+        },
+        "screens": {
+          "name": "Tylko te ekrany",
+          "description": "Nazwy ekranów NextFloor (ustawione na każdym ekranie). Puste: wszystkie."
+        },
+        "tts_entity": {
+          "name": "Zamiana tekstu na mowę",
+          "description": "Zamiast wybranej w planie lub pierwszej."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Żadne pomieszczenie planu nie pasuje do podanych."
+    },
+    "no_tts": {
+      "message": "Żaden głośnik nie mógł tego powiedzieć: skonfiguruj w Home Assistant encję zamiany tekstu na mowę."
+    },
+    "not_loaded": {
+      "message": "NextFloor nie jest skonfigurowany."
+    }
   }
 }

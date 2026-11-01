@@ -1,6 +1,10 @@
 {
   "domain": "nextfloor",
   "name": "NextFloor",
+  "after_dependencies": [
+    "media_source",
+    "tts"
+  ],
   "codeowners": [
     "@therealMRBK"
   ],

@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor is al ingesteld."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Omroep",
+      "description": "Spreekt een bericht uit in kamers van het plan, elk via de eigen luidspreker, en toont en spreekt het op elk open NextFloor-scherm.",
+      "fields": {
+        "message": {
+          "name": "Bericht",
+          "description": "Wat er gezegd wordt."
+        },
+        "rooms": {
+          "name": "Kamers",
+          "description": "Kamers op naam, kamer-id of ruimte-id. Leeg: elke kamer met een luidspreker (kamers in hun stille tijd blijven buiten)."
+        },
+        "floor": {
+          "name": "Verdieping",
+          "description": "Alleen de kamers van deze verdieping (naam of id)."
+        },
+        "on_speakers": {
+          "name": "Op de luidsprekers",
+          "description": "In de kamers spreken."
+        },
+        "on_screens": {
+          "name": "Op de schermen",
+          "description": "Tonen en uitspreken op de open NextFloor-schermen."
+        },
+        "screens": {
+          "name": "Alleen deze schermen",
+          "description": "Namen van NextFloor-schermen (op elk scherm ingesteld). Leeg: alle schermen."
+        },
+        "tts_entity": {
+          "name": "Tekst-naar-spraak",
+          "description": "In plaats van die in het plan, of de eerste."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Geen kamer van het plan past bij de opgegeven kamers."
+    },
+    "no_tts": {
+      "message": "Geen luidspreker kon het zeggen: stel een tekst-naar-spraak-entiteit in Home Assistant in."
+    },
+    "not_loaded": {
+      "message": "NextFloor is niet ingesteld."
+    }
   }
 }

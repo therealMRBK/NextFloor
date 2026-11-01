@@ -225,6 +225,17 @@ export class NextFloorPanel extends LitElement {
             ${(["none", "top_left", "top_right", "bottom_left", "bottom_right"] as const).map((c) => html`<option value=${c} ?selected=${p.clock === c}>${this.t(`clock_${c}`)}</option>`)}
           </select>
         </label>
+        <details class="nf-seg nf-screen-pick">
+          <summary title=${this.t(p.announceMuted ? "announce_muted" : "announce_on")} aria-label=${this.t(p.announceMuted ? "announce_muted" : "announce_on")}>${p.announceMuted ? "🔇" : "📢"}</summary>
+          <div class="nf-screen-menu">
+            <label class="nf-check"><input type="checkbox" .checked=${!p.announceMuted} @change=${(e: Event) => this.setPref("announceMuted", !(e.target as HTMLInputElement).checked)} /> ${this.t("announce_on")}</label>
+            <label class="nf-field"
+              >${this.t("screen_name")}
+              <input type="text" maxlength="60" .value=${p.screenName} @change=${(e: Event) => this.setPref("screenName", (e.target as HTMLInputElement).value.trim())} />
+            </label>
+            <p class="nf-screen-hint">${this.t("screen_name_hint")}</p>
+          </div>
+        </details>
         <div class="nf-seg nf-quality">
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
@@ -422,6 +433,8 @@ export class NextFloorPanel extends LitElement {
           .heatMode=${p.heat}
           .theme=${lookNow(p.theme, this.hass?.states["sun.sun"]?.state)}
           .clock=${p.clock === "none" ? null : p.clock}
+          .announcements=${!p.announceMuted}
+          .screenName=${p.screenName || null}
           .lockButton=${true}
           .walkButton=${true}
           .travelButton=${true}
@@ -445,6 +458,7 @@ export class NextFloorPanel extends LitElement {
               .room=${room}
               .floor=${building.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
               .confirmEntities=${confirmEntities(this.hass, building.floors)}
+              .phrases=${building.settings.announce_phrases ?? null}
               @close=${() => (this._roomId = null)}
             ></nf-room-panel>`
           : nothing}

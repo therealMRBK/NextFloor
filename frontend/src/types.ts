@@ -25,6 +25,8 @@ export interface HassEntityEntry {
   translation_key?: string | null;
   /** Decimals set for a sensor in Home Assistant (null = default). */
   display_precision?: number | null;
+  /** The integration that provides the entity (e.g. "alexa_devices"). */
+  platform?: string | null;
 }
 
 export interface HassDevice {
@@ -61,4 +63,8 @@ export interface HomeAssistant {
   /** fetch() with the logged-in user's token (Home Assistant's frontend provides it). */
   fetchWithAuth?(path: string, init?: Record<string, unknown>): Promise<Response>;
   callService(domain: string, service: string, data?: Record<string, unknown>): Promise<unknown>;
+  /** The actions Home Assistant offers, by domain (to show a button only where its action exists). */
+  services?: Record<string, Record<string, unknown>>;
+  /** A path on the Home Assistant server as a full URL (Home Assistant's frontend provides it). */
+  hassUrl?(path?: string): string;
 }

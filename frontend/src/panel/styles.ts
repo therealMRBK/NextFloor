@@ -35,6 +35,9 @@ export const panelStyles = css`
     background: var(--app-header-background-color, var(--nf-chrome-solid));
     color: var(--app-header-text-color, var(--nf-text));
     flex-wrap: wrap;
+    /* above the room bar, so a menu opened from the header (the screen's announcements) is not covered */
+    position: relative;
+    z-index: 30;
   }
   ha-menu-button {
     color: var(--app-header-text-color, var(--nf-text));
@@ -220,6 +223,46 @@ export const panelStyles = css`
   }
   .nf-clock-pick option {
     color: #111;
+  }
+  .nf-screen-pick {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nf-screen-pick > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .nf-screen-pick > summary::-webkit-details-marker {
+    display: none;
+  }
+  .nf-screen-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 20;
+    display: grid;
+    gap: 10px;
+    width: 260px;
+    padding: 12px;
+    border: 1px solid var(--nf-line);
+    border-radius: 14px;
+    background: var(--nf-chrome-solid);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  }
+  .nf-screen-menu .nf-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--nf-text);
+  }
+  .nf-screen-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--nf-muted);
   }
   .nf-accent-pick input[type="color"] {
     width: 22px;

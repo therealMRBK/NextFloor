@@ -83,6 +83,10 @@ export interface CardConfig {
   alert_jump?: boolean;
   /** Scene and script chips of the selected room (default true). */
   scenes?: boolean;
+  /** Announcements (action nextfloor.announce) show and speak on this card (default true). */
+  announcements?: boolean;
+  /** The name of this screen, for announcements meant for some screens only (default: the name set in the panel on this device). */
+  screen_name?: string;
   /** Weather outside the house: rain, snow, fog, clouds, sun and moon (default on). */
   weather?: boolean;
   /** The weather entity to use (default: the first one). */

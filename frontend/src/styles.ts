@@ -149,7 +149,8 @@ export const controls = css`
     color: var(--nf-muted);
   }
   .nf-field input,
-  .nf-field select {
+  .nf-field select,
+  .nf-field textarea {
     font: inherit;
     font-size: 14px;
     color: var(--nf-text);
@@ -161,7 +162,8 @@ export const controls = css`
     min-width: 0;
   }
   .nf-field input:focus,
-  .nf-field select:focus {
+  .nf-field select:focus,
+  .nf-field textarea:focus {
     border-bottom-color: var(--nf-accent);
   }
   .nf-field input[type="range"] {

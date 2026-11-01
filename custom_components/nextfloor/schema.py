@@ -89,6 +89,17 @@ ROOM_SCHEMA = vol.Schema(
         ),
         # the room's own ceiling height (None = the floor height)
         vol.Optional("ceiling", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=20))),
+        # announcements: the room's speaker ("none": the room never speaks) and a quiet time ("HH:MM")
+        vol.Optional("announce_speaker"): _ENTITY_REF,
+        vol.Optional("announce_quiet"): vol.Any(
+            None,
+            vol.Schema(
+                {
+                    vol.Required("from"): vol.Match(r"^([01]\d|2[0-3]):[0-5]\d$"),
+                    vol.Required("to"): vol.Match(r"^([01]\d|2[0-3]):[0-5]\d$"),
+                }
+            ),
+        ),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -632,6 +643,11 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("rain_warning", default=True): bool,
         # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
         vol.Optional("contact_warning"): bool,
+        # announcements: the text-to-speech entity and the sentences offered in a room (None = the default ones)
+        vol.Optional("announce_tts"): _ENTITY_REF,
+        vol.Optional("announce_phrases"): vol.Any(
+            None, vol.All([vol.All(str, vol.Length(min=1, max=200))], vol.Length(max=30))
+        ),
         # sunlight through the windows as patches on the floor
         vol.Optional("sun_patches", default=True): bool,
         vol.Optional("weather_effects", default=None): vol.Any(

@@ -785,6 +785,14 @@ export const editorStyles = css`
     flex: 1 1 84px;
     min-width: 84px;
   }
+  .nf-quiet-time > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nf-quiet-time input {
+    flex: 1 1 0;
+  }
   .nf-edge-height > .nf-field {
     flex: 1 1 90px;
     min-width: 0;

@@ -78,6 +78,7 @@ import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, point
 import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
+import { claim, forThisScreen, playAnnouncement, showFor, subscribeAnnouncements, type Announcement } from "../live/announce.ts";
 import type { DeviceMarker, NextFloorViewer, FloorStack, RobotInfo, Quality, ScreenState, SurfaceGrab, ViewerStats, WallMode } from "../viewer/viewer3d.ts";
 
 /** Which HTML markers are shown: none, only what has no 3D object or shows a value, or all. */
@@ -161,6 +162,9 @@ export class NfView3d extends LitElement {
     alerts: { attribute: false },
     alertJump: { attribute: false },
     scenes: { attribute: false },
+    announcements: { attribute: false },
+    screenName: { attribute: false },
+    _announcement: { state: true },
     dimmed: { attribute: false },
     autoOrbit: { attribute: false },
     startView: { attribute: false },
@@ -171,6 +175,14 @@ export class NfView3d extends LitElement {
   };
 
   declare hass: HomeAssistant;
+  /** This view is a screen announcements show and speak on (the panel's 3D view and cards, not the editor's). */
+  declare announcements: boolean;
+  /** The name of this screen, for announcements meant for some screens only. */
+  declare screenName: string | null;
+  /** The announcement on screen now, and when it goes. */
+  private declare _announcement: { message: string; until: number } | null;
+  private stopAnnouncements: (() => void) | null = null;
+  private announceTimer: ReturnType<typeof setTimeout> | undefined;
   declare building: Building | null;
   declare floorId: string | null;
   declare roomId: string | null;
@@ -434,6 +446,9 @@ export class NfView3d extends LitElement {
     this._narrowStage = false;
     this.alerts = true;
     this.alertJump = false;
+    this.announcements = false;
+    this.screenName = null;
+    this._announcement = null;
     this._alerts = [];
     this.scenes = true;
     this._sceneFired = null;
@@ -466,6 +481,7 @@ export class NfView3d extends LitElement {
     super.disconnectedCallback();
     this.stopPlugins?.();
     this.stopPlugins = null;
+    this.listenToAnnouncements(false);
     this.resizeObs?.disconnect();
     this.resizeObs = null;
     clearInterval(this.alertTimer);
@@ -569,6 +585,7 @@ export class NfView3d extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
+    if (changed.has("announcements") || (changed.has("hass") && this.announcements && !this.stopAnnouncements)) this.listenToAnnouncements(this.announcements && !!this.hass && this.isConnected);
     if (changed.has("hass") && this.live?.el) this.live.el.hass = this.hass;
     // a plugin window's content (a Home Assistant card) gets every new hass
     const windowNode = this._pluginWindow?.node as (Node & { hass?: unknown }) | undefined;
@@ -1459,6 +1476,42 @@ export class NfView3d extends LitElement {
     setTimeout(() => this.viewer?.focus(item.floorId, item.x, item.z, item.y, item.entity), 120);
   }
 
+  /** Start or stop hearing announcements (once per view; Home Assistant subscribes again after a reconnect by itself). */
+  private listenToAnnouncements(on: boolean): void {
+    if (!on) {
+      this.stopAnnouncements?.();
+      this.stopAnnouncements = null;
+      clearTimeout(this.announceTimer);
+      return;
+    }
+    if (this.stopAnnouncements) return;
+    // a placeholder until the subscription stands, so a second update does not subscribe twice
+    let stopped = false;
+    this.stopAnnouncements = () => (stopped = true);
+    void subscribeAnnouncements(this.hass, (a) => this.announce(a)).then((stop) => {
+      if (stopped) stop();
+      else this.stopAnnouncements = stop;
+    });
+  }
+
+  /** An announcement arrived: show it big over the house, chime and speak it (once per page, only if meant for this screen). */
+  private announce(a: Announcement): void {
+    if (!forThisScreen(a, this.screenName) || !claim(a)) return;
+    const duration = showFor(a.message);
+    this._announcement = { message: a.message, until: Date.now() + duration };
+    clearTimeout(this.announceTimer);
+    this.announceTimer = setTimeout(() => (this._announcement = null), duration);
+    void playAnnouncement(this.hass, a);
+  }
+
+  private renderAnnouncement() {
+    const a = this._announcement;
+    if (!a) return nothing;
+    return html`<button class="nf-announcement" role="alert" title=${translate(this.hass, "close")} @click=${() => (this._announcement = null)}>
+      <span class="nf-announcement-icon" aria-hidden="true">📢</span><span class="nf-announcement-text">${a.message}</span>
+    </button>`;
+  }
+
   private renderAlerts() {
     const b = this.building;
     if (!this._alerts.length || !b) return nothing;
@@ -2112,7 +2165,7 @@ export class NfView3d extends LitElement {
       style=${style}
     >
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.clean ? nothing : this.renderLhEnergy()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
-      ${this.renderAlerts()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
+      ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
@@ -2171,6 +2224,40 @@ export class NfView3d extends LitElement {
       .nf-alert-alarm_pending {
         border-left-color: #ffb547;
         box-shadow: 0 0 18px rgba(255, 181, 71, 0.35);
+      }
+      .nf-announcement {
+        position: absolute;
+        inset: 18% 8% auto;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin: 0 auto;
+        max-width: 860px;
+        padding: 22px 28px;
+        border: 1px solid color-mix(in srgb, var(--nf-accent) 55%, transparent);
+        border-radius: 22px;
+        background: var(--nf-chrome-solid);
+        color: var(--nf-text);
+        box-shadow: 0 0 40px color-mix(in srgb, var(--nf-accent) 35%, transparent), 0 18px 50px rgba(0, 0, 0, 0.45);
+        font: 700 clamp(22px, 3.6vw, 40px) / 1.25 var(--nf-font);
+        text-align: left;
+        cursor: pointer;
+        animation: nf-announce-in 0.35s ease-out;
+      }
+      .nf-announcement-icon {
+        font-size: 1.3em;
+      }
+      @keyframes nf-announce-in {
+        from {
+          opacity: 0;
+          transform: translateY(-12px) scale(0.98);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-announcement {
+          animation: none;
+        }
       }
       /* a contact that stopped answering is a chore, not an emergency: no glow, no pulse */
       .nf-alert-contact_lost {

@@ -11,6 +11,7 @@ import type { RectField } from "../ops/rooms.ts";
 import { SPOT_TYPES, spotCount, spotItems } from "../ops/spots.ts";
 import type { SideState } from "../side-state.ts";
 import { formatArea } from "../../../units.ts";
+import { roomSpeaker } from "../../../live/announce.ts";
 
 /** What the room form makes the editor do, and the parts of it that the editor still draws itself. */
 export interface RoomActions {
@@ -93,6 +94,31 @@ function ceilingField(host: EditorHost, room: Room, floor: Floor, actions: RoomA
     ${hint(t("room_ceiling_hint"), "nf-wide")}`;
 }
 
+/** Announcements in the room: its speaker (automatic, chosen, or none) and a quiet time. */
+function announceFields(host: EditorHost, room: Room, floor: Floor | null, actions: RoomActions): TemplateResult {
+  const t = host.t;
+  if (!host.hass) return html``;
+  const auto = roomSpeaker(host.hass, floor, { ...room, announce_speaker: null });
+  const speakers = entityOptions(host.hass, (id) => /^(media_player|assist_satellite)\./.test(id) || (id.startsWith("notify.") && id.endsWith("_announce")));
+  const quiet = room.announce_quiet ?? null;
+  // the first time typed fills the other with the usual night (20:00–07:00), so a half quiet time is never stored
+  const setQuiet = (part: "from" | "to", value: string) => {
+    if (!value) return actions.patch({ announce_quiet: null });
+    actions.patch({ announce_quiet: { from: quiet?.from ?? "20:00", to: quiet?.to ?? "07:00", [part]: value } });
+  };
+  return html`${entityField(host, t("room_announce_speaker"), room.announce_speaker ?? null, auto, speakers, (v) => actions.patch({ announce_speaker: v }))}
+    <div class="nf-field nf-wide nf-quiet-time">
+      ${t("room_announce_quiet")}
+      <span>
+        <input type="time" .value=${quiet?.from ?? ""} ?disabled=${!host.admin} aria-label=${`${t("room_announce_quiet")} 1`} @change=${(e: Event) => setQuiet("from", (e.target as HTMLInputElement).value)} />
+        –
+        <input type="time" .value=${quiet?.to ?? ""} ?disabled=${!host.admin} aria-label=${`${t("room_announce_quiet")} 2`} @change=${(e: Event) => setQuiet("to", (e.target as HTMLInputElement).value)} />
+        ${quiet ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => actions.patch({ announce_quiet: null })}>×</button>` : nothing}
+      </span>
+    </div>
+    ${hint(t("room_announce_hint"), "nf-wide")}`;
+}
+
 /** The form of the selected room. */
 export function renderRoomForm(host: EditorHost, state: SideState, room: Room, actions: RoomActions): TemplateResult {
   const t = host.t;
@@ -111,6 +137,7 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
       ${selectField(host, t("material"), room.floor_material, materials, (floor_material) => actions.patch({ floor_material }), { wide: true })}
       ${colorField(host, t("wall_paint_room"), room.wall_paint, host.doc.settings.wall_paint_inside ?? DEFAULT_PAINT_INSIDE, (wall_paint) => actions.patch({ wall_paint }))}
       ${host.floor ? ceilingField(host, room, host.floor, actions) : nothing}
+      ${announceFields(host, room, host.floor ?? null, actions)}
       ${rectangle
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRect("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRect("z", v))}
           ${numberField(host, t("width"), box.x1 - box.x0, (v) => actions.setRect("w", v), 0.01, 0.05)}

@@ -24,3 +24,4 @@ PANEL_ICON = "mdi:floor-plan"
 PANEL_TITLE = "NextFloor"
 
 SIGNAL_BUILDING_UPDATED = f"{DOMAIN}_building_updated"
+SIGNAL_ANNOUNCE = f"{DOMAIN}_announce"

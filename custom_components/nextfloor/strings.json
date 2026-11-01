@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor is already set up."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Announcement",
+      "description": "Speaks a message in rooms of the plan, each through its own speaker, and shows and speaks it on every open NextFloor screen.",
+      "fields": {
+        "message": {
+          "name": "Message",
+          "description": "What is said."
+        },
+        "rooms": {
+          "name": "Rooms",
+          "description": "Rooms by name, room id or area id. Empty: every room with a speaker (rooms in their quiet time are left out)."
+        },
+        "floor": {
+          "name": "Floor",
+          "description": "Only the rooms of this floor (name or id)."
+        },
+        "on_speakers": {
+          "name": "On the speakers",
+          "description": "Speak in the rooms."
+        },
+        "on_screens": {
+          "name": "On the screens",
+          "description": "Show and speak it on the open NextFloor screens."
+        },
+        "screens": {
+          "name": "Only these screens",
+          "description": "Names of NextFloor screens (set on each screen). Empty: every screen."
+        },
+        "tts_entity": {
+          "name": "Text-to-speech",
+          "description": "Instead of the one chosen in the plan, or the first one."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "No room of the plan matches the rooms given."
+    },
+    "no_tts": {
+      "message": "No speaker could say it: set up a text-to-speech entity in Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor is not set up."
+    }
   }
 }

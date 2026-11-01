@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { PrefStore, type PrefsStorage } from "./prefs.ts";
+import { PrefStore, screenMuted, screenName, type PrefsStorage } from "./prefs.ts";
 
 function memory(initial: Record<string, string> = {}): PrefsStorage & { data: Record<string, string> } {
   const data = { ...initial };
@@ -11,8 +11,21 @@ test("nothing stored gives the defaults", () => {
   const prefs = new PrefStore(memory()).load();
   assert.deepEqual(prefs, {
     explode: true, keepRoof: false, solidWalls: false, quality: "auto", stats: false, markers: "important", heat: "none", theme: "neon", accent: null,
-    floorStack: "dim", roomNames: true, clean: false, navWrap: false, weather: true, clock: "none",
+    floorStack: "dim", roomNames: true, clean: false, navWrap: false, weather: true, clock: "none", screenName: "", announceMuted: false,
   });
+});
+
+test("a screen's name and mute switch are kept, and cards read them too", () => {
+  const storage = memory();
+  const store = new PrefStore(storage);
+  store.save("screenName", "  Hallway ");
+  store.save("announceMuted", true);
+  const prefs = new PrefStore(storage).load();
+  assert.equal(prefs.screenName, "Hallway");
+  assert.equal(prefs.announceMuted, true);
+  assert.equal(screenName(storage), "Hallway");
+  assert.equal(screenMuted(storage), true);
+  assert.equal(screenName(memory()), null);
 });
 
 test("the auto look and a clock corner are kept", () => {

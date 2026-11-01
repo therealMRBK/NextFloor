@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor är redan konfigurerat."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Utrop",
+      "description": "Säger ett meddelande i rum i planen, vart och ett genom sin egen högtalare, och visar och säger det på varje öppen NextFloor-skärm.",
+      "fields": {
+        "message": {
+          "name": "Meddelande",
+          "description": "Det som sägs."
+        },
+        "rooms": {
+          "name": "Rum",
+          "description": "Rum efter namn, rum-id eller område-id. Tomt: varje rum med högtalare (rum under sin tysta tid utesluts)."
+        },
+        "floor": {
+          "name": "Våning",
+          "description": "Bara rummen på denna våning (namn eller id)."
+        },
+        "on_speakers": {
+          "name": "I högtalarna",
+          "description": "Tala i rummen."
+        },
+        "on_screens": {
+          "name": "På skärmarna",
+          "description": "Visa och säga på de öppna NextFloor-skärmarna."
+        },
+        "screens": {
+          "name": "Bara dessa skärmar",
+          "description": "Namn på NextFloor-skärmar (satta på varje skärm). Tomt: alla."
+        },
+        "tts_entity": {
+          "name": "Text till tal",
+          "description": "I stället för den valda i planen, eller den första."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Inget rum i planen matchar de angivna."
+    },
+    "no_tts": {
+      "message": "Ingen högtalare kunde säga det: lägg till en text-till-tal-entitet i Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor är inte konfigurerat."
+    }
   }
 }

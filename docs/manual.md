@@ -109,6 +109,27 @@ Built in and free; they only need the devices you already have.
 - **Washer, dryer, dishwasher:** when the device has a remaining-time sensor in Home Assistant, its pin says "25 min left".
 - **Pets** (pets pack: cat, dog, rabbit): walk around their room, round the furniture, with breaks in between.
 
+## Announcements
+
+*"Dinner is ready!"* – and the room that should hear it, hears it.
+
+- **From a room:** the room panel has a **📢 Announcement** section when the room has a speaker. Tap a sentence, or type your own; the room's speaker says it. Your own sentences go into *Editor → Settings* (one per line).
+- **The room's speaker:** chosen in the room's form, else a speaker placed in the room, else a voice assistant (Voice PE and other satellites), an Echo or a speaker of its area. A TV or a speaker that is off is never picked by itself. Voice satellites announce with their chime, Echos as a real announcement (Alexa Devices or Alexa Media Player), speakers that support it (Sonos and others) lower their music and play on after; any other speaker talks through Home Assistant's text-to-speech.
+- **Quiet time per room:** in the room's form, e.g. 20:00–07:00 for a nursery. Announcements to several rooms leave the room out then; one meant only for that room still gets through.
+- **On the screens:** every open NextFloor page (panel or card) shows the message big over the house, plays a soft chime and speaks it – an old wall tablet becomes an announcement speaker. Give a screen a name under ⚙ → 📢 (e.g. *Hallway*) to send announcements to it alone, or untick it there to keep it silent. Browsers play sound only after the page was tapped once; in Fully Kiosk switch on *Autoplay Audio* (Web Content Settings).
+- **In automations:** the action **NextFloor: Announcement**.
+
+```yaml
+action: nextfloor.announce
+data:
+  message: "Someone is at the door!"
+  rooms: [Kitchen, Living room]   # by name, room id or area id; leave out for every room with a speaker
+  on_screens: true                # the open NextFloor screens show and speak it too
+  screens: [Hallway]              # optional: only these screens
+```
+
+`floor` limits it to one floor, `on_speakers: false` keeps the speakers silent, `tts_entity` picks the voice. The action returns which speaker said it and which rooms were left out (and why).
+
 ## Dashboard card
 
 Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. The same options exist in YAML under the names shown in the editor.

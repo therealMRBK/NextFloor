@@ -61,6 +61,10 @@ export interface Room {
    * items hang from it, and its walls default to it (a wall shared with a room without a ceiling of its own keeps the floor height).
    */
   ceiling?: number | null;
+  /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */
+  announce_speaker?: string | null;
+  /** Announcements to several rooms leave this room out from `from` to `to` ("HH:MM", may run over midnight). */
+  announce_quiet?: { from: string; to: string } | null;
 }
 
 export type OpeningType = "door" | "window" | "garage";
@@ -533,6 +537,9 @@ export interface BuildingSettings {
   outage_sensor?: string | null;
   /** Warn when a door or window contact has been unavailable for 10 minutes (empty battery, out of reach); default off. */
   contact_warning?: boolean;
+  /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
+  announce_tts?: string | null;
+  announce_phrases?: string[] | null;
   /** An own background behind the house instead of the look's sky: a colour and/or a picture (/local/… or https), dimmed. */
   backdrop?: { color?: string | null; image?: string | null; dim?: number | null } | null;
   /** Plugin modules to load (Extensions page); see docs/plugins.md. */

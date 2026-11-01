@@ -73,6 +73,21 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${host.hass ? entityField(host, t("outage_sensor"), s.outage_sensor ?? null, undefined, entityOptions(host.hass, (id) => /^(binary_sensor|sensor)\./.test(id)), (v) => set({ outage_sensor: v === "none" ? null : v })) : nothing}
       ${hint(t("outage_hint"), "nf-wide")}
       ${checkField(host, t("contact_warning"), !!s.contact_warning, (on) => set({ contact_warning: on || undefined }), { title: t("contact_warning_hint") })}
+      ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
+      <label class="nf-field nf-wide"
+        >${t("announce_phrases")}
+        <textarea
+          rows="4"
+          ?disabled=${!host.admin}
+          .value=${(s.announce_phrases ?? []).join("\n")}
+          placeholder=${[1, 2, 3, 4, 5].map((n) => t(`announce_phrase_${n}` as I18nKey)).join("\n")}
+          @change=${(e: Event) => {
+            const lines = (e.target as HTMLTextAreaElement).value.split("\n").map((l) => l.trim().slice(0, 200)).filter(Boolean).slice(0, 30);
+            set({ announce_phrases: lines.length ? lines : null });
+          }}
+        ></textarea>
+      </label>
+      ${hint(t("announce_phrases_hint"), "nf-wide")}
       ${checkField(host, t("sun_patches"), s.sun_patches !== false, (on) => set({ sun_patches: on }), { title: t("sun_patches_hint") })}
       ${backdropFields(host, s.backdrop ?? null, (backdrop) => set({ backdrop }))}
     </div>

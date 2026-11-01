@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "O NextFloor já está configurado."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Anúncio",
+      "description": "Diz uma mensagem em divisões do plano, cada uma pelo seu próprio altifalante, e mostra-a e di-la em cada ecrã NextFloor aberto.",
+      "fields": {
+        "message": {
+          "name": "Mensagem",
+          "description": "O que é dito."
+        },
+        "rooms": {
+          "name": "Divisões",
+          "description": "Divisões por nome, id da divisão ou id da área. Vazio: cada divisão com altifalante (as que estão no período de silêncio ficam de fora)."
+        },
+        "floor": {
+          "name": "Piso",
+          "description": "Só as divisões deste piso (nome ou id)."
+        },
+        "on_speakers": {
+          "name": "Nos altifalantes",
+          "description": "Falar nas divisões."
+        },
+        "on_screens": {
+          "name": "Nos ecrãs",
+          "description": "Mostrar e dizer nos ecrãs NextFloor abertos."
+        },
+        "screens": {
+          "name": "Só estes ecrãs",
+          "description": "Nomes de ecrãs NextFloor (definidos em cada ecrã). Vazio: todos."
+        },
+        "tts_entity": {
+          "name": "Texto para voz",
+          "description": "Em vez do escolhido no plano, ou do primeiro."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Nenhuma divisão do plano corresponde às indicadas."
+    },
+    "no_tts": {
+      "message": "Nenhum altifalante o conseguiu dizer: configure uma entidade de texto para voz no Home Assistant."
+    },
+    "not_loaded": {
+      "message": "O NextFloor não está configurado."
+    }
   }
 }

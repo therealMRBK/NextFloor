@@ -9,5 +9,52 @@
     "abort": {
       "single_instance_allowed": "NextFloor è già configurato."
     }
+  },
+  "services": {
+    "announce": {
+      "name": "Annuncio",
+      "description": "Pronuncia un messaggio nelle stanze del piano, ognuna con il proprio altoparlante, e lo mostra e pronuncia su ogni schermo NextFloor aperto.",
+      "fields": {
+        "message": {
+          "name": "Messaggio",
+          "description": "Ciò che viene detto."
+        },
+        "rooms": {
+          "name": "Stanze",
+          "description": "Stanze per nome, id della stanza o id dell'area. Vuoto: ogni stanza con un altoparlante (quelle nell'ora di silenzio restano escluse)."
+        },
+        "floor": {
+          "name": "Piano",
+          "description": "Solo le stanze di questo piano (nome o id)."
+        },
+        "on_speakers": {
+          "name": "Sugli altoparlanti",
+          "description": "Parlare nelle stanze."
+        },
+        "on_screens": {
+          "name": "Sugli schermi",
+          "description": "Mostrare e pronunciare sugli schermi NextFloor aperti."
+        },
+        "screens": {
+          "name": "Solo questi schermi",
+          "description": "Nomi di schermi NextFloor (impostati su ogni schermo). Vuoto: tutti."
+        },
+        "tts_entity": {
+          "name": "Sintesi vocale",
+          "description": "Invece di quella scelta nel piano, o della prima."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Nessuna stanza del piano corrisponde a quelle indicate."
+    },
+    "no_tts": {
+      "message": "Nessun altoparlante ha potuto dirlo: configura un'entità di sintesi vocale in Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor non è configurato."
+    }
   }
 }

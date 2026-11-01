@@ -12,6 +12,7 @@ interface RegistryEntry {
   entity_category?: string | null;
   name?: string | null;
   translation_key?: string | null;
+  platform?: string | null;
 }
 
 /** A Home Assistant with the given states and registry entries (entry key = entity id). */

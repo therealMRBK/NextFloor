@@ -7,6 +7,7 @@ import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
 import { pluginRoomSections } from "../plugins/registry.ts";
+import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Floor, Room } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
@@ -45,7 +46,9 @@ export class NfRoomPanel extends LitElement {
     room: { attribute: false },
     floor: { attribute: false },
     confirmEntities: { attribute: false },
+    phrases: { attribute: false },
     _showAll: { state: true },
+    _said: { state: true },
     _folded: { state: true },
   };
 
@@ -55,6 +58,11 @@ export class NfRoomPanel extends LitElement {
   declare floor: Floor | null;
   /** Entities that ask before they are switched. */
   declare confirmEntities: Set<string> | null;
+  /** The sentences offered for an announcement (null: the default ones). */
+  declare phrases: string[] | null;
+  /** What the last announcement from this panel did, shown under it for a moment. */
+  private declare _said: { text: string; failed: boolean } | null;
+  private saidTimer: ReturnType<typeof setTimeout> | undefined;
   /** Show the other devices of the area as well (their main entities). */
   private declare _showAll: boolean;
   /** Only the header shows (a small screen: the room stays in view, the devices are out of the way). Starts open for every room. */
@@ -65,6 +73,8 @@ export class NfRoomPanel extends LitElement {
     super();
     this.room = null;
     this.floor = null;
+    this.phrases = null;
+    this._said = null;
     this._showAll = false;
     this._folded = false;
   }
@@ -212,6 +222,7 @@ export class NfRoomPanel extends LitElement {
               ],
             )
           : nothing}
+        ${canAnnounce(this.hass) && roomHasSpeaker(this.hass, this.floor, room) ? this.announceSection(room) : nothing}
         ${this.pluginSections(room, ids)}
         ${hiddenCount
           ? html`<button class="nf-btn nf-rp-small nf-rp-more" @click=${() => (this._showAll = !this._showAll)}>
@@ -241,6 +252,35 @@ export class NfRoomPanel extends LitElement {
     const hum = value("humidity", "%");
     if (hum) out.push(hum);
     return out;
+  }
+
+  /** Announcements in the room: a tap on a sentence says it on the room's speaker; an own message too. */
+  private announceSection(room: Room) {
+    const phrases = this.phrases?.length ? this.phrases : [1, 2, 3, 4, 5].map((n) => this.t(`announce_phrase_${n}` as I18nKey));
+    const say = (message: string) => {
+      const text = message.trim();
+      if (!text) return;
+      clearTimeout(this.saidTimer);
+      this.hass.callService("nextfloor", "announce", { message: text, rooms: [room.id], on_screens: false }).then(
+        () => (this._said = { text: this.t("announce_sent", { message: text }), failed: false }),
+        (err: unknown) => (this._said = { text: this.t("announce_failed", { error: (err as { message?: string })?.message ?? String(err) }), failed: true }),
+      );
+      this.saidTimer = setTimeout(() => (this._said = null), 6000);
+    };
+    const own = (e: Event) => {
+      e.preventDefault();
+      const input = (e.currentTarget as HTMLFormElement).querySelector("input")!;
+      say(input.value);
+      input.value = "";
+    };
+    return this.section("panel_announce", [
+      html`<div class="nf-rp-scenes">${phrases.map((p) => html`<button class="nf-btn" @click=${() => say(p)}>${p}</button>`)}</div>
+        <form class="nf-rp-say" @submit=${own}>
+          <input type="text" maxlength="500" placeholder=${this.t("announce_placeholder")} aria-label=${this.t("announce_placeholder")} />
+          <button class="nf-btn nf-primary" type="submit">${this.t("announce_send")}</button>
+        </form>
+        ${this._said ? html`<p class="nf-rp-note ${this._said.failed ? "nf-rp-fail" : ""}" role="status">${this._said.text}</p>` : nothing}`,
+    ]);
   }
 
   /** Blocks plugins add for this room, titled with the plugin's name. */
@@ -681,6 +721,26 @@ export class NfRoomPanel extends LitElement {
       .nf-rp-swatches,
       .nf-rp-buttons,
       .nf-rp-chips,
+      .nf-rp-say {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .nf-rp-say input {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-size: 14px;
+        color: var(--nf-text);
+        background: var(--nf-fill);
+        border: none;
+        border-bottom: 1px solid var(--nf-line);
+        border-radius: 10px 10px 4px 4px;
+        padding: 8px 10px;
+      }
+      .nf-rp-fail {
+        color: #ff6b7a;
+      }
       .nf-rp-scenes {
         display: flex;
         flex-wrap: wrap;

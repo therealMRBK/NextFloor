@@ -11,7 +11,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.loader import async_get_integration
 import voluptuous as vol
 
-from .const import DOMAIN, SIGNAL_BUILDING_UPDATED
+from .const import DOMAIN, SIGNAL_ANNOUNCE, SIGNAL_BUILDING_UPDATED
 from .packs import MAX_PACK_SIZE, PackError, parse_pack, validate_payload
 from .schema import BUILDING_SCHEMA, IMAGE_DATA
 from .storage import NextFloorData, complete
@@ -26,6 +26,7 @@ def async_register_commands(hass: HomeAssistant) -> None:
         ws_get_building,
         ws_save_building,
         ws_subscribe_building,
+        ws_subscribe_announcements,
         ws_get_image,
         ws_set_image,
         ws_delete_image,
@@ -92,6 +93,21 @@ def ws_subscribe_building(hass: HomeAssistant, connection: websocket_api.ActiveC
         connection.send_message(websocket_api.event_message(msg["id"], {"revision": revision}))
 
     connection.subscriptions[msg["id"]] = async_dispatcher_connect(hass, SIGNAL_BUILDING_UPDATED, forward)
+    connection.send_result(msg["id"])
+
+
+@websocket_api.websocket_command({vol.Required("type"): "nextfloor/announcements/subscribe"})
+@callback
+def ws_subscribe_announcements(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Send every announcement to the screen (any user: wall tablets often sign in as one without admin rights)."""
+
+    @callback
+    def forward(payload: dict[str, Any]) -> None:
+        connection.send_message(websocket_api.event_message(msg["id"], payload))
+
+    connection.subscriptions[msg["id"]] = async_dispatcher_connect(hass, SIGNAL_ANNOUNCE, forward)
     connection.send_result(msg["id"])
 
 

@@ -6,6 +6,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Announcements, free for everyone**: *"Dinner is ready!"* – and the room that should hear it, hears it.
+  - **In the room panel**, a **📢 Announcement** section for rooms with a speaker: tap a sentence or type your own. Own sentences under *Editor → Settings*.
+  - **Each room speaks through its own speaker**: chosen in the room's form, else one placed in the room, else a voice satellite, an Echo or a speaker of its area (never a TV or a speaker that is off). Voice satellites chime, Echos make a real announcement (Alexa Devices or Alexa Media Player), speakers that can (Sonos and others) lower their music and play on after, every other speaker uses Home Assistant's text-to-speech.
+  - **Quiet time per room** (a nursery from 20:00): announcements to several rooms leave it out, one meant only for it still gets through.
+  - **Every open NextFloor screen** (panel or card) shows the message big over the house, plays a soft chime and speaks it. A screen can get a name (⚙ → 📢) to be addressed alone, or stay silent. Card options `announcements` and `screen_name`.
+  - **The action `nextfloor.announce`** for automations (message, rooms, floor, screens, on_speakers, on_screens, tts_entity); it answers which speaker said it and which rooms were left out.
 - **Opening angle for doors**: every door has an *Opening angle* (default, 15° to 180°). With a contact the leaf opens that far as soon as it reports open; without one it stands that far open instead of half open. A door that is only assumed to stand open no longer glows as open. *Default* keeps everything as it was.
 - **Warning for contacts that stop answering** (off by default, Editor → Settings): when a door or window contact has been unavailable for 10 minutes (an empty battery, out of radio reach), a note in the warning bar names it, because the window then looks shut in 3D although nobody knows. It is a quiet note: the room does not pulse and the view does not jump to it. A restart of Home Assistant does not warn.
 
