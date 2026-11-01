@@ -7,6 +7,7 @@
  *  - fog that thickens with distance
  *  - lightning: a jagged bolt from the clouds down beside the house, with a short flash of the whole stage
  *  - the sun by day and the moon by night as a glowing disc in their real direction, paler behind clouds
+ *  - stars on a clear night, and the ground under the house white with snow or dark and wet after rain
  *
  * Everything sits in one group; the layer only animates while something moves (rain, snow, clouds, a bolt),
  * and draws fewer particles on the tablet level.
@@ -74,6 +75,7 @@ const DEG = Math.PI / 180;
 const RAIN_MAX = 2400;
 const SNOW_MAX = 1600;
 const CLOUDS = 9;
+const STARS = 360;
 
 function softTexture(stops: [number, string][], size = 64): CanvasTexture {
   const c = document.createElement("canvas");
@@ -137,6 +139,8 @@ export class WeatherLayer {
   private readonly bolt: LineSegments;
   private readonly disc: Sprite;
   private readonly halo: Sprite;
+  private readonly stars: Points;
+  private readonly cover: Mesh;
   private last = 0;
   private nextBolt = 0;
   private boltUntil = 0;
@@ -181,7 +185,22 @@ export class WeatherLayer {
     this.disc = new Sprite(new SpriteMaterial({ map: glow, transparent: true, depthWrite: false, blending: AdditiveBlending, fog: false }));
     this.halo = new Sprite(new SpriteMaterial({ map: softTexture([[0, "rgba(255,255,255,0.35)"], [1, "rgba(255,255,255,0)"]]), transparent: true, depthWrite: false, blending: AdditiveBlending, fog: false }));
 
-    for (const o of [this.rain, this.snow, this.hail, this.bolt, this.disc, this.halo]) {
+    // stars on a dome over the plot (unit sphere, scaled to the plot), dimmer towards the horizon
+    const starAt = new Float32Array(STARS * 3);
+    for (let i = 0; i < STARS; i++) {
+      const a = i * 2.39996;
+      const up = 0.08 + 0.92 * ((i * 0.618034) % 1);
+      const r = Math.sqrt(1 - up * up);
+      starAt.set([Math.cos(a) * r, up, Math.sin(a) * r], i * 3);
+    }
+    const stg = new BufferGeometry();
+    stg.setAttribute("position", new Float32BufferAttribute(starAt, 3));
+    this.stars = new Points(stg, new PointsMaterial({ color: 0xeef3ff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false, fog: false }));
+    this.cover = new Mesh(new PlaneGeometry(1, 1), new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false }));
+    this.cover.rotation.x = -Math.PI / 2;
+    this.cover.renderOrder = -1;
+
+    for (const o of [this.rain, this.snow, this.hail, this.bolt, this.disc, this.halo, this.stars, this.cover]) {
       o.frustumCulled = false;
       this.group.add(o);
     }
@@ -198,6 +217,29 @@ export class WeatherLayer {
   setBounds(b: Bounds): void {
     this.bounds = b;
     this.seed();
+    this.placeNight();
+  }
+
+  /** Stars when the sun is well below the horizon and the sky is clear; snow lying or wet ground under the house. */
+  private placeNight(): void {
+    const v = this.view;
+    const w = v?.weather;
+    const b = this.bounds;
+    const span = Math.max(b.x1 - b.x0, b.z1 - b.z0);
+    const night = v?.sun && v.disc ? Math.min(1, Math.max(0, (-v.sun.elevation - 4) / 8)) : 0;
+    const starMaterial = this.stars.material as PointsMaterial;
+    starMaterial.opacity = night * (1 - (w?.cloud ?? 0)) * 0.9;
+    this.stars.visible = starMaterial.opacity > 0.02;
+    this.stars.position.set((b.x0 + b.x1) / 2, b.y0, (b.z0 + b.z1) / 2);
+    this.stars.scale.setScalar(span * 3);
+    const coverMaterial = this.cover.material as MeshBasicMaterial;
+    const snowy = (w?.snow ?? 0) + (w?.hail ?? 0) * 0.5;
+    const wet = w?.rain ?? 0;
+    coverMaterial.color.setHex(snowy > 0.05 ? 0xf4f8ff : 0x1c3550);
+    coverMaterial.opacity = snowy > 0.05 ? 0.3 + 0.45 * Math.min(1, snowy) : wet > 0.1 ? 0.25 * Math.min(1, wet) : 0;
+    this.cover.visible = coverMaterial.opacity > 0.02;
+    this.cover.position.set((b.x0 + b.x1) / 2, b.y0 - 0.18, (b.z0 + b.z1) / 2);
+    this.cover.scale.set(b.x1 - b.x0, b.z1 - b.z0, 1);
   }
 
   set(view: SkyView | null): void {
@@ -212,6 +254,7 @@ export class WeatherLayer {
     } else if (this.scene.fog instanceof FogExp2) this.scene.fog = null;
     if (!before || before.low !== view?.low || !!before.weather !== !!w) this.seed();
     this.placeDisc();
+    this.placeNight();
     if (!w?.lightning) this.endBolt();
   }
 

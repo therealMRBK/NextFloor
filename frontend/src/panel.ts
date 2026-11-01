@@ -1,6 +1,7 @@
 // The sidebar page of Home Assistant: the 3D view, the editor, and the extensions page.
 
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from "lit";
+import { sunPosition, todayAt } from "./sun-position.ts";
 import { BuildingController } from "./building-controller.ts";
 import type { PluginRef } from "./plugins/api.ts";
 import type { MarkerMode } from "./components/view3d.ts";
@@ -40,6 +41,7 @@ export class NextFloorPanel extends LitElement {
     _selFurniture: { state: true },
     _selDevice: { state: true },
     _optsOpen: { state: true },
+    _timeOfDay: { state: true },
   };
 
   declare hass: HomeAssistant;
@@ -59,6 +61,8 @@ export class NextFloorPanel extends LitElement {
   private declare _selDevice: string | null;
   /** Phones fold the view options behind a gear button. */
   private declare _optsOpen: boolean;
+  /** The time-of-day slider: hours shown instead of now (null: the slider is closed and the view shows the real sun). */
+  private declare _timeOfDay: number | null;
 
   private readonly data = new BuildingController(this);
   private readonly store = new PrefStore(browserStorage());
@@ -76,6 +80,32 @@ export class NextFloorPanel extends LitElement {
     this._selFurniture = null;
     this._selDevice = null;
     this._optsOpen = false;
+    this._timeOfDay = null;
+  }
+
+  /** The sun state the look follows: the real one, or the one of the hour on the time-of-day slider. */
+  private sunState(): string | undefined {
+    const config = this.hass?.config;
+    if (this._timeOfDay === null || config?.latitude === undefined || config.longitude === undefined) return this.hass?.states["sun.sun"]?.state;
+    return sunPosition(todayAt(this._timeOfDay), config.latitude, config.longitude).elevation > 0 ? "above_horizon" : "below_horizon";
+  }
+
+  /** The time-of-day chip, and while it is on the slider over the hours of today with a button back to now. */
+  private renderTimeOfDay() {
+    const t = this.t;
+    if (this.hass?.config?.latitude === undefined) return nothing;
+    const hours = this._timeOfDay;
+    const label = (h: number) => `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
+    const now = () => {
+      const d = new Date();
+      return Math.round((d.getHours() + d.getMinutes() / 60) * 4) / 4;
+    };
+    return html`<button class="nf-chip" aria-pressed=${hours !== null} title=${t("time_of_day_hint")} @click=${() => (this._timeOfDay = hours === null ? now() : null)}>☀ ${hours === null ? t("time_of_day") : label(hours)}</button>
+      ${hours !== null
+        ? html`<label class="nf-chip nf-time-slider"
+            ><input type="range" min="0" max="23.75" step="0.25" .value=${String(hours)} aria-label=${t("time_of_day")} @input=${(e: Event) => (this._timeOfDay = Number((e.target as HTMLInputElement).value))}
+          /></label>`
+        : nothing}`;
   }
 
   private readonly t = (key: Key, vars?: Record<string, string | number>): string => translate(this.hass, key, vars);
@@ -404,6 +434,7 @@ export class NextFloorPanel extends LitElement {
       ${this.toggleChip("roomNames", "room_names_short")}
      
       ${this.toggleChip("weather", "weather_short", "weather_hint")}
+      ${this.renderTimeOfDay()}
       ${this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing}
     </div>`;
   }
@@ -442,7 +473,8 @@ export class NextFloorPanel extends LitElement {
           .keepRoof=${p.keepRoof}
           .markerMode=${p.markers}
           .heatMode=${p.heat}
-          .theme=${lookNow(p.theme, this.hass?.states["sun.sun"]?.state)}
+          .theme=${lookNow(p.theme, this.sunState())}
+          .timeOfDay=${this._timeOfDay}
           .clock=${p.clock === "none" ? null : p.clock}
           .announcements=${!p.announceMuted}
           .glassWalls=${p.glassWalls}

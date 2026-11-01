@@ -81,6 +81,15 @@ export const controls = css`
       padding: 5px 10px;
     }
   }
+  .nf-time-slider {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+  }
+  .nf-time-slider input {
+    width: 160px;
+    accent-color: var(--nf-accent);
+  }
   .nf-seg button[aria-pressed="true"],
   .nf-chip[aria-pressed="true"] {
     background: color-mix(in srgb, var(--nf-accent) 24%, var(--nf-chrome-solid));

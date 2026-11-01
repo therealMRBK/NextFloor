@@ -51,6 +51,8 @@ import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
+import { HouseShadow } from "./scene/house-shadow.ts";
+import { mergeHoles } from "../geometry/holes.ts";
 import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
@@ -514,6 +516,9 @@ export class NextFloorViewer {
   private sun: SunState | null = null;
   /** The sky over the plot: rain, snow, clouds, fog, lightning, sun and moon (live-weather.ts). */
   private readonly weatherLayer: WeatherLayer;
+  /** The house's shadow on the ground, and what it was last built from. */
+  private readonly houseShadow = new HouseShadow();
+  private shadowKey = "";
   /** The real map under the plan (live-map.ts). */
   private readonly mapLayer: MapLayer;
   private mapSettings: MapSettings | null = null;
@@ -555,6 +560,7 @@ export class NextFloorViewer {
     this.ground.renderOrder = -1;
     this.scene.add(this.ground, this.root);
     this.weatherLayer = new WeatherLayer(this.scene);
+    this.scene.add(this.houseShadow.mesh);
     this.mapLayer = new MapLayer(this.scene);
     this.mapLayer.onChange = () => this.invalidate();
     this.energyLayer = new EnergyLayer(this.scene, this.liftOf);
@@ -982,7 +988,32 @@ export class NextFloorViewer {
   setSun(sun: SunState | null): void {
     this.sun = sun;
     for (const fv of this.floors) this.buildSun(fv);
+    this.buildHouseShadow();
     this.invalidate();
+  }
+
+  /**
+   * The house's shadow on the ground: the footprint of the floors above ground, swept away from the sun by the height of the house.
+   * Off with the sun patches and on the tablet level.
+   */
+  private buildHouseShadow(): void {
+    if (!this.houseShadow) return;
+    const b = this.building;
+    const above = (b?.floors ?? []).filter((f) => f.elevation >= -0.01 && f.rooms.length);
+    const off = !b || !above.length || b.settings.sun_patches === false || this.lowQuality;
+    const cloud = this.weatherLayer?.cloud ?? 0;
+    const north = b?.settings.north ?? 0;
+    const key = off ? "off" : `${this.sun?.elevation.toFixed(1)},${this.sun?.azimuth.toFixed(1)},${north},${cloud.toFixed(2)},${above.map((f) => `${f.elevation}:${f.height}:${JSON.stringify(f.rooms.map((r) => r.points))}`).join("|")}`;
+    if (key === this.shadowKey) return;
+    this.shadowKey = key;
+    if (off) {
+      this.houseShadow.update([], 0, 0, null, 0, 0, true);
+      return;
+    }
+    const ground = Math.min(...above.map((f) => f.elevation));
+    const top = Math.max(...above.map((f) => f.elevation + f.height));
+    const footprint = mergeHoles(above.flatMap((f) => f.rooms.map((r) => r.points)));
+    this.houseShadow.update(footprint, top - ground, ground + 0.03, this.sun, north, cloud, false);
   }
 
   /** Where a floor stands right now (for NextFloor's layers): its height, how far it is pulled apart, whether it shows. */
@@ -1056,6 +1087,7 @@ export class NextFloorViewer {
   setSky(view: SkyView | null): void {
     this.skyView = view;
     this.weatherLayer.set(view ? { ...view, low: view.low || this.lowQuality } : null);
+    this.buildHouseShadow();
     for (const fv of this.floors) this.buildSun(fv);
     this.invalidate();
   }
@@ -1253,6 +1285,7 @@ export class NextFloorViewer {
     clearTimeout(this.orbitTimer);
     clearTimeout(this.weatherTimer);
     this.weatherLayer.dispose();
+    this.houseShadow?.dispose();
     this.mapLayer.dispose();
     this.energyLayer.dispose();
     this.soundLayer.dispose();
@@ -1298,6 +1331,7 @@ export class NextFloorViewer {
     this.lowQuality = low;
     // (the weather layer does not exist yet while the first renderer is made)
     if (this.weatherLayer && this.skyView) this.weatherLayer.set({ ...this.skyView, low: this.skyView.low || low });
+    if (this.weatherLayer) this.buildHouseShadow();
     this.highQuality = quality === "high";
     const renderer = new WebGLRenderer({ antialias: !low, alpha: true, powerPreference: low ? "low-power" : "default" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1 : quality === "high" ? 2.5 : 2));
@@ -2137,6 +2171,7 @@ export class NextFloorViewer {
     }
     if (box.isEmpty()) box.set(new Vector3(-4, 0, -4), new Vector3(4, 2.5, 4));
     this.placeGround();
+    this.buildHouseShadow();
     // the weather falls over the plot and a margin around it
     this.weatherLayer.setBounds({ x0: box.min.x - 8, x1: box.max.x + 8, z0: box.min.z - 8, z1: box.max.z + 8, y0: box.min.y, y1: box.max.y + 6 });
     const center = box.getCenter(new Vector3());
