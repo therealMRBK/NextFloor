@@ -1,7 +1,7 @@
 // The floors of the house: adding one (also from a floor of Home Assistant's registry), ordering them, and finding what is still to be
 // connected to Home Assistant.
 
-import { floorElevation, newFloor, uid, type Building, type Floor } from "../../../model.ts";
+import { floorElevation, newFloor, uid, type Building, type Floor, type Furniture } from "../../../model.ts";
 import type { HassArea, HassFloor } from "../../../types.ts";
 
 /** A new floor, named after a Home Assistant floor when it comes from one, and placed at that floor's level or on top of the house. */
@@ -48,4 +48,68 @@ export function unplacedAreas(doc: Building, floor: Floor, areas: Readonly<Recor
 /** The Home Assistant floors a floor may be linked to: its own and the ones no other floor uses. */
 export function linkableHaFloors(doc: Building, floor: Floor, registry: Readonly<Record<string, HassFloor>> | undefined): HassFloor[] {
   return Object.values(registry ?? {}).filter((f) => f.floor_id === floor.ha_floor || !doc.floors.some((other) => other.ha_floor === f.floor_id));
+}
+
+/** What a floor copy takes along besides its rooms, walls, doors and windows. */
+export interface FloorCopyOptions {
+  furniture: boolean;
+  /** Device pins: off by default, since the same entity would then show twice. */
+  devices: boolean;
+  outdoor: boolean;
+}
+
+/**
+ * A copy of a floor with new ids for everything on it, put on top of the house (above the highest floor). Rooms lose
+ * their Home Assistant area and the floor its Home Assistant floor, since each can stand for one room or floor only;
+ * doors and windows keep pointing at the copied rooms and walls.
+ */
+export function copyOfFloor(doc: Building, floor: Floor, name: string, options: FloorCopyOptions, id: (prefix: string) => string = uid): Floor {
+  const copy = structuredClone(floor);
+  const top = doc.floors.reduce((max, f) => Math.max(max, f.elevation + f.height), floor.elevation + floor.height);
+  const rooms = new Map<string, string>();
+  const walls = new Map<string, string>();
+  copy.id = id("floor");
+  copy.name = name;
+  copy.elevation = Math.round(top * 1000) / 1000;
+  copy.ha_floor = null;
+  copy.start_view = null;
+  copy.rooms = copy.rooms.map((r) => {
+    const fresh = id("room");
+    rooms.set(r.id, fresh);
+    return { ...r, id: fresh, area_id: null };
+  });
+  copy.walls = (copy.walls ?? []).map((w) => {
+    const fresh = id("wall");
+    walls.set(w.id, fresh);
+    return { ...w, id: fresh };
+  });
+  copy.openings = copy.openings.filter((o) => rooms.has(o.room_id)).map((o) => ({ ...o, id: id("opening"), room_id: rooms.get(o.room_id)!, wall: o.wall ? (walls.get(o.wall) ?? null) : o.wall }));
+  // energy devices (meters, inverters …) belong to the real house once, so they stay behind
+  const energy = new Set(["meter", "inverter", "home_battery", "wallbox", "grid_point"]);
+  copy.furniture = options.furniture ? copy.furniture.filter((f) => !energy.has(f.type)).map((f) => unlinked({ ...f, id: id("furniture") })) : [];
+  copy.placements = options.devices ? copy.placements : [];
+  copy.outdoor = options.outdoor ? copy.outdoor.map((a) => ({ ...a, id: id("outdoor") })) : [];
+  return copy;
+}
+
+/** Entity links a copied piece of furniture leaves behind ("none" for the two that would otherwise be found again by name). */
+const PLAIN_LINKS = ["door_left", "door_right", "soc", "charge", "export", "status", "room_sensor", "temp_entity", "temp_entity2", "state_entity", "state_entity2", "color_entity", "fan_entity"] as const;
+
+function unlinked(item: Furniture): Furniture {
+  const out: Furniture = { ...item, entity: item.entity ? "none" : item.entity, power: item.power ? "none" : item.power };
+  for (const key of PLAIN_LINKS) if (out[key] != null) (out as unknown as Record<string, unknown>)[key] = null;
+  delete out.gang_entities;
+  return out;
+}
+
+/** Moves a piece of furniture to another floor, at the same spot in the plan. Returns false when it or the floor is missing. */
+export function moveFurnitureToFloor(doc: Building, fromFloorId: string, itemId: string, toFloorId: string): boolean {
+  const from = doc.floors.find((f) => f.id === fromFloorId);
+  const to = doc.floors.find((f) => f.id === toFloorId);
+  if (!from || !to || from === to) return false;
+  const index = from.furniture.findIndex((f) => f.id === itemId);
+  if (index < 0) return false;
+  const [item] = from.furniture.splice(index, 1);
+  to.furniture.push(item);
+  return true;
 }

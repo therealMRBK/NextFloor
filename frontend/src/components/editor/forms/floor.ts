@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import type { Floor } from "../../../model.ts";
 import type { HassFloor } from "../../../types.ts";
-import { hint, numberField, selectField, textField } from "../fields.ts";
+import { checkField, hint, numberField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { freeHaFloors, linkableHaFloors, unplacedAreas } from "../ops/floors.ts";
 import type { SideState } from "../side-state.ts";
@@ -14,6 +14,8 @@ export interface FloorActions {
   addFloor(from: HassFloor | null): void;
   moveFloor(direction: -1 | 1): void;
   deleteFloor(): void;
+  /** Copies the open floor on top of the house, with what the choices take along. */
+  duplicateFloor(options: { furniture: boolean; devices: boolean; outdoor: boolean }): void;
   addAreaRooms(floor: Floor): void;
   closeGaps(): void;
   /** Moves everything on the floor (or house) by the typed distance. */
@@ -58,6 +60,22 @@ function shiftRow(host: EditorHost, state: SideState, floorActions: FloorActions
   </div>`;
 }
 
+/** What a copy of the floor takes along, and the button that makes it. */
+function copyChoices(host: EditorHost, state: SideState, floorActions: FloorActions, choice: { furniture: boolean; devices: boolean; outdoor: boolean }): TemplateResult {
+  const t = host.t;
+  const set = (patch: Partial<typeof choice>) => (state.floorCopy = { ...choice, ...patch });
+  return html`<div class="nf-form nf-wide nf-copy-floor">
+    ${hint(t("floor_copy_hint"), "nf-wide")}
+    ${checkField(host, t("floor_copy_furniture"), choice.furniture, (furniture) => set({ furniture }))}
+    ${checkField(host, t("floor_copy_devices"), choice.devices, (devices) => set({ devices }), { title: t("floor_copy_devices_hint") })}
+    ${checkField(host, t("floor_copy_outdoor"), choice.outdoor, (outdoor) => set({ outdoor }))}
+    <div class="nf-actions nf-wide">
+      <button class="nf-btn nf-primary" @click=${() => floorActions.duplicateFloor(choice)}>${t("floor_copy_make")}</button>
+      <button class="nf-btn" @click=${() => (state.floorCopy = null)}>${t("cancel")}</button>
+    </div>
+  </div>`;
+}
+
 function floorForm(host: EditorHost, state: SideState, floorActions: FloorActions, floor: Floor): TemplateResult {
   const t = host.t;
   const update = (patch: Partial<Floor>) => host.change((_, f) => Object.assign(f, patch));
@@ -77,8 +95,10 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
       ? html`<div class="nf-actions nf-wide">
             <button class="nf-btn" @click=${() => floorActions.moveFloor(1)}>${t("move_up")}</button>
             <button class="nf-btn" @click=${() => floorActions.moveFloor(-1)}>${t("move_down")}</button>
+            <button class="nf-btn" @click=${() => (state.floorCopy = state.floorCopy ? null : { furniture: true, devices: false, outdoor: false })}>${t("floor_copy")}</button>
             <button class="nf-btn nf-danger" @click=${() => floorActions.deleteFloor()}>${t("delete_floor")}</button>
           </div>
+          ${state.floorCopy ? copyChoices(host, state, floorActions, state.floorCopy) : nothing}
           <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("gaps_hint")} ?disabled=${floor.rooms.length < 2} @click=${() => floorActions.closeGaps()}>${t("gaps_close")}</button></div>
           ${state.notice ? html`<p class="nf-sub nf-wide nf-notice">${state.notice}</p>` : nothing}`
       : nothing}

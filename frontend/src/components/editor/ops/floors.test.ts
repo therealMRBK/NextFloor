@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { box, floorWith } from "../../../entities/fixtures.ts";
+import { box, floorWith, opening } from "../../../entities/fixtures.ts";
 import type { Building } from "../../../model.ts";
-import { floorsSwapped, floorsWith, freeHaFloors, linkableHaFloors, newFloorFor, unplacedAreas } from "./floors.ts";
+import { copyOfFloor, floorsSwapped, floorsWith, freeHaFloors, linkableHaFloors, moveFurnitureToFloor, newFloorFor, unplacedAreas } from "./floors.ts";
 
 const names = { first: "Ground floor", next: (n: number) => `Floor ${n}` };
 const level = (id: string, elevation: number, extra = {}) => floorWith([], { id, elevation, ...extra } as never);
@@ -59,4 +59,43 @@ test("areas without a room: only those of the floor's Home Assistant floor, by n
   assert.deepEqual(unplacedAreas(doc, ground, areas).map((a) => a.area_id), ["b", "k"]);
   assert.deepEqual(unplacedAreas(doc, { ...ground, ha_floor: null }, areas), []);
   assert.deepEqual(unplacedAreas(doc, ground, undefined), []);
+});
+
+test("a floor copy gets new ids, goes on top of the house and keeps its doors on the copied rooms", () => {
+  let n = 0;
+  const id = (prefix: string) => `${prefix}_${++n}`;
+  const room = { ...box("r1", 0, 0, 4, 3), area_id: "living" };
+  const ground = floorWith([room], {
+    id: "g",
+    ha_floor: "eg",
+    walls: [{ id: "w1", a: [0, 1], b: [2, 1] }],
+    openings: [opening("o1", "r1", "door"), opening("o2", "r1", "window", { wall: "w1" })],
+    furniture: [
+      { id: "f1", type: "sofa", x: 1, z: 1, rotation: 0, w: 2, d: 1, h: 0.8, variant: null, entity: "media_player.tv", state_entity: "binary_sensor.seat" },
+      { id: "f2", type: "meter", x: 0, z: 0, rotation: 0, w: 0.5, d: 0.2, h: 1, variant: null },
+    ],
+    placements: [{ entity_id: "light.a", x: 1, z: 1 } as never],
+  });
+  const upper = floorWith([], { id: "u", elevation: 2.75, height: 2.5 });
+  const doc = house(ground, upper);
+  const copy = copyOfFloor(doc, ground, "Ground (copy)", { furniture: true, devices: false, outdoor: false }, id);
+  assert.equal(copy.elevation, 5.25, "above the highest floor");
+  assert.equal(copy.ha_floor, null);
+  assert.equal(copy.rooms[0].area_id, null);
+  assert.notEqual(copy.rooms[0].id, "r1");
+  assert.deepEqual(copy.openings.map((o) => o.room_id), [copy.rooms[0].id, copy.rooms[0].id]);
+  assert.equal(copy.openings[1].wall, copy.walls![0].id);
+  assert.deepEqual(copy.furniture.map((f) => f.type), ["sofa"], "the meter stays behind");
+  assert.equal(copy.furniture[0].entity, "none");
+  assert.equal(copy.furniture[0].state_entity, null);
+  assert.deepEqual(copy.placements, []);
+  assert.equal(ground.rooms[0].area_id, "living", "the original is untouched");
+});
+
+test("furniture moves to another floor at the same spot", () => {
+  const sofa = { id: "f1", type: "sofa", x: 1, z: 1, rotation: 0, w: 2, d: 1, h: 0.8, variant: null };
+  const doc = house(floorWith([], { id: "g", furniture: [sofa] }), floorWith([], { id: "u", elevation: 2.75 }));
+  assert.equal(moveFurnitureToFloor(doc, "g", "f1", "u"), true);
+  assert.deepEqual([doc.floors[0].furniture.length, doc.floors[1].furniture[0].x], [0, 1]);
+  assert.equal(moveFurnitureToFloor(doc, "g", "f1", "u"), false);
 });
