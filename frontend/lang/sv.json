@@ -1073,6 +1073,7 @@
   "fan_hint": "Lampan är fläktens belysningsdel (lämna tom om den inte har någon). Fläkten hittas i rummet eller väljs här: i 3D snurrar bladen så snabbt som den går, dess ikon växlar den, svep upp/ner ändrar hastigheten, ett långt tryck öppnar snabbmenyn. Höjden är hur långt den hänger under taket (mer = en längre stång).",
   "room_ceiling": "Takhöjd",
   "room_ceiling_hint": "För ett rum lägre än våningen: taklampor, fläktar, LED-slingor och takenheter hänger härifrån, och rummets väggar är så höga.",
+  "room_ceiling_above_floor": "Taket ({ceiling} m) ligger över våningshöjden ({floor} m). Väggar, fönster och dörrar slutar vid våningshöjden, så ett fönster ovanför trycks ihop. Höj våningshöjden och ge de lägre rummen ett eget tak.",
   "room_announce_speaker": "Högtalare för utrop",
   "room_announce_quiet": "Tyst tid för utrop",
   "room_announce_hint": "Utan val talar högtalaren som står i rummet, annars en röstassistent, en Echo eller en högtalare i området (aldrig en tv). Under den tysta tiden hoppar utrop till flera rum över detta rum; ett utrop bara till det kommer ändå fram.",
