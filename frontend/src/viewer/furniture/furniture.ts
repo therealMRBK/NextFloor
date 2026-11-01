@@ -13,6 +13,7 @@ import { coatRack, coffeeTable, desk, dresser, nightstand, plant, roundTable, ru
 import { gridCabinet, homeBattery, inverter, meterCabinet, wallbox } from "./technical.ts";
 import { packModel, placement } from "./packs.ts";
 import { shapedStairs } from "./stairs.ts";
+import { studioUnit } from "./studio.ts";
 import { cabinet } from "./parts.ts";
 import { EDGE_FAINT, EDGE_FURN, M } from "./palette.ts";
 
@@ -95,6 +96,9 @@ function drawBuiltIn(b: Builder, f: Furniture, w: number, d: number, h: number, 
       }
       stairs(b, w, d, h);
       return "yes";
+    case "studio":
+      studioUnit(b, f, w, d, h);
+      return f.studio?.kind === "wall" ? "no" : "yes";
     case "stairwell":
       return "no"; // only a hole in the floor (see stairHoles in build.ts), nothing to draw
     case "sideboard":

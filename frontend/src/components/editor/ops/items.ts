@@ -2,6 +2,7 @@
 
 import { autoPlace } from "../../../devices.ts";
 import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
+import { DEFAULT_STUDIO } from "../../../geometry/studio.ts";
 import { openingHost } from "../../../geometry/walls.ts";
 import {
   bounds,
@@ -75,6 +76,7 @@ export function newFurniture(type: string, doc: Building, floor: Floor, at: Vec2
   const item: Furniture = { id: uid("furniture"), type, x: thousandths(at[0]), z: thousandths(at[1]), rotation: 0, w, d, h, variant: null };
   // new stairs are shaped stairs: shape, turn and steps are set in the form, and they open only the floor they need
   if (type === "stairs") item.stair = { ...DEFAULT_STAIR };
+  if (type === "studio") item.studio = { ...DEFAULT_STUDIO };
   return item;
 }
 

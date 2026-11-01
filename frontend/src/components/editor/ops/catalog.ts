@@ -88,6 +88,7 @@ const BUILT_IN: Record<string, Category> = {
   washbasin: "bath",
   radiator: "climate",
   stairs: "building",
+  studio: "storage",
   parking: "vehicles",
   ceiling_fan: "lights",
 };

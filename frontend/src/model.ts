@@ -5,6 +5,7 @@ import type { PluginRef } from "./plugins/api.ts";
 import { packItem } from "./packs.ts";
 import type { LightEffectConfig } from "./light-effects.ts";
 import type { StairConfig } from "./geometry/stairs.ts";
+import { studioMount, type StudioConfig } from "./geometry/studio.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
 
 export type Vec2 = [number, number];
@@ -235,6 +236,8 @@ export interface Furniture extends LightEffectConfig {
   mirror?: boolean;
   /** Stairs: shape, turn, build, steps and direction (missing on older plans: the simple straight stair). */
   stair?: Partial<StairConfig> | null;
+  /** Furniture studio units: kind, columns, rows, fronts, base, finish and light strip. */
+  studio?: Partial<StudioConfig> | null;
   /** LED strip: tilt about its length (°; 0 = lying flat, 90 = its face points sideways, e.g. along a roof slope). */
   tilt?: number;
   /** LED strip: standing upright – its length runs up from the mount height (door frame, light column). */
@@ -885,6 +888,7 @@ export const FURNITURE_TYPES = [
   "tall_cabinet",
   "coat_rack",
   "stairs",
+  "studio",
   "robot_vacuum",
   "inverter",
   "home_battery",
@@ -899,7 +903,7 @@ export const FURNITURE_TYPES = [
 /** Furniture library sections (the editor lists them in this order). */
 export const FURNITURE_GROUPS: Record<string, FurnitureType[]> = {
   lights: ["lamp_ceiling", "lamp_downlight", "lamp_spot", "lamp_panel", "lamp_pendant", "ceiling_fan", "lamp_floor", "lamp_uplight", "lamp_table", "lamp_wall", "led_strip", "lamp_bollard", "lamp_garden"],
-  living: ["sofa", "armchair", "stool", "coffee_table", "tv_board", "tv_wall", "sideboard", "shelf", "plant", "rug"],
+  living: ["sofa", "armchair", "stool", "coffee_table", "tv_board", "tv_wall", "sideboard", "shelf", "studio", "plant", "rug"],
   dining: ["table", "table_round", "chair", "bench", "corner_bench", "bar_stool"],
   kitchen: ["kitchen", "kitchen_wall", "kitchen_tall", "island", "worktop", "sink", "stove", "dishwasher", "fridge"],
   sleeping: ["bed", "bunk_bed", "nightstand", "wardrobe", "dresser"],
@@ -992,8 +996,10 @@ export function step(p: Vec2, length: number, dir: Direction): Vec2 {
  * Height of the bottom of a built-in model as drawn (a wall cabinet hangs at 1.45 m, a wall TV is
  * centred at 1.3 m, a radiator stands on short brackets); the mount height replaces it.
  */
-export function builtinBase(f: Pick<Furniture, "type" | "h"> & { variant?: string | null }): number {
+export function builtinBase(f: Pick<Furniture, "type" | "h"> & { variant?: string | null; studio?: Partial<StudioConfig> | null }): number {
   switch (f.type) {
+    case "studio":
+      return studioMount(f);
     case "home_battery":
       // a wall battery hangs at hip height
       return f.variant === "wall" ? 0.5 : 0;
@@ -1096,6 +1102,7 @@ export const FURNITURE_SIZE: Record<FurnitureType, [number, number, number]> = {
   plant: [0.45, 0.45, 1.1],
   rug: [2.0, 1.4, 0.01],
   stairs: [1.0, 3.2, 2.75],
+  studio: [1.2, 0.45, 0.9],
   stool: [0.55, 0.55, 0.42],
   lamp_ceiling: [0.4, 0.4, 0.08],
   lamp_downlight: [0.1, 0.1, 0.02],

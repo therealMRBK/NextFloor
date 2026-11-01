@@ -125,3 +125,11 @@ def test_shaped_stair_rejects_unknown_shapes() -> None:
     for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}):
         with pytest.raises(vol.Invalid):
             FURNITURE_SCHEMA({**STAIRS, "stair": bad})
+
+
+def test_studio_unit_round_trips() -> None:
+    studio = {"kind": "wall", "cols": 3, "rows": 2, "front": "glass", "base": "none", "finish": "wood", "light": True}
+    item = {**STAIRS, "id": "u1", "type": "studio", "studio": studio}
+    assert FURNITURE_SCHEMA(item)["studio"] == studio
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**item, "studio": {"front": "curtain"}})

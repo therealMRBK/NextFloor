@@ -12,6 +12,7 @@ import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type Furnit
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
 import { parkingForm } from "./parking.ts";
 import { stairForm } from "./stairs.ts";
+import { studioForm } from "./studio.ts";
 import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 
 export interface FurnitureActions extends FurnitureLinkActions {
@@ -170,7 +171,7 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
   return html`<section>
     <div class="nf-h3row"><h3>${item.name || host.t("furniture")}</h3>${actions.lockButton}</div>
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>
-    ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
+    ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${item.type === "studio" ? studioForm(host, item, (patch) => actions.update(patch)) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
     ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
     ${householdKind(item.type) ? careLink(host, item, householdKind(item.type)!, actions) : nothing} ${hasMovingParts(packItem(item.type)) ? coverLink(host, item, actions) : nothing} ${item.type === "parking" ? parkingForm(host, item, actions.packs, actions) : nothing}
     ${item.type.startsWith("pack:nextfloor.fahrzeuge:") && host.admin

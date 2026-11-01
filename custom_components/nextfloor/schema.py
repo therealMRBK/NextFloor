@@ -226,6 +226,19 @@ _STAIR_SCHEMA = vol.Schema(
     }
 )
 
+# furniture studio units: kind, columns, rows, fronts, base, finish and light strip
+_STUDIO_SCHEMA = vol.Schema(
+    {
+        vol.Optional("kind"): vol.In(["cabinet", "shelf", "wall"]),
+        vol.Optional("cols"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=1, max=12))),
+        vol.Optional("rows"): vol.All(vol.Coerce(int), vol.Range(min=1, max=10)),
+        vol.Optional("front"): vol.In(["doors", "drawers", "mixed", "glass", "open"]),
+        vol.Optional("base"): vol.In(["plinth", "legs", "none"]),
+        vol.Optional("finish"): vol.In(["white", "wood", "dark", "body"]),
+        vol.Optional("light"): bool,
+    }
+)
+
 FURNITURE_SCHEMA = vol.Schema(
     {
         vol.Required("id"): _ID,
@@ -299,6 +312,7 @@ FURNITURE_SCHEMA = vol.Schema(
         # mirrored left-right
         vol.Optional("mirror", default=False): bool,
         vol.Optional("stair"): vol.Any(None, _STAIR_SCHEMA),
+        vol.Optional("studio"): vol.Any(None, _STUDIO_SCHEMA),
         # fridges: thermometers of the fridge and the freezer compartment
         vol.Optional("temp_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("temp_entity2"): vol.Any(None, vol.All(str, vol.Length(max=255))),

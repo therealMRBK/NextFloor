@@ -4,6 +4,7 @@
 import { nothing, svg, type SVGTemplateResult } from "lit";
 import { fittedParts, packItem, type PackItem } from "../packs.ts";
 import { stairConfig, stairLayout, treadCentre, type StairConfig } from "../geometry/stairs.ts";
+import { studioCols, studioConfig, type StudioConfig } from "../geometry/studio.ts";
 
 type Part = SVGTemplateResult;
 
@@ -37,8 +38,17 @@ function seating(w: number, d: number, seats: number, arms: boolean): Part[] {
 }
 
 /** Symbol parts for a furniture type of size w × d (metres). */
-export function furnitureSymbol(type: string, w: number, d: number, item?: { h: number; stair?: Partial<StairConfig> | null }): Part[] | typeof nothing {
+export function furnitureSymbol(type: string, w: number, d: number, item?: { h: number; stair?: Partial<StairConfig> | null; studio?: Partial<StudioConfig> | null }): Part[] | typeof nothing {
   if (type === "stairs" && item?.stair) return shapedStairSymbol(item, w, d);
+  if (type === "studio") {
+    // the columns along the front; open shelves show their boards as a dashed inner line, wall units are drawn dashed
+    const cfg = studioConfig(item ?? {});
+    const cols = studioCols(cfg, w);
+    const cls = cfg.kind === "wall" ? "nf-sym-dash" : "";
+    const out: Part[] = [rect(-w / 2, -d / 2, w / 2, d / 2, cls), ...fronts(w, d, cols)];
+    if (cfg.front === "open") out.push(line(-w / 2 + 0.03, -d / 2 + 0.04, w / 2 - 0.03, -d / 2 + 0.04, "nf-sym-dash"));
+    return out;
+  }
   switch (type) {
     case "sofa":
       return seating(w, d, Math.max(1, Math.round((w - 0.4) / 0.62)), true);
