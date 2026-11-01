@@ -35,18 +35,25 @@ Free, open source, no cloud, no account. Made for wall tablets.</p>
 |---|---|
 | ✏️ **Plan editor** | Floors, rooms, walls, doors, windows, stairs, outdoor areas and a roof, drawn in Home Assistant with the 3D view beside the plan. |
 | 💡 **Live 3D** | Tap to switch, swipe to dim, long press for colours. Blinds, windows and doors follow their entities; a room panel lists everything in the room. |
+| 📢 **Announcements** | *"Dinner is ready!"* in the room that should hear it: through each room's speaker (Voice PE, Echo, Sonos …) and on every open NextFloor screen, from the room panel or the action `nextfloor.announce`. |
+| 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours – lights, doors, motion, energy. |
+| 🏡 **Household and garden** | Waste bins on pickup day, post in the mailbox, thirsty plants, pets that roam, robot vacuums on their lanes, sprinklers that water while their valve is open. |
+| 🔐 **Doors and windows** | Smart locks, lift-and-slide doors, sliding and top-hung windows, garage doors and gates that move, warnings for rain and for contacts that stop answering. |
 | 🛋️ **Furniture & vehicles** | 40 basic models and 26 packs with over 620 more, popular IKEA sizes, Tesla models in their paint colours. |
 | ⚡ **Energy & weather** | Solar fields and power flow, rain, snow, fog, sun and moon, sunlight through the windows. |
 | 📺 **Media** | TV screens with cover and ambilight, speakers with their cover and controls. |
-| 🖥️ **Wall tablet ready** | Alerts for smoke, gas, water and open windows, kiosk mode with night dimming, a light quality level for Fire tablets. |
+| 🖥️ **Wall tablet ready** | Alerts for smoke, gas, water and open windows, your own sensors at the top, kiosk mode with night dimming, a light quality level for Fire tablets. |
 | 🎨 **Fits your theme** | Takes colours, font and corner radius from Home Assistant; three looks (*Neon*, *Blueprint*, *Day*) and a heatmap. |
 | 🧩 **Dashboard card** | `custom:nextfloor-card` with a visual editor. |
 | 🌍 **Nine languages** | German, English, French, Spanish, Italian, Dutch, Polish, Portuguese and Swedish, following the language of your Home Assistant user. |
-| 📦 **Own 3D models** | Upload a `.glb` of your own on the Extensions page; NextFloor prepares it for you. |
+| 📦 **Own 3D models** | Upload a `.glb` of your own on the Extensions page; NextFloor prepares it for you. Import plans from Sweet Home 3D or let an AI write one in NextFloor's plan format. |
+| 🧩 **Plugins** | New device kinds from plugins and a plugin store on the Extensions page (cameras with their field of view, alarm panels). |
 
 ## 💚 Free and open, for good
 
 I believe in open source: software that anyone may read, change and share, and that every home can use without paying a cent. That conviction is the reason NextFloor exists. It began as a fork of NeonPlan 3D, carried by one simple promise: every feature, every model pack and every update belongs to everyone, free and open, and it will stay that way. No paywall, no account, no subscription, just your home drawn by you and coming alive in 3D, shaped together by the people who use it.
+
+**Everything is included:** the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden, all furniture packs and every plugin in the store. Nothing is sold separately, nothing is held back for supporters, and NextFloor sends no usage data anywhere.
 
 ## 🖼️ Gallery
 
