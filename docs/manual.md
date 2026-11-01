@@ -22,12 +22,12 @@ The plan, its pictures and the packs are stored in Home Assistant's `.storage`. 
 
 Open the **Editor** tab (administrators only). The toolbar holds the tools; the side panel always shows what is selected; the hint at the bottom names what the active tool does. **Undo** (Ctrl+Z) takes back almost everything.
 
-1. **Add a floor.** *Add floor* offers the floors of Home Assistant (keeping plan and Home Assistant connected) or *Empty floor*. The floor form sets name, elevation, ceiling height and the Home Assistant floor. *Shift* and *Turn 90°* move or turn the whole floor; *Take every floor along* applies that to the whole house. *Add rooms from HA areas* drops a room per area as a start.
+1. **Add a floor.** *Add floor* offers the floors of Home Assistant (keeping plan and Home Assistant connected) or *Empty floor*. The floor form sets name, elevation, ceiling height and the Home Assistant floor. *Shift* and *Turn 90°* move or turn the whole floor; *Take every floor along* applies that to the whole house. *Add rooms from HA areas* drops a room per area as a start. *Duplicate floor* puts a copy on top of the house, with its furniture, device pins and outdoor areas if you like; the copy is unlinked from Home Assistant and set up for the new storey.
 2. **Draw rooms.** *Rectangle*: drag. *Free shape*: place corners, close by tapping the first corner or Enter, Esc cancels. Corners snap to the grid and to existing walls; Alt switches snapping off for one move.
 3. **Describe each room.** Name, *Area* (the link to Home Assistant devices) and *Floor* material. Position and size can be typed. Drag a corner handle to reshape; the **+** on an edge adds a corner.
-4. **Walls.** They come from the room edges. Each edge has height, thickness, a scissors button that splits it into parts, and *No wall* for open edges. A lower height makes a parapet or counter. Free-standing partitions use the *Wall* tool (Shift keeps straight). *Close gaps* in the floor form joins hairline gaps.
+4. **Walls.** They come from the room edges. Each edge has height, thickness, a scissors button that splits it into parts, and *No wall* for open edges. A lower height makes a parapet or counter. Free-standing partitions use the *Wall* tool (Shift keeps straight). *Close gaps* in the floor form joins hairline gaps. **◠ Arc** on an edge (or on a free wall) bends the wall into an arc; a room sharing the wall bends along, doors and windows move with it.
 5. **Doors and windows.** *Doors & windows*, tap a wall, pick the kind (door, front door, double door, window, double window, terrace door, French doors, garage door, glass wall). Set width, position from the corner, sill and height; swap hinge side or opening direction. Style *Automatic* picks front door outside and room door inside.
-6. **Stairs and openings.** Stairs come from the *Stairs & railings* furniture pack and cut their opening into the floor above by themselves. *Floor opening* cuts any other hole (gallery, shaft).
+6. **Stairs and openings.** The *Stairs* from the furniture library have a shape (straight, quarter turn, L with landing, half turn, U with landing, spiral), turn left or right and are built solid, on stringers, on a spine or cantilevered, with or without risers and railings. The risers follow the floor height; the form shows rise, going and step measure and warns when the stair is uncomfortable. *Leads down* makes a stair into a cellar that need not be drawn. A stair opens the floor above only where its steps lack 2.2 m of headroom. The stairs of the *Stairs & railings* pack cut their whole footprint. *Floor opening* cuts any other hole (gallery, shaft).
 7. **Template.** *Template (floor plan image)* puts a picture behind the plan; move, scale, turn and straighten it, set the scale from a known length, then trace.
 8. **Lock.** The *Floor plan* lock stops rooms, walls, openings and outdoor areas from moving by accident; single pieces can be fixed with *Fix*.
 
@@ -38,7 +38,8 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 *Furniture* tool, tap a room, pick from the library on the right. New pieces appear in the middle of the room.
 
 - The library has sections (lights, living, dining, kitchen, sleeping, bath, work, parking) and then the furniture packs. The search finds German and English names, pack names and several words in any order.
-- Drag to move, drag corners to resize, use the turn handle or type position, size and rotation. *Mirror* flips left and right, *Duplicate* copies, *Fix* locks.
+- Drag to move, drag corners to resize, use the turn handle or type position, size and rotation. *Mirror* flips left and right, *Duplicate* copies, *Fix* locks, *Move to floor* takes the item to the same spot on another floor.
+- The **furniture studio** builds cabinets, shelves and wall units in any size: pick a preset (sideboard, display cabinet, wardrobe, chest of drawers, bookcase, wall unit), then set columns, compartments, fronts (doors, drawers, mixed, glass, open), plinth or legs, finish and a light strip.
 - Items marked with an electrical symbol can be linked to devices (see below). Lamps are furniture with a light behind them; the lights section has twelve kinds.
 - **Place spots:** a room's *Place spots* lays out a grid of lamps (columns × rows) that all follow one light, undoable in one step.
 - **Library:** furniture sorted by kind (seating, beds, kitchen …) with a picture and its size; a model in several sizes is one card with size chips. With a room selected, what fits it comes first (*Fits …*), *Show all rooms* lifts that. Filters for ⚡ linkable, 💡 lit and 🌳 outdoor; ★ favourites and recently used stand at the top.
@@ -86,7 +87,8 @@ Under **Settings**:
 
 Built in and free; they only need the devices you already have.
 
-- **Weather at the house:** rain, snow, hail, sleet, fog, clouds with shadows, lightning, sun and moon, driven by a weather entity and the compass.
+- **Weather at the house:** rain, snow, hail, sleet, fog, clouds with shadows, lightning, sun and moon, driven by a weather entity and the compass. Stars come out on a clear night; snow lies white on the ground while it snows, and the ground turns wet in the rain.
+- **Sun and shadows:** the house throws its shadow from the real sun. The **☀ Time of day** switch opens a slider over the hours of today: sun patches, shadow, sky and the *Auto* look follow the chosen hour; tap again to go back to now.
 - **Power flow:** particles from the solar modules to inverter, house, battery and grid; a glass card with the balance and self-sufficiency.
 - **TV screens:** what plays, in the app's colour, plus ambilight.
 - **Sound:** a card over every playing speaker or TV with cover and controls; sound rings in the app's colour; multiroom groups are joined by a thread.
