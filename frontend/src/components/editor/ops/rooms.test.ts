@@ -117,3 +117,33 @@ test("a corner on an edge without slope leaves the slopes of the other walls in 
   insertCorner(floor, "r", 0, [2, 0]);
   assert.deepEqual([room.wall_heights?.[3], room.wall_slopes?.[3]], [1, 3], "the sloping wall is now edge 3");
 });
+
+test("bending a shared edge bends both rooms the same way and keeps the door on it", async () => {
+  const { arcRoomEdge } = await import("./rooms.ts");
+  const { box, floorWith, opening } = await import("../../../entities/fixtures.ts");
+  const left = box("a", 0, 0, 4, 4);
+  const right = box("b", 4, 0, 8, 4);
+  const floor = floorWith([left, right], { openings: [opening("d", "a", "door", { edge: 1, offset: 2, width: 0.9 })] });
+  const edge = left.points.findIndex((p, i) => p[0] === 4 && left.points[(i + 1) % 4][0] === 4);
+  const before = left.points.length;
+  assert.equal(arcRoomEdge(floor, "a", edge, 0.8), true);
+  assert.ok(left.points.length > before);
+  // a bulges into b: the corners lie right of x = 4, and b has the very same corners
+  const added = left.points.filter((p) => p[0] > 4.001);
+  assert.ok(added.length >= 2);
+  for (const p of added) assert.ok(right.points.some((q) => q[0] === p[0] && q[1] === p[1]));
+  const door = floor.openings[0];
+  assert.ok(door.edge >= edge && door.edge < edge + added.length + 1);
+  assert.equal((left.wall_heights ?? []).length <= left.points.length, true);
+});
+
+test("a free wall bends into a chain of walls that keeps its openings", async () => {
+  const { arcFreeWall } = await import("./rooms.ts");
+  const { floorWith, opening } = await import("../../../entities/fixtures.ts");
+  const floor = floorWith([], { walls: [{ id: "w", a: [0, 0], b: [5, 0], thickness: 0.2 }], openings: [opening("o", "r", "window", { wall: "w", offset: 4, width: 1 })] });
+  const ids = arcFreeWall(floor, "w", 1);
+  assert.ok(ids.length >= 2 && ids[0] === "w");
+  assert.equal(floor.walls!.length, ids.length);
+  assert.ok(floor.walls!.every((w) => w.thickness === 0.2));
+  assert.ok(ids.includes(floor.openings[0].wall!));
+});
