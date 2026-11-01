@@ -51,6 +51,12 @@ export const isPlaceable = (kind: DeviceKind | null): boolean => kind !== null &
 
 export const isUnavailable = (st: HassEntity | undefined): boolean => !st || st.state === "unavailable" || st.state === "unknown";
 
+const MOTION_CLASSES = new Set(["motion", "occupancy", "presence", "moving"]);
+
+/** A binary sensor that tells motion, occupancy or presence. */
+export const isMotionSensor = (hass: HomeAssistant | undefined, entityId: string): boolean =>
+  entityId.startsWith("binary_sensor.") && MOTION_CLASSES.has(String(hass?.states[entityId]?.attributes.device_class ?? ""));
+
 /** A cover that only sends commands (assumed state, a garage remote) and so stays unknown: its buttons still work. */
 export const assumedCover = (st: HassEntity | undefined): boolean => !!st && st.entity_id.startsWith("cover.") && st.state === "unknown" && st.attributes.assumed_state === true;
 

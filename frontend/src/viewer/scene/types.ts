@@ -93,7 +93,7 @@ export interface DeviceMarker {
   /** A placed device fixed against moving. */
   fixed?: boolean;
   /** The marker setting of its placement or furniture item (undefined means automatic). */
-  show?: "always" | "no_power" | "never";
+  show?: "always" | "active" | "no_power" | "never";
   /** The 3D lamp can be tapped: it has an entity. */
   pickable?: boolean;
   /** The furniture item this lamp is, so it can be moved in 3D. */

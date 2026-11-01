@@ -265,7 +265,7 @@ FURNITURE_SCHEMA = vol.Schema(
         # ask before switching the linked entity
         vol.Optional("confirm", default=False): bool,
         # its marker in 3D: None = automatic, always, without watts, or hidden
-        vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "no_power", "never"])),
+        vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
         # an own symbol for the marker: a Material Design icon name without "mdi:"
         vol.Optional("icon", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
         # parking spots: the vehicle shown (a pack item type) while the entity reports a car, its size
@@ -334,7 +334,7 @@ PLACEMENT_SCHEMA = vol.Schema(
         # ask before switching this device from the 3D view, the quick menu or the room panel
         vol.Optional("confirm", default=False): bool,
         # its marker in 3D: None = automatic, always, without watts, or hidden
-        vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "no_power", "never"])),
+        vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
         # an own symbol for the marker: a Material Design icon name without "mdi:"
         vol.Optional("icon", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
         # an own name in the plan, without renaming the entity; show_name puts it under the marker
@@ -645,6 +645,8 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("rain_warning", default=True): bool,
         # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
         vol.Optional("contact_warning"): bool,
+        # motion, occupancy and presence sensors show their marker only while they detect something
+        vol.Optional("motion_markers_active"): bool,
         # own sensors shown at the top of the 3D view
         vol.Optional("status_entities"): vol.Any(
             None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))

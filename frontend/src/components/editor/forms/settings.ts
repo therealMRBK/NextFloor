@@ -92,6 +92,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${host.hass ? entityField(host, t("outage_sensor"), s.outage_sensor ?? null, undefined, entityOptions(host.hass, (id) => /^(binary_sensor|sensor)\./.test(id)), (v) => set({ outage_sensor: v === "none" ? null : v })) : nothing}
       ${hint(t("outage_hint"), "nf-wide")}
       ${checkField(host, t("contact_warning"), !!s.contact_warning, (on) => set({ contact_warning: on || undefined }), { title: t("contact_warning_hint") })}
+      ${checkField(host, t("motion_markers_active"), !!s.motion_markers_active, (on) => set({ motion_markers_active: on || undefined }), { title: t("motion_markers_active_hint") })}
       ${host.hass ? statusFields(host, s.status_entities ?? [], (status_entities) => set({ status_entities: status_entities.length ? status_entities : null })) : nothing}
       ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
       <label class="nf-field nf-wide"

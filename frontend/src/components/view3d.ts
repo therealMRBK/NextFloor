@@ -11,6 +11,7 @@ import {
   entityName,
   furnitureEntities,
   isActive,
+  isMotionSensor,
   coverReaches,
   deviceSiblings,
   hasPost,
@@ -1310,6 +1311,11 @@ export class NfView3d extends LitElement {
     // the device's own setting wins over the marker mode (except "none", which hides every marker)
     if (m.show === "never" || this.markerMode === "none") return false;
     if (m.show === "always") return true;
+    // only while it is on: a motion sensor while it detects, a door while it is open
+    if (m.show === "active" || (this.building?.settings.motion_markers_active && isMotionSensor(this.hass, m.id))) {
+      if (!m.active) return false;
+      if (m.show === "active") return true;
+    }
     // outside the opened room (the house, a floor, another room): the kinds chosen in the card
     if (this.markersOutside && !(this.roomId && m.roomId === this.roomId)) return this.markersOutside.includes(markerKind(m.id, !!m.lamp));
     if (this.markerMode === "all") return true;

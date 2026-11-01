@@ -248,8 +248,8 @@ export interface Furniture extends LightEffectConfig {
 
 export type LampMount = "ceiling" | "floor" | "table" | "wall";
 
-/** How a device's marker shows in 3D (null = automatic by the marker mode). */
-export const MARKER_SHOWS = ["always", "no_power", "never"] as const;
+/** How a device's marker shows in 3D (null = automatic by the marker mode); "active": only while it is on (motion detected, door open). */
+export const MARKER_SHOWS = ["always", "active", "no_power", "never"] as const;
 export type MarkerShow = (typeof MARKER_SHOWS)[number];
 
 export interface Placement extends LightEffectConfig {
@@ -543,6 +543,8 @@ export interface BuildingSettings {
   outage_sensor?: string | null;
   /** Warn when a door or window contact has been unavailable for 10 minutes (empty battery, out of reach); default off. */
   contact_warning?: boolean;
+  /** Motion, occupancy and presence sensors show their marker only while they detect something (default off). */
+  motion_markers_active?: boolean;
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
   announce_tts?: string | null;
   announce_phrases?: string[] | null;
