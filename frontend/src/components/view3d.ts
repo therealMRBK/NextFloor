@@ -163,6 +163,7 @@ export class NfView3d extends LitElement {
     alertJump: { attribute: false },
     scenes: { attribute: false },
     announcements: { attribute: false },
+    sensorBar: { attribute: false },
     screenName: { attribute: false },
     _announcement: { state: true },
     dimmed: { attribute: false },
@@ -177,6 +178,8 @@ export class NfView3d extends LitElement {
   declare hass: HomeAssistant;
   /** This view is a screen announcements show and speak on (the panel's 3D view and cards, not the editor's). */
   declare announcements: boolean;
+  /** The plan's own sensors at the top (cards can switch them off). */
+  declare sensorBar: boolean;
   /** The name of this screen, for announcements meant for some screens only. */
   declare screenName: string | null;
   /** The announcement on screen now, and when it goes. */
@@ -447,6 +450,7 @@ export class NfView3d extends LitElement {
     this.alerts = true;
     this.alertJump = false;
     this.announcements = false;
+    this.sensorBar = true;
     this.screenName = null;
     this._announcement = null;
     this._alerts = [];
@@ -2094,9 +2098,10 @@ export class NfView3d extends LitElement {
 
   /** NextFloor's energy bar: what the house makes, uses, stores and trades, and the switches for flows and cards. */
   private renderLhEnergy() {
+    const own = this.ownSensors();
     const e = this._liveEnergy?.summary;
-    if (!e || this.roomId || !this.showEnergy || !this.hass) return nothing;
-    if (e.consumption === null && e.grid === null && e.solar === null && e.battery === null) return nothing;
+    const energy = !!e && !this.roomId && this.showEnergy && !!this.hass && !(e.consumption === null && e.grid === null && e.solar === null && e.battery === null);
+    if (!energy) return own.length ? html`<div class="nf-energy" aria-live="off">${own}</div>` : nothing;
     const t = (k: Parameters<typeof translate>[1]) => translate(this.hass, k);
     const items: { cls: string; label: string; value: string }[] = [];
     if (e.solar !== null) items.push({ cls: "solar", label: t("energy_solar"), value: formatPower(this.hass, e.solar) });
@@ -2123,7 +2128,20 @@ export class NfView3d extends LitElement {
         : html`<button class="nf-energy-item nf-flow-toggle" aria-pressed=${this._liveCardOn} title=${t("holos_hint")} aria-label=${t("holos")} @click=${() => this.toggleLhCards()}>
             <span>${t("holos")}</span><b>◫</b>
           </button>`}
+      ${own}
     </div>`;
+  }
+
+  /** The plan's own sensors at the top (outside temperature, the alarm…): their name and state; a tap opens their details. */
+  private ownSensors() {
+    const ids = this.sensorBar && this.hass ? (this.building?.settings.status_entities ?? []) : [];
+    return ids
+      .filter((id) => this.hass.states[id])
+      .map(
+        (id) => html`<button class="nf-energy-item nf-own-sensor" title=${entityName(this.hass, id)} @click=${() => openMoreInfo(this, id)}>
+          <span>${entityName(this.hass, id)}</span><b>${stateText(this.hass, this.hass.states[id])}</b>
+        </button>`,
+      );
   }
 
   /** The map's credit while a real map lies under the plan (OpenStreetMap asks for it). */
@@ -3375,6 +3393,22 @@ export class NfView3d extends LitElement {
         color: inherit;
         text-align: left;
         font: inherit;
+      }
+      .nf-own-sensor {
+        pointer-events: auto;
+        cursor: pointer;
+        border: 0;
+        border-left: 3px solid var(--nf-accent);
+        color: inherit;
+        text-align: left;
+        font: inherit;
+        max-width: 220px;
+      }
+      .nf-own-sensor span,
+      .nf-own-sensor b {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .nf-flow-toggle[aria-pressed="true"] {
         border-left-color: var(--nf-accent);

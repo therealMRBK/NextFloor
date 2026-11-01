@@ -2,6 +2,7 @@ import { html, nothing, type TemplateResult } from "lit";
 import { weatherEntity } from "../../../weather.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, DEFAULT_WEATHER_EFFECTS, WEATHER_EFFECTS, type Building, type RoofType } from "../../../model.ts";
+import { entityName } from "../../../devices.ts";
 import { entityOptions } from "../entities.ts";
 import { renderCompass } from "./compass.ts";
 import { renderMapSettings } from "./map.ts";
@@ -37,6 +38,24 @@ function backdropFields(host: EditorHost, b: Backdrop | null, onChange: (b: Back
 }
 
 /** Wall thickness, grid, north, roof shape, the weather source and its effects. */
+/** The plan's own sensors at the top of the 3D view: the chosen ones as chips to remove, and a picker to add one. */
+function statusFields(host: EditorHost, ids: string[], set: (ids: string[]) => void): TemplateResult {
+  const t = host.t;
+  const options = entityOptions(host.hass, (id) => !ids.includes(id) && /^(sensor|binary_sensor|alarm_control_panel|weather|input_|counter|lock|climate|person|sun)\b/.test(id));
+  return html`<div class="nf-sub nf-wide">${t("status_entities")}</div>
+    ${ids.length
+      ? html`<div class="nf-chips nf-wide">
+          ${ids.map(
+            (id) => html`<span class="nf-chip">${entityName(host.hass, id)}
+              ${host.admin ? html`<button class="nf-chip-x" title=${t("delete")} aria-label=${`${t("delete")}: ${entityName(host.hass, id)}`} @click=${() => set(ids.filter((x) => x !== id))}>×</button>` : nothing}</span
+            >`,
+          )}
+        </div>`
+      : nothing}
+    ${ids.length < 12 ? entityField(host, t("status_add"), null, undefined, options, (v) => v && v !== "none" && set([...ids, v])) : nothing}
+    ${hint(t("status_entities_hint"), "nf-wide")}`;
+}
+
 export function renderSettings(host: EditorHost, actions: SettingsActions): TemplateResult {
   const t = host.t;
   const s = host.doc.settings;
@@ -73,6 +92,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${host.hass ? entityField(host, t("outage_sensor"), s.outage_sensor ?? null, undefined, entityOptions(host.hass, (id) => /^(binary_sensor|sensor)\./.test(id)), (v) => set({ outage_sensor: v === "none" ? null : v })) : nothing}
       ${hint(t("outage_hint"), "nf-wide")}
       ${checkField(host, t("contact_warning"), !!s.contact_warning, (on) => set({ contact_warning: on || undefined }), { title: t("contact_warning_hint") })}
+      ${host.hass ? statusFields(host, s.status_entities ?? [], (status_entities) => set({ status_entities: status_entities.length ? status_entities : null })) : nothing}
       ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
       <label class="nf-field nf-wide"
         >${t("announce_phrases")}

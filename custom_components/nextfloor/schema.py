@@ -645,6 +645,10 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("rain_warning", default=True): bool,
         # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
         vol.Optional("contact_warning"): bool,
+        # own sensors shown at the top of the 3D view
+        vol.Optional("status_entities"): vol.Any(
+            None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))
+        ),
         # announcements: the text-to-speech entity and the sentences offered in a room (None = the default ones)
         vol.Optional("announce_tts"): _ENTITY_REF,
         vol.Optional("announce_phrases"): vol.Any(

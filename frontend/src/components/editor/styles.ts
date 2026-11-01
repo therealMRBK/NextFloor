@@ -785,6 +785,28 @@ export const editorStyles = css`
     flex: 1 1 84px;
     min-width: 84px;
   }
+  .nf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .nf-chips .nf-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: default;
+    color: var(--nf-text);
+  }
+  .nf-chip-x {
+    border: 0;
+    background: none;
+    color: var(--nf-muted);
+    font: inherit;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 2px;
+    cursor: pointer;
+  }
   .nf-quiet-time > span {
     display: flex;
     align-items: center;

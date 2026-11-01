@@ -28,6 +28,7 @@ export const DEFAULTS: Partial<CardConfig> = {
   alert_jump: false,
   scenes: true,
   announcements: true,
+  sensor_bar: true,
   weather: true,
   weather_density: 1,
   idle_return: 0,
@@ -41,7 +42,7 @@ export const DEFAULTS: Partial<CardConfig> = {
 };
 
 /** The yes/no options that get a plain checkbox. */
-export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "idle_orbit" | "weather" | "tap_in_room";
+export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room";
 
 export type Choice = [value: string, label: I18nKey];
 
