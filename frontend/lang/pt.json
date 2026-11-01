@@ -434,8 +434,8 @@
   "card_weather_density": "Quantidade de chuva e neve",
   "card_weather_density_hint": "Menos gotas e flocos do que o tempo indica; nuvens, nevoeiro e relâmpagos mantêm-se",
   "rain_warning": "Aviso: janela aberta enquanto chove",
-  "sun_patches": "Luz do sol pelas janelas",
-  "sun_patches_hint": "Com o norte definido, a luz de sun.sun entra pelas janelas como manchas claras no chão. Desmarque para manter o chão sem manchas de sol.",
+  "sun_patches": "Sol e sombras",
+  "sun_patches_hint": "Com o norte definido, a luz do sol de sun.sun entra pelas janelas em manchas claras no chão e a casa projeta a sua sombra no terreno. Desmarque para manter chão e terreno sem manchas de sol nem sombras.",
   "weather_effect_rain": "Chuva",
   "weather_effect_snow": "Neve",
   "weather_effect_fog": "Nevoeiro (acinzenta a cena)",
@@ -2112,5 +2112,7 @@
   "marker_kind_binary": "Contactos e detetores",
   "marker_kind_sensor": "Sensores",
   "marker_kind_tap": "Móveis com ação",
-  "marker_kind_other": "Outros"
+  "marker_kind_other": "Outros",
+  "time_of_day": "Hora do dia",
+  "time_of_day_hint": "Mostra sol, luz, sombras e aspeto a outra hora de hoje. Toque de novo para voltar a agora."
 }

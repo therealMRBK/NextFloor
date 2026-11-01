@@ -434,8 +434,8 @@
   "card_weather_density": "Quantità di pioggia e neve",
   "card_weather_density_hint": "Meno gocce e fiocchi di quanto indica il meteo; nuvole, nebbia e fulmini restano",
   "rain_warning": "Avviso: finestra aperta mentre piove",
-  "sun_patches": "Luce del sole attraverso le finestre",
-  "sun_patches_hint": "Con il nord impostato, la luce di sun.sun entra dalle finestre come macchie luminose sul pavimento. Deseleziona per lasciare il pavimento senza macchie di sole.",
+  "sun_patches": "Sole e ombre",
+  "sun_patches_hint": "Con il nord impostato, la luce del sole di sun.sun entra dalle finestre come macchie chiare sul pavimento e la casa proietta la sua ombra sul terreno. Togli la spunta per lasciare pavimento e terreno senza macchie di sole e ombre.",
   "weather_effect_rain": "Pioggia",
   "weather_effect_snow": "Neve",
   "weather_effect_fog": "Nebbia (ingrigisce la scena)",
@@ -2112,5 +2112,7 @@
   "marker_kind_binary": "Contatti e rilevatori",
   "marker_kind_sensor": "Sensori",
   "marker_kind_tap": "Mobili con un'azione",
-  "marker_kind_other": "Altro"
+  "marker_kind_other": "Altro",
+  "time_of_day": "Ora del giorno",
+  "time_of_day_hint": "Mostra sole, luce, ombre e aspetto a un'altra ora di oggi. Tocca di nuovo per tornare ad adesso."
 }

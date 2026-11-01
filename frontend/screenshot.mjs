@@ -124,6 +124,9 @@ const shots = [
   { name: "dev-ceilings-edit", dev: true, query: "", width: 1500, height: 950, editor: true, editorScript: `const b = structuredClone(e._doc); ${CEILING_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.selectItem("room", b.floors[0].rooms.find((r) => r.name === "Bad").id);`, openDetails: true },
   { name: "dev-fan-form", dev: true, query: "", width: 1500, height: 1300, editor: true, editorScript: `const b = structuredClone(e._doc); ${CEILING_DOC} e.setDoc(b); e._floorId = b.floors[0].id; e.selectItem("furniture", "fan_demo");`, openDetails: true },
   { name: "dev-plan-example", dev: true, query: "?state=/preview/screenshots/plan-example.json&noshowcase", width: 1400, height: 800 },
+  // views around the plan: the house's shadow in the morning on the time-of-day slider, and a snowy night with stars
+  { name: "dev-sun-shadow", dev: true, query: "", width: 1400, height: 850, settle: 2500, viewScript: "const p = document.querySelector('nextfloor-panel'); p.setPref('theme', 'day'); p.setPref('explode', false); p.setPref('quality', 'high'); p._clean = true; p._timeOfDay = 10;", afterWait: 1500 },
+  { name: "dev-snow-night", dev: true, query: "?weather=snowy&night", width: 1400, height: 850, settle: 3000, viewScript: "const p = document.querySelector('nextfloor-panel'); p._timeOfDay = 22.5;", afterWait: 1500 },
   { name: "dev-library", dev: true, query: "", width: 1500, height: 950, editor: true, click: "Möbel", wait: 500 },
   { name: "dev-library-kitchen", dev: true, query: "", width: 1500, height: 950, editor: true, click: "Möbel", tapAt: [690, 520], wait: 500, settle: 6000 },
   // ../preview/screenshots/stretch.json: a pack sofa and table at their size and resized (keeps arms, legs and plates)

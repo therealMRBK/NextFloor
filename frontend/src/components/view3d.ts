@@ -1,6 +1,7 @@
 // Lit wrapper around the lazily loaded 3D viewer.
 
 import { changeMoments, hassAt, loadHistory, replayable, type History } from "../live/time-travel.ts";
+import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
@@ -123,6 +124,7 @@ export class NfView3d extends LitElement {
     weather: { type: Boolean },
     weatherEntityId: { attribute: false },
     weatherDensity: { attribute: false },
+    timeOfDay: { attribute: false },
     selectedFurniture: { attribute: false },
     selectedDevice: { attribute: false },
     _sky: { state: true },
@@ -236,6 +238,8 @@ export class NfView3d extends LitElement {
   declare weatherEntityId: string | null;
   /** How much of the rain, hail and snow falls (1: all of it). */
   declare weatherDensity: number;
+  /** Hours of today whose sun the view shows instead of the real one (the time-of-day slider); null: the real sun. */
+  declare timeOfDay: number | null;
   /** A lightning flash lights the stage for a moment. */
   private cloud = 0;
   /** Entities that ask before a tap switches them. */
@@ -661,7 +665,7 @@ export class NfView3d extends LitElement {
     }
     if (changed.has("selectedFurniture")) v.selectFurniture(this.selectedFurniture);
     if (changed.has("selectedDevice")) v.setSelectedDevice(this.selectedDevice);
-    if (changed.has("weather") || changed.has("weatherEntityId") || changed.has("weatherDensity")) this.syncDevices(true);
+    if (changed.has("weather") || changed.has("weatherEntityId") || changed.has("weatherDensity") || changed.has("timeOfDay")) this.syncDevices(true);
     if (changed.has("quality") && changed.get("quality") !== undefined) {
       v.setQuality(this.quality);
       this._low = v.low;
@@ -776,7 +780,8 @@ export class NfView3d extends LitElement {
     const counts = floorCounts(hass, b, this.openingLinks!, persons);
     v.setFloorInfo(new Map([...counts].map(([id, c]) => [id, floorInfoText(hass, c)])));
     // daylight: sun through the windows and a lighter sky
-    const sunNow = readSun(hass);
+    const config = hass.config;
+    const sunNow = this.timeOfDay != null && config?.latitude !== undefined && config.longitude !== undefined ? sunPosition(todayAt(this.timeOfDay), config.latitude, config.longitude) : readSun(hass);
     v.setSun(sunNow);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
     const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;

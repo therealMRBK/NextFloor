@@ -86,7 +86,8 @@ Under **Settings**:
 
 Built in and free; they only need the devices you already have.
 
-- **Weather at the house:** rain, snow, hail, sleet, fog, clouds with shadows, lightning, sun and moon, driven by a weather entity and the compass.
+- **Weather at the house:** rain, snow, hail, sleet, fog, clouds with shadows, lightning, sun and moon, driven by a weather entity and the compass. Stars come out on a clear night; snow lies white on the ground while it snows, and the ground turns wet in the rain.
+- **Sun and shadows:** the house throws its shadow from the real sun (setting *Sunlight and shadows*, off on *Tablet*). The **☀ Time of day** switch opens a slider over the hours of today: sun patches, shadow, sky and the *Auto* look follow the chosen hour; tap again to go back to now.
 - **Power flow:** particles from the solar modules to inverter, house, battery and grid; a glass card with the balance and self-sufficiency.
 - **TV screens:** what plays, in the app's colour, plus ambilight.
 - **Sound:** a card over every playing speaker or TV with cover and controls; sound rings in the app's colour; multiroom groups are joined by a thread.

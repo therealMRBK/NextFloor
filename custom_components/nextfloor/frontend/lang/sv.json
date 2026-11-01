@@ -434,8 +434,8 @@
   "card_weather_density": "Mängd regn och snö",
   "card_weather_density_hint": "Färre droppar och flingor än vädret rapporterar; moln, dimma och blixtar stannar",
   "rain_warning": "Varning: fönster öppet när det regnar",
-  "sun_patches": "Solljus genom fönstren",
-  "sun_patches_hint": "Med norr inställt faller solljuset från sun.sun genom fönstren som ljusa fläckar på golvet. Avmarkera för att hålla golvet fritt från solfläckar.",
+  "sun_patches": "Sol och skuggor",
+  "sun_patches_hint": "Med norr inställt faller solljuset från sun.sun som ljusa fläckar genom fönstren på golvet, och huset kastar sin skugga på tomten. Avmarkera för att hålla golv och tomt fria från solfläckar och skuggor.",
   "weather_effect_rain": "Regn",
   "weather_effect_snow": "Snö",
   "weather_effect_fog": "Dimma (gör scenen grå)",
@@ -2112,5 +2112,7 @@
   "marker_kind_binary": "Kontakter och detektorer",
   "marker_kind_sensor": "Sensorer",
   "marker_kind_tap": "Möbler med åtgärd",
-  "marker_kind_other": "Övrigt"
+  "marker_kind_other": "Övrigt",
+  "time_of_day": "Tid på dagen",
+  "time_of_day_hint": "Visar sol, ljus, skuggor och utseende vid en annan tid i dag. Tryck igen för att gå tillbaka till nu."
 }

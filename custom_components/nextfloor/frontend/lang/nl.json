@@ -434,8 +434,8 @@
   "card_weather_density": "Hoeveelheid regen en sneeuw",
   "card_weather_density_hint": "Minder druppels en vlokken dan het weer meldt; wolken, mist en bliksem blijven",
   "rain_warning": "Waarschuwing: raam open terwijl het regent",
-  "sun_patches": "Zonlicht door de ramen",
-  "sun_patches_hint": "Met ingesteld noorden valt het zonlicht van sun.sun door de ramen als heldere vlekken op de vloer. Vink het uit om de vloer vrij van zonvlekken te houden.",
+  "sun_patches": "Zon en schaduwen",
+  "sun_patches_hint": "Met het noorden ingesteld valt het zonlicht van sun.sun als lichte vlekken door de ramen op de vloer, en werpt het huis zijn schaduw op het perceel. Vink uit om vloer en perceel zonder zonnevlekken en schaduwen te laten.",
   "weather_effect_rain": "Regen",
   "weather_effect_snow": "Sneeuw",
   "weather_effect_fog": "Mist (maakt de scène grijs)",
@@ -2112,5 +2112,7 @@
   "marker_kind_binary": "Contacten en melders",
   "marker_kind_sensor": "Sensoren",
   "marker_kind_tap": "Meubels met een actie",
-  "marker_kind_other": "Overig"
+  "marker_kind_other": "Overig",
+  "time_of_day": "Tijdstip",
+  "time_of_day_hint": "Toont zon, licht, schaduwen en uiterlijk op een ander tijdstip van vandaag. Tik opnieuw om terug te gaan naar nu."
 }

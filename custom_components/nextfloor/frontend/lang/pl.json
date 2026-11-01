@@ -434,8 +434,8 @@
   "card_weather_density": "Ilość deszczu i śniegu",
   "card_weather_density_hint": "Mniej kropli i płatków, niż podaje pogoda; chmury, mgła i błyskawice zostają",
   "rain_warning": "Ostrzeżenie: okno otwarte podczas deszczu",
-  "sun_patches": "Słońce przez okna",
-  "sun_patches_hint": "Przy ustawionej północy światło z sun.sun wpada przez okna jako jasne plamy na podłodze. Odznacz, by podłoga była bez plam słońca.",
+  "sun_patches": "Słońce i cienie",
+  "sun_patches_hint": "Przy ustawionej północy światło słońca z sun.sun pada przez okna jasnymi plamami na podłogę, a dom rzuca cień na działkę. Odznacz, aby podłoga i działka zostały bez plam słońca i cieni.",
   "weather_effect_rain": "Deszcz",
   "weather_effect_snow": "Śnieg",
   "weather_effect_fog": "Mgła (szarzy scenę)",
@@ -2112,5 +2112,7 @@
   "marker_kind_binary": "Kontaktrony i czujki",
   "marker_kind_sensor": "Czujniki",
   "marker_kind_tap": "Meble z akcją",
-  "marker_kind_other": "Inne"
+  "marker_kind_other": "Inne",
+  "time_of_day": "Pora dnia",
+  "time_of_day_hint": "Pokazuje słońce, światło, cienie i wygląd o innej porze dzisiejszego dnia. Dotknij ponownie, aby wrócić do teraz."
 }
