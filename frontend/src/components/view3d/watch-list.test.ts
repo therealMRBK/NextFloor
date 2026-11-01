@@ -4,7 +4,7 @@ import { box, entity, floorWith, hassOf } from "../../entities/fixtures.ts";
 import type { Building, Furniture } from "../../model.ts";
 import { watchedEntities, type WatchInputs } from "./watch-list.ts";
 
-const tv: Furniture = { id: "tv1", type: "tv_board", x: 1, z: 1, rotation: 0, w: 1, d: 0.4, h: 0.5, variant: null, state_entity: "binary_sensor.state", door_left: "binary_sensor.left", soc: "sensor.soc" };
+const tv: Furniture = { id: "tv1", type: "tv_board", x: 1, z: 1, rotation: 0, w: 1, d: 0.4, h: 0.5, variant: null, state_entity: "binary_sensor.state", door_left: "binary_sensor.left", soc: "sensor.soc", temp_entity: "sensor.fridge_temp", temp_entity2: "sensor.freezer_temp" };
 const building = (extra: Record<string, unknown> = {}): Building =>
   ({
     version: 1,
@@ -22,7 +22,7 @@ function inputs(extra: Partial<WatchInputs> = {}): WatchInputs {
 
 test("placed devices, energy sensors, presence, furniture links, the roof and the sun are watched", () => {
   const ids = watchedEntities(inputs());
-  for (const id of ["light.a", "sensor.grid", "person.anna", "sensor.anna_room", "binary_sensor.state", "binary_sensor.left", "sensor.soc", "cover.roof", "sensor.pv", "sun.sun"]) assert.ok(ids.includes(id), id);
+  for (const id of ["light.a", "sensor.grid", "person.anna", "sensor.anna_room", "binary_sensor.state", "binary_sensor.left", "sensor.soc", "sensor.fridge_temp", "sensor.freezer_temp", "cover.roof", "sensor.pv", "sun.sun"]) assert.ok(ids.includes(id), id);
 });
 
 test("an entity set to 'none' on a roof window is not watched, and nothing appears twice", () => {

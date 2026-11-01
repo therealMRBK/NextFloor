@@ -2,7 +2,7 @@
 
 import { html, nothing, type TemplateResult } from "lit";
 import { canHangOff, deviceMeter, meterParent, subMeterIds } from "../../../energy.ts";
-import { furnitureEntities, hasScreen, isMediaFurniture, isStatusSensor, robotRoomSensor } from "../../../devices.ts";
+import { furnitureEntities, hasScreen, isCooling, isMediaFurniture, isStatusSensor, robotRoomSensor } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, isLamp, type Furniture } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
@@ -128,6 +128,20 @@ export function gangLinks(host: EditorHost, item: Furniture, gangs: number, acti
 }
 
 /** The links of electric furniture: the main entity and the power sensor, and what is special to the kind of device. */
+/** A fridge's thermometers: one in the fridge, one in the freezer compartment; the marker shows them and warns when too warm. */
+function coolingLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
+  const t = host.t;
+  const temps = entityOptions(host.hass, (id) => {
+    const a = host.hass?.states[id]?.attributes;
+    return id.startsWith("sensor.") && (a?.device_class === "temperature" || a?.unit_of_measurement === "°C" || a?.unit_of_measurement === "°F");
+  });
+  return linkBlock(
+    entityField(host, t("fridge_temp"), item.temp_entity ?? null, undefined, temps, (v) => actions.update({ temp_entity: noneAsNull(v) })),
+    entityField(host, t("freezer_temp"), item.temp_entity2 ?? null, undefined, temps, (v) => actions.update({ temp_entity2: noneAsNull(v) })),
+    hint(t("fridge_temp_hint"), "nf-wide"),
+  );
+}
+
 export function furnitureLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult | typeof nothing {
   const { hass } = host;
   if (!hass) return nothing;
@@ -155,6 +169,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
       hasScreen(item.type) ? glowField(host, item.ambilight, (v) => actions.update({ ambilight: v }), { label: "ambilight", hint: "ambilight_hint", lowest: 0 }) : nothing,
       lamp || item.type === "grid_point" ? nothing : entityField(host, t(meterParent(host.doc, item) ? "meter_sub_power" : powerLabel(item.type)), item.power ?? null, automaticLink(host, item, "power"), power, (v) => actions.update({ power: v })),
     )}
+    ${isCooling(item.type) ? coolingLinks(host, item, actions) : nothing}
     ${item.type === "meter" ? subMeterLinks(host, item, actions) : nothing}
     ${item.type === "inverter" || item.type === "home_battery" ? deviceMeterLink(host, item, actions) : nothing}
     ${item.type === "meter" && !meterParent(host.doc, item) ? linkBlock(entityField(host, t("furn_export"), item.export ?? null, undefined, power, set("export")), hint(t("furn_export_hint"), "nf-wide")) : nothing}

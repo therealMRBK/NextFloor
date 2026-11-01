@@ -177,6 +177,33 @@ export function confirmEntities(hass: HomeAssistant, floors: readonly Floor[]): 
   return asking;
 }
 
+/** Fridges and freezers (also pack items named so): they can show the temperatures of their compartments. */
+export const isCooling = (type: string): boolean => type === "fridge" || type === "fridge_smart" || /(fridge|freezer|kuehl|gefrier|chest_freezer)/.test(type.slice(type.lastIndexOf(":") + 1));
+
+/** Above these a fridge and a freezer count as too warm (°C). */
+export const FRIDGE_WARM = 8;
+export const FREEZER_WARM = -12;
+
+/**
+ * The temperatures a fridge shows: its fridge and freezer compartment ("4.2 °C · −18.0 °C"), and whether one is too warm.
+ * Null when no sensor is set or none tells a number.
+ */
+export function coolingTemps(hass: HomeAssistant, piece: { temp_entity?: string | null; temp_entity2?: string | null }, format: (celsius: number) => string): { text: string; warm: boolean } | null {
+  const read = (id: string | null | undefined): number | null => {
+    if (!isSet(id)) return null;
+    const st = hass.states[id];
+    const value = st ? Number(st.state) : NaN;
+    if (!Number.isFinite(value)) return null;
+    // a sensor in Fahrenheit is turned into Celsius, so the limits hold
+    return st!.attributes.unit_of_measurement === "°F" ? ((value - 32) * 5) / 9 : value;
+  };
+  const fridge = read(piece.temp_entity);
+  const freezer = read(piece.temp_entity2);
+  if (fridge === null && freezer === null) return null;
+  const parts = [fridge, freezer].filter((v): v is number => v !== null).map(format);
+  return { text: parts.join(" · "), warm: (fridge !== null && fridge > FRIDGE_WARM) || (freezer !== null && freezer > FREEZER_WARM) };
+}
+
 /** Which doors of each smart fridge stand open now (a door sensor that says "on" or "open"). */
 export function fridgeDoors(hass: HomeAssistant, floors: readonly Floor[]): Map<string, { left: boolean; right: boolean }> {
   const isOpen = (sensor: EntityRef | undefined) => isSet(sensor) && ["on", "open"].includes(hass.states[sensor]?.state ?? "");

@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { setPacks } from "../packs.ts";
 import type { Furniture } from "../model.ts";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
-import { confirmEntities, fridgeDoors, furnitureEntities, hasScreen, isMediaFurniture, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
+import { confirmEntities, coolingTemps, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
 
 const piece = (id: string, type: string, extra: Partial<Furniture> = {}): Furniture => ({ id, type, x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 1, variant: null, entity: null, power: null, ...extra });
 const room = box("r", 0, 0, 4, 3, "area");
@@ -141,4 +141,26 @@ test("the room panel shows placed and linked entities, own picks and door sensor
   const { shown, more } = roomPanelEntities(hass, floor, r);
   assert.deepEqual(shown.sort(), ["binary_sensor.door", "light.lamp", "light.picked", "light.placed"]);
   assert.deepEqual(more, ["sensor.rest"]);
+});
+
+test("a fridge shows its compartments' temperatures and warns when one is too warm", () => {
+  const fmt = (c: number) => `${c.toFixed(1)} °C`;
+  const hass = hassOf([
+    entity("sensor.fridge", "4.2", { unit_of_measurement: "°C" }),
+    entity("sensor.freezer", "-18", { unit_of_measurement: "°C" }),
+    entity("sensor.warm", "9.1", { unit_of_measurement: "°C" }),
+    entity("sensor.thawing", "-10", { unit_of_measurement: "°C" }),
+    entity("sensor.fahrenheit", "50", { unit_of_measurement: "°F" }),
+    entity("sensor.gone", "unavailable"),
+  ]);
+  assert.deepEqual(coolingTemps(hass, { temp_entity: "sensor.fridge", temp_entity2: "sensor.freezer" }, fmt), { text: "4.2 °C · -18.0 °C", warm: false });
+  assert.equal(coolingTemps(hass, { temp_entity: "sensor.warm" }, fmt)?.warm, true);
+  assert.equal(coolingTemps(hass, { temp_entity2: "sensor.thawing" }, fmt)?.warm, true);
+  // 50 °F are 10 °C: too warm for a fridge
+  assert.deepEqual(coolingTemps(hass, { temp_entity: "sensor.fahrenheit" }, fmt), { text: "10.0 °C", warm: true });
+  assert.equal(coolingTemps(hass, { temp_entity: "sensor.gone" }, fmt), null);
+  assert.equal(coolingTemps(hass, { temp_entity: "none" }, fmt), null);
+  assert.equal(isCooling("fridge"), true);
+  assert.equal(isCooling("pack:nextfloor.a_kueche:fridge_freezer"), true);
+  assert.equal(isCooling("pack:nextfloor.a_kueche:oven"), false);
 });

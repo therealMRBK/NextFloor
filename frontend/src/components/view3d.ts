@@ -11,6 +11,7 @@ import {
   entityName,
   furnitureEntities,
   isActive,
+  isCooling,
   isMotionSensor,
   coverReaches,
   deviceSiblings,
@@ -33,6 +34,7 @@ import {
   type FurnitureLinks,
   type OpeningEntities,
   confirmEntities,
+  coolingTemps,
   fridgeDoors,
   hasScreen,
   fromCelsius,
@@ -940,8 +942,8 @@ export class NfView3d extends LitElement {
     b: Building,
     taken: Set<string>,
     consumerSensors: Set<string>,
-  ): { markers: (DeviceMarker & { fromFurniture: boolean; energyDevice?: boolean; care?: boolean })[]; consumers: Consumer[]; screens: Map<string, ScreenState>; targets: Map<string, string> } {
-    const markers: (DeviceMarker & { fromFurniture: boolean; energyDevice?: boolean; care?: boolean })[] = [];
+  ): { markers: (DeviceMarker & { fromFurniture: boolean; energyDevice?: boolean; care?: boolean; readout?: boolean })[]; consumers: Consumer[]; screens: Map<string, ScreenState>; targets: Map<string, string> } {
+    const markers: (DeviceMarker & { fromFurniture: boolean; energyDevice?: boolean; care?: boolean; readout?: boolean })[] = [];
     const consumers: Consumer[] = [];
     const screens = new Map<string, ScreenState>();
     const targets = new Map<string, string>();
@@ -988,8 +990,10 @@ export class NfView3d extends LitElement {
           }
           continue;
         }
-        // a home battery with only its charge, a wallbox with only its status still gets its marker
-        const extraRef = f.type === "home_battery" ? f.soc : f.type === "wallbox" ? f.status : null;
+        // a fridge shows the temperatures of its compartments (and warns when one is too warm)
+        const temps = isCooling(f.type) ? coolingTemps(hass, f, (c) => `${formatNumber(hass, fromCelsius(hass, c), 1)} ${tempUnit(hass)}`) : null;
+        // a home battery with only its charge, a wallbox with only its status, a fridge with only its thermometer still gets its marker
+        const extraRef = f.type === "home_battery" ? f.soc : f.type === "wallbox" ? f.status : temps ? (f.temp_entity && f.temp_entity !== "none" ? f.temp_entity : f.temp_entity2) : null;
         const extra = extraRef && extraRef !== "none" ? extraRef : null;
         const link = linked ?? (extra ? { entity: null, power: null } : undefined);
         if (!link) continue;
@@ -1045,8 +1049,9 @@ export class NfView3d extends LitElement {
           name: f.name || (link.entity ? entityName(hass, link.entity) : furnitureName(hass, f.type)),
           ownName: f.name || undefined,
           showName: !!f.show_name,
-          text:
-            f.type === "home_battery"
+          text: temps
+            ? temps.text
+            : f.type === "home_battery"
               ? this.batteryText(hass, extra, power)
               : f.type === "wallbox"
                 ? this.wallboxText(hass, extra, power)
@@ -1061,13 +1066,15 @@ export class NfView3d extends LitElement {
                     : power !== null
                       ? formatPower(hass, Math.max(0, power))
                       : "",
-          active: st ? isActive(st) : (power ?? 0) > 5,
+          active: temps?.warm || (st ? isActive(st) : (power ?? 0) > 5),
           unavailable: st ? isUnavailable(st) : false,
           glow: null,
           // its pin grabs the item when furnishing
           furnitureId: f.id,
           // inverter, battery, wallbox: their own text (watts, charge, status) is always worth a pin
           energyDevice: f.type === "inverter" || f.type === "home_battery" || f.type === "wallbox" || f.type === "meter",
+          // a fridge's temperatures are worth a pin, like an energy device's values
+          readout: !!temps || undefined,
           show: f.marker ?? undefined,
           fromFurniture: true,
         });
@@ -1313,7 +1320,7 @@ export class NfView3d extends LitElement {
    * Marker rule: "important" leaves out devices that their 3D object stands for (lamps, a TV that is
    * off) and keeps devices without an object (sensors, heating, switches) and values (watts, the app).
    */
-  private showPin(m: DeviceMarker & { fromFurniture?: boolean; energyDevice?: boolean; care?: boolean }): boolean {
+  private showPin(m: DeviceMarker & { fromFurniture?: boolean; energyDevice?: boolean; care?: boolean; readout?: boolean }): boolean {
     // while furnishing every placed device has a pin to grab it by
     if (this.furnish && !m.fromFurniture) return true;
     // the device's own setting wins over the marker mode (except "none", which hides every marker)
@@ -1336,6 +1343,8 @@ export class NfView3d extends LitElement {
     if (m.care) return m.active;
     // an item with its own tap action: its pin is the way to find it
     if (m.id.startsWith("tap:")) return true;
+    // values worth reading (a fridge's temperatures)
+    if (m.readout) return true;
     if (m.fromFurniture) return (m.power ?? 0) >= 1 || (kind === "media" && m.active) || (!!m.energyDevice && !!m.text);
     return true;
   }

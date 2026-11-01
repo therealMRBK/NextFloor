@@ -284,6 +284,9 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("color_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # mirrored left-right
         vol.Optional("mirror", default=False): bool,
+        # fridges: thermometers of the fridge and the freezer compartment
+        vol.Optional("temp_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("temp_entity2"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # lawn sprinkler: how far its water reaches (m)
         vol.Optional("spray"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=15))),
         # LED strip: tilt about its length (degrees) and standing upright
