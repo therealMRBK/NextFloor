@@ -142,7 +142,7 @@ The card's kiosk section returns to the start view after idle time, dims at nigh
 
 - **Extensions tab → Furniture packs:** import your own furniture packs as files or paste their JSON straight in, and remove your own packs again. Format: [packs.md](packs.md) (German).
 - **Extensions tab:** upload your own `.glb` model for a vehicle slot. The browser turns it the right way round, lightens it, removes textures and marks the paint; the file is stored on your Home Assistant (admins only, up to 12 MB). See [models.md](models.md).
-- **Furniture packs** come with the integration (26 packs, over 600 models) and need no setup. Own packs are JSON files, format in [packs.md](packs.md). The demo has a model showcase that shows every model live.
+- **Furniture packs** come with the integration (30 packs, over 800 models) and need no setup. Own packs are JSON files, format in [packs.md](packs.md). The demo has a model showcase that shows every model live.
 
 ## Backup
 

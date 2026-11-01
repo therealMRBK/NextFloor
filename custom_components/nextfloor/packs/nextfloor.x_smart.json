@@ -1,0 +1,2099 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.x_smart",
+ "name": "Smart Home & Technik 2",
+ "publisher": "NextFloor",
+ "description": "Kameras, Sensoren, Türklingel, Smart Lock, Server, Netzwerk, Heimkino, Gaming, Werkstatt und Haustechnik mit Füllstand",
+ "release": 1,
+ "items": [
+  {
+   "id": "video_doorbell",
+   "name": {
+    "de": "Video-Türklingel",
+    "en": "Video doorbell"
+   },
+   "size": [
+    0.06,
+    0.03,
+    0.15
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.1667,
+     "y": 0.6667,
+     "h": 0.2,
+     "color": "#2a303c",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5833,
+     "d": 0.1667,
+     "y": 0.1667,
+     "h": 0.2333,
+     "color": "#37e0ff",
+     "axis": "z",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "electric": true
+  },
+  {
+   "id": "smart_lock",
+   "name": {
+    "de": "Smartes Türschloss",
+    "en": "Smart lock"
+   },
+   "size": [
+    0.07,
+    0.06,
+    0.16
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#9aa3b0",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.7143,
+     "d": 0.3333,
+     "y": 0.375,
+     "h": 0.3125,
+     "color": "#2a303c",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.4286,
+     "d": 0.0333,
+     "y": 0.8125,
+     "h": 0.0625,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.0,
+   "electric": true
+  },
+  {
+   "id": "camera_indoor",
+   "name": {
+    "de": "Innenkamera",
+    "en": "Indoor camera"
+   },
+   "size": [
+    0.08,
+    0.08,
+    0.12
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.1667,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.25,
+     "d": 0.25,
+     "y": 0.1667,
+     "h": 0.25,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.875,
+     "d": 0.875,
+     "y": 0.4167,
+     "h": 0.5833,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.4375,
+     "w": 0.375,
+     "d": 0.125,
+     "y": 0.5833,
+     "h": 0.25,
+     "color": "#1b1f27",
+     "axis": "z"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "camera_bullet",
+   "name": {
+    "de": "Außenkamera (Bullet)",
+    "en": "Outdoor camera (bullet)"
+   },
+   "size": [
+    0.08,
+    0.25,
+    0.12
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.44,
+     "w": 1,
+     "d": 0.08,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.28,
+     "w": 0.3125,
+     "d": 0.28,
+     "y": 0.4167,
+     "h": 0.2083,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.08,
+     "w": 0.875,
+     "d": 0.72,
+     "y": 0.25,
+     "h": 0.5833,
+     "color": "#e8ecf2",
+     "axis": "z",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.44,
+     "w": 0.625,
+     "d": 0.04,
+     "y": 0.3333,
+     "h": 0.4167,
+     "color": "#1b1f27",
+     "axis": "z"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 2.4,
+   "electric": true
+  },
+  {
+   "id": "camera_dome",
+   "name": {
+    "de": "Dome-Kamera (Decke)",
+    "en": "Dome camera (ceiling)"
+   },
+   "size": [
+    0.14,
+    0.14,
+    0.1
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.7,
+     "h": 0.3,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.7857,
+     "d": 0.7857,
+     "y": 0,
+     "h": 0.7,
+     "color": "#2a303c",
+     "edges": "faint"
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "motion_sensor",
+   "name": {
+    "de": "Bewegungsmelder",
+    "en": "Motion sensor"
+   },
+   "size": [
+    0.05,
+    0.04,
+    0.07
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.7,
+     "d": 0.25,
+     "y": 0.2857,
+     "h": 0.5,
+     "color": "#d8dde5",
+     "axis": "z"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 2.2
+  },
+  {
+   "id": "leak_sensor",
+   "name": {
+    "de": "Wassermelder",
+    "en": "Water leak sensor"
+   },
+   "size": [
+    0.06,
+    0.06,
+    0.025
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.3333,
+     "d": 0.3333,
+     "y": 1,
+     "h": 0.08,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ]
+  },
+  {
+   "id": "temp_sensor",
+   "name": {
+    "de": "Thermometer/Hygrometer",
+    "en": "Temperature & humidity sensor"
+   },
+   "size": [
+    0.06,
+    0.02,
+    0.06
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.75,
+     "d": 0.1,
+     "y": 0.2,
+     "h": 0.5833,
+     "color": "#2a303c",
+     "screen": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.5
+  },
+  {
+   "id": "air_quality",
+   "name": {
+    "de": "Luftgütemonitor (CO₂)",
+    "en": "Air quality monitor (CO₂)"
+   },
+   "size": [
+    0.1,
+    0.06,
+    0.14
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8,
+     "d": 0.0333,
+     "y": 0.3571,
+     "h": 0.4286,
+     "color": "#2a303c",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.6,
+     "d": 0.0333,
+     "y": 0.1429,
+     "h": 0.0714,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "ha_green",
+   "name": {
+    "de": "Home-Assistant-Server (klein)",
+    "en": "Home Assistant box (small)"
+   },
+   "size": [
+    0.11,
+    0.11,
+    0.03
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#2f8f5a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5455,
+     "d": 0.0182,
+     "y": 0.4,
+     "h": 0.2,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "zigbee_stick",
+   "name": {
+    "de": "Zigbee-Koordinator mit Antenne",
+    "en": "Zigbee coordinator with antenna"
+   },
+   "size": [
+    0.08,
+    0.05,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.15,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.25,
+     "z": 0.0,
+     "w": 0.15,
+     "d": 0.24,
+     "y": 0.15,
+     "h": 0.85,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.5,
+     "w": 0.125,
+     "d": 0.04,
+     "y": 0.06,
+     "h": 0.04,
+     "color": "#ffb547",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "mini_pc",
+   "name": {
+    "de": "Mini-PC",
+    "en": "Mini PC"
+   },
+   "size": [
+    0.13,
+    0.13,
+    0.05
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#2a303c",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3077,
+     "z": 0.5,
+     "w": 0.0615,
+     "d": 0.0154,
+     "y": 0.5,
+     "h": 0.16,
+     "color": "#37e0ff",
+     "axis": "z",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "ups",
+   "name": {
+    "de": "USV (Notstrom)",
+    "en": "UPS (backup power)"
+   },
+   "size": [
+    0.15,
+    0.36,
+    0.23
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5333,
+     "d": 0.0056,
+     "y": 0.6087,
+     "h": 0.1739,
+     "color": "#2a303c",
+     "screen": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.1333,
+     "d": 0.0056,
+     "y": 0.3478,
+     "h": 0.087,
+     "color": "#7fbf4a",
+     "axis": "z",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "poe_switch",
+   "name": {
+    "de": "Netzwerk-Switch (PoE)",
+    "en": "Network switch (PoE)"
+   },
+   "size": [
+    0.33,
+    0.2,
+    0.045
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#9aa3b0",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.3636,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.2727,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.1818,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.0909,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0909,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.1818,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.2727,
+     "z": 0.5,
+     "w": 0.0606,
+     "d": 0.01,
+     "y": 0.3333,
+     "h": 0.3333,
+     "color": "#7fbf4a",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "router_mesh",
+   "name": {
+    "de": "Mesh-WLAN-Knoten",
+    "en": "Mesh Wi-Fi node"
+   },
+   "size": [
+    0.1,
+    0.1,
+    0.18
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.3,
+     "d": 0.3,
+     "y": 1,
+     "h": 0.0111,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "wall_tablet",
+   "name": {
+    "de": "Wandtablet (Dashboard)",
+    "en": "Wall tablet (dashboard)"
+   },
+   "size": [
+    0.26,
+    0.03,
+    0.18
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.9231,
+     "d": 0.0667,
+     "y": 0.0556,
+     "h": 0.8889,
+     "color": "#2a303c",
+     "screen": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.35,
+   "electric": true
+  },
+  {
+   "id": "voice_puck",
+   "name": {
+    "de": "Sprachassistent (Puck)",
+    "en": "Voice assistant (puck)"
+   },
+   "size": [
+    0.1,
+    0.1,
+    0.04
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.875,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0.875,
+     "h": 0.125,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "smart_speaker_tall",
+   "name": {
+    "de": "Smarter Lautsprecher (hoch)",
+    "en": "Smart speaker (tall)"
+   },
+   "size": [
+    0.12,
+    0.12,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.95,
+     "color": "#3a404c",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8333,
+     "d": 0.8333,
+     "y": 0.95,
+     "h": 0.05,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "soundbar",
+   "name": {
+    "de": "Soundbar",
+    "en": "Soundbar"
+   },
+   "size": [
+    0.9,
+    0.1,
+    0.07
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.9556,
+     "d": 0.02,
+     "y": 0.1429,
+     "h": 0.7143,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.3889,
+     "z": 0.5,
+     "w": 0.0333,
+     "d": 0.02,
+     "y": 0.7143,
+     "h": 0.0857,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "subwoofer",
+   "name": {
+    "de": "Subwoofer",
+    "en": "Subwoofer"
+   },
+   "size": [
+    0.35,
+    0.35,
+    0.38
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.7143,
+     "d": 0.0286,
+     "y": 0.1579,
+     "h": 0.6579,
+     "color": "#2a303c",
+     "axis": "z"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "projector_ceiling",
+   "name": {
+    "de": "Beamer (Decke)",
+    "en": "Projector (ceiling)"
+   },
+   "size": [
+    0.35,
+    0.3,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.1143,
+     "d": 0.1333,
+     "y": 0.3429,
+     "h": 0.6571,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.3429,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2286,
+     "z": 0.5,
+     "w": 0.2,
+     "d": 0.0667,
+     "y": 0.0714,
+     "h": 0.2,
+     "color": "#37e0ff",
+     "axis": "z",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "projection_screen",
+   "name": {
+    "de": "Leinwand motorisch",
+    "en": "Motorised projection screen"
+   },
+   "size": [
+    2.4,
+    0.08,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.925,
+     "h": 0.075,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.9583,
+     "d": 0.125,
+     "y": 0.0937,
+     "h": 0.8313,
+     "color": "#f4f6fa",
+     "move": "down"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.9583,
+     "d": 0.25,
+     "y": 0.075,
+     "h": 0.0187,
+     "color": "#1b1f27",
+     "move": "down"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 0.8,
+   "electric": true,
+   "cover": "extends",
+   "cover_rest": 0.0
+  },
+  {
+   "id": "game_console",
+   "name": {
+    "de": "Spielkonsole",
+    "en": "Game console"
+   },
+   "size": [
+    0.11,
+    0.3,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9091,
+     "d": 0.9,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.0571,
+     "h": 0.8857,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5455,
+     "d": 0.0067,
+     "y": 0.9143,
+     "h": 0.0286,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "gaming_pc",
+   "name": {
+    "de": "Gaming-PC mit RGB",
+    "en": "Gaming PC with RGB"
+   },
+   "size": [
+    0.24,
+    0.48,
+    0.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0.5,
+     "z": 0.0,
+     "w": 0.0083,
+     "d": 0.875,
+     "y": 0.08,
+     "h": 0.84,
+     "color": "glass"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4583,
+     "z": -0.25,
+     "w": 0.5,
+     "d": 0.25,
+     "y": 0.6,
+     "h": 0.24,
+     "color": "#ff4fa3",
+     "axis": "x",
+     "glow": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4583,
+     "z": 0.2083,
+     "w": 0.5,
+     "d": 0.25,
+     "y": 0.6,
+     "h": 0.24,
+     "color": "#ff4fa3",
+     "axis": "x",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.4583,
+     "z": 0.3125,
+     "w": 0.0417,
+     "d": 0.2083,
+     "y": 0.12,
+     "h": 0.24,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "desk_dual_monitor",
+   "name": {
+    "de": "Schreibtisch mit zwei Monitoren",
+    "en": "Desk with two monitors"
+   },
+   "size": [
+    1.6,
+    0.8,
+    1.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.576,
+     "h": 0.032,
+     "color": "#b98d5a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.4688,
+     "z": 0.0,
+     "w": 0.0375,
+     "d": 0.875,
+     "y": 0,
+     "h": 0.576,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.4688,
+     "z": 0.0,
+     "w": 0.0375,
+     "d": 0.875,
+     "y": 0,
+     "h": 0.576,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.375,
+     "w": 0.025,
+     "d": 0.05,
+     "y": 0.608,
+     "h": 0.16,
+     "color": "#9aa3b0"
+    },
+    {
+     "shape": "box",
+     "x": -0.2062,
+     "z": -0.35,
+     "w": 0.3875,
+     "d": 0.0375,
+     "y": 0.704,
+     "h": 0.296,
+     "color": "#1b1f27",
+     "rot": 8,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.2062,
+     "z": -0.325,
+     "w": 0.3625,
+     "d": 0.0025,
+     "y": 0.72,
+     "h": 0.264,
+     "color": "#2a303c",
+     "screen": true,
+     "rot": 8
+    },
+    {
+     "shape": "box",
+     "x": 0.2062,
+     "z": -0.35,
+     "w": 0.3875,
+     "d": 0.0375,
+     "y": 0.704,
+     "h": 0.296,
+     "color": "#1b1f27",
+     "rot": -8,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.2062,
+     "z": -0.325,
+     "w": 0.3625,
+     "d": 0.0025,
+     "y": 0.72,
+     "h": 0.264,
+     "color": "#2a303c",
+     "screen": true,
+     "rot": -8
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1875,
+     "w": 0.2812,
+     "d": 0.1875,
+     "y": 0.608,
+     "h": 0.016,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.2187,
+     "z": 0.1875,
+     "w": 0.0438,
+     "d": 0.1375,
+     "y": 0.608,
+     "h": 0.016,
+     "color": "#2a303c"
+    }
+   ],
+   "electric": true,
+   "surface": true
+  },
+  {
+   "id": "printer_resin",
+   "name": {
+    "de": "Resin-3D-Drucker",
+    "en": "Resin 3D printer"
+   },
+   "size": [
+    0.25,
+    0.25,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.3333,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.92,
+     "d": 0.92,
+     "y": 0.3333,
+     "h": 0.6667,
+     "color": "#ffb547",
+     "top": "#ffb547"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.48,
+     "d": 0.008,
+     "y": 0.0889,
+     "h": 0.1556,
+     "color": "#2a303c",
+     "screen": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "laser_engraver",
+   "name": {
+    "de": "Laser-Graviergerät",
+    "en": "Laser engraver"
+   },
+   "size": [
+    0.75,
+    0.55,
+    0.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.8,
+     "color": "#2a303c",
+     "edges": "faint"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": -0.0909,
+     "w": 1,
+     "d": 0.8182,
+     "y": 0.8,
+     "h": 0.2,
+     "color": "#ff7a1a",
+     "tw": 1,
+     "td": 0.6364
+    },
+    {
+     "shape": "box",
+     "x": 0.4,
+     "z": 0.4909,
+     "w": 0.1067,
+     "d": 0.0036,
+     "y": 0.32,
+     "h": 0.24,
+     "color": "#ff3b3b",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "ebike_charger",
+   "name": {
+    "de": "E-Bike mit Ladegerät",
+    "en": "E-bike with charger"
+   },
+   "size": [
+    0.6,
+    1.8,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3333,
+     "w": 0.1,
+     "d": 0.3667,
+     "y": 0.0182,
+     "h": 0.6,
+     "color": "#1b1f27",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3333,
+     "w": 0.1,
+     "d": 0.3667,
+     "y": 0.0182,
+     "h": 0.6,
+     "color": "#1b1f27",
+     "axis": "x"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.0833,
+     "d": 0.6667,
+     "y": 0.3182,
+     "h": 0.4545,
+     "color": "#3b7bb5",
+     "tz": 0.0556,
+     "td": 0.3333
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0556,
+     "w": 0.1333,
+     "d": 0.1944,
+     "y": 0.4545,
+     "h": 0.1091,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.2778,
+     "w": 0.4167,
+     "d": 0.1389,
+     "y": 0.8,
+     "h": 0.0545,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3056,
+     "w": 0.9167,
+     "d": 0.0222,
+     "y": 0.9273,
+     "h": 0.0273,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.3333,
+     "z": -0.4722,
+     "w": 0.1667,
+     "d": 0.0333,
+     "y": 0,
+     "h": 0.0545,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "box",
+     "x": 0.3333,
+     "z": -0.4722,
+     "w": 0.05,
+     "d": 0.0111,
+     "y": 0.0545,
+     "h": 0.0073,
+     "color": "#7fbf4a",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "ac_portable",
+   "name": {
+    "de": "Klimagerät mobil",
+    "en": "Portable air conditioner"
+   },
+   "size": [
+    0.45,
+    0.38,
+    0.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8,
+     "d": 0.0053,
+     "y": 0.7333,
+     "h": 0.16,
+     "color": "#d8dde5"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.2222,
+     "d": 0.0053,
+     "y": 0.9333,
+     "h": 0.0333,
+     "color": "#2a303c",
+     "screen": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.5,
+     "w": 0.3111,
+     "d": 0.3684,
+     "y": 0.6,
+     "h": 0.1867,
+     "color": "#d8dde5",
+     "axis": "z"
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "ir_heater",
+   "name": {
+    "de": "Infrarotheizung (Bild)",
+    "en": "Infrared heater (picture)"
+   },
+   "size": [
+    1.0,
+    0.03,
+    0.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.94,
+     "d": 0.1,
+     "y": 0.05,
+     "h": 0.9,
+     "color": "#ff7a1a",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.2,
+   "electric": true
+  },
+  {
+   "id": "instant_heater",
+   "name": {
+    "de": "Durchlauferhitzer",
+    "en": "Instantaneous water heater"
+   },
+   "size": [
+    0.23,
+    0.11,
+    0.47
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.4348,
+     "d": 0.0182,
+     "y": 0.6383,
+     "h": 0.1064,
+     "color": "#2a303c",
+     "screen": true
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2174,
+     "z": 0.0,
+     "w": 0.087,
+     "d": 0.1818,
+     "y": 0,
+     "h": 0.1064,
+     "color": "#9aa3b0"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2174,
+     "z": 0.0,
+     "w": 0.087,
+     "d": 0.1818,
+     "y": 0,
+     "h": 0.1064,
+     "color": "#9aa3b0"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.3,
+   "electric": true
+  },
+  {
+   "id": "hp_water_heater",
+   "name": {
+    "de": "Warmwasser-Wärmepumpe",
+    "en": "Heat pump water heater"
+   },
+   "size": [
+    0.62,
+    0.62,
+    1.9
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.8158,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9677,
+     "d": 0.9677,
+     "y": 0.8158,
+     "h": 0.1842,
+     "color": "#d8dde5"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4677,
+     "w": 0.2258,
+     "d": 0.0323,
+     "y": 0.8684,
+     "h": 0.0421,
+     "color": "#2a303c",
+     "screen": true
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2419,
+     "z": -0.4032,
+     "w": 0.1935,
+     "d": 0.1935,
+     "y": 0.9211,
+     "h": 0.0789,
+     "color": "#9aa3b0"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2419,
+     "z": -0.4032,
+     "w": 0.1935,
+     "d": 0.1935,
+     "y": 0.9211,
+     "h": 0.0789,
+     "color": "#9aa3b0"
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "oil_tank",
+   "name": {
+    "de": "Heizöltank mit Füllstand",
+    "en": "Heating oil tank with level"
+   },
+   "size": [
+    2.0,
+    0.75,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9688,
+     "color": "#e8e2c8",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.97,
+     "d": 0.92,
+     "y": 0,
+     "h": 0.5625,
+     "color": "#9a6a2a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3,
+     "z": 0.0,
+     "w": 0.07,
+     "d": 0.1867,
+     "y": 0.9688,
+     "h": 0.0312,
+     "color": "#ff3b3b"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": 0.5,
+     "w": 0.05,
+     "d": 0.0027,
+     "y": 0.0625,
+     "h": 0.8125,
+     "color": "#d8dde5"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": 0.5,
+     "w": 0.03,
+     "d": 0.0027,
+     "y": 0.0625,
+     "h": 0.5,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "water_tank",
+   "name": {
+    "de": "Regenwasser-Zisterne (Kellertank)",
+    "en": "Rainwater tank (cellar)"
+   },
+   "size": [
+    1.2,
+    1.2,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9375,
+     "color": "#4a6a5a",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.25,
+     "d": 0.25,
+     "y": 0.9375,
+     "h": 0.0625,
+     "color": "#1b1f27"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.25,
+     "z": 0.25,
+     "w": 0.0833,
+     "d": 0.0833,
+     "y": 0.9062,
+     "h": 0.0937,
+     "color": "#9aa3b0"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "server_cabinet_wall",
+   "name": {
+    "de": "Netzwerkschrank (Wand, 12 HE)",
+    "en": "Network cabinet (wall, 12U)"
+   },
+   "size": [
+    0.6,
+    0.45,
+    0.64
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#1b1f27",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.9333,
+     "d": 0.0067,
+     "y": 0.0469,
+     "h": 0.9062,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1111,
+     "w": 0.8,
+     "d": 0.7111,
+     "y": 0.1562,
+     "h": 0.0687,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1111,
+     "w": 0.8,
+     "d": 0.7111,
+     "y": 0.2812,
+     "h": 0.0687,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1111,
+     "w": 0.8,
+     "d": 0.7111,
+     "y": 0.4062,
+     "h": 0.0687,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1111,
+     "w": 0.8,
+     "d": 0.7111,
+     "y": 0.625,
+     "h": 0.0687,
+     "color": "#2a303c"
+    },
+    {
+     "shape": "box",
+     "x": -0.3,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.2333,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.1667,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.1,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": -0.0333,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0333,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.1,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.1667,
+     "z": 0.4667,
+     "w": 0.025,
+     "d": 0.0044,
+     "y": 0.2031,
+     "h": 0.0125,
+     "color": "#7fbf4a",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.4,
+   "electric": true
+  },
+  {
+   "id": "robot_window",
+   "name": {
+    "de": "Fensterputzroboter",
+    "en": "Window cleaning robot"
+   },
+   "size": [
+    0.28,
+    0.08,
+    0.28
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.2143,
+     "d": 0.125,
+     "y": 0.3929,
+     "h": 0.2143,
+     "color": "#37e0ff",
+     "axis": "z",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.2,
+   "electric": true
+  },
+  {
+   "id": "pet_feeder",
+   "name": {
+    "de": "Futterautomat",
+    "en": "Automatic pet feeder"
+   },
+   "size": [
+    0.22,
+    0.3,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1,
+     "w": 1,
+     "d": 0.8,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3333,
+     "w": 0.6364,
+     "d": 0.4667,
+     "y": 0,
+     "h": 0.1429,
+     "color": "#d8dde5"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1,
+     "w": 0.8182,
+     "d": 0.6667,
+     "y": 0.7143,
+     "h": 0.2286,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3,
+     "w": 0.2727,
+     "d": 0.0067,
+     "y": 0.8,
+     "h": 0.0286,
+     "color": "#37e0ff",
+     "glow": true
+    }
+   ],
+   "electric": true
+  }
+ ]
+}

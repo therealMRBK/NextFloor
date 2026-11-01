@@ -43,7 +43,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 | 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours – lights, doors, motion, energy. |
 | 🏡 **Household and garden** | Waste bins on pickup day, post in the mailbox, thirsty plants, pets that roam, robot vacuums on their lanes, sprinklers that water while their valve is open. |
 | 🔐 **Doors and windows** | Smart locks, lift-and-slide doors, sliding and top-hung windows, garage doors and gates that move, warnings for rain and for contacts that stop answering. |
-| 🛋️ **Furniture & vehicles** | 40 basic models and 26 packs with over 620 more, popular IKEA sizes, Tesla models in their paint colours. |
+| 🛋️ **Furniture & vehicles** | 41 basic models and 30 packs with over 800 more, popular IKEA sizes, Tesla models in their paint colours. |
 | ⚡ **Energy & weather** | Solar fields and power flow, rain, snow, fog, sun and moon, sunlight through the windows. |
 | 📺 **Media** | TV screens with cover and ambilight, speakers with their cover and controls. |
 | 🖥️ **Wall tablet ready** | Alerts for smoke, gas, water and open windows, your own sensors at the top, kiosk mode with night dimming, a light quality level for Fire tablets. |
@@ -59,7 +59,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 NextFloor is free, and it stays free. Not "free to try", not "free with a paid Pro", not "free until the next version": **free, for everyone, forever.** Every feature, every furniture pack and every update belongs to everyone the day it comes out.
 
 - **Nothing to buy, ever.** No Pro version, no paid modules, no packs sold one by one, no supporter pass that gets features first, no licence key, no shop. What others sell as add-ons – the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden – is simply part of NextFloor.
-- **New furniture all the time, for free.** 26 packs with over 620 models come with it, and new packs keep coming with the updates.
+- **New furniture all the time, for free.** 30 packs with over 800 models come with it, and new packs keep coming with the updates.
 - **Build your own furniture.** The [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) runs in your browser: build it, see it exactly as NextFloor draws it, and share it in the community store, where everyone installs it with one tap.
 - **Extend it yourself.** A [plugin system](https://github.com/therealMRBK/NextFloor/blob/main/docs/plugins.md) with a reviewed [plugin store](https://github.com/therealMRBK/NextFloor-Plugins): new device kinds, light animations, room cards – from anyone.
 - **Your data stays home.** No account, no cloud, no usage data sent anywhere.

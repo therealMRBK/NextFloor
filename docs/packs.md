@@ -15,7 +15,7 @@ Packs stehen danach in NextFloor unter **Erweiterungen → Community-Möbel** zu
 
 ## Mitgelieferte Packs
 
-26 Packs kommen mit der Integration (`custom_components/nextfloor/packs/nextfloor.*.json`) und sind
+30 Packs kommen mit der Integration (`custom_components/nextfloor/packs/nextfloor.*.json`) und sind
 immer da; Übersicht in der [Anleitung](anleitung.md#71-mitgelieferte-packs). Sie werden mit
 `python3 tools/build_packs.py` aus den Definitionen in `tools/` erzeugt (`build_packs.py` und die
 `area_*.py`-Module); nach einer Änderung dort das Skript laufen lassen, mit `python3 tools/check_packs.py`

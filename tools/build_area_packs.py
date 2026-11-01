@@ -2,7 +2,7 @@
 
 import importlib
 
-MODULES = ["area_living", "area_kitchen", "area_bath", "area_rooms2", "area_garden", "area_tech"]
+MODULES = ["area_living", "area_kitchen", "area_bath", "area_rooms2", "area_garden", "area_tech", "area_expansion"]
 
 
 def register(bp):

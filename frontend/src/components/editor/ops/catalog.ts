@@ -23,6 +23,8 @@ export const CATEGORIES = [
   "workshop",
   "vehicles",
   "building",
+  "seasonal",
+  "art",
   "decor",
 ] as const;
 
@@ -95,6 +97,18 @@ const BUILT_IN: Record<string, Category> = {
 
 // pack items by words in their id, checked in this order (the first hit wins)
 const RULES: [RegExp, Category][] = [
+  // the expansion packs, whose ids would otherwise land in a neighbour's category (a studio monitor is no office monitor)
+  [/xmas|advent|window_star|light_chain|pumpkin|easter|snowman|nativity/, "seasonal"],
+  [/^frame_|^canvas_|gallery_wall|wall_clock|mirror_round_wall|neon_sign|moss_wall/, "art"],
+  [/vinyl|guitar|digital_piano|drum_kit|dj_desk|studio_monitors/, "media"],
+  [/camera_|motion_sensor|leak_sensor|temp_sensor|air_quality|ha_green|zigbee|mini_pc|^ups$|poe_switch|voice_puck|video_doorbell|smart_lock|robot_window|laser_engraver|wall_tablet|^globe$/, "tech"],
+  [/ir_heater|instant_heater|oil_tank|water_tank|infrared_cabin/, "climate"],
+  [/ebike_charger/, "energy"],
+  [/espresso|grinder|air_fryer|bread_maker|water_bubbler|ice_maker|rice_cooker|kitchen_machine|pizza_oven_counter/, "appliances"],
+  [/wine_rack|dish_rack|fruit_bowl|open_shelf_kitchen/, "kitchen"],
+  [/clawfoot|urinal|cold_plunge/, "bath"],
+  [/fruit_bushes|bamboo|rose_bush|lavender|boxwood|palm|ficus|fiddle|cactus|olive|snake_plant|vase_tall|vegetable_bed|herb_spiral/, "plants"],
+  [/pond|fountain|water_feature|sandbox|beach_chair|wood_pile|bird_house|bird_bath|insect_hotel|compost|tool_shed|bike_garage|carport|swim_spa|^slide$|playhouse|football_goal|table_tennis|basketball|kamado|smoker|pizza_oven_garden|light_poles|daybed/, "garden"],
   [/lamp|pendant|light_pillar|light_bars|mood_spot|ceiling_panel|garden_spots|wall_light|light_cove|niche_led|shelf_led|monitor_light|workshop_light|painting_light|cabinet_light|moon_light|torch|lantern|ceiling_fan_light/, "lights"],
   [/cat_|dog_|pet_|litter|scratch|hamster|rabbit|bird_cage|small_animal|aquarium|terrarium/, "pets"],
   [/stairs|steps|landing|rail_|column|pilaster|beam|chimney|glass_wall|sliding_wall|half_wall|platform|niche_shelf|window_seat|divider_slats|gallery/, "building"],
@@ -129,11 +143,11 @@ export function categoryOf(entry: CatalogEntry): Category {
 
 // room names in German and English, and what belongs there besides lights (always offered)
 const ROOMS: [RegExp, Category[]][] = [
-  [/k(u|ü)che|kitchen|kochen/, ["kitchen", "appliances", "tables", "seating", "storage", "plants", "decor"]],
-  [/wohn|living|lounge|salon/, ["seating", "tables", "storage", "media", "plants", "decor", "climate", "tech"]],
-  [/\bess|dining/, ["tables", "seating", "storage", "plants", "decor", "media"]],
-  [/schlaf|bed|gast|guest/, ["beds", "storage", "seating", "tables", "decor", "plants", "climate", "media"]],
-  [/kind|kids|child|baby|spiel|play|nursery/, ["kids", "beds", "storage", "seating", "tables", "decor"]],
+  [/k(u|ü)che|kitchen|kochen/, ["kitchen", "appliances", "tables", "seating", "storage", "plants", "decor", "art", "seasonal"]],
+  [/wohn|living|lounge|salon/, ["seating", "tables", "storage", "media", "plants", "decor", "art", "seasonal", "climate", "tech"]],
+  [/\bess|dining/, ["tables", "seating", "storage", "plants", "decor", "art", "seasonal", "media"]],
+  [/schlaf|bed|gast|guest/, ["beds", "storage", "seating", "tables", "decor", "art", "seasonal", "plants", "climate", "media"]],
+  [/kind|kids|child|baby|spiel|play|nursery/, ["kids", "beds", "storage", "seating", "tables", "decor", "art", "seasonal"]],
   [/bad|bath|wc|toilet|dusch|shower|sauna/, ["bath", "appliances", "storage", "climate", "plants"]],
   [/b(u|ü)ro|office|arbeit|study|work/, ["office", "tech", "storage", "seating", "tables", "plants"]],
   [/kino|cinema|media|game|gaming|hifi/, ["media", "seating", "tables", "storage", "office"]],
@@ -141,8 +155,8 @@ const ROOMS: [RegExp, Category[]][] = [
   [/garage|carport|stellplatz|parking/, ["vehicles", "workshop", "energy", "storage", "garden"]],
   [/werkstatt|workshop|hobby|keller|cellar|basement|lager|storage/, ["workshop", "storage", "appliances", "energy", "climate", "fitness", "tech"]],
   [/hauswirtschaft|hwr|utility|laundry|wasch|technik|heiz|boiler/, ["appliances", "climate", "energy", "storage", "tech", "bath"]],
-  [/flur|diele|hall|entr|eingang|corridor|treppe|stair/, ["storage", "seating", "decor", "plants", "building"]],
-  [/garten|garden|terrass|terrace|balkon|balcony|patio|hof|yard|pool/, ["garden", "plants", "seating", "tables", "pets", "kids"]],
+  [/flur|diele|hall|entr|eingang|corridor|treppe|stair/, ["storage", "seating", "decor", "art", "seasonal", "plants", "building"]],
+  [/garten|garden|terrass|terrace|balkon|balcony|patio|hof|yard|pool/, ["garden", "plants", "seating", "tables", "pets", "kids", "seasonal"]],
 ];
 
 /** The categories that fit a room by its name; null when the name says nothing (then the whole library shows). */

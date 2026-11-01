@@ -322,6 +322,10 @@ const ENGLISH_NAMES: Record<string, string> = {
   a_kino: "Home cinema & hi-fi",
   a_smart: "Smart home & tech",
   a_haustechnik: "Utility & building services",
+  x_deko: "Living & decoration",
+  x_smart: "Smart home & tech 2",
+  x_kuechebad: "Kitchen & bath 2",
+  x_garten: "Garden & wellness",
 };
 
 /** The pack's name for the user's language: built-in packs are English outside German, other packs keep their own name. */
