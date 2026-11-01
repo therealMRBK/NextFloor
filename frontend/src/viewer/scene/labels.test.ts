@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { OrthographicCamera } from "three";
-import { LabelPlacer, centredAt, floorLabelPosition, floorShowsMarkers, leftAt, project, stackFloorLabels } from "./labels.ts";
+import { LabelPlacer, centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, leftAt, project, stackFloorLabels } from "./labels.ts";
 
 test("a point in front of the camera lands on the screen, one behind it is off", () => {
   const camera = new OrthographicCamera(-5, 5, 5, -5, 0.1, 100);
@@ -61,4 +61,11 @@ test("markers show only for a floor that is fully in view and not another floor"
   assert.equal(floorShowsMarkers({ to: 0.2, o: 0.2 }, false), false);
   assert.equal(floorShowsMarkers({ to: 1, o: 1 }, true), false);
   assert.equal(floorShowsMarkers({ to: 1, o: 0.5 }, false), false);
+});
+
+test("outdoor markers show wherever their floor is drawn and settled", () => {
+  assert.equal(floorShowsOutdoorMarkers({ to: 1, o: 1 }), true);
+  assert.equal(floorShowsOutdoorMarkers({ to: 0.22, o: 0.22 }), true, "a dimmed floor below the opened one");
+  assert.equal(floorShowsOutdoorMarkers({ to: 0, o: 0 }), false, "a hidden floor");
+  assert.equal(floorShowsOutdoorMarkers({ to: 1, o: 0.5 }), false, "still fading in");
 });

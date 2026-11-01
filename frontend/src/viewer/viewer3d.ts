@@ -46,7 +46,7 @@ import type { Building, Floor, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
-import { centredAt, floorLabelPosition, floorShowsMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
+import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
@@ -3020,9 +3020,12 @@ export class NextFloorViewer {
       if (!pin) continue;
       const fv = this.floorMap.get(marker.floorId);
       // device markers belong to the floor and room views; the house view only shows floor labels, except what a camera detects
-      // right now, which deserves a pin on the whole house too
+      // right now, which deserves a pin on the whole house too, and devices outside every room set to "always" (garden valves),
+      // which show wherever their floor is drawn
       const alert = marker.id.startsWith("detect:");
-      const shown = !!fv && (!house || alert) && floorShowsMarkers(fv, this.otherFloor(fv)) && marker.pin !== false;
+      const outdoor = !!marker.full && marker.roomId === null;
+      const floorOk = !!fv && (outdoor ? floorShowsOutdoorMarkers(fv) : (!house || alert) && floorShowsMarkers(fv, this.otherFloor(fv)));
+      const shown = !!fv && floorOk && marker.pin !== false;
       const spot = shown ? this.screenPoint([marker.x, fv.floor.elevation + fv.y + marker.y, marker.z]) : null;
       if (!spot || spot.off) {
         this.labelPlacer.place(pin, null);

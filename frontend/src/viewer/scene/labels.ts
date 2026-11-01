@@ -80,3 +80,11 @@ export function floorLabelPosition(corners: readonly { x: number; y: number }[],
 export function floorShowsMarkers(floor: { to: number; o: number }, otherFloor: boolean): boolean {
   return floor.to >= 0.99 && floor.o >= 0.9 && !otherFloor;
 }
+
+/**
+ * Whether outdoor markers set to "always" may show: their floor is drawn and has settled, in the house view and below an opened
+ * floor too (the garden belongs to no storey).
+ */
+export function floorShowsOutdoorMarkers(floor: { to: number; o: number }): boolean {
+  return floor.to > 0 && Math.abs(floor.o - floor.to) < 0.05;
+}
