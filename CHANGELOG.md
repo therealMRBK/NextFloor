@@ -10,6 +10,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Changed
 
+- **The room form warns when a room's ceiling lies above its floor height** (it can come from an import or a floor height lowered later): walls, windows and doors stop at the floor height, so a window above it was squeezed. Thanks to @jan74berlin ([#37](https://github.com/therealMRBK/NextFloor/issues/37)).
 - **The switches at the bottom of the 3D view take less room**: on a smaller window, a zoomed browser or a dashboard column they are drawn smaller, and in the panel the new ▾ button folds them into one "Switches" button (remembered per device). Thanks to @jan74berlin ([#38](https://github.com/therealMRBK/NextFloor/issues/38)).
 - **Garden devices set to "Always show" are visible from every view**: a device placed outside every room (irrigation valves, outdoor lights, a pool pump) whose marker is set to "Always show" now also shows in the house view ("All floors") and while another floor is opened, wherever its floor is drawn. Other markers keep to their floor as before. Thanks to @jan74berlin ([#33](https://github.com/therealMRBK/NextFloor/issues/33)).
 

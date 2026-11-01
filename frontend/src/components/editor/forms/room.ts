@@ -1,7 +1,7 @@
 // The side panel's room part: the list of rooms, and the form of one room with its corners, packages and spot grid.
 
 import { html, nothing, type TemplateResult } from "lit";
-import type { I18nKey } from "../../../i18n.ts";
+import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { bounds, DEFAULT_PAINT_INSIDE, FLOOR_MATERIALS, isAxisRect, polygonArea, type Floor, type FurnitureType, type Room } from "../../../model.ts";
 import { PACKAGES, type PackageId } from "../../../packages.ts";
 import { entityOptions } from "../entities.ts";
@@ -91,7 +91,10 @@ function ceilingField(host: EditorHost, room: Room, floor: Floor, actions: RoomA
   const set = (v: number) => actions.patch({ ceiling: v >= floor.height - 0.005 ? null : Math.max(1, Math.round(v * 1000) / 1000) });
   return html`${numberField(host, t("room_ceiling"), room.ceiling ?? floor.height, set, 0.01, 1)}
     ${room.ceiling != null ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => actions.patch({ ceiling: null })}>${t("height_auto")}</button>` : nothing}
-    ${hint(t("room_ceiling_hint"), "nf-wide")}`;
+    ${hint(t("room_ceiling_hint"), "nf-wide")}
+    ${room.ceiling != null && room.ceiling > floor.height + 0.005
+      ? html`<p class="nf-sub nf-warn nf-wide">${t("room_ceiling_above_floor", { ceiling: formatNumber(host.hass, room.ceiling, 2), floor: formatNumber(host.hass, floor.height, 2) })}</p>`
+      : nothing}`;
 }
 
 /** Announcements in the room: its speaker (automatic, chosen, or none) and a quiet time. */

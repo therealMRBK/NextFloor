@@ -1073,6 +1073,7 @@
   "fan_hint": "La luz es el kit de luz del ventilador (déjala vacía si no tiene). El ventilador se encuentra en la estancia o se elige aquí: en 3D las aspas giran tan rápido como funciona, su icono lo conmuta, deslizar arriba/abajo cambia la velocidad y una pulsación larga abre el menú rápido. La altura es lo que cuelga del techo (más = una barra más larga).",
   "room_ceiling": "Altura del techo",
   "room_ceiling_hint": "Para una estancia más baja que la planta: lámparas de techo, ventiladores, tiras LED y dispositivos de techo cuelgan desde aquí, y las paredes de la estancia tienen esta altura.",
+  "room_ceiling_above_floor": "El techo ({ceiling} m) está por encima de la altura de la planta ({floor} m). Paredes, ventanas y puertas terminan a la altura de la planta, así que una ventana por encima queda aplastada. Sube la altura de la planta y da a las estancias más bajas un techo propio.",
   "room_announce_speaker": "Altavoz para anuncios",
   "room_announce_quiet": "Hora de silencio para anuncios",
   "room_announce_hint": "Sin elegir, habla el altavoz colocado en la habitación; si no, un asistente de voz, un Echo o un altavoz de su área (nunca un televisor). En la hora de silencio, los anuncios a varias habitaciones la omiten; uno solo para ella llega igualmente.",

@@ -1073,6 +1073,7 @@
   "fan_hint": "La luce è il kit luce del ventilatore (lasciala vuota se non ce l'ha). Il ventilatore si trova nella stanza o si sceglie qui: in 3D le pale girano alla sua velocità, l'icona lo commuta, scorrere su/giù cambia la velocità, una pressione lunga apre il menu rapido. L'altezza è quanto pende dal soffitto (di più = un'asta più lunga).",
   "room_ceiling": "Altezza soffitto",
   "room_ceiling_hint": "Per una stanza più bassa del piano: plafoniere, ventilatori, strisce LED e dispositivi a soffitto pendono da qui, e le pareti della stanza sono alte così.",
+  "room_ceiling_above_floor": "Il soffitto ({ceiling} m) è più alto dell'altezza del piano ({floor} m). Pareti, finestre e porte finiscono all'altezza del piano, quindi una finestra più in alto viene schiacciata. Alza l'altezza del piano e dai alle stanze più basse un soffitto proprio.",
   "room_announce_speaker": "Altoparlante per gli annunci",
   "room_announce_quiet": "Ora di silenzio per gli annunci",
   "room_announce_hint": "Senza scelta parla l'altoparlante posizionato nella stanza, altrimenti un assistente vocale, un Echo o un altoparlante della sua area (mai un televisore). Nell'ora di silenzio gli annunci a più stanze la saltano; uno solo per lei arriva comunque.",

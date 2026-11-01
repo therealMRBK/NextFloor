@@ -1073,6 +1073,7 @@
   "fan_hint": "De lamp is de lichtkit van de ventilator (leeg laten als hij er geen heeft). De ventilator wordt in de ruimte gevonden of hier gekozen: in 3D draaien de bladen zo snel als hij draait, zijn pictogram schakelt hem, omhoog/omlaag vegen wijzigt de snelheid, lang drukken opent het snelmenu. De hoogte is hoe ver hij onder het plafond hangt (meer = een langere stang).",
   "room_ceiling": "Plafondhoogte",
   "room_ceiling_hint": "Voor een ruimte lager dan de verdieping: plafondlampen, ventilatoren, ledstrips en plafondapparaten hangen vanaf hier, en de muren van de ruimte zijn zo hoog.",
+  "room_ceiling_above_floor": "Het plafond ({ceiling} m) ligt boven de verdiepingshoogte ({floor} m). Muren, ramen en deuren stoppen op de verdiepingshoogte, dus een raam daarboven wordt platgedrukt. Verhoog de verdiepingshoogte en geef de lagere ruimtes een eigen plafond.",
   "room_announce_speaker": "Luidspreker voor omroepen",
   "room_announce_quiet": "Stille tijd voor omroepen",
   "room_announce_hint": "Zonder keuze spreekt de luidspreker die in de kamer staat, anders een spraakassistent, een Echo of een luidspreker van de ruimte (nooit een tv). In de stille tijd slaan omroepen naar meerdere kamers deze kamer over; een omroep alleen voor deze kamer komt wel aan.",
