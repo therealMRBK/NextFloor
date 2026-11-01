@@ -630,6 +630,8 @@ SETTINGS_SCHEMA = vol.Schema(
         # which weather effects the 3D view shows (None = all but fog)
         # warning for a window open while it rains
         vol.Optional("rain_warning", default=True): bool,
+        # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
+        vol.Optional("contact_warning"): bool,
         # sunlight through the windows as patches on the floor
         vol.Optional("sun_patches", default=True): bool,
         vol.Optional("weather_effects", default=None): vol.Any(

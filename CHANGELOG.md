@@ -7,6 +7,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 ### Added
 
 - **Opening angle for doors**: every door has an *Opening angle* (default, 15° to 180°). With a contact the leaf opens that far as soon as it reports open; without one it stands that far open instead of half open. A door that is only assumed to stand open no longer glows as open. *Default* keeps everything as it was.
+- **Warning for contacts that stop answering** (off by default, Editor → Settings): when a door or window contact has been unavailable for 10 minutes (an empty battery, out of radio reach), a note in the warning bar names it, because the window then looks shut in 3D although nobody knows. It is a quiet note: the room does not pulse and the view does not jump to it. A restart of Home Assistant does not warn.
 
 ## 0.15.1
 

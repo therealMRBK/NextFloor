@@ -1,5 +1,6 @@
 // Warnings in the 3D view: smoke, gas, carbon monoxide and leak sensors of a room, an alarm panel that
-// went off, a power outage, and a window left open in the rain. A room with a warning pulses in the warning's colour.
+// went off, a power outage, a window left open in the rain, and a door or window contact that stopped answering.
+// A room with a warning pulses in the warning's colour.
 
 import { areaEntities, entityName, openingState, type OpeningEntities } from "./devices.ts";
 import { translate } from "./i18n.ts";
@@ -7,7 +8,7 @@ import type { Building, Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 import { weatherEntity } from "./weather.ts";
 
-export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage";
+export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage" | "contact_lost";
 
 export interface Alert {
   kind: AlertKind;
@@ -26,7 +27,15 @@ export interface AlertSources {
   rain: string | null;
   /** A sensor that tells a power outage (grid gone). */
   outage: string | null;
+  /** The contacts of doors and windows, watched for going unavailable (empty unless that warning is on). */
+  contacts?: { floorId: string; roomId: string; entity: string }[];
 }
+
+/** Warnings that only show in the banner: the room does not pulse and the view does not jump to it. */
+export const QUIET_ALERTS: ReadonlySet<AlertKind> = new Set<AlertKind>(["contact_lost"]);
+
+/** How long a contact has to be unavailable before it warns: a restart of Home Assistant or a short radio gap does not. */
+export const CONTACT_GRACE_MS = 10 * 60 * 1000;
 
 /** Weather conditions that wet a window. */
 export const RAIN_STATES = new Set(["rainy", "pouring", "lightning-rainy", "hail", "snowy-rainy"]);
@@ -44,8 +53,25 @@ const warningOf = (hass: HomeAssistant, entityId: string): AlertKind | undefined
   return SENSOR_WARNING.get(String(hass.states[entityId]?.attributes.device_class));
 };
 
+/** The contact and tilt sensors of every door, window and garage door, each once. */
+function openingContacts(building: Building, links: Map<string, OpeningEntities>): NonNullable<AlertSources["contacts"]> {
+  const seen = new Set<string>();
+  const found: NonNullable<AlertSources["contacts"]> = [];
+  for (const floor of building.floors) {
+    for (const o of floor.openings) {
+      const link = links.get(o.id);
+      for (const entity of link ? [link.contact, link.contact2, link.tilt, link.tilt2] : []) {
+        if (!entity || seen.has(entity)) continue;
+        seen.add(entity);
+        found.push({ floorId: floor.id, roomId: o.room_id, entity });
+      }
+    }
+  }
+  return found;
+}
+
 /** Warning sensors per room, the alarm panels, and the weather entity (none when the rain warning is off). */
-export function alertSources(hass: HomeAssistant, building: Building, weatherId?: string | null): AlertSources {
+export function alertSources(hass: HomeAssistant, building: Building, weatherId?: string | null, links?: Map<string, OpeningEntities>): AlertSources {
   const rooms: AlertSources["rooms"] = [];
   for (const floor of building.floors) {
     for (const room of floor.rooms) {
@@ -61,6 +87,7 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
     weather: rainWarningOn ? weatherEntity(hass, weatherId ?? building.settings.weather_entity) : null,
     rain: rainWarningOn && rain && rain !== "none" ? rain : null,
     outage: building.settings.outage_sensor && building.settings.outage_sensor !== "none" ? building.settings.outage_sensor : null,
+    contacts: building.settings.contact_warning && links ? openingContacts(building, links) : [],
   };
 }
 
@@ -68,6 +95,7 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
 export function alertEntities(sources: AlertSources): string[] {
   const ids = sources.rooms.flatMap((r) => r.sensors).concat(sources.alarms);
   for (const id of [sources.weather, sources.rain, sources.outage]) if (id) ids.push(id);
+  for (const c of sources.contacts ?? []) ids.push(c.entity);
   return ids;
 }
 
@@ -141,10 +169,27 @@ function alarmWarnings(hass: HomeAssistant, sources: AlertSources): Alert[] {
   return found;
 }
 
-/** The warnings that are active now: room sensors, then windows in the rain, then house-wide alarms and a power outage. */
-export function findAlerts(hass: HomeAssistant, building: Building, sources: AlertSources, links: Map<string, OpeningEntities>): Alert[] {
+/** A contact that has been unavailable for longer than the grace time (a deleted entity does not warn, it is just gone). */
+export function contactLost(hass: HomeAssistant, entity: string, now: number): boolean {
+  const st = hass.states[entity];
+  if (st?.state !== "unavailable") return false;
+  const since = Date.parse(st.last_changed ?? "");
+  return !Number.isFinite(since) || now - since >= CONTACT_GRACE_MS;
+}
+
+/** Contacts that went unavailable but are still within the grace time: the view looks again once it has passed. */
+export function contactsPending(hass: HomeAssistant, sources: AlertSources): boolean {
+  return (sources.contacts ?? []).some((c) => hass.states[c.entity]?.state === "unavailable");
+}
+
+function contactWarnings(hass: HomeAssistant, sources: AlertSources, now: number): Alert[] {
+  return (sources.contacts ?? []).filter((c) => contactLost(hass, c.entity, now)).map((c) => ({ kind: "contact_lost", entity: c.entity, roomId: c.roomId, floorId: c.floorId }));
+}
+
+/** The warnings that are active now: room sensors, then windows in the rain, then house-wide alarms and a power outage, then lost contacts. */
+export function findAlerts(hass: HomeAssistant, building: Building, sources: AlertSources, links: Map<string, OpeningEntities>, now = Date.now()): Alert[] {
   const outage: Alert[] = sources.outage && isPowerOut(hass, sources.outage) ? [{ kind: "power_outage", entity: sources.outage, roomId: null, floorId: null }] : [];
-  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources), ...outage];
+  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources), ...outage, ...contactWarnings(hass, sources, now)];
 }
 
 const PULSE: Record<AlertKind, [number, number, number]> = {
@@ -156,6 +201,7 @@ const PULSE: Record<AlertKind, [number, number, number]> = {
   window_rain: [0.35, 0.72, 1],
   alarm_pending: [1, 0.62, 0.2],
   power_outage: [1, 0.62, 0.2],
+  contact_lost: [1, 0.62, 0.2],
 };
 
 /** The colour a room pulses in (channels 0..1). */

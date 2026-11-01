@@ -49,7 +49,7 @@ import { ownTaps } from "./view3d/own-taps.ts";
 import { lightAnimation, lightEffectSource } from "../light-effects.ts";
 import type { PlacementInfo } from "../plugins/api.ts";
 import { onPluginsChanged, pluginTap } from "../plugins/registry.ts";
-import { alertColor, alertSources, alertText, findAlerts, type Alert, type AlertSources } from "../alerts.ts";
+import { alertColor, alertSources, alertText, contactsPending, findAlerts, QUIET_ALERTS, type Alert, type AlertSources } from "../alerts.ts";
 import { iconPath, iconSvg, mdiIcon } from "../icons.ts";
 import { deviceSensors, energySummary, findConsumers, readPower, subMeterIds, subMeterLabel, type Consumer, type EnergySummary } from "../energy.ts";
 import { mapCredit, mapShown } from "../map-geo.ts";
@@ -296,6 +296,8 @@ export class NfView3d extends LitElement {
   private declare _alerts: Alert[];
   private alertSrc: AlertSources | null = null;
   private alertTimer: ReturnType<typeof setInterval> | undefined;
+  /** Looks again at contacts that went unavailable, until their grace time has passed. */
+  private contactTimer: ReturnType<typeof setInterval> | undefined;
   private seenAlerts = new Set<string>();
   /** A room briefly lit up after a double tap switched its lights. */
   private roomFlash: { roomId: string; until: number } | null = null;
@@ -468,6 +470,8 @@ export class NfView3d extends LitElement {
     this.resizeObs = null;
     clearInterval(this.alertTimer);
     this.alertTimer = undefined;
+    clearInterval(this.contactTimer);
+    this.contactTimer = undefined;
     clearInterval(this.clockTimer);
     this.clockTimer = undefined;
     clearInterval(this.travelTimer);
@@ -653,7 +657,7 @@ export class NfView3d extends LitElement {
       this.furnitureLinks = furnitureEntities(hass, b.floors);
       this.linkedRegistry = hass.entities;
       this.findIndex = null;
-      this.alertSrc = this.alerts ? alertSources(hass, b, this.weatherEntityId) : null;
+      this.alertSrc = this.alerts ? alertSources(hass, b, this.weatherEntityId, this.openingLinks) : null;
       this.watched = watchedEntities({
         hass,
         building: b,
@@ -704,6 +708,7 @@ export class NfView3d extends LitElement {
     const openingStates = new Map([...this.openingLinks!].map(([id, e]) => [id, openingState(hass, e, types.get(id))]));
     v.setOpeningStates(openingStates);
     this.setAlerts(this.alertSrc ? findAlerts(hass, b, this.alertSrc, this.openingLinks!) : []);
+    this.watchLostContacts(hass);
     // the floor pictures follow lamps and blinds (not sensors), at most every few seconds
     const lampSig = [...deviceMarkers, ...furniture.markers].map((m) => `${m.id}:${m.glow ? `${m.glow.level.toFixed(1)}/${m.glow.color.map((c) => c.toFixed(1)).join("/")}` : 0}`).join(";") + "|" + [...openingStates].map(([id, o]) => `${id}:${o.open}:${o.cover === null ? "-" : o.cover.toFixed(1)}`).join(";");
     if (lampSig !== this.thumbSig) {
@@ -765,14 +770,33 @@ export class NfView3d extends LitElement {
     if (JSON.stringify(energy) !== JSON.stringify(this._energy)) this._energy = energy;
   }
 
+  /**
+   * A contact that went unavailable warns only after the grace time, which no state change marks: while one is
+   * unavailable, look again every minute.
+   */
+  private watchLostContacts(hass: HomeAssistant): void {
+    const waiting = !!this.alertSrc && !this._travel && contactsPending(hass, this.alertSrc);
+    if (waiting && !this.contactTimer)
+      this.contactTimer = setInterval(() => {
+        const b = this.building;
+        if (this.alertSrc && b && this.hass && this.openingLinks && !this._travel) this.setAlerts(findAlerts(this.hass, b, this.alertSrc, this.openingLinks));
+      }, 60_000);
+    if (!waiting && this.contactTimer) {
+      clearInterval(this.contactTimer);
+      this.contactTimer = undefined;
+    }
+  }
+
   /** New warnings start the pulse (and a jump to the room when wanted); none stops it. */
   private setAlerts(alerts: Alert[]): void {
     const keys = alerts.map((a) => `${a.kind}:${a.entity}`);
-    const fresh = alerts.filter((_, i) => !this.seenAlerts.has(keys[i]));
+    // quiet warnings (a contact that stopped answering) only show in the banner: no pulse, no jump
+    const fresh = alerts.filter((a, i) => !this.seenAlerts.has(keys[i]) && !QUIET_ALERTS.has(a.kind));
     this.seenAlerts = new Set(keys);
     if (keys.join() !== this._alerts.map((a) => `${a.kind}:${a.entity}`).join()) this._alerts = alerts;
-    if (alerts.length && !this.alertTimer) this.alertTimer = setInterval(() => !document.hidden && this.applyTint(), this._low ? 200 : 100);
-    if (!alerts.length && this.alertTimer) {
+    const pulsing = alerts.some((a) => !QUIET_ALERTS.has(a.kind));
+    if (pulsing && !this.alertTimer) this.alertTimer = setInterval(() => !document.hidden && this.applyTint(), this._low ? 200 : 100);
+    if (!pulsing && this.alertTimer) {
       clearInterval(this.alertTimer);
       this.alertTimer = undefined;
     }
@@ -861,6 +885,7 @@ export class NfView3d extends LitElement {
       tint ??= new Map();
       const k = 0.55 + 0.45 * Math.sin(performance.now() / 160);
       for (const a of this._alerts) {
+        if (QUIET_ALERTS.has(a.kind)) continue;
         const c = alertColor(a.kind).map((x) => x * k) as [number, number, number];
         if (a.roomId) tint.set(a.roomId, c);
         else for (const f of b.floors) for (const r of f.rooms) tint.set(r.id, c);
@@ -2146,6 +2171,12 @@ export class NfView3d extends LitElement {
       .nf-alert-alarm_pending {
         border-left-color: #ffb547;
         box-shadow: 0 0 18px rgba(255, 181, 71, 0.35);
+      }
+      /* a contact that stopped answering is a chore, not an emergency: no glow, no pulse */
+      .nf-alert-contact_lost {
+        border-left-color: #ffb547;
+        box-shadow: none;
+        animation: none;
       }
       .nf-alert-more {
         align-self: center;

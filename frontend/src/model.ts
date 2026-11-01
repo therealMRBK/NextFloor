@@ -531,6 +531,8 @@ export interface BuildingSettings {
   rain_sensor?: string | null;
   /** A sensor that tells a power outage: a warning for the whole house while the grid is gone. */
   outage_sensor?: string | null;
+  /** Warn when a door or window contact has been unavailable for 10 minutes (empty battery, out of reach); default off. */
+  contact_warning?: boolean;
   /** An own background behind the house instead of the look's sky: a colour and/or a picture (/local/… or https), dimmed. */
   backdrop?: { color?: string | null; image?: string | null; dim?: number | null } | null;
   /** Plugin modules to load (Extensions page); see docs/plugins.md. */

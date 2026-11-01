@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { alertColor, alertEntities, alertSources, alertText, findAlerts, isPowerOut, RAIN_STATES } from "./alerts.ts";
+import { alertColor, alertEntities, alertSources, alertText, CONTACT_GRACE_MS, contactsPending, findAlerts, isPowerOut, QUIET_ALERTS, RAIN_STATES } from "./alerts.ts";
 import type { OpeningEntities } from "./devices.ts";
 import { emptyBuilding, newFloor, type Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
@@ -151,4 +151,35 @@ test("a power outage warns for the whole house, whatever kind of sensor tells it
     const found = findAlerts(hass, building, alertSources(hass, building), links);
     assert.equal(found.some((a) => a.kind === "power_outage" && a.roomId === null), out);
   }
+});
+
+test("a contact that stays unavailable warns after the grace time, only when switched on, and quietly", () => {
+  const { hass, building, links } = house();
+  const now = Date.parse("2026-11-01T12:00:00Z");
+  const lost = (minutes: number) => {
+    hass.states["binary_sensor.casement"] = { ...hass.states["binary_sensor.casement"], state: "unavailable", last_changed: new Date(now - minutes * 60_000).toISOString() };
+  };
+  // off by default: not even watched
+  assert.deepEqual(alertSources(hass, building, null, links).contacts, []);
+  building.settings.contact_warning = true;
+  const sources = alertSources(hass, building, null, links);
+  assert.deepEqual(sources.contacts, [{ floorId: "g", roomId: "lounge", entity: "binary_sensor.casement" }]);
+  assert.ok(alertEntities(sources).includes("binary_sensor.casement"));
+  lost(3);
+  assert.equal(contactsPending(hass, sources), true);
+  assert.deepEqual(findAlerts(hass, building, sources, links, now), []);
+  lost(CONTACT_GRACE_MS / 60_000);
+  assert.deepEqual(findAlerts(hass, building, sources, links, now), [{ kind: "contact_lost", entity: "binary_sensor.casement", roomId: "lounge", floorId: "g" }]);
+  assert.ok(QUIET_ALERTS.has("contact_lost"));
+  set(hass, "binary_sensor.casement", "off");
+  assert.equal(contactsPending(hass, sources), false);
+  assert.deepEqual(findAlerts(hass, building, sources, links, now), []);
+});
+
+test("a contact shared by two openings is watched once", () => {
+  const { hass, building, links } = house();
+  building.settings.contact_warning = true;
+  building.floors[0].openings.push({ ...building.floors[0].openings[0], id: "w2", offset: 3 });
+  links.set("w2", { cover: null, contact: "binary_sensor.casement", tilt: null });
+  assert.equal(alertSources(hass, building, null, links).contacts!.length, 1);
 });
