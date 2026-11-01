@@ -217,6 +217,13 @@ export class NextFloorCardEditor extends LitElement {
         </label>
         ${choice(f, "walls", "card_walls", [["auto", "walls_auto"], ["cut", "walls_cut"], ["slope", "walls_slope"]], v.walls)}
         ${switchOption(f, "solid_walls", "card_solid_walls")}
+        <label class="field" title=${f.t("glass_walls_hint")}
+          >${f.t("glass_walls")} (${this._config.glass_walls ?? 20} %)
+          <input type="range" min="0" max="100" step="5" .value=${String(this._config.glass_walls ?? 20)} @change=${(e: Event) => {
+            const value = Number((e.target as HTMLInputElement).value);
+            f.set("glass_walls", value === 20 ? undefined : value);
+          }} />
+        </label>
         ${choice(f, "quality", "quality", [["auto", "quality_auto"], ["low", "quality_low"], ["high", "quality_high"]], v.quality)}
         ${choice(f, "floor_stack", "card_floor_stack", [["dim", "floor_stack_dim"], ["stacked", "floor_stack_stacked"], ["single", "floor_stack_single"]], v.floor_stack)}
       </div>

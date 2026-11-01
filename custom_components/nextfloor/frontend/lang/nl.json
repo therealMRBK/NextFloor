@@ -1089,6 +1089,8 @@
   "clock_top_right": "Rechtsboven",
   "clock_bottom_left": "Linksonder",
   "clock_bottom_right": "Rechtsonder",
+  "glass_walls": "Glazen wanden",
+  "glass_walls_hint": "Hoe dekkend de wanden zijn waardoor je in de kamers kijkt: links bijna onzichtbaar, rechts ondoorzichtig. Voor dit scherm.",
   "screen_name": "Naam van dit scherm",
   "screen_name_hint": "Omroepen verschijnen op elk open NextFloor-scherm. Met een naam (bijv. ‘Gang’) kan een omroep alleen naar dit scherm gaan. Zonder vinkje blijft dit scherm stil.",
   "announce_on": "Omroepen op dit scherm aan",

@@ -1089,6 +1089,8 @@
   "clock_top_right": "Prawy górny",
   "clock_bottom_left": "Lewy dolny",
   "clock_bottom_right": "Prawy dolny",
+  "glass_walls": "Szklane ściany",
+  "glass_walls_hint": "Jak bardzo kryjące są ściany, przez które widać pomieszczenia: w lewo prawie niewidoczne, w prawo nieprzezroczyste. Dla tego ekranu.",
   "screen_name": "Nazwa tego ekranu",
   "screen_name_hint": "Komunikaty pojawiają się na każdym otwartym ekranie NextFloor. Z nazwą (np. „Korytarz”) komunikat może trafić tylko na ten ekran. Bez zaznaczenia ten ekran milczy.",
   "announce_on": "Komunikaty na tym ekranie włączone",

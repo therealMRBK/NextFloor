@@ -312,6 +312,7 @@ export class NextFloorCard extends LitElement {
       .alertJump=${!!c?.alert_jump}
       .announcements=${c?.announcements !== false && !screenMuted()}
       .sensorBar=${c?.sensor_bar !== false}
+      .glassWalls=${typeof c?.glass_walls === "number" ? Math.min(100, Math.max(0, c.glass_walls)) : null}
       .screenName=${c?.screen_name ?? screenName()}
       .scenes=${c?.scenes !== false}
       .clean=${this._clean}

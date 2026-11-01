@@ -1089,6 +1089,8 @@
   "clock_top_right": "In alto a destra",
   "clock_bottom_left": "In basso a sinistra",
   "clock_bottom_right": "In basso a destra",
+  "glass_walls": "Pareti di vetro",
+  "glass_walls_hint": "Quanto sono coprenti le pareti attraverso cui si guardano le stanze: a sinistra quasi invisibili, a destra opache. Per questo schermo.",
   "screen_name": "Nome di questo schermo",
   "screen_name_hint": "Gli annunci compaiono su ogni schermo NextFloor aperto. Con un nome (es. «Corridoio») un annuncio può andare solo a questo schermo. Senza spunta, questo schermo resta muto.",
   "announce_on": "Annunci attivi su questo schermo",

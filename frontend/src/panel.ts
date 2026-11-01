@@ -225,6 +225,10 @@ export class NextFloorPanel extends LitElement {
             ${(["none", "top_left", "top_right", "bottom_left", "bottom_right"] as const).map((c) => html`<option value=${c} ?selected=${p.clock === c}>${this.t(`clock_${c}`)}</option>`)}
           </select>
         </label>
+        <label class="nf-seg nf-glass-pick" title=${this.t("glass_walls_hint")}
+          >${this.t("glass_walls")}
+          <input type="range" min="0" max="100" step="5" .value=${String(p.glassWalls)} aria-label=${this.t("glass_walls")} @input=${(e: Event) => this.setPref("glassWalls", Number((e.target as HTMLInputElement).value))} />
+        </label>
         <details class="nf-seg nf-screen-pick">
           <summary title=${this.t(p.announceMuted ? "announce_muted" : "announce_on")} aria-label=${this.t(p.announceMuted ? "announce_muted" : "announce_on")}>${p.announceMuted ? "🔇" : "📢"}</summary>
           <div class="nf-screen-menu">
@@ -434,6 +438,7 @@ export class NextFloorPanel extends LitElement {
           .theme=${lookNow(p.theme, this.hass?.states["sun.sun"]?.state)}
           .clock=${p.clock === "none" ? null : p.clock}
           .announcements=${!p.announceMuted}
+          .glassWalls=${p.glassWalls}
           .screenName=${p.screenName || null}
           .lockButton=${true}
           .walkButton=${true}

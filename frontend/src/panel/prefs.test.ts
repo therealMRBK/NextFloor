@@ -11,7 +11,7 @@ test("nothing stored gives the defaults", () => {
   const prefs = new PrefStore(memory()).load();
   assert.deepEqual(prefs, {
     explode: true, keepRoof: false, solidWalls: false, quality: "auto", stats: false, markers: "important", heat: "none", theme: "neon", accent: null,
-    floorStack: "dim", roomNames: true, clean: false, navWrap: false, weather: true, clock: "none", screenName: "", announceMuted: false,
+    floorStack: "dim", roomNames: true, clean: false, navWrap: false, weather: true, clock: "none", screenName: "", announceMuted: false, glassWalls: 20,
   });
 });
 
@@ -85,4 +85,13 @@ test("a storage that is missing or throws never breaks anything", () => {
     assert.doesNotThrow(() => store.save("theme", "day"));
     assert.equal(store.load().theme, "neon");
   }
+});
+
+test("the glass walls' opacity is kept in whole percent between 0 and 100", () => {
+  const storage = memory();
+  new PrefStore(storage).save("glassWalls", 135);
+  assert.equal(new PrefStore(storage).load().glassWalls, 100);
+  new PrefStore(storage).save("glassWalls", 0);
+  assert.equal(new PrefStore(storage).load().glassWalls, 0);
+  assert.equal(new PrefStore(memory({ "nextfloor.glass_walls": "abc" })).load().glassWalls, 20);
 });

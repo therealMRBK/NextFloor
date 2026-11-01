@@ -25,6 +25,8 @@ export interface DevicePrefs {
   weather: boolean;
   /** A clock in a corner of the 3D view, or none. */
   clock: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
+  /** How opaque the see-through walls are, in % (20: faint glass). */
+  glassWalls: number;
   /** The name of this screen for announcements meant for some screens only ("" = none). */
   screenName: string;
   /** Announcements are not shown or spoken on this device. */
@@ -73,6 +75,12 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   weather: flag("weather", true),
   screenName: { name: "screen_name", fallback: "", read: (raw) => raw.slice(0, 60), write: (value) => value.trim().slice(0, 60) },
   announceMuted: flag("announce_muted", false),
+  glassWalls: {
+    name: "glass_walls",
+    fallback: 20,
+    read: (raw) => (/^\d{1,3}$/.test(raw) ? Math.min(100, Number(raw)) : 20),
+    write: (value) => String(Math.round(Math.min(100, Math.max(0, value)))),
+  },
 };
 
 /** This device's screen name and mute switch, also for cards (which have no preferences of their own). */

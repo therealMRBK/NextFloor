@@ -1089,6 +1089,8 @@
   "clock_top_right": "Uppe till höger",
   "clock_bottom_left": "Nere till vänster",
   "clock_bottom_right": "Nere till höger",
+  "glass_walls": "Glasväggar",
+  "glass_walls_hint": "Hur täckande väggarna är som man ser in i rummen genom: till vänster nästan osynliga, till höger ogenomskinliga. För denna skärm.",
   "screen_name": "Namn på denna skärm",
   "screen_name_hint": "Utrop visas på varje öppen NextFloor-skärm. Med ett namn (t.ex. ”Hall”) kan ett utrop gå bara till denna skärm. Utan bock förblir denna skärm tyst.",
   "announce_on": "Utrop på denna skärm på",

@@ -24,6 +24,8 @@ export interface FoldMasks {
    */
   slope?: { value: Vector4 };
   slopeY?: { value: Vector2 };
+  /** How opaque glass walls are (0 … 1, default 0.2); one object shared by every floor, so one setting changes them all. */
+  glassAlpha?: { value: number };
 }
 
 export type FoldRole = "plain" | "solid" | "glass";
@@ -34,6 +36,7 @@ export function makeFoldable<T extends Material>(material: T, masks: FoldMasks, 
     shader.uniforms.uGlass = masks.glass;
     shader.uniforms.uSlope = masks.slope ?? { value: { x: 0, y: 0, z: 0, w: 0 } };
     shader.uniforms.uSlopeY = masks.slopeY ?? { value: { x: 0, y: 0 } };
+    shader.uniforms.uGlassAlpha = masks.glassAlpha ?? { value: 0.2 };
     shader.vertexShader = shader.vertexShader
       .replace("#include <common>", "#include <common>\nattribute float fold;\nuniform int uStanding;\nuniform int uGlass;\nuniform vec4 uSlope;\nuniform vec2 uSlopeY;\nvarying float vNfPaint;")
       .replace(
@@ -65,7 +68,7 @@ export function makeFoldable<T extends Material>(material: T, masks: FoldMasks, 
         if (!nfShow) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
       }`,
     );
-    shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>\nvarying float vNfPaint;");
+    shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>\nvarying float vNfPaint;\nuniform float uGlassAlpha;");
     if (role !== "glass") {
       // painted walls: their own colour, after the look has mapped everything else (see theme.ts)
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -77,12 +80,12 @@ export function makeFoldable<T extends Material>(material: T, masks: FoldMasks, 
       );
     }
     if (role === "glass") {
-      // dark walls become a faint cyan-tinted glass
+      // dark walls become a faint cyan-tinted glass, as opaque as the setting says
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <color_fragment>",
         `#include <color_fragment>
         diffuseColor.rgb = diffuseColor.rgb * 1.7 + vec3(0.015, 0.05, 0.075);
-        diffuseColor.a *= 0.2;`,
+        diffuseColor.a *= uGlassAlpha;`,
       );
     }
   };

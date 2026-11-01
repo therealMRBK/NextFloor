@@ -1089,6 +1089,8 @@
   "clock_top_right": "Em cima à direita",
   "clock_bottom_left": "Em baixo à esquerda",
   "clock_bottom_right": "Em baixo à direita",
+  "glass_walls": "Paredes de vidro",
+  "glass_walls_hint": "Quão opacas são as paredes através das quais se veem as divisões: à esquerda quase invisíveis, à direita opacas. Para este ecrã.",
   "screen_name": "Nome deste ecrã",
   "screen_name_hint": "Os anúncios aparecem em cada ecrã NextFloor aberto. Com um nome (p. ex. «Corredor»), um anúncio pode ir só para este ecrã. Sem visto, este ecrã fica em silêncio.",
   "announce_on": "Anúncios ativos neste ecrã",

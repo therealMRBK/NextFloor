@@ -1047,6 +1047,8 @@
  "clock_top_right": "En haut à droite",
  "clock_bottom_left": "En bas à gauche",
  "clock_bottom_right": "En bas à droite",
+ "glass_walls": "Murs vitrés",
+ "glass_walls_hint": "Opacité des murs à travers lesquels on voit les pièces : à gauche presque invisibles, à droite opaques. Pour cet écran.",
  "screen_name": "Nom de cet écran",
  "screen_name_hint": "Les annonces s'affichent sur chaque écran NextFloor ouvert. Avec un nom (p. ex. « Entrée »), une annonce peut viser cet écran seul. Décoché, cet écran reste muet.",
  "announce_on": "Annonces activées sur cet écran",

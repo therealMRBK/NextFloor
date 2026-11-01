@@ -224,6 +224,17 @@ export const panelStyles = css`
   .nf-clock-pick option {
     color: #111;
   }
+  .nf-glass-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+  .nf-glass-pick input {
+    width: 80px;
+    accent-color: var(--nf-accent);
+  }
   .nf-screen-pick {
     position: relative;
     display: inline-flex;

@@ -521,6 +521,8 @@ export class NextFloorViewer {
   /** Sound rings around playing speakers and multiroom threads (live-sound.ts). */
   private readonly soundLayer: SoundLayer;
   private readonly waterLayer: WaterLayer;
+  /** How opaque the glass walls are, shared by every floor's materials (0.2: faint glass). */
+  private readonly glassAlpha = { value: 0.2 };
   /** Pictures on TVs that play, with an ambilight behind (live-screens.ts). */
   private readonly screenLayer: ScreenLayer;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
@@ -995,6 +997,14 @@ export class NextFloorViewer {
   /** Speakers that play (rings) and the speakers that play together (threads). */
   setLiveSound(spots: SoundSpot[], groups: [PlanPoint, PlanPoint][]): void {
     this.soundLayer.set(spots, groups);
+    this.invalidate();
+  }
+
+  /** How opaque the see-through walls are: 0 … 1 (0.2 is the usual faint glass). */
+  setGlassWalls(alpha: number): void {
+    const value = Math.min(1, Math.max(0, alpha));
+    if (value === this.glassAlpha.value) return;
+    this.glassAlpha.value = value;
     this.invalidate();
   }
 
@@ -1500,7 +1510,7 @@ export class NextFloorViewer {
           }
         : undefined;
       const geo = buildFloorGeometry(withVehicles(floor, this.parked), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint());
-      const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() } };
+      const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();
       const floorMesh = new Mesh(geo.floor, materials.floor);

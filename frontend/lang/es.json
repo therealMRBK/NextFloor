@@ -1089,6 +1089,8 @@
   "clock_top_right": "Arriba a la derecha",
   "clock_bottom_left": "Abajo a la izquierda",
   "clock_bottom_right": "Abajo a la derecha",
+  "glass_walls": "Paredes de cristal",
+  "glass_walls_hint": "Opacidad de las paredes a través de las que se ven las habitaciones: a la izquierda casi invisibles, a la derecha opacas. Para esta pantalla.",
   "screen_name": "Nombre de esta pantalla",
   "screen_name_hint": "Los anuncios aparecen en cada pantalla de NextFloor abierta. Con un nombre (p. ej. «Pasillo»), un anuncio puede ir solo a esta pantalla. Sin marcar, esta pantalla queda en silencio.",
   "announce_on": "Anuncios activados en esta pantalla",
