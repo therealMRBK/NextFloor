@@ -2646,7 +2646,8 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         font-size: 10.5px;
         font-weight: 600;
         line-height: 1.35;
-        color: var(--nf-text);
+        /* a fixed dark plate, so a fixed light text: the theme text colour can be dark (day themes, pins that are on) */
+        color: #f2f5fb;
         background: rgba(10, 16, 32, 0.72);
         pointer-events: none;
       }
