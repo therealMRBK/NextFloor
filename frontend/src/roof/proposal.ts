@@ -80,10 +80,21 @@ export function wallTopUnder(b: Building, x0: number, z0: number, x1: number, z1
   return tops.length ? Math.max(...tops) : null;
 }
 
-/** The floor a roof section sits on: the highest floor with rooms that starts below the section's base. */
-export function sectionFloor(b: Building, section: Pick<RoofSection, "base">): Floor | undefined {
+/**
+ * The floor a roof section sits on: the highest floor that starts below the section's base and has rooms under it. A floor
+ * with no room under the section (a house beside a garage on a slope) does not count; without any, the highest floor below.
+ */
+export function sectionFloor(b: Building, section: Pick<RoofSection, "base"> & Partial<Pick<RoofSection, "x0" | "z0" | "x1" | "z1">>): Floor | undefined {
   const withRooms = b.floors.filter((f) => f.rooms.length > 0).sort((p, q) => p.elevation - q.elevation);
-  return withRooms.findLast((f) => f.elevation < section.base - 0.05) ?? withRooms[0];
+  const below = withRooms.filter((f) => f.elevation < section.base - 0.05);
+  const { x0, z0, x1, z1 } = section;
+  if (x0 !== undefined && z0 !== undefined && x1 !== undefined && z1 !== undefined) {
+    const samples: Vec2[] = [];
+    for (const fu of [0.2, 0.5, 0.8]) for (const fv of [0.2, 0.5, 0.8]) samples.push([x0 + (x1 - x0) * fu, z0 + (z1 - z0) * fv]);
+    const under = below.findLast((f) => f.rooms.some((r) => r.points.length >= 3 && samples.some((p) => pointInPolygon(p, r.points))));
+    if (under) return under;
+  }
+  return below.at(-1) ?? withRooms[0];
 }
 
 const round3 = (v: number) => Math.round(v * 1000) / 1000;

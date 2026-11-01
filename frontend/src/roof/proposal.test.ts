@@ -139,3 +139,15 @@ test("pulled apart, a roof moves with the floor that has a loft under its slopes
   assert.equal(roofRider(b, g, ["dormer"]), "l");
   assert.equal(roofRider(b, g, ["unknown"]), "g");
 });
+
+test("a roof section belongs to the floor whose rooms lie under it, not to a higher floor beside it (#42)", () => {
+  const b = emptyBuilding();
+  const garage = { ...newFloor("garage", "Garage", 0), height: 2.5 };
+  garage.rooms = [{ id: "gar", name: "Garage", area_id: null, points: [[0.1, 7.12], [7.9, 7.12], [7.9, 10.5], [0.1, 10.5]], floor_material: "concrete" }];
+  const eg = { ...newFloor("eg", "EG", 1.32), height: 2.72 };
+  eg.rooms = [{ id: "wohnen", name: "Wohnen", area_id: null, points: [[0.14, 0.14], [10.06, 0.14], [10.06, 6.86], [0.14, 6.86]], floor_material: "concrete" }];
+  b.floors = [garage, eg];
+  assert.equal(sectionFloor(b, { base: 2.5, x0: 0, z0: 7.02, x1: 8, z1: 10.6 })?.id, "garage");
+  assert.equal(sectionFloor(b, { base: 4.04, x0: 0, z0: 0, x1: 10.2, z1: 7 })?.id, "eg");
+  assert.equal(sectionFloor(b, { base: 2.5 })?.id, "eg", "without its rectangle: the highest floor below, as before");
+});

@@ -15,6 +15,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **The roof sits on its walls**: at rest in the house view it hovered 13 cm above them, and while zooming in the walls under it showed through. It now rests exactly on its height and keeps hiding what is below until it has mostly faded. Thanks to @LDSign ([#41](https://github.com/therealMRBK/NextFloor/issues/41)).
+- **A roof section stays on the floor under it**: on a slope, a flat garage roof could ride with a higher floor beside it ("Pulled apart" lifted it off the garage). A section now belongs to the floor whose rooms lie under it. Thanks to @LDSign ([#42](https://github.com/therealMRBK/NextFloor/issues/42)).
 - **Device names under markers are readable again**: the caption of a device with its own name ("Show the name under the marker in 3D") was dark text on a dark plate in some themes; it is now light text on the dark plate in every theme. Thanks to @jan74berlin ([#34](https://github.com/therealMRBK/NextFloor/issues/34)).
 - **TVs that only report "on"** (Samsung, LG on live TV, and others) show their channel, input and logo on the screen in the plan, and appear in the live media card, instead of staying blank. Thanks to @Luca-Bachini-Barr ([#31](https://github.com/therealMRBK/NextFloor/issues/31)).
 - **Heaters from furniture packs glow while they heat**, as the built-in radiator does: link a towel radiator (or any pack heater) to a thermostat and it glows orange while that thermostat heats; a thermostat or A/C unit with a display glows on its display. Thanks to @Luca-Bachini-Barr ([#32](https://github.com/therealMRBK/NextFloor/issues/32)).

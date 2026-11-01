@@ -357,6 +357,9 @@ interface FloorView {
 
 const ACTIVE_FLOOR = new Color(0x1a2a4d);
 
+/** The roof's opacity at rest in the house view: a touch see-through, so what lies under it can be guessed. */
+const ROOF_REST = 0.94;
+
 export { isLowEnd };
 
 export class NextFloorViewer {
@@ -1745,7 +1748,7 @@ export class NextFloorViewer {
     const zoom = this.keepRoof ? 1 : Math.min(1, Math.max(0, (this.controls.view.radius / this.houseRadius - 0.62) / 0.3));
     // a house with a single floor shows that floor as its house view, roof included (D208)
     const house = this.floorId === null || this.floors.length === 1;
-    const target = house && !this.lowered ? 0.94 * zoom : 0;
+    const target = house && !this.lowered ? ROOF_REST * zoom : 0;
     const k = floorShare(dt);
     const before = this.roofO;
     this.roofO += (target - this.roofO) * k;
@@ -1759,10 +1762,13 @@ export class NextFloorViewer {
       // the same slopes, #202) and lifts off it the same way (it follows that floor's own glide)
       const ride = this.floorMap.get(part.rideId) ?? fv;
       const apart = ride.ty > 0 ? Math.min(1, ride.y / ride.ty) : this.explode && this.floorId === null ? 1 : 0;
-      part.group.position.y = fv.floor.elevation + ride.y + part.base + (1 - this.roofO) * 2.2 + (part.lift ? apart * ROOF_GAP : 0);
+      // at rest (fully shown) it sits exactly on its walls: the lift counts from the resting opacity, not from 1 (#41)
+      const fade = Math.max(0, 1 - this.roofO / ROOF_REST);
+      part.group.position.y = fv.floor.elevation + ride.y + part.base + fade * 2.2 + (part.lift ? apart * ROOF_GAP : 0);
     }
     roof.solid.opacity = this.roofO;
-    roof.solid.depthWrite = this.roofO > 0.9;
+    // the roof keeps hiding the walls under it until it is mostly faded, so they do not show through it while zooming in (#41)
+    roof.solid.depthWrite = this.roofO > 0.5;
     roof.lines.opacity = this.roofO;
     roof.glass.opacity = this.roofO * 0.28;
     return this.roofO !== before && this.roofO !== target;
