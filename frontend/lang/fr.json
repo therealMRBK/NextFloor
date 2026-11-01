@@ -2112,5 +2112,8 @@
  "pack:nextfloor.a_garten:mailbox_post": "Boîte aux lettres sur pied",
  "pack:nextfloor.a_haustiere:pet_cat": "Chat (se promène)",
  "pack:nextfloor.a_haustiere:pet_dog": "Chien (se promène)",
- "pack:nextfloor.a_haustiere:pet_rabbit": "Lapin (sautille partout)"
+ "pack:nextfloor.a_haustiere:pet_rabbit": "Lapin (sautille partout)",
+ "arc": "Arc",
+ "arc_hint": "Courbe le mur en arc. Une pièce qui partage ce mur se courbe avec, les portes et fenêtres suivent ; Annuler retire l'arc.",
+ "arc_prompt": "De combien le mur doit-il se bomber (m) ? Positif vers l'extérieur, négatif vers la pièce."
 }

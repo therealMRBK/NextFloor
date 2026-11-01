@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Contatti e rilevatori",
   "marker_kind_sensor": "Sensori",
   "marker_kind_tap": "Mobili con un'azione",
-  "marker_kind_other": "Altro"
+  "marker_kind_other": "Altro",
+  "arc": "Arco",
+  "arc_hint": "Curva la parete ad arco. Una stanza che condivide la parete si curva con lei, porte e finestre la seguono; Annulla toglie l'arco.",
+  "arc_prompt": "Di quanto deve incurvarsi la parete (m)? Positivo verso l'esterno, negativo verso la stanza."
 }

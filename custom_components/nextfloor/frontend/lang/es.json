@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Contactos y detectores",
   "marker_kind_sensor": "Sensores",
   "marker_kind_tap": "Muebles con acción",
-  "marker_kind_other": "Otros"
+  "marker_kind_other": "Otros",
+  "arc": "Arco",
+  "arc_hint": "Curva la pared en arco. Una habitación que comparte la pared se curva con ella, puertas y ventanas la siguen; Deshacer quita el arco.",
+  "arc_prompt": "¿Cuánto debe abombarse la pared (m)? Positivo hacia fuera, negativo hacia la habitación."
 }

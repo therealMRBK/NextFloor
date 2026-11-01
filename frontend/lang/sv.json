@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Kontakter och detektorer",
   "marker_kind_sensor": "Sensorer",
   "marker_kind_tap": "Möbler med åtgärd",
-  "marker_kind_other": "Övrigt"
+  "marker_kind_other": "Övrigt",
+  "arc": "Båge",
+  "arc_hint": "Böjer väggen till en båge. Ett rum som delar väggen böjs med, dörrar och fönster följer med; Ångra tar bort bågen.",
+  "arc_prompt": "Hur mycket ska väggen bukta (m)? Positivt utåt, negativt in i rummet."
 }

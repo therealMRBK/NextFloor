@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Kontaktrony i czujki",
   "marker_kind_sensor": "Czujniki",
   "marker_kind_tap": "Meble z akcją",
-  "marker_kind_other": "Inne"
+  "marker_kind_other": "Inne",
+  "arc": "Łuk",
+  "arc_hint": "Wygina ścianę w łuk. Pomieszczenie dzielące tę ścianę wygina się razem z nią, drzwi i okna przesuwają się; Cofnij usuwa łuk.",
+  "arc_prompt": "Jak bardzo ma się wygiąć ściana (m)? Dodatnio na zewnątrz, ujemnie do wnętrza pomieszczenia."
 }

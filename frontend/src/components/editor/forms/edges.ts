@@ -21,6 +21,8 @@ export interface EdgeActions {
   /** Makes a sloping wall level again. */
   clearSlope(room: Room, edge: number): void;
   setThickness(room: Room, edge: number, thickness: number | null): void;
+  /** Bends the wall into an arc (asks how far). */
+  arc(room: Room, edge: number): void;
   cut(room: Room, edge: number, part: number | undefined): void;
   moveCut(room: Room, edge: number, from: number, to: number): void;
   join(room: Room, edge: number, at: number, part: number): void;
@@ -70,6 +72,7 @@ export function renderEdgeHeights(host: EditorHost, room: Room, actions: EdgeAct
           : nothing}
         ${host.admin && height !== 0 ? html`<button class="nf-btn" title=${t("wall_none_hint")} @click=${() => set(0)}>${t("wall_none")}</button>` : nothing}
         ${host.admin && length >= 0.4 ? html`<button class="nf-btn" title=${t("wall_split_hint")} @click=${() => actions.cut(room, edge, part)}>✂</button>` : nothing}
+        ${host.admin && part === undefined && length >= 0.4 ? html`<button class="nf-btn" title=${t("arc_hint")} @click=${() => actions.arc(room, edge)}>◠ ${t("arc")}</button>` : nothing}
         ${(part === undefined || part === 0) && height !== 0 ? html`<button class="nf-btn" title=${t("wall_view_hint")} @click=${() => actions.openWall(room, edge)}>▣ ${t("wall_view")}</button>` : nothing}
         ${(part === undefined || part === 0) && height !== 0
           ? html`<span class="nf-wide nf-split-row" title=${t("wall_thickness_hint")}

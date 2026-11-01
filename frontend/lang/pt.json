@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Contactos e detetores",
   "marker_kind_sensor": "Sensores",
   "marker_kind_tap": "Móveis com ação",
-  "marker_kind_other": "Outros"
+  "marker_kind_other": "Outros",
+  "arc": "Arco",
+  "arc_hint": "Curva a parede em arco. Uma divisão que partilha a parede curva-se com ela, portas e janelas acompanham; Desfazer retira o arco.",
+  "arc_prompt": "Quanto deve a parede abaular (m)? Positivo para fora, negativo para dentro da divisão."
 }

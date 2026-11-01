@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.16.2
+
+### Added
+
+- **Curved walls**: the ◠ Arc button on a wall of a room (in the room's wall list) or on a free wall bends it into an arc that bulges by the typed distance, outwards or into the room. A room sharing the wall bends along, doors and windows move with it and stay whole, and everything else (3D, solid walls, cut view, wall heights) treats the arc like any wall. Undo takes the arc back.
+
 ## 0.16.1
 
 ### Added

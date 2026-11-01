@@ -2112,5 +2112,8 @@
   "marker_kind_binary": "Contacten en melders",
   "marker_kind_sensor": "Sensoren",
   "marker_kind_tap": "Meubels met een actie",
-  "marker_kind_other": "Overig"
+  "marker_kind_other": "Overig",
+  "arc": "Boog",
+  "arc_hint": "Buigt de muur tot een boog. Een kamer die de muur deelt buigt mee, deuren en ramen gaan mee; Ongedaan maken haalt de boog weg.",
+  "arc_prompt": "Hoe ver moet de muur uitbuigen (m)? Positief naar buiten, negatief de kamer in."
 }
