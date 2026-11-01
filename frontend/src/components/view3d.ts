@@ -1496,6 +1496,8 @@ export class NfView3d extends LitElement {
 
   /** An announcement arrived: show it big over the house, chime and speak it (once per page, only if meant for this screen). */
   private announce(a: Announcement): void {
+    // only a real announcement (a message to say); anything else on the subscription is ignored
+    if (typeof a?.message !== "string" || !a.message.trim()) return;
     if (!forThisScreen(a, this.screenName) || !claim(a)) return;
     const duration = showFor(a.message);
     this._announcement = { message: a.message, until: Date.now() + duration };

@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { newFloor, type Opening } from "../../model.ts";
 import { buildFloorGeometry } from "../build.ts";
 import { buildOpeningParts, CLOSED, type OpeningState } from "../openings.ts";
+import { slidingPanes } from "./windows.ts";
 
 const room = { id: "a", name: "a", area_id: null, points: [[0, 0], [6, 0], [6, 5], [0, 5]] as [number, number][], floor_material: "wood" as const };
 
@@ -113,4 +114,30 @@ test("an open window glows warm; with 'mark closed' the closed one does", () => 
   assert.ok(colorSum(build({}, { open: 1 })) > colorSum(build({})));
   const marked = (open: number) => colorSum(build({ mark: "closed" } as never, { open, sensed: true }));
   assert.ok(marked(0) > marked(1));
+});
+
+test("a sliding window: the pane at the hinge side slides in front of the fixed one; four panes with two leaves", () => {
+  const one = slidingPanes(2.4, 0.06, true, 1, 1, 0);
+  assert.equal(one.length, 2);
+  assert.ok(one[0].slide! > 1, "the moving pane runs about half the width");
+  assert.equal(one[1].slide, 0);
+  assert.ok(one[0].x1 > one[1].x0, "the panes overlap in the middle");
+  const four = slidingPanes(3.2, 0.06, true, 2, 1, 1);
+  assert.deepEqual(four.map((p) => Math.sign(p.slide!)), [0, -1, 1, 0]);
+  const mirrored = slidingPanes(2.4, 0.06, false, 1, 1, 0);
+  assert.ok(mirrored[1].slide! < 0 && mirrored[0].slide === 0);
+});
+
+test("an open sliding door stays in the wall and moves along it; a top-hung window swings out at the bottom", () => {
+  const door = { opens: "slide" as const, sill: 0, height: 2.15, width: 2.4 };
+  const closed = positions(build(door).frames);
+  const open = positions(build(door, { open: 1 }).frames);
+  const depth = (p: number[]) => Math.max(...p.filter((_, i) => i % 3 === 2));
+  assert.notDeepEqual(closed, open);
+  assert.ok(depth(open) <= depth(closed) + 1e-6, "no part reaches into the room");
+  const top = { opens: "top" as const };
+  const out = (p: number[]) => Math.min(...p.filter((_, i) => i % 3 === 2));
+  assert.ok(out(positions(build(top, { open: 1 }).frames)) < out(positions(build(top).frames)) - 0.1, "the bottom leaves the wall towards outside");
+  // a tilt sensor opens a top-hung window as well
+  assert.notDeepEqual(positions(build(top, { tilt: 1 }).frames), positions(build(top).frames));
 });

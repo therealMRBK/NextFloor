@@ -69,6 +69,10 @@ export interface Room {
 
 export type OpeningType = "door" | "window" | "garage";
 
+/** How a window's sash opens: turn (and tilt) into the room, slide along the wall, or swing out from its top edge. */
+export const WINDOW_OPENINGS = ["turn", "slide", "top"] as const;
+export type WindowOpening = (typeof WINDOW_OPENINGS)[number];
+
 /** Entity link of an opening: null = assigned automatically by area, "none" = no entity. */
 export type EntityRef = string | null;
 
@@ -126,6 +130,8 @@ export interface Opening {
   confirm?: boolean;
   cover: EntityRef;
   contact: EntityRef;
+  /** Windows: how the sash opens – turns and tilts into the room (null), slides behind the fixed pane, or swings out at the bottom (top-hung). */
+  opens?: WindowOpening | null;
   /** Windows: the board inside and the sill outside – automatic (both when the sill is above 30 cm), none, or only one of them. */
   sill_boards?: "auto" | "none" | "inside" | "outside" | null;
   /** Windows below the ground: their light well (null = by itself when the sill lies below the ground, false = none, true = always). */
@@ -1129,6 +1135,9 @@ export const DOOR_STYLES = ["interior", "front", "front_glass", "sidelight", "si
 export const WINDOW_STYLES = ["standard", "bars", "glass_wall"] as const;
 export type OpeningStyle = (typeof DOOR_STYLES)[number] | (typeof WINDOW_STYLES)[number];
 
+/** Looks a door gets by itself from its wall (a front door in an outer wall, a room door inside): new doors leave them unset. */
+export const AUTO_STYLES: ReadonlySet<string> = new Set(["interior", "front"]);
+
 /** The style an opening is drawn with: its own, or the automatic one for its wall. */
 export function openingStyle(o: Pick<Opening, "type" | "style">, exterior: boolean): OpeningStyle {
   if (o.type === "door") return o.style && (DOOR_STYLES as readonly string[]).includes(o.style) ? o.style : exterior ? "front" : "interior";
@@ -1180,16 +1189,18 @@ export const OPENING_PRESETS = {
   window_double: { type: "window", leaves: 2, width: 1.6, sill: 0.9, height: 1.3 },
   terrace: { type: "window", leaves: 1, width: 1.0, sill: 0, height: 2.1 },
   terrace_double: { type: "window", leaves: 2, width: 1.8, sill: 0, height: 2.1 },
+  lift_slide: { type: "window", leaves: 1, width: 2.4, sill: 0, height: 2.15, opens: "slide" },
   garage: { type: "garage", leaves: 1, width: 2.5, sill: 0, height: 2.1 },
   glass_wall: { type: "window", leaves: 1, width: 2.0, sill: 0, height: 2.4, style: "glass_wall" },
-} as const satisfies Record<string, { type: OpeningType; leaves: 1 | 2; width: number; sill: number; height: number; style?: OpeningStyle }>;
+} as const satisfies Record<string, { type: OpeningType; leaves: 1 | 2; width: number; sill: number; height: number; style?: OpeningStyle; opens?: WindowOpening }>;
 
 export type OpeningPreset = keyof typeof OPENING_PRESETS;
 
 /** The preset an opening matches (by type, leaves, style and whether it reaches the floor). */
-export function openingPreset(o: Pick<Opening, "type" | "leaves" | "sill" | "style">): OpeningPreset {
+export function openingPreset(o: Pick<Opening, "type" | "leaves" | "sill" | "style" | "opens">): OpeningPreset {
   if (o.type === "garage") return "garage";
   if (o.type === "window" && o.style === "glass_wall") return "glass_wall";
+  if (o.type === "window" && o.opens === "slide" && o.sill < 0.1) return "lift_slide";
   const two = o.leaves === 2;
   if (o.type === "door") {
     if (!two && o.style && isFrontDoor(o.style)) return "front";

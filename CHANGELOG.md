@@ -12,8 +12,14 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
   - **Quiet time per room** (a nursery from 20:00): announcements to several rooms leave it out, one meant only for it still gets through.
   - **Every open NextFloor screen** (panel or card) shows the message big over the house, plays a soft chime and speaks it. A screen can get a name (⚙ → 📢) to be addressed alone, or stay silent. Card options `announcements` and `screen_name`.
   - **The action `nextfloor.announce`** for automations (message, rooms, floor, screens, on_speakers, on_screens, tts_entity); it answers which speaker said it and which rooms were left out.
+- **Lift-and-slide doors and sliding windows**: a new kind *Lift-and-slide door*, and every window can now open *sliding*. The pane at the hinge side slides in front of the fixed one when its contact reports open; with two leaves the two middle panes slide outwards, each on its own contact. The plan draws the panes on their two tracks.
+- **Top-hung windows**: a window can open *top-hung* – its bottom swings out of the wall when its contact (or a tilt sensor) reports open.
 - **Opening angle for doors**: every door has an *Opening angle* (default, 15° to 180°). With a contact the leaf opens that far as soon as it reports open; without one it stands that far open instead of half open. A door that is only assumed to stand open no longer glows as open. *Default* keeps everything as it was.
 - **Warning for contacts that stop answering** (off by default, Editor → Settings): when a door or window contact has been unavailable for 10 minutes (an empty battery, out of radio reach), a note in the warning bar names it, because the window then looks shut in 3D although nobody knows. It is a quiet note: the room does not pulse and the view does not jump to it. A restart of Home Assistant does not warn.
+
+### Fixed
+
+- **A glass wall placed from the toolbar is a glass wall**: dropping the *Glass wall* kind made a plain terrace window; it now keeps its look (doors still pick room or front door by their wall).
 
 ## 0.15.1
 

@@ -24,6 +24,7 @@ import {
   isFixed,
   step,
   type Direction,
+  AUTO_STYLES,
   OPENING_PRESETS,
   type OpeningPreset,
   resizeFurniture,
@@ -2557,7 +2558,7 @@ export class NfEditor extends LitElement {
     const a = room.points[edge];
     const b = room.points[(edge + 1) % room.points.length];
     const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
-    const defaults = OPENING_PRESETS[preset];
+    const defaults = OPENING_PRESETS[preset] as { type: OpeningType; leaves: 1 | 2; sill: number; height: number; width: number; style?: Opening["style"]; opens?: Opening["opens"] };
     const type: OpeningType = defaults.type;
     const width = round(Math.min(defaults.width, Math.max(0.3, len - 0.1)));
     const opening: Opening = {
@@ -2573,6 +2574,9 @@ export class NfEditor extends LitElement {
       hinge: "left",
       leaves: defaults.leaves,
       swing: "in",
+      // the preset's own look (a glass wall; room and front doors stay automatic by their wall) and way of opening
+      ...(defaults.style && !AUTO_STYLES.has(defaults.style) ? { style: defaults.style } : {}),
+      ...(defaults.opens ? { opens: defaults.opens } : {}),
       cover: null,
       contact: null,
       contact2: null,

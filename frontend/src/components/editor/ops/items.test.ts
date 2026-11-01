@@ -109,6 +109,18 @@ test("changing the kind of an opening keeps its width only when its shape stays 
   const patch = openingKindPatch({ ...door, width: 1.1 }, "window");
   assert.deepEqual([patch.type, patch.width, patch.sill, patch.style], ["window", 1.2, 0.9, null]);
   assert.equal(openingKindPatch(door, "front").style, "front");
+  // a lift-and-slide door slides; changing it back into a terrace door turns again
+  const slide = openingKindPatch(door, "lift_slide");
+  assert.deepEqual([slide.type, slide.opens, slide.sill], ["window", "slide", 0]);
+  assert.equal(openingKindPatch({ ...door, ...slide } as typeof door, "terrace").opens, null);
+});
+
+test("a new glass wall or lift-and-slide door keeps its preset's look and way of opening; doors stay automatic", () => {
+  const host = { roomId: "r", edge: 0, length: 5, offset: () => 1 };
+  assert.equal(newOpening("glass_wall", host).style, "glass_wall");
+  assert.equal(newOpening("lift_slide", host).opens, "slide");
+  assert.equal(newOpening("door", host).style, undefined);
+  assert.equal(newOpening("front", host).style, undefined);
 });
 
 test("the edge an opening sits on, for rooms and free walls", () => {

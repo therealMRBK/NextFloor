@@ -4,7 +4,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName, openingEntities, windowPosition } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { DOOR_STYLES, OPENING_PRESETS, openingPreset, openingStyle, WINDOW_STYLES, type Opening, type OpeningPreset, type OpeningStyle } from "../../../model.ts";
+import { DOOR_STYLES, OPENING_PRESETS, openingPreset, openingStyle, WINDOW_OPENINGS, WINDOW_STYLES, type Opening, type OpeningPreset, type OpeningStyle } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
 import { checkField, entityField, hint, numberField, selectField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
@@ -187,6 +187,9 @@ export function renderOpeningForm(host: EditorHost, o: Opening, actions: Opening
       ${window ? numberField(host, t("sill"), o.sill, (v) => at({ sill: Math.max(0, v) }), 0.01, 0) : nothing}
       ${numberField(host, t("opening_height"), o.height, (v) => at({ height: Math.max(0.3, v) }), 0.01, 0.3)}
       ${garage ? nothing : styleField(host, o, actions)} ${sidelightFields(host, o, actions)}
+      ${window && o.style !== "glass_wall"
+        ? selectField(host, t("window_opens"), o.opens ?? "turn", WINDOW_OPENINGS.map((w) => [w, t(`window_opens_${w}` as I18nKey)] as const), (v) => at({ opens: v === "turn" ? null : v }), { wide: true, title: t("window_opens_hint") })
+        : nothing}
       ${selectField(host, t("opening_mark"), o.mark === "closed" ? "closed" : "", markChoices, (v) => at({ mark: v === "closed" ? "closed" : null }), { wide: true, title: t("opening_mark_hint") })}
       ${garage ? nothing : selectField(host, t(o.leaves === 2 ? "main_leaf" : "hinge"), o.hinge, hingeChoices, (hinge) => at({ hinge }), { wide: true })}
       ${window

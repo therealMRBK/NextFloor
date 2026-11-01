@@ -87,6 +87,16 @@ function doorSymbol(ctx: CanvasContext, f: Frame, o: Opening): Sym {
 /** A window: two panes in the middle of the wall, and for a double window a post between them. */
 function windowSymbol(f: Frame, o: Opening): Sym {
   const middle = (f.across[0] - f.across[1]) / 2;
+  if (o.opens === "slide") {
+    // a sliding window: its panes on two tracks, overlapping a little, as plans draw them
+    const panes = o.leaves === 2 ? 4 : 2;
+    const along = (t: number): [number, number] => [f.p0[0] + (f.p1[0] - f.p0[0]) * t, f.p0[1] + (f.p1[1] - f.p0[1]) * t];
+    const parts = Array.from({ length: panes }, (_, k) => {
+      const track = o.leaves === 2 ? (k === 1 || k === 2 ? 0.035 : -0.035) : k === 0 ? 0.035 : -0.035;
+      return line(f.at(along(Math.max(0, k / panes - 0.03)), middle + track), f.at(along(Math.min(1, (k + 1) / panes + 0.03)), middle + track));
+    });
+    return svg`${parts}`;
+  }
   const post = o.leaves === 2 ? line(f.at([(f.p0[0] + f.p1[0]) / 2, (f.p0[1] + f.p1[1]) / 2], f.across[0]), f.at([(f.p0[0] + f.p1[0]) / 2, (f.p0[1] + f.p1[1]) / 2], -f.across[1])) : nothing;
   return svg`${line(f.at(f.p0, middle + 0.035), f.at(f.p1, middle + 0.035))}${line(f.at(f.p0, middle - 0.035), f.at(f.p1, middle - 0.035))}${post}`;
 }

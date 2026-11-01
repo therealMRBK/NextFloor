@@ -7,6 +7,7 @@ import {
   centroid,
   FURNITURE_SIZE,
   isLamp,
+  AUTO_STYLES,
   OPENING_PRESETS,
   openingPreset,
   uid,
@@ -153,7 +154,7 @@ export function offsetOnEdge(edgeLength: number, along: number, width: number, g
 
 /** A new opening of this kind on an edge: as wide as the preset, but never wider than the edge allows. */
 export function newOpening(preset: OpeningPreset, host: { roomId: string; edge: number; wall?: string; length: number; offset(width: number): number }): Opening {
-  const kind = OPENING_PRESETS[preset];
+  const kind = OPENING_PRESETS[preset] as { type: Opening["type"]; leaves: 1 | 2; sill: number; height: number; width: number; style?: Opening["style"]; opens?: Opening["opens"] };
   const width = thousandths(Math.min(kind.width, Math.max(0.3, host.length - 0.1)));
   return {
     id: uid("opening"),
@@ -168,6 +169,9 @@ export function newOpening(preset: OpeningPreset, host: { roomId: string; edge: 
     hinge: "left",
     leaves: kind.leaves,
     swing: "in",
+    // the preset's own look (a glass wall; room and front doors stay automatic by their wall) and way of opening
+    ...(kind.style && !AUTO_STYLES.has(kind.style) ? { style: kind.style } : {}),
+    ...(kind.opens ? { opens: kind.opens } : {}),
     cover: null,
     contact: null,
     contact2: null,
@@ -177,9 +181,9 @@ export function newOpening(preset: OpeningPreset, host: { roomId: string; edge: 
 
 /** What changing an opening into another kind sets. It keeps its own width unless it already was of that kind's shape. */
 export function openingKindPatch(opening: Opening, preset: OpeningPreset): Partial<Opening> {
-  const kind = OPENING_PRESETS[preset] as { type: Opening["type"]; leaves: 1 | 2; sill: number; height: number; width: number; style?: Opening["style"] };
+  const kind = OPENING_PRESETS[preset] as { type: Opening["type"]; leaves: 1 | 2; sill: number; height: number; width: number; style?: Opening["style"]; opens?: Opening["opens"] };
   const widthChange = openingPreset(opening) === preset ? {} : { width: kind.width };
-  return { type: kind.type, leaves: kind.leaves, sill: kind.sill, height: kind.height, style: kind.style ?? null, ...widthChange };
+  return { type: kind.type, leaves: kind.leaves, sill: kind.sill, height: kind.height, style: kind.style ?? null, opens: kind.opens ?? null, ...widthChange };
 }
 
 /** The wall edge an opening sits on, as its two end points. */

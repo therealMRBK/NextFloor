@@ -157,6 +157,8 @@ OPENING_SCHEMA = vol.Schema(
         vol.Optional("tilt_invert", default=False): bool,
         # a door without a sensor is drawn closed instead of half open
         vol.Optional("shut", default=False): bool,
+        # windows: how the sash opens (None = turn and tilt into the room)
+        vol.Optional("opens"): vol.Any(None, vol.In(["turn", "slide", "top"])),
         # how far a door leaf opens in degrees (None = the usual swing)
         vol.Optional("open_angle", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=5, max=180))),
         # highlight in 3D while open (None) or while closed ("closed": a WC or a child's room door)

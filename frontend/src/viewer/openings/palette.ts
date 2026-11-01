@@ -23,3 +23,5 @@ export const GLASS = shade(0x37e0ff, 0.08);
 export const OPEN_ANGLE = 1.2;
 export const DOOR_ANGLE = 1.5;
 export const TILT_ANGLE = 0.2;
+/** How far a top-hung sash swings out at the bottom when open (about 30°). */
+export const TOP_HUNG_ANGLE = 0.52;

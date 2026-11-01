@@ -16,7 +16,7 @@ export interface Announcement {
 /** Whether an announcement is meant for this screen: every screen, or this one by its name. A muted screen hears none. */
 export function forThisScreen(a: Pick<Announcement, "screens">, name: string | null | undefined, muted = false): boolean {
   if (muted) return false;
-  if (!a.screens?.length) return true;
+  if (!Array.isArray(a.screens) || !a.screens.length) return true;
   const own = (name ?? "").trim().toLocaleLowerCase();
   return !!own && a.screens.some((s) => s.trim().toLocaleLowerCase() === own);
 }

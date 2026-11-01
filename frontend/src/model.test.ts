@@ -164,3 +164,9 @@ test("a glass wall is a preset of its own (#163)", () => {
   assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0, style: "glass_wall" }), "glass_wall");
   assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0, style: null }), "terrace");
 });
+
+test("a sliding window down to the floor is a lift-and-slide door; with a sill it stays a window", () => {
+  assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0, style: null, opens: "slide" }), "lift_slide");
+  assert.equal(openingPreset({ type: "window", leaves: 2, sill: 0.02, style: null, opens: "slide" }), "lift_slide");
+  assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0.9, style: null, opens: "slide" }), "window");
+});
