@@ -55,6 +55,9 @@ const mainConfig = (viewerHash, editorHash, cardEditorHash) => ({
   },
 });
 
+// the furniture builder: a page of its own on the project's site (site/builder), not part of the integration
+const builderConfig = { ...common, entryPoints: ["src/builder/app.ts"], outfile: "../site/builder/builder.js" };
+
 function copyAssets() {
   // the integration folder is what HACS ships as a zip, so the licences have to be inside it
   for (const f of ["LICENSE", "THIRD_PARTY_NOTICES.md"]) copyFileSync(`../${f}`, `../custom_components/nextfloor/${f}`);
@@ -69,13 +72,14 @@ const BUDGET = { "nextfloor.js": 470 * 1024, "nextfloor-3d.js": 900 * 1024, "nex
 copyAssets();
 if (watch) {
   // in watch mode the hash is not tracked; a dev reload fetches the bundle anyway
-  for (const c of [viewerConfig, editorConfig("dev"), cardEditorConfig, mainConfig("dev", "dev", "dev")]) await (await context(c)).watch();
+  for (const c of [viewerConfig, editorConfig("dev"), cardEditorConfig, mainConfig("dev", "dev", "dev"), builderConfig]) await (await context(c)).watch();
 } else {
   await build(viewerConfig);
   const editor = editorConfig(hashOf(viewerConfig.outfile));
   await build(editor);
   await build(cardEditorConfig);
   await build(mainConfig(hashOf(viewerConfig.outfile), hashOf(editor.outfile), hashOf(cardEditorConfig.outfile)));
+  await build(builderConfig);
   let over = false;
   for (const [file, limit] of Object.entries(BUDGET)) {
     const size = statSync(`${out}/${file}`).size;

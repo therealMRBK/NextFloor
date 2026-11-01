@@ -24,7 +24,7 @@ jobs:
       - name: Build and check budgets
         run: npm run build
       - name: Committed bundles are up to date
-        run: git diff --exit-code -- ../custom_components/nextfloor/frontend
+        run: git diff --exit-code -- ../custom_components/nextfloor/frontend ../site/builder
 
   python:
     runs-on: ubuntu-latest

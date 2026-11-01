@@ -49,6 +49,8 @@ jobs:
             cp "$src"/preview/*.html "$src"/preview/*.js "$out/preview/"
             cp -r "$src/custom_components/nextfloor/frontend" "$out/custom_components/nextfloor/"
             cp -r "$src/custom_components/nextfloor/packs" "$out/custom_components/nextfloor/"
+            # the furniture builder (a page of its own; older branches do not have it yet)
+            if [ -d "$src/site/builder" ]; then cp -r "$src/site/builder" "$out/"; fi
           }
           assemble src-main _site
           # the setup video lives at the release (too big for the repository); the page plays it in the browser
@@ -57,7 +59,7 @@ jobs:
           curl -fsSL -o _site/tutorial/nextfloor-tutorial.en.mp4 "https://github.com/therealMRBK/NextFloor/releases/download/v0.8.1/nextfloor-tutorial.en.mp4" || echo "::warning::tutorial video not found at the v0.8.1 release (point this at the newest release that carries it)"
           assemble src-dev _site/dev
           # the development demo says so, so nobody takes it for the release
-          for page in _site/dev/index.html _site/dev/preview/index.html; do
+          for page in _site/dev/index.html _site/dev/preview/index.html $( [ -f _site/dev/builder/index.html ] && echo _site/dev/builder/index.html ); do
             sed -i 's|<body>|<body><div style="position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;padding:2px 14px;border-radius:0 0 10px 10px;background:#ffb547;color:#1a1200;font:700 12px sans-serif">DEV – work in progress</div>|' "$page"
           done
           touch _site/.nojekyll

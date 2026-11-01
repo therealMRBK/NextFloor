@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Furniture builder** ([open it](https://therealmrbk.github.io/NextFloor/builder/)): build your own furniture in the browser from boxes, cylinders, tapers and round bodies, in centimetres, beside a 3D view that draws it exactly as NextFloor does. Start from a template (cabinet, table, shelf, floor lamp, sofa), tap parts in 3D to select them, set colours that follow the look, lamps and screens. The builder checks the pack as NextFloor's import does, keeps it in the browser, saves it as a pack file, and shares it in the community store with one button.
 - **Announcements, free for everyone**: *"Dinner is ready!"* – and the room that should hear it, hears it.
   - **In the room panel**, a **📢 Announcement** section for rooms with a speaker: tap a sentence or type your own. Own sentences under *Editor → Settings*.
   - **Each room speaks through its own speaker**: chosen in the room's form, else one placed in the room, else a voice satellite, an Echo or a speaker of its area (never a TV or a speaker that is off). Voice satellites chime, Echos make a real announcement (Alexa Devices or Alexa Media Player), speakers that can (Sonos and others) lower their music and play on after, every other speaker uses Home Assistant's text-to-speech.
