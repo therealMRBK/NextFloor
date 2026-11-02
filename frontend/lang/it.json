@@ -482,6 +482,7 @@
   "alert_co": "Monossido di carbonio: {name}",
   "alert_water": "Acqua: {name}",
   "alert_alarm": "Allarme scattato",
+  "alert_alarm_by": "Allarme attivato da {cause}",
   "alert_alarm_pending": "Allarme in attesa",
   "alert_window_rain": "Finestra aperta con la pioggia: {name}",
   "alert_power_outage": "Blackout: {name}",

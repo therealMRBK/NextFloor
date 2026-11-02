@@ -2,9 +2,9 @@
 // went off, a power outage, a window left open in the rain, and a door or window contact that stopped answering.
 // A room with a warning pulses in the warning's colour.
 
-import { areaEntities, entityName, openingState, type OpeningEntities } from "./devices.ts";
+import { areaEntities, entityAreaId, entityName, openingState, type OpeningEntities } from "./devices.ts";
 import { translate } from "./i18n.ts";
-import type { Building, Opening } from "./model.ts";
+import { pointInPolygon, type Building, type Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 import { weatherEntity } from "./weather.ts";
 
@@ -16,6 +16,8 @@ export interface Alert {
   /** Room and floor it concerns; null for the whole house (an alarm). */
   roomId: string | null;
   floorId: string | null;
+  /** An alarm: the sensor that set it off (a door, a window, a motion sensor), when it can be told. */
+  cause?: string;
 }
 
 /** Where the warnings come from. Looked up once and kept until the registries change. */
@@ -159,11 +161,60 @@ function rainWarnings(hass: HomeAssistant, building: Building, sources: AlertSou
   return found;
 }
 
-function alarmWarnings(hass: HomeAssistant, sources: AlertSources): Alert[] {
+const TRIGGER_CLASSES = new Set(["door", "window", "opening", "garage_door", "motion", "occupancy", "presence", "vibration", "tamper", "sound", "glass"]);
+
+/**
+ * The sensor that set an alarm off: Alarmo names the open sensors itself; otherwise the door, window or motion sensor that changed to
+ * "on" closest before the alarm went off (within two minutes).
+ */
+export function alarmCause(hass: HomeAssistant, panel: string): string | null {
+  const st = hass.states[panel];
+  const open = st?.attributes.open_sensors;
+  if (open && typeof open === "object") {
+    const first = Object.keys(open as Record<string, unknown>)[0];
+    if (first) return first;
+  }
+  const at = Date.parse(st?.last_changed ?? "");
+  if (!Number.isFinite(at)) return null;
+  let best: string | null = null;
+  let gap = 120_000;
+  for (const s of Object.values(hass.states)) {
+    if (!s.entity_id.startsWith("binary_sensor.") || !TRIGGER_CLASSES.has(String(s.attributes.device_class ?? "")) || s.state !== "on") continue;
+    const changed = Date.parse(s.last_changed ?? "");
+    const d = at - changed;
+    if (Number.isFinite(changed) && d >= -5_000 && Math.abs(d) < gap) {
+      gap = Math.abs(d);
+      best = s.entity_id;
+    }
+  }
+  return best;
+}
+
+/** The room a sensor belongs to: where it is placed, else the room of its area. */
+function roomOf(hass: HomeAssistant, building: Building, entity: string): { roomId: string; floorId: string } | null {
+  for (const floor of building.floors) {
+    const placed = floor.placements.find((p) => p.entity_id === entity);
+    const room = placed ? floor.rooms.find((r) => r.points.length >= 3 && pointInPolygon([placed.x, placed.z], r.points)) : undefined;
+    if (room) return { roomId: room.id, floorId: floor.id };
+  }
+  const area = entityAreaId(hass, entity);
+  for (const floor of building.floors) {
+    const room = area ? floor.rooms.find((r) => r.area_id === area) : undefined;
+    if (room) return { roomId: room.id, floorId: floor.id };
+  }
+  return null;
+}
+
+function alarmWarnings(hass: HomeAssistant, sources: AlertSources, building: Building): Alert[] {
   const found: Alert[] = [];
   for (const entity of sources.alarms) {
     const state = hass.states[entity]?.state;
-    if (state === "triggered") found.push({ kind: "alarm", entity, roomId: null, floorId: null });
+    if (state === "triggered") {
+      // the room of the sensor that set it off pulses, and the banner names it
+      const cause = alarmCause(hass, entity);
+      const where = cause ? roomOf(hass, building, cause) : null;
+      found.push({ kind: "alarm", entity, roomId: where?.roomId ?? null, floorId: where?.floorId ?? null, ...(cause ? { cause } : {}) });
+    }
     if (state === "pending") found.push({ kind: "alarm_pending", entity, roomId: null, floorId: null });
   }
   return found;
@@ -189,7 +240,7 @@ function contactWarnings(hass: HomeAssistant, sources: AlertSources, now: number
 /** The warnings that are active now: room sensors, then windows in the rain, then house-wide alarms and a power outage, then lost contacts. */
 export function findAlerts(hass: HomeAssistant, building: Building, sources: AlertSources, links: Map<string, OpeningEntities>, now = Date.now()): Alert[] {
   const outage: Alert[] = sources.outage && isPowerOut(hass, sources.outage) ? [{ kind: "power_outage", entity: sources.outage, roomId: null, floorId: null }] : [];
-  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources), ...outage, ...contactWarnings(hass, sources, now)];
+  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now)];
 }
 
 const PULSE: Record<AlertKind, [number, number, number]> = {
@@ -210,7 +261,7 @@ export const alertColor = (kind: AlertKind): [number, number, number] => PULSE[k
 /** One line for the banner, e.g. "Kitchen · Smoke: smoke detector". */
 export function alertText(hass: HomeAssistant | undefined, building: Building, a: Alert): string {
   const name = hass ? entityName(hass, a.entity) : a.entity;
-  const message = translate(hass, `alert_${a.kind}` as Parameters<typeof translate>[1], { name });
+  const message = a.cause ? translate(hass, "alert_alarm_by", { name, cause: hass ? entityName(hass, a.cause) : a.cause }) : translate(hass, `alert_${a.kind}` as Parameters<typeof translate>[1], { name });
   const room = a.roomId === null ? undefined : building.floors.flatMap((f) => f.rooms).find((r) => r.id === a.roomId);
   return room ? `${room.name} · ${message}` : message;
 }

@@ -482,6 +482,7 @@
   "alert_co": "Monóxido de carbono: {name}",
   "alert_water": "Agua: {name}",
   "alert_alarm": "Alarma activada",
+  "alert_alarm_by": "Alarma disparada por {cause}",
   "alert_alarm_pending": "Alarma pendiente",
   "alert_window_rain": "Ventana abierta con lluvia: {name}",
   "alert_power_outage": "Corte de luz: {name}",

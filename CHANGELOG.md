@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Which sensor set the alarm off**: when an alarm panel is triggered, the banner names the door, window or motion sensor that set it off (Alarmo tells it, otherwise the one that changed just before), and only its room pulses red instead of the whole house.
 - **Outdoor areas like rooms**: a garden, terrace or pool can be linked to a Home Assistant area – its devices and sensors join the Outside panel, and a pin on the area opens it. A pool, pond or bed can show its water temperature and pump on that pin ("24.5 °C · pump on").
 - **Robot mowers mow their lawn**: a robot mower or its dock from the *Garden 2* pack linked to a `lawn_mower` drives lanes over its lawn in 3D while it mows (around the beds, ponds and terraces on it), and drives home when it returns.
 - **Wi-Fi map**: the map selector has a new **Wi-Fi** mode – every access point, router or mesh node from the packs linked to its device spreads its reach as a disc over the floor (through the walls), blue while it has room, amber when it is busy, red when it is down; its pin tells how many devices it carries, and the legend sums up the access points, their devices and which network devices of the plan are offline.

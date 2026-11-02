@@ -482,6 +482,7 @@
   "alert_co": "Koolmonoxide: {name}",
   "alert_water": "Water: {name}",
   "alert_alarm": "Alarm afgegaan",
+  "alert_alarm_by": "Alarm afgegaan door {cause}",
   "alert_alarm_pending": "Alarm in afwachting",
   "alert_window_rain": "Raam open bij regen: {name}",
   "alert_power_outage": "Stroomstoring: {name}",

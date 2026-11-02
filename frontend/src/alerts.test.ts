@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { alertColor, alertEntities, alertSources, alertText, CONTACT_GRACE_MS, contactsPending, findAlerts, isPowerOut, QUIET_ALERTS, RAIN_STATES } from "./alerts.ts";
+import { alarmCause, alertColor, alertEntities, alertSources, alertText, CONTACT_GRACE_MS, contactsPending, findAlerts, isPowerOut, QUIET_ALERTS, RAIN_STATES } from "./alerts.ts";
 import type { OpeningEntities } from "./devices.ts";
 import { emptyBuilding, newFloor, type Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
+import { hassOf } from "./entities/fixtures.ts";
 
 type Attrs = Record<string, unknown>;
 const entity = (entity_id: string, state: string, attributes: Attrs = {}) => ({ entity_id, state, attributes });
@@ -182,4 +183,25 @@ test("a contact shared by two openings is watched once", () => {
   building.floors[0].openings.push({ ...building.floors[0].openings[0], id: "w2", offset: 3 });
   links.set("w2", { cover: null, contact: "binary_sensor.casement", tilt: null });
   assert.equal(alertSources(hass, building, null, links).contacts!.length, 1);
+});
+
+test("a triggered alarm names the sensor that set it off and pulses its room", () => {
+  const at = Date.parse("2026-11-02T20:00:00Z");
+  const iso = (ms: number) => new Date(ms).toISOString();
+  const hass = hassOf(
+    [
+      { entity_id: "alarm_control_panel.home", state: "triggered", attributes: {}, last_changed: iso(at) },
+      { entity_id: "binary_sensor.front_door", state: "on", attributes: { device_class: "door", friendly_name: "Haustür" }, last_changed: iso(at - 3000) },
+      { entity_id: "binary_sensor.hall_motion", state: "on", attributes: { device_class: "motion" }, last_changed: iso(at - 60_000) },
+    ],
+    { "binary_sensor.front_door": { area_id: "flur" } },
+  );
+  assert.equal(alarmCause(hass, "alarm_control_panel.home"), "binary_sensor.front_door");
+  const alarmo = hassOf([{ entity_id: "alarm_control_panel.alarmo", state: "triggered", attributes: { open_sensors: { "binary_sensor.window_kitchen": "on" } } }]);
+  assert.equal(alarmCause(alarmo, "alarm_control_panel.alarmo"), "binary_sensor.window_kitchen", "Alarmo tells it");
+  const b = emptyBuilding();
+  b.floors = [{ ...newFloor("g", "EG", 0), rooms: [{ id: "r", name: "Flur", area_id: "flur", points: [[0, 0], [2, 0], [2, 2]], floor_material: "wood" }] }];
+  const alerts = findAlerts(hass, b, alertSources(hass, b), new Map());
+  assert.equal(alerts[0].roomId, "r");
+  assert.equal(alerts[0].cause, "binary_sensor.front_door");
 });

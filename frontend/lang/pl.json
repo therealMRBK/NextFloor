@@ -482,6 +482,7 @@
   "alert_co": "Tlenek węgla: {name}",
   "alert_water": "Woda: {name}",
   "alert_alarm": "Alarm wyzwolony",
+  "alert_alarm_by": "Alarm wywołany przez {cause}",
   "alert_alarm_pending": "Alarm oczekuje",
   "alert_window_rain": "Okno otwarte w deszczu: {name}",
   "alert_power_outage": "Brak zasilania: {name}",

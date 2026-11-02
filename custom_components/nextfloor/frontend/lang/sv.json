@@ -482,6 +482,7 @@
   "alert_co": "Kolmonoxid: {name}",
   "alert_water": "Vatten: {name}",
   "alert_alarm": "Larm utlöst",
+  "alert_alarm_by": "Larm utlöst av {cause}",
   "alert_alarm_pending": "Larm väntar",
   "alert_window_rain": "Fönster öppet i regn: {name}",
   "alert_power_outage": "Strömavbrott: {name}",
