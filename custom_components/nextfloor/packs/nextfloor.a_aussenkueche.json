@@ -1,0 +1,565 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_aussenkueche",
+ "name": "Grillküche & Terrasse",
+ "publisher": "NextFloor",
+ "description": "Außenküche, Kamado, Pizzaofen, Feuerschale, Terrassenstrahler, Außen-Kühlschrank, Bartheke und Hängesessel",
+ "release": 1,
+ "items": [
+  {
+   "id": "outdoor_kitchen",
+   "name": {
+    "de": "Außenküche",
+    "en": "Outdoor kitchen"
+   },
+   "size": [
+    2.8,
+    0.75,
+    0.95
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.9263,
+     "color": "#5d6672",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.9263,
+     "h": 0.0526,
+     "color": "#a4a9b1"
+    },
+    {
+     "shape": "box",
+     "x": -0.2143,
+     "z": 0.0,
+     "w": 0.3214,
+     "d": 0.7333,
+     "y": 0.9789,
+     "h": 0.0211,
+     "color": "dark"
+    },
+    {
+     "shape": "loft",
+     "x": -0.2143,
+     "z": -0.0667,
+     "w": 0.3214,
+     "d": 0.6667,
+     "y": 1,
+     "h": 0.2632,
+     "color": "metal",
+     "tw": 0.3036,
+     "td": 0.4
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": 0.0,
+     "w": 0.1786,
+     "d": 0.5333,
+     "y": 0.9684,
+     "h": 0.0105,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.3571,
+     "z": 0.5,
+     "w": 0.1786,
+     "d": 0.0133,
+     "y": 0.1053,
+     "h": 0.7368,
+     "color": "#4a525d"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.1786,
+     "d": 0.0133,
+     "y": 0.1053,
+     "h": 0.7368,
+     "color": "#4a525d"
+    },
+    {
+     "shape": "box",
+     "x": 0.3571,
+     "z": 0.5,
+     "w": 0.1786,
+     "d": 0.0133,
+     "y": 0.1053,
+     "h": 0.7368,
+     "color": "#4a525d"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "kamado",
+   "name": {
+    "de": "Kamado-Grill",
+    "en": "Kamado grill"
+   },
+   "size": [
+    0.8,
+    0.7,
+    1.15
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.75,
+     "d": 0.8571,
+     "y": 0.3043,
+     "h": 0.5217,
+     "color": "#2f6b3a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.0,
+     "w": 0.05,
+     "d": 0.7143,
+     "y": 0,
+     "h": 0.3478,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": 0.0,
+     "w": 0.05,
+     "d": 0.7143,
+     "y": 0,
+     "h": 0.3478,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4375,
+     "z": 0.0,
+     "w": 0.225,
+     "d": 0.5714,
+     "y": 0.5652,
+     "h": 0.0261,
+     "color": "wood"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.125,
+     "d": 0.1429,
+     "y": 0.8261,
+     "h": 0.1043,
+     "color": "metal"
+    }
+   ]
+  },
+  {
+   "id": "pizza_oven",
+   "name": {
+    "de": "Pizzaofen",
+    "en": "Pizza oven"
+   },
+   "size": [
+    0.9,
+    0.9,
+    1.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.5667,
+     "color": "#a4a9b1"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9444,
+     "d": 0.9444,
+     "y": 0.5667,
+     "h": 0.3,
+     "color": "#c58a5a",
+     "tw": 0.5556,
+     "td": 0.5556
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4778,
+     "w": 0.3889,
+     "d": 0.0111,
+     "y": 0.6133,
+     "h": 0.12,
+     "color": "#ff7a1a",
+     "glow": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.2222,
+     "w": 0.1333,
+     "d": 0.1333,
+     "y": 0.8667,
+     "h": 0.1667,
+     "color": "metal"
+    }
+   ],
+   "light": "table"
+  },
+  {
+   "id": "fire_pit",
+   "name": {
+    "de": "Feuerschale",
+    "en": "Fire pit"
+   },
+   "size": [
+    1.0,
+    1.0,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.4,
+     "d": 0.4,
+     "y": 0,
+     "h": 0.4444,
+     "color": "dark"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.6,
+     "d": 0.6,
+     "y": 0.4444,
+     "h": 0.4444,
+     "color": "#3a2a22",
+     "tw": 1,
+     "td": 1
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.5,
+     "d": 0.5,
+     "y": 0.7778,
+     "h": 0.1778,
+     "color": "#ff7a1a",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "garden"
+  },
+  {
+   "id": "patio_heater",
+   "name": {
+    "de": "Terrassenstrahler",
+    "en": "Patio heater"
+   },
+   "size": [
+    0.8,
+    0.8,
+    2.3
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.625,
+     "d": 0.625,
+     "y": 0,
+     "h": 0.0435,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.075,
+     "d": 0.075,
+     "y": 0.0435,
+     "h": 0.8261,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.3125,
+     "d": 0.3125,
+     "y": 0.8261,
+     "h": 0.1087,
+     "color": "#ff5a3a",
+     "glow": true
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.375,
+     "d": 0.375,
+     "y": 0.9348,
+     "h": 0.0652,
+     "color": "metal",
+     "tw": 1,
+     "td": 1
+    }
+   ],
+   "electric": true,
+   "climate": true,
+   "light": "floor"
+  },
+  {
+   "id": "outdoor_fridge",
+   "name": {
+    "de": "Außen-Kühlschrank",
+    "en": "Outdoor fridge"
+   },
+   "size": [
+    0.6,
+    0.6,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "metal",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8667,
+     "d": 0.0167,
+     "y": 0.0588,
+     "h": 0.8824,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.3333,
+     "z": 0.5,
+     "w": 0.0333,
+     "d": 0.0333,
+     "y": 0.3529,
+     "h": 0.3529,
+     "color": "dark"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "bar_counter",
+   "name": {
+    "de": "Bartheke",
+    "en": "Bar counter"
+   },
+   "size": [
+    2.0,
+    0.6,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.6667,
+     "y": 0,
+     "h": 0.9545,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0833,
+     "w": 1,
+     "d": 1,
+     "y": 0.9545,
+     "h": 0.0455,
+     "color": "#a4a9b1"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3333,
+     "w": 0.95,
+     "d": 0.0167,
+     "y": 0.0909,
+     "h": 0.0182,
+     "color": "#ffd89a",
+     "glow": true
+    }
+   ],
+   "surface": true,
+   "electric": true,
+   "light": "strip"
+  },
+  {
+   "id": "bar_stool_out",
+   "name": {
+    "de": "Barhocker außen",
+    "en": "Outdoor bar stool"
+   },
+   "size": [
+    0.45,
+    0.45,
+    0.8
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.4111,
+     "z": -0.4111,
+     "w": 0.0667,
+     "d": 0.0667,
+     "y": 0,
+     "h": 0.9375,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.4111,
+     "z": 0.4111,
+     "w": 0.0667,
+     "d": 0.0667,
+     "y": 0,
+     "h": 0.9375,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4111,
+     "z": -0.4111,
+     "w": 0.0667,
+     "d": 0.0667,
+     "y": 0,
+     "h": 0.9375,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.4111,
+     "z": 0.4111,
+     "w": 0.0667,
+     "d": 0.0667,
+     "y": 0,
+     "h": 0.9375,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9333,
+     "d": 0.9333,
+     "y": 0.9375,
+     "h": 0.0625,
+     "color": "wood"
+    }
+   ]
+  },
+  {
+   "id": "hanging_chair",
+   "name": {
+    "de": "Hängesessel",
+    "en": "Hanging chair"
+   },
+   "size": [
+    1.0,
+    1.0,
+    2.0
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0,
+     "h": 0.025,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.35,
+     "z": 0.0,
+     "w": 0.05,
+     "d": 0.05,
+     "y": 0.025,
+     "h": 0.95,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.1,
+     "z": 0.0,
+     "w": 0.55,
+     "d": 0.05,
+     "y": 0.95,
+     "h": 0.025,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.15,
+     "z": 0.0,
+     "w": 0.75,
+     "d": 0.75,
+     "y": 0.2,
+     "h": 0.5,
+     "color": "#c8b07a",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.15,
+     "z": 0.05,
+     "w": 0.6,
+     "d": 0.55,
+     "y": 0.25,
+     "h": 0.06,
+     "color": "#e8dcc4"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,486 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_haustechnik2",
+ "name": "Haustechnik 2",
+ "publisher": "NextFloor",
+ "description": "Wassertank mit Füllstand, Öltank und Ölkessel, Enthärtungsanlage, Pufferspeicher, Zisterne und Lüftungsgerät",
+ "release": 1,
+ "items": [
+  {
+   "id": "water_tank",
+   "name": {
+    "de": "Wassertank",
+    "en": "Water tank"
+   },
+   "size": [
+    0.9,
+    0.9,
+    1.6
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#3d6e9e",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9333,
+     "d": 0.9333,
+     "y": 0.0125,
+     "h": 0.625,
+     "color": "#3ea6ff",
+     "glow": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.2222,
+     "d": 0.2222,
+     "y": 1,
+     "h": 0.025,
+     "color": "dark"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "oil_tank",
+   "name": {
+    "de": "Öltank",
+    "en": "Oil tank"
+   },
+   "size": [
+    1.6,
+    0.7,
+    1.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c9cfa0",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.375,
+     "z": 0.0,
+     "w": 0.0625,
+     "d": 0.1429,
+     "y": 1,
+     "h": 0.0533,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": -0.3125,
+     "z": 0.5,
+     "w": 0.025,
+     "d": 0.0143,
+     "y": 0.0667,
+     "h": 0.8,
+     "color": "#e8ecf2"
+    }
+   ]
+  },
+  {
+   "id": "oil_boiler",
+   "name": {
+    "de": "Ölheizung",
+    "en": "Oil boiler"
+   },
+   "size": [
+    0.6,
+    0.7,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.6667,
+     "d": 0.0143,
+     "y": 0.75,
+     "h": 0.15,
+     "color": "#2b3446",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.1667,
+     "z": 0.5,
+     "w": 0.1333,
+     "d": 0.0143,
+     "y": 0.5,
+     "h": 0.05,
+     "color": "#ff7a1a",
+     "glow": true
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.2857,
+     "w": 0.25,
+     "d": 0.2143,
+     "y": 1,
+     "h": 0.25,
+     "color": "metal"
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "water_softener",
+   "name": {
+    "de": "Enthärtungsanlage",
+    "en": "Water softener"
+   },
+   "size": [
+    0.35,
+    0.5,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2,
+     "w": 1,
+     "d": 0.6,
+     "y": 0,
+     "h": 0.7273,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3,
+     "w": 0.5714,
+     "d": 0.4,
+     "y": 0,
+     "h": 0.9091,
+     "color": "#3d6e9e"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.4286,
+     "d": 0.02,
+     "y": 0.6364,
+     "h": 0.0545,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "buffer_tank",
+   "name": {
+    "de": "Pufferspeicher",
+    "en": "Buffer tank"
+   },
+   "size": [
+    0.8,
+    0.8,
+    1.9
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c0c7d1",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.375,
+     "z": 0.3125,
+     "w": 0.075,
+     "d": 0.075,
+     "y": 0.1579,
+     "h": 0.0316,
+     "color": "#3ea6ff",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.375,
+     "z": 0.3125,
+     "w": 0.075,
+     "d": 0.075,
+     "y": 0.5263,
+     "h": 0.0316,
+     "color": "#3ea6ff",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.375,
+     "z": 0.3125,
+     "w": 0.075,
+     "d": 0.075,
+     "y": 0.8421,
+     "h": 0.0316,
+     "color": "#e03a3a",
+     "axis": "z"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "cistern",
+   "name": {
+    "de": "Zisterne",
+    "en": "Rainwater cistern"
+   },
+   "size": [
+    2.0,
+    2.0,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.25,
+     "color": "#5d6672",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.35,
+     "d": 0.35,
+     "y": 0.25,
+     "h": 0.6,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9,
+     "d": 0.9,
+     "y": 0,
+     "h": 0.1,
+     "color": "#3ea6ff",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "ventilation_unit",
+   "name": {
+    "de": "Lüftungsanlage",
+    "en": "Ventilation unit"
+   },
+   "size": [
+    0.8,
+    0.6,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.35,
+     "z": -0.1667,
+     "w": 0.2,
+     "d": 0.2667,
+     "y": 1,
+     "h": 0.2222,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.125,
+     "z": -0.1667,
+     "w": 0.2,
+     "d": 0.2667,
+     "y": 1,
+     "h": 0.2222,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.125,
+     "z": -0.1667,
+     "w": 0.2,
+     "d": 0.2667,
+     "y": 1,
+     "h": 0.2222,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.35,
+     "z": -0.1667,
+     "w": 0.2,
+     "d": 0.2667,
+     "y": 1,
+     "h": 0.2222,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.25,
+     "d": 0.0167,
+     "y": 0.6667,
+     "h": 0.0889,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "expansion_vessel",
+   "name": {
+    "de": "Ausdehnungsgefäß",
+    "en": "Expansion vessel"
+   },
+   "size": [
+    0.4,
+    0.4,
+    0.55
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.0909,
+     "h": 0.8182,
+     "color": "#c0392b"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.15,
+     "d": 0.15,
+     "y": 0.9091,
+     "h": 0.0909,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.75,
+     "d": 0.75,
+     "y": 0,
+     "h": 0.0909,
+     "color": "dark"
+    }
+   ]
+  },
+  {
+   "id": "heat_pump_indoor",
+   "name": {
+    "de": "Wärmepumpe (Innengerät)",
+    "en": "Heat pump (indoor unit)"
+   },
+   "size": [
+    0.6,
+    0.7,
+    1.8
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.0143,
+     "y": 0.7222,
+     "h": 0.1111,
+     "color": "#1d2533",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8333,
+     "d": 0.0143,
+     "y": 0.0556,
+     "h": 0.0111,
+     "color": "#7fd0ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "climate": true
+  }
+ ]
+}

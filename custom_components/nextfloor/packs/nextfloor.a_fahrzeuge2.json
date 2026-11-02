@@ -1,0 +1,1013 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_fahrzeuge2",
+ "name": "Fahrzeuge 2",
+ "publisher": "NextFloor",
+ "description": "Motorrad, Roller, Wohnmobil, Anhänger, E-Bike, Lastenrad, Quad und Bootsanhänger",
+ "release": 1,
+ "items": [
+  {
+   "id": "motorbike",
+   "name": {
+    "de": "Motorrad",
+    "en": "Motorbike"
+   },
+   "size": [
+    0.8,
+    2.15,
+    1.15
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3256,
+     "w": 0.15,
+     "d": 0.3023,
+     "y": 0,
+     "h": 0.5652,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3256,
+     "w": 0.175,
+     "d": 0.3023,
+     "y": 0,
+     "h": 0.5652,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0233,
+     "w": 0.375,
+     "d": 0.4651,
+     "y": 0.3913,
+     "h": 0.3043,
+     "color": "body",
+     "tw": 0.3125,
+     "td": 0.2791,
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1628,
+     "w": 0.35,
+     "d": 0.2791,
+     "y": 0.6522,
+     "h": 0.0696,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3023,
+     "w": 0.9375,
+     "d": 0.0186,
+     "y": 0.8696,
+     "h": 0.0261,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3953,
+     "w": 0.1875,
+     "d": 0.0372,
+     "y": 0.6957,
+     "h": 0.1304,
+     "color": "#ffd89a",
+     "glow": true,
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0233,
+     "w": 0.3125,
+     "d": 0.2326,
+     "y": 0.2174,
+     "h": 0.2174,
+     "color": "metal"
+    }
+   ],
+   "vehicle": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "scooter",
+   "name": {
+    "de": "Motorroller",
+    "en": "Scooter"
+   },
+   "size": [
+    0.7,
+    1.8,
+    1.15
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3333,
+     "w": 0.1429,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.3913,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3333,
+     "w": 0.1429,
+     "d": 0.25,
+     "y": 0,
+     "h": 0.3913,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": -0.1111,
+     "w": 0.5714,
+     "d": 0.6111,
+     "y": 0.1739,
+     "h": 0.4348,
+     "color": "body",
+     "tw": 0.5,
+     "td": 0.4444,
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3056,
+     "w": 0.4286,
+     "d": 0.0833,
+     "y": 0.1739,
+     "h": 0.6522,
+     "color": "body",
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3056,
+     "w": 0.9286,
+     "d": 0.0222,
+     "y": 0.913,
+     "h": 0.0261,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1667,
+     "w": 0.4571,
+     "d": 0.3333,
+     "y": 0.6087,
+     "h": 0.087,
+     "color": "dark"
+    }
+   ],
+   "vehicle": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "camper_van",
+   "name": {
+    "de": "Wohnmobil",
+    "en": "Camper van"
+   },
+   "size": [
+    2.3,
+    7.0,
+    3.0
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": -0.413,
+     "z": 0.3286,
+     "w": 0.1087,
+     "d": 0.1071,
+     "y": 0,
+     "h": 0.25,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.413,
+     "z": -0.2571,
+     "w": 0.1087,
+     "d": 0.1071,
+     "y": 0,
+     "h": 0.25,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.413,
+     "z": 0.3286,
+     "w": 0.1087,
+     "d": 0.1071,
+     "y": 0,
+     "h": 0.25,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.413,
+     "z": -0.2571,
+     "w": 0.1087,
+     "d": 0.1071,
+     "y": 0,
+     "h": 0.25,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0571,
+     "w": 1,
+     "d": 0.8286,
+     "y": 0.1333,
+     "h": 0.85,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.4214,
+     "w": 0.9565,
+     "d": 0.1571,
+     "y": 0.1333,
+     "h": 0.6,
+     "color": "white",
+     "tz": 0.3714,
+     "td": 0.0857
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4714,
+     "w": 0.8696,
+     "d": 0.0071,
+     "y": 0.4333,
+     "h": 0.2667,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0429,
+     "w": 1,
+     "d": 0.0857,
+     "y": 0.5,
+     "h": 0.1667,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0571,
+     "w": 1,
+     "d": 0.5714,
+     "y": 0.3,
+     "h": 0.04,
+     "color": "body",
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1429,
+     "w": 0.5217,
+     "d": 0.2,
+     "y": 0.9833,
+     "h": 0.04,
+     "color": "dark"
+    }
+   ],
+   "vehicle": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "trailer",
+   "name": {
+    "de": "Anhänger",
+    "en": "Trailer"
+   },
+   "size": [
+    1.6,
+    3.2,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": -0.4375,
+     "z": -0.0937,
+     "w": 0.1125,
+     "d": 0.1719,
+     "y": 0,
+     "h": 0.6111,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4375,
+     "z": -0.0937,
+     "w": 0.1125,
+     "d": 0.1719,
+     "y": 0,
+     "h": 0.6111,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0937,
+     "w": 0.875,
+     "d": 0.6875,
+     "y": 0.5,
+     "h": 0.4667,
+     "color": "metal",
+     "edges": "faint"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.3594,
+     "w": 0.375,
+     "d": 0.25,
+     "y": 0.4444,
+     "h": 0.0667,
+     "color": "metal",
+     "tw": 0.05,
+     "td": 0.0312,
+     "tz": 0.4688
+    }
+   ],
+   "vehicle": true
+  },
+  {
+   "id": "e_bike",
+   "name": {
+    "de": "E-Bike",
+    "en": "E-bike"
+   },
+   "size": [
+    0.6,
+    1.85,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3243,
+     "w": 0.0833,
+     "d": 0.3784,
+     "y": 0,
+     "h": 0.6364,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3243,
+     "w": 0.0833,
+     "d": 0.3784,
+     "y": 0,
+     "h": 0.6364,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0541,
+     "w": 0.0833,
+     "d": 0.4865,
+     "y": 0.5,
+     "h": 0.0545,
+     "color": "body",
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.027,
+     "w": 0.1333,
+     "d": 0.1892,
+     "y": 0.3636,
+     "h": 0.1091,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1622,
+     "w": 0.3333,
+     "d": 0.1351,
+     "y": 0.8636,
+     "h": 0.0455,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2973,
+     "w": 0.9667,
+     "d": 0.0162,
+     "y": 0.9545,
+     "h": 0.0273,
+     "color": "metal"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.3784,
+     "w": 0.1,
+     "d": 0.0216,
+     "y": 0.8182,
+     "h": 0.0545,
+     "color": "#ffd89a",
+     "glow": true,
+     "axis": "z"
+    }
+   ],
+   "vehicle": true,
+   "electric": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "cargo_bike",
+   "name": {
+    "de": "Lastenrad",
+    "en": "Cargo bike"
+   },
+   "size": [
+    0.8,
+    2.6,
+    1.15
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.4231,
+     "w": 0.0625,
+     "d": 0.1923,
+     "y": 0,
+     "h": 0.4348,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.3846,
+     "w": 0.0625,
+     "d": 0.2692,
+     "y": 0,
+     "h": 0.6087,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2308,
+     "w": 0.9375,
+     "d": 0.3269,
+     "y": 0.2609,
+     "h": 0.3913,
+     "color": "wood",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1538,
+     "w": 0.0625,
+     "d": 0.3846,
+     "y": 0.3913,
+     "h": 0.0522,
+     "color": "body",
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.2692,
+     "w": 0.25,
+     "d": 0.0962,
+     "y": 0.8261,
+     "h": 0.0435,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.75,
+     "d": 0.0115,
+     "y": 0.913,
+     "h": 0.0261,
+     "color": "metal"
+    }
+   ],
+   "vehicle": true,
+   "electric": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "quad",
+   "name": {
+    "de": "Quad",
+    "en": "Quad bike"
+   },
+   "size": [
+    1.2,
+    1.9,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": -0.4,
+     "z": 0.3158,
+     "w": 0.2083,
+     "d": 0.2895,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.4,
+     "z": -0.3158,
+     "w": 0.2083,
+     "d": 0.2895,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4,
+     "z": 0.3158,
+     "w": 0.2083,
+     "d": 0.2895,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.4,
+     "z": -0.3158,
+     "w": 0.2083,
+     "d": 0.2895,
+     "y": 0,
+     "h": 0.5,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.6667,
+     "d": 0.8421,
+     "y": 0.3182,
+     "h": 0.4091,
+     "color": "body",
+     "tw": 0.5,
+     "td": 0.6316,
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1053,
+     "w": 0.2917,
+     "d": 0.3158,
+     "y": 0.7273,
+     "h": 0.0909,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2368,
+     "w": 0.6667,
+     "d": 0.0211,
+     "y": 0.9091,
+     "h": 0.0273,
+     "color": "metal"
+    }
+   ],
+   "vehicle": true,
+   "colors": [
+    {
+     "id": "red",
+     "name": {
+      "de": "Rot",
+      "en": "Red"
+     },
+     "hex": "#b3232f"
+    },
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#e8ecf2"
+    },
+    {
+     "id": "blue",
+     "name": {
+      "de": "Blau",
+      "en": "Blue"
+     },
+     "hex": "#2f6b9a"
+    },
+    {
+     "id": "green",
+     "name": {
+      "de": "Grün",
+      "en": "Green"
+     },
+     "hex": "#3f7a4a"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "de": "Grau",
+      "en": "Grey"
+     },
+     "hex": "#7b8594"
+    }
+   ]
+  },
+  {
+   "id": "boat_trailer",
+   "name": {
+    "de": "Bootsanhänger mit Boot",
+    "en": "Boat on a trailer"
+   },
+   "size": [
+    2.0,
+    5.5,
+    1.7
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": -0.425,
+     "z": -0.0909,
+     "w": 0.09,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.3235,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.425,
+     "z": -0.0909,
+     "w": 0.09,
+     "d": 0.1,
+     "y": 0,
+     "h": 0.3235,
+     "color": "dark",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0364,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0.2353,
+     "h": 0.0588,
+     "color": "metal"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": -0.0545,
+     "w": 0.95,
+     "d": 0.8364,
+     "y": 0.3235,
+     "h": 0.4706,
+     "color": "white",
+     "tw": 0.8,
+     "td": 0.7636,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.0545,
+     "w": 0.85,
+     "d": 0.7273,
+     "y": 0.7941,
+     "h": 0.0294,
+     "color": "wood"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.4636,
+     "w": 0.2,
+     "d": 0.0909,
+     "y": 0.2059,
+     "h": 0.0353,
+     "color": "metal",
+     "tw": 0.04,
+     "td": 0.0182
+    }
+   ],
+   "vehicle": true
+  }
+ ]
+}

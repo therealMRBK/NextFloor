@@ -1,0 +1,570 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_japandi",
+ "name": "Japandi & Skandi",
+ "publisher": "NextFloor",
+ "description": "Niedriges Bett, Tatami, Papierleuchte, Teetisch, Shoji-Paravent, Bonsai, Sitzkissen und Holzbank",
+ "release": 1,
+ "items": [
+  {
+   "id": "low_bed",
+   "name": {
+    "de": "Niedriges Bett",
+    "en": "Low platform bed"
+   },
+   "size": [
+    1.8,
+    2.2,
+    0.75
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.2,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0227,
+     "w": 0.8889,
+     "d": 0.9091,
+     "y": 0.2,
+     "h": 0.2,
+     "color": "#efe9dd"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.4773,
+     "w": 1,
+     "d": 0.0455,
+     "y": 0,
+     "h": 1,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.2222,
+     "z": -0.3864,
+     "w": 0.3333,
+     "d": 0.1591,
+     "y": 0.4,
+     "h": 0.16,
+     "color": "#d9cfbf"
+    },
+    {
+     "shape": "box",
+     "x": 0.2222,
+     "z": -0.3864,
+     "w": 0.3333,
+     "d": 0.1591,
+     "y": 0.4,
+     "h": 0.16,
+     "color": "#d9cfbf"
+    }
+   ]
+  },
+  {
+   "id": "tatami",
+   "name": {
+    "de": "Tatami",
+    "en": "Tatami mat"
+   },
+   "size": [
+    1.8,
+    0.9,
+    0.05
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c9c08a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.4778,
+     "w": 1,
+     "d": 0.0444,
+     "y": 0,
+     "h": 1,
+     "color": "#2b3f66"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4778,
+     "w": 1,
+     "d": 0.0444,
+     "y": 0,
+     "h": 1,
+     "color": "#2b3f66"
+    }
+   ]
+  },
+  {
+   "id": "paper_lamp",
+   "name": {
+    "de": "Papierleuchte",
+    "en": "Paper floor lamp"
+   },
+   "size": [
+    0.45,
+    0.45,
+    1.2
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.6667,
+     "d": 0.6667,
+     "y": 0,
+     "h": 0.025,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.0667,
+     "d": 0.0667,
+     "y": 0.025,
+     "h": 0.25,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.275,
+     "h": 0.7083,
+     "color": "#fff6e0",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "floor"
+  },
+  {
+   "id": "paper_pendant",
+   "name": {
+    "de": "Papier-Pendelleuchte",
+    "en": "Paper pendant"
+   },
+   "size": [
+    0.6,
+    0.6,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.0167,
+     "d": 0.0167,
+     "y": 0.5556,
+     "h": 0.4444,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.0556,
+     "h": 0.5,
+     "color": "#fff6e0",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true,
+   "light": "pendant"
+  },
+  {
+   "id": "tea_table",
+   "name": {
+    "de": "Teetisch",
+    "en": "Low tea table"
+   },
+   "size": [
+    1.1,
+    0.7,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.8571,
+     "h": 0.1429,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.4273,
+     "z": -0.3857,
+     "w": 0.0545,
+     "d": 0.0857,
+     "y": 0,
+     "h": 0.8571,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.4273,
+     "z": 0.3857,
+     "w": 0.0545,
+     "d": 0.0857,
+     "y": 0,
+     "h": 0.8571,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.4273,
+     "z": -0.3857,
+     "w": 0.0545,
+     "d": 0.0857,
+     "y": 0,
+     "h": 0.8571,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.4273,
+     "z": 0.3857,
+     "w": 0.0545,
+     "d": 0.0857,
+     "y": 0,
+     "h": 0.8571,
+     "color": "#b98d5a"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "shoji_screen",
+   "name": {
+    "de": "Shoji-Paravent",
+    "en": "Shoji screen"
+   },
+   "size": [
+    1.6,
+    0.05,
+    1.8
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.3312,
+     "z": 0.0,
+     "w": 0.3125,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "#fff6e0",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.3125,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "#fff6e0",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.3312,
+     "z": 0.0,
+     "w": 0.3125,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "#fff6e0",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.4938,
+     "z": 0.0,
+     "w": 0.0125,
+     "d": 0.8,
+     "y": 0,
+     "h": 1,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.1688,
+     "z": 0.0,
+     "w": 0.0125,
+     "d": 0.8,
+     "y": 0,
+     "h": 1,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.1688,
+     "z": 0.0,
+     "w": 0.0125,
+     "d": 0.8,
+     "y": 0,
+     "h": 1,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.4938,
+     "z": 0.0,
+     "w": 0.0125,
+     "d": 0.8,
+     "y": 0,
+     "h": 1,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.8,
+     "y": 0.2222,
+     "h": 0.0111,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.8,
+     "y": 0.5,
+     "h": 0.0111,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.8,
+     "y": 0.7778,
+     "h": 0.0111,
+     "color": "#b98d5a"
+    }
+   ]
+  },
+  {
+   "id": "bonsai",
+   "name": {
+    "de": "Bonsai",
+    "en": "Bonsai"
+   },
+   "size": [
+    0.4,
+    0.3,
+    0.4
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.875,
+     "d": 0.8333,
+     "y": 0,
+     "h": 0.2,
+     "color": "#5a4a3a"
+    },
+    {
+     "shape": "box",
+     "x": -0.075,
+     "z": 0.0,
+     "w": 0.075,
+     "d": 0.1,
+     "y": 0.2,
+     "h": 0.375,
+     "color": "wood",
+     "rot": 15
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2,
+     "z": 0.0,
+     "w": 0.4,
+     "d": 0.4,
+     "y": 0.55,
+     "h": 0.2,
+     "color": "#3f7a4a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.175,
+     "z": 0.0667,
+     "w": 0.4,
+     "d": 0.4,
+     "y": 0.65,
+     "h": 0.2,
+     "color": "#3f7a4a"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.0667,
+     "w": 0.4,
+     "d": 0.4,
+     "y": 0.775,
+     "h": 0.2,
+     "color": "#3f7a4a"
+    }
+   ],
+   "mount": "surface"
+  },
+  {
+   "id": "floor_cushion",
+   "name": {
+    "de": "Sitzkissen",
+    "en": "Floor cushion"
+   },
+   "size": [
+    0.6,
+    0.6,
+    0.15
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#d9cfbf",
+     "edges": "faint"
+    }
+   ]
+  },
+  {
+   "id": "wood_bench",
+   "name": {
+    "de": "Holzbank",
+    "en": "Wooden bench"
+   },
+   "size": [
+    1.4,
+    0.4,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.8889,
+     "h": 0.1111,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": -0.3929,
+     "z": 0.0,
+     "w": 0.0429,
+     "d": 0.875,
+     "y": 0,
+     "h": 0.8889,
+     "color": "#b98d5a"
+    },
+    {
+     "shape": "box",
+     "x": 0.3929,
+     "z": 0.0,
+     "w": 0.0429,
+     "d": 0.875,
+     "y": 0,
+     "h": 0.8889,
+     "color": "#b98d5a"
+    }
+   ],
+   "surface": true
+  },
+  {
+   "id": "rattan_chair",
+   "name": {
+    "de": "Rattansessel",
+    "en": "Rattan armchair"
+   },
+   "size": [
+    0.75,
+    0.8,
+    0.8
+   ],
+   "parts": [
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9333,
+     "d": 0.9375,
+     "y": 0,
+     "h": 0.525,
+     "color": "#c8a46a",
+     "tw": 1,
+     "td": 1,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.4125,
+     "w": 0.9333,
+     "d": 0.125,
+     "y": 0.525,
+     "h": 0.475,
+     "color": "#c8a46a"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0625,
+     "w": 0.8,
+     "d": 0.75,
+     "y": 0.525,
+     "h": 0.1,
+     "color": "#efe9dd"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,519 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_wellness",
+ "name": "Wellness",
+ "publisher": "NextFloor",
+ "description": "Sauna mit Temperatur, Fasssauna, Infrarotkabine, Whirlpool, Tauchbecken, Dampfdusche und Ruheliege",
+ "release": 1,
+ "items": [
+  {
+   "id": "sauna_cabin",
+   "name": {
+    "de": "Sauna",
+    "en": "Sauna"
+   },
+   "size": [
+    2.0,
+    1.8,
+    2.1
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c08a54",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.5,
+     "w": 0.3,
+     "d": 0.0111,
+     "y": 0.0476,
+     "h": 0.9048,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0.0,
+     "w": 0.5,
+     "d": 0.8333,
+     "y": 0.2143,
+     "h": 0.0286,
+     "color": "#e0b07a"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": -0.2778,
+     "w": 0.5,
+     "d": 0.2778,
+     "y": 0.4286,
+     "h": 0.0286,
+     "color": "#e0b07a"
+    },
+    {
+     "shape": "box",
+     "x": -0.375,
+     "z": -0.3333,
+     "w": 0.175,
+     "d": 0.1944,
+     "y": 0,
+     "h": 0.2857,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.375,
+     "z": -0.3333,
+     "w": 0.15,
+     "d": 0.1667,
+     "y": 0.2857,
+     "h": 0.0714,
+     "color": "#ff7a1a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.35,
+     "z": 0.5,
+     "w": 0.05,
+     "d": 0.0056,
+     "y": 0.7619,
+     "h": 0.0286,
+     "color": "#ff7a1a",
+     "screen": true
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "sauna_barrel",
+   "name": {
+    "de": "Fasssauna",
+    "en": "Barrel sauna"
+   },
+   "size": [
+    2.2,
+    2.4,
+    2.2
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.0455,
+     "h": 0.9545,
+     "color": "#b07a46",
+     "axis": "z",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.375,
+     "w": 0.8636,
+     "d": 0.0625,
+     "y": 0,
+     "h": 0.0545,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.375,
+     "w": 0.8636,
+     "d": 0.0625,
+     "y": 0,
+     "h": 0.0545,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.3182,
+     "d": 0.0083,
+     "y": 0.0909,
+     "h": 0.7273,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.3636,
+     "z": -0.25,
+     "w": 0.0682,
+     "d": 0.0625,
+     "y": 0.8636,
+     "h": 0.1818,
+     "color": "metal"
+    }
+   ],
+   "electric": true,
+   "climate": true
+  },
+  {
+   "id": "infrared_cabin",
+   "name": {
+    "de": "Infrarotkabine",
+    "en": "Infrared cabin"
+   },
+   "size": [
+    1.2,
+    1.0,
+    1.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#d9a46b",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.02,
+     "y": 0.0526,
+     "h": 0.8947,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": -0.45,
+     "w": 0.25,
+     "d": 0.02,
+     "y": 0.2632,
+     "h": 0.4211,
+     "color": "#ff5a3a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": -0.45,
+     "w": 0.25,
+     "d": 0.02,
+     "y": 0.2632,
+     "h": 0.4211,
+     "color": "#ff5a3a",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.1,
+     "w": 0.9167,
+     "d": 0.45,
+     "y": 0.2368,
+     "h": 0.0263,
+     "color": "#e0b07a"
+    }
+   ],
+   "electric": true,
+   "climate": true,
+   "light": "panel"
+  },
+  {
+   "id": "hot_tub",
+   "name": {
+    "de": "Whirlpool",
+    "en": "Hot tub"
+   },
+   "size": [
+    2.2,
+    2.2,
+    0.9
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#5a4a3a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8636,
+     "d": 0.8636,
+     "y": 0.5556,
+     "h": 0.4222,
+     "color": "#2a8fd4",
+     "glow": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9091,
+     "d": 0.9091,
+     "y": 0.9556,
+     "h": 0.0444,
+     "color": "#d9dee6"
+    }
+   ],
+   "electric": true,
+   "climate": true,
+   "light": "garden"
+  },
+  {
+   "id": "plunge_pool",
+   "name": {
+    "de": "Tauchbecken",
+    "en": "Plunge pool"
+   },
+   "size": [
+    1.2,
+    1.2,
+    1.1
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c0c7d1",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.9167,
+     "d": 0.9167,
+     "y": 0.5455,
+     "h": 0.4091,
+     "color": "#69b8e8",
+     "glow": true
+    }
+   ]
+  },
+  {
+   "id": "steam_shower",
+   "name": {
+    "de": "Dampfdusche",
+    "en": "Steam shower"
+   },
+   "size": [
+    1.0,
+    1.0,
+    2.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.0364,
+     "color": "white"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.48,
+     "w": 1,
+     "d": 0.04,
+     "y": 0.0364,
+     "h": 0.9545,
+     "color": "#d9dee6"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.48,
+     "w": 1,
+     "d": 0.02,
+     "y": 0.0364,
+     "h": 0.9091,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.2,
+     "w": 0.3,
+     "d": 0.3,
+     "y": 0.9545,
+     "h": 0.0091,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.3,
+     "z": -0.45,
+     "w": 0.12,
+     "d": 0.01,
+     "y": 0.5909,
+     "h": 0.0364,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "relax_lounger",
+   "name": {
+    "de": "Ruheliege",
+    "en": "Relaxation lounger"
+   },
+   "size": [
+    0.75,
+    2.0,
+    0.8
+   ],
+   "parts": [
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.15,
+     "w": 0.9333,
+     "d": 0.6,
+     "y": 0.4375,
+     "h": 0.125,
+     "color": "wood",
+     "tz": 0.2,
+     "td": 0.5
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": -0.3,
+     "w": 0.9333,
+     "d": 0.4,
+     "y": 0.5,
+     "h": 0.5,
+     "color": "wood",
+     "tz": -0.4,
+     "td": 0.15
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.1,
+     "w": 0.8667,
+     "d": 0.75,
+     "y": 0.5625,
+     "h": 0.0625,
+     "color": "#e8dcc4"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": -0.47,
+     "w": 0.0667,
+     "d": 0.025,
+     "y": 0,
+     "h": 0.4375,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": -0.42,
+     "z": 0.47,
+     "w": 0.0667,
+     "d": 0.025,
+     "y": 0,
+     "h": 0.4375,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": -0.47,
+     "w": 0.0667,
+     "d": 0.025,
+     "y": 0,
+     "h": 0.4375,
+     "color": "wood"
+    },
+    {
+     "shape": "box",
+     "x": 0.42,
+     "z": 0.47,
+     "w": 0.0667,
+     "d": 0.025,
+     "y": 0,
+     "h": 0.4375,
+     "color": "wood"
+    }
+   ]
+  },
+  {
+   "id": "cold_bath",
+   "name": {
+    "de": "Eistonne",
+    "en": "Ice bath"
+   },
+   "size": [
+    0.8,
+    0.8,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#7a5a3a",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.875,
+     "d": 0.875,
+     "y": 0.6471,
+     "h": 0.3294,
+     "color": "#bfe6ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "climate": true
+  }
+ ]
+}

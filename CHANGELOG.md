@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.20.0
+
+### Added
+
+- **13 new furniture packs with 124 pieces**: *Season & decoration* (a Christmas tree whose fairy lights follow its light, Advent wreath, window star, candle arch, light-up reindeer, outdoor string lights, pumpkins, Easter tree, snowman, presents), *Smart home 2* (siren, Wi-Fi access points, smoke, CO, presence and water leak sensors, air quality monitor, dehumidifier, cube lamp, video doorbell), *Building services 2* (water tank, oil tank and oil boiler, water softener, buffer tank, cistern, ventilation unit, indoor heat pump), *Wellness* (sauna, barrel sauna, infrared cabin, hot tub, plunge pool, ice bath, steam shower, lounger – the heated ones link to a climate entity and show its temperature), *Garden 2* (water feature with light, pond with pump, robot mower and its dock, sandbox, beach chair, wood pile, bird house, raised bed, garden shower), *Kitchen 2* (bean-to-cup and espresso machines, kettle, toaster, stand mixer, cooking food processor, air fryer, microwave, wine fridge, sparkling water maker, slim dishwasher), *Vehicles 2* (motorbike, scooter, camper van, trailer, e-bike, cargo bike, quad, boat on a trailer, each in six colours), *Outdoor kitchen & terrace*, *Workshop 2*, *Japandi & Scandi*, *Loft & industrial*, *Indoor greenery* (plants that show their soil moisture) and *Music & studio*. The library has two new shelves for them: *Music & studio* and *Season & decoration*.
+
 ## 0.17.0
 
 ### Added

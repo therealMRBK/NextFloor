@@ -1,0 +1,465 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_smart2",
+ "name": "Smart Home 2",
+ "publisher": "NextFloor",
+ "description": "Sirene, Access Point, Rauch- und CO-Melder, Luftentfeuchter, Würfellampe, Präsenzmelder und Wassermelder",
+ "release": 1,
+ "items": [
+  {
+   "id": "siren",
+   "name": {
+    "de": "Sirene",
+    "en": "Siren"
+   },
+   "size": [
+    0.18,
+    0.1,
+    0.22
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.5,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.6667,
+     "d": 0.5,
+     "y": 0.2727,
+     "h": 0.5455,
+     "color": "#e03a3a",
+     "glow": true,
+     "axis": "z"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 2.1,
+   "electric": true,
+   "light": "wall"
+  },
+  {
+   "id": "access_point",
+   "name": {
+    "de": "WLAN-Access-Point",
+    "en": "Wi-Fi access point"
+   },
+   "size": [
+    0.22,
+    0.22,
+    0.04
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.7273,
+     "d": 0.7273,
+     "y": 0,
+     "h": 0.125,
+     "color": "#7fd0ff",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "access_point_wall",
+   "name": {
+    "de": "WLAN-Access-Point (Wand)",
+    "en": "Wi-Fi access point (wall)"
+   },
+   "size": [
+    0.16,
+    0.04,
+    0.16
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.375,
+     "d": 0.125,
+     "y": 0.625,
+     "h": 0.0625,
+     "color": "#7fd0ff",
+     "glow": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 2.0,
+   "electric": true
+  },
+  {
+   "id": "smoke_detector",
+   "name": {
+    "de": "Rauchmelder",
+    "en": "Smoke detector"
+   },
+   "size": [
+    0.11,
+    0.11,
+    0.05
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.2727,
+     "z": 0.0,
+     "w": 0.0909,
+     "d": 0.0909,
+     "y": 0,
+     "h": 0.1,
+     "color": "#e03a3a",
+     "glow": true
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "co_detector",
+   "name": {
+    "de": "CO-Melder",
+    "en": "CO detector"
+   },
+   "size": [
+    0.12,
+    0.04,
+    0.12
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.125,
+     "y": 0.5833,
+     "h": 0.2083,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.5,
+   "electric": true
+  },
+  {
+   "id": "dehumidifier",
+   "name": {
+    "de": "Luftentfeuchter",
+    "en": "Dehumidifier"
+   },
+   "size": [
+    0.35,
+    0.25,
+    0.55
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0.0364,
+     "h": 0.9636,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8,
+     "d": 0.8,
+     "y": 0.9636,
+     "h": 0.0364,
+     "color": "#c9d1dc"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.7143,
+     "d": 0.04,
+     "y": 0.0909,
+     "h": 0.3273,
+     "color": "#9fb8d4"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.2286,
+     "d": 0.04,
+     "y": 0.8182,
+     "h": 0.0545,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "cube_lamp",
+   "name": {
+    "de": "Würfellampe",
+    "en": "Cube lamp"
+   },
+   "size": [
+    0.2,
+    0.2,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#fff1c9",
+     "glow": true,
+     "edges": "faint"
+    }
+   ],
+   "mount": "surface",
+   "electric": true,
+   "light": "table"
+  },
+  {
+   "id": "presence_ceiling",
+   "name": {
+    "de": "Präsenzmelder (Decke)",
+    "en": "Presence sensor (ceiling)"
+   },
+   "size": [
+    0.09,
+    0.09,
+    0.03
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.4444,
+     "d": 0.4444,
+     "y": 0,
+     "h": 0.3333,
+     "color": "#2b3446"
+    }
+   ],
+   "mount": "ceiling",
+   "electric": true
+  },
+  {
+   "id": "water_leak",
+   "name": {
+    "de": "Wassermelder",
+    "en": "Water leak sensor"
+   },
+   "size": [
+    0.07,
+    0.07,
+    0.02
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.2857,
+     "d": 0.2857,
+     "y": 1,
+     "h": 0.1,
+     "color": "#3ea6ff"
+    }
+   ],
+   "electric": true
+  },
+  {
+   "id": "air_quality",
+   "name": {
+    "de": "Luftgütesensor",
+    "en": "Air quality monitor"
+   },
+   "size": [
+    0.12,
+    0.08,
+    0.16
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8333,
+     "d": 0.0625,
+     "y": 0.1875,
+     "h": 0.625,
+     "color": "#1d2533",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.6667,
+     "d": 0.075,
+     "y": 0.875,
+     "h": 0.0625,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "doorbell_cam",
+   "name": {
+    "de": "Video-Türklingel",
+    "en": "Video doorbell"
+   },
+   "size": [
+    0.06,
+    0.03,
+    0.15
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.3333,
+     "y": 0.6667,
+     "h": 0.2,
+     "color": "#2b3446",
+     "axis": "z"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.3333,
+     "y": 0.1333,
+     "h": 0.2,
+     "color": "#7fd0ff",
+     "glow": true,
+     "axis": "z"
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.3,
+   "electric": true
+  }
+ ]
+}

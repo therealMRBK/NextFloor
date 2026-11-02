@@ -1,0 +1,653 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_kueche2",
+ "name": "Küche 2",
+ "publisher": "NextFloor",
+ "description": "Kaffeevollautomat, Siebträger, Wasserkocher, Toaster, Küchenmaschine, Heißluftfritteuse, Weinkühlschrank und mehr",
+ "release": 1,
+ "items": [
+  {
+   "id": "coffee_machine",
+   "name": {
+    "de": "Kaffeevollautomat",
+    "en": "Bean-to-cup coffee machine"
+   },
+   "size": [
+    0.28,
+    0.45,
+    0.38
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4444,
+     "w": 0.7143,
+     "d": 0.1333,
+     "y": 0.1316,
+     "h": 0.1316,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.5,
+     "d": 0.0222,
+     "y": 0.7368,
+     "h": 0.1579,
+     "color": "#1d2533",
+     "screen": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4,
+     "w": 0.4286,
+     "d": 0.1778,
+     "y": 0.3158,
+     "h": 0.1053,
+     "color": "metal"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "espresso",
+   "name": {
+    "de": "Siebträgermaschine",
+    "en": "Espresso machine"
+   },
+   "size": [
+    0.35,
+    0.4,
+    0.4
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.125,
+     "w": 1,
+     "d": 0.75,
+     "y": 0,
+     "h": 1,
+     "color": "metal",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.375,
+     "w": 0.2286,
+     "d": 0.25,
+     "y": 0.5,
+     "h": 0.1,
+     "color": "dark"
+    },
+    {
+     "shape": "cyl",
+     "x": -0.2286,
+     "z": 0.25,
+     "w": 0.1714,
+     "d": 0.15,
+     "y": 0.75,
+     "h": 0.15,
+     "color": "#e8ecf2",
+     "axis": "z"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3,
+     "w": 0.8571,
+     "d": 0.3,
+     "y": 0,
+     "h": 0.05,
+     "color": "dark"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "kettle",
+   "name": {
+    "de": "Wasserkocher",
+    "en": "Kettle"
+   },
+   "size": [
+    0.22,
+    0.16,
+    0.26
+   ],
+   "parts": [
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8182,
+     "d": 1,
+     "y": 0.0769,
+     "h": 0.8462,
+     "color": "white"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.8182,
+     "d": 1,
+     "y": 0,
+     "h": 0.0769,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": -0.4545,
+     "z": 0.0,
+     "w": 0.1364,
+     "d": 0.25,
+     "y": 0.2308,
+     "h": 0.6154,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.1364,
+     "z": 0.5,
+     "w": 0.0909,
+     "d": 0.0312,
+     "y": 0.3077,
+     "h": 0.0769,
+     "color": "#3ea6ff",
+     "glow": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "toaster",
+   "name": {
+    "de": "Toaster",
+    "en": "Toaster"
+   },
+   "size": [
+    0.3,
+    0.18,
+    0.2
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#c0392b",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.2,
+     "z": 0.0,
+     "w": 0.3333,
+     "d": 0.1667,
+     "y": 0.975,
+     "h": 0.025,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.2,
+     "z": 0.0,
+     "w": 0.3333,
+     "d": 0.1667,
+     "y": 0.975,
+     "h": 0.025,
+     "color": "dark"
+    },
+    {
+     "shape": "box",
+     "x": 0.4667,
+     "z": 0.0,
+     "w": 0.0667,
+     "d": 0.2222,
+     "y": 0.6,
+     "h": 0.15,
+     "color": "metal"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "stand_mixer",
+   "name": {
+    "de": "Küchenmaschine",
+    "en": "Stand mixer"
+   },
+   "size": [
+    0.25,
+    0.38,
+    0.35
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.88,
+     "d": 0.9211,
+     "y": 0,
+     "h": 0.1143,
+     "color": "#d7c6a0"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.3158,
+     "w": 0.48,
+     "d": 0.2632,
+     "y": 0.1143,
+     "h": 0.8,
+     "color": "#d7c6a0"
+    },
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0526,
+     "w": 0.56,
+     "d": 0.8421,
+     "y": 0.7429,
+     "h": 0.2571,
+     "color": "#d7c6a0",
+     "tw": 0.48,
+     "td": 0.6579
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.2105,
+     "w": 0.72,
+     "d": 0.4737,
+     "y": 0.1143,
+     "h": 0.4286,
+     "color": "metal"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "thermo_cooker",
+   "name": {
+    "de": "Multikocher",
+    "en": "Food processor with cooking"
+   },
+   "size": [
+    0.33,
+    0.33,
+    0.33
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0606,
+     "w": 0.9091,
+     "d": 0.7879,
+     "y": 0,
+     "h": 0.3636,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": -0.0909,
+     "w": 0.5152,
+     "d": 0.5152,
+     "y": 0.3636,
+     "h": 0.6061,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4545,
+     "w": 0.3636,
+     "d": 0.0303,
+     "y": 0.1212,
+     "h": 0.2121,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "air_fryer",
+   "name": {
+    "de": "Heißluftfritteuse",
+    "en": "Air fryer"
+   },
+   "size": [
+    0.3,
+    0.35,
+    0.33
+   ],
+   "parts": [
+    {
+     "shape": "loft",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "tw": 1,
+     "td": 1,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.4571,
+     "w": 0.7333,
+     "d": 0.0857,
+     "y": 0.1212,
+     "h": 0.5455,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3429,
+     "w": 0.4,
+     "d": 0.0286,
+     "y": 0.8182,
+     "h": 0.1212,
+     "color": "#ff7a1a",
+     "screen": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "microwave",
+   "name": {
+    "de": "Mikrowelle",
+    "en": "Microwave"
+   },
+   "size": [
+    0.48,
+    0.38,
+    0.28
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.1042,
+     "z": 0.5,
+     "w": 0.6667,
+     "d": 0.0263,
+     "y": 0.1429,
+     "h": 0.7143,
+     "color": "#2b3446"
+    },
+    {
+     "shape": "box",
+     "x": 0.375,
+     "z": 0.5,
+     "w": 0.1667,
+     "d": 0.0263,
+     "y": 0.6429,
+     "h": 0.1429,
+     "color": "#1d2533",
+     "screen": true
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "wine_fridge",
+   "name": {
+    "de": "Weinkühlschrank",
+    "en": "Wine fridge"
+   },
+   "size": [
+    0.6,
+    0.6,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8667,
+     "d": 0.0167,
+     "y": 0.0588,
+     "h": 0.8824,
+     "color": "glass",
+     "edges": "glow"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.1412,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.2824,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.4235,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.5647,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.7059,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.1667,
+     "w": 0.8333,
+     "d": 0.1,
+     "y": 0.8471,
+     "h": 0.0706,
+     "color": "#6b1f2f",
+     "axis": "x"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8333,
+     "d": 0.0083,
+     "y": 0.9647,
+     "h": 0.0118,
+     "color": "#a8d8ff",
+     "glow": true
+    }
+   ],
+   "electric": true,
+   "light": "strip"
+  },
+  {
+   "id": "water_bar",
+   "name": {
+    "de": "Wassersprudler",
+    "en": "Sparkling water maker"
+   },
+   "size": [
+    0.15,
+    0.25,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.2,
+     "w": 0.9333,
+     "d": 0.48,
+     "y": 0,
+     "h": 0.9333,
+     "color": "white",
+     "edges": "faint"
+    },
+    {
+     "shape": "cyl",
+     "x": 0.0,
+     "z": 0.24,
+     "w": 0.6,
+     "d": 0.36,
+     "y": 0.0444,
+     "h": 0.6667,
+     "color": "glass"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2,
+     "w": 0.3333,
+     "d": 0.24,
+     "y": 0.8,
+     "h": 0.0889,
+     "color": "dark"
+    }
+   ],
+   "mount": "surface"
+  },
+  {
+   "id": "dishwasher_slim",
+   "name": {
+    "de": "Geschirrspüler 45 cm",
+    "en": "Slim dishwasher (45 cm)"
+   },
+   "size": [
+    0.45,
+    0.6,
+    0.82
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "#e8ecf2",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.5,
+     "w": 0.8,
+     "d": 0.0333,
+     "y": 0.9024,
+     "h": 0.0244,
+     "color": "metal"
+    },
+    {
+     "shape": "box",
+     "x": 0.2667,
+     "z": 0.5,
+     "w": 0.1778,
+     "d": 0.0083,
+     "y": 0.9512,
+     "h": 0.0244,
+     "color": "#38e07b",
+     "glow": true
+    }
+   ],
+   "electric": true
+  }
+ ]
+}
