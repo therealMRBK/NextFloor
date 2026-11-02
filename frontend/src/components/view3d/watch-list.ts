@@ -2,7 +2,7 @@
 // everything it shows: devices and their power sensors, openings and their contacts, energy, presence, heat, weather, and so on.
 
 import { alertEntities, type AlertSources } from "../../alerts.ts";
-import { areaEntities, carWatched, deviceSiblings, kindOf, robotRoomSensor, type FurnitureLinks, type OpeningEntities } from "../../devices.ts";
+import { carWatched, deviceSiblings, kindOf, robotRoomSensor, type FurnitureLinks, type OpeningEntities, roomEntities } from "../../devices.ts";
 import { powerSensorFor } from "../../energy.ts";
 import { placedEntities } from "../../markers.ts";
 import type { Building } from "../../model.ts";
@@ -58,8 +58,8 @@ export function watchedEntities(inputs: WatchInputs): string[] {
   const { hass, building: b } = inputs;
   const placed = placedEntities(b);
   const energy = b.energy;
-  const lightsOfRooms = roomsOf(b).flatMap((r) => areaEntities(hass, r.area_id).filter((id) => kindOf(id) === "light"));
-  const sensorsOfRooms = inputs.needsRoomSensors ? roomsOf(b).flatMap((r) => areaEntities(hass, r.area_id).filter((id) => id.startsWith("sensor.") || id.startsWith("climate."))) : [];
+  const lightsOfRooms = roomsOf(b).flatMap((r) => roomEntities(hass, r).filter((id) => kindOf(id) === "light"));
+  const sensorsOfRooms = inputs.needsRoomSensors ? roomsOf(b).flatMap((r) => roomEntities(hass, r).filter((id) => id.startsWith("sensor.") || id.startsWith("climate."))) : [];
   const ids: MaybeId[] = [
     ...placed,
     ...openingIds(inputs.openingLinks),

@@ -1,7 +1,7 @@
 // People and floor summaries. A room sensor (ESPresense, Bermuda ...) reports the room a person is in as
 // its state; this finds that room in the plan. Also the counts on the floor labels of the house view.
 
-import { areaEntities, kindOf, openingState, primaryEntities, type OpeningEntities } from "./devices.ts";
+import { kindOf, openingState, primaryEntities, type OpeningEntities, roomEntities } from "./devices.ts";
 import { translate } from "./i18n.ts";
 import { centroid, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
@@ -84,7 +84,7 @@ function lightsOnFloor(hass: HomeAssistant, floor: Floor): number {
   const lights = new Set<string>();
   // only the main entity of a device counts: an LED strip with 30 segment entities is one light
   for (const room of floor.rooms) {
-    for (const id of primaryEntities(hass, areaEntities(hass, room.area_id))) if (kindOf(id) === "light") lights.add(id);
+    for (const id of primaryEntities(hass, roomEntities(hass, room))) if (kindOf(id) === "light") lights.add(id);
   }
   for (const placed of floor.placements) if (kindOf(placed.entity_id) === "light") lights.add(placed.entity_id);
   return [...lights].filter((id) => hass.states[id]?.state === "on").length;

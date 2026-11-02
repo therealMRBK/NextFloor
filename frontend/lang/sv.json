@@ -72,6 +72,8 @@
   "room_name": "Namn",
   "area": "Område",
   "no_area": "Inget område",
+  "sub_area_add": "+ Område i rummet",
+  "sub_area_hint": "En del av rummet med ett eget Home Assistant-område men utan väggar – en läshörna, en hylla, ett pentry i vardagsrummet. Dess enheter och sensorer hör till det här rummet.",
   "material": "Golv",
   "x": "X (m)",
   "z": "Y (m)",

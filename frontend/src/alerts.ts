@@ -2,7 +2,7 @@
 // went off, a power outage, a window left open in the rain, and a door or window contact that stopped answering.
 // A room with a warning pulses in the warning's colour.
 
-import { areaEntities, entityAreaId, entityName, openingState, type OpeningEntities } from "./devices.ts";
+import { entityAreaId, entityName, openingState, type OpeningEntities, roomEntities } from "./devices.ts";
 import { translate } from "./i18n.ts";
 import { pointInPolygon, type Building, type Opening, type OwnAlert } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
@@ -98,7 +98,7 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
   const rooms: AlertSources["rooms"] = [];
   for (const floor of building.floors) {
     for (const room of floor.rooms) {
-      const sensors = areaEntities(hass, room.area_id).filter((id) => warningOf(hass, id));
+      const sensors = roomEntities(hass, room).filter((id) => warningOf(hass, id));
       if (sensors.length > 0) rooms.push({ floorId: floor.id, roomId: room.id, sensors });
     }
   }

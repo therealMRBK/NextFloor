@@ -26,6 +26,8 @@ export interface Room {
   id: string;
   name: string;
   area_id: string | null;
+  /** Home Assistant areas that are parts of this room without walls of their own (a reading corner, a shelf): their devices belong to it. */
+  sub_areas?: string[] | null;
   /** The camera the room opens with when it is tapped in 3D (null: framed from above). */
   start_view?: StartView | null;
   points: Vec2[];

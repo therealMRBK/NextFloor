@@ -62,6 +62,8 @@
  "room_name": "Nom",
  "area": "Zone",
  "no_area": "Aucune zone",
+ "sub_area_add": "+ Zone dans la pièce",
+ "sub_area_hint": "Une partie de la pièce avec sa propre pièce Home Assistant mais sans murs – un coin lecture, une étagère, une kitchenette dans le séjour. Ses appareils et capteurs appartiennent à cette pièce.",
  "material": "Sol",
  "x": "X (m)",
  "z": "Y (m)",

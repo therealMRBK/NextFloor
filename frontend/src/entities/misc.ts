@@ -4,7 +4,7 @@
 import { centroid, pointInPolygon, type Floor, type Placement, type Room, type Vec2 } from "../model.ts";
 import type { HomeAssistant } from "../types.ts";
 import { kindOf } from "./kinds.ts";
-import { areaEntities, primaryEntities } from "./registry.ts";
+import { roomEntities, primaryEntities } from "./registry.ts";
 
 // ---------------------------------------------------------------- automatic placement
 
@@ -131,7 +131,7 @@ export function floorControls(hass: HomeAssistant, floor: Floor): { lights: stri
   };
   for (const room of floor.rooms) {
     const hidden = new Set(room.hidden ?? []);
-    primaryEntities(hass, areaEntities(hass, room.area_id)).filter((id) => !hidden.has(id)).forEach(consider);
+    primaryEntities(hass, roomEntities(hass, room)).filter((id) => !hidden.has(id)).forEach(consider);
   }
   floor.placements.forEach((p) => consider(p.entity_id));
   floor.furniture.forEach((f) => consider(f.entity));

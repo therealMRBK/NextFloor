@@ -2,7 +2,7 @@
 // scenes and scripts). Shown next to the 3D view when a room is selected.
 
 import { css, html, LitElement, nothing, svg, type TemplateResult } from "lit";
-import { areaEntities, assumedCover, entityName, groupByDevice, groupCovers, isActive, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind } from "../devices.ts";
+import { assumedCover, entityName, groupByDevice, groupCovers, isActive, isUnavailable, kindOf, roomClimateSensors, roomClimateValue, roomPanelEntities, fromCelsius, tempUnit, type DeviceKind, roomEntities } from "../devices.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
@@ -115,7 +115,7 @@ export class NfRoomPanel extends LitElement {
     const edit = !!this.rooms && !!(this.hass as { user?: { is_admin?: boolean } }).user?.is_admin;
     if (!moods.length && !edit) return nothing;
     const others = (this.rooms ?? []).filter((r) => r.id !== room.id && r.area_id);
-    const lightsOf = (r: Room) => areaEntities(this.hass, r.area_id).filter((id) => id.startsWith("light."));
+    const lightsOf = (r: Room) => roomEntities(this.hass, r).filter((id) => id.startsWith("light."));
     const save = () => {
       const name = (this._moodName ?? "").trim() || this.t("mood_new");
       this.fireMoods(room, [...moods, { id: `mood_${Date.now().toString(36)}`, name, lights: lights.map(lightSetting) }]);
@@ -153,7 +153,7 @@ export class NfRoomPanel extends LitElement {
   /** Loads the temperature history of the room's sensors (or thermostats) and samples it every quarter hour. */
   private async loadCurve(room: Room): Promise<void> {
     const ids = roomClimateSensors(this.hass, this.floor, room, "temperature");
-    const sources = ids.length ? ids : areaEntities(this.hass, room.area_id).filter((id) => id.startsWith("climate."));
+    const sources = ids.length ? ids : roomEntities(this.hass, room).filter((id) => id.startsWith("climate."));
     if (!sources.length) return;
     const to = Date.now();
     const from = to - 24 * 3600_000;
@@ -254,7 +254,7 @@ export class NfRoomPanel extends LitElement {
     if (outside && !this.outsideRoom) this.outsideRoom = { id: "nf-outside", name: this.t("outside_area"), area_id: null, points: [], floor_material: "grass" } as unknown as Room;
     const room = this.room ?? (outside ? this.outsideRoom : null);
     if (!room || !this.hass) return nothing;
-    const all = outside ?? areaEntities(this.hass, room.area_id);
+    const all = outside ?? roomEntities(this.hass, room);
     // what the plan shows in the room; the rest of the area on request (each device's main entity);
     // worked out once per registry, room and floor (every state change renders the panel again)
     const m = this.memo;

@@ -72,6 +72,8 @@
   "room_name": "Nazwa",
   "area": "Obszar",
   "no_area": "Bez obszaru",
+  "sub_area_add": "+ Obszar w pomieszczeniu",
+  "sub_area_hint": "Część pomieszczenia z własnym obszarem w Home Assistant, ale bez ścian – kącik do czytania, regał, aneks kuchenny. Jej urządzenia i czujniki należą do tego pomieszczenia.",
   "material": "Podłoga",
   "x": "X (m)",
   "z": "Y (m)",

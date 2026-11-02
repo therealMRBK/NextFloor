@@ -143,6 +143,13 @@ function indexOf(hass: HomeAssistant): Index {
 }
 
 /** The shown entities of an area, by kind and name. The array is shared: do not change it. */
+/** The entities of a room: those of its area and of the areas that are parts of it (a corner, a shelf with an area of its own). */
+export function roomEntities(hass: HomeAssistant, room: { area_id: string | null; sub_areas?: string[] | null }): string[] {
+  const own = areaEntities(hass, room.area_id);
+  if (!room.sub_areas?.length) return own;
+  return [...new Set([...own, ...room.sub_areas.flatMap((a) => areaEntities(hass, a))])];
+}
+
 export function areaEntities(hass: HomeAssistant, areaId: string | null): string[] {
   if (!areaId || !hass.entities) return [];
   return indexOf(hass).byArea.get(areaId) ?? [];
@@ -236,7 +243,7 @@ export function roomClimateSensors(hass: HomeAssistant, floor: Floor | null, roo
   const placedSensors = (floor?.placements ?? []).filter((p) => p.entity_id.startsWith("sensor."));
   const inside = placedSensors.filter((p) => pointInPolygon([p.x, p.z], room.points)).map((p) => p.entity_id);
   const insideElsewhere = new Set(placedSensors.filter((p) => !pointInPolygon([p.x, p.z], room.points)).map((p) => p.entity_id));
-  const candidates = new Set([...areaEntities(hass, room.area_id).filter((id) => !insideElsewhere.has(id)), ...inside]);
+  const candidates = new Set([...roomEntities(hass, room).filter((id) => !insideElsewhere.has(id)), ...inside]);
   return [...candidates].filter((id) => id.startsWith("sensor.") && hass.states[id]?.attributes.device_class === CLIMATE_CLASSES[key] && isRoomClimateSensor(hass, id));
 }
 
@@ -252,7 +259,7 @@ export function roomClimateValue(hass: HomeAssistant, floor: Floor | null, room:
   // no room sensor: a thermostat of the room's area tells its temperature and humidity (heating curves, the heat map)
   if (key === "co2" || room.climate?.[key] === "none") return null;
   const attr = key === "temperature" ? "current_temperature" : "current_humidity";
-  const climates = areaEntities(hass, room.area_id)
+  const climates = roomEntities(hass, room)
     .filter((id) => id.startsWith("climate."))
     .map((id) => hass.states[id]?.attributes[attr])
     .filter((v): v is number => typeof v === "number" && Number.isFinite(v));

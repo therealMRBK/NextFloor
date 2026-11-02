@@ -5,50 +5,7 @@ import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
-import {
-  type CarState,
-  roomClimateValue,
-  areaEntities,
-  entityName,
-  furnitureEntities,
-  isActive,
-  isCooling,
-  isMotionSensor,
-  coverReaches,
-  deviceSiblings,
-  hasPost,
-  minutesText,
-  pickupDays,
-  plantThirst,
-  remainingMinutes,
-  gangGlows,
-  gangEntities,
-  isUnavailable,
-  kindOf,
-  markerKind,
-  type MarkerKind,
-  lightGlow,
-  openingEntities,
-  openingState,
-  isUnlocked,
-  TOGGLE_KINDS,
-  type FurnitureLinks,
-  type OpeningEntities,
-  confirmEntities,
-  coolingTemps,
-  fridgeDoors,
-  hasScreen,
-  fromCelsius,
-  toCelsius,
-  tempUnit,
-  robotRoom,
-  robotRoomSensor,
-  isStatusSensor,
-  floorControls,
-  favoriteCall,
-  runButton,
-  ownButtonOn,
-} from "../devices.ts";
+import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { ownTaps } from "./view3d/own-taps.ts";
@@ -1029,7 +986,7 @@ export class NfView3d extends LitElement {
     const floor = b?.floors.find((f) => f.id === floorId);
     const room = floor?.rooms.find((r) => r.id === roomId);
     if (!b || !hass || !floor || !room) return;
-    const ids = new Set(areaEntities(hass, room.area_id).filter((id) => kindOf(id) === "light"));
+    const ids = new Set(roomEntities(hass, room).filter((id) => kindOf(id) === "light"));
     for (const p of floor.placements) if (kindOf(p.entity_id) === "light" && pointInPolygon([p.x, p.z], room.points)) ids.add(p.entity_id);
     for (const f of floor.furniture) {
       const e = this.furnitureLinks.get(f.id)?.entity;
@@ -1797,7 +1754,7 @@ export class NfView3d extends LitElement {
     const b = this.building;
     if (!this.scenes || !this.roomId || this.panelOpen || !b || !this.hass) return nothing;
     const room = b.floors.flatMap((f) => f.rooms).find((r) => r.id === this.roomId);
-    const ids = room ? areaEntities(this.hass, room.area_id).filter((id) => kindOf(id) === "scene" || kindOf(id) === "script").slice(0, 6) : [];
+    const ids = room ? roomEntities(this.hass, room).filter((id) => kindOf(id) === "scene" || kindOf(id) === "script").slice(0, 6) : [];
     if (!ids.length) return nothing;
     const areaName = room?.area_id ? this.hass.areas?.[room.area_id]?.name : undefined;
     return html`<div class="nf-scenes">

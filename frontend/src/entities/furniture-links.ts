@@ -6,7 +6,7 @@ import { isClimateFurniture, packScreen } from "../packs.ts";
 import type { HomeAssistant } from "../types.ts";
 import { entityName, kindOf } from "./kinds.ts";
 import { openingEntities } from "./openings.ts";
-import { areaEntities, entityAreaId, isPower, powerSensorsOf, primaryEntities } from "./registry.ts";
+import { areaEntities, roomEntities, entityAreaId, isPower, powerSensorsOf, primaryEntities } from "./registry.ts";
 
 const TV_NAME = /\b(tv|fernseh|television|fire ?tv|apple ?tv|chromecast|shield)/i;
 const COOLING_NAME = /(kühl|fridge|gefrier|freezer)/i;
@@ -109,7 +109,7 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
       const pattern = isLamp ? LAMP_NAMES[piece.type] : FURNITURE_NAMES[piece.type];
       if (!pattern && !isClimate && piece.entity == null && piece.power == null) continue;
       const room = roomOf(floor, piece.x, piece.z);
-      const free = (room ? primaryEntities(hass, areaEntities(hass, room.area_id)) : []).filter((id) => !used.has(id));
+      const free = (room ? primaryEntities(hass, roomEntities(hass, room)) : []).filter((id) => !used.has(id));
       const describe = (id: string) => `${id} ${entityName(hass, id)}`;
       const ofKind = (kind: string) => free.filter((id) => kindOf(id) === kind);
 
@@ -117,7 +117,7 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
       if (piece.entity == null) {
         if (piece.type === "ceiling_fan") {
           // the fan's light kit: a light on the same device as a free fan, or one whose name fits (a fan without light takes none)
-          const all = (room ? areaEntities(hass, room.area_id) : []).filter((id) => !used.has(id));
+          const all = (room ? roomEntities(hass, room) : []).filter((id) => !used.has(id));
           const devices = new Set(all.filter((id) => kindOf(id) === "fan").map((id) => hass.entities?.[id]?.device_id).filter(Boolean));
           entity = all.find((id) => kindOf(id) === "light" && devices.has(hass.entities?.[id]?.device_id)) ?? pickByName(ofKind("light"), pattern, describe, false);
         } else if (isLamp) entity = pickByName(ofKind("light"), pattern, describe, true);
@@ -137,7 +137,7 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
       let power: string | null = piece.power === "none" ? null : (piece.power ?? null);
       if (piece.power == null) {
         power = entity ? powerOfDevice(hass, entity) : null;
-        if (!power && pattern && room && !isLamp) power = areaEntities(hass, room.area_id).find((id) => isPower(hass, id) && !used.has(id) && pattern.test(describe(id))) ?? null;
+        if (!power && pattern && room && !isLamp) power = roomEntities(hass, room).find((id) => isPower(hass, id) && !used.has(id) && pattern.test(describe(id))) ?? null;
         if (power) used.add(power);
       }
       // a ceiling fan's fan: on the light's device first, else a free fan of the room
@@ -146,7 +146,7 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
         fan = piece.fan_entity === "none" ? null : (piece.fan_entity ?? null);
         if (piece.fan_entity == null) {
           // every fan of the area: the light kit's device may count as one device with the light, which only keeps one of them
-          const fans = (room ? areaEntities(hass, room.area_id) : []).filter((id) => kindOf(id) === "fan" && !used.has(id));
+          const fans = (room ? roomEntities(hass, room) : []).filter((id) => kindOf(id) === "fan" && !used.has(id));
           const device = entity ? hass.entities?.[entity]?.device_id : undefined;
           fan = (device ? fans.find((id) => hass.entities?.[id]?.device_id === device) : undefined) ?? fans[0] ?? null;
           if (fan) used.add(fan);
@@ -235,7 +235,7 @@ export function roomPanelEntities(hass: HomeAssistant, floor: Floor, room: Room)
   ];
   const shown = [...new Set(candidates.filter((id): id is string => !!id && !!hass.states[id]))].filter((id) => !hidden.has(id));
   const isShown = new Set(shown);
-  return { shown, more: areaEntities(hass, room.area_id).filter((id) => !isShown.has(id) && !hidden.has(id)) };
+  return { shown, more: roomEntities(hass, room).filter((id) => !isShown.has(id) && !hidden.has(id)) };
 }
 
 

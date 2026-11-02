@@ -140,6 +140,10 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
     <div class="nf-form">
       ${textField(host, t("room_name"), room.name, (v) => actions.patch({ name: v }), { wide: true })}
       ${selectField(host, t("area"), room.area_id ?? "", areaChoices, (id) => actions.setArea(id), { wide: true })}
+      ${(room.sub_areas ?? []).map((a) => html`<span class="nf-chip nf-wide">${host.hass?.areas?.[a]?.name ?? a} <button class="nf-btn nf-field-btn" ?disabled=${!host.admin} title=${t("delete")} @click=${() => actions.patch({ sub_areas: (room.sub_areas ?? []).filter((x) => x !== a).length ? (room.sub_areas ?? []).filter((x) => x !== a) : null })}>✕</button></span>`)}
+      ${room.area_id
+        ? selectField(host, t("sub_area_add"), "", areaChoices.filter(([id]) => id !== room.area_id && !(room.sub_areas ?? []).includes(id)), (id) => id && actions.patch({ sub_areas: [...(room.sub_areas ?? []), id] }), { wide: true, title: t("sub_area_hint") })
+        : nothing}
       ${selectField(host, t("material"), room.floor_material, materials, (floor_material) => actions.patch({ floor_material }), { wide: true })}
       ${colorField(host, t("wall_paint_room"), room.wall_paint, host.doc.settings.wall_paint_inside ?? DEFAULT_PAINT_INSIDE, (wall_paint) => actions.patch({ wall_paint }))}
       ${host.floor ? ceilingField(host, room, host.floor, actions) : nothing}

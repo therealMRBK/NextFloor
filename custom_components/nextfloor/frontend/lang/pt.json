@@ -72,6 +72,8 @@
   "room_name": "Nome",
   "area": "Área",
   "no_area": "Sem área",
+  "sub_area_add": "+ Área dentro da divisão",
+  "sub_area_hint": "Uma parte da divisão com área própria no Home Assistant mas sem paredes – um canto de leitura, uma estante, uma kitchenette na sala. Os seus dispositivos e sensores pertencem a esta divisão.",
   "material": "Pavimento",
   "x": "X (m)",
   "z": "Y (m)",

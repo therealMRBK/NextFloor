@@ -72,6 +72,8 @@
   "room_name": "Naam",
   "area": "Gebied",
   "no_area": "Geen gebied",
+  "sub_area_add": "+ Gebied in de kamer",
+  "sub_area_hint": "Een deel van de kamer met een eigen Home Assistant-gebied maar zonder wanden – een leeshoek, een kast, een kitchenette in de woonkamer. De apparaten en sensoren horen bij deze kamer.",
   "material": "Vloer",
   "x": "X (m)",
   "z": "Y (m)",

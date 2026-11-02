@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Areas within a room**: a room can take more Home Assistant areas as its parts (*＋ Area within the room*) – a reading corner, a shelf, the kitchenette of a living room – whose devices and sensors then belong to the room: in its panel, the climate, the lights and the warnings.
 - **Pets where they really are**: a pet from the packs can follow a room sensor (Bermuda, ESPresense or any sensor naming a room, with a tag on its collar) – it appears in the room the sensor names and roams it there.
 - **Light designer**: set a room's lamps as you like and press *＋ Save mood* in its panel – the mood is kept with the plan, a tap on ✨ sets it again, and *→* carries it over to another room's lamps (the first lamp takes the first setting …).
 - **Layers**: a floor can be marked as a *Layer* – all the trees, the decoration, the garden furniture – and the 3D view shows an eye for it at the top that shows or hides it with its pins, remembered on each device.

@@ -2,7 +2,7 @@
 
 import { html, LitElement, nothing, svg, type PropertyValues, type TemplateResult } from "lit";
 import { fetchImage, storeImage } from "../api.ts";
-import { areaEntities, defaultHeight, entityName, kindOf } from "../devices.ts";
+import { defaultHeight, entityName, kindOf, roomEntities } from "../devices.ts";
 import { closeGaps, suggestedThickness } from "../geometry/gaps.ts";
 import { keepInRoom, snapToWall } from "../geometry/snap.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
@@ -2098,7 +2098,7 @@ export class NfEditor extends LitElement {
       rememberView: () => this.rememberRoomView(),
       applyPackage: (pkg) => this.applyPackage(room, pkg),
       openSpots: () => {
-        const lights = this.hass ? areaEntities(this.hass, room.area_id).filter((id) => id.startsWith("light.")) : [];
+        const lights = this.hass ? roomEntities(this.hass, room).filter((id) => id.startsWith("light.")) : [];
         this.side.spots = suggestedSpots(room, lights);
       },
       placeSpots: () => this.placeSpots(room),

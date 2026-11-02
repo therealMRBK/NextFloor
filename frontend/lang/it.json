@@ -72,6 +72,8 @@
   "room_name": "Nome",
   "area": "Area",
   "no_area": "Nessuna area",
+  "sub_area_add": "+ Area nella stanza",
+  "sub_area_hint": "Una parte della stanza con un'area propria in Home Assistant ma senza pareti – un angolo lettura, uno scaffale, un angolo cottura. I suoi dispositivi e sensori appartengono a questa stanza.",
   "material": "Pavimento",
   "x": "X (m)",
   "z": "Y (m)",

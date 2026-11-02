@@ -72,6 +72,8 @@
   "room_name": "Nombre",
   "area": "Área",
   "no_area": "Sin área",
+  "sub_area_add": "+ Área dentro de la estancia",
+  "sub_area_hint": "Una parte de la estancia con área propia en Home Assistant pero sin paredes – un rincón de lectura, una estantería, una cocina americana. Sus dispositivos y sensores pertenecen a esta estancia.",
   "material": "Suelo",
   "x": "X (m)",
   "z": "Y (m)",

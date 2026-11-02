@@ -3,7 +3,7 @@
 import type { Floor, Opening } from "../model.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
 import { isUnavailable, kindOf } from "./kinds.ts";
-import { areaEntities } from "./registry.ts";
+import { roomEntities } from "./registry.ts";
 
 export interface OpeningEntities {
   cover: string | null;
@@ -58,7 +58,7 @@ export function openingEntities(hass: HomeAssistant, floors: readonly Floor[]): 
     for (const room of floor.rooms) {
       const openings = floor.openings.filter((o) => o.room_id === room.id).sort((a, b) => a.edge - b.edge || a.offset - b.offset);
       if (openings.length === 0) continue;
-      const entities = areaEntities(hass, room.area_id);
+      const entities = roomEntities(hass, room);
       const deviceClass = (id: string) => hass.states[id]?.attributes.device_class as string | undefined;
       const binaries = (classes: (cls: string) => boolean) => entities.filter((id) => kindOf(id) === "binary" && classes(deviceClass(id) ?? ""));
       const ofType = (type: Opening["type"]) => openings.filter((o) => o.type === type);
