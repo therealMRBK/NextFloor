@@ -7,7 +7,7 @@ import type { PluginRef } from "./plugins/api.ts";
 import type { MarkerMode } from "./components/view3d.ts";
 import "./components/room-panel.ts";
 import "./components/view3d.ts";
-import { confirmEntities } from "./devices.ts";
+import { confirmEntities, outsideEntities } from "./devices.ts";
 import type { HeatMode } from "./heatmap.ts";
 import { awaitingLanguage, translate, type I18nKey } from "./i18n.ts";
 import { loadEditor } from "./load-editor.ts";
@@ -42,6 +42,7 @@ export class NextFloorPanel extends LitElement {
     _selDevice: { state: true },
     _optsOpen: { state: true },
     _timeOfDay: { state: true },
+    _outside: { state: true },
     _timeDrag: { state: true },
   };
 
@@ -64,6 +65,9 @@ export class NextFloorPanel extends LitElement {
   private declare _optsOpen: boolean;
   /** The time-of-day slider: hours shown instead of now (null: the slider is closed and the view shows the real sun). */
   private declare _timeOfDay: number | null;
+  /** The Outside panel is open (the house view with the garden's and the roof's devices). */
+  private declare _outside: boolean;
+  private outsideMemo: { building: Building; entities: unknown; ids: string[] } | null = null;
   /** The hour under the finger while the slider is dragged: the view follows only when it is let go (old tablets). */
   private declare _timeDrag: number | null;
 
@@ -84,6 +88,7 @@ export class NextFloorPanel extends LitElement {
     this._selDevice = null;
     this._optsOpen = false;
     this._timeOfDay = null;
+    this._outside = false;
     this._timeDrag = null;
   }
 
@@ -153,13 +158,33 @@ export class NextFloorPanel extends LitElement {
   private openFloor(floorId: string | null): void {
     this._floorId = floorId;
     this._roomId = null;
+    this._outside = false;
+  }
+
+  /** The devices of Outside, worked out again only when the plan or the registry changes. */
+  private outsideIds(building: Building): string[] {
+    const m = this.outsideMemo;
+    if (m && m.building === building && m.entities === this.hass.entities) return m.ids;
+    const ids = outsideEntities(this.hass, building.floors);
+    this.outsideMemo = { building, entities: this.hass.entities, ids };
+    return ids;
+  }
+
+  /** Opens Outside over the house view (or closes it again). */
+  private openOutside(): void {
+    const open = !this._outside;
+    this.openFloor(null);
+    this._outside = open;
   }
 
   private onRoomTap(e: CustomEvent<{ floorId: string; roomId: string | null }>): void {
     const { floorId, roomId } = e.detail;
     // in the house view, or on another floor, a tap opens the whole floor first and the rooms come next
     if ((this.data.building?.floors.length ?? 0) > 1 && floorId && this._floorId !== floorId) return this.openFloor(floorId);
-    if (roomId) this._roomId = roomId === this._roomId ? null : roomId;
+    if (roomId) {
+      this._roomId = roomId === this._roomId ? null : roomId;
+      this._outside = false;
+    }
   }
 
   // furnishing in 3D: every change builds a changed copy of the plan and saves it
@@ -198,7 +223,8 @@ export class NextFloorPanel extends LitElement {
 
   /** Escape and the back button: close the room, then the floor, and finally reset the camera. */
   private back(): void {
-    if (this._roomId) this._roomId = null;
+    if (this._outside) this._outside = false;
+    else if (this._roomId) this._roomId = null;
     else if (this._floorId && (this.data.building?.floors.length ?? 0) > 1) this._floorId = null;
     else this.view3d()?.resetView();
   }
@@ -375,11 +401,16 @@ export class NextFloorPanel extends LitElement {
     const shown: Floor[] = building.floors.filter((f) => !this._floorId || f.id === this._floorId);
     const several = building.floors.length > 1;
     const wrap = this._prefs.navWrap;
+    // Outside: its own chip next to the floors as soon as a device stands outside the rooms or belongs to it
+    const outside = this.outsideIds(building).length
+      ? html`<button class="nf-chip" aria-pressed=${this._outside} title=${this.t("outside_area_hint")} @click=${() => this.openOutside()}>🌳 ${this.t("outside_area")}</button>`
+      : nothing;
     const floorChips = several
       ? html`<button class="nf-chip" aria-pressed=${this._floorId === null} @click=${() => this.openFloor(null)}>${this.t("all_floors")}</button>
           ${[...building.floors].reverse().map((f) => html`<button class="nf-chip" aria-pressed=${f.id === this._floorId} @click=${() => this.openFloor(f.id)}>${f.name}</button>`)}
+          ${outside}
           <span class="nf-sep"></span>`
-      : nothing;
+      : html`${outside}`;
     const roomChips = shown.flatMap((floor) => [
       // in the house view a small floor label comes before the rooms of each floor
       shown.length > 1 && floor.rooms.length ? html`<span class="nf-nav-floor">${floor.name}</span>` : nothing,
@@ -390,6 +421,7 @@ export class NextFloorPanel extends LitElement {
           @click=${() => {
             if (several) this._floorId = floor.id;
             this._roomId = room.id === this._roomId ? null : room.id;
+            this._outside = false;
           }}
         >
           ${room.name}
@@ -517,7 +549,17 @@ export class NextFloorPanel extends LitElement {
               .phrases=${building.settings.announce_phrases ?? null}
               @close=${() => (this._roomId = null)}
             ></nf-room-panel>`
-          : nothing}
+          : this._outside
+            ? html`<nf-room-panel
+                class="nf-room-panel"
+                .hass=${this.hass}
+                .room=${null}
+                .outside=${this.outsideIds(building)}
+                .confirmEntities=${confirmEntities(this.hass, building.floors)}
+                .phrases=${building.settings.announce_phrases ?? null}
+                @close=${() => (this._outside = false)}
+              ></nf-room-panel>`
+            : nothing}
         ${p.clean ? nothing : this.renderOverlay(building)}
         ${this._furnish ? furnishBar(this.furnishHost, this._selFurniture, this._selDevice) : nothing}
       </div>

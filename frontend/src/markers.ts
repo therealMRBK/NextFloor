@@ -117,7 +117,8 @@ function markerFor(hass: HomeAssistant, floor: Floor, placed: Placement): Device
   // a plugin may take on entities of domains NextFloor does not know
   const kind = kindOf(placed.entity_id) ?? pluginKind(placed.entity_id, st);
   if (!kind || !st) return null;
-  const room = roomAt(floor, placed.x, placed.z);
+  // a device that belongs to Outside never counts for the room under it
+  const room = placed.outside ? null : roomAt(floor, placed.x, placed.z);
   const areaName = room?.area_id ? hass.areas?.[room.area_id]?.name : undefined;
   const marker: DeviceMarker = {
     id: placed.entity_id,

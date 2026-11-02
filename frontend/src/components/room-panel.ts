@@ -47,6 +47,7 @@ export class NfRoomPanel extends LitElement {
     floor: { attribute: false },
     confirmEntities: { attribute: false },
     phrases: { attribute: false },
+    outside: { attribute: false },
     _showAll: { state: true },
     _said: { state: true },
     _folded: { state: true },
@@ -60,6 +61,8 @@ export class NfRoomPanel extends LitElement {
   declare confirmEntities: Set<string> | null;
   /** The sentences offered for an announcement (null: the default ones). */
   declare phrases: string[] | null;
+  /** Outside instead of a room: the devices it lists (see outsideEntities). */
+  declare outside: string[] | null;
   /** What the last announcement from this panel did, shown under it for a moment. */
   private declare _said: { text: string; failed: boolean } | null;
   private saidTimer: ReturnType<typeof setTimeout> | undefined;
@@ -74,6 +77,7 @@ export class NfRoomPanel extends LitElement {
     this.room = null;
     this.floor = null;
     this.phrases = null;
+    this.outside = null;
     this._said = null;
     this._showAll = false;
     this._folded = false;
@@ -129,15 +133,21 @@ export class NfRoomPanel extends LitElement {
     ></button>`;
   }
 
+  /** Outside, shown like a room without an area. */
+  private outsideRoom: Room | null = null;
+
   protected render() {
-    const room = this.room;
+    const outside = !this.room && this.outside ? this.outside : null;
+    if (outside && !this.outsideRoom) this.outsideRoom = { id: "nf-outside", name: this.t("outside_area"), area_id: null, points: [], floor_material: "grass" } as unknown as Room;
+    const room = this.room ?? (outside ? this.outsideRoom : null);
     if (!room || !this.hass) return nothing;
-    const all = areaEntities(this.hass, room.area_id);
+    const all = outside ?? areaEntities(this.hass, room.area_id);
     // what the plan shows in the room; the rest of the area on request (each device's main entity);
     // worked out once per registry, room and floor (every state change renders the panel again)
     const m = this.memo;
-    const { shown, more } =
-      m && m.entities === this.hass.entities && m.floor === this.floor && m.room === room
+    const { shown, more } = outside
+      ? { shown: outside, more: [] as string[] }
+      : m && m.entities === this.hass.entities && m.floor === this.floor && m.room === room
         ? m
         : (this.memo = { entities: this.hass.entities, floor: this.floor, room, ...(this.floor ? roomPanelEntities(this.hass, this.floor, room) : { shown: all, more: [] }) });
     const extra = groupByDevice(this.hass, more).map((g) => g.primary);
@@ -167,7 +177,7 @@ export class NfRoomPanel extends LitElement {
         </button>
       </header>
       <div class="nf-rp-body" ?hidden=${this._folded}>
-        ${!room.area_id
+        ${!room.area_id && !outside
           ? html`<p class="nf-rp-note">${this.t("panel_no_area")}</p>`
           : !ids.length
             ? html`<p class="nf-rp-note">${this.t("panel_empty")}</p>`
@@ -236,7 +246,9 @@ export class NfRoomPanel extends LitElement {
   /** Header facts: the room's temperature and humidity from its climate sensors (chosen or automatic). */
   private facts(climates: HassEntity[]): string[] {
     const out: string[] = [];
-    const room = this.room!;
+    const room = this.room;
+    // Outside has no climate of its own
+    if (!room) return out;
     const value = (key: "temperature" | "humidity", fallbackUnit: string) => {
       const v = roomClimateValue(this.hass, this.floor, room, key);
       if (v === null) return null;

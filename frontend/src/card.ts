@@ -8,7 +8,7 @@ import { roomButtons } from "./card/room-buttons.ts";
 import { cardStyles } from "./card/styles.ts";
 import "./components/room-panel.ts";
 import "./components/view3d.ts";
-import { confirmEntities } from "./devices.ts";
+import { confirmEntities, outsideEntities } from "./devices.ts";
 import { awaitingLanguage, translate } from "./i18n.ts";
 import { nightActive } from "./kiosk.ts";
 import { screenMuted, screenName } from "./panel/prefs.ts";
@@ -17,6 +17,9 @@ import { colorSchemeOf, controls, tokens } from "./styles.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
 import { lookNow } from "./themes.ts";
+
+/** The room id the card uses for Outside (no room has it: room ids are made by uid()). */
+const OUTSIDE = "nf-outside";
 
 type HeatMode = NonNullable<CardConfig["heatmap"]>;
 type Key = Parameters<typeof translate>[1];
@@ -241,12 +244,19 @@ export class NextFloorCard extends LitElement {
       if (this.canSwitch && floorId !== s.floorId) this._floorId = floorId;
       this._roomId = roomId === this._roomId ? null : roomId;
     };
+    // Outside: the house view with the garden's and the roof's devices in the panel
+    const outside = outsideEntities(this.hass, b.floors).length > 0;
+    const openOutside = () => {
+      if (this.canSwitch) this._floorId = null;
+      this._roomId = this._roomId === OUTSIDE ? null : OUTSIDE;
+    };
     return html`<div class="nf-card-rooms ${this._roomId && this._config?.room_panel !== false ? "nf-card-rooms-beside" : ""}" role="group" aria-label=${this.t("card_room_buttons")}>
       ${groups.map(
         (g) => html`${several ? html`<span class="nf-card-rooms-floor">${g.floorName}</span>` : nothing}${g.rooms.map(
           (r) => html`<button class="nf-chip" aria-pressed=${r.id === this._roomId} @click=${() => open(g.floorId, r.id)}>${r.name}</button>`,
         )}`,
       )}
+      ${outside ? html`<button class="nf-chip" aria-pressed=${this._roomId === OUTSIDE} title=${this.t("outside_area_hint")} @click=${openOutside}>🌳 ${this.t("outside_area")}</button>` : nothing}
     </div>`;
   }
 
@@ -281,7 +291,7 @@ export class NextFloorCard extends LitElement {
       .building=${b}
       .packs=${this.data.packs}
       .floorId=${s.floorId}
-      .roomId=${this._roomId}
+      .roomId=${this._roomId === OUTSIDE ? null : this._roomId}
       .wallMode=${s.walls}
       .solidWalls=${c?.solid_walls === true}
       .explode=${s.explode}
@@ -347,6 +357,7 @@ export class NextFloorCard extends LitElement {
       .hass=${this.hass}
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}
       .floor=${b.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
+      .outside=${this._roomId === OUTSIDE ? outsideEntities(this.hass, b.floors) : null}
       .confirmEntities=${confirmEntities(this.hass, b.floors)}
       .phrases=${b.settings.announce_phrases ?? null}
       @close=${() => (this._roomId = null)}

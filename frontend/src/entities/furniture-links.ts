@@ -223,7 +223,7 @@ export function roomPanelEntities(hass: HomeAssistant, floor: Floor, room: Room)
   const openingLinks = openingEntities(hass, [floor]);
   const hidden = new Set(room.hidden ?? []);
   const candidates = [
-    ...floor.placements.filter((p) => inside(p.x, p.z)).map((p) => p.entity_id),
+    ...floor.placements.filter((p) => !p.outside && inside(p.x, p.z)).map((p) => p.entity_id),
     ...floor.furniture.filter((f) => inside(f.x, f.z)).flatMap((f) => [furnitureLinks.get(f.id)?.entity, furnitureLinks.get(f.id)?.power]),
     ...floor.openings
       .filter((o) => o.room_id === room.id)
@@ -238,3 +238,18 @@ export function roomPanelEntities(hass: HomeAssistant, floor: Floor, room: Room)
   return { shown, more: areaEntities(hass, room.area_id).filter((id) => !isShown.has(id) && !hidden.has(id)) };
 }
 
+
+/**
+ * Outside: the devices placed outside every room outline (the garden's valves and lights, a mower, the grid connection
+ * outside), and those marked as belonging to Outside wherever they stand (a weather station on the roof), on all floors.
+ */
+export function outsideEntities(hass: HomeAssistant, floors: readonly Floor[]): string[] {
+  const out: (string | null | undefined)[] = [];
+  for (const floor of floors) {
+    const indoors = (x: number, z: number) => floor.rooms.some((room) => room.points.length >= 3 && pointInPolygon([x, z], room.points));
+    const links = furnitureEntities(hass, [floor]);
+    out.push(...floor.placements.filter((p) => p.outside || !indoors(p.x, p.z)).map((p) => p.entity_id));
+    out.push(...floor.furniture.filter((f) => !indoors(f.x, f.z)).flatMap((f) => [links.get(f.id)?.entity, links.get(f.id)?.power]));
+  }
+  return [...new Set(out.filter((id): id is string => !!id && !!hass.states[id]))];
+}

@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { setPacks } from "../packs.ts";
 import type { Furniture } from "../model.ts";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
-import { confirmEntities, coolingTemps, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
+import { confirmEntities, coolingTemps, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, outsideEntities, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
 
 const piece = (id: string, type: string, extra: Partial<Furniture> = {}): Furniture => ({ id, type, x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 1, variant: null, entity: null, power: null, ...extra });
 const room = box("r", 0, 0, 4, 3, "area");
@@ -163,4 +163,17 @@ test("a fridge shows its compartments' temperatures and warns when one is too wa
   assert.equal(isCooling("fridge"), true);
   assert.equal(isCooling("pack:nextfloor.a_kueche:fridge_freezer"), true);
   assert.equal(isCooling("pack:nextfloor.a_kueche:oven"), false);
+});
+
+test("Outside lists what stands outside the rooms and what belongs to it; the room below no longer counts a roof device", () => {
+  const hass = hassOf([entity("switch.valve", "off"), entity("sensor.weather", "12"), entity("light.inside", "on")]);
+  const floor = floorWith([room], {
+    placements: [
+      { entity_id: "switch.valve", x: 9, z: 9, y: null, mount: null },
+      { entity_id: "sensor.weather", x: 1, z: 1, y: null, mount: null, outside: true },
+      { entity_id: "light.inside", x: 2, z: 2, y: null, mount: null },
+    ],
+  });
+  assert.deepEqual(outsideEntities(hass, [floor]).sort(), ["sensor.weather", "switch.valve"]);
+  assert.deepEqual(roomPanelEntities(hass, floor, room).shown, ["light.inside"], "the weather station is not the room's");
 });

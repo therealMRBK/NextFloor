@@ -295,6 +295,8 @@ export interface Placement extends LightEffectConfig {
   cone?: boolean | null;
   /** Settings plugins added to the device's form: per plugin id, the values by key. */
   plugin?: Record<string, Record<string, string | number | boolean>> | null;
+  /** Belongs to Outside: never to the room under it (a weather station on the roof), listed in the Outside panel. */
+  outside?: boolean;
 }
 
 export interface Background {

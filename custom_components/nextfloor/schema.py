@@ -355,6 +355,8 @@ PLACEMENT_SCHEMA = vol.Schema(
         vol.Optional("reach", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=50))),
         vol.Optional("tilt", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=90))),
         # ask before switching this device from the 3D view, the quick menu or the room panel
+        # belongs to Outside, not to the room under it (a weather station on the roof)
+        vol.Optional("outside"): bool,
         vol.Optional("confirm", default=False): bool,
         # its marker in 3D: None = automatic, always, without watts, or hidden
         vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
