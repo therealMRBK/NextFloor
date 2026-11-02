@@ -2,7 +2,7 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
-## 0.16.2
+## 0.17.0
 
 ### Added
 

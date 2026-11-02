@@ -92,14 +92,39 @@ export function copyOfFloor(doc: Building, floor: Floor, name: string, options: 
   return copy;
 }
 
-/** Entity links a copied piece of furniture leaves behind ("none" for the two that would otherwise be found again by name). */
-const PLAIN_LINKS = ["door_left", "door_right", "soc", "charge", "export", "status", "room_sensor", "temp_entity", "temp_entity2", "state_entity", "state_entity2", "color_entity", "fan_entity"] as const;
+/** Links that are found automatically while they are null: a copy sets them to "none", or it would find the original's entities again. */
+const AUTO_LINKS = ["entity", "power", "fan_entity", "room_sensor"] as const;
+/** Links that are simply empty while null. */
+const PLAIN_LINKS = [
+  "door_left",
+  "door_right",
+  "soc",
+  "charge",
+  "export",
+  "status",
+  "temp_entity",
+  "temp_entity2",
+  "state_entity",
+  "state_entity2",
+  "color_entity",
+  "care_entity",
+  "cover_entity",
+  "type_entity",
+  "parent_meter",
+  "car",
+  "tap",
+] as const;
+/** Lists of links, dropped as a whole. */
+const LINK_LISTS = ["gang_entities", "pictures", "types", "meter_floors"] as const;
 
-function unlinked(item: Furniture): Furniture {
-  const out: Furniture = { ...item, entity: item.entity ? "none" : item.entity, power: item.power ? "none" : item.power };
-  for (const key of PLAIN_LINKS) if (out[key] != null) (out as unknown as Record<string, unknown>)[key] = null;
-  delete out.gang_entities;
-  return out;
+/** A piece of furniture with every link to Home Assistant removed, its size, place and look kept. */
+export function unlinked(item: Furniture): Furniture {
+  const out = { ...item } as Record<string, unknown>;
+  // the fan and the vacuum's room sensor are looked up in the item's room, which a copy no longer links to an area
+  for (const key of AUTO_LINKS) if (key === "entity" || key === "power" || out[key] != null) out[key] = "none";
+  for (const key of PLAIN_LINKS) if (out[key] != null) out[key] = null;
+  for (const key of LINK_LISTS) delete out[key];
+  return out as unknown as Furniture;
 }
 
 /** Moves a piece of furniture to another floor, at the same spot in the plan. Returns false when it or the floor is missing. */

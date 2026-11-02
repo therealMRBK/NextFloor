@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, floorWith, opening } from "../../../entities/fixtures.ts";
 import type { Building } from "../../../model.ts";
-import { copyOfFloor, floorsSwapped, floorsWith, freeHaFloors, linkableHaFloors, moveFurnitureToFloor, newFloorFor, unplacedAreas } from "./floors.ts";
+import { copyOfFloor, floorsSwapped, floorsWith, freeHaFloors, linkableHaFloors, moveFurnitureToFloor, newFloorFor, unlinked, unplacedAreas } from "./floors.ts";
 
 const names = { first: "Ground floor", next: (n: number) => `Floor ${n}` };
 const level = (id: string, elevation: number, extra = {}) => floorWith([], { id, elevation, ...extra } as never);
@@ -98,4 +98,39 @@ test("furniture moves to another floor at the same spot", () => {
   assert.equal(moveFurnitureToFloor(doc, "g", "f1", "u"), true);
   assert.deepEqual([doc.floors[0].furniture.length, doc.floors[1].furniture[0].x], [0, 1]);
   assert.equal(moveFurnitureToFloor(doc, "g", "f1", "u"), false);
+});
+
+test("a copied piece of furniture keeps no link to Home Assistant", () => {
+  const linked = {
+    id: "f1",
+    type: "fridge_smart",
+    x: 1,
+    z: 1,
+    rotation: 0,
+    w: 0.9,
+    d: 0.7,
+    h: 1.8,
+    variant: null,
+    entity: "switch.fridge",
+    power: "sensor.fridge_power",
+    temp_entity: "sensor.fridge_temp",
+    door_left: "binary_sensor.freezer_door",
+    door_right: "binary_sensor.fridge_door",
+    state_entity: "binary_sensor.seat",
+    color_entity: "light.bulb",
+    care_entity: "sensor.bin",
+    cover_entity: "cover.curtain",
+    fan_entity: "fan.ceiling",
+    room_sensor: "sensor.vacuum_room",
+    type_entity: "sensor.car_kind",
+    gang_entities: ["light.a", "light.b"],
+    pictures: [{ entity: "media_player.tv", state: "*", image: "x" }],
+    car: { device: "sensor.car_soc", soc: "sensor.car_soc" },
+    tap: { action: "more-info", target: "light.a" },
+  } as never;
+  const copy = unlinked(linked);
+  const text = JSON.stringify(copy);
+  assert.doesNotMatch(text, /[a-z_]+\.[a-z0-9_]+/, "no entity id survives");
+  assert.deepEqual([copy.entity, copy.power, copy.fan_entity, copy.room_sensor], ["none", "none", "none", "none"]);
+  assert.deepEqual([copy.w, copy.d, copy.h, copy.x], [0.9, 0.7, 1.8, 1]);
 });
