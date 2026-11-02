@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Own warnings**: *House → Own warnings* turns any entity into a line in the warning bar while it is in a state – "Water tank empty" from the robot vacuum, "Dishwasher done", "Salt low" below 20 (several states with commas, `<20` or `>80` for numbers), for the whole house or one room. They look like the warning for a contact that stops answering. Thanks to @HA-Luz ([#52](https://github.com/therealMRBK/NextFloor/discussions/52)).
 - **Which sensor set the alarm off**: when an alarm panel is triggered, the banner names the door, window or motion sensor that set it off (Alarmo tells it, otherwise the one that changed just before), and only its room pulses red instead of the whole house.
 - **Outdoor areas like rooms**: a garden, terrace or pool can be linked to a Home Assistant area – its devices and sensors join the Outside panel, and a pin on the area opens it. A pool, pond or bed can show its water temperature and pump on that pin ("24.5 °C · pump on").
 - **Robot mowers mow their lawn**: a robot mower or its dock from the *Garden 2* pack linked to a `lawn_mower` drives lanes over its lawn in 3D while it mows (around the beds, ponds and terraces on it), and drives home when it returns.

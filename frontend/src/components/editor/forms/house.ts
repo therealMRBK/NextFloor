@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, uid, type ButtonAction, type CustomButton, type MediaPreset, type StartView } from "../../../model.ts";
+import { BUTTON_ACTIONS, uid, type ButtonAction, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
 import { actions, checkField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
@@ -37,6 +37,24 @@ function favorites(host: EditorHost): TemplateResult {
     ${list.length < MAX_FAVORITES
       ? html`<div class="nf-form">${entityField(host, host.t("favorites_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>`
       : nothing}`;
+}
+
+/** Own warnings: a text in the warning bar while an entity is in a state (the robot's water tank is empty, the dishwasher is done). */
+function ownAlerts(host: EditorHost): TemplateResult {
+  const list = host.doc.settings.own_alerts ?? [];
+  const store = (next: OwnAlert[]) => host.change((d) => (d.settings.own_alerts = orUndefined(next)));
+  const edit = (i: number, patch: Partial<OwnAlert>) => store(patchAt(list, i, patch));
+  const rooms: [string, string][] = [["", host.t("own_alert_house")], ...host.doc.floors.flatMap((f) => f.rooms.map((r): [string, string] => [r.id, `${r.name} · ${f.name}`]))];
+  const card = (a: OwnAlert, i: number) => html`<div class="nf-form nf-own-button">
+    ${entityField(host, host.t("own_alert_entity"), a.entity || null, undefined, entityOptions(host.hass, () => true), (v) => edit(i, { entity: v && v !== "none" ? v : "" }))}
+    ${textField(host, host.t("own_alert_state"), a.state ?? "", (v) => edit(i, { state: v || null }), { placeholder: host.hass?.states[a.entity]?.state ?? "on · <20 · >80" })}
+    ${textField(host, host.t("own_alert_text"), a.text, (v) => edit(i, { text: v || host.t("own_alert_new") }), { wide: true, maxlength: 120 })}
+    ${selectField(host, host.t("room"), a.room_id ?? "", rooms, (v) => edit(i, { room_id: v || null }), { wide: true })}
+    <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
+  </div>`;
+  return html`<h4>⚠ ${host.t("own_alerts")}</h4>
+    ${hint(host.t("own_alerts_hint"))} ${list.map(card)}
+    ${list.length < 40 ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("alert"), entity: "", state: null, text: host.t("own_alert_new") }])}>+ ${host.t("own_alert_add")}</button>`) : nothing}`;
 }
 
 /** The calendars of the "Today" card: their appointments of the day show top right in the 3D view, with the bins due. */
@@ -122,7 +140,7 @@ function ownButtons(host: EditorHost): TemplateResult {
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
 export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
+  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

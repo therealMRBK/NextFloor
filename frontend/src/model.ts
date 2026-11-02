@@ -594,6 +594,8 @@ export interface BuildingSettings {
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
   announce_tts?: string | null;
   announce_phrases?: string[] | null;
+  /** Own warnings: a line in the warning bar while an entity is in a state ("Water tank empty", "Dishwasher done"). */
+  own_alerts?: OwnAlert[] | null;
   /** Calendars whose appointments of the day show on the "Today" card of the 3D view. */
   calendars?: string[] | null;
   /** Own sensors shown at the top of the 3D view (outside temperature, the alarm…), at most 12. */
@@ -617,6 +619,16 @@ export interface MapSettings {
   zoom?: number;
   /** Tile address with {z}, {x} and {y}; null = OpenStreetMap. */
   url?: string | null;
+}
+
+/** An own warning: shown in the warning bar while `entity` is in `state` (comma separated, or "<20" / ">80" for numbers). */
+export interface OwnAlert {
+  id: string;
+  entity: string;
+  state?: string | null;
+  text: string;
+  /** The room it belongs to (its floor pulses softly); null = the whole house. */
+  room_id?: string | null;
 }
 
 /** A camera position around the house: azimuth and polar angle (radians) and the distance (m). */

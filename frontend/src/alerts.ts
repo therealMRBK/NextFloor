@@ -4,11 +4,11 @@
 
 import { areaEntities, entityAreaId, entityName, openingState, type OpeningEntities } from "./devices.ts";
 import { translate } from "./i18n.ts";
-import { pointInPolygon, type Building, type Opening } from "./model.ts";
+import { pointInPolygon, type Building, type Opening, type OwnAlert } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 import { weatherEntity } from "./weather.ts";
 
-export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage" | "contact_lost";
+export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage" | "contact_lost" | "own";
 
 export interface Alert {
   kind: AlertKind;
@@ -18,6 +18,8 @@ export interface Alert {
   floorId: string | null;
   /** An alarm: the sensor that set it off (a door, a window, a motion sensor), when it can be told. */
   cause?: string;
+  /** An own warning: its text. */
+  text?: string;
 }
 
 /** Where the warnings come from. Looked up once and kept until the registries change. */
@@ -31,10 +33,29 @@ export interface AlertSources {
   outage: string | null;
   /** The contacts of doors and windows, watched for going unavailable (empty unless that warning is on). */
   contacts?: { floorId: string; roomId: string; entity: string }[];
+  /** Own warnings of the plan (House → Own warnings). */
+  own?: OwnAlert[];
 }
 
 /** Warnings that only show in the banner: the room does not pulse and the view does not jump to it. */
-export const QUIET_ALERTS: ReadonlySet<AlertKind> = new Set<AlertKind>(["contact_lost"]);
+export const QUIET_ALERTS: ReadonlySet<AlertKind> = new Set<AlertKind>(["contact_lost", "own"]);
+
+/**
+ * Whether an own warning's condition is met: the entity is in one of the states (comma separated, any case), or its number is below
+ * ("<20") or above (">80") a value. An unavailable entity never warns.
+ */
+export function ownAlertMet(hass: HomeAssistant, rule: Pick<OwnAlert, "entity" | "state">): boolean {
+  const st = hass.states[rule.entity];
+  if (!st || ["unavailable", "unknown"].includes(st.state)) return false;
+  const want = (rule.state ?? "on").trim();
+  const m = /^([<>])\s*(-?\d+(?:[.,]\d+)?)$/.exec(want);
+  if (m) {
+    const v = Number(st.state);
+    const limit = Number(m[2].replace(",", "."));
+    return Number.isFinite(v) && (m[1] === "<" ? v < limit : v > limit);
+  }
+  return want.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean).includes(String(st.state).toLowerCase());
+}
 
 /** How long a contact has to be unavailable before it warns: a restart of Home Assistant or a short radio gap does not. */
 export const CONTACT_GRACE_MS = 10 * 60 * 1000;
@@ -90,6 +111,7 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
     rain: rainWarningOn && rain && rain !== "none" ? rain : null,
     outage: building.settings.outage_sensor && building.settings.outage_sensor !== "none" ? building.settings.outage_sensor : null,
     contacts: building.settings.contact_warning && links ? openingContacts(building, links) : [],
+    own: (building.settings.own_alerts ?? []).filter((r) => r.entity),
   };
 }
 
@@ -98,6 +120,7 @@ export function alertEntities(sources: AlertSources): string[] {
   const ids = sources.rooms.flatMap((r) => r.sensors).concat(sources.alarms);
   for (const id of [sources.weather, sources.rain, sources.outage]) if (id) ids.push(id);
   for (const c of sources.contacts ?? []) ids.push(c.entity);
+  for (const r of sources.own ?? []) ids.push(r.entity);
   return ids;
 }
 
@@ -240,7 +263,11 @@ function contactWarnings(hass: HomeAssistant, sources: AlertSources, now: number
 /** The warnings that are active now: room sensors, then windows in the rain, then house-wide alarms and a power outage, then lost contacts. */
 export function findAlerts(hass: HomeAssistant, building: Building, sources: AlertSources, links: Map<string, OpeningEntities>, now = Date.now()): Alert[] {
   const outage: Alert[] = sources.outage && isPowerOut(hass, sources.outage) ? [{ kind: "power_outage", entity: sources.outage, roomId: null, floorId: null }] : [];
-  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now)];
+  const own: Alert[] = (sources.own ?? []).filter((r) => ownAlertMet(hass, r)).map((r) => {
+    const room = r.room_id ? building.floors.find((f) => f.rooms.some((x) => x.id === r.room_id)) : undefined;
+    return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text };
+  });
+  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now), ...own];
 }
 
 const PULSE: Record<AlertKind, [number, number, number]> = {
@@ -253,6 +280,7 @@ const PULSE: Record<AlertKind, [number, number, number]> = {
   alarm_pending: [1, 0.62, 0.2],
   power_outage: [1, 0.62, 0.2],
   contact_lost: [1, 0.62, 0.2],
+  own: [1, 0.62, 0.2],
 };
 
 /** The colour a room pulses in (channels 0..1). */
@@ -261,7 +289,7 @@ export const alertColor = (kind: AlertKind): [number, number, number] => PULSE[k
 /** One line for the banner, e.g. "Kitchen · Smoke: smoke detector". */
 export function alertText(hass: HomeAssistant | undefined, building: Building, a: Alert): string {
   const name = hass ? entityName(hass, a.entity) : a.entity;
-  const message = a.cause ? translate(hass, "alert_alarm_by", { name, cause: hass ? entityName(hass, a.cause) : a.cause }) : translate(hass, `alert_${a.kind}` as Parameters<typeof translate>[1], { name });
+  const message = a.kind === "own" ? a.text || name : a.cause ? translate(hass, "alert_alarm_by", { name, cause: hass ? entityName(hass, a.cause) : a.cause }) : translate(hass, `alert_${a.kind}` as Parameters<typeof translate>[1], { name });
   const room = a.roomId === null ? undefined : building.floors.flatMap((f) => f.rooms).find((r) => r.id === a.roomId);
   return room ? `${room.name} · ${message}` : message;
 }

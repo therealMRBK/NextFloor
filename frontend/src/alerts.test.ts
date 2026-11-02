@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { alarmCause, alertColor, alertEntities, alertSources, alertText, CONTACT_GRACE_MS, contactsPending, findAlerts, isPowerOut, QUIET_ALERTS, RAIN_STATES } from "./alerts.ts";
+import { alarmCause, ownAlertMet, alertColor, alertEntities, alertSources, alertText, CONTACT_GRACE_MS, contactsPending, findAlerts, isPowerOut, QUIET_ALERTS, RAIN_STATES } from "./alerts.ts";
 import type { OpeningEntities } from "./devices.ts";
 import { emptyBuilding, newFloor, type Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
-import { hassOf } from "./entities/fixtures.ts";
+import { entity as entity2, hassOf } from "./entities/fixtures.ts";
 
 type Attrs = Record<string, unknown>;
 const entity = (entity_id: string, state: string, attributes: Attrs = {}) => ({ entity_id, state, attributes });
@@ -204,4 +204,17 @@ test("a triggered alarm names the sensor that set it off and pulses its room", (
   const alerts = findAlerts(hass, b, alertSources(hass, b), new Map());
   assert.equal(alerts[0].roomId, "r");
   assert.equal(alerts[0].cause, "binary_sensor.front_door");
+});
+
+test("own warnings: a state, one of several, or a number below or above a value", () => {
+  const hass = hassOf([entity2("binary_sensor.robot_tank", "on"), entity2("sensor.dishwasher", "Finished"), entity2("sensor.salt", "12")]);
+  assert.equal(ownAlertMet(hass, { entity: "binary_sensor.robot_tank", state: null }), true, "on by default");
+  assert.equal(ownAlertMet(hass, { entity: "sensor.dishwasher", state: "done, finished" }), true);
+  assert.equal(ownAlertMet(hass, { entity: "sensor.salt", state: "<20" }), true);
+  assert.equal(ownAlertMet(hass, { entity: "sensor.salt", state: ">20" }), false);
+  const b = emptyBuilding();
+  b.settings.own_alerts = [{ id: "a", entity: "sensor.dishwasher", state: "finished", text: "Dishwasher done" }];
+  const alerts = findAlerts(hass, b, alertSources(hass, b), new Map());
+  assert.equal(alerts[0].kind, "own");
+  assert.equal(alertText(hass, b, alerts[0]), "Dishwasher done");
 });
