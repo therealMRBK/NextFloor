@@ -62,7 +62,7 @@ import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
-import { pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
+import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
 import { coverReach, hasMesh, hasMovingParts, mountBase, packItem, setMeshSource, setPacks, type FurniturePack, type MeshSource } from "../packs.ts";
 import { withVehicles } from "../parking.ts";
 import { buildRoof, type RoofWindowState } from "./roof.ts";
@@ -231,6 +231,8 @@ export interface ScreenState {
   heat?: boolean;
   /** An electric pack item that runs (a coffee machine, a compressor): its status lights and display light up. */
   leds?: boolean;
+  /** A home battery: its charge (0…1) fills the bar on its front. */
+  fill?: number;
 }
 
 /** Position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
@@ -2095,6 +2097,30 @@ export class NextFloorViewer {
         for (const g of st.gangs) {
           const col = new Color(...g.color.map((v) => Math.min(1, v * (0.45 + 0.55 * g.level))) as [number, number, number]);
           pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => p.gang === g.gang);
+        }
+        continue;
+      }
+      if (st.fill !== undefined) {
+        // a home battery's charge bar, filled up to its charge (sideways on a wall unit), the rest dim
+        const bar = batteryBar(f, fv.floor);
+        if (!bar) continue;
+        const r = bar.rect;
+        const k = Math.min(1, Math.max(0, st.fill));
+        const lit = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
+        const dim = new Color(0.08, 0.1, 0.13);
+        const z = r.z;
+        const quad = (x0: number, x1: number, y0: number, y1: number, col: Color) => {
+          buf.tri(P(x0, y0, z), P(x1, y0, z), P(x1, y1, z), col);
+          buf.tri(P(x0, y0, z), P(x1, y1, z), P(x0, y1, z), col);
+        };
+        if (bar.vertical) {
+          const y = r.y0 + (r.y1 - r.y0) * k;
+          if (k > 0) quad(r.x0, r.x1, r.y0, y, lit);
+          if (k < 1) quad(r.x0, r.x1, y, r.y1, dim);
+        } else {
+          const x = r.x0 + (r.x1 - r.x0) * k;
+          if (k > 0) quad(r.x0, x, r.y0, r.y1, lit);
+          if (k < 1) quad(x, r.x1, r.y0, r.y1, dim);
         }
         continue;
       }

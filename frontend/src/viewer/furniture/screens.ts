@@ -79,3 +79,14 @@ export function pictureRect(f: Furniture, floor?: Floor): ScreenRect | null {
   const rect = { x0, x1, y0: base + part.y * h, y1: base + (part.y + part.h) * h, z: (part.z + part.d / 2) * d };
   return f.mirror ? { ...rect, x0: -rect.x1, x1: -rect.x0 } : rect;
 }
+
+/** The charge bar on the front of a home battery (local coordinates) and whether it fills upwards (a tower) or sideways (wall unit, cube). */
+export function batteryBar(f: Furniture, floor?: Floor): { rect: ScreenRect; vertical: boolean } | null {
+  if (f.type !== "home_battery") return null;
+  const [w, d, h] = [Math.max(0.05, f.w), Math.max(0.05, f.d), Math.max(0.05, f.h)];
+  const lift = floor ? mountBase(floor, f) - builtinBase(f) : 0;
+  const z = d / 2 + 0.005;
+  if (f.variant === "wall") return { rect: { x0: -w * 0.3, x1: w * 0.3, y0: lift + 0.5 + h * 0.84, y1: lift + 0.5 + h * 0.9, z }, vertical: false };
+  if (f.variant === "cube") return { rect: { x0: -w * 0.35, x1: w * 0.35, y0: lift + h * 0.8, y1: lift + h * 0.86, z }, vertical: false };
+  return { rect: { x0: -w * 0.05, x1: w * 0.05, y0: lift + 0.06 + h * 0.16, y1: lift + h - 0.12, z }, vertical: true };
+}

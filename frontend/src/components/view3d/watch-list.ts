@@ -30,7 +30,7 @@ const furnitureOf = (b: Building) => b.floors.flatMap((f) => f.furniture);
 
 /** The sensors and entities behind the openings: blinds, contacts, tilt, positions. */
 function openingIds(links: WatchInputs["openingLinks"]): MaybeId[] {
-  return [...links.values()].flatMap((e) => [e.cover, e.contact, e.tilt, e.contact2, e.tilt2, e.position, e.tiltAngle]);
+  return [...links.values()].flatMap((e) => [e.cover, e.cover2, e.contact, e.tilt, e.contact2, e.tilt2, e.position, e.tiltAngle]);
 }
 
 /** What furniture is linked to besides its device: state lights, doors and thermometers of a fridge, battery, status, charge, export, pictures. */
@@ -74,6 +74,8 @@ export function watchedEntities(inputs: WatchInputs): string[] {
     energy.battery_soc,
     energy.consumption,
     energy.tariff,
+    energy.gas,
+    energy.water,
     ...b.presence.flatMap((p) => [p.person, p.sensor]),
     ...lightsOfRooms,
     ...sensorsOfRooms,

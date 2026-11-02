@@ -754,6 +754,9 @@ ENERGY_SCHEMA = vol.Schema(
         vol.Optional("battery_soc", default=None): _ENTITY,
         vol.Optional("consumption", default=None): _ENTITY,
         vol.Optional("tariff", default=None): _ENTITY,
+        # gas and water meters shown with the house's balance
+        vol.Optional("gas"): _ENTITY,
+        vol.Optional("water"): _ENTITY,
         # meters can hang off other meters (sub-meters); no default, so older plans stay as they are
         vol.Optional("advanced"): bool,
         # a sub-meter's label also shows what no placed device measures

@@ -745,6 +745,9 @@ export interface EnergySettings {
   show_unmetered?: boolean;
   /** Where the cable of an energy connection really runs (the flow follows it instead of an arc). */
   routes?: EnergyRoute[];
+  /** Gas and water meters shown with the house's balance: a sensor with the flow now (m³/h, l/min) or today's reading. */
+  gas?: string | null;
+  water?: string | null;
 }
 
 /** A point a cable runs through: on a floor, in plan coordinates. */

@@ -68,6 +68,7 @@ import { parkedVehicle, parkedVehicles, vehicleFurniture } from "../parking.ts";
 import { weatherEntity } from "../weather.ts";
 import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.ts";
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
+import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -1081,6 +1082,11 @@ export class NfView3d extends LitElement {
         } else if (plate && running && !plate.light && plate.parts.some((p) => p.glow || p.screen)) {
           // any other electric pack item that runs: its status lights and display light up, like an appliance's
           screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8, leds: true });
+        }
+        // a home battery shows its charge on its own front: a bar that fills, green when full, red when nearly empty
+        if (f.type === "home_battery" && extra) {
+          const soc = Number(hass.states[extra]?.state);
+          if (Number.isFinite(soc)) screens.set(f.id, { color: soc > 60 ? [0.29, 0.87, 0.5] : soc > 25 ? [0.98, 0.8, 0.08] : [0.97, 0.44, 0.44], level: 0.95, fill: soc / 100 });
         }
         if (st && hasScreen(f.type)) {
           // a screen is lit or dark (what plays on it is drawn by NextFloor's TV screens); a light (an aquarium,
@@ -2131,6 +2137,44 @@ export class NfView3d extends LitElement {
     return mediaNow(hass, spots);
   }
 
+  private week: WeekBars | null = null;
+  private weekAt = 0;
+
+  /** The last seven days for the house card, from the long-term statistics, loaded at most every hour while the card shows. */
+  private refreshWeek(b: Building): void {
+    const hass = this.hass;
+    if (!hass || this._travel || Date.now() - this.weekAt < 3_600_000) return;
+    this.weekAt = Date.now();
+    const found = deviceSensors(b, (f) => this.furnitureLinks?.get(f.id)?.power ?? null);
+    const e = b.energy;
+    const src = {
+      solar: e.solar ? [e.solar] : found.solar,
+      grid: e.grid ?? found.grid,
+      gridInvert: !!e.grid_invert,
+      battery: e.battery ? [e.battery] : found.battery,
+      batteryInvert: !!e.battery_invert,
+      consumption: e.consumption,
+    };
+    void loadWeek(hass, src)
+      .then((week) => {
+        this.week = week;
+        this.syncDevices(true);
+      })
+      .catch(() => (this.week = null));
+  }
+
+  /** Gas and water with the house's balance: what their sensors read now. */
+  private meterRows(b: Building): { icon: string; label: string; value: string }[] {
+    const hass = this.hass;
+    const rows: { icon: string; label: string; value: string }[] = [];
+    for (const [key, icon, label] of [["gas", "🔥", "energy_gas_short"], ["water", "💧", "energy_water_short"]] as const) {
+      const id = b.energy[key];
+      const st = id ? hass?.states[id] : undefined;
+      if (st && !isUnavailable(st)) rows.push({ icon, label: translate(hass, label), value: stateText(hass, st) });
+    }
+    return rows;
+  }
+
   /** Solar and consumption over the last 24 hours for the house card, loaded at most every 10 minutes while the card shows. */
   private refreshDayCurves(b: Building): void {
     const hass = this.hass;
@@ -2153,13 +2197,15 @@ export class NfView3d extends LitElement {
     const s = pic.summary;
     const hasEnergy = s.solar !== null || s.grid !== null || s.battery !== null || s.consumption !== null;
     const hub = houseHub(b);
-    const top = [...b.floors].sort((p, q) => q.elevation - p.elevation)[0];
+    // over the house, or over the floor that is open (the card stays in the floor views too)
+    const top = (this.floorId ? b.floors.find((f) => f.id === this.floorId) : undefined) ?? [...b.floors].sort((p, q) => q.elevation - p.elevation)[0];
     if (this.liveCardsOn && !this.dimmed && !this.roomId && hasEnergy && hub && top) {
       // over the middle of the house, above the roof
       let x = 0, z = 0, n = 0;
       for (const r of top.rooms) for (const [px, pz] of r.points) (x += px), (z += pz), n++;
-      cards.push({ kind: "house", at: { floorId: top.id, x: n ? x / n : hub.x, z: n ? z / n : hub.z, y: top.height + 3.2 }, summary: s, autarky: pic.autarky, curves: this.dayCurves ?? undefined });
+      cards.push({ kind: "house", at: { floorId: top.id, x: n ? x / n : hub.x, z: n ? z / n : hub.z, y: top.height + (this.floorId ? 1.2 : 3.2) }, summary: s, autarky: pic.autarky, curves: this.dayCurves ?? undefined, week: this.week ?? undefined, meters: this.meterRows(b) });
       this.refreshDayCurves(b);
+      this.refreshWeek(b);
     }
     if (this.liveCardsOn && !this.dimmed && !this.roomId) {
       for (const c of cars) cards.push({ kind: "car", at: c.at, spot: c.spot, name: c.name, car: c.car });
@@ -2220,6 +2266,7 @@ export class NfView3d extends LitElement {
       items.push({ cls: exporting ? "export" : "grid", label: t(exporting ? "energy_grid_export" : "energy_grid_import"), value: formatPower(this.hass, Math.abs(e.grid)) });
     }
     if (e.tariff) items.push({ cls: "tariff", label: t("energy_tariff"), value: `${formatNumber(this.hass, e.tariff.value, 3)} ${e.tariff.unit}`.trim() });
+    if (this.building) for (const m of this.meterRows(this.building)) items.push({ cls: "meter", label: `${m.icon} ${m.label}`, value: m.value });
     return html`<div class="nf-energy" aria-live="off">
       ${this.liveCardsOn && this._liveCards.some((c) => c.kind === "house") ? nothing : items.map((i) => html`<div class="nf-energy-item nf-energy-${i.cls}"><span>${i.label}</span><b>${i.value}</b></div>`)}
       ${this.flows !== null

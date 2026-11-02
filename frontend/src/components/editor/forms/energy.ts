@@ -78,7 +78,8 @@ export function renderEnergyBalance(host: EditorHost, actions: EnergyActions): T
   const found = foundDevices(host);
   const sensors = deviceSensors(host.doc, (item) => powerSensorOf(item, found));
   const store = (patch: Partial<Building["energy"]>) => host.replace({ ...structuredClone(host.doc), energy: { ...host.doc.energy, ...patch } });
-  const pick = (key: "grid" | "solar" | "battery" | "battery_soc" | "consumption" | "tariff") => (v: string | null) => store({ [key]: v === "none" ? null : v });
+  const meters = entityOptions(host.hass, (id) => isNumeric(id) && ["gas", "water", "volume_flow_rate"].includes(attribute(id, "device_class") ?? ""));
+  const pick = (key: "grid" | "solar" | "battery" | "battery_soc" | "consumption" | "tariff" | "gas" | "water") => (v: string | null) => store({ [key]: v === "none" ? null : v });
 
   // the usual trap is a sign the wrong way round: exporting without any sun, or a battery charging at night
   const sum = host.hass ? energySummary(host.hass, host.doc, [], sensors) : null;
@@ -101,6 +102,9 @@ export function renderEnergyBalance(host: EditorHost, actions: EnergyActions): T
       ${entityField(host, host.t("energy_battery_soc"), energy.battery_soc, sensors.soc[0] ?? null, charge, pick("battery_soc"))}
       ${entityField(host, host.t("energy_consumption_sensor"), energy.consumption, null, power, pick("consumption"))}
       ${entityField(host, host.t("energy_tariff_sensor"), energy.tariff, undefined, tariff, pick("tariff"))}
+      ${entityField(host, host.t("energy_gas"), energy.gas ?? null, undefined, meters, pick("gas"))}
+      ${entityField(host, host.t("energy_water"), energy.water ?? null, undefined, meters, pick("water"))}
+      ${hint(host.t("energy_meters_hint"), "nf-wide")}
     </div>
     <div class="nf-actions"><button class="nf-btn" ?disabled=${!host.admin || !host.hass} @click=${() => actions.importPrefs()}>${host.t("energy_import_prefs")}</button></div>
     ${actions.note ? hint(actions.note) : nothing} ${hint(host.t("energy_hint"))}

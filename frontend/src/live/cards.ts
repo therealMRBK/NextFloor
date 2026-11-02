@@ -24,6 +24,10 @@ export interface HouseCard {
   autarky: number | null;
   /** Solar and consumption over the last 24 hours (quarter hours), when the history could be loaded. */
   curves?: { solar: (number | null)[]; use: (number | null)[] };
+  /** Solar and consumption per day over the last seven days (kWh), from the long-term statistics. */
+  week?: { days: number[]; solar: (number | null)[]; use: (number | null)[] };
+  /** Gas and water meters: their icon, name and what they read now. */
+  meters?: { icon: string; label: string; value: string }[];
 }
 
 export interface CarCard {
@@ -77,13 +81,32 @@ function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number): Te
     const exporting = s.grid < -15;
     rows.push(html`<div class="live-row ${exporting ? "live-export" : "live-import"}"><span>⇄ ${t(exporting ? "energy_grid_export" : "energy_grid_import")}</span><b>${watts(hass, s.grid)}</b></div>`);
   }
+  for (const m of c.meters ?? []) rows.push(html`<div class="live-row live-meter"><span>${m.icon} ${m.label}</span><b>${m.value}</b></div>`);
   const own = c.autarky;
   return html`<div class="live-card live-card-house" data-i=${i}>
     ${own !== null
       ? html`<div class="live-own">${ring(own, own > 0.95 ? "#4ade80" : own > 0.6 ? "#facc15" : "#f87171")}<div class="live-own-text"><b>${Math.round(own * 100)} %</b><span>${t("live_autarky")}</span></div></div>`
       : nothing}
     <div class="live-rows">${rows}</div>
-    ${dayChart(hass, c.curves)}
+    ${dayChart(hass, c.curves)} ${weekChart(hass, c.week)}
+  </div>`;
+}
+
+/** The last seven days: a bar per day for solar (filled) and consumption (outlined), in kWh. */
+function weekChart(hass: HomeAssistant | undefined, week: HouseCard["week"]): TemplateResult | typeof nothing {
+  if (!week) return nothing;
+  const values = [...week.solar, ...week.use].filter((v): v is number => v !== null);
+  if (!values.length) return nothing;
+  const top = Math.max(...values) * 1.1 || 1;
+  const [w, h] = [150, 30];
+  const slot = w / 7;
+  const bar = (v: number | null, x: number, cls: string) => (v === null || v <= 0 ? nothing : svg`<rect x=${x.toFixed(1)} y=${(h - (v / top) * h).toFixed(1)} width=${(slot * 0.36).toFixed(1)} height=${((v / top) * h).toFixed(1)} class=${cls}></rect>`);
+  const total = (list: (number | null)[]) => list.reduce<number>((a, b) => a + (b ?? 0), 0);
+  return html`<div class="live-day live-week" title=${translate(hass, "live_week_hint", { solar: formatNumber(hass, total(week.solar), 0), use: formatNumber(hass, total(week.use), 0) })}>
+    <svg viewBox=${`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      ${week.days.map((_, k) => svg`${bar(week.solar[k], k * slot + slot * 0.1, "live-week-solar")}${bar(week.use[k], k * slot + slot * 0.5, "live-week-use")}`)}
+    </svg>
+    <span>7 ${translate(hass, "live_days")}</span>
   </div>`;
 }
 
@@ -266,6 +289,18 @@ export const liveCardStyles = css`
   .live-day-solar {
     fill: rgba(250, 204, 21, 0.35);
     stroke: #facc15;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .live-week svg {
+    height: 30px;
+  }
+  .live-week-solar {
+    fill: rgba(250, 204, 21, 0.6);
+  }
+  .live-week-use {
+    fill: rgba(232, 238, 255, 0.18);
+    stroke: #e8eeff;
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }

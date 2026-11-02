@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **More of the energy picture**: the house card now shows the last seven days as bars (sun and use per day, from Home Assistant's long-term statistics), gas and water meters (*Energy → Balance*) appear in the energy bar and on the card, the card stays above the open floor in the floor views, and a home battery shows its charge on its own front – a bar that fills, green when full, yellow, red when nearly empty.
 - **Venetian blinds, inside blinds, two blinds per window and Somfy "My"**: a window's blind can be a roller shutter outside (as before), a venetian blind whose slats turn in 3D with the cover's tilt, or a roller blind inside behind the glass. A wide window takes a second blind for its right half. A favourite position shows as **My** in the blind's quick menu – a blind with positions moves there, a Somfy RTS motor without feedback goes to its own My.
 - **Every electric piece works alike**: any electric piece of furniture with a switch or power sensor shows its draw beside its state on its pin ("On · 1.2 kW"), and its status lights and display light up while it runs – a coffee machine, a compressor, a 3D printer – like the washer and dishwasher always did.
 - **Lamps with several bulbs**: a lamp's form takes up to four more lights of the same fixture – a night light, an ambient ring, an uplight. While the main light is off, the lamp glows in 3D with the next light that is on, a little dimmer, and its pin says which one.
