@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **DXF import**: *Backup → Import* also takes a `.dxf` drawing from a CAD program – closed polylines become rooms, lines and open polylines free walls, in the drawing's unit turned into metres.
 - **A tap on an own warning**: opens the entity's details by default, or – as chosen per warning – switches the entity or jumps to its room. Thanks to @HA-Luz ([#52](https://github.com/therealMRBK/NextFloor/discussions/52)).
 
 ## 0.20.0

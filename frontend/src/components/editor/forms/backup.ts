@@ -42,7 +42,7 @@ export function renderBackup(host: EditorHost, service: BackupService): Template
     ${actions(
       html`<button class="nf-btn" @click=${() => service.exportPlan(false)}>${t("backup_export")}</button>`,
       html`<button class="nf-btn" title=${t("backup_export_share_hint")} @click=${() => service.exportPlan(true)}>${t("backup_export_share")}</button>`,
-      filePicker(t("backup_import"), (file) => void service.importPlan(file), "application/json,.json,.sh3d"),
+      filePicker(t("backup_import"), (file) => void service.importPlan(file), "application/json,.json,.sh3d,.dxf"),
     )}
     ${hint(t("backup_hint"))} ${hint(t("import_other_hint"))}
     <h4 class="nf-lib-head">${t("backup_full")}</h4>

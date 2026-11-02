@@ -544,6 +544,8 @@
   "import_error_not_plan": "Filen är ingen NextFloor-planritning.",
   "import_other_hint": "Från Sweet Home 3D: importera .sh3d-filen här. Våningar, rum, dörrar, fönster och fristående väggar följer med, möbler inte.",
   "import_sh3d_found": "Sweet Home 3D: {floors} våningar, {rooms} rum, {openings} dörrar och fönster, {walls} fristående väggar ({furniture} möbler tas inte med).",
+  "import_dxf_found": "DXF: {rooms} rum (slutna polylinjer) och {walls} fristående väggar (linjer) på en våning.",
+  "import_error_dxf_empty": "DXF-filen har inga linjer eller polylinjer.",
   "import_error_sh3d": "Det här är ingen läsbar Sweet Home 3D-fil (kräver Sweet Home 3D 5.3 eller senare).",
   "import_error_sh3d_empty": "Sweet Home 3D-filen har inga rum eller väggar.",
   "export_name_template": "mall",

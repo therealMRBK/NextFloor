@@ -544,6 +544,8 @@
   "import_error_not_plan": "Il file non è una planimetria NextFloor.",
   "import_other_hint": "Da Sweet Home 3D: importa qui il file .sh3d. Vengono importati piani, stanze, porte, finestre e pareti libere, gli arredi no.",
   "import_sh3d_found": "Sweet Home 3D: {floors} piani, {rooms} stanze, {openings} porte e finestre, {walls} pareti libere ({furniture} arredi non vengono importati).",
+  "import_dxf_found": "DXF: {rooms} stanze (polilinee chiuse) e {walls} pareti libere (linee) su un piano.",
+  "import_error_dxf_empty": "Il file DXF non contiene linee né polilinee.",
   "import_error_sh3d": "Questo non è un file Sweet Home 3D leggibile (serve Sweet Home 3D 5.3 o successivo).",
   "import_error_sh3d_empty": "Il file Sweet Home 3D non ha stanze né pareti.",
   "export_name_template": "modello",

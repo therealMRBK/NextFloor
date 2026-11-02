@@ -544,6 +544,8 @@
   "import_error_not_plan": "Plik nie jest planem NextFloor.",
   "import_other_hint": "Ze Sweet Home 3D: zaimportuj tutaj plik .sh3d. Przenoszone są piętra, pomieszczenia, drzwi, okna i wolne ściany, meble nie.",
   "import_sh3d_found": "Sweet Home 3D: {floors} pięter, {rooms} pomieszczeń, {openings} drzwi i okien, {walls} wolnych ścian ({furniture} mebli nie przeniesiono).",
+  "import_dxf_found": "DXF: {rooms} pomieszczeń (zamknięte polilinie) i {walls} wolnych ścian (linie) na jednym piętrze.",
+  "import_error_dxf_empty": "Plik DXF nie zawiera linii ani polilinii.",
   "import_error_sh3d": "To nie jest czytelny plik Sweet Home 3D (wymaga Sweet Home 3D 5.3 lub nowszego).",
   "import_error_sh3d_empty": "Plik Sweet Home 3D nie ma pomieszczeń ani ścian.",
   "export_name_template": "szablon",

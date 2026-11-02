@@ -2368,6 +2368,8 @@
  "sill_boards_outside": "Extérieur seulement",
  "import_other_hint": "Depuis Sweet Home 3D : importez ici le fichier .sh3d. Étages, pièces, portes, fenêtres et murs libres sont repris, les meubles non.",
  "import_sh3d_found": "Sweet Home 3D : {floors} étages, {rooms} pièces, {openings} portes et fenêtres, {walls} murs libres ({furniture} meubles ne sont pas repris).",
+ "import_dxf_found": "DXF : {rooms} pièces (polylignes fermées) et {walls} murs libres (lignes) sur un étage.",
+ "import_error_dxf_empty": "Le fichier DXF ne contient ni lignes ni polylignes.",
  "import_error_sh3d": "Ce n'est pas un fichier Sweet Home 3D lisible (il faut Sweet Home 3D 5.3 ou plus récent).",
  "import_error_sh3d_empty": "Le fichier Sweet Home 3D ne contient ni pièces ni murs.",
  "care_bin_today": "Collecte aujourd'hui",

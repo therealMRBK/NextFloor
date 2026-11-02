@@ -544,6 +544,8 @@
   "import_error_not_plan": "O ficheiro não é uma planta do NextFloor.",
   "import_other_hint": "Do Sweet Home 3D: importe aqui o ficheiro .sh3d. Pisos, divisões, portas, janelas e paredes livres são importados, os móveis não.",
   "import_sh3d_found": "Sweet Home 3D: {floors} pisos, {rooms} divisões, {openings} portas e janelas, {walls} paredes livres ({furniture} móveis não são importados).",
+  "import_dxf_found": "DXF: {rooms} divisões (polilinhas fechadas) e {walls} paredes livres (linhas) num piso.",
+  "import_error_dxf_empty": "O ficheiro DXF não tem linhas nem polilinhas.",
   "import_error_sh3d": "Isto não é um ficheiro Sweet Home 3D legível (requer Sweet Home 3D 5.3 ou mais recente).",
   "import_error_sh3d_empty": "O ficheiro Sweet Home 3D não tem divisões nem paredes.",
   "export_name_template": "modelo",
