@@ -233,6 +233,8 @@ export interface ScreenState {
   leds?: boolean;
   /** A home battery: its charge (0…1) fills the bar on its front. */
   fill?: number;
+  /** A 3D printer: how far the print has grown (0…1) on its bed, in the colour. */
+  print?: number;
 }
 
 /** Position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
@@ -2112,6 +2114,24 @@ export class NextFloorViewer {
         for (const g of st.gangs) {
           const col = new Color(...g.color.map((v) => Math.min(1, v * (0.45 + 0.55 * g.level))) as [number, number, number]);
           pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => p.gang === g.gang);
+        }
+        continue;
+      }
+      if (st.print !== undefined) {
+        // the print on the bed: a block in the middle of the printer that grows with the progress
+        const base = mountBase(fv.floor, f) + f.h * 0.2;
+        const s = Math.min(f.w, f.d) * 0.16;
+        const top = base + f.h * 0.38 * Math.min(1, Math.max(0, st.print));
+        const col = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
+        const side = col.clone().multiplyScalar(0.7);
+        const c4 = [P(-s, base, -s), P(s, base, -s), P(s, base, s), P(-s, base, s)];
+        const t4 = [P(-s, top, -s), P(s, top, -s), P(s, top, s), P(-s, top, s)];
+        buf.tri(t4[0], t4[2], t4[1], col);
+        buf.tri(t4[0], t4[3], t4[2], col);
+        for (let k = 0; k < 4; k++) {
+          const j = (k + 1) % 4;
+          buf.tri(c4[k], c4[j], t4[j], side);
+          buf.tri(c4[k], t4[j], t4[k], side);
         }
         continue;
       }

@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Your 3D printer, live**: link a 3D printer from the packs to any entity of your printer's device (Bambu Lab, OctoPrint, Moonraker/Klipper or PrusaLink), and while it prints a card floats above it with the model's picture, the progress, the time left and "done at", the layer, nozzle and bed temperatures and the filament colours of the AMS – and the print grows on the bed in 3D in the colour of its filament.
 - **"Today" on the wall tablet**: choose calendars in *House → Calendars for "Today"*, and a card top right in the 3D view lists the day's appointments (all-day ones first, past ones dimmed) together with the waste bins collected today or tomorrow. A tap on its title folds it; the card option `today: false` hides it on a dashboard card.
 - **Move a pin by hand**: when devices stand close together and their pins cover each other, *Move the pin* in the device's or furniture's form pushes the pin aside or up (in metres) while the device stays where it is.
 - **Small tablets and phones**: a 🔍 zoom in the view options (card option `zoom`) brings the fitted views closer so the house looks larger on a small tablet; *🎥 Keep camera* (card option `keep_camera`) keeps the camera's side, height and distance when you switch floors; the room panel takes a little more of the width on small landscape tablets; and on a phone the editor's tools are one dropdown instead of a row of eleven buttons.

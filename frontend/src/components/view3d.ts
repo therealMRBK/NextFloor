@@ -71,6 +71,7 @@ import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
+import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -1130,6 +1131,15 @@ export class NfView3d extends LitElement {
           // any other electric pack item that runs: its status lights and display light up, like an appliance's
           screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8, leds: true });
         }
+        // a 3D printer that prints: the print grows on its bed, in the colour of its filament
+        if (isPrinter3d(f.type)) {
+          const pr = readPrinter(hass, link.entity ?? link.power);
+          if (pr && pr.progress !== null && (pr.printing || /pause/.test(pr.status))) {
+            const hex = pr.filaments[0] ?? "#38bdf8";
+            const rgb = [1, 3, 5].map((k) => parseInt(hex.slice(k, k + 2), 16) / 255) as [number, number, number];
+            screens.set(f.id, { color: rgb, level: 0.9, print: Math.max(0.02, pr.progress / 100) });
+          }
+        }
         // a home battery shows its charge on its own front: a bar that fills, green when full, red when nearly empty
         if (f.type === "home_battery" && extra) {
           const soc = Number(hass.states[extra]?.state);
@@ -2155,6 +2165,22 @@ export class NfView3d extends LitElement {
 
   /** The floating cards (house balance; car and music follow) and the points in the plan they hang over. */
   /** The cars of the parking spots: what each reports, and the point over the spot (over the car when it is there). */
+  /** 3D printers in the plan whose device reports a print (the card shows while it prints, and a while after). */
+  private livePrinters(b: Building): { id: string; name: string; at: { floorId: string; x: number; z: number; y: number }; printer: PrinterInfo }[] {
+    const hass = this.hass;
+    const out: { id: string; name: string; at: { floorId: string; x: number; z: number; y: number }; printer: PrinterInfo }[] = [];
+    if (!hass) return out;
+    for (const floor of b.floors)
+      for (const f of floor.furniture) {
+        if (!isPrinter3d(f.type)) continue;
+        const link = this.furnitureLinks?.get(f.id);
+        const printer = readPrinter(hass, link?.entity ?? link?.power ?? null);
+        if (!printer || (!printer.printing && !/pause|finish|complete|error/.test(printer.status))) continue;
+        out.push({ id: f.id, name: f.name || furnitureName(hass, f.type), at: { floorId: floor.id, x: f.x, z: f.z, y: mountBase(floor, f) + f.h + 0.5 }, printer });
+      }
+    return out;
+  }
+
   private liveCars(hass: HomeAssistant, b: Building): { spot: string; name: string; at: { floorId: string; x: number; z: number; y: number }; car: CarInfo }[] {
     const out: { spot: string; name: string; at: { floorId: string; x: number; z: number; y: number }; car: CarInfo }[] = [];
     for (const floor of b.floors) {
@@ -2292,6 +2318,7 @@ export class NfView3d extends LitElement {
     }
     if (this.liveCardsOn && !this.dimmed && !this.roomId) {
       for (const c of cars) cards.push({ kind: "car", at: c.at, spot: c.spot, name: c.name, car: c.car });
+      for (const p of this.livePrinters(b)) cards.push({ kind: "printer", at: p.at, name: p.name, printer: p.printer });
       for (const m of media) cards.push({ kind: "media", at: { ...m.at, y: m.at.y + 0.5 }, media: m });
     }
     if (JSON.stringify(cards) !== JSON.stringify(this._liveCards)) this._liveCards = cards;

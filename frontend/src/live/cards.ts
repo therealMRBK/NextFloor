@@ -15,6 +15,7 @@ import type { MediaNow } from "./media.ts";
 import { formatNumber, translate } from "../i18n.ts";
 import type { HomeAssistant } from "../types.ts";
 import { curvePath } from "./day-curves.ts";
+import type { PrinterInfo } from "./printer.ts";
 import type { PlanPoint } from "../viewer/live-energy.ts";
 
 export interface HouseCard {
@@ -44,7 +45,14 @@ export interface MediaCard {
   media: MediaNow;
 }
 
-export type LiveCard = HouseCard | CarCard | MediaCard;
+export interface PrinterCard {
+  kind: "printer";
+  at: PlanPoint;
+  name: string;
+  printer: PrinterInfo;
+}
+
+export type LiveCard = HouseCard | CarCard | MediaCard | PrinterCard;
 
 /** A button on a card was pressed: the 3D view calls the service (with extra data such as the volume). */
 export type LiveCardAction = (domain: string, service: string, entity: string, data?: Record<string, unknown>) => void;
@@ -223,10 +231,34 @@ export function unstackLhCards(root: ParentNode): void {
   }
 }
 
+/** A 3D printer's print: the model's picture, progress, when it is done, the layer, temperatures and the filaments. */
+function printerCard(hass: HomeAssistant | undefined, c: PrinterCard, i: number): TemplateResult {
+  const p = c.printer;
+  const t = (k: Parameters<typeof translate>[1], v?: Record<string, string | number>) => translate(hass, k, v);
+  const pct = p.progress ?? 0;
+  const clock = (ms: number) => new Intl.DateTimeFormat(hass?.language ?? navigator.language, { hour: "2-digit", minute: "2-digit" }).format(new Date(ms));
+  const left = p.remaining !== null ? (p.remaining >= 60 ? `${Math.floor(p.remaining / 60)} h ${Math.round(p.remaining % 60)} min` : `${Math.round(p.remaining)} min`) : null;
+  const temps = [p.nozzle !== null ? `${t("printer_nozzle")} ${Math.round(p.nozzle)}°` : null, p.bed !== null ? `${t("printer_bed")} ${Math.round(p.bed)}°` : null].filter(Boolean).join(" · ");
+  return html`<div class="live-card live-card-printer ${p.printing ? "live-charging" : ""}" data-i=${i}>
+    <div class="live-own">
+      ${p.picture ? html`<img class="live-print-pic" src=${p.picture} alt="" />` : ring(pct / 100, p.printing ? "#38bdf8" : "#8aa0c8")}
+      <div class="live-own-text"><b>${p.progress !== null ? `${Math.round(pct)} %` : "–"}</b><span>${t(`printer_${p.printing ? "printing" : /finish|complete|fertig/.test(p.status) ? "done" : /pause/.test(p.status) ? "paused" : /error|fail/.test(p.status) ? "error" : "idle"}`)}</span></div>
+    </div>
+    <div class="live-rows">
+      <div class="live-title">${c.name}</div>
+      ${p.job ? html`<div class="live-status">${p.job}</div>` : nothing}
+      ${p.printing && (p.endsAt || left) ? html`<div class="live-status">⏱ ${[left, p.endsAt ? t("printer_done_at", { time: clock(p.endsAt) }) : null].filter(Boolean).join(" · ")}</div>` : nothing}
+      ${p.layer !== null ? html`<div class="live-status">▤ ${t("printer_layer")} ${p.layer}${p.layers ? ` / ${p.layers}` : ""}</div>` : nothing}
+      ${temps ? html`<div class="live-status">🌡 ${temps}</div>` : nothing}
+      ${p.filaments.length ? html`<div class="live-filaments">${p.filaments.map((f) => html`<i style=${`background:${f}`}></i>`)}</div>` : nothing}
+    </div>
+  </div>`;
+}
+
 export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction): TemplateResult | typeof nothing {
   if (!cards.length) return nothing;
   return html`<div class="live-cards">
-    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i) : c.kind === "car" ? carCard(hass, c, i, act) : mediaCard(hass, c, i, act)))}
+    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : mediaCard(hass, c, i, act)))}
   </div>`;
 }
 
@@ -343,6 +375,24 @@ export const liveCardStyles = css`
   }
   .live-status {
     opacity: 0.85;
+  }
+  .live-print-pic {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .live-filaments {
+    display: flex;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .live-filaments i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
   }
   .live-warn {
     color: #fbbf24;
