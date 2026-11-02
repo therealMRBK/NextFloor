@@ -10,7 +10,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Move furniture to another floor**: the furniture form moves an item to the same spot on another floor.
 - **Curved walls**: the ◠ Arc button on a wall of a room (in the room's wall list) or on a free wall bends it into an arc: type how far its middle bulges, outwards or into the room, and press *Bend*. A room sharing the wall bends along, doors and windows move with it and stay whole, and everything else (3D, solid walls, cut view, wall heights) treats the arc like any wall. Undo takes the arc back.
 - **The house throws its shadow**: with north set, the house casts its shadow on the plot from the sun's real position, long in the morning and evening and paler behind clouds. It follows the "Sunlight and shadows" setting (formerly "Sunlight through the windows") and is off on the Tablet level.
-- **Time of day**: the ☀ Time of day switch under the 3D view opens a slider over the hours of today. Sun patches, the shadow, the sky, the sun or moon and the *Auto* look follow the chosen hour once the slider is let go; tapping the switch again goes back to now.
+- **Time of day**: switch on *☀ Time of day* in the view options (⚙), and a ☀ switch under the 3D view opens a slider over the hours of today, in Home Assistant's time zone. Sun patches, the shadow, the sky, the sun or moon and the *Auto* look follow the chosen hour once the slider is let go; tapping the switch again goes back to now.
 - **Night sky and weather on the ground**: with the weather on, stars come out on a clear night; snow lies white around the house while it snows, and the ground turns dark and wet in the rain.
 
 ## 0.16.1

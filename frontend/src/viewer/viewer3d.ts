@@ -998,6 +998,8 @@ export class NextFloorViewer {
   /**
    * The house's shadow on the ground: the footprint of the floors above ground, swept away from the sun by the height of the house.
    * Off with the sun patches and on the tablet level.
+   * A known simplification: the whole footprint sweeps by the full height of the house, so a one-storey garage beside a
+   * two-storey house throws a two-storey shadow.
    */
   private buildHouseShadow(): void {
     if (!this.houseShadow) return;

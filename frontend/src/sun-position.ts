@@ -21,9 +21,35 @@ export function sunPosition(date: Date, latitude: number, longitude: number): { 
   return { elevation: elevation / RAD, azimuth: ((azimuth % 360) + 360) % 360 };
 }
 
-/** Today (in the browser's time zone) at `hours` o'clock. */
-export function todayAt(hours: number, now = new Date()): Date {
+/** The wall clock of `zone` at an instant, as if it were UTC (its difference to the instant is the zone's offset). */
+function wallClock(instant: number, zone: string): number {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", { timeZone: zone, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+      .formatToParts(new Date(instant))
+      .map((p) => [p.type, Number(p.value)]),
+  );
+  return Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+}
+
+/**
+ * Today at `hours` o'clock in `zone` (Home Assistant's time zone, so a tablet set to another zone, or a kiosk on UTC,
+ * still shows the home's light); without a zone, or with one the browser does not know, in the browser's own zone.
+ */
+export function todayAt(hours: number, zone?: string | null, now = new Date()): Date {
+  const [h, m] = [Math.floor(hours), Math.round((hours % 1) * 60)];
+  if (zone) {
+    try {
+      const today = new Date(wallClock(now.getTime(), zone));
+      const wanted = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), h, m);
+      // the zone's offset at the wanted time, checked once more across a change to or from summer time
+      let at = wanted - (wallClock(wanted, zone) - wanted);
+      at = wanted - (wallClock(at, zone) - at);
+      return new Date(at);
+    } catch {
+      // an unknown zone: fall back to the browser's
+    }
+  }
   const at = new Date(now);
-  at.setHours(Math.floor(hours), Math.round((hours % 1) * 60), 0, 0);
+  at.setHours(h, m, 0, 0);
   return at;
 }

@@ -87,11 +87,17 @@ export class NextFloorPanel extends LitElement {
     this._timeDrag = null;
   }
 
+  /** Shows or hides the time-of-day switch; hiding it goes back to the real sun. */
+  private toggleTimeSlider(on: boolean): void {
+    this.setPref("timeSlider", on);
+    if (!on) [this._timeOfDay, this._timeDrag] = [null, null];
+  }
+
   /** The sun state the look follows: the real one, or the one of the hour on the time-of-day slider. */
   private sunState(): string | undefined {
     const config = this.hass?.config;
     if (this._timeOfDay === null || config?.latitude === undefined || config.longitude === undefined) return this.hass?.states["sun.sun"]?.state;
-    return sunPosition(todayAt(this._timeOfDay), config.latitude, config.longitude).elevation > 0 ? "above_horizon" : "below_horizon";
+    return sunPosition(todayAt(this._timeOfDay, config.time_zone), config.latitude, config.longitude).elevation > 0 ? "above_horizon" : "below_horizon";
   }
 
   /** The time-of-day chip, and while it is on the slider over the hours of today with a button back to now. */
@@ -276,6 +282,7 @@ export class NextFloorPanel extends LitElement {
           </div>
         </details>
         <div class="nf-seg nf-quality">
+          <button aria-pressed=${p.timeSlider} title=${this.t("time_of_day_hint")} @click=${() => this.toggleTimeSlider(!p.timeSlider)}>☀ ${this.t("time_of_day")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
       </div>`;
@@ -439,7 +446,7 @@ export class NextFloorPanel extends LitElement {
       ${this.toggleChip("roomNames", "room_names_short")}
      
       ${this.toggleChip("weather", "weather_short", "weather_hint")}
-      ${this.renderTimeOfDay()}
+      ${p.timeSlider ? this.renderTimeOfDay() : nothing}
       ${this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing}
     </div>`;
   }

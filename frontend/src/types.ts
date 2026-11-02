@@ -55,7 +55,7 @@ export interface HomeAssistant {
   entities?: Record<string, HassEntityEntry>;
   devices?: Record<string, HassDevice>;
   states: Record<string, HassEntity>;
-  config?: { unit_system?: { temperature?: string }; latitude?: number; longitude?: number };
+  config?: { unit_system?: { temperature?: string }; latitude?: number; longitude?: number; time_zone?: string };
   /** Home Assistant's theme state: `darkMode` is false in a light theme. */
   themes?: { darkMode?: boolean };
   connection: HassConnection;

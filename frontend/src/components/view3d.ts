@@ -781,7 +781,7 @@ export class NfView3d extends LitElement {
     v.setFloorInfo(new Map([...counts].map(([id, c]) => [id, floorInfoText(hass, c)])));
     // daylight: sun through the windows and a lighter sky
     const config = hass.config;
-    const sunNow = this.timeOfDay != null && config?.latitude !== undefined && config.longitude !== undefined ? sunPosition(todayAt(this.timeOfDay), config.latitude, config.longitude) : readSun(hass);
+    const sunNow = this.timeOfDay != null && config?.latitude !== undefined && config.longitude !== undefined ? sunPosition(todayAt(this.timeOfDay, config.time_zone), config.latitude, config.longitude) : readSun(hass);
     v.setSun(sunNow);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
     const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;

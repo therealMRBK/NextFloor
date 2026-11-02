@@ -25,6 +25,8 @@ export interface DevicePrefs {
   /** The switches at the bottom of the 3D view folded into one button. */
   barsFolded: boolean;
   weather: boolean;
+  /** The ☀ time-of-day switch under the 3D view (off: the view always shows the real sun). */
+  timeSlider: boolean;
   /** A clock in a corner of the 3D view, or none. */
   clock: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
   /** How opaque the see-through walls are, in % (20: faint glass). */
@@ -76,6 +78,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   navWrap: flag("nav_wrap", false),
   barsFolded: flag("bars_folded", false),
   weather: flag("weather", true),
+  timeSlider: flag("time_slider", false),
   screenName: { name: "screen_name", fallback: "", read: (raw) => raw.slice(0, 60), write: (value) => value.trim().slice(0, 60) },
   announceMuted: flag("announce_muted", false),
   glassWalls: {
