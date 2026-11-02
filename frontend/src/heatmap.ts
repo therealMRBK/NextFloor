@@ -5,10 +5,10 @@ import { mouldRisk } from "./live/room-climate.ts";
 import type { Building } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
-export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "values";
+export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "values" | "wifi";
 
 /** The modes that paint floors ("values" prints numbers at the room names instead). */
-export type HeatColorMode = Exclude<HeatMode, "none" | "values">;
+export type HeatColorMode = Exclude<HeatMode, "none" | "values" | "wifi">;
 
 type Rgb = [number, number, number];
 type Stop = readonly [value: number, colour: Rgb];

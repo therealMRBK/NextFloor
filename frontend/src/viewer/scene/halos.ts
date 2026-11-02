@@ -49,7 +49,8 @@ export function addFloorWedge(buffer: GeoBuffer, device: DeviceMarker, walls: re
   const at = (t: number, r: number): [number, number, number] => [device.x + (heading[0] * Math.cos(t) - heading[1] * Math.sin(t)) * r, WEDGE_Y, device.z + (heading[1] * Math.cos(t) + heading[0] * Math.sin(t)) * r];
   for (let i = 0; i < steps; i++) {
     const [t0, t1] = [-half + (2 * half * i) / steps, -half + (2 * half * (i + 1)) / steps];
-    const [r0, r1] = [viewReach(walls, origin, heading, t0, wedge.reach), viewReach(walls, origin, heading, t1, wedge.reach)];
+    // a radio's reach (Wi-Fi) goes through walls; a camera's view stops at them
+    const [r0, r1] = wedge.walls === false ? [wedge.reach, wedge.reach] : [viewReach(walls, origin, heading, t0, wedge.reach), viewReach(walls, origin, heading, t1, wedge.reach)];
     const [n0, n1] = [Math.min(wedge.near, r0), Math.min(wedge.near, r1)];
     if (wedge.near <= 0) buffer.tri([device.x, WEDGE_Y, device.z], at(t1, r1), at(t0, r0), inner, outer, outer);
     else {

@@ -194,7 +194,7 @@ export interface DeviceMarker {
   /** Formatted power, e.g. "85 W". */
   powerText?: string;
   /** A plugin's shape on the floor from the device (a camera's field of view): stops at walls; `through` lets taps pass. */
-  wedge?: { angle: number; reach: number; near: number; color: [number, number, number]; opacity: number; through: boolean } | null;
+  wedge?: { angle: number; reach: number; near: number; color: [number, number, number]; opacity: number; through: boolean; walls?: boolean } | null;
 }
 
 export type FloorStack = "dim" | "stacked" | "single";

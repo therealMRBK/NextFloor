@@ -74,6 +74,7 @@ import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
 import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
 import { isHeatPump, readHeatPump, type HeatPumpInfo } from "../live/heat-pump.ts";
+import { coverageColor, isAccessPoint, networkHealth, readAccessPoint } from "../live/wifi.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -996,7 +997,7 @@ export class NfView3d extends LitElement {
     const hass = this.hass;
     if (!v || !b || !hass) return;
     let tint: Map<string, [number, number, number]> | null = null;
-    if (this.heatMode !== "none" && this.heatMode !== "values") {
+    if (this.heatMode !== "none" && this.heatMode !== "values" && this.heatMode !== "wifi") {
       const mode = this.heatMode;
       const values = roomValues(hass, b, mode);
       // the legend's "nothing found" line depends on it: render again when that changes
@@ -1219,6 +1220,19 @@ export class NfView3d extends LitElement {
           show: f.marker ?? undefined,
           fromFurniture: true,
         });
+      }
+    }
+    // the Wi-Fi map: an access point's reach as a disc on the floor (through walls), its pin tells its devices
+    const wifi = this.heatMode === "wifi";
+    for (const m of markers) {
+      const f = m.furnitureId ? b.floors.flatMap((fl) => fl.furniture).find((x) => x.id === m.furnitureId) : undefined;
+      if (!f || !isAccessPoint(f.type)) continue;
+      const ap = readAccessPoint(hass, this.furnitureLinks.get(f.id)?.entity ?? this.furnitureLinks.get(f.id)?.power ?? null);
+      if (!ap) continue;
+      if (ap.clients !== null) m.text = translate(hass, "wifi_clients", { n: ap.clients });
+      if (wifi) {
+        m.wedge = { angle: 360, reach: 9, near: 0, color: coverageColor(ap), opacity: 0.4, through: true, walls: false };
+        m.show = "always";
       }
     }
     // an item with its own tap action shows what it shows as usual; a tap on it or on its pin runs the action
@@ -2449,6 +2463,7 @@ export class NfView3d extends LitElement {
   }
 
   private renderLegend() {
+    if (this.heatMode === "wifi") return this.renderWifiLegend();
     if (this.heatMode === "none" || this.heatMode === "values") return nothing;
     const summer = isSummer(new Date(), this.hass?.config?.latitude ?? 50);
     const scale = scaleOf(this.heatMode, summer);
@@ -2463,6 +2478,26 @@ export class NfView3d extends LitElement {
       <span class="nf-legend-bar" style="background:${heatGradient(this.heatMode, summer)}"></span>
       <span class="nf-legend-range"><span>${formatNumber(this.hass, lo, 0)} ${unit}</span><span>${formatNumber(this.hass, hi, 0)} ${unit}</span></span>
       ${this.heatValues.size ? nothing : html`<span class="nf-legend-none">${t("heat_none_found")}</span>`}
+    </div>`;
+  }
+
+  /** The Wi-Fi map's legend: the access points, the devices they carry, and the network devices that are offline. */
+  private renderWifiLegend() {
+    const hass = this.hass;
+    const b = this.building;
+    if (!hass || !b) return nothing;
+    const t = (k: I18nKey, v?: Record<string, string | number>) => translate(hass, k, v);
+    const aps = b.floors.flatMap((f) => f.furniture.filter((m) => isAccessPoint(m.type)).map((m) => readAccessPoint(hass, this.furnitureLinks?.get(m.id)?.entity ?? this.furnitureLinks?.get(m.id)?.power ?? null)));
+    const known = aps.filter((a): a is NonNullable<typeof a> => !!a);
+    const clients = known.reduce((s, a) => s + (a.clients ?? 0), 0);
+    const placed = b.floors.flatMap((f) => f.placements.map((p) => hass.states[p.entity_id]));
+    const health = networkHealth(placed);
+    return html`<div class="nf-legend">
+      <b>📶 ${t("heat_wifi")}</b>
+      <span>${t("wifi_aps", { n: aps.length, clients })}</span>
+      ${health.online + health.offline.length ? html`<span>${t("wifi_network", { online: health.online, offline: health.offline.length })}</span>` : nothing}
+      ${health.offline.length ? html`<span class="nf-legend-none">${health.offline.slice(0, 4).join(", ")}</span>` : nothing}
+      ${aps.length ? nothing : html`<span class="nf-legend-none">${t("wifi_none")}</span>`}
     </div>`;
   }
 

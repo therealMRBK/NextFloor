@@ -269,7 +269,7 @@ export class NextFloorCardEditor extends LitElement {
     return html`<h3>${f.t("card_section_show")}</h3>
       <div class="grid">
         ${choice(f, "markers", "markers", [["none", "markers_none"], ["important", "markers_important"], ["all", "markers_all"]], v.markers)}
-        ${choice(f, "heatmap", "heatmap", [["none", "heat_off"], ["temperature", "heat_temperature"], ["humidity", "heat_humidity"], ["co2", "heat_co2"], ["mould", "heat_mould"], ["values", "heat_values"]], v.heatmap)}
+        ${choice(f, "heatmap", "heatmap", [["none", "heat_off"], ["temperature", "heat_temperature"], ["humidity", "heat_humidity"], ["co2", "heat_co2"], ["mould", "heat_mould"], ["values", "heat_values"], ["wifi", "heat_wifi"]], v.heatmap)}
         ${followOrForce(f, "flows", "flows", v.flows)} ${followOrForce(f, "holograms", "holos", v.holograms)}
       </div>
       ${switchOption(f, "tap_in_room", "card_tap_in_room", "card_tap_in_room_hint")} ${this.markersOutside()} ${this.controlsSection()} ${this.floorThumbsToggle()} ${switchOption(f, "room_names", "card_room_names")} ${switchOption(f, "energy", "card_energy")}

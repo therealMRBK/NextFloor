@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Wi-Fi map**: the map selector has a new **Wi-Fi** mode – every access point, router or mesh node from the packs linked to its device spreads its reach as a disc over the floor (through the walls), blue while it has room, amber when it is busy, red when it is down; its pin tells how many devices it carries, and the legend sums up the access points, their devices and which network devices of the plan are offline.
 - **Room climate**: the heat map has a new **Mould** mode – the risk at each room's coldest wall from its temperature and humidity – and the temperature map uses a summer scale from May to September (rooms count as hot later). Rooms without a sensor of their own take the temperature and humidity of their thermostat. The room panel shows the room's temperature over the last 24 hours as a small curve, and both the panel and the *Values* map tell when to air a room (too much CO₂, too damp, risk of mould).
 - **Underfloor heating**: a room can name its floor heating's thermostat, valve or switch, and its floor glows warm in 3D while it heats.
 - **Heat pump**: a heat pump from the packs linked to any entity of its device shows a card with what it does (heating, hot water, cooling, defrosting), flow and return, the outside temperature, the power it draws, the heat it delivers and its COP as a ring – and with the energy flow on, its heat runs into the house in orange.
