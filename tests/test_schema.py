@@ -101,3 +101,27 @@ def test_placement_plugin_settings() -> None:
         PLACEMENT_SCHEMA({**placed, "plugin": {"cameras": {"bad key": 1}}})
     with pytest.raises(vol.Invalid):
         PLACEMENT_SCHEMA({**placed, "plugin": {"cameras": {"nested": {"a": 1}}}})
+
+
+STAIRS = {"id": "s1", "type": "stairs", "x": 1, "z": 2, "rotation": 0, "w": 2.2, "d": 2.8, "h": 2.8, "variant": None}
+
+
+def test_shaped_stair_round_trips() -> None:
+    stair = {
+        "shape": "l",
+        "turn": "left",
+        "build": "mono",
+        "risers": False,
+        "steps": 15,
+        "run_width": 1.0,
+        "down": False,
+        "rail": "both",
+    }
+    assert FURNITURE_SCHEMA({**STAIRS, "stair": stair})["stair"] == stair
+    assert "stair" not in FURNITURE_SCHEMA(STAIRS)
+
+
+def test_shaped_stair_rejects_unknown_shapes() -> None:
+    for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}, {"opening": "wide"}):
+        with pytest.raises(vol.Invalid):
+            FURNITURE_SCHEMA({**STAIRS, "stair": bad})

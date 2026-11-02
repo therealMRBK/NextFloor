@@ -1,6 +1,7 @@
 // Making and changing the things on a floor: furniture, devices, outdoor areas, free walls, floor openings and doors and windows.
 
 import { autoPlace } from "../../../devices.ts";
+import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 import { openingHost } from "../../../geometry/walls.ts";
 import {
   bounds,
@@ -71,7 +72,10 @@ export function newFurniture(type: string, doc: Building, floor: Floor, at: Vec2
   const [w, d, height] = furnitureSize(type);
   const above = doc.floors.filter((f) => f.elevation > floor.elevation).sort((p, q) => p.elevation - q.elevation)[0];
   const h = type === "stairs" ? thousandths(above ? above.elevation - floor.elevation : floor.height + 0.25) : height;
-  return { id: uid("furniture"), type, x: thousandths(at[0]), z: thousandths(at[1]), rotation: 0, w, d, h, variant: null };
+  const item: Furniture = { id: uid("furniture"), type, x: thousandths(at[0]), z: thousandths(at[1]), rotation: 0, w, d, h, variant: null };
+  // new stairs are shaped stairs: shape, turn and steps are set in the form, and they open only the floor they need
+  if (type === "stairs") item.stair = { ...DEFAULT_STAIR };
+  return item;
 }
 
 /** A copy of a piece of furniture 30 cm to the south east. */

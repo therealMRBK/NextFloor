@@ -212,6 +212,21 @@ _TAP_SCHEMA = vol.Schema(
     }
 )
 
+# stairs: shape, turn, build and direction of a shaped stair (no defaults: plans without it keep the simple stair)
+_STAIR_SCHEMA = vol.Schema(
+    {
+        vol.Optional("shape"): vol.In(["straight", "quarter", "l", "half", "u", "spiral"]),
+        vol.Optional("turn"): vol.In(["left", "right"]),
+        vol.Optional("build"): vol.In(["solid", "stringer", "mono", "cantilever"]),
+        vol.Optional("risers"): bool,
+        vol.Optional("steps"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=2, max=40))),
+        vol.Optional("run_width"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.3, max=5))),
+        vol.Optional("down"): bool,
+        vol.Optional("rail"): vol.In(["none", "left", "right", "both"]),
+        vol.Optional("opening"): vol.In(["headroom", "full", "none"]),
+    }
+)
+
 FURNITURE_SCHEMA = vol.Schema(
     {
         vol.Required("id"): _ID,
@@ -284,6 +299,7 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("color_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # mirrored left-right
         vol.Optional("mirror", default=False): bool,
+        vol.Optional("stair"): vol.Any(None, _STAIR_SCHEMA),
         # fridges: thermometers of the fridge and the freezer compartment
         vol.Optional("temp_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("temp_entity2"): vol.Any(None, vol.All(str, vol.Length(max=255))),
