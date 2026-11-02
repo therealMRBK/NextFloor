@@ -657,6 +657,8 @@ SETTINGS_SCHEMA = vol.Schema(
                         vol.Required("label"): vol.All(str, vol.Length(max=60)),
                         vol.Required("type"): vol.All(str, vol.Length(max=40)),
                         vol.Required("content"): vol.All(str, vol.Length(max=500)),
+                        # the speakers it is offered on (empty = every speaker)
+                        vol.Optional("speakers"): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=30)),
                     },
                     extra=vol.ALLOW_EXTRA,
                 )

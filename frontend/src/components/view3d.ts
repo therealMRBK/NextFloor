@@ -2007,7 +2007,7 @@ export class NfView3d extends LitElement {
         .hass=${this.hass}
         .entity=${m.entity}
         .car=${m.car ?? null}
-        .presets=${[]}
+        .presets=${(this.building?.settings.media_presets ?? []).filter((p) => !p.speakers?.length || p.speakers.includes(m.entity))}
         ?confirmSwitch=${this.confirmSet.has(m.entity)}
         .myPosition=${this.myPositionOf(m.entity)}
         @close=${() => (this._menu = null)}
@@ -2045,8 +2045,9 @@ export class NfView3d extends LitElement {
       return;
     }
     const kind = kindOf(entityId);
-    // blinds have no single on/off: a tap opens their quick menu (up, positions, stop, down)
-    if (kind === "cover") {
+    // blinds have no single on/off: a tap opens their quick menu (up, positions, stop, down); speakers and TVs open theirs
+    // (play, skip, volume, sources and the stations set for them)
+    if (kind === "cover" || kind === "media") {
       this._menu = { entity: entityId, x, y };
       return;
     }

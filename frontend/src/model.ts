@@ -532,6 +532,8 @@ export interface MediaPreset {
   label: string;
   type: string;
   content: string;
+  /** The speakers it is offered on (media_player ids); empty or missing = every speaker. */
+  speakers?: string[];
 }
 
 export interface BuildingSettings {

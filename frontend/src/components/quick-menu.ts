@@ -214,6 +214,45 @@ export class NfQuickMenu extends LitElement {
     </div>`;
   }
 
+  /** A speaker or TV: power, play/pause and skip, the volume, its sources, and the stations and playlists it may play. */
+  private renderMedia(st: HassEntity) {
+    const on = !["off", "standby", "unavailable", "unknown"].includes(st.state);
+    const playing = st.state === "playing";
+    const a = st.attributes as Record<string, unknown>;
+    const volume = typeof a.volume_level === "number" ? Math.round(a.volume_level * 100) : null;
+    const sources = Array.isArray(a.source_list) ? (a.source_list as string[]).slice(0, 24) : [];
+    const title = [a.media_title, a.media_artist].filter((v) => typeof v === "string" && v).join(" · ");
+    const icon = (d: string) => html`<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d=${d} /></svg>`;
+    const slot = (label: ReturnType<typeof html>, aria: string, action: () => void, active = false) =>
+      html`<button class="qm-swatch qm-slot ${active ? "qm-slot-on" : ""}" aria-label=${aria} title=${aria} @click=${action}>${label}</button>`;
+    const ring = on
+      ? [
+          slot(icon(playing ? "M6 5h4v14H6zM14 5h4v14h-4z" : "M8 5v14l11-7z"), this.t(playing ? "media_pause" : "media_play"), () => this.call("media_player", "media_play_pause"), playing),
+          slot(icon("M6 6h2v12H6zm3.5 6 8.5 6V6z"), this.t("media_previous"), () => this.call("media_player", "media_previous_track")),
+          slot(icon("M16 6h2v12h-2zM6 18l8.5-6L6 6z"), this.t("media_next"), () => this.call("media_player", "media_next_track")),
+        ]
+      : [];
+    return html`<div class="qm-ring ${ring.length ? "" : "qm-ring-small"}">
+        ${this.ring(ring)}
+        <button class="qm-power ${on ? "qm-on" : ""}" aria-pressed=${on} @click=${() => this.ask() && this.call("media_player", on ? "turn_off" : "turn_on")}>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v8M6.3 6.8a8 8 0 1 0 11.4 0" /></svg>
+          <b>${volume !== null && on ? `${volume} %` : stateText(this.hass, st)}</b>
+        </button>
+      </div>
+      ${title ? html`<div class="qm-media-title">${title}</div>` : nothing}
+      ${volume !== null
+        ? html`<input class="qm-slider" type="range" min="0" max="100" .value=${String(volume)} aria-label=${this.t("media_volume")} @change=${(e: Event) => this.call("media_player", "volume_set", { volume_level: Number((e.target as HTMLInputElement).value) / 100 })} />`
+        : nothing}
+      ${sources.length
+        ? html`<div class="qm-play-head">${this.t("media_sources")}</div>
+            <div class="qm-play">${sources.map((s) => html`<button class="qm-chip ${a.source === s ? "qm-chip-on" : ""}" @click=${() => this.call("media_player", "select_source", { source: s })}>${s}</button>`)}</div>`
+        : nothing}
+      ${this.presets?.length
+        ? html`<div class="qm-play-head">${this.t("presets")}</div>
+            <div class="qm-play">${this.presets.map((p) => html`<button class="qm-chip" @click=${() => this.call("media_player", "play_media", { media_content_type: p.type, media_content_id: p.content })}>${p.label}</button>`)}</div>`
+        : nothing}`;
+  }
+
   protected render() {
     const st = this.hass?.states[this.entity];
     if (!st) return nothing;
@@ -225,7 +264,9 @@ export class NfQuickMenu extends LitElement {
         ? this.renderLight(st)
         : kind === "cover"
           ? this.renderCover(st)
-          : this.renderToggle(st);
+          : kind === "media"
+            ? this.renderMedia(st)
+            : this.renderToggle(st);
     return html`<div class="qm" role="dialog" aria-label=${entityName(this.hass, this.entity)}>
       <div class="qm-title">${entityName(this.hass, this.entity)}</div>
       ${body}

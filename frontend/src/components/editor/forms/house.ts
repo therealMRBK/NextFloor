@@ -5,7 +5,7 @@ import { entityName } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, uid, type ButtonAction, type CustomButton, type MediaPreset, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
-import { actions, entityField, hint, iconField, selectField, textField } from "../fields.ts";
+import { actions, checkField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { likelyRoomSensors, parseButtonData, startViewYaml, withPresence } from "../ops/house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "../ops/lists.ts";
@@ -44,10 +44,16 @@ function mediaPresets(host: EditorHost): TemplateResult {
   const list = host.doc.settings.media_presets ?? [];
   const store = (next: MediaPreset[]) => host.change((d) => (d.settings.media_presets = orUndefined(next)));
   const edit = (i: number, patch: Partial<MediaPreset>) => store(patchAt(list, i, patch));
+  // the speakers of the plan: media players placed as devices or linked to furniture
+  const speakers = [...new Set(host.doc.floors.flatMap((f) => [...f.placements.map((p) => p.entity_id), ...f.furniture.map((m) => m.entity ?? "")]).filter((id) => id.startsWith("media_player.")))];
   const card = (p: MediaPreset, i: number) => html`<div class="nf-form nf-own-button">
     ${textField(host, host.t("own_button_label"), p.label, (v) => edit(i, { label: v || "Radio" }), { maxlength: 60 })}
     ${textField(host, host.t("preset_type"), p.type, (v) => edit(i, { type: v || "music" }), { title: host.t("preset_type_hint") })}
     ${textField(host, host.t("preset_content"), p.content, (v) => edit(i, { content: v }), { wide: true, title: host.t("preset_content_hint"), placeholder: "https://… · spotify:playlist:… · Rock Antenne" })}
+    ${speakers.length > 1
+      ? html`<div class="nf-sub nf-wide">${host.t("preset_speakers")}</div>
+          ${speakers.map((id) => checkField(host, entityName(host.hass, id), !!p.speakers?.includes(id), (on) => edit(i, { speakers: orUndefined(on ? [...(p.speakers ?? []), id] : (p.speakers ?? []).filter((s) => s !== id)) }), { wide: false }))}`
+      : nothing}
     <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
   </div>`;
   return html`<h4>${host.t("presets")}</h4>
