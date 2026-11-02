@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Contacten en melders",
   "marker_kind_sensor": "Sensoren",
   "marker_kind_tap": "Meubels met een actie",
-  "marker_kind_other": "Overig"
+  "marker_kind_other": "Overig",
+  "floor_copy": "Verdieping dupliceren",
+  "floor_copy_hint": "De kopie komt boven op het huis met alle kamers, muren, deuren en ramen. Kamers en verdieping verliezen hun koppeling met Home Assistant, meubels hun entiteiten; energieapparaten blijven op de oude verdieping.",
+  "floor_copy_furniture": "Meubels meenemen",
+  "floor_copy_devices": "Apparaatpinnen meenemen",
+  "floor_copy_devices_hint": "Dezelfde entiteit staat dan op beide verdiepingen.",
+  "floor_copy_outdoor": "Buitenzones meenemen",
+  "floor_copy_make": "Kopie maken",
+  "floor_copy_name": "{name} (kopie)",
+  "furn_to_floor": "Naar verdieping verplaatsen",
+  "furn_to_floor_hint": "Het meubel gaat naar dezelfde plek op de gekozen verdieping."
 }

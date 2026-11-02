@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Kontakter och detektorer",
   "marker_kind_sensor": "Sensorer",
   "marker_kind_tap": "Möbler med åtgärd",
-  "marker_kind_other": "Övrigt"
+  "marker_kind_other": "Övrigt",
+  "floor_copy": "Duplicera plan",
+  "floor_copy_hint": "Kopian hamnar överst på huset med alla rum, väggar, dörrar och fönster. Rum och plan förlorar sin koppling till Home Assistant, möbler sina entiteter; energienheter stannar på det gamla planet.",
+  "floor_copy_furniture": "Ta med möblerna",
+  "floor_copy_devices": "Ta med enhetsnålarna",
+  "floor_copy_devices_hint": "Samma entitet visas då på båda planen.",
+  "floor_copy_outdoor": "Ta med utomhusytorna",
+  "floor_copy_make": "Skapa kopian",
+  "floor_copy_name": "{name} (kopia)",
+  "furn_to_floor": "Flytta till plan",
+  "furn_to_floor_hint": "Möbeln flyttas till samma plats på det valda planet."
 }

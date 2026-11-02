@@ -2,6 +2,13 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.16.2
+
+### Added
+
+- **Duplicate a floor**: the floor form copies the open floor on top of the house, with its rooms, walls, doors and windows, and on request its furniture, device pins and outdoor areas. The copy is unlinked from Home Assistant (areas, floor, furniture entities), so it can be set up for the new storey; energy devices stay on the original floor.
+- **Move furniture to another floor**: the furniture form moves an item to the same spot on another floor.
+
 ## 0.16.1
 
 ### Added

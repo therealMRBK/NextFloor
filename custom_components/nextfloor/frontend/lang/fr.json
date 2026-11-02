@@ -2112,5 +2112,15 @@
  "pack:nextfloor.a_garten:mailbox_post": "Boîte aux lettres sur pied",
  "pack:nextfloor.a_haustiere:pet_cat": "Chat (se promène)",
  "pack:nextfloor.a_haustiere:pet_dog": "Chien (se promène)",
- "pack:nextfloor.a_haustiere:pet_rabbit": "Lapin (sautille partout)"
+ "pack:nextfloor.a_haustiere:pet_rabbit": "Lapin (sautille partout)",
+ "floor_copy": "Dupliquer l'étage",
+ "floor_copy_hint": "La copie se place au-dessus de la maison avec toutes les pièces, murs, portes et fenêtres. Les pièces et l'étage perdent leur lien avec Home Assistant, les meubles leurs entités ; les appareils d'énergie restent sur l'ancien étage.",
+ "floor_copy_furniture": "Copier les meubles",
+ "floor_copy_devices": "Copier les repères d'appareils",
+ "floor_copy_devices_hint": "La même entité apparaît alors aux deux étages.",
+ "floor_copy_outdoor": "Copier les zones extérieures",
+ "floor_copy_make": "Créer la copie",
+ "floor_copy_name": "{name} (copie)",
+ "furn_to_floor": "Déplacer vers l'étage",
+ "furn_to_floor_hint": "Le meuble se place au même endroit à l'étage choisi."
 }

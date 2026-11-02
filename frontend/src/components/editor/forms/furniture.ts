@@ -20,6 +20,8 @@ export interface FurnitureActions extends FurnitureLinkActions {
   toDevice(item: Furniture): void;
   /** Turns a vehicle into a parking spot holding it. */
   toSpot(item: Furniture): void;
+  /** Moves the item to another floor, at the same spot. */
+  toFloor(floorId: string): void;
   packs: readonly FurniturePack[];
   lockButton: TemplateResult | typeof nothing;
 }
@@ -129,13 +131,15 @@ function buttons(host: EditorHost, item: Furniture, actions: FurnitureActions): 
   if (!host.admin) return nothing;
   const t = host.t;
   const linked = !!item.entity && item.entity !== "none" && item.type !== "parking";
+  const others = host.doc.floors.filter((f) => f.id !== host.floor?.id);
   return html`<div class="nf-actions">
     <button class="nf-btn" @click=${() => actions.rotate(-90)}>${t("rotate_left")}</button>
     <button class="nf-btn" @click=${() => actions.rotate(90)}>${t("rotate_right")}</button>
     ${linked ? html`<button class="nf-btn" title=${t("as_device_hint")} @click=${() => actions.toDevice(item)}>${t("as_device")}</button>` : nothing}
     <button class="nf-btn" @click=${() => actions.duplicate()}>${t("duplicate")}</button>
     <button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button>
-  </div>`;
+  </div>
+  ${others.length ? html`<div class="nf-form">${selectField(host, t("furn_to_floor"), "", [["", "–"], ...others.map((f): [string, string] => [f.id, f.name])], (id) => id && actions.toFloor(id), { wide: true, title: t("furn_to_floor_hint") })}</div>` : nothing}`;
 }
 
 /** What a tap on the item does: its usual tap, or an own action like the star menu's own buttons. */

@@ -22,7 +22,7 @@ The plan, its pictures and the packs are stored in Home Assistant's `.storage`. 
 
 Open the **Editor** tab (administrators only). The toolbar holds the tools; the side panel always shows what is selected; the hint at the bottom names what the active tool does. **Undo** (Ctrl+Z) takes back almost everything.
 
-1. **Add a floor.** *Add floor* offers the floors of Home Assistant (keeping plan and Home Assistant connected) or *Empty floor*. The floor form sets name, elevation, ceiling height and the Home Assistant floor. *Shift* and *Turn 90°* move or turn the whole floor; *Take every floor along* applies that to the whole house. *Add rooms from HA areas* drops a room per area as a start.
+1. **Add a floor.** *Add floor* offers the floors of Home Assistant (keeping plan and Home Assistant connected) or *Empty floor*. The floor form sets name, elevation, ceiling height and the Home Assistant floor. *Shift* and *Turn 90°* move or turn the whole floor; *Take every floor along* applies that to the whole house. *Add rooms from HA areas* drops a room per area as a start. *Duplicate floor* puts a copy on top of the house, with its furniture, device pins and outdoor areas if you like; the copy is unlinked from Home Assistant and set up for the new storey.
 2. **Draw rooms.** *Rectangle*: drag. *Free shape*: place corners, close by tapping the first corner or Enter, Esc cancels. Corners snap to the grid and to existing walls; Alt switches snapping off for one move.
 3. **Describe each room.** Name, *Area* (the link to Home Assistant devices) and *Floor* material. Position and size can be typed. Drag a corner handle to reshape; the **+** on an edge adds a corner.
 4. **Walls.** They come from the room edges. Each edge has height, thickness, a scissors button that splits it into parts, and *No wall* for open edges. A lower height makes a parapet or counter. Free-standing partitions use the *Wall* tool (Shift keeps straight). *Close gaps* in the floor form joins hairline gaps.
@@ -38,7 +38,7 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 *Furniture* tool, tap a room, pick from the library on the right. New pieces appear in the middle of the room.
 
 - The library has sections (lights, living, dining, kitchen, sleeping, bath, work, parking) and then the furniture packs. The search finds German and English names, pack names and several words in any order.
-- Drag to move, drag corners to resize, use the turn handle or type position, size and rotation. *Mirror* flips left and right, *Duplicate* copies, *Fix* locks.
+- Drag to move, drag corners to resize, use the turn handle or type position, size and rotation. *Mirror* flips left and right, *Duplicate* copies, *Fix* locks, *Move to floor* takes the item to the same spot on another floor.
 - Items marked with an electrical symbol can be linked to devices (see below). Lamps are furniture with a light behind them; the lights section has twelve kinds.
 - **Place spots:** a room's *Place spots* lays out a grid of lamps (columns × rows) that all follow one light, undoable in one step.
 - **Library:** furniture sorted by kind (seating, beds, kitchen …) with a picture and its size; a model in several sizes is one card with size chips. With a room selected, what fits it comes first (*Fits …*), *Show all rooms* lifts that. Filters for ⚡ linkable, 💡 lit and 🌳 outdoor; ★ favourites and recently used stand at the top.

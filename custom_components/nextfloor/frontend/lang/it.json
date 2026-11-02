@@ -2112,5 +2112,15 @@
   "marker_kind_binary": "Contatti e rilevatori",
   "marker_kind_sensor": "Sensori",
   "marker_kind_tap": "Mobili con un'azione",
-  "marker_kind_other": "Altro"
+  "marker_kind_other": "Altro",
+  "floor_copy": "Duplica piano",
+  "floor_copy_hint": "La copia va in cima alla casa con tutte le stanze, pareti, porte e finestre. Stanze e piano perdono il collegamento a Home Assistant, i mobili le loro entità; i dispositivi energetici restano sul piano originale.",
+  "floor_copy_furniture": "Copia i mobili",
+  "floor_copy_devices": "Copia i segnaposto dei dispositivi",
+  "floor_copy_devices_hint": "La stessa entità compare allora su entrambi i piani.",
+  "floor_copy_outdoor": "Copia le aree esterne",
+  "floor_copy_make": "Crea la copia",
+  "floor_copy_name": "{name} (copia)",
+  "furn_to_floor": "Sposta al piano",
+  "furn_to_floor_hint": "Il mobile si sposta nello stesso punto del piano scelto."
 }
