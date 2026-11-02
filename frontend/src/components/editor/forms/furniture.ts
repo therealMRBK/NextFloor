@@ -6,7 +6,8 @@ import { holeInRoom } from "../../../geometry/holes.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, canLift, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
 import { hasMovingParts, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
-import { checkField, hint, iconField, markerField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, entityField, hint, iconField, markerField, numberField, selectField, textField } from "../fields.ts";
+import { entityOptions } from "../entities.ts";
 import type { EditorHost } from "../host.ts";
 import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
@@ -164,6 +165,23 @@ function tapField(host: EditorHost, item: Furniture, actions: FurnitureActions):
   </div>`;
 }
 
+const CONDITION_DOMAINS = /^(input_boolean|input_select|switch|binary_sensor|sensor|calendar|schedule|sun|person|device_tracker|input_text|select)\./;
+
+/** Shown only while an entity is in a state: seasonal decoration behind a helper, a calendar, the sun. */
+function showWhenField(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
+  const t = host.t;
+  const cond = item.show_when ?? null;
+  const set = (patch: Partial<NonNullable<Furniture["show_when"]>>) => actions.update({ show_when: { entity: cond?.entity ?? "", state: cond?.state ?? null, invert: cond?.invert || undefined, ...patch } });
+  return html`<div class="nf-form">
+    ${entityField(host, t("furn_show_when"), cond?.entity || null, undefined, entityOptions(host.hass, (id) => CONDITION_DOMAINS.test(id)), (v) => (v && v !== "none" ? set({ entity: v }) : actions.update({ show_when: null })))}
+    ${cond?.entity
+      ? html`${textField(host, t("furn_show_when_state"), cond.state ?? "", (v) => set({ state: v || null }), { wide: true, placeholder: host.hass?.states[cond.entity]?.state ?? "on" })}
+        ${checkField(host, t("furn_show_when_invert"), !!cond.invert, (on) => set({ invert: on || undefined }))}`
+      : nothing}
+    ${hint(t("furn_show_when_hint"), "nf-wide")}
+  </div>`;
+}
+
 /** The form of the selected piece of furniture. */
 export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
   const gangs = packItem(item.type)?.gangs ?? 0;
@@ -177,6 +195,6 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
     ${item.type.startsWith("pack:nextfloor.fahrzeuge:") && host.admin
       ? html`<section>${hint(host.t("vehicle_to_spot_hint"))}<div class="nf-actions"><button class="nf-btn nf-primary" @click=${() => actions.toSpot(item)}>🅿 ${host.t("vehicle_to_spot")}</button></div></section>`
       : nothing}
-    ${host.admin ? tapField(host, item, actions) : nothing} ${buttons(host, item, actions)}
+    ${host.admin ? tapField(host, item, actions) : nothing} ${showWhenField(host, item, actions)} ${buttons(host, item, actions)}
   </section>`;
 }

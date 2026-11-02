@@ -115,7 +115,7 @@ const PLAIN_LINKS = [
   "tap",
 ] as const;
 /** Lists of links, dropped as a whole. */
-const LINK_LISTS = ["gang_entities", "pictures", "types", "meter_floors"] as const;
+const LINK_LISTS = ["gang_entities", "pictures", "types", "meter_floors", "show_when"] as const;
 
 /** A piece of furniture with every link to Home Assistant removed, its size, place and look kept. */
 export function unlinked(item: Furniture): Furniture {

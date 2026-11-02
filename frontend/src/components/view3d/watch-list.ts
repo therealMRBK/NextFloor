@@ -39,7 +39,7 @@ function furnitureIds(inputs: WatchInputs): MaybeId[] {
   const pieces = furnitureOf(building);
   return [
     ...[...furnitureLinks.values()].flatMap((l) => [l.entity, l.power]),
-    ...pieces.flatMap((m) => [m.state_entity, m.state_entity2, m.color_entity, ...(m.gang_entities ?? []), m.cover_entity, m.care_entity]),
+    ...pieces.flatMap((m) => [m.state_entity, m.state_entity2, m.color_entity, ...(m.gang_entities ?? []), m.cover_entity, m.care_entity, m.show_when?.entity]),
     // a washer's, dryer's or dishwasher's time left comes from a sensor next to its switch
     ...pieces.filter((m) => m.type === "washer" || m.type === "dryer" || m.type === "dishwasher").flatMap((m) => deviceSiblings(hass, furnitureLinks.get(m.id)?.entity ?? furnitureLinks.get(m.id)?.power).filter((id) => id.startsWith("sensor."))),
     ...pieces.flatMap((m) => [m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2]),

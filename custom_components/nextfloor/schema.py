@@ -323,6 +323,17 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("tap", default=None): vol.Any(None, _TAP_SCHEMA),
         # fixed against moving by accident
         vol.Optional("locked", default=None): vol.Any(None, bool),
+        # shown only while an entity is in a state (seasonal decoration behind a helper)
+        vol.Optional("show_when"): vol.Any(
+            None,
+            vol.Schema(
+                {
+                    vol.Required("entity"): vol.All(str, vol.Length(min=1, max=255)),
+                    vol.Optional("state"): vol.Any(None, vol.All(str, vol.Length(max=120))),
+                    vol.Optional("invert"): bool,
+                }
+            ),
+        ),
     },
     extra=vol.ALLOW_EXTRA,
 )

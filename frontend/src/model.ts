@@ -6,6 +6,7 @@ import { packItem } from "./packs.ts";
 import type { LightEffectConfig } from "./light-effects.ts";
 import type { StairConfig } from "./geometry/stairs.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
+import type { ShowWhen } from "./entities/visibility.ts";
 
 export type Vec2 = [number, number];
 
@@ -160,6 +161,8 @@ export interface Furniture extends LightEffectConfig {
   tap?: Pick<CustomButton, "action" | "target" | "data"> | null;
   /** Fixed against moving by accident. */
   locked?: boolean | null;
+  /** Shown only while an entity is in a state (seasonal decoration behind a helper); null = always. */
+  show_when?: ShowWhen | null;
   id: string;
   type: string;
   x: number;

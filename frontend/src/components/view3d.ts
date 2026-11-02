@@ -78,6 +78,7 @@ import "./quick-menu.ts";
 import { load3d } from "../load3d.ts";
 import { scaleGlow, buildMarkers, openMoreInfo, stateText, toggleEntity, withPluginPatch } from "../markers.ts";
 import { fanSpin } from "../entities/fans.ts";
+import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, pointInPolygon, surfaceHeight, type Building, type Furniture, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
@@ -586,7 +587,7 @@ export class NfView3d extends LitElement {
       if (this.building) {
         this.shownStartView = JSON.stringify(this.startViewOf());
         this.viewer.setStartView(this.startViewOf());
-        this.viewer.setBuilding(this.building);
+        this.viewer.setBuilding(this.shownBuilding(this.hass));
         this.viewer.setMap(this.building.settings.map, this.building.settings.north ?? 0);
       }
       this.scheduleThumbs();
@@ -625,7 +626,7 @@ export class NfView3d extends LitElement {
       const startChanged = this.shownStartView !== undefined && this.shownStartView !== start;
       this.shownStartView = start;
       v.setStartView(this.startViewOf());
-      v.setBuilding(this.building);
+      v.setBuilding(this.shownBuilding(this.hass));
       v.setMap(this.building?.settings.map, this.building?.settings.north ?? 0);
       if (startChanged && this.floorId === null) v.resetView();
     }
@@ -679,6 +680,18 @@ export class NfView3d extends LitElement {
    * when a watched entity changed (or the building). Openings are matched with entities again when
    * the building or the entity registry changes.
    */
+  private shownFor: { building: Building; key: string; shown: Building } | null = null;
+
+  /** The building as the 3D view draws it: without the pieces whose visibility condition is not met. */
+  private shownBuilding(hass: HomeAssistant | undefined): Building {
+    const b = this.building!;
+    const hidden = hiddenFurniture(hass, b);
+    const key = hidden.join(",");
+    if (this.shownFor?.building === b && this.shownFor.key === key) return this.shownFor.shown;
+    this.shownFor = { building: b, key, shown: withoutHidden(b, hidden) };
+    return this.shownFor.shown;
+  }
+
   private syncDevices(force: boolean): void {
     const v = this.viewer;
     const b = this.building;
@@ -705,6 +718,8 @@ export class NfView3d extends LitElement {
     }
     const changed = force || this.watched.some((id) => this.shownStates.get(id) !== hass.states[id]);
     if (!changed) return;
+    // a piece shown only while a helper is on (seasonal decoration) comes and goes with it
+    if (hiddenFurniture(hass, b).join(",") !== this.shownFor?.key) v.setBuilding(this.shownBuilding(hass));
     this.shownStates = new Map(this.watched.map((id) => [id, hass.states[id]]));
 
     const consumers = findConsumers(hass, b);
@@ -955,6 +970,7 @@ export class NfView3d extends LitElement {
     const subMeters = subMeterIds(b);
     for (const floor of b.floors) {
       for (const f of floor.furniture) {
+        if (!furnitureShown(hass, f)) continue;
         const linked = this.furnitureLinks.get(f.id);
         // furniture with a state: a glowing plate on the item while its entity is on, occupied or home;
         // two entities light the halves (left/right of a bed, bottom/top of a bunk bed)

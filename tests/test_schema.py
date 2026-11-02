@@ -136,3 +136,15 @@ def test_shaped_stair_rejects_unknown_shapes() -> None:
     for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}, {"opening": "wide"}):
         with pytest.raises(vol.Invalid):
             FURNITURE_SCHEMA({**STAIRS, "stair": bad})
+
+
+FURN = {"id": "f1", "type": "plant", "x": 0, "z": 0, "rotation": 0, "w": 1, "d": 1, "h": 1, "variant": None}
+
+
+def test_furniture_show_when() -> None:
+    assert "show_when" not in FURNITURE_SCHEMA(FURN)
+    cond = {"entity": "input_boolean.xmas", "state": "on, home", "invert": True}
+    assert FURNITURE_SCHEMA({**FURN, "show_when": cond})["show_when"] == cond
+    assert FURNITURE_SCHEMA({**FURN, "show_when": None})["show_when"] is None
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**FURN, "show_when": {"state": "on"}})
