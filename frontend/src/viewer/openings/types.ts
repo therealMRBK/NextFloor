@@ -17,6 +17,10 @@ export interface OpeningState {
   unlocked?: boolean;
   /** The door leaf stands where it is assumed to, as no sensor tells: it does not glow as open. */
   assumed?: boolean;
+  /** The second blind of a wide window (its right half): its closed fraction. */
+  cover2?: number | null;
+  /** Venetian blinds: how far the slats are open (0 shut, 1 level). */
+  slats?: number | null;
 }
 
 export const CLOSED: OpeningState = { open: 0, open2: 0, tilt: 0, tilt2: 0, cover: null };

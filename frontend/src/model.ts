@@ -131,6 +131,12 @@ export interface Opening {
   /** Ask before moving the blind or garage door; it then does not follow a swipe either. */
   confirm?: boolean;
   cover: EntityRef;
+  /** Windows and doors: a second blind for the right half (seen from the room) of a wide window. */
+  cover2?: string | null;
+  /** The kind of blind: a roller shutter outside (null, default), a venetian blind (Raffstore) outside with slats, or a roller blind inside. */
+  blind?: "roller" | "venetian" | "inside" | null;
+  /** The favourite position of the blind (%, open = 100) – Somfy's "My": a button in its menu moves it there. */
+  my_position?: number | null;
   contact: EntityRef;
   /** Windows: how the sash opens – turns and tilts into the room (null), slides behind the fixed pane, or swings out at the bottom (top-hung). */
   opens?: WindowOpening | null;

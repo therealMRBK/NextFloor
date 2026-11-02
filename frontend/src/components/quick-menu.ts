@@ -44,6 +44,7 @@ export class NfQuickMenu extends LitElement {
     car: { attribute: false },
     presets: { attribute: false },
     confirmSwitch: { type: Boolean },
+    myPosition: { attribute: false },
     low: { type: Boolean, reflect: true },
   };
 
@@ -55,6 +56,8 @@ export class NfQuickMenu extends LitElement {
   declare presets: { id: string; label: string; type: string; content: string }[];
   /** Ask before the power button switches. */
   declare confirmSwitch: boolean;
+  /** Blinds: the favourite position (Somfy's "My", %), a button in the ring moves there; null = none. */
+  declare myPosition: number | null;
   /** Tablet level: no blur behind the menu. */
   declare low: boolean;
   private t(key: I18nKey, vars?: Record<string, string | number>): string {
@@ -136,6 +139,10 @@ export class NfQuickMenu extends LitElement {
       slot("▼", this.t("cover_close"), () => this.ask() && this.call("cover", "close_cover"), at(0)),
       ...(setPos ? [25].map((p) => slot(`${p}`, `${p} %`, () => this.ask() && this.call("cover", "set_cover_position", { position: p }), at(p))) : []),
       slot("■", this.t("cover_stop"), () => this.call("cover", "stop_cover"), moving),
+      // the favourite position: a cover that sets positions goes there; a Somfy RTS motor without feedback goes to its own "My" on stop
+      ...(this.myPosition != null
+        ? [slot("My", this.t("cover_my_go", { p: this.myPosition }), () => this.ask() && (setPos ? this.call("cover", "set_cover_position", { position: this.myPosition }) : this.call("cover", "stop_cover")), at(this.myPosition))]
+        : []),
     ];
     // the centre shows the blind: its closed part fills from the top
     const closed = pos === null ? (st.state === "closed" ? 100 : 0) : 100 - pos;

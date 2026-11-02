@@ -1992,8 +1992,19 @@ export class NfView3d extends LitElement {
         .car=${m.car ?? null}
         .presets=${[]}
         ?confirmSwitch=${this.confirmSet.has(m.entity)}
+        .myPosition=${this.myPositionOf(m.entity)}
         @close=${() => (this._menu = null)}
       ></nf-quick-menu>`;
+  }
+
+  /** The favourite position of a blind (Somfy's "My") set on a window it covers, or null. */
+  private myPositionOf(entity: string): number | null {
+    for (const floor of this.building?.floors ?? [])
+      for (const o of floor.openings) {
+        const links = this.openingLinks?.get(o.id);
+        if (o.my_position != null && (links?.cover === entity || links?.cover2 === entity)) return o.my_position;
+      }
+    return null;
   }
 
   private onDeviceTap(entityId: string, x = 0, y = 0): void {

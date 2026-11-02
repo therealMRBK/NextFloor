@@ -166,6 +166,10 @@ OPENING_SCHEMA = vol.Schema(
         # ask before moving the blind or garage door (no moving by a swipe then)
         vol.Optional("confirm", default=False): bool,
         vol.Optional("cover", default=None): _ENTITY_REF,
+        # a second blind (the right half of a wide window), the kind of blind and its favourite position (Somfy "My", %)
+        vol.Optional("cover2"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("blind"): vol.Any(None, vol.In(["roller", "venetian", "inside"])),
+        vol.Optional("my_position"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=0, max=100))),
         vol.Optional("contact", default=None): _ENTITY_REF,
         vol.Optional("tilt", default=None): _ENTITY_REF,
     },

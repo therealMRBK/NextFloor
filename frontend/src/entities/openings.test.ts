@@ -172,3 +172,15 @@ test("a door's smart lock is linked by hand and says when it stands unlocked", (
   assert.equal(isUnlocked(hass, "lock.side"), false, "a jammed lock does not glow");
   assert.equal(isUnlocked(hass, null), false);
 });
+
+test("a wide window's second blind and a venetian blind's slats", () => {
+  const hass = hassOf([
+    entity("cover.left", "open", { current_position: 100, current_tilt_position: 30 }),
+    entity("cover.right", "closed", { current_position: 0 }),
+  ]);
+  const state = openingState(hass, { cover: "cover.left", contact: null, tilt: null, cover2: "cover.right" });
+  assert.equal(state.cover, 0);
+  assert.equal(state.cover2, 1);
+  assert.equal(state.slats, 0.3);
+  assert.equal(openingState(hass, { cover: "cover.right", contact: null, tilt: null }).cover2, undefined, "no second blind");
+});

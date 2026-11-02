@@ -7,6 +7,7 @@ from custom_components.nextfloor.schema import (
     ENERGY_SCHEMA,
     FURNITURE_SCHEMA,
     MAP_SCHEMA,
+    OPENING_SCHEMA,
     PLACEMENT_SCHEMA,
     PLUGIN_SCHEMA,
     ROOM_SCHEMA,
@@ -158,3 +159,23 @@ def test_picture_frames() -> None:
         FURNITURE_SCHEMA({**FURN, "picture_fit": "stretch"})
     floors = [{"background": None, "furniture": [frame, {**FURN, "id": "f2", "picture": "/local/a.jpg"}]}]
     assert image_ids({"floors": floors}) == {"img_7"}
+
+
+def test_opening_blinds() -> None:
+    base = {
+        "id": "o1",
+        "room_id": "r1",
+        "edge": 0,
+        "offset": 1,
+        "width": 1.2,
+        "type": "window",
+        "sill": 0.9,
+        "height": 1.3,
+    }
+    base.update(
+        {"hinge": "left", "leaves": 1, "swing": "in", "contact2": None, "cover": None, "contact": None, "tilt": None}
+    )
+    o = OPENING_SCHEMA({**base, "cover2": "cover.right", "blind": "venetian", "my_position": 40})
+    assert (o["cover2"], o["blind"], o["my_position"]) == ("cover.right", "venetian", 40)
+    with pytest.raises(vol.Invalid):
+        OPENING_SCHEMA({**base, "blind": "curtain"})

@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Venetian blinds, inside blinds, two blinds per window and Somfy "My"**: a window's blind can be a roller shutter outside (as before), a venetian blind whose slats turn in 3D with the cover's tilt, or a roller blind inside behind the glass. A wide window takes a second blind for its right half. A favourite position shows as **My** in the blind's quick menu – a blind with positions moves there, a Somfy RTS motor without feedback goes to its own My.
 - **Every electric piece works alike**: any electric piece of furniture with a switch or power sensor shows its draw beside its state on its pin ("On · 1.2 kW"), and its status lights and display light up while it runs – a coffee machine, a compressor, a 3D printer – like the washer and dishwasher always did.
 - **Lamps with several bulbs**: a lamp's form takes up to four more lights of the same fixture – a night light, an ambient ring, an uplight. While the main light is off, the lamp glows in 3D with the next light that is on, a little dimmer, and its pin says which one.
 - **Picture frames with your own photos**: the new *Pictures & frames* pack (frames in four formats and six colours, canvas, poster, table frame, digital photo frame, picture ledge) shows a photo you upload in the frame's form, a picture address (/local/…) or the current picture of an image or camera entity – a photo of the day changes on the wall by itself. A white mat of any width, and the photo fills the frame or shows whole.

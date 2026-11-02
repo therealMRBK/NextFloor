@@ -26,6 +26,8 @@ export interface OpeningEntities {
   angled?: boolean;
   /** A door's smart lock. */
   lock?: string | null;
+  /** A second blind of a wide window (its right half, seen from the room). */
+  cover2?: string | null;
 }
 
 const BLIND_CLASSES = new Set([undefined, "shutter", "blind", "awning", "shade", "curtain", "window"]);
@@ -88,6 +90,7 @@ export function openingEntities(hass: HomeAssistant, floors: readonly Floor[]): 
           shut: !!o.shut,
           angled: o.type === "door" && !!o.open_angle,
           lock: o.type === "door" ? unlessNone(o.lock) : null,
+          cover2: o.type === "garage" ? null : unlessNone(o.cover2),
         });
       }
     }
@@ -132,6 +135,22 @@ function reportedPosition(hass: HomeAssistant, id: string | null | undefined): n
 }
 
 /** How closed the blind is (0 open, 1 closed) from the position sensor, else from the cover entity. Null without cover data. */
+/** How far a cover entity is closed (0 up, 1 down), or null without one. */
+function coverClosed(hass: HomeAssistant, id: string | null | undefined): number | null {
+  const cover = id ? hass.states[id] : undefined;
+  if (!cover || isUnavailable(cover)) return id ? 0 : null;
+  const percent = cover.attributes.current_position;
+  if (typeof percent === "number") return 1 - Math.min(100, Math.max(0, percent)) / 100;
+  if (cover.state === "closed") return 1;
+  return cover.state === "opening" || cover.state === "closing" ? 0.5 : 0;
+}
+
+/** How far the slats of a venetian blind are open (0 shut, 1 level), from its tilt position; null when it reports none. */
+function slatsOpen(hass: HomeAssistant, id: string | null | undefined): number | null {
+  const tilt = id ? hass.states[id]?.attributes.current_tilt_position : undefined;
+  return typeof tilt === "number" ? Math.min(100, Math.max(0, tilt)) / 100 : null;
+}
+
 function blindClosedFraction(hass: HomeAssistant, e: OpeningEntities): number | null {
   const reported = reportedPosition(hass, e.position);
   if (reported !== null) return e.positionInverted ? reported : 1 - reported;
@@ -162,6 +181,10 @@ export interface OpeningState {
   unlocked?: boolean;
   /** A door leaf drawn where it is assumed to stand, as no sensor tells: it does not glow as open. */
   assumed?: boolean;
+  /** The second blind of a wide window (its right half): how far it is closed. */
+  cover2?: number | null;
+  /** Venetian blinds: how far the slats are open (0 shut, 1 level), from the cover's tilt position. */
+  slats?: number | null;
 }
 
 /**
@@ -208,5 +231,7 @@ export function openingState(hass: HomeAssistant, e: OpeningEntities, type: Open
     tilt2: secondTilted ? 1 : 0,
     cover,
     sensed: isKnown(e.contact) || isKnown(e.tilt) || Number.isFinite(rawAngle),
+    ...(e.cover2 ? { cover2: coverClosed(hass, e.cover2) } : {}),
+    ...(slatsOpen(hass, e.cover) !== null ? { slats: slatsOpen(hass, e.cover) } : {}),
   };
 }

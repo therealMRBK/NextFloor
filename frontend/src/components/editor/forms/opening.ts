@@ -145,7 +145,13 @@ function blindFields(host: EditorHost, o: Opening, actions: OpeningActions, list
     ${hasBlind
       ? html`${entityField(host, t("cover_position_entity"), o.position ?? null, undefined, lists.positions, (v) => actions.update({ position: noneAsNull(v) }))}
         ${o.position ? checkField(host, t("cover_position_invert"), !!o.position_inverted, (on) => actions.update({ position_inverted: on })) : nothing}
-        ${checkField(host, t("device_confirm"), !!o.confirm, (on) => actions.update({ confirm: on }), { title: t("cover_confirm_hint") })}`
+        ${checkField(host, t("device_confirm"), !!o.confirm, (on) => actions.update({ confirm: on }), { title: t("cover_confirm_hint") })}
+        ${window
+          ? html`${selectField(host, t("blind_kind"), o.blind ?? "roller", [["roller", t("blind_roller")], ["venetian", t("blind_venetian")], ["inside", t("blind_inside")]], (v) => actions.update({ blind: v === "roller" ? null : (v as Opening["blind"]) }))}
+            ${entityField(host, t("cover2_entity"), o.cover2 ?? null, undefined, lists.covers, (v) => actions.update({ cover2: noneAsNull(v) }))}`
+          : nothing}
+        ${numberField(host, t("cover_my"), o.my_position ?? 0, (v) => actions.update({ my_position: v > 0 ? Math.min(100, Math.round(v)) : null }), 5, 0)}
+        ${hint(t("blind_hint"), "nf-wide")}`
       : nothing}`;
 }
 
