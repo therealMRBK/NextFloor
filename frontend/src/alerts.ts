@@ -21,6 +21,8 @@ export interface Alert {
   /** An own warning: its text, and its colour ("#rrggbb", the stripe on the left). */
   text?: string;
   color?: string;
+  /** An own warning: what a tap does (null: open the entity's details). */
+  tap?: OwnAlert["tap"];
 }
 
 /** Where the warnings come from. Looked up once and kept until the registries change. */
@@ -266,7 +268,7 @@ export function findAlerts(hass: HomeAssistant, building: Building, sources: Ale
   const outage: Alert[] = sources.outage && isPowerOut(hass, sources.outage) ? [{ kind: "power_outage", entity: sources.outage, roomId: null, floorId: null }] : [];
   const own: Alert[] = (sources.own ?? []).filter((r) => ownAlertMet(hass, r)).map((r) => {
     const room = r.room_id ? building.floors.find((f) => f.rooms.some((x) => x.id === r.room_id)) : undefined;
-    return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text, ...(r.color ? { color: r.color } : {}) };
+    return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text, ...(r.color ? { color: r.color } : {}), ...(r.tap ? { tap: r.tap } : {}) };
   });
   return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now), ...own];
 }

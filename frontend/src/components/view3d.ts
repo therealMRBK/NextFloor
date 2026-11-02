@@ -970,6 +970,12 @@ export class NfView3d extends LitElement {
 
   /** Show where a warning is: its floor and room, or the house for an alarm. */
   private jumpTo(a: Alert): void {
+    // an own warning: its details, or what was chosen for it (switch the entity, go to its room)
+    if (a.kind === "own" && a.tap !== "room") {
+      if (a.tap === "toggle") void this.hass.callService("homeassistant", "toggle", { entity_id: a.entity });
+      else openMoreInfo(this, a.entity);
+      return;
+    }
     if (!a.floorId) {
       this.fire("floor-tap", { floorId: null });
       return;

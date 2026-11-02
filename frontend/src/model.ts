@@ -657,6 +657,8 @@ export interface OwnAlert {
   room_id?: string | null;
   /** The colour of its stripe ("#rrggbb"; null = amber). */
   color?: string | null;
+  /** What a tap on it does: open the entity's details (null), switch the entity, or go to its room. */
+  tap?: "toggle" | "room" | null;
 }
 
 /** A camera position around the house: azimuth and polar angle (radians) and the distance (m). */

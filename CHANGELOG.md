@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.21.0
+
+### Added
+
+- **A tap on an own warning**: opens the entity's details by default, or – as chosen per warning – switches the entity or jumps to its room. Thanks to @HA-Luz ([#52](https://github.com/therealMRBK/NextFloor/discussions/52)).
+
 ## 0.20.0
 
 ### Added

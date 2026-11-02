@@ -51,6 +51,7 @@ function ownAlerts(host: EditorHost): TemplateResult {
     ${textField(host, host.t("own_alert_text"), a.text, (v) => edit(i, { text: v || host.t("own_alert_new") }), { wide: true, maxlength: 120 })}
     ${selectField(host, host.t("room"), a.room_id ?? "", rooms, (v) => edit(i, { room_id: v || null }), { wide: true })}
     ${colorField(host, host.t("own_alert_color"), a.color ?? null, "#ffb547", (color) => edit(i, { color }))}
+    ${selectField(host, host.t("own_alert_tap"), a.tap ?? "", [["", host.t("own_alert_tap_info")], ["toggle", host.t("own_alert_tap_toggle")], ["room", host.t("own_alert_tap_room")]], (v) => edit(i, { tap: (v || null) as OwnAlert["tap"] }))}
     <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
   </div>`;
   return html`<h4>⚠ ${host.t("own_alerts")}</h4>
