@@ -133,7 +133,7 @@ function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: Li
   const t = (k: Parameters<typeof translate>[1], v?: Record<string, string | number>) => translate(hass, k, v);
   const color = socColor(car.soc);
   const status = !car.home
-    ? `${t("live_car_away")}${car.where ? ` · ${car.where}` : ""}`
+    ? `${t("live_car_away")}${car.where ? ` · ${car.where}` : ""}${car.distance !== null ? ` · ${formatNumber(hass, car.distance, car.distance < 10 ? 1 : 0)} km` : ""}`
     : car.charging
       ? `⚡ ${t("live_car_charging")}${car.chargingW ? ` · ${watts(hass, car.chargingW)}` : ""}`
       : car.plugged
@@ -151,6 +151,8 @@ function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: Li
       <div class="live-title">${c.name}</div>
       ${status ? html`<div class="live-status">${status}</div>` : nothing}
       ${car.inside !== null ? html`<div class="live-status">🌡 ${formatNumber(hass, car.inside, 1)} °C</div>` : nothing}
+      ${car.departure ? html`<div class="live-status">⏰ ${t("live_car_departure", { time: car.departure })}</div>` : nothing}
+      ${car.open.length ? html`<div class="live-status live-warn">⚠ ${t("live_car_open", { parts: car.open.join(", ") })}</div>` : nothing}
       <div class="live-actions">
         ${e.lock
           ? button(car.locked, t(car.locked ? "live_car_unlock" : "live_car_lock"), car.locked ? "🔒" : "🔓", () => {
@@ -341,6 +343,10 @@ export const liveCardStyles = css`
   }
   .live-status {
     opacity: 0.85;
+  }
+  .live-warn {
+    color: #fbbf24;
+    opacity: 1;
   }
   .live-actions {
     display: flex;

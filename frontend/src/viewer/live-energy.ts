@@ -142,7 +142,8 @@ export class EnergyLayer {
       v.path = arc.via?.length ? Array.from({ length: arc.via.length + 2 }, () => new Vector3()) : null;
       (v.points.material as PointsMaterial).color.copy(col);
       // more power: more particles, a bit faster (a kettle and a heat pump look different, a 10 kW car still fits)
-      v.count = Math.max(3, Math.min(MAX_PER_ARC, Math.round(3 + Math.sqrt(arc.power) / 2.2)));
+      // a cable without power (a car plugged in that does not charge) shows the cable alone
+      v.count = arc.power <= 0 ? 0 : Math.max(3, Math.min(MAX_PER_ARC, Math.round(3 + Math.sqrt(arc.power) / 2.2)));
       v.speed = 0.18 + Math.min(0.5, Math.log10(1 + arc.power) * 0.1);
       v.points.geometry.setDrawRange(0, v.count);
     }

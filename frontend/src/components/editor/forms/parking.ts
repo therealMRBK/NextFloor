@@ -84,6 +84,7 @@ export function parkingForm(host: EditorHost, spot: Furniture, packs: readonly F
     ${hint(t("parking_hint"))}
     ${host.hass
       ? html`${entityField(host, t("live_car_device"), car.device ?? null, null, entityOptions(host.hass, (id) => CAR_DEVICE.test(id)), (v) => actions.update({ car: { ...car, device: v } }))}
-        ${hint(t("live_car_device_hint"), "nf-wide")}`
+        ${hint(t("live_car_device_hint"), "nf-wide")}
+        ${entityField(host, t("live_car_departure_entity"), car.departure ?? null, undefined, entityOptions(host.hass, (id) => /^(sensor|input_datetime|time|datetime)\./.test(id)), (v) => actions.update({ car: { ...car, departure: v === "none" ? null : v } }))}`
       : nothing}`;
 }

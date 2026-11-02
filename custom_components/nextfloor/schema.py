@@ -199,6 +199,7 @@ CAR_SCHEMA = vol.Schema(
         vol.Optional("lock", default=None): _CAR_ENTITY,
         vol.Optional("climate", default=None): _CAR_ENTITY,
         vol.Optional("tracker", default=None): _CAR_ENTITY,
+        vol.Optional("departure"): _CAR_ENTITY,
     },
     extra=vol.ALLOW_EXTRA,
 )

@@ -700,6 +700,8 @@ export interface CarLinks {
   lock?: EntityRef;
   climate?: EntityRef;
   tracker?: EntityRef;
+  /** The planned departure time (a sensor, input_datetime or time entity). */
+  departure?: EntityRef;
 }
 
 /** Area outside the house (lawn, terrace, pool, hedge …), drawn like a room. */

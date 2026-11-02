@@ -26,6 +26,12 @@ export interface CarInfo {
   inside: number | null;
   /** Where it is when it is away: the zone or the tracker's text. */
   where: string | null;
+  /** Away: how far it is from home (km, as the crow flies), from the tracker's position. */
+  distance: number | null;
+  /** Doors, hatches, windows and the charge port that stand open (their names). */
+  open: string[];
+  /** The planned departure ("07:30"), from a departure time the car or a helper reports. */
+  departure: string | null;
   entities: { lock: string | null; climate: string | null; charge: string | null; tracker: string | null };
 }
 
@@ -54,6 +60,29 @@ function pick(hass: HomeAssistant, set: string | null, list: string[], match: (i
   return list.find((id) => match(id, hass.states[id])) ?? null;
 }
 
+/** Distance between two points on the earth in km (haversine). */
+export function kmBetween(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const r = Math.PI / 180;
+  const a = Math.sin(((lat2 - lat1) * r) / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(((lon2 - lon1) * r) / 2) ** 2;
+  return 12742 * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+/** "07:30" from a departure entity: a time ("07:30:00"), a date-time or timestamp (today's or tomorrow's), or minutes after midnight. */
+export function departureText(st: HassEntity | undefined): string | null {
+  if (!st || ["unknown", "unavailable", "", "none", "off"].includes(String(st.state).toLowerCase())) return null;
+  const s = String(st.state);
+  let m = /^(\d{1,2}):(\d{2})/.exec(s);
+  if (m) return `${m[1].padStart(2, "0")}:${m[2]}`;
+  const t = Date.parse(s);
+  if (Number.isFinite(t) && /\d{4}-\d{2}-\d{2}/.test(s)) {
+    const d = new Date(t);
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+  m = /^(\d{1,4})$/.exec(s);
+  if (m && Number(m[1]) < 1440) return `${String(Math.floor(Number(m[1]) / 60)).padStart(2, "0")}:${String(Number(m[1]) % 60).padStart(2, "0")}`;
+  return null;
+}
+
 export function readCar(hass: HomeAssistant, spot: Pick<Furniture, "entity" | "car">): CarInfo | null {
   const links = spot.car ?? {};
   const anchor = ref(links.device) ?? ref(links.tracker) ?? ref(spot.entity);
@@ -74,6 +103,12 @@ export function readCar(hass: HomeAssistant, spot: Pick<Furniture, "entity" | "c
   const chargeSwitch = pick(hass, chargingSet && /^(switch|input_boolean)\./.test(chargingSet) ? chargingSet : null, all, (id) => domain(id) === "switch" && word(id, "charg", "laden") && !word(id, "port", "klappe"));
   const trackerId = pick(hass, ref(links.tracker), all, (id) => domain(id) === "device_tracker") ?? (ref(spot.entity)?.startsWith("device_tracker.") ? ref(spot.entity) : null);
   const insideId = pick(hass, null, all, (id, st) => domain(id) === "sensor" && dc(st) === "temperature" && word(id, "inside", "innen", "interior", "cabin"));
+  const departureId = pick(hass, ref(links.departure), all, (id) => /^(sensor|input_datetime|time|datetime)$/.test(domain(id)) && word(id, "departure", "abfahrt", "depart"));
+  // doors, trunk, frunk, windows and the charge port: binary sensors of the car that report open
+  const opened = all.filter((id) => {
+    const s = hass.states[id];
+    return domain(id) === "binary_sensor" && s?.state === "on" && (["door", "opening", "window", "garage_door"].includes(dc(s)) || word(id, "trunk", "frunk", "kofferraum", "tailgate", "hatch", "klappe", "charge_port", "ladeklappe"));
+  });
 
   const st = (id: string | null) => (id ? hass.states[id] : undefined);
   const soc = num(st(socId));
@@ -108,8 +143,34 @@ export function readCar(hass: HomeAssistant, spot: Pick<Furniture, "entity" | "c
     climateOn: climate ? climate.state !== "off" && climate.state !== "unavailable" : null,
     inside: num(st(insideId)),
     where: home ? null : zoneName,
+    distance: home ? null : distanceHome(hass, tracker),
+    open: opened.map((id) => carPartName(hass, id, all)),
+    departure: departureText(st(departureId)),
     entities: { lock: lockId, climate: climateId, charge: chargeSwitch, tracker: trackerId },
   };
+}
+
+/** How far a tracker is from home in km, or null without positions. */
+function distanceHome(hass: HomeAssistant, tracker: HassEntity | undefined): number | null {
+  const home = hass.states["zone.home"]?.attributes;
+  const lat = Number(tracker?.attributes?.latitude);
+  const lon = Number(tracker?.attributes?.longitude);
+  const hl = Number(home?.latitude ?? hass.config?.latitude);
+  const ho = Number(home?.longitude ?? hass.config?.longitude);
+  if (![lat, lon, hl, ho].every(Number.isFinite)) return null;
+  return Math.round(kmBetween(lat, lon, hl, ho) * 10) / 10;
+}
+
+/** The short name of a car's part (the car's name taken off: "Model 3 Trunk" → "Trunk"). */
+function carPartName(hass: HomeAssistant, id: string, all: string[]): string {
+  const name = String(hass.states[id]?.attributes.friendly_name ?? id.split(".")[1]);
+  const device = all.map((e) => String(hass.states[e]?.attributes.friendly_name ?? "")).reduce((common, n) => {
+    let k = 0;
+    while (k < common.length && k < n.length && common[k] === n[k]) k++;
+    return common.slice(0, k);
+  });
+  const rest = name.slice(device.length).trim();
+  return rest.length >= 2 ? rest : name;
 }
 
 /** The charge level's colour: red when low, amber in the middle, green when well charged. */

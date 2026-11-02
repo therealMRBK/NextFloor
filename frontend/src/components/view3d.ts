@@ -802,10 +802,21 @@ export class NfView3d extends LitElement {
     const liveCars = this.liveCars(hass, b);
     // a charging car draws its power from the nearest wallbox (or the house) into the car
     for (const c of liveCars) {
-      if (!c.car.home || !c.car.charging) continue;
-      const wallbox = b.floors.flatMap((f) => f.furniture.filter((m) => m.type === "wallbox").map((m) => ({ floorId: f.id, x: m.x, z: m.z, y: 1 })))
-        .sort((p, q) => Math.hypot(p.x - c.at.x, p.z - c.at.z) - Math.hypot(q.x - c.at.x, q.z - c.at.z))[0] ?? houseHub(b);
-      if (wallbox) livePic.arcs.push({ key: `car:${c.spot}`, from: wallbox, to: { ...c.at, y: 0.8 }, power: c.car.chargingW ?? 7000, color: [80, 175, 255] });
+      if (!c.car.home || (!c.car.charging && !c.car.plugged)) continue;
+      const near = b.floors.flatMap((f) => f.furniture.filter((m) => m.type === "wallbox").map((m) => ({ floorId: f.id, x: m.x, z: m.z, y: 1 })))
+        .sort((p, q) => Math.hypot(p.x - c.at.x, p.z - c.at.z) - Math.hypot(q.x - c.at.x, q.z - c.at.z))[0];
+      // a wallbox close to the car: its charging cable hangs down to the car, plugged in or charging
+      const cable = near && near.floorId === c.at.floorId && Math.hypot(near.x - c.at.x, near.z - c.at.z) < 9;
+      const from = near ?? houseHub(b);
+      if (!from || (!c.car.charging && !cable)) continue;
+      livePic.arcs.push({
+        key: `car:${c.spot}`,
+        from,
+        to: { ...c.at, y: 0.8 },
+        power: c.car.charging ? (c.car.chargingW ?? 7000) : 0,
+        color: [80, 175, 255],
+        ...(cable ? { via: [{ ...from, y: 0.35 }, { floorId: c.at.floorId, x: (from.x + c.at.x) / 2, z: (from.z + c.at.z) / 2, y: 0.08 }, { ...c.at, y: 0.5 }], cable: true } : {}),
+      });
     }
     const liveFlows = (this.flows ?? this._flows) && !this.dimmed;
     v.setLiveEnergy(liveFlows ? livePic.arcs : [], liveFlows ? livePic.sparks : []);
