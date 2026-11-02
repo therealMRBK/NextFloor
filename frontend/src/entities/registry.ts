@@ -38,9 +38,10 @@ export const entityKind = (hass: HomeAssistant, entityId: string): DeviceKind | 
 export function isRelevant(hass: HomeAssistant, entityId: string): boolean {
   const state = hass.states[entityId];
   if (!state || isHiddenOrConfig(hass, entityId)) return false;
+  // an entity a plugin takes care of is shown, whatever its domain or class (a printer's enum status sensor)
+  if (pluginKind(entityId, state) !== null) return true;
   const kind = kindOf(entityId);
-  // an entity a plugin takes care of is shown, whatever its class
-  if (!kind) return pluginKind(entityId, state) !== null;
+  if (!kind) return false;
   const deviceClass = state.attributes.device_class as string | undefined;
   // wall buttons, remotes and doorbells (event entities) count, other events are integration internals
   if (entityId.startsWith("event.")) return !deviceClass || deviceClass === "button" || deviceClass === "doorbell";
@@ -108,9 +109,14 @@ function build(hass: HomeAssistant): Index {
   // entities that are not in the registry (YAML without a unique_id, a USB camera) have no area either
   if (hass.entities) for (const id of Object.keys(hass.states)) if (!hass.entities[id]) offerWithoutArea(id);
 
-  // an entity a plugin takes on (a camera of an NVR) comes before the plain sensors of its device, so it is the device's main entry
+  // an entity a plugin takes on (an NVR's camera, a printer's status) comes before the plain sensors of its device, so it is
+  // the device's main entry
   const pluginRank = KIND_ORDER.indexOf("binary") - 0.5;
-  const rank = (id: string) => (kindOf(id) ? KIND_ORDER.indexOf(kindOf(id)!) : pluginRank);
+  const rank = (id: string) => {
+    const kind = kindOf(id);
+    const own = kind ? KIND_ORDER.indexOf(kind) : pluginRank;
+    return own > pluginRank && pluginKind(id, hass.states[id]) !== null ? pluginRank : own;
+  };
   withoutArea.sort((a, b) => rank(a) - rank(b) || entityName(hass, a).localeCompare(entityName(hass, b)));
   for (const [areaId, ids] of byArea) {
     const areaName = hass.areas?.[areaId]?.name;

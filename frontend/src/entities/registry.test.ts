@@ -185,3 +185,16 @@ test("an NVR's camera that a plugin takes on leads its device, before the device
   assert.equal(groupByDevice(hass, ids)[0].primary, "camera.camera_1_live");
   resetPlugins();
 });
+
+test("a sensor a plugin handles is listed whatever its device class, and leads its device", () => {
+  registerPlugin({ id: "printer-test", name: "Printer", version: "1.0.0", apiVersion: 1, devices: [{ match: (id: string) => id.endsWith("_current_print_state"), kind: "sensor" }] } as never);
+  const printer = { area_id: "work", device_id: "voron" };
+  const hass = hassOf(
+    [entity("sensor.voron_current_print_state", "printing", { device_class: "enum" }), entity("sensor.voron_extruder", "210", { device_class: "temperature", unit_of_measurement: "°C" }), entity("sensor.other_status", "ok", { device_class: "enum" })],
+    { "sensor.voron_current_print_state": printer, "sensor.voron_extruder": printer, "sensor.other_status": { area_id: "work" } } as never,
+  );
+  assert.equal(isRelevant(hass, "sensor.voron_current_print_state"), true);
+  assert.equal(isRelevant(hass, "sensor.other_status"), false, "an enum sensor no plugin handles stays hidden");
+  assert.equal(groupByDevice(hass, areaEntities(hass, "work"))[0].primary, "sensor.voron_current_print_state");
+  resetPlugins();
+});

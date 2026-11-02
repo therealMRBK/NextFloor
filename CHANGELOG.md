@@ -26,6 +26,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 ### Fixed
 
 - **Cameras of an NVR are easy to find in the device list**: with the *Cameras* plugin, a camera that shares its device with the NVR's motion, person and vehicle sensors (ONVIF) now leads that device's row instead of hiding behind "more" after the sensors. Thanks to @toshi24 ([#50](https://github.com/therealMRBK/NextFloor/discussions/50)).
+- **Sensors a plugin handles can be placed**: the editor's device lists show every entity a plugin takes on, whatever its device class (a 3D printer's enum print-state sensor from Moonraker), and it leads its device's row. Entities no plugin handles are filtered as before. Thanks to @Luca-Bachini-Barr ([#51](https://github.com/therealMRBK/NextFloor/issues/51)).
 
 ## 0.16.1
 
