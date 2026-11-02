@@ -18,8 +18,9 @@ export interface Alert {
   floorId: string | null;
   /** An alarm: the sensor that set it off (a door, a window, a motion sensor), when it can be told. */
   cause?: string;
-  /** An own warning: its text. */
+  /** An own warning: its text, and its colour ("#rrggbb", the stripe on the left). */
   text?: string;
+  color?: string;
 }
 
 /** Where the warnings come from. Looked up once and kept until the registries change. */
@@ -265,7 +266,7 @@ export function findAlerts(hass: HomeAssistant, building: Building, sources: Ale
   const outage: Alert[] = sources.outage && isPowerOut(hass, sources.outage) ? [{ kind: "power_outage", entity: sources.outage, roomId: null, floorId: null }] : [];
   const own: Alert[] = (sources.own ?? []).filter((r) => ownAlertMet(hass, r)).map((r) => {
     const room = r.room_id ? building.floors.find((f) => f.rooms.some((x) => x.id === r.room_id)) : undefined;
-    return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text };
+    return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text, ...(r.color ? { color: r.color } : {}) };
   });
   return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now), ...own];
 }

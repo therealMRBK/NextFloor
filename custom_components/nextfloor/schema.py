@@ -737,6 +737,7 @@ SETTINGS_SCHEMA = vol.Schema(
                             vol.Optional("state"): vol.Any(None, vol.All(str, vol.Length(max=120))),
                             vol.Required("text"): vol.All(str, vol.Length(max=120)),
                             vol.Optional("room_id"): vol.Any(None, vol.All(str, vol.Length(max=64))),
+                            vol.Optional("color"): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
                         }
                     )
                 ],

@@ -1744,7 +1744,7 @@ export class NfView3d extends LitElement {
     if (!this._alerts.length || !b) return nothing;
     const shown = this._alerts.slice(0, 3);
     return html`<div class="nf-alert-banner" role="alert">
-      ${shown.map((a) => html`<button class="nf-alert nf-alert-${a.kind}" title=${alertText(this.hass, b, a)} @click=${() => this.jumpTo(a)}>${alertText(this.hass, b, a)}</button>`)}
+      ${shown.map((a) => html`<button class="nf-alert nf-alert-${a.kind}" style=${a.color ? `border-left-color:${a.color}` : ""} title=${alertText(this.hass, b, a)} @click=${() => this.jumpTo(a)}>${alertText(this.hass, b, a)}</button>`)}
       ${this._alerts.length > 3 ? html`<span class="nf-alert-more">+${this._alerts.length - 3}</span>` : nothing}
     </div>`;
   }
@@ -2657,7 +2657,8 @@ export class NfView3d extends LitElement {
         }
       }
       /* a contact that stopped answering is a chore, not an emergency: no glow, no pulse */
-      .nf-alert-contact_lost {
+      .nf-alert-contact_lost,
+      .nf-alert-own {
         border-left-color: #ffb547;
         box-shadow: none;
         animation: none;

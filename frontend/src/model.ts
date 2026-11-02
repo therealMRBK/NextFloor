@@ -653,6 +653,8 @@ export interface OwnAlert {
   text: string;
   /** The room it belongs to (its floor pulses softly); null = the whole house. */
   room_id?: string | null;
+  /** The colour of its stripe ("#rrggbb"; null = amber). */
+  color?: string | null;
 }
 
 /** A camera position around the house: azimuth and polar angle (radians) and the distance (m). */

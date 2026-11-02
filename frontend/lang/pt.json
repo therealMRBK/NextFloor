@@ -377,6 +377,7 @@
   "own_alert_entity": "Quando …",
   "own_alert_state": "… está no estado (vazio = ligado)",
   "own_alert_text": "… então este aviso",
+  "own_alert_color": "Cor",
   "own_alert_house": "Toda a casa",
   "own_alert_new": "Novo aviso",
   "own_alert_add": "Adicionar aviso",

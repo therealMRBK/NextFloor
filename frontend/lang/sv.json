@@ -377,6 +377,7 @@
   "own_alert_entity": "När …",
   "own_alert_state": "… har tillståndet (tomt = på)",
   "own_alert_text": "… då denna varning",
+  "own_alert_color": "Färg",
   "own_alert_house": "Hela huset",
   "own_alert_new": "Ny varning",
   "own_alert_add": "Lägg till varning",

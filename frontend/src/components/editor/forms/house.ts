@@ -5,7 +5,7 @@ import { entityName } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, uid, type ButtonAction, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
-import { actions, checkField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
+import { actions, checkField, colorField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { likelyRoomSensors, parseButtonData, startViewYaml, withPresence } from "../ops/house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "../ops/lists.ts";
@@ -50,6 +50,7 @@ function ownAlerts(host: EditorHost): TemplateResult {
     ${textField(host, host.t("own_alert_state"), a.state ?? "", (v) => edit(i, { state: v || null }), { placeholder: host.hass?.states[a.entity]?.state ?? "on · <20 · >80" })}
     ${textField(host, host.t("own_alert_text"), a.text, (v) => edit(i, { text: v || host.t("own_alert_new") }), { wide: true, maxlength: 120 })}
     ${selectField(host, host.t("room"), a.room_id ?? "", rooms, (v) => edit(i, { room_id: v || null }), { wide: true })}
+    ${colorField(host, host.t("own_alert_color"), a.color ?? null, "#ffb547", (color) => edit(i, { color }))}
     <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
   </div>`;
   return html`<h4>⚠ ${host.t("own_alerts")}</h4>

@@ -377,6 +377,7 @@
   "own_alert_entity": "Quando …",
   "own_alert_state": "… è nello stato (vuoto = acceso)",
   "own_alert_text": "… allora questo avviso",
+  "own_alert_color": "Colore",
   "own_alert_house": "Tutta la casa",
   "own_alert_new": "Nuovo avviso",
   "own_alert_add": "Aggiungi avviso",
