@@ -55,8 +55,9 @@ function rails(b: Builder, cfg: StairConfig, treads: Tread[]): void {
   for (const side of sides) {
     const nodes: [number, number, number][] = [];
     for (const t of treads) for (const p of t[side]) nodes.push([p[0], t.top + RAIL_HEIGHT, p[1]]);
-    // one post at the start of every tread (several on one spot, as at a winder's pivot, make a newel post)
-    for (const t of treads) {
+    // a post at the start of every second tread and of the top one (one per tread is a fence on a spiral)
+    for (const [i, t] of treads.entries()) {
+      if (i % 2 && i !== treads.length - 1) continue;
       const p = t[side][0];
       b.cylinder(p[0], p[1], 0.012, t.top, t.top + RAIL_HEIGHT, M.metal, 6);
     }

@@ -104,13 +104,13 @@ export function stairHoles(floors: readonly Floor[], floor: Floor): Vec2[][] {
   // stairwells, and the shaped stairs that lead down from this floor
   const own = [
     ...floor.furniture.filter((f) => f.type === "stairwell").map(furnitureFootprint),
-    ...floor.furniture.filter((f) => isShapedStair(f) && f.stair?.down).map(stairOpeningInPlan),
+    ...floor.furniture.filter((f) => isShapedStair(f) && f.stair?.down).flatMap(stairOpeningInPlan),
   ].filter((ring) => ring.length >= 3);
   const below = floors.filter((f) => f.elevation < floor.elevation).sort((p, q) => q.elevation - p.elevation)[0];
   if (!below) return mergeHoles(own);
   const reaching = below.furniture.filter((f) => (f.type === "stairs" || packItem(f.type)?.hole) && !(isShapedStair(f) && f.stair?.down) && below.elevation + f.h >= floor.elevation - 0.3);
   // a shaped stair opens the floor only where its treads lack headroom; old stairs and pack stairs open their whole footprint
-  const stairs = reaching.map((f) => (isShapedStair(f) ? stairOpeningInPlan(f) : furnitureFootprint(f))).filter((ring) => ring.length >= 3);
+  const stairs = reaching.flatMap((f) => (isShapedStair(f) ? stairOpeningInPlan(f) : [furnitureFootprint(f)])).filter((ring) => ring.length >= 3);
   // overlapping openings become one outline (an L-shaped stairwell made of two)
   return mergeHoles([...own, ...stairs]);
 }

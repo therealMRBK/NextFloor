@@ -3,6 +3,7 @@
 // the floor above (or, for stairs going down, in the floor it starts on) are all drawn from this one layout.
 
 import type { Vec2 } from "../model.ts";
+import { mergeHoles } from "./holes.ts";
 
 export const STAIR_SHAPES = ["straight", "quarter", "l", "half", "u", "spiral"] as const;
 export type StairShape = (typeof STAIR_SHAPES)[number];
@@ -246,42 +247,24 @@ export function treadCentre(t: Tread): Vec2 {
   return [sum[0] / t.poly.length, sum[1] / t.poly.length];
 }
 
-/** Convex hull (counter-clockwise in a y-up sense; the caller winds it as it needs). */
-export function convexHull(points: readonly Vec2[]): Vec2[] {
-  const pts = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  if (pts.length < 3) return pts;
-  const cross = (o: Vec2, a: Vec2, b: Vec2) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-  const lower: Vec2[] = [];
-  for (const p of pts) {
-    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 1e-12) lower.pop();
-    lower.push(p);
-  }
-  const upper: Vec2[] = [];
-  for (const p of [...pts].reverse()) {
-    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 1e-12) upper.pop();
-    upper.push(p);
-  }
-  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
-}
-
 /**
- * The opening a stair needs in the floor it reaches (local coordinates): around every tread that lies less than the
- * headroom below that floor. For stairs going up that floor is the one above (at h), for stairs going down the stair's own (at 0).
+ * The opening a stair needs in the floor it reaches (local coordinates): the outline of every tread that lies less than the
+ * headroom below that floor, merged into one shape per piece. For stairs going up that floor is the one above (at h), for stairs
+ * going down the stair's own (at 0). The outline follows the treads, so an L or a spiral stair leaves the floor beside it whole.
  */
-export function stairOpening(layout: StairLayout, h: number, down: boolean, opening: StairOpening = "headroom"): Vec2[] {
+export function stairOpening(layout: StairLayout, h: number, down: boolean, opening: StairOpening = "headroom"): Vec2[][] {
   if (opening === "none") return [];
   const level = down ? 0 : Math.abs(h);
   const near = opening === "full" ? layout.treads : layout.treads.filter((t, i) => t.top > level - HEADROOM || (!down && i === layout.treads.length - 1) || (down && i === 0));
-  const hull = convexHull(near.flatMap((t) => t.poly));
-  return hull.length >= 3 ? hull : [];
+  return mergeHoles(near.map((t) => t.poly).filter((poly) => poly.length >= 3));
 }
 
 /** The floor opening of a shaped stair in plan coordinates (the same transform the 3D model uses, mirror included). */
-export function stairOpeningInPlan(item: { x: number; z: number; rotation: number; w: number; d: number; h: number; mirror?: boolean; stair?: Partial<StairConfig> | null }): Vec2[] {
+export function stairOpeningInPlan(item: { x: number; z: number; rotation: number; w: number; d: number; h: number; mirror?: boolean; stair?: Partial<StairConfig> | null }): Vec2[][] {
   const cfg = stairConfig(item);
   const local = stairOpening(stairLayout(cfg, item.w, item.d, item.h), item.h, cfg.down, cfg.opening);
   const a = (item.rotation * Math.PI) / 180;
   const [c, s] = [Math.cos(a), Math.sin(a)];
   const mx = item.mirror ? -1 : 1;
-  return local.map(([x, z]): Vec2 => [item.x + mx * x * c - z * s, item.z + mx * x * s + z * c]);
+  return local.map((ring) => ring.map(([x, z]): Vec2 => [item.x + mx * x * c - z * s, item.z + mx * x * s + z * c]));
 }

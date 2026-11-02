@@ -16,6 +16,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Stairs going down**: a stair can lead down from its floor, for example into a cellar that is not drawn. It opens its own floor and is drawn dashed in the plan.
 - **Openings that fit the stair**: a shaped stair opens the floor above only where its steps lack 2.2 m of headroom, following its shape, instead of the whole rectangle. The stair's **Floor opening** choice opens the whole stair instead (an open stairwell) or nothing (a hatch or closed stairwell). Older stairs and the stairs of the *Stairs & railings* pack open their footprint as before.
 
+### Changed
+
+- **New stairs are shaped stairs**: a stair placed from now on opens the floor above only where its steps lack headroom, so the opening is smaller than the whole rectangle as before. Choose *Floor opening → Over the whole stair* in its form for the old opening; stairs already in the plan keep theirs.
+
 ## 0.16.1
 
 ### Added
