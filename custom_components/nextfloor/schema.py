@@ -706,6 +706,19 @@ ENERGY_DEFAULTS = {
     "tariff": None,
 }
 
+ROUTE_POINT_SCHEMA = vol.Schema(
+    {vol.Required("floor_id"): _ID, vol.Required("x"): _COORD, vol.Required("z"): _COORD}, extra=vol.ALLOW_EXTRA
+)
+
+ROUTE_SCHEMA = vol.Schema(
+    {
+        vol.Required("key"): vol.All(str, vol.Length(min=1, max=128)),
+        vol.Required("points"): vol.All([ROUTE_POINT_SCHEMA], vol.Length(max=30)),
+        vol.Optional("cable"): bool,
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
 # Power sensors in watts: grid positive = import, battery positive = discharging (both can be inverted)
 ENERGY_SCHEMA = vol.Schema(
     {
@@ -722,6 +735,8 @@ ENERGY_SCHEMA = vol.Schema(
         vol.Optional("advanced"): bool,
         # a sub-meter's label also shows what no placed device measures
         vol.Optional("show_unmetered"): bool,
+        # where the cable of an energy connection runs (the flow follows it instead of an arc)
+        vol.Optional("routes"): vol.All([ROUTE_SCHEMA], vol.Length(max=100)),
     },
     extra=vol.ALLOW_EXTRA,
 )

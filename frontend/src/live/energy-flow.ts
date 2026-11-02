@@ -12,7 +12,7 @@
  * "The house" is where the cables meet: the meter cabinet, else the inverter, else the middle of the ground floor.
  */
 import { deviceMeter, deviceSensors, energySummary, findConsumers, oneBattery, readPower, subMeterIds, type Consumer, type EnergySummary } from "../energy.ts";
-import type { Building, Floor, Furniture, SolarField } from "../model.ts";
+import type { Building, EnergyRoute, Floor, Furniture, SolarField } from "../model.ts";
 import { fieldFace, fieldModules, roofFaces, topFloor, wallFaces, GROUND, groundFloor } from "../solar.ts";
 import type { HomeAssistant } from "../types.ts";
 import type { EnergyArc, PlanPoint, SparkField } from "../viewer/live-energy.ts";
@@ -197,5 +197,58 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
     const wallbox = c.wallbox || wallboxes.has(`${c.floorId}:${c.x.toFixed(1)}:${c.z.toFixed(1)}`);
     arcs.push({ key: `use:${c.id}`, from: feeders.get(c.floorId) ?? hub, to: { floorId: c.floorId, x: c.x, z: c.z, y: 0.9 }, power: c.power, color: wallbox ? ENERGY_COLORS.wallbox : ENERGY_COLORS.house });
   }
-  return { arcs, sparks, summary, autarky };
+  return { arcs: arcs.map((arc) => routed(b, arc)), sparks, summary, autarky };
+}
+
+/** How high above its floor a cable route runs (along the skirting). */
+const CABLE_Y = 0.25;
+
+/** A connection whose cable can be routed: its key (as the arcs name it) and what it joins. */
+export interface EnergyConnection {
+  key: string;
+  kind: "solar" | "battery" | "inverter" | "grid" | "meter";
+  /** The solar field, or the device behind a sub-meter, or the sub-meter. */
+  id: string | null;
+}
+
+/**
+ * The connections of the plan that can get a cable route, whether power flows on them right now or not: each solar field to
+ * its inverter, the battery, the inverter and the grid to the house, and in the advanced energy mode the devices behind a
+ * sub-meter and the sub-meters. Consumers keep their arc.
+ */
+export function energyConnections(b: Building): EnergyConnection[] {
+  const out: EnergyConnection[] = [];
+  const hub = houseHub(b);
+  if (!hub) return out;
+  const behind = new Set(b.floors.flatMap((f) => f.furniture).filter((m) => deviceMeter(b, m)).map((m) => m.id));
+  const inverter = spotsOf(b, "inverter").find((s) => !behind.has(s.id));
+  for (const f of b.settings.roof.solar ?? []) out.push({ key: `solar:${f.id}`, kind: "solar", id: f.id });
+  if (spotsOf(b, "home_battery").some((s) => !behind.has(s.id))) out.push({ key: "battery", kind: "battery", id: null });
+  if (inverter && (inverter.floorId !== hub.floorId || inverter.x !== hub.x || inverter.z !== hub.z)) out.push({ key: "inverter", kind: "inverter", id: null });
+  if (gridSpot(b, hub)) out.push({ key: "grid", kind: "grid", id: null });
+  for (const f of b.floors.flatMap((fl) => fl.furniture)) {
+    if (!behind.has(f.id)) continue;
+    if (f.type === "inverter") out.push({ key: `inverter:${f.id}`, kind: "inverter", id: f.id });
+    else if (f.type === "home_battery") out.push({ key: `battery:${f.id}`, kind: "battery", id: f.id });
+  }
+  for (const id of subMeterIds(b)) out.push({ key: `meter:${id}`, kind: "meter", id });
+  return out;
+}
+
+/** The route of a connection, if one is drawn. */
+export const routeOf = (b: Building, key: string): EnergyRoute | undefined => b.energy.routes?.find((r) => r.key === key && r.points.length > 0);
+
+/**
+ * An arc with its cable route: the route's points in the order the power runs. A route is drawn once for a connection whose
+ * flow can turn round (the battery charges and discharges), so it is walked from whichever end lies nearer to the arc's start.
+ */
+export function routed(b: Building, arc: EnergyArc): EnergyArc {
+  const route = routeOf(b, arc.key);
+  if (!route) return arc;
+  const via: PlanPoint[] = route.points.map((p) => ({ floorId: p.floor_id, x: p.x, z: p.z, y: CABLE_Y }));
+  const elevation = (id: string | null) => b.floors.find((f) => f.id === id)?.elevation ?? 0;
+  const apart = (p: PlanPoint, q: PlanPoint) => Math.hypot(p.x - q.x, p.z - q.z) + Math.abs(elevation(p.floorId) + p.y - elevation(q.floorId) - q.y);
+  const [first, last] = [via[0], via[via.length - 1]];
+  if (apart(arc.from, last) + apart(arc.to, first) < apart(arc.from, first) + apart(arc.to, last)) via.reverse();
+  return { ...arc, via, cable: !!route.cable };
 }

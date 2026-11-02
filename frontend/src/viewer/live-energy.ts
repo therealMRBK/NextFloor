@@ -5,7 +5,8 @@
  *
  * Each arc joins two points of the plan (each on its floor, so it follows when the floors are pulled apart). The
  * particles fly in the direction the power flows; more power means more and faster particles. A faint line shows
- * the arc itself.
+ * the arc itself. A connection with a cable route follows its points instead of the arc (a cable shown as such is drawn
+ * stronger).
  */
 import { AdditiveBlending, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, Group, Line, LineBasicMaterial, Points, PointsMaterial, Vector3, type Scene } from "three";
 
@@ -25,6 +26,10 @@ export interface EnergyArc {
   power: number;
   /** Particle colour (r, g, b 0…255). */
   color: [number, number, number];
+  /** Where the cable runs between `from` and `to` (the flow follows these points instead of an arc). */
+  via?: PlanPoint[];
+  /** The route is drawn as a visible cable. */
+  cable?: boolean;
 }
 
 /** A solar field's modules (corners in building coordinates) and how much it produces right now (0…1). */
@@ -39,6 +44,8 @@ export interface SparkField {
 export type FloorLift = (floorId: string | null) => { y: number; dy: number; visible: boolean };
 
 const MAX_PER_ARC = 46;
+/** Points of an arc's line: the arc's samples, or a route's points (at most 30 between its ends). */
+const LINE_POINTS = 33;
 const SPARKS = 900;
 
 /** A soft round dot for point sprites (sparks, droplets). */
@@ -65,6 +72,9 @@ interface ArcView {
   a: Vector3;
   b: Vector3;
   c: Vector3;
+  /** A routed arc: its corners in the world and how far along it each one lies; null for an arc. */
+  path: Vector3[] | null;
+  along: number[];
 }
 
 export class EnergyLayer {
@@ -113,7 +123,7 @@ export class EnergyLayer {
       let v = this.arcs.get(arc.key);
       if (!v) {
         const lg = new BufferGeometry();
-        lg.setAttribute("position", new Float32BufferAttribute(new Float32Array(33 * 3), 3));
+        lg.setAttribute("position", new Float32BufferAttribute(new Float32Array(LINE_POINTS * 3), 3));
         const line = new Line(lg, new LineBasicMaterial({ transparent: true, opacity: 0.4, depthWrite: false, blending: AdditiveBlending }));
         const pg = new BufferGeometry();
         pg.setAttribute("position", new Float32BufferAttribute(new Float32Array(MAX_PER_ARC * 3), 3));
@@ -121,13 +131,15 @@ export class EnergyLayer {
         line.frustumCulled = points.frustumCulled = false;
         const phase = new Float32Array(MAX_PER_ARC);
         for (let i = 0; i < MAX_PER_ARC; i++) phase[i] = Math.random();
-        v = { arc, line, points, phase, count: 0, speed: 0, a: new Vector3(), b: new Vector3(), c: new Vector3() };
+        v = { arc, line, points, phase, count: 0, speed: 0, a: new Vector3(), b: new Vector3(), c: new Vector3(), path: null, along: [] };
         this.arcs.set(arc.key, v);
         this.group.add(line, points);
       }
       v.arc = arc;
       const col = new Color(arc.color[0] / 255, arc.color[1] / 255, arc.color[2] / 255);
       (v.line.material as LineBasicMaterial).color.copy(col);
+      (v.line.material as LineBasicMaterial).opacity = arc.via?.length && arc.cable ? 0.9 : 0.4;
+      v.path = arc.via?.length ? Array.from({ length: arc.via.length + 2 }, () => new Vector3()) : null;
       (v.points.material as PointsMaterial).color.copy(col);
       // more power: more particles, a bit faster (a kettle and a heat pump look different, a 10 kW car still fits)
       v.count = Math.max(3, Math.min(MAX_PER_ARC, Math.round(3 + Math.sqrt(arc.power) / 2.2)));
@@ -175,6 +187,10 @@ export class EnergyLayer {
   /** The arcs' start, end and bend for where the floors are now. */
   private place(): void {
     for (const v of this.arcs.values()) {
+      if (v.path) {
+        this.placeRoute(v, v.path);
+        continue;
+      }
       const va = this.world(v.arc.from, v.a);
       const vb = this.world(v.arc.to, v.b);
       const len = v.a.distanceTo(v.b);
@@ -183,12 +199,40 @@ export class EnergyLayer {
       const show = va && vb;
       v.line.visible = v.points.visible = show;
       const pos = v.line.geometry.getAttribute("position") as Float32BufferAttribute;
-      for (let i = 0; i <= 32; i++) {
-        const t = i / 32;
+      for (let i = 0; i < LINE_POINTS; i++) {
+        const t = i / (LINE_POINTS - 1);
         pos.setXYZ(i, ...this.bezier(v, t));
       }
+      v.line.geometry.setDrawRange(0, LINE_POINTS);
       pos.needsUpdate = true;
     }
+  }
+
+  /** A routed connection: from its start through the route's points to its end; hidden while any of them is on a hidden floor. */
+  private placeRoute(v: ArcView, path: Vector3[]): void {
+    const plan = [v.arc.from, ...(v.arc.via ?? []), v.arc.to];
+    let show = true;
+    plan.forEach((p, i) => (show = this.world(p, path[i]) && show));
+    v.line.visible = v.points.visible = show;
+    v.along = [0];
+    for (let i = 1; i < path.length; i++) v.along.push(v.along[i - 1] + path[i].distanceTo(path[i - 1]));
+    const pos = v.line.geometry.getAttribute("position") as Float32BufferAttribute;
+    path.forEach((p, i) => pos.setXYZ(i, p.x, p.y, p.z));
+    v.line.geometry.setDrawRange(0, path.length);
+    pos.needsUpdate = true;
+  }
+
+  /** Where a particle `t` (0…1) of the way along an arc or a route is. */
+  private at(v: ArcView, t: number): [number, number, number] {
+    if (!v.path) return this.bezier(v, t);
+    const total = v.along[v.along.length - 1] || 1;
+    const s = t * total;
+    let i = 1;
+    while (i < v.along.length - 1 && v.along[i] < s) i++;
+    const [p, q] = [v.path[i - 1], v.path[i]];
+    const span = v.along[i] - v.along[i - 1] || 1;
+    const k = Math.max(0, Math.min(1, (s - v.along[i - 1]) / span));
+    return [p.x + (q.x - p.x) * k, p.y + (q.y - p.y) * k, p.z + (q.z - p.z) * k];
   }
 
   private bezier(v: ArcView, t: number): [number, number, number] {
@@ -214,7 +258,7 @@ export class EnergyLayer {
       const pos = v.points.geometry.getAttribute("position") as Float32BufferAttribute;
       for (let i = 0; i < v.count; i++) {
         v.phase[i] = (v.phase[i] + v.speed * dt) % 1;
-        pos.setXYZ(i, ...this.bezier(v, v.phase[i]));
+        pos.setXYZ(i, ...this.at(v, v.phase[i]));
       }
       pos.needsUpdate = true;
     }

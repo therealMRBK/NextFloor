@@ -1027,6 +1027,42 @@ export const editorStyles = css`
     text-align: center;
     pointer-events: none;
   }
+  .nf-route line {
+    stroke: var(--nf-warm);
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+    opacity: 0.7;
+  }
+  .nf-route circle {
+    fill: var(--nf-warm);
+    opacity: 0.8;
+  }
+  .nf-route circle.nf-route-riser {
+    fill: none;
+    stroke: var(--nf-warm);
+    stroke-width: 2;
+  }
+  .nf-route-drawing line {
+    stroke: var(--nf-accent);
+    stroke-dasharray: none;
+    opacity: 1;
+  }
+  .nf-route-drawing circle {
+    fill: var(--nf-accent);
+    opacity: 1;
+  }
+  .nf-route-drawing circle.nf-route-riser {
+    fill: none;
+    stroke: var(--nf-accent);
+  }
+  .nf-route text {
+    fill: var(--nf-text);
+    font-size: 11px;
+    pointer-events: none;
+  }
+  .nf-routes {
+    pointer-events: none;
+  }
   .nf-energy-marker circle {
     fill: color-mix(in srgb, var(--nf-chrome-solid) 80%, transparent);
     stroke: #ffd75a;

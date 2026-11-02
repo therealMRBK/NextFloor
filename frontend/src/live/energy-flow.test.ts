@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { findConsumers } from "../energy.ts";
 import { emptyBuilding, newFloor, type Building, type Furniture } from "../model.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
-import { ENERGY_COLORS, energyPicture, houseHub } from "./energy-flow.ts";
+import { ENERGY_COLORS, energyConnections, energyPicture, houseHub, routed } from "./energy-flow.ts";
 
 const sensor = (entity_id: string, state: string): HassEntity => ({ entity_id, state, attributes: { device_class: "power" } });
 const hassOf = (list: HassEntity[]) => ({ states: Object.fromEntries(list.map((s) => [s.entity_id, s])), entities: {} }) as unknown as HomeAssistant;
@@ -78,4 +78,22 @@ test("with the mode off a balcony plant's meter is ignored", () => {
   delete plain.floors[1].furniture[0].parent_meter;
   for (const f of plain.floors[0].furniture) (delete f.parent_meter, delete f.meter_floors);
   assert.deepEqual(energyPicture(plantHass, withPlants(false)), energyPicture(plantHass, plain));
+});
+
+test("a connection with a cable route follows it, walked from the end nearer to where the power starts", () => {
+  const b = flats(true);
+  b.floors[0].furniture.push({ ...meter("bat", 5), type: "home_battery", power: "sensor.bat" });
+  assert.ok(energyConnections(b).some((c) => c.key === "battery"));
+  assert.ok(energyConnections(b).some((c) => c.key === "meter:og"));
+  // the cable runs from the battery (x 5) along the wall to the hub (x 1), drawn starting at the battery's end
+  b.energy.routes = [{ key: "battery", points: [{ floor_id: "g", x: 5, z: 4 }, { floor_id: "g", x: 1, z: 4 }], cable: true }];
+  const hub = houseHub(b)!;
+  const battery = { floorId: "g", x: 5, z: 1, y: 0.8 };
+  const discharging = routed(b, { key: "battery", from: battery, to: hub, power: 500, color: ENERGY_COLORS.battery });
+  assert.deepEqual(discharging.via?.map((p) => p.x), [5, 1]);
+  assert.equal(discharging.cable, true);
+  const charging = routed(b, { key: "battery", from: hub, to: battery, power: 500, color: ENERGY_COLORS.battery });
+  assert.deepEqual(charging.via?.map((p) => p.x), [1, 5], "charging walks the same cable the other way");
+  // other connections keep their arc
+  assert.equal(routed(b, { key: "grid", from: hub, to: battery, power: 1, color: ENERGY_COLORS.import }).via, undefined);
 });

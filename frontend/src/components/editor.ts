@@ -19,6 +19,8 @@ import {
   bounds,
   centroid,
   ENERGY_DEVICES,
+  MAX_ROUTE_POINTS,
+  type EnergyRoute,
   type StartView,
   canLift,
   isFixed,
@@ -51,8 +53,8 @@ import { renderFavorites, renderPresence, renderStartView } from "./editor/forms
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
 import { renderSettings, type SettingsActions } from "./editor/forms/settings.ts";
-import { renderEnergyBalance, renderEnergyChecklist, renderEnergyDevices, renderEnergyTeaser, renderHelpLinks, type EnergyActions } from "./editor/forms/energy.ts";
-import { energyMarkersLayer, headroomLayer, roofSectionsLayer, roofWindowsLayer, solarLayer } from "./editor/canvas/roof-layers.ts";
+import { renderEnergyBalance, renderEnergyChecklist, renderEnergyDevices, renderEnergyRoutes, renderEnergyTeaser, renderHelpLinks, type EnergyActions, type RouteActions, type RouteDraft } from "./editor/forms/energy.ts";
+import { energyMarkersLayer, energyRoutesLayer, headroomLayer, roofSectionsLayer, roofWindowsLayer, solarLayer } from "./editor/canvas/roof-layers.ts";
 import type { CanvasContext } from "./editor/canvas/context.ts";
 import { backgroundLayer } from "./editor/canvas/background.ts";
 import { mapLayer } from "./editor/canvas/map.ts";
@@ -192,6 +194,7 @@ export class NfEditor extends LitElement {
     _canUndo: { state: true },
     _canRedo: { state: true },
     _arcEdit: { state: true },
+    _routeDraft: { state: true },
   };
 
   declare hass: HomeAssistant;
@@ -233,6 +236,8 @@ export class NfEditor extends LitElement {
   private declare _tool: Tool;
   /** The wall whose arc row is open in the side bar, with the typed bulge. */
   private declare _arcEdit: ArcEdit | null;
+  /** The cable route being drawn in the energy tool. */
+  private declare _routeDraft: RouteDraft | null;
   /** The wall shown from the front (room and edge), or null. */
   private declare _wallView: { roomId: string; edge: number } | null;
   private declare _draft: Vec2[];
@@ -274,6 +279,7 @@ export class NfEditor extends LitElement {
     this.narrow = false;
     this._floorId = null;
     this._arcEdit = null;
+    this._routeDraft = null;
     this.roof.sectionId = null;
     this.roof.solarId = null;
     this.roof.picking = false;
@@ -1061,7 +1067,7 @@ export class NfEditor extends LitElement {
     }
     const press: Press = { local, world: this.toWorld(...local), target: e.target as Element, fine: e.altKey };
     // the first of these that recognises what was pressed decides what the gesture is
-    const gesture = this.pressBackground(press) ?? this.pressWallTool(press) ?? this.pressRoofTools(press) ?? this.pressDrawingTool(press) ?? this.pressItem(press) ?? this.pressRoom(press);
+    const gesture = this.pressRoute(press) ?? this.pressBackground(press) ?? this.pressWallTool(press) ?? this.pressRoofTools(press) ?? this.pressDrawingTool(press) ?? this.pressItem(press) ?? this.pressRoom(press);
     if (gesture !== NO_GESTURE) this.drag = gesture;
   }
 
@@ -1945,7 +1951,7 @@ export class NfEditor extends LitElement {
         ${room && this._tool === "select" ? cutMarksLayer(ctx, room) : nothing}
         ${headroomLayer(ctx, floor)}`
       : nothing}
-      ${this._tool === "roof" ? svg`${roofSectionsLayer(ctx, this.roof)}${roofWindowsLayer(ctx, this.roof)}` : this._tool === "energy" ? svg`${roofSectionsLayer(ctx, this.roof)}${solarLayer(ctx, this.roof)}${energyMarkersLayer(ctx, this.floor, this.sel.furniture)}` : nothing}
+      ${this._tool === "roof" ? svg`${roofSectionsLayer(ctx, this.roof)}${roofWindowsLayer(ctx, this.roof)}` : this._tool === "energy" ? svg`${roofSectionsLayer(ctx, this.roof)}${solarLayer(ctx, this.roof)}${energyRoutesLayer(ctx, this.floor, this._doc.energy.routes ?? [], this._routeDraft)}${energyMarkersLayer(ctx, this.floor, this.sel.furniture)}` : nothing}
       ${draftLayer(ctx, sketch, this._tool, this._draft, this._cursor)} ${guidesLayer(ctx, this._guides, this._size)}`;
   }
 
@@ -2357,6 +2363,41 @@ export class NfEditor extends LitElement {
   // ------------------------------------------------------------------ energy tool
 
   /** What the energy panel can make this editor do. */
+  /** While a cable route is drawn in the energy tool, a tap on the plan adds a point on the floor shown. */
+  private pressRoute(press: Press): Gesture | undefined {
+    const draft = this._routeDraft;
+    if (!draft || this._tool !== "energy" || !this._floorId || draft.points.length >= MAX_ROUTE_POINTS) return undefined;
+    const [x, z] = this.snap(press.world, undefined, press.fine).map((v) => Math.round(v * 1000) / 1000);
+    this._routeDraft = { ...draft, points: [...draft.points, { floor_id: this._floorId, x, z }] };
+    return NO_GESTURE;
+  }
+
+  private routeActions(): RouteActions {
+    const save = (change: (routes: EnergyRoute[]) => EnergyRoute[]) =>
+      this.change((doc) => {
+        doc.energy.routes = change(doc.energy.routes ?? []);
+        if (!doc.energy.routes.length) delete doc.energy.routes;
+      });
+    return {
+      draft: this._routeDraft,
+      start: (key) => (this._routeDraft = { key, points: [...(this._doc.energy.routes?.find((r) => r.key === key)?.points ?? [])] }),
+      undoPoint: () => this._routeDraft && (this._routeDraft = { ...this._routeDraft, points: this._routeDraft.points.slice(0, -1) }),
+      cancel: () => (this._routeDraft = null),
+      finish: () => {
+        const draft = this._routeDraft;
+        this._routeDraft = null;
+        if (!draft || !this.isAdmin) return;
+        save((routes) => {
+          const old = routes.find((r) => r.key === draft.key);
+          const rest = routes.filter((r) => r.key !== draft.key);
+          return draft.points.length ? [...rest, { key: draft.key, points: draft.points, ...(old?.cable ? { cable: true } : {}) }] : rest;
+        });
+      },
+      clear: (key) => this.isAdmin && save((routes) => routes.filter((r) => r.key !== key)),
+      setCable: (key, cable) => this.isAdmin && save((routes) => routes.map((r) => (r.key === key ? { ...r, cable } : r))),
+    };
+  }
+
   private energyActions(): EnergyActions {
     return {
       follow: (target) => {
@@ -2427,7 +2468,7 @@ export class NfEditor extends LitElement {
       return html`<button class="nf-btn nf-back" @click=${() => this.selectItem("furniture", null)}>‹ ${this.t("tool_energy")}</button>
         ${renderFurnitureForm(this.host, device, this.furnitureActions())}`;
     const actions = this.energyActions();
-    return html`${renderEnergyChecklist(this.host, actions)}${renderSolarList(this.roofDeps())}${renderEnergyDevices(this.host, actions)}${renderEnergyBalance(this.host, actions)}${renderEnergyTeaser(this.host)}`;
+    return html`${renderEnergyChecklist(this.host, actions)}${renderSolarList(this.roofDeps())}${renderEnergyDevices(this.host, actions)}${renderEnergyRoutes(this.host, this.routeActions())}${renderEnergyBalance(this.host, actions)}${renderEnergyTeaser(this.host)}`;
   }
 
   /** The item of a fixable kind on a floor. */

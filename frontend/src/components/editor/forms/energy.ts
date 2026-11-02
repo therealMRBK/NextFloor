@@ -4,11 +4,12 @@ import { html, nothing, type TemplateResult } from "lit";
 import { deviceSensors, energySummary } from "../../../energy.ts";
 import { furnitureEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { ENERGY_DEVICES, type Building, type Floor, type Furniture } from "../../../model.ts";
+import { ENERGY_DEVICES, type Building, type Floor, type Furniture, type RoutePoint } from "../../../model.ts";
 import { entityOptions, isNumeric, isPowerSensor, powerSensorOf } from "../entities.ts";
 import { checkField, entityField, hint } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { energyChecklist, type ChecklistTarget } from "../ops/energy-checklist.ts";
+import { energyConnections, routeOf, type EnergyConnection } from "../../../live/energy-flow.ts";
 
 /** What the panel can make the editor do. */
 export interface EnergyActions {
@@ -128,5 +129,76 @@ export function renderHelpLinks(host: EditorHost): TemplateResult {
     <h3>${host.t("help_title")}</h3>
     ${hint(host.t("help_hint"))}
     <div class="nf-actions">${link("issues/new/choose", "🐞", "help_issue")}${link("discussions/categories/ideas", "💡", "help_idea")}</div>
+  </section>`;
+}
+
+/** Drawing a cable route: the connection and the points tapped so far (each on the floor it was tapped on). */
+export interface RouteDraft {
+  key: string;
+  points: RoutePoint[];
+}
+
+export interface RouteActions {
+  draft: RouteDraft | null;
+  start(key: string): void;
+  undoPoint(): void;
+  finish(): void;
+  cancel(): void;
+  clear(key: string): void;
+  setCable(key: string, cable: boolean): void;
+}
+
+/** What a connection joins, in words. */
+function connectionName(host: EditorHost, c: EnergyConnection): string {
+  const t = host.t;
+  const furniture = host.doc.floors.flatMap((f) => f.furniture).find((m) => m.id === c.id);
+  const name = furniture ? deviceName(host, furniture) : "";
+  switch (c.kind) {
+    case "solar": {
+      const fields = host.doc.settings.roof.solar ?? [];
+      const i = fields.findIndex((f) => f.id === c.id);
+      return t("route_conn_solar", { name: fields[i]?.name || `${t("solar_field")} ${i + 1}` });
+    }
+    case "battery":
+      return c.id ? t("route_conn_device", { name }) : t("route_conn_battery");
+    case "inverter":
+      return c.id ? t("route_conn_device", { name }) : t("route_conn_inverter");
+    case "grid":
+      return t("route_conn_grid");
+    case "meter":
+      return t("route_conn_meter", { name });
+  }
+}
+
+/** The connections whose cable can be drawn: a route per connection, shown as a faint line or as a visible cable. */
+export function renderEnergyRoutes(host: EditorHost, actions: RouteActions): TemplateResult | typeof nothing {
+  const connections = energyConnections(host.doc);
+  if (!connections.length) return nothing;
+  const t = host.t;
+  const draft = actions.draft;
+  return html`<section>
+    <h3>〰 ${t("energy_routes")}</h3>
+    ${hint(t("energy_routes_hint"))}
+    <div class="nf-room-list">
+      ${connections.map((c) => {
+        const route = routeOf(host.doc, c.key);
+        const drawing = draft?.key === c.key;
+        return html`<div class="nf-row nf-route-row">
+          <span class="nf-dev-name"><span>${connectionName(host, c)} · ${route ? t("route_points", { n: route.points.length }) : t("route_none")}</span></span>
+          ${drawing
+            ? html`<p class="nf-sub nf-wide">${t("route_drawing", { n: draft.points.length })}</p>
+                <div class="nf-actions nf-wide">
+                  <button class="nf-btn" ?disabled=${!draft.points.length} @click=${() => actions.undoPoint()}>↶ ${t("route_undo")}</button>
+                  <button class="nf-btn nf-primary" @click=${() => actions.finish()}>${t("route_done")}</button>
+                  <button class="nf-btn" @click=${() => actions.cancel()}>${t("cancel")}</button>
+                </div>`
+            : html`<div class="nf-actions">
+                <button class="nf-btn" ?disabled=${!host.admin || !!draft} @click=${() => actions.start(c.key)}>✎ ${t(route ? "route_redraw" : "route_draw")}</button>
+                ${route ? html`<button class="nf-btn" ?disabled=${!host.admin || !!draft} @click=${() => actions.clear(c.key)}>⨉</button>` : nothing}
+              </div>
+              ${route ? checkField(host, t("route_cable"), !!route.cable, (cable) => actions.setCable(c.key, cable), { title: t("route_cable_hint") }) : nothing}`}
+        </div>`;
+      })}
+    </div>
   </section>`;
 }

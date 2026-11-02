@@ -724,7 +724,27 @@ export interface EnergySettings {
   advanced?: boolean;
   /** Advanced energy mode: a sub-meter's label also shows how much of its use no placed device measures. */
   show_unmetered?: boolean;
+  /** Where the cable of an energy connection really runs (the flow follows it instead of an arc). */
+  routes?: EnergyRoute[];
 }
+
+/** A point a cable runs through: on a floor, in plan coordinates. */
+export interface RoutePoint {
+  floor_id: string;
+  x: number;
+  z: number;
+}
+
+/** The cable of one energy connection (`key` as the flow names it: "grid", "battery", "solar:<field>" …). */
+export interface EnergyRoute {
+  key: string;
+  points: RoutePoint[];
+  /** Draw the route as a visible cable, not just the faint line the flow follows. */
+  cable?: boolean;
+}
+
+/** The most points a cable route can have. */
+export const MAX_ROUTE_POINTS = 30;
 
 /** A person and the sensor whose state names the room they are in (ESPresense, Bermuda, …). */
 export interface PresenceLink {

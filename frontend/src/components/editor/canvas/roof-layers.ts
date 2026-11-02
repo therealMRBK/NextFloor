@@ -3,7 +3,7 @@
 
 import { nothing, svg, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
-import { ENERGY_DEVICES, type Floor, type RoofSection, type Vec2 } from "../../../model.ts";
+import { ENERGY_DEVICES, type EnergyRoute, type Floor, type RoofSection, type RoutePoint, type Vec2 } from "../../../model.ts";
 import { dormerParent, effectiveDormer, headroomLines, ridgeHeight, sectionCutsBelow, sectionFrame, sectionGeometry } from "../../../roof-sections.ts";
 import { fieldCenter, fieldFace, fieldModules, roofFaces, windowCorners } from "../../../solar.ts";
 import type { RoofController } from "../roof-controller.ts";
@@ -162,4 +162,30 @@ export function headroomLayer(ctx: CanvasContext, floor: Floor): Layer {
     }),
   );
   return svg`${lines}`;
+}
+
+/**
+ * The cable routes on the floor shown: each run of points on this floor as a line, a dot per point, and a short stub where the
+ * cable goes to another floor. The route being drawn is highlighted and numbered.
+ */
+export function energyRoutesLayer(ctx: CanvasContext, floor: Floor | undefined, routes: readonly EnergyRoute[], draft: { key: string; points: RoutePoint[] } | null): Layer {
+  if (!floor) return nothing;
+  const one = (points: readonly RoutePoint[], drawing: boolean) => {
+    const parts: TemplateResult[] = [];
+    points.forEach((p, i) => {
+      if (p.floor_id !== floor.id) return;
+      const [x, y] = ctx.toScreen([p.x, p.z]);
+      const next = points[i + 1];
+      if (next?.floor_id === floor.id) {
+        const [x2, y2] = ctx.toScreen([next.x, next.z]);
+        parts.push(svg`<line x1=${x} y1=${y} x2=${x2} y2=${y2} />`);
+      }
+      // where the cable leaves this floor (or comes from another), a ring marks the riser
+      const riser = (next && next.floor_id !== floor.id) || (i > 0 && points[i - 1].floor_id !== floor.id);
+      parts.push(svg`<circle cx=${x} cy=${y} r=${riser ? 7 : 4} class=${riser ? "nf-route-riser" : ""} />`);
+      if (drawing) parts.push(svg`<text x=${x + 8} y=${y - 8}>${i + 1}</text>`);
+    });
+    return svg`<g class=${`nf-route${drawing ? " nf-route-drawing" : ""}`}>${parts}</g>`;
+  };
+  return svg`<g class="nf-routes">${routes.filter((r) => r.key !== draft?.key).map((r) => one(r.points, false))}${draft ? one(draft.points, true) : nothing}</g>`;
 }

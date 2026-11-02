@@ -60,6 +60,17 @@ def test_advanced_energy_mode_is_optional() -> None:
         ENERGY_SCHEMA({"advanced": "yes"})
 
 
+def test_energy_routes() -> None:
+    assert "routes" not in ENERGY_SCHEMA({})
+    route = {"key": "solar:f1", "points": [{"floor_id": "eg", "x": 1, "z": 2}, {"floor_id": "kg", "x": 1, "z": 2}]}
+    result = ENERGY_SCHEMA({"routes": [route, {**route, "key": "grid", "cable": True}]})
+    assert result["routes"][0]["points"][1] == {"floor_id": "kg", "x": 1.0, "z": 2.0}
+    assert result["routes"][1]["cable"] is True
+    for bad in ({**route, "points": [{"floor_id": "eg", "x": 1}]}, {**route, "points": [route["points"][0]] * 31}):
+        with pytest.raises(vol.Invalid):
+            ENERGY_SCHEMA({"routes": [bad]})
+
+
 SETTINGS = {"wall_exterior": 0.3, "wall_interior": 0.1, "grid": 0.1, "roof": {}}
 
 
