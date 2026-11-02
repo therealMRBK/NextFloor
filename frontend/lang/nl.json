@@ -965,6 +965,7 @@
   "rotation": "Rotatie (°)",
   "strip_tilt": "Kanteling om de lengteas (°)",
   "strip_upright": "Rechtop",
+  "strip_rise": "Helling over de lengte (°)",
   "strip_upright_hint": "De strip staat op zijn kant: zijn lengte loopt omhoog vanaf de hoogte boven de vloer, langs een deurkozijn, als lichtzuil. De kanteling legt een liggende strip tegen een helling (90° = de voorkant wijst opzij).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",

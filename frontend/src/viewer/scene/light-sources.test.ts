@@ -54,3 +54,16 @@ test("hanging lamps are the ceiling kinds", () => {
   assert.equal(HANGING_LAMPS.has("pendant"), true);
   assert.equal(HANGING_LAMPS.has("floor"), false);
 });
+
+test("a rising strip climbs along its length from its mount height, and one under the ceiling falls away from it", () => {
+  const level = lightSourcesOf(floor, null, [marker({ lamp: "strip", size: [2, 0.04, 0.03], rotation: 0, base: 1 })], on);
+  const rising = lightSourcesOf(floor, null, [marker({ lamp: "strip", size: [2, 0.04, 0.03], rotation: 0, base: 1, rise: 30 })], on);
+  assert.ok(rising[0].y < rising[1].y && rising[1].y < rising[2].y, "climbs towards its +x end");
+  // the low end stays at the mount height: the middle is half the strip's rise above the level strip's
+  assert.ok(Math.abs(rising[1].y - level[1].y - Math.sin(Math.PI / 6)) < 1e-9);
+  // the run along the floor is shorter than the strip
+  assert.ok(rising[2].x - rising[0].x < level[2].x - level[0].x);
+  const underCeiling = lightSourcesOf(floor, null, [marker({ lamp: "strip", size: [2, 0.04, 0.03], rotation: 0, rise: 30 })], on);
+  const flatCeiling = lightSourcesOf(floor, null, [marker({ lamp: "strip", size: [2, 0.04, 0.03], rotation: 0 })], on);
+  assert.ok(underCeiling[2].y <= flatCeiling[2].y + 1e-9, "its high end stays under the ceiling");
+});

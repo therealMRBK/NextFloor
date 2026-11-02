@@ -88,6 +88,8 @@ export interface DeviceMarker {
   /** An LED strip: roll about its length (degrees), and standing upright (its length runs up from the base). */
   roll?: number;
   upright?: boolean;
+  /** An LED strip: how steeply its length rises (degrees). */
+  rise?: number;
   /** Show the HTML marker. False: the 3D object alone stands for the device. */
   pin?: boolean;
   /** A placed device fixed against moving. */

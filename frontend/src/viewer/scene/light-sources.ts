@@ -3,6 +3,7 @@
 import type { Floor } from "../../model.ts";
 import { roomIndexAt, zoneOf, type LightKind, type LightSource } from "../lighting.ts";
 import { LAMP_SIZE, lightOrigin } from "./lamp-data.ts";
+import { stripPoint, stripRiseLift } from "./strip.ts";
 import type { DeviceMarker } from "./types.ts";
 
 const RADIANS = Math.PI / 180;
@@ -34,9 +35,13 @@ export function lightSourcesOf(floor: Floor, zones: readonly number[] | null, ma
     // standing upright a strip climbs; one turned on its side (or standing) lights all around rather than up or down
     const heading = (marker.rotation ?? 0) * RADIANS;
     const sideways = !!marker.upright || Math.abs(marker.roll ?? 0) > 45;
+    const middle = y + stripRiseLift(marker.base, width, marker.rise);
     for (const along of STRIP_SHARES) {
       if (marker.upright) sources.push({ x: marker.x, y: base + width * (0.5 + along), z: marker.z, color, level: level * STRIP_LEVEL, kind: "omni", room });
-      else sources.push({ x: marker.x + Math.cos(heading) * width * along, y, z: marker.z + Math.sin(heading) * width * along, color, level: level * STRIP_LEVEL, kind: sideways ? "omni" : kind, room });
+      else {
+        const [px, py, pz] = stripPoint(marker.x, middle, marker.z, heading, width, marker.rise, along);
+        sources.push({ x: px, y: py, z: pz, color, level: level * STRIP_LEVEL, kind: sideways ? "omni" : kind, room });
+      }
     }
   }
   return sources;

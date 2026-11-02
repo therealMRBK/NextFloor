@@ -965,6 +965,7 @@
   "rotation": "Rotación (°)",
   "strip_tilt": "Inclinación sobre su longitud (°)",
   "strip_upright": "Vertical",
+  "strip_rise": "Inclinación a lo largo (°)",
   "strip_upright_hint": "La tira queda de pie: su longitud sube desde la altura sobre el suelo, a lo largo de un marco de puerta, como columna de luz. La inclinación apoya una tira tumbada contra una pendiente (90° = su cara mira de lado).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",

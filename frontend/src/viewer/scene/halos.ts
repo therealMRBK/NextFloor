@@ -4,6 +4,7 @@ import { Color } from "three";
 import { DEG, GeoBuffer } from "../geo.ts";
 import { HANGING_LAMPS, LAMP_SIZE } from "./lamp-data.ts";
 import type { DeviceMarker, LampModel } from "./types.ts";
+import { stripPoint, stripRiseLift } from "./strip.ts";
 
 type Wall2d = { a: readonly [number, number]; b: readonly [number, number] };
 
@@ -113,7 +114,7 @@ export function addLampHalo(points: HaloPoints, lamp: DeviceMarker & { lamp: Lam
     for (const along of [-0.4, -0.13, 0.13, 0.4]) {
       // an upright strip glows up its length
       if (lamp.upright) add(lamp.x, base + width * (0.5 + along), lamp.z, 0.6);
-      else add(lamp.x + Math.cos(turn) * width * along, y, lamp.z + Math.sin(turn) * width * along, 0.6);
+      else add(...stripPoint(lamp.x, y + stripRiseLift(lamp.base, width, lamp.rise), lamp.z, turn, width, lamp.rise, along), 0.6);
     }
   } else if (lamp.lamp === "wall") add(lamp.x - Math.sin(turn) * (depth / 2 + 0.05), y, lamp.z + Math.cos(turn) * (depth / 2 + 0.05), 1);
   else add(lamp.x, y, lamp.z, 1);

@@ -104,6 +104,7 @@ function geometryFields(host: EditorHost, item: Furniture, actions: FurnitureAct
     ${isLamp(item.type) ? nothing : checkField(host, t("furn_mirror"), !!item.mirror, (mirror) => set({ mirror }), { wide: false, title: t("furn_mirror_hint") })}
     ${item.type === "led_strip"
       ? html`${numberField(host, t("strip_tilt"), item.tilt ?? 0, (v) => set({ tilt: Math.max(-90, Math.min(90, Math.round(v))) }), 5)}
+        ${item.upright ? nothing : numberField(host, t("strip_rise"), item.rise ?? 0, (v) => set({ rise: Math.max(-80, Math.min(80, Math.round(v))) }), 5)}
         ${checkField(host, t("strip_upright"), !!item.upright, (upright) => set({ upright }), { wide: false, title: t("strip_upright_hint") })}`
       : nothing}
     ${canLift(item) && floor

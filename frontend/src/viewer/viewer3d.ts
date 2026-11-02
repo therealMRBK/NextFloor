@@ -51,6 +51,7 @@ import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
+import { stripRiseLift } from "./scene/strip.ts";
 import { HouseShadow } from "./scene/house-shadow.ts";
 import { mergeHoles } from "../geometry/holes.ts";
 import type { Vec2 } from "../model.ts";
@@ -165,6 +166,8 @@ export interface DeviceMarker {
   /** LED strip: roll about its length (degrees) and standing upright (its length runs up from the base). */
   roll?: number;
   upright?: boolean;
+  /** LED strip: how steeply its length rises (degrees). */
+  rise?: number;
   /** Show the HTML marker (false: the 3D object alone stands for the device). */
   pin?: boolean;
   /** A placed device fixed against moving. */
@@ -1932,7 +1935,7 @@ export class NextFloorViewer {
     const shapeSig =
       this.wallMode +
       (this.lowQuality ? "L" : this.highQuality ? "H" : "M") +
-      lamps.map((d) => `${d.id},${d.lamp},${d.variant},${d.x},${d.z},${d.y},${d.rotation ?? 0},${d.roll ?? 0},${d.upright ? 1 : 0},${d.size?.join("/")},${d.base ?? 0},${d.pack ?? ""},${d.mirror ? 1 : 0},${d.ceiling ?? ""},${this.fanPhase(d)}`).join(";");
+      lamps.map((d) => `${d.id},${d.lamp},${d.variant},${d.x},${d.z},${d.y},${d.rotation ?? 0},${d.roll ?? 0},${d.upright ? 1 : 0},${d.rise ?? 0},${d.size?.join("/")},${d.base ?? 0},${d.pack ?? ""},${d.mirror ? 1 : 0},${d.ceiling ?? ""},${this.fanPhase(d)}`).join(";");
     const glows = lamps.map((d) => this.glowOf(d));
     const wedges = this.devices.filter((d) => d.floorId === fv.floor.id && d.wedge);
     const colorSig =
@@ -3286,7 +3289,7 @@ export function createViewer(host: HTMLElement, options?: ViewerOptions): NextFl
 /** Model of a lamp into a buffer (3D view and furniture previews); `H` is the ceiling height. */
 export function pushLampModel(
   buf: GeoBuffer,
-  d: Pick<DeviceMarker, "x" | "z" | "size" | "base" | "rotation" | "variant" | "roll" | "upright"> & { lamp: LampModel; phase?: number },
+  d: Pick<DeviceMarker, "x" | "z" | "size" | "base" | "rotation" | "variant" | "roll" | "upright" | "rise"> & { lamp: LampModel; phase?: number },
   H: number,
   shadeCol: number,
 ): void {
@@ -3410,20 +3413,23 @@ export function pushLampModel(
       // length it lies against a slope, standing upright it climbs from its mount height
       const t = Math.max(0.02, h);
       const y1 = d.base != null ? d.base + t : H - 0.04;
-      if (!d.roll && !d.upright) {
+      const rise = d.upright ? 0 : (d.rise ?? 0) * DEG;
+      if (!d.roll && !d.upright && !rise) {
         box(-w / 2, w / 2, -dd / 2, dd / 2, y1 - t, y1, shadeCol);
         break;
       }
       const roll = (d.roll ?? 0) * DEG;
       const cr = Math.cos(roll);
       const sr = Math.sin(roll);
-      const cy = d.upright ? base + w / 2 : y1 - t / 2;
+      const [ce, se] = [Math.cos(rise), Math.sin(rise)];
+      const cy = d.upright ? base + w / 2 : y1 - t / 2 + stripRiseLift(d.base, w, d.rise);
       // local: x along the length, y through the thickness, z across the depth
       const P = (lx: number, ly: number, lz: number): number[] => {
         let x = lx;
         let y = ly * cr - lz * sr;
         const z = ly * sr + lz * cr;
         if (d.upright) [x, y] = [-y, x];
+        else if (rise) [x, y] = [x * ce - y * se, x * se + y * ce];
         return [d.x + x * ca - z * sa, cy + y, d.z + x * sa + z * ca];
       };
       const c = [P(-w / 2, -t / 2, -dd / 2), P(w / 2, -t / 2, -dd / 2), P(w / 2, -t / 2, dd / 2), P(-w / 2, -t / 2, dd / 2), P(-w / 2, t / 2, -dd / 2), P(w / 2, t / 2, -dd / 2), P(w / 2, t / 2, dd / 2), P(-w / 2, t / 2, dd / 2)];

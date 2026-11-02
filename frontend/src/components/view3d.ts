@@ -1308,6 +1308,7 @@ export class NfView3d extends LitElement {
       mirror: !!f.mirror,
       roll: f.tilt ?? 0,
       upright: !!f.upright,
+      rise: f.rise ?? 0,
       size: [f.w, f.d, f.h],
       base,
       pickable: !!entity,

@@ -239,6 +239,8 @@ export interface Furniture extends LightEffectConfig {
   tilt?: number;
   /** LED strip: standing upright – its length runs up from the mount height (door frame, light column). */
   upright?: boolean;
+  /** LED strip: how steeply its length rises (°, -80 to 80), e.g. up a sloped ceiling or along a stair. Its low end sits at the mount height, or its high end under the ceiling. */
+  rise?: number;
   /** Screens: pictures shown while an entity is in a state (first match wins; "*" = any state). */
   pictures?: ScreenPicture[];
   /** Screens: what shows around a rule picture – a dark screen (default) or a white one (for dark logos). */

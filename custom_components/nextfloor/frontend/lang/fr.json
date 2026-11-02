@@ -923,6 +923,7 @@
  "rotation": "Rotation (°)",
  "strip_tilt": "Inclinaison autour de sa longueur (°)",
  "strip_upright": "Debout",
+ "strip_rise": "Pente sur la longueur (°)",
  "strip_upright_hint": "Le ruban est dressé : sa longueur part de la hauteur au-dessus du sol – le long d'un encadrement de porte, comme une colonne lumineuse. L'inclinaison plaque un ruban couché contre une pente (90° = sa face regarde sur le côté).",
  "rotate_left": "↺ 90°",
  "rotate_right": "↻ 90°",

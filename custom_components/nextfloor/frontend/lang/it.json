@@ -965,6 +965,7 @@
   "rotation": "Rotazione (°)",
   "strip_tilt": "Inclinazione lungo la sua lunghezza (°)",
   "strip_upright": "In verticale",
+  "strip_rise": "Pendenza lungo la lunghezza (°)",
   "strip_upright_hint": "La striscia sta in piedi: la sua lunghezza sale dall'altezza dal pavimento, lungo un telaio di porta, come colonna luminosa. L'inclinazione appoggia una striscia distesa contro una pendenza (90° = la faccia guarda di lato).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",

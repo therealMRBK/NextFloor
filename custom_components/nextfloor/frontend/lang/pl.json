@@ -965,6 +965,7 @@
   "rotation": "Obrót (°)",
   "strip_tilt": "Pochylenie wzdłuż długości (°)",
   "strip_upright": "Pionowo",
+  "strip_rise": "Nachylenie wzdłuż długości (°)",
   "strip_upright_hint": "Taśma stoi pionowo: jej długość biegnie w górę od wysokości nad podłogą – wzdłuż ościeżnicy, jako kolumna świetlna. Pochylenie kładzie leżącą taśmę na skosie (90° = przód skierowany w bok).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",

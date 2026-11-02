@@ -965,6 +965,7 @@
   "rotation": "Rotação (°)",
   "strip_tilt": "Inclinação sobre o comprimento (°)",
   "strip_upright": "Na vertical",
+  "strip_rise": "Inclinação ao longo do comprimento (°)",
   "strip_upright_hint": "A fita fica de pé: o seu comprimento sobe a partir da altura acima do chão, ao longo de um aro de porta, como coluna de luz. A inclinação encosta uma fita deitada a um declive (90° = a face fica de lado).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",

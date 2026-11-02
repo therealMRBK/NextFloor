@@ -965,6 +965,7 @@
   "rotation": "Rotation (°)",
   "strip_tilt": "Lutning kring längden (°)",
   "strip_upright": "Upprätt",
+  "strip_rise": "Lutning längs längden (°)",
   "strip_upright_hint": "Slingan står på högkant: dess längd går uppåt från höjden över golvet – längs ett dörrkarmen, som ljuspelare. Lutningen lägger en liggande slinga mot en sluttning (90° = framsidan pekar åt sidan).",
   "rotate_left": "↺ 90°",
   "rotate_right": "↻ 90°",
