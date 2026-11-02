@@ -24,18 +24,49 @@ export interface SectionFrame {
   at(u: number, v: number): Vec2;
 }
 
-type FrameInput = Rect & Pick<RoofSection, "axis" | "flip">;
+type FrameInput = Rect & Pick<RoofSection, "axis" | "flip"> & { rotation?: number | null };
+
+/** A section turned about the middle of its rectangle (a wing at an angle): the middle and the turn, or null when it stands straight. */
+function turnOf(s: Rect & { rotation?: number | null }): { cx: number; cz: number; c: number; sn: number } | null {
+  if (!s.rotation) return null;
+  const r = s.rotation * DEG;
+  return { cx: (s.x0 + s.x1) / 2, cz: (s.z0 + s.z1) / 2, c: Math.cos(r), sn: Math.sin(r) };
+}
+
+/** A point of the section's own (unturned) rectangle in the plan: turned clockwise about the middle by the section's rotation. */
+export function turnedPoint(s: Rect & { rotation?: number | null }, p: Vec2): Vec2 {
+  const t = turnOf(s);
+  if (!t) return p;
+  const [dx, dz] = [p[0] - t.cx, p[1] - t.cz];
+  return [t.cx + dx * t.c - dz * t.sn, t.cz + dx * t.sn + dz * t.c];
+}
+
+/** A plan point in the section's own (unturned) rectangle. */
+export function unturnedPoint(s: Rect & { rotation?: number | null }, x: number, z: number): Vec2 {
+  const t = turnOf(s);
+  if (!t) return [x, z];
+  const [dx, dz] = [x - t.cx, z - t.cz];
+  return [t.cx + dx * t.c + dz * t.sn, t.cz - dx * t.sn + dz * t.c];
+}
+
+/** The four corners of a section's rectangle in the plan, turned with it. */
+export function sectionCorners(s: Rect & { rotation?: number | null }, grow = 0): Vec2[] {
+  const { x0, x1, z0, z1 } = orderedRect(s);
+  return ([[x0 - grow, z0 - grow], [x1 + grow, z0 - grow], [x1 + grow, z1 + grow], [x0 - grow, z1 + grow]] as Vec2[]).map((p) => turnedPoint(s, p));
+}
 
 export function sectionFrame(s: FrameInput): SectionFrame {
   const { x0, x1, z0, z1 } = orderedRect(s);
+  const turn = (p: Vec2) => turnedPoint(s, p);
   // flipped: v counts from the high coordinate, so side a is the bottom (or right) side
-  if (s.axis === "x") return { u0: x0, u1: x1, w: z1 - z0, at: (u, v) => [u, s.flip ? z1 - v : z0 + v] };
-  return { u0: z0, u1: z1, w: x1 - x0, at: (u, v) => [s.flip ? x1 - v : x0 + v, u] };
+  if (s.axis === "x") return { u0: x0, u1: x1, w: z1 - z0, at: (u, v) => turn([u, s.flip ? z1 - v : z0 + v]) };
+  return { u0: z0, u1: z1, w: x1 - x0, at: (u, v) => turn([s.flip ? x1 - v : x0 + v, u]) };
 }
 
 /** A plan point as (u, v) in the section's frame: along the ridge and across from side a. */
-export function sectionUV(s: FrameInput, x: number, z: number): [number, number] {
+export function sectionUV(s: FrameInput, px: number, pz: number): [number, number] {
   const { x0, x1, z0, z1 } = orderedRect(s);
+  const [x, z] = unturnedPoint(s, px, pz);
   if (s.axis === "x") return [x, s.flip ? z1 - z : z - z0];
   return [z, s.flip ? x1 - x : x - x0];
 }

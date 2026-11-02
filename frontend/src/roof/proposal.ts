@@ -3,7 +3,7 @@
 
 import { pointInPolygon, type Building, type Floor, type Room, type RoofSection, type Vec2 } from "../model.ts";
 import { dormerParent } from "./dormers.ts";
-import { gradient, ridgeHeight, sectionFrame, sectionProfile, sectionUV } from "./frame.ts";
+import { gradient, ridgeHeight, sectionFrame, sectionProfile, sectionUV, unturnedPoint } from "./frame.ts";
 import { sectionGeometry, sectionHeightAt } from "./geometry.ts";
 
 /** Anything that carries roof sections: a building, or just its settings in a test. */
@@ -33,7 +33,9 @@ export function roofUnderAt(holder: RoofHolder, x: number, z: number): number | 
   for (const s of holder.settings.roof.sections ?? []) {
     if (s.open) continue;
     const [x0, x1, z0, z1] = [Math.min(s.x0, s.x1), Math.max(s.x0, s.x1), Math.min(s.z0, s.z1), Math.max(s.z0, s.z1)];
-    if (x < x0 - eps || x > x1 + eps || z < z0 - eps || z > z1 + eps) continue;
+    // a turned section: the point in its own rectangle
+    const [lx, lz] = unturnedPoint(s, x, z);
+    if (lx < x0 - eps || lx > x1 + eps || lz < z0 - eps || lz > z1 + eps) continue;
     // a free-shaped flat roof covers its polygon only
     if (s.points && s.points.length >= 3 && !pointInPolygon([x, z], s.points)) continue;
     const [u, v] = sectionUV(s, x, z);

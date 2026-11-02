@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { gableSection, near } from "./fixtures.ts";
-import { gradient, orderedRect, ridgeHeight, sectionFrame, sectionProfile, sectionUV } from "./frame.ts";
+import { gradient, orderedRect, ridgeHeight, sectionFrame, sectionProfile, sectionUV, turnedPoint } from "./frame.ts";
 
 test("pitches become gradients and are kept between 0° and 80°", () => {
   near(gradient(45), 1);
@@ -69,4 +69,14 @@ test("a mansard breaks into a steeper lower and a 30° upper slope and is contin
     last = p.y(v);
   }
   near(p.y(p.vr), p.rh, 1e-6);
+});
+
+test("a turned section maps its frame to the plan and back", () => {
+  const s = { x0: 0, z0: 0, x1: 8, z1: 4, axis: "x" as const, flip: false, rotation: 30 };
+  const f = sectionFrame(s);
+  const p = f.at(2, 1);
+  const [u, v] = sectionUV(s, p[0], p[1]);
+  assert.ok(Math.abs(u - 2) < 1e-9 && Math.abs(v - 1) < 1e-9);
+  assert.notDeepEqual(p, [2, 1], "it really turns");
+  assert.ok(Math.abs(turnedPoint(s, [4, 2])[0] - 4) < 1e-9, "about its middle");
 });

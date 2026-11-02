@@ -959,6 +959,7 @@
   "roof_pitch_short": "Helling (°)",
   "roof_height": "Hoogte (m)",
   "roof_base": "Bovenkant muren (m)",
+  "roof_rotation": "Draaiing (°)",
   "roof_on_floor": "Staat op verdieping",
   "roof_on_floor_hint": "Zet het vlak op de muurkoppen van deze verdieping; basis en goten bewegen mee. In de 3D-weergave hoort het dak bij deze verdieping.",
   "roof_base_hint": "Onder de plafondhoogte van de verdieping eronder eindigen de muren van die verdieping onder het dak: knieschotten bij de goten, topgevels tot de nok, binnenmuren afgesneden door de helling. Gestreepte lijnen in de plattegrond tonen waar 1,5 m en 2 m stahoogte overblijven.",

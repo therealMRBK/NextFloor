@@ -1,5 +1,6 @@
 // Roof sections as the editor makes them: a section drawn on the plan, a copy, and the sections' list helpers.
 
+import { sectionCorners } from "../../../roof/frame.ts";
 import { uid, type Building, type RoofSection, type Vec2 } from "../../../model.ts";
 import { polygonBox, wallTopUnder } from "../../../roof-sections.ts";
 
@@ -48,6 +49,7 @@ export const sectionNumber = (sections: readonly RoofSection[], id: string): num
 /** The outline of a flat roof section: its own free shape, or the corners of its rectangle. */
 export function roofOutline(s: RoofSection): Vec2[] {
   if (s.points && s.points.length >= 3) return s.points.map(([x, z]): Vec2 => [x, z]);
+  if (s.rotation) return sectionCorners(s);
   return [[s.x0, s.z0], [s.x1, s.z0], [s.x1, s.z1], [s.x0, s.z1]];
 }
 

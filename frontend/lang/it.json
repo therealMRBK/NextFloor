@@ -959,6 +959,7 @@
   "roof_pitch_short": "Pendenza (°)",
   "roof_height": "Altezza (m)",
   "roof_base": "Sommità dei muri (m)",
+  "roof_rotation": "Rotazione (°)",
   "roof_on_floor": "Poggia sul piano",
   "roof_on_floor_hint": "Appoggia la falda sulla sommità dei muri di questo piano; base e gronde si spostano con essa. Nella vista 3D il tetto appartiene a questo piano.",
   "roof_base_hint": "Sotto l'altezza del soffitto del piano inferiore, le pareti di quel piano finiscono sotto il tetto: muretti alle gronde, timpani fino al colmo, pareti interne tagliate dalla pendenza. Le linee tratteggiate nella planimetria mostrano dove restano 1,5 m e 2 m di altezza libera.",

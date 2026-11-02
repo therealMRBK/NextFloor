@@ -9,7 +9,7 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Topic | What it is about |
 |---|---|
 | Split levels | Floors that overlap in height (a garage half a storey lower) shown together in the editor, conflicts marked in red; a room a few steps higher or lower than its floor |
-| Roofs | Turned roof sections (a wing at an angle); windows in dormers; windows with a slanted top under the slope; a roof flush against a wall; gable and hip roofs over free shapes |
+| Roofs | Windows in dormers; windows with a slanted top under the slope; a roof flush against a wall; gable and hip roofs over free shapes |
 | Trees in the way | Trees and tall plants that fade while they stand between the camera and the house |
 | Furniture studio in the editor | The furniture builder's templates right inside the editor (cabinets in any width with drawers and doors, shelves, lamps, devices with a display) |
 | More imports | Apple RoomPlan, DXF, Valetudo maps and glTF scenes |
@@ -31,7 +31,7 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Thema | Worum es geht |
 |---|---|
 | Split-Level | Etagen, die sich in der Höhe überschneiden (eine Garage ein halbes Geschoss tiefer), im Editor gemeinsam sehen, Konflikte rot markiert; ein Raum ein paar Stufen höher oder tiefer als seine Etage |
-| Dächer | Gedrehte Dachabschnitte (ein Flügel im Winkel); Fenster in Gauben; Fenster mit schräger Oberkante unter der Dachschräge; Dach bündig an eine Wand; Sattel- und Walmdächer über freien Formen |
+| Dächer | Fenster in Gauben; Fenster mit schräger Oberkante unter der Dachschräge; Dach bündig an eine Wand; Sattel- und Walmdächer über freien Formen |
 | Bäume im Weg | Bäume und hohe Pflanzen, die ausblenden, solange sie zwischen Kamera und Haus stehen |
 | Möbel-Studio im Editor | Die Vorlagen der Möbel-Werkstatt direkt im Editor (Schränke in jeder Breite mit Schubladen und Türen, Regale, Lampen, Geräte mit Display) |
 | Weitere Importe | Apple RoomPlan, DXF, Valetudo-Karten und glTF-Szenen |

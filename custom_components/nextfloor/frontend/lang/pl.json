@@ -959,6 +959,7 @@
   "roof_pitch_short": "Nachylenie (°)",
   "roof_height": "Wysokość (m)",
   "roof_base": "Wierzch ścian (m)",
+  "roof_rotation": "Obrót (°)",
   "roof_on_floor": "Stoi na piętrze",
   "roof_on_floor_hint": "Stawia połać na koronach ścian tego piętra; podstawa i okapy przesuwają się razem. W widoku 3D dach należy do tego piętra.",
   "roof_base_hint": "Poniżej wysokości sufitu piętra pod spodem ściany tego piętra kończą się pod dachem: ścianki kolankowe przy okapach, szczyty do kalenicy, ściany wewnętrzne ścięte spadkiem. Przerywane linie w planie pokazują, gdzie zostaje 1,5 m i 2 m wysokości.",

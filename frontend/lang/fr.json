@@ -911,6 +911,7 @@
  "roof_pitch_short": "Pente (°)",
  "roof_height": "Hauteur (m)",
  "roof_base": "Haut des murs (m)",
+ "roof_rotation": "Rotation (°)",
  "roof_on_floor": "Posé sur l'étage",
  "roof_on_floor_hint": "Pose la section sur le haut des murs de cet étage ; la base et les avant-toits suivent. Dans la vue 3D, le toit appartient à cet étage.",
  "roof_base_hint": "Sous la hauteur sous plafond de l'étage inférieur, les murs de cet étage s'arrêtent sous le toit : murs de comble aux avant-toits, pignons jusqu'au faîtage, murs intérieurs coupés par la pente. Les lignes en pointillés du plan montrent où il reste 1,5 m et 2 m de hauteur libre.",

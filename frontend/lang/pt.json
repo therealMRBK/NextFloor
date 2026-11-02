@@ -959,6 +959,7 @@
   "roof_pitch_short": "Inclinação (°)",
   "roof_height": "Altura (m)",
   "roof_base": "Topo das paredes (m)",
+  "roof_rotation": "Rotação (°)",
   "roof_on_floor": "Assente no piso",
   "roof_on_floor_hint": "Assenta a água no topo das paredes deste piso; base e beirais acompanham. Na vista 3D o telhado pertence a este piso.",
   "roof_base_hint": "Abaixo do pé-direito do piso inferior, as paredes desse piso terminam sob o telhado: muretes nos beirais, empenas até à cumeeira, paredes interiores cortadas pela inclinação. Linhas tracejadas na planta mostram onde restam 1,5 m e 2 m de altura livre.",

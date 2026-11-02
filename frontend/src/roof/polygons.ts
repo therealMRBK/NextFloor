@@ -1,5 +1,6 @@
 // Outlines for roofs: growing a polygon outwards and finding the outline of a floor's outer walls.
 
+import { sectionCorners } from "./frame.ts";
 import { generateWalls } from "../geometry/walls.ts";
 import { polygonArea, type FreeWall, type Room, type RoofSection, type Vec2 } from "../model.ts";
 
@@ -37,8 +38,9 @@ export function offsetPolygon(points: readonly Vec2[], d: number): Vec2[] {
 }
 
 /** The footprint of a section including its overhang: its free polygon, or its rectangle. */
-export function sectionPolygon(s: Pick<RoofSection, "x0" | "z0" | "x1" | "z1" | "points">, overhang: number): Vec2[] {
+export function sectionPolygon(s: Pick<RoofSection, "x0" | "z0" | "x1" | "z1" | "points" | "rotation">, overhang: number): Vec2[] {
   if (s.points && s.points.length >= 3) return offsetPolygon(s.points, overhang);
+  if (s.rotation) return sectionCorners(s, overhang);
   const x0 = Math.min(s.x0, s.x1) - overhang;
   const x1 = Math.max(s.x0, s.x1) + overhang;
   const z0 = Math.min(s.z0, s.z1) - overhang;

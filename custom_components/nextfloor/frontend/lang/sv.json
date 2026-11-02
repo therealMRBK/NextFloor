@@ -959,6 +959,7 @@
   "roof_pitch_short": "Lutning (°)",
   "roof_height": "Höjd (m)",
   "roof_base": "Väggkrön (m)",
+  "roof_rotation": "Vridning (°)",
   "roof_on_floor": "Står på våning",
   "roof_on_floor_hint": "Sätter takfallet på den här våningens väggkrön; bas och takfötter följer med. I 3D-vyn hör taket till den här våningen.",
   "roof_base_hint": "Under takhöjden på våningen under slutar den våningens väggar under taket: knäväggar vid takfötterna, gavlar upp till nocken, innerväggar avskurna av lutningen. Streckade linjer i planritningen visar var 1,5 m och 2 m takhöjd återstår.",

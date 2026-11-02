@@ -1,6 +1,7 @@
 // What the roof and energy tools draw over the plan: roof sections with their ridges and handles, solar modules, roof windows,
 // the head-room lines of an attic floor, and the markers of the energy devices.
 
+import { sectionCorners } from "../../../roof/frame.ts";
 import { nothing, svg, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, type EnergyRoute, type Floor, type RoofSection, type RoutePoint, type Vec2 } from "../../../model.ts";
@@ -52,7 +53,7 @@ export function roofSectionsLayer(ctx: CanvasContext, roof: RoofController): Lay
     const flatRoof = section.shape === "flat" || section.shape === "parapet";
     const [x0, x1, z0, z1] = [Math.min(section.x0, section.x1), Math.max(section.x0, section.x1), Math.min(section.z0, section.z1), Math.max(section.z0, section.z1)];
     // a flat roof can be reshaped: a "+" on every edge adds a corner (a rectangle becomes a free shape)
-    const ring: Vec2[] = custom ?? [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+    const ring: Vec2[] = custom ?? (section.rotation ? sectionCorners(section) : [[x0, z0], [x1, z0], [x1, z1], [x0, z1]]);
     const plusses = movable && flatRoof ? ring.map((p, i) => edgePlus(ctx, p, ring[(i + 1) % ring.length], "roof", section.id, i)) : nothing;
     const handles = !movable
       ? nothing

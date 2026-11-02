@@ -59,6 +59,7 @@ function sectionForm(deps: RoofPanelDeps, section: RoofSection): TemplateResult 
             ${metres(`${t("roof_pitch_short")} ${pent ? "" : sideA}`, section.pitch_a, (v) => set({ pitch_a: Math.min(75, v) }), 1)}
             ${pent ? nothing : metres(`${t("roof_pitch_short")} ${sideB}`, section.pitch_b, (v) => set({ pitch_b: Math.min(75, v) }), 1)}`}
         ${metres(t("roof_base"), section.base, (v) => set({ base: v }))}
+        ${section.points?.length ? nothing : numberField(host, t("roof_rotation"), section.rotation ?? 0, (v) => set({ rotation: (((Math.round(v) % 360) + 540) % 360) - 180 || null }), 1)}
         ${selectField(host, t("roof_on_floor"), onFloor ?? "", floors.map((f): [string, string] => [f.id, f.name]), moveToFloor, { title: t("roof_on_floor_hint") })}
         ${hint(t("roof_base_hint"), "nf-wide")}
         ${metres(t("roof_overhang"), section.overhang ?? host.doc.settings.roof.overhang, (v) => set({ overhang: Math.min(2, v) }))}

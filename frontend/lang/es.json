@@ -959,6 +959,7 @@
   "roof_pitch_short": "Inclinación (°)",
   "roof_height": "Altura (m)",
   "roof_base": "Coronación de muros (m)",
+  "roof_rotation": "Giro (°)",
   "roof_on_floor": "Sobre la planta",
   "roof_on_floor_hint": "Coloca la sección sobre la coronación de los muros de esta planta; base y aleros se mueven con ella. En la vista 3D el tejado pertenece a esta planta.",
   "roof_base_hint": "Por debajo de la altura del techo de la planta inferior, las paredes de esa planta terminan bajo el tejado: muretes en los aleros, hastiales hasta la cumbrera, paredes interiores cortadas por la pendiente. Las líneas discontinuas del plano muestran dónde quedan 1,5 m y 2 m de altura libre.",
