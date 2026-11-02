@@ -420,8 +420,8 @@
  "card_weather_density": "Quantité de pluie et de neige",
  "card_weather_density_hint": "Moins de gouttes et de flocons que la météo n'en annonce ; les nuages, le brouillard et les éclairs restent",
  "rain_warning": "Alerte : fenêtre ouverte sous la pluie",
- "sun_patches": "Soleil à travers les fenêtres",
- "sun_patches_hint": "Avec le nord défini, la lumière du soleil de sun.sun traverse les fenêtres en taches lumineuses sur le sol. Décochez pour garder le sol sans taches de soleil.",
+ "sun_patches": "Soleil et ombres",
+ "sun_patches_hint": "Avec le nord défini, la lumière du soleil de sun.sun traverse les fenêtres en taches lumineuses sur le sol, et la maison projette son ombre sur le terrain. Décochez pour garder sol et terrain sans taches de soleil ni ombres.",
  "weather_effect_rain": "Pluie",
  "weather_effect_snow": "Neige",
  "weather_effect_fog": "Brouillard (grise la scène)",
@@ -2128,5 +2128,7 @@
  "arc_bulge": "Courbure (m)",
  "arc_bulge_hint": "De combien le milieu du mur se bombe : positif vers l'extérieur, négatif vers la pièce.",
  "arc_apply": "Courber",
- "arc_too_wide": "Une porte ou une fenêtre de ce mur est trop large pour cette courbe. Rends la courbe plus plate ou l'ouverture plus étroite."
+ "arc_too_wide": "Une porte ou une fenêtre de ce mur est trop large pour cette courbe. Rends la courbe plus plate ou l'ouverture plus étroite.",
+ "time_of_day": "Heure du jour",
+ "time_of_day_hint": "Montre soleil, lumière, ombres et apparence à une autre heure d'aujourd'hui. Touchez à nouveau pour revenir à maintenant."
 }

@@ -434,8 +434,8 @@
   "card_weather_density": "Cantidad de lluvia y nieve",
   "card_weather_density_hint": "Menos gotas y copos de los que indica el tiempo; nubes, niebla y rayos se mantienen",
   "rain_warning": "Aviso: ventana abierta mientras llueve",
-  "sun_patches": "Luz del sol por las ventanas",
-  "sun_patches_hint": "Con el norte definido, la luz de sun.sun entra por las ventanas como manchas brillantes en el suelo. Desmárcalo para dejar el suelo sin manchas de sol.",
+  "sun_patches": "Sol y sombras",
+  "sun_patches_hint": "Con el norte definido, la luz del sol de sun.sun entra por las ventanas como manchas claras en el suelo y la casa proyecta su sombra sobre la parcela. Desmárcalo para dejar suelo y parcela sin manchas de sol ni sombras.",
   "weather_effect_rain": "Lluvia",
   "weather_effect_snow": "Nieve",
   "weather_effect_fog": "Niebla (agrisa la escena)",
@@ -2128,5 +2128,7 @@
   "arc_bulge": "Curvatura (m)",
   "arc_bulge_hint": "Cuánto se curva el centro de la pared: positivo hacia fuera, negativo hacia la estancia.",
   "arc_apply": "Curvar",
-  "arc_too_wide": "Una puerta o ventana de esta pared es demasiado ancha para esta curva. Haz la curva más plana o la abertura más estrecha."
+  "arc_too_wide": "Una puerta o ventana de esta pared es demasiado ancha para esta curva. Haz la curva más plana o la abertura más estrecha.",
+  "time_of_day": "Hora del día",
+  "time_of_day_hint": "Muestra sol, luz, sombras y aspecto a otra hora de hoy. Toca de nuevo para volver a ahora."
 }

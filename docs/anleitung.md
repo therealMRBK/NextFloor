@@ -130,7 +130,8 @@ In den **Einstellungen**:
 
 Eingebaut und kostenlos; sie brauchen nur die Geräte, die du schon hast.
 
-- **Wetter am Haus:** Regen, Schnee, Hagel, Schneeregen, Nebel, Wolken mit Schatten, Blitze, Sonne und Mond, gesteuert von einer Wetter-Entity und dem Kompass.
+- **Wetter am Haus:** Regen, Schnee, Hagel, Schneeregen, Nebel, Wolken mit Schatten, Blitze, Sonne und Mond, gesteuert von einer Wetter-Entity und dem Kompass. Nachts kommen bei klarem Himmel Sterne heraus; bei Schnee liegt der Boden weiß, bei Regen wird er nass.
+- **Sonne und Schatten:** Das Haus wirft seinen Schatten nach dem echten Sonnenstand (Einstellung *Sonnenlicht und Schatten*, auf *Tablet* aus). Der Schalter **☀ Tageszeit** öffnet einen Regler über die Stunden des Tages: Sonnenflecken, Schatten, Himmel und der Look *Auto* folgen der gewählten Uhrzeit; erneut tippen zeigt wieder das Jetzt.
 - **Stromfluss:** Teilchen von den Solarmodulen zu Wechselrichter, Haus, Akku und Netz; eine Glaskarte mit Bilanz und Autarkie.
 - **Fernseher:** was läuft, in der Farbe der App, dazu Ambilight.
 - **Klang:** eine Karte über jedem spielenden Lautsprecher oder Fernseher mit Cover und Bedienung; Schallringe in der Farbe der App; Multiroom-Gruppen verbindet ein Faden.
