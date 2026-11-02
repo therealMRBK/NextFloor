@@ -179,3 +179,11 @@ def test_opening_blinds() -> None:
     assert (o["cover2"], o["blind"], o["my_position"]) == ("cover.right", "venetian", 40)
     with pytest.raises(vol.Invalid):
         OPENING_SCHEMA({**base, "blind": "curtain"})
+
+
+def test_pin_offsets() -> None:
+    placed = PLACEMENT_SCHEMA({"entity_id": "light.a", "x": 1, "z": 1, "y": None, "pin_offset": {"x": 0.4, "y": -0.2}})
+    assert placed["pin_offset"] == {"x": 0.4, "y": -0.2}
+    assert FURNITURE_SCHEMA({**FURN, "pin_offset": {"z": 1}})["pin_offset"] == {"z": 1.0}
+    with pytest.raises(vol.Invalid):
+        PLACEMENT_SCHEMA({"entity_id": "light.a", "x": 1, "z": 1, "y": None, "pin_offset": {"x": 9}})

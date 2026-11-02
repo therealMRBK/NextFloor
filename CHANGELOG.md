@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Move a pin by hand**: when devices stand close together and their pins cover each other, *Move the pin* in the device's or furniture's form pushes the pin aside or up (in metres) while the device stays where it is.
 - **Small tablets and phones**: a 🔍 zoom in the view options (card option `zoom`) brings the fitted views closer so the house looks larger on a small tablet; *🎥 Keep camera* (card option `keep_camera`) keeps the camera's side, height and distance when you switch floors; the room panel takes a little more of the width on small landscape tablets; and on a phone the editor's tools are one dropdown instead of a row of eleven buttons.
 - **Favourites first**: the star menu can stand open from the start and a size larger (*★ Menu open* in the view options, card option `central_open`) for a wall tablet that mostly runs scenes; own buttons light up while their entity is on (the one they open or switch, or one you name); and the room panel lists the room's scenes at the top.
 - **Speakers and TVs get their own quick menu**: a tap on one opens play/pause, back and next, the volume, its sources (inputs, apps, Spotify Connect …) and the stations and playlists of *House → Presets*. A preset can now be kept to some speakers – the kitchen radio station on the kitchen speaker only.

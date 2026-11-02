@@ -169,6 +169,8 @@ export interface Furniture extends LightEffectConfig {
   locked?: boolean | null;
   /** Shown only while an entity is in a state (seasonal decoration behind a helper); null = always. */
   show_when?: ShowWhen | null;
+  /** Its pin moved by hand (m in the plan and up), for pieces that stand close together. */
+  pin_offset?: PinOffset | null;
   id: string;
   type: string;
   x: number;
@@ -314,6 +316,15 @@ export interface Placement extends LightEffectConfig {
   plugin?: Record<string, Record<string, string | number | boolean>> | null;
   /** Belongs to Outside: never to the room under it (a weather station on the roof), listed in the Outside panel. */
   outside?: boolean;
+  /** Its pin moved by hand from where it would stand (m in the plan and up), so pins of devices close together do not cover each other. */
+  pin_offset?: PinOffset | null;
+}
+
+/** A pin moved by hand: metres along x and z of the plan, and up. */
+export interface PinOffset {
+  x?: number;
+  z?: number;
+  y?: number;
 }
 
 export interface Background {

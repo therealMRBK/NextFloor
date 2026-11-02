@@ -5,7 +5,7 @@ import { html, nothing, type TemplateResult } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { entityName } from "../../devices.ts";
 import type { I18nKey } from "../../i18n.ts";
-import { MARKER_SHOWS, type MarkerShow } from "../../model.ts";
+import { MARKER_SHOWS, type MarkerShow, type PinOffset } from "../../model.ts";
 import type { EntityOption } from "./entities.ts";
 import type { EditorHost } from "./host.ts";
 import { pluginMdiIcon } from "../../plugins/registry.ts";
@@ -135,6 +135,23 @@ export function markerField(host: EditorHost, value: MarkerShow | null, onChange
       ${MARKER_SHOWS.map((m) => html`<option value=${m} ?selected=${m === value}>${host.t(`marker_show_${m}` as I18nKey)}</option>`)}
     </select>
   </label>`;
+}
+
+/** Moving a pin by hand (devices close together): metres along x and z and up, folded until used. */
+export function pinShiftField(host: EditorHost, value: PinOffset | null | undefined, onChange: (v: PinOffset | null) => void): TemplateResult {
+  const v = value ?? {};
+  const set = (key: keyof PinOffset) => (n: number) => {
+    const next = { ...v, [key]: Math.round(Math.max(-5, Math.min(5, n)) * 100) / 100 };
+    onChange(next.x || next.z || next.y ? next : null);
+  };
+  return html`<details class="nf-wide nf-pin-shift" ?open=${!!value}>
+    <summary>${host.t("pin_shift")}</summary>
+    <div class="nf-form">
+      ${numberField(host, "↔ x", v.x ?? 0, set("x"), 0.05)} ${numberField(host, "↕ z", v.z ?? 0, set("z"), 0.05)} ${numberField(host, host.t("pin_shift_up"), v.y ?? 0, set("y"), 0.05)}
+      ${value ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => onChange(null)}>${host.t("height_auto")}</button>` : nothing}
+      <p class="nf-sub nf-wide">${host.t("pin_shift_hint")}</p>
+    </div>
+  </details>`;
 }
 
 /** A row of buttons at the bottom of a form. */

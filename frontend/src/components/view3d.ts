@@ -84,7 +84,7 @@ import { fixtureGlow } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage } from "../api.ts";
-import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, pointInPolygon, surfaceHeight, type Building, type Furniture, type StartView } from "../model.ts";
+import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, pointInPolygon, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
@@ -779,8 +779,18 @@ export class NfView3d extends LitElement {
     this.confirmSet = confirmEntities(hass, b.floors);
     // under NextFloor's cards (a playing speaker, a car in its spot) the device's own pin steps aside
     const carded = new Set(this.liveCardsOn ? this._liveCards.flatMap((c) => (c.kind === "media" ? [c.media.entity] : c.kind === "car" ? [c.spot] : [])) : []);
+    // pins moved by hand (devices that stand close together): shifted in the plan and in height; lamps keep theirs at the lamp
+    const shifts = new Map<string, NonNullable<Placement["pin_offset"]>>();
+    for (const floor of b.floors) {
+      for (const p of floor.placements) if (p.pin_offset) shifts.set(`${floor.id}:${p.entity_id}`, p.pin_offset);
+      for (const f of floor.furniture) if (f.pin_offset) shifts.set(`f:${f.id}`, f.pin_offset);
+    }
+    const shifted = <T extends DeviceMarker>(m: T): T => {
+      const s = m.lamp ? undefined : (m.furnitureId ? shifts.get(`f:${m.furnitureId}`) : undefined) ?? shifts.get(`${m.floorId}:${m.id}`);
+      return s ? { ...m, x: m.x + (s.x ?? 0), z: m.z + (s.z ?? 0), y: m.y + (s.y ?? 0) } : m;
+    };
     v.setDevices([
-      ...[...deviceMarkers, ...furniture.markers].map((m) => {
+      ...[...deviceMarkers, ...furniture.markers].map(shifted).map((m) => {
         // "without watts" drops the power badge (a plug shows only on / off)
         const power = m.show === "no_power" || ("energyDevice" in m && m.energyDevice) ? null : (byDevice.get(m.id) ?? null);
         // at night (kiosk) colour effects rest

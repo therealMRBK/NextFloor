@@ -7,7 +7,7 @@ import type { I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, isLamp, type Furniture } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
 import { entityOptions, isBinary, isNumeric, isPowerSensor } from "../entities.ts";
-import { checkField, entityField, glowField, hint, iconField, markerField, numberField, selectField } from "../fields.ts";
+import { checkField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
@@ -200,7 +200,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
     ${item.type === "wallbox" ? linkBlock(entityField(host, t("furn_wallbox_status"), item.status ?? null, undefined, kindOptions((id) => isBinary(id) || isNumeric(id)), set("status"))) : nothing}
     ${!lamp || item.entity
       ? html`${checkField(host, t("device_confirm"), !!item.confirm, (on) => actions.update({ confirm: on }), { title: t("device_confirm_hint") })}
-        <div class="nf-form">${markerField(host, item.marker ?? null, (v) => actions.update({ marker: v }))}${iconField(host, item.icon, (v) => actions.update({ icon: v }))}</div>`
+        <div class="nf-form">${markerField(host, item.marker ?? null, (v) => actions.update({ marker: v }))}${iconField(host, item.icon, (v) => actions.update({ icon: v }))}${lamp ? nothing : pinShiftField(host, item.pin_offset, (v) => actions.update({ pin_offset: v }))}</div>`
       : nothing}
     ${item.type === "robot_vacuum"
       ? linkBlock(entityField(host, t("furn_robot_room"), item.room_sensor ?? null, robotRoomSensor(hass, furnitureEntities(hass, host.doc.floors).get(item.id)?.entity ?? null, null), kindOptions(isNumeric), (v) => actions.update({ room_sensor: v })))

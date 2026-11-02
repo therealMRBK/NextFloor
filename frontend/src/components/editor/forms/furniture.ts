@@ -6,7 +6,7 @@ import { holeInRoom } from "../../../geometry/holes.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, canLift, uid, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
 import { hasMovingParts, hasPicture, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
-import { checkField, entityField, hint, iconField, markerField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, entityField, hint, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
 import { storeImage } from "../../../api.ts";
 import { readPictureInBrowser } from "../background-tool.ts";
@@ -162,7 +162,7 @@ function tapField(host: EditorHost, item: Furniture, actions: FurnitureActions):
       : nothing}
     ${tap && (tap.action === "service" || tap.action === "fire_dom_event") ? dataField(host, tap, (data) => set({ data })) : nothing}
     ${tap && !isElectric(item.type) && !packItem(item.type)?.gangs
-      ? html`${markerField(host, item.marker ?? null, (v) => actions.update({ marker: v }))}${iconField(host, item.icon, (v) => actions.update({ icon: v }))}`
+      ? html`${markerField(host, item.marker ?? null, (v) => actions.update({ marker: v }))}${iconField(host, item.icon, (v) => actions.update({ icon: v }))}${pinShiftField(host, item.pin_offset, (v) => actions.update({ pin_offset: v }))}`
       : nothing}
   </div>`;
 }

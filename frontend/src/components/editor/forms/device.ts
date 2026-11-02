@@ -7,7 +7,7 @@ import { iconPath } from "../../../icons.ts";
 import { ceilingAt, FURNITURE_TYPES, isLamp, type LampMount, type Placement } from "../../../model.ts";
 import { packItemLabel, packLabel } from "../../../furniture-names.ts";
 import { isClimateFurniture, isElectric, isPackType, packType, type FurniturePack } from "../../../packs.ts";
-import { checkField, deviceIcon, glowField, iconField, markerField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, deviceIcon, glowField, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { pluginDeviceSettings, pluginText, settingsWithDefaults } from "../../../plugins/registry.ts";
@@ -104,6 +104,7 @@ export function renderDeviceForm(host: EditorHost, placed: Placement, actions: D
       ${kind && TOGGLE_KINDS.has(kind) ? checkField(host, t("device_confirm"), !!placed.confirm, (on) => set({ confirm: on }), { title: t("device_confirm_hint") }) : nothing}
       ${checkField(host, t("device_outside"), !!placed.outside, (on) => set({ outside: on || undefined }), { title: t("device_outside_hint") })}
       ${markerField(host, placed.marker ?? null, (v) => set({ marker: v }))}
+      ${pinShiftField(host, placed.pin_offset, (v) => set({ pin_offset: v }))}
       ${textField(host, t("device_name"), placed.name ?? "", (v) => set({ name: v || null }), { wide: true, maxlength: 60, title: t("device_name_hint"), placeholder: entityName(host.hass, placed.entity_id) })}
       ${placed.name ? checkField(host, t("show_name"), !!placed.show_name, (on) => set({ show_name: on || undefined })) : nothing}
       ${iconField(host, placed.icon, (v) => set({ icon: v }))}

@@ -232,6 +232,12 @@ _STAIR_SCHEMA = vol.Schema(
     }
 )
 
+# a pin moved by hand (m along x and z, and up)
+_PIN_OFFSET = vol.Any(
+    None,
+    vol.Schema({vol.Optional(k): vol.All(vol.Coerce(float), vol.Range(min=-5, max=5)) for k in ("x", "y", "z")}),
+)
+
 FURNITURE_SCHEMA = vol.Schema(
     {
         vol.Required("id"): _ID,
@@ -334,6 +340,7 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("picture"): vol.Any(None, vol.All(str, vol.Length(max=500))),
         vol.Optional("picture_border"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=40))),
         vol.Optional("picture_fit"): vol.Any(None, vol.In(["cover", "contain"])),
+        vol.Optional("pin_offset"): _PIN_OFFSET,
         # shown only while an entity is in a state (seasonal decoration behind a helper)
         vol.Optional("show_when"): vol.Any(
             None,
@@ -379,6 +386,8 @@ PLACEMENT_SCHEMA = vol.Schema(
         # ask before switching this device from the 3D view, the quick menu or the room panel
         # belongs to Outside, not to the room under it (a weather station on the roof)
         vol.Optional("outside"): bool,
+        # its pin moved by hand
+        vol.Optional("pin_offset"): _PIN_OFFSET,
         vol.Optional("confirm", default=False): bool,
         # its marker in 3D: None = automatic, always, without watts, or hidden
         vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
