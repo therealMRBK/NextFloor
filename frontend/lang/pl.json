@@ -1141,6 +1141,8 @@
   "furn_robot_vacuum": "Robot sprzątający",
   "furn_entity_vacuum": "Robot sprzątający",
   "furn_entity_mower": "Robot koszący",
+  "pet_room_sensor": "Czujnik pomieszczenia zwierzęcia (opcjonalnie)",
+  "pet_room_hint": "Czujnik podający pomieszczenie, w którym jest zwierzę – Bermuda lub ESPresense z brelokiem na obroży: w 3D chodzi wtedy po tym pomieszczeniu.",
   "furn_entity_water": "Zawór lub przełącznik",
   "fridge_temp": "Temperatura chłodziarki",
   "freezer_temp": "Temperatura zamrażarki",

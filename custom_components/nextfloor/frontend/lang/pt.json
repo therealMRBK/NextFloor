@@ -1141,6 +1141,8 @@
   "furn_robot_vacuum": "Robô aspirador",
   "furn_entity_vacuum": "Robô aspirador",
   "furn_entity_mower": "Robô corta-relva",
+  "pet_room_sensor": "Sensor de divisão do animal (opcional)",
+  "pet_room_hint": "Um sensor que diz a divisão onde o animal está – Bermuda ou ESPresense com uma etiqueta na coleira: em 3D passeia por essa divisão.",
   "furn_entity_water": "Válvula ou interruptor",
   "fridge_temp": "Temperatura do frigorífico",
   "freezer_temp": "Temperatura do congelador",

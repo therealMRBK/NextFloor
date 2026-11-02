@@ -1141,6 +1141,8 @@
   "furn_robot_vacuum": "Robotdammsugare",
   "furn_entity_vacuum": "Robotdammsugare",
   "furn_entity_mower": "Robotgräsklippare",
+  "pet_room_sensor": "Djurets rumssensor (valfritt)",
+  "pet_room_hint": "En sensor som anger rummet djuret är i – Bermuda eller ESPresense med en tagg på halsbandet: i 3D strövar det då i det rummet.",
   "furn_entity_water": "Ventil eller brytare",
   "fridge_temp": "Kylens temperatur",
   "freezer_temp": "Frysens temperatur",

@@ -1141,6 +1141,8 @@
   "furn_robot_vacuum": "Robotstofzuiger",
   "furn_entity_vacuum": "Robotstofzuiger",
   "furn_entity_mower": "Robotmaaier",
+  "pet_room_sensor": "Kamersensor van het dier (optioneel)",
+  "pet_room_hint": "Een sensor die de kamer noemt waar het dier is – Bermuda of ESPresense met een tag aan de halsband: in 3D loopt het dan in die kamer rond.",
   "furn_entity_water": "Klep of schakelaar",
   "fridge_temp": "Temperatuur koelkast",
   "freezer_temp": "Temperatuur vriezer",

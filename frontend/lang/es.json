@@ -1141,6 +1141,8 @@
   "furn_robot_vacuum": "Robot aspirador",
   "furn_entity_vacuum": "Robot aspirador",
   "furn_entity_mower": "Robot cortacésped",
+  "pet_room_sensor": "Sensor de estancia de la mascota (opcional)",
+  "pet_room_hint": "Un sensor que nombra la estancia en la que está la mascota – Bermuda o ESPresense con una etiqueta en el collar: en 3D pasea por esa estancia.",
   "furn_entity_water": "Válvula o interruptor",
   "fridge_temp": "Temperatura del frigorífico",
   "freezer_temp": "Temperatura del congelador",

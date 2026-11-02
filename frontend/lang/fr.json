@@ -1097,6 +1097,8 @@
  "furn_robot_vacuum": "Robot aspirateur",
  "furn_entity_vacuum": "Robot aspirateur",
  "furn_entity_mower": "Robot tondeuse",
+ "pet_room_sensor": "Capteur de pièce de l'animal (facultatif)",
+ "pet_room_hint": "Un capteur qui nomme la pièce où se trouve l'animal – Bermuda ou ESPresense avec une balise au collier : en 3D il se promène alors dans cette pièce.",
  "furn_entity_water": "Vanne ou interrupteur",
  "fridge_temp": "Température du réfrigérateur",
  "freezer_temp": "Température du congélateur",

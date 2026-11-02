@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Pets where they really are**: a pet from the packs can follow a room sensor (Bermuda, ESPresense or any sensor naming a room, with a tag on its collar) – it appears in the room the sensor names and roams it there.
 - **Light designer**: set a room's lamps as you like and press *＋ Save mood* in its panel – the mood is kept with the plan, a tap on ✨ sets it again, and *→* carries it over to another room's lamps (the first lamp takes the first setting …).
 - **Layers**: a floor can be marked as a *Layer* – all the trees, the decoration, the garden furniture – and the 3D view shows an eye for it at the top that shows or hides it with its pins, remembered on each device.
 - **Lamps under the roof slope**: a ceiling lamp, fan or hanging item in an attic room gets *📐 Up to the roof slope* in its form, which hangs it from the underside of the roof right above it; its height stays adjustable.

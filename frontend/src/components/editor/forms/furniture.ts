@@ -239,6 +239,9 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
     ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
     ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
     ${hasPicture(item.type) ? pictureFields(host, item, actions) : nothing}
+    ${packItem(item.type)?.pet
+      ? html`<div class="nf-form nf-links">${entityField(host, host.t("pet_room_sensor"), item.room_sensor ?? null, undefined, entityOptions(host.hass, (id) => /^(sensor|device_tracker|input_select|select)\./.test(id)), (v) => actions.update({ room_sensor: v && v !== "none" ? v : null }))}${hint(host.t("pet_room_hint"), "nf-wide")}</div>`
+      : nothing}
     ${householdKind(item.type) ? careLink(host, item, householdKind(item.type)!, actions) : nothing} ${hasMovingParts(packItem(item.type)) ? coverLink(host, item, actions) : nothing} ${item.type === "parking" ? parkingForm(host, item, actions.packs, actions) : nothing}
     ${item.type.startsWith("pack:nextfloor.fahrzeuge:") && host.admin
       ? html`<section>${hint(host.t("vehicle_to_spot_hint"))}<div class="nf-actions"><button class="nf-btn nf-primary" @click=${() => actions.toSpot(item)}>🅿 ${host.t("vehicle_to_spot")}</button></div></section>`

@@ -880,6 +880,14 @@ export class NfView3d extends LitElement {
     v.setFridgeDoors(fridgeDoors(hass, b.floors));
     v.setCovers(coverReaches(hass, b));
     v.setRobots(this.robotInfos(hass, b));
+    // pets with a room sensor (Bermuda, ESPresense, a tracker tag): they roam the room it names
+    const petRooms = new Map<string, string | null>();
+    for (const floor of b.floors)
+      for (const f of floor.furniture) {
+        if (!packItem(f.type)?.pet || !f.room_sensor || f.room_sensor === "none") continue;
+        petRooms.set(f.id, robotRoom(hass, floor.rooms.filter((r) => r.points.length >= 3), null, f.room_sensor)?.id ?? null);
+      }
+    if (petRooms.size) v.setPetRooms(petRooms);
     // roof windows: sash and blind follow their contact and cover like windows do
     v.setRoofWindows(roofWindowStates(hass, b));
     v.setParked(parkedVehicles(hass, b));

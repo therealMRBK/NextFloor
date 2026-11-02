@@ -2909,6 +2909,24 @@ export class NextFloorViewer {
     for (const [id, old] of keep) if (!this.pets.has(id)) old.group.removeFromParent();
   }
 
+  /**
+   * Where the pets are now, as their room sensors tell (pet id -> room id on the pet's floor; null: the room it was placed in). A pet
+   * reported in another room appears there and roams it.
+   */
+  setPetRooms(rooms: Map<string, string | null>): void {
+    for (const [id, p] of this.pets) {
+      const fv = this.floorMap.get(p.floorId);
+      const roomId = rooms.get(id);
+      if (!fv || roomId === undefined) continue;
+      const room = roomId ? fv.floor.rooms.find((r) => r.id === roomId && r.points.length >= 3) : undefined;
+      if (!room || p.room.points === room.points) continue;
+      const obstacles = fv.floor.furniture.filter((o) => !packItem(o.type)?.pet && o.type !== "rug" && mountBase(fv.floor, o) < 0.5 && pointInPolygon([o.x, o.z], room.points)).map((o) => furnitureFootprint(o));
+      p.room = { ...p.room, points: room.points, obstacles };
+      if (!pointInPolygon(p.motion.pos, room.points)) p.motion = { ...p.motion, pos: centroid(room.points), target: null, rest: 0.5 };
+    }
+    this.invalidate();
+  }
+
   /** Move the robots; true while one of them drives. */
   private stepRobots(now: number): boolean {
     if (!this.robots.size && !this.pets.size) return false;
