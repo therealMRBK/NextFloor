@@ -1114,6 +1114,8 @@
  "room_announce_hint": "Sans choix, c'est le haut-parleur placé dans la pièce qui parle, sinon un assistant vocal, un Echo ou un haut-parleur de sa zone (jamais un téléviseur). Pendant l'heure calme, les annonces à plusieurs pièces ignorent celle-ci ; une annonce pour elle seule passe quand même.",
  "ceiling_here": "Plafond ici",
  "ceiling_here_hint": "Hauteur du plafond à cet endroit précis, p. ex. sous un plafond en pente. Vide = le plafond de la pièce.",
+ "ceiling_slope": "Sous le rampant",
+ "ceiling_slope_hint": "Ici le plafond est sous le rampant : la lampe est suspendue à sa face inférieure, juste au-dessus de sa place.",
  "furn_lamp_floor": "Lampadaire",
  "furn_lamp_table": "Lampe de table",
  "furn_lamp_wall": "Applique",

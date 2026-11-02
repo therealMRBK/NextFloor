@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Senza scelta parla l'altoparlante posizionato nella stanza, altrimenti un assistente vocale, un Echo o un altoparlante della sua area (mai un televisore). Nell'ora di silenzio gli annunci a più stanze la saltano; uno solo per lei arriva comunque.",
   "ceiling_here": "Soffitto qui",
   "ceiling_here_hint": "Altezza del soffitto proprio in questo punto, ad es. in un soffitto inclinato. Vuoto = il soffitto della stanza.",
+  "ceiling_slope": "Sotto la falda",
+  "ceiling_slope_hint": "Qui il soffitto è sotto la falda: la lampada pende dalla sua parte inferiore, proprio sopra il suo posto.",
   "furn_lamp_floor": "Lampada da terra",
   "furn_lamp_table": "Lampada da tavolo",
   "furn_lamp_wall": "Applique",

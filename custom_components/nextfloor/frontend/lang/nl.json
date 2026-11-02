@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Zonder keuze spreekt de luidspreker die in de kamer staat, anders een spraakassistent, een Echo of een luidspreker van de ruimte (nooit een tv). In de stille tijd slaan omroepen naar meerdere kamers deze kamer over; een omroep alleen voor deze kamer komt wel aan.",
   "ceiling_here": "Plafond hier",
   "ceiling_here_hint": "Hoogte van het plafond precies op deze plek, bijv. bij een schuin plafond. Leeg = het plafond van de ruimte.",
+  "ceiling_slope": "Tegen het schuine dak",
+  "ceiling_slope_hint": "Het plafond ligt hier onder het schuine dak: de lamp hangt aan de onderkant, precies boven zijn plek.",
   "furn_lamp_floor": "Vloerlamp",
   "furn_lamp_table": "Tafellamp",
   "furn_lamp_wall": "Wandlamp",

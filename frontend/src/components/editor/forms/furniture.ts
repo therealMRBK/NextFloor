@@ -10,6 +10,7 @@ import { checkField, entityField, hint, iconField, markerField, pinShiftField, n
 import { entityOptions } from "../entities.ts";
 import { storeImage } from "../../../api.ts";
 import { readPictureInBrowser } from "../background-tool.ts";
+import { roofUnderAt } from "../../../roof/proposal.ts";
 import type { EditorHost } from "../host.ts";
 import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
@@ -118,8 +119,21 @@ function geometryFields(host: EditorHost, item: Furniture, actions: FurnitureAct
     ${hangs(item) && floor
       ? html`${numberField(host, t("ceiling_here"), ceilingOf(floor, item), (v) => set({ ceiling_y: Math.abs(v - ceilingAt(floor, item.x, item.z)) < 0.005 ? null : Math.max(0.5, v) }), 0.01, 0.5)}
         ${item.ceiling_y != null ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => set({ ceiling_y: null })}>${t("height_auto")}</button>` : nothing}
+        ${slopeAbove(host, item) !== null
+          ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} title=${t("ceiling_slope_hint")} @click=${() => set({ ceiling_y: slopeAbove(host, item) })}>📐 ${t("ceiling_slope")}</button>`
+          : nothing}
         ${hint(t("ceiling_here_hint"), "nf-wide")}`
       : nothing}`;
+}
+
+/** The underside of a roof slope right above an item, when it is lower than the room's ceiling (an attic room): its height on the floor. */
+function slopeAbove(host: EditorHost, item: Furniture): number | null {
+  const floor = host.floor;
+  if (!floor) return null;
+  const under = roofUnderAt(host.doc, item.x, item.z);
+  if (under === null) return null;
+  const y = Math.round((under - floor.elevation) * 1000) / 1000;
+  return y > 0.5 && y < ceilingAt(floor, item.x, item.z) - 0.02 ? y : null;
 }
 
 /** Items that hang from the ceiling: their own ceiling height can be set (a lamp in a sloping ceiling). */

@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Sin elegir, habla el altavoz colocado en la habitación; si no, un asistente de voz, un Echo o un altavoz de su área (nunca un televisor). En la hora de silencio, los anuncios a varias habitaciones la omiten; uno solo para ella llega igualmente.",
   "ceiling_here": "Techo aquí",
   "ceiling_here_hint": "Altura del techo justo en este punto, p. ej. en un techo inclinado. Vacío = el techo de la estancia.",
+  "ceiling_slope": "A la pendiente del tejado",
+  "ceiling_slope_hint": "Aquí el techo está bajo la pendiente: la lámpara cuelga de su cara inferior, justo encima de su sitio.",
   "furn_lamp_floor": "Lámpara de pie",
   "furn_lamp_table": "Lámpara de mesa",
   "furn_lamp_wall": "Aplique de pared",

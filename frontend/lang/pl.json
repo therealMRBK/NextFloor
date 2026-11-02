@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Bez wyboru mówi głośnik ustawiony w pomieszczeniu, w przeciwnym razie asystent głosowy, Echo lub głośnik obszaru (nigdy telewizor). W czasie ciszy komunikaty do wielu pomieszczeń je pomijają; komunikat tylko dla niego i tak dotrze.",
   "ceiling_here": "Sufit tutaj",
   "ceiling_here_hint": "Wysokość sufitu dokładnie w tym miejscu, np. przy skosie. Puste = sufit pomieszczenia.",
+  "ceiling_slope": "Pod skos dachu",
+  "ceiling_slope_hint": "Sufit leży tu pod skosem dachu: lampa wisi na jego spodzie, dokładnie nad swoim miejscem.",
   "furn_lamp_floor": "Lampa podłogowa",
   "furn_lamp_table": "Lampa stołowa",
   "furn_lamp_wall": "Kinkiet",

@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Utan val talar högtalaren som står i rummet, annars en röstassistent, en Echo eller en högtalare i området (aldrig en tv). Under den tysta tiden hoppar utrop till flera rum över detta rum; ett utrop bara till det kommer ändå fram.",
   "ceiling_here": "Tak här",
   "ceiling_here_hint": "Takets höjd precis på den här platsen, t.ex. under ett snedtak. Tom = rummets tak.",
+  "ceiling_slope": "Upp mot taksnedden",
+  "ceiling_slope_hint": "Taket ligger här under taksnedden: lampan hänger från dess undersida, rakt ovanför sin plats.",
   "furn_lamp_floor": "Golvlampa",
   "furn_lamp_table": "Bordslampa",
   "furn_lamp_wall": "Vägglampa",

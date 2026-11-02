@@ -1158,6 +1158,8 @@
   "room_announce_hint": "Sem escolha, fala o altifalante colocado na divisão; senão um assistente de voz, um Echo ou um altifalante da área (nunca uma TV). No período de silêncio, anúncios para várias divisões deixam-na de fora; um só para ela chega na mesma.",
   "ceiling_here": "Teto aqui",
   "ceiling_here_hint": "Altura do teto exatamente neste ponto, p. ex. num teto inclinado. Vazio = o teto da divisão.",
+  "ceiling_slope": "Sob a vertente do telhado",
+  "ceiling_slope_hint": "Aqui o teto fica sob a vertente: o candeeiro pende da sua face inferior, mesmo por cima do seu lugar.",
   "furn_lamp_floor": "Candeeiro de pé",
   "furn_lamp_table": "Candeeiro de mesa",
   "furn_lamp_wall": "Aplique de parede",

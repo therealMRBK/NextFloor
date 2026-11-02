@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Lamps under the roof slope**: a ceiling lamp, fan or hanging item in an attic room gets *📐 Up to the roof slope* in its form, which hangs it from the underside of the roof right above it; its height stays adjustable.
 - **Walls**: a split wall can have its own thickness on each part (a thick outer wall next to a thin glass front), and the room form shows a rectangular room's inside size from wall face to wall face.
 - **Solar racks**: a field on a flat roof can stand on **east-west racks** – every second row turned, the pairs back to back, low and close – and a field on a pitched roof can stand on a rack that tilts it further than the roof (the upper edge on brackets).
 - **L- and U-shaped sofas without a pack**: the built-in sofa has a *Shape* – straight, L (mirror it for the other side) or U – with a chaise at one or both ends; choosing one makes a small sofa large enough for it.
