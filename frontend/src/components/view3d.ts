@@ -61,7 +61,8 @@ import { mapCredit, mapShown } from "../map-geo.ts";
 import { type CustomButton, type EntityRef } from "../model.ts";
 
 import { STAGE, type Theme } from "../themes.ts";
-import { HEAT_SCALES, heatColor, heatGradient, roomValues, type HeatMode } from "../heatmap.ts";
+import { heatColor, heatGradient, roomValues, scaleOf, type HeatMode } from "../heatmap.ts";
+import { airingNeed, isSummer, mouldRisk } from "../live/room-climate.ts";
 import { furnitureName } from "../furniture-names.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { getPacks, hasMovingParts, householdKind, mountBase, packItem, packsVersion } from "../packs.ts";
@@ -1001,7 +1002,8 @@ export class NfView3d extends LitElement {
       // the legend's "nothing found" line depends on it: render again when that changes
       if (!values.size !== !this.heatValues.size) this.requestUpdate();
       this.heatValues = values;
-      tint = new Map([...values].map(([id, value]) => [id, heatColor(mode, value)]));
+      const summer = isSummer(new Date(), hass.config?.latitude ?? 50);
+      tint = new Map([...values].map(([id, value]) => [id, heatColor(mode, value, summer)]));
     }
     // "values": the numbers at the room names instead of coloured floors
     const info = new Map<string, string>();
@@ -1011,15 +1013,26 @@ export class NfView3d extends LitElement {
           const t = roomClimateValue(hass, floor, room, "temperature");
           const h = roomClimateValue(hass, floor, room, "humidity");
           const c = roomClimateValue(hass, floor, room, "co2");
+          const need = airingNeed(c, h, mouldRisk(t, h));
           const parts = [
             t !== null ? `${formatNumber(hass, fromCelsius(hass, t), 1)} ${tempUnit(hass)}` : null,
             h !== null ? `${formatNumber(hass, h, 0)} %` : null,
             c !== null ? `${formatNumber(hass, c, 0)} ppm` : null,
+            need ? `💨 ${translate(hass, `air_${need}`)}` : null,
           ].filter((x): x is string => !!x);
           if (parts.length) info.set(room.id, parts.join(" · "));
         }
     }
     v.setRoomInfo(info);
+    // underfloor heating: the floor of a room glows warm while its heating runs (under the heat map, which shows values)
+    if (!tint) {
+      for (const floor of b.floors)
+        for (const room of floor.rooms) {
+          const st = room.floor_heating ? hass.states[room.floor_heating] : undefined;
+          const heats = st && (st.entity_id.startsWith("climate.") ? st.attributes.hvac_action === "heating" : st.state === "on" || st.state === "open");
+          if (heats) (tint ??= new Map()).set(room.id, [0.55, 0.24, 0.08]);
+        }
+    }
     if (this._alerts.length) {
       tint ??= new Map();
       const k = 0.55 + 0.45 * Math.sin(performance.now() / 160);
@@ -2437,7 +2450,8 @@ export class NfView3d extends LitElement {
 
   private renderLegend() {
     if (this.heatMode === "none" || this.heatMode === "values") return nothing;
-    const scale = HEAT_SCALES[this.heatMode];
+    const summer = isSummer(new Date(), this.hass?.config?.latitude ?? 50);
+    const scale = scaleOf(this.heatMode, summer);
     // temperatures are coloured in °C and shown in Home Assistant's unit
     const temp = this.heatMode === "temperature";
     const lo = temp ? fromCelsius(this.hass, scale.stops[0][0]) : scale.stops[0][0];
@@ -2445,8 +2459,8 @@ export class NfView3d extends LitElement {
     const unit = temp ? tempUnit(this.hass) : scale.unit;
     const t = (k: Parameters<typeof translate>[1]) => translate(this.hass, k);
     return html`<div class="nf-legend">
-      <b>${t(`heat_${this.heatMode}`)}</b>
-      <span class="nf-legend-bar" style="background:${heatGradient(this.heatMode)}"></span>
+      <b>${t(`heat_${this.heatMode}`)}${this.heatMode === "temperature" ? html` <small>${t(summer ? "heat_summer" : "heat_winter")}</small>` : nothing}</b>
+      <span class="nf-legend-bar" style="background:${heatGradient(this.heatMode, summer)}"></span>
       <span class="nf-legend-range"><span>${formatNumber(this.hass, lo, 0)} ${unit}</span><span>${formatNumber(this.hass, hi, 0)} ${unit}</span></span>
       ${this.heatValues.size ? nothing : html`<span class="nf-legend-none">${t("heat_none_found")}</span>`}
     </div>`;

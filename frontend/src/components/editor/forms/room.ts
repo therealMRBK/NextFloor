@@ -140,6 +140,8 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
       ${selectField(host, t("material"), room.floor_material, materials, (floor_material) => actions.patch({ floor_material }), { wide: true })}
       ${colorField(host, t("wall_paint_room"), room.wall_paint, host.doc.settings.wall_paint_inside ?? DEFAULT_PAINT_INSIDE, (wall_paint) => actions.patch({ wall_paint }))}
       ${host.floor ? ceilingField(host, room, host.floor, actions) : nothing}
+      ${entityField(host, t("floor_heating"), room.floor_heating ?? null, undefined, entityOptions(host.hass, (id) => /^(climate|switch|valve|binary_sensor|input_boolean)\./.test(id)), (v) => actions.patch({ floor_heating: v && v !== "none" ? v : null }))}
+      ${room.floor_heating ? hint(t("floor_heating_hint"), "nf-wide") : nothing}
       ${announceFields(host, room, host.floor ?? null, actions)}
       ${rectangle
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRect("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRect("z", v))}

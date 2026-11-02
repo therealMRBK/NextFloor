@@ -63,6 +63,8 @@ export interface Room {
    * items hang from it, and its walls default to it (a wall shared with a room without a ceiling of its own keeps the floor height).
    */
   ceiling?: number | null;
+  /** Underfloor heating: the thermostat, valve or switch of the room's floor heating; its floor glows warm while it heats. */
+  floor_heating?: string | null;
   /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */
   announce_speaker?: string | null;
   /** Announcements to several rooms leave this room out from `from` to `to` ("HH:MM", may run over midnight). */

@@ -55,6 +55,8 @@ ROOM_SCHEMA = vol.Schema(
         vol.Required("id"): _ID,
         vol.Required("name"): _NAME,
         vol.Required("area_id"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        # underfloor heating: the entity whose heating makes the floor glow
+        vol.Optional("floor_heating"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Required("points"): vol.All([_POINT], vol.Length(min=3, max=MAX_POINTS)),
         vol.Required("floor_material"): vol.All(str, vol.Length(max=32)),
         # the camera this room opens with when it is tapped (None = framed from above)

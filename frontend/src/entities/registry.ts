@@ -248,5 +248,13 @@ export function roomClimateValue(hass: HomeAssistant, floor: Floor | null, room:
       return key === "temperature" ? toCelsius(reading, hass.states[id]?.attributes.unit_of_measurement) : reading;
     })
     .filter(Number.isFinite);
-  return readings.length ? readings.reduce((sum, v) => sum + v, 0) / readings.length : null;
+  if (readings.length) return readings.reduce((sum, v) => sum + v, 0) / readings.length;
+  // no room sensor: a thermostat of the room's area tells its temperature and humidity (heating curves, the heat map)
+  if (key === "co2" || room.climate?.[key] === "none") return null;
+  const attr = key === "temperature" ? "current_temperature" : "current_humidity";
+  const climates = areaEntities(hass, room.area_id)
+    .filter((id) => id.startsWith("climate."))
+    .map((id) => hass.states[id]?.attributes[attr])
+    .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+  return climates.length ? climates.reduce((sum, v) => sum + v, 0) / climates.length : null;
 }

@@ -9,6 +9,9 @@ import { openMoreInfo, stateText } from "../markers.ts";
 import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Floor, Room } from "../model.ts";
+import { airingNeed, mouldRisk } from "../live/room-climate.ts";
+import { hassAt, loadHistory } from "../live/time-travel.ts";
+import { curvePath } from "../live/day-curves.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
 
@@ -51,6 +54,7 @@ export class NfRoomPanel extends LitElement {
     _showAll: { state: true },
     _said: { state: true },
     _folded: { state: true },
+    _curve: { state: true },
   };
 
   declare hass: HomeAssistant;
@@ -71,6 +75,9 @@ export class NfRoomPanel extends LitElement {
   /** Only the header shows (a small screen: the room stays in view, the devices are out of the way). Starts open for every room. */
   private declare _folded: boolean;
   private memo: { entities: HomeAssistant["entities"]; floor: Floor | null; room: Room; shown: string[]; more: string[] } | null = null;
+  /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
+  private declare _curve: (number | null)[] | null;
+  private curveFor = "";
 
   constructor() {
     super();
@@ -81,11 +88,58 @@ export class NfRoomPanel extends LitElement {
     this._said = null;
     this._showAll = false;
     this._folded = false;
+    this._curve = null;
+  }
+
+  /** Loads the temperature history of the room's sensors (or thermostats) and samples it every quarter hour. */
+  private async loadCurve(room: Room): Promise<void> {
+    const ids = roomClimateSensors(this.hass, this.floor, room, "temperature");
+    const sources = ids.length ? ids : areaEntities(this.hass, room.area_id).filter((id) => id.startsWith("climate."));
+    if (!sources.length) return;
+    const to = Date.now();
+    const from = to - 24 * 3600_000;
+    try {
+      const history = await loadHistory(this.hass, sources, from, to, !ids.length ? false : true);
+      if (this.room?.id !== room.id) return;
+      const curve: (number | null)[] = [];
+      for (let i = 1; i <= 96; i++) {
+        const at = hassAt(this.hass, history, from + ((to - from) * i) / 96);
+        const values = sources
+          .map((id) => (id.startsWith("climate.") ? Number(at.states[id]?.attributes.current_temperature) : Number(at.states[id]?.state)))
+          .filter(Number.isFinite);
+        curve.push(values.length ? values.reduce((a, b) => a + b, 0) / values.length : null);
+      }
+      this._curve = curve.some((v) => v !== null) ? curve : null;
+    } catch {
+      this._curve = null;
+    }
+  }
+
+  /** The heating curve: the room's temperature over the last 24 hours, with its lowest and highest value. */
+  private renderCurve() {
+    const curve = this._curve;
+    if (!curve) return nothing;
+    const values = curve.filter((v): v is number => v !== null);
+    const lo = Math.min(...values);
+    const hi = Math.max(...values);
+    const span = Math.max(1, hi - lo);
+    const shifted = curve.map((v) => (v === null ? null : v - lo + span * 0.1));
+    const d = curvePath(shifted, 220, 36, span * 1.2);
+    const f = (v: number) => `${formatNumber(this.hass, fromCelsius(this.hass, v), 1)}°`;
+    return html`<div class="nf-rp-curve" title=${this.t("room_curve_hint")}>
+      <svg viewBox="0 0 220 36" preserveAspectRatio="none" aria-hidden="true">${svg`<path d=${d}></path>`}</svg>
+      <span>24 h · ${f(lo)} – ${f(hi)}</span>
+    </div>`;
   }
 
   protected willUpdate(changed: Map<string, unknown>): void {
     const before = changed.get("room") as Room | null | undefined;
     if (changed.has("room") && before?.id !== this.room?.id) this._folded = false;
+    if (this.room && this.hass && this.curveFor !== this.room.id) {
+      this.curveFor = this.room.id;
+      this._curve = null;
+      void this.loadCurve(this.room);
+    }
   }
 
   /** The host carries `folded`, so the stage it sits in can move a folded panel out of the way (see panel/styles.ts, card/styles.ts). */
@@ -168,6 +222,7 @@ export class NfRoomPanel extends LitElement {
         <div>
           <h2>${room.name}</h2>
           ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing}
+          ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${this._folded ? svg`<path d="M6 14l6-6 6 6" />` : svg`<path d="M6 12h12" />`}</svg>
@@ -263,6 +318,11 @@ export class NfRoomPanel extends LitElement {
     else if (climateTemp && room.climate?.temperature !== "none") out.push(`${formatNumber(this.hass, climateTemp.attributes.current_temperature as number, 1)} ${tempUnit(this.hass)}`);
     const hum = value("humidity", "%");
     if (hum) out.push(hum);
+    // airing hints: too much CO₂, too damp, or a risk of mould at the coldest wall
+    const t = roomClimateValue(this.hass, this.floor, room, "temperature");
+    const h = roomClimateValue(this.hass, this.floor, room, "humidity");
+    const need = airingNeed(roomClimateValue(this.hass, this.floor, room, "co2"), h, mouldRisk(t, h));
+    if (need) out.push(`💨 ${this.t(`air_${need}`)}`);
     return out;
   }
 
@@ -752,6 +812,27 @@ export class NfRoomPanel extends LitElement {
       }
       .nf-rp-fail {
         color: #ff6b7a;
+      }
+      .nf-rp-curve {
+        position: relative;
+        margin-top: 4px;
+        width: 220px;
+        max-width: 100%;
+      }
+      .nf-rp-curve svg {
+        display: block;
+        width: 100%;
+        height: 30px;
+      }
+      .nf-rp-curve path {
+        fill: none;
+        stroke: var(--nf-warm, #ff9f43);
+        stroke-width: 1.5;
+        vector-effect: non-scaling-stroke;
+      }
+      .nf-rp-curve span {
+        font-size: 10.5px;
+        color: var(--nf-muted);
       }
       .nf-rp-scenes {
         display: flex;

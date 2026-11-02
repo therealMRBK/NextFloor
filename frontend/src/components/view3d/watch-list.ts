@@ -59,7 +59,7 @@ export function watchedEntities(inputs: WatchInputs): string[] {
   const placed = placedEntities(b);
   const energy = b.energy;
   const lightsOfRooms = roomsOf(b).flatMap((r) => areaEntities(hass, r.area_id).filter((id) => kindOf(id) === "light"));
-  const sensorsOfRooms = inputs.needsRoomSensors ? roomsOf(b).flatMap((r) => areaEntities(hass, r.area_id).filter((id) => id.startsWith("sensor."))) : [];
+  const sensorsOfRooms = inputs.needsRoomSensors ? roomsOf(b).flatMap((r) => areaEntities(hass, r.area_id).filter((id) => id.startsWith("sensor.") || id.startsWith("climate."))) : [];
   const ids: MaybeId[] = [
     ...placed,
     ...openingIds(inputs.openingLinks),
@@ -78,6 +78,7 @@ export function watchedEntities(inputs: WatchInputs): string[] {
     energy.water,
     ...b.presence.flatMap((p) => [p.person, p.sensor]),
     ...lightsOfRooms,
+    ...roomsOf(b).map((r) => r.floor_heating),
     ...sensorsOfRooms,
     ...(inputs.alertSources ? alertEntities(inputs.alertSources) : []),
     ...parkingEntities(b.floors),
