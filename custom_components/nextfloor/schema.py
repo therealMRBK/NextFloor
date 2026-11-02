@@ -74,7 +74,16 @@ ROOM_SCHEMA = vol.Schema(
         ),
         # thickness of the wall on each edge in m (None = the building's exterior / interior thickness)
         vol.Optional("wall_thickness"): vol.All(
-            [vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1.5)))],
+            [
+                vol.Any(
+                    None,
+                    vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1.5)),
+                    # a split edge: one thickness per part
+                    vol.All(
+                        [vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1.5)))], vol.Length(max=32)
+                    ),
+                )
+            ],
             vol.Length(max=MAX_POINTS),
         ),
         # height of the wall on each edge (None = full floor height, 0 = no wall), aligned with the points;

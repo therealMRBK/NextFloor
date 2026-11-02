@@ -1147,6 +1147,8 @@
   "furn_fan_entity": "Fläkt",
   "fan_hint": "Lampan är fläktens belysningsdel (lämna tom om den inte har någon). Fläkten hittas i rummet eller väljs här: i 3D snurrar bladen så snabbt som den går, dess ikon växlar den, svep upp/ner ändrar hastigheten, ett långt tryck öppnar snabbmenyn. Höjden är hur långt den hänger under taket (mer = en längre stång).",
   "room_ceiling": "Takhöjd",
+  "room_inner": "Invändigt {w} × {d}",
+  "room_inner_hint": "Mätt vägg till vägg: innerväggar tar halva sin tjocklek, ytterväggar står utanför konturen.",
   "floor_heating": "Golvvärme (valfritt)",
   "floor_heating_hint": "Så länge termostaten värmer (eller ventilen är öppen, brytaren på) glöder rummets golv varmt i 3D.",
   "room_ceiling_hint": "För ett rum lägre än våningen: taklampor, fläktar, LED-slingor och takenheter hänger härifrån, och rummets väggar är så höga.",

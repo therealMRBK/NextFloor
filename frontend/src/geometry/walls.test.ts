@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { polygonArea, signedArea, type FreeWall, type Room, type Vec2 } from "../model.ts";
-import { generateWalls, locateOnWalls, locateOpening, openingHost, pointOnRoomEdge } from "./walls.ts";
+import { generateWalls, innerSize, locateOnWalls, locateOpening, openingHost, pointOnRoomEdge } from "./walls.ts";
 
 const OUTER = 0.3;
 const INNER = 0.1;
@@ -210,4 +210,18 @@ test("a wall with no slope has no end height, and an unset or invalid slope is i
   // a slope without a start height, a zero end height, or heights per part do not slope
   const odd = generateWalls([room("a", 0, 0, 4, 3, { wall_heights: [null, 2.5, [1, 2], null], wall_slopes: [3, 0, 3, null] })], opts).walls;
   assert.ok(odd.every((w) => w.heightEnd === undefined));
+});
+
+test("a room's inner size loses half of each inner wall, nothing to the outer walls", () => {
+  const a: Room = { id: "a", name: "A", area_id: null, points: [[0, 0], [4, 0], [4, 3], [0, 3]], floor_material: "wood" };
+  const b: Room = { id: "b", name: "B", area_id: null, points: [[4, 0], [7, 0], [7, 3], [4, 3]], floor_material: "wood" };
+  const { walls } = generateWalls([a, b], { exterior: 0.3, interior: 0.12 });
+  assert.deepEqual(innerSize(a, walls), [3.94, 3]);
+});
+
+test("a split edge can have a thickness per part", () => {
+  const a: Room = { id: "a", name: "A", area_id: null, points: [[0, 0], [4, 0], [4, 3], [0, 3]], floor_material: "wood", wall_splits: [[2]], wall_thickness: [[0.5, 0.2]] };
+  const { walls } = generateWalls([a], { exterior: 0.3, interior: 0.12 });
+  const top = walls.filter((w) => Math.abs(w.a[1]) < 1e-6 && Math.abs(w.b[1]) < 1e-6).map((w) => w.left + w.right).sort();
+  assert.deepEqual(top, [0.2, 0.5]);
 });

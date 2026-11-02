@@ -2002,7 +2002,7 @@ export class NfEditor extends LitElement {
       },
       setSlope: (room, edge, start, end) => this.changeRoom(room, (r) => setWallSlope(r, edge, start, end)),
       clearSlope: (room, edge) => this.changeRoom(room, (r) => clearWallSlope(r, edge, this.floor?.height ?? 2.5)),
-      setThickness: (room, edge, thickness) => this.changeRoom(room, (r) => setWallThickness(r, edge, thickness)),
+      setThickness: (room, edge, thickness, part, count) => this.changeRoom(room, (r) => setWallThickness(r, edge, thickness, part, count)),
       arc: this.arcActions(),
       cut: (room, edge, part) => {
         const starts = this.edgeParts(room, edge);

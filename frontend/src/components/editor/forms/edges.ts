@@ -21,7 +21,7 @@ export interface EdgeActions {
   setSlope(room: Room, edge: number, start: number, end: number): void;
   /** Makes a sloping wall level again. */
   clearSlope(room: Room, edge: number): void;
-  setThickness(room: Room, edge: number, thickness: number | null): void;
+  setThickness(room: Room, edge: number, thickness: number | null, part?: number, partCount?: number): void;
   /** Bending a wall into an arc (the key of a room wall is `room:<id>:<edge>`). */
   arc: ArcActions;
   cut(room: Room, edge: number, part: number | undefined): void;
@@ -49,6 +49,8 @@ export function renderEdgeHeights(host: EditorHost, room: Room, actions: EdgeAct
     const parts: (number | undefined)[] = starts.length > 1 ? starts.map((_, k) => k) : [undefined];
     return parts.map((part) => {
       const height = Array.isArray(entry) ? (entry[part ?? 0] ?? null) : entry;
+      const thickEntry = room.wall_thickness?.[edge] ?? null;
+      const thick = Array.isArray(thickEntry) ? (thickEntry[part ?? 0] ?? null) : thickEntry;
       const length = part === undefined ? edgeLength(room, edge) : (starts[part + 1] ?? edgeLength(room, edge)) - starts[part];
       const set = (v: number | null) => actions.setHeight(room, edge, part, v);
       const standard = actions.isOuter(room, edge) ? wall_exterior : wall_interior;
@@ -78,10 +80,10 @@ export function renderEdgeHeights(host: EditorHost, room: Room, actions: EdgeAct
         ${host.admin && length >= 0.4 ? html`<button class="nf-btn" title=${t("wall_split_hint")} @click=${() => actions.cut(room, edge, part)}>✂</button>` : nothing}
         ${part === undefined && length >= 0.4 ? arcButton(host, arcKey(room, edge), actions.arc) : nothing}
         ${(part === undefined || part === 0) && height !== 0 ? html`<button class="nf-btn" title=${t("wall_view_hint")} @click=${() => actions.openWall(room, edge)}>▣ ${t("wall_view")}</button>` : nothing}
-        ${(part === undefined || part === 0) && height !== 0
+        ${height !== 0
           ? html`<span class="nf-wide nf-split-row" title=${t("wall_thickness_hint")}
-              >${numberField(host, t("edge_thickness"), room.wall_thickness?.[edge] ?? standard, (v) => actions.setThickness(room, edge, thicknessFromTyped(v, standard)), 0.01, 0.02)}
-              ${host.admin && room.wall_thickness?.[edge] != null ? html`<button class="nf-btn" title=${t("wall_thickness_reset")} @click=${() => actions.setThickness(room, edge, null)}>↺</button>` : nothing}</span
+              >${numberField(host, t("edge_thickness"), thick ?? standard, (v) => actions.setThickness(room, edge, thicknessFromTyped(v, standard), part, starts.length), 0.01, 0.02)}
+              ${host.admin && thick != null ? html`<button class="nf-btn" title=${t("wall_thickness_reset")} @click=${() => actions.setThickness(room, edge, null, part, starts.length)}>↺</button>` : nothing}</span
             >`
           : nothing}
         ${part === undefined ? arcRow(host, arcKey(room, edge), actions.arc) : nothing}

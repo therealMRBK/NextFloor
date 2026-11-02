@@ -1147,6 +1147,8 @@
   "furn_fan_entity": "Ventilador",
   "fan_hint": "La luz es el kit de luz del ventilador (déjala vacía si no tiene). El ventilador se encuentra en la estancia o se elige aquí: en 3D las aspas giran tan rápido como funciona, su icono lo conmuta, deslizar arriba/abajo cambia la velocidad y una pulsación larga abre el menú rápido. La altura es lo que cuelga del techo (más = una barra más larga).",
   "room_ceiling": "Altura del techo",
+  "room_inner": "Interior {w} × {d}",
+  "room_inner_hint": "Medido de pared a pared: las paredes interiores restan la mitad de su grosor, las exteriores quedan fuera del contorno.",
   "floor_heating": "Suelo radiante (opcional)",
   "floor_heating_hint": "Mientras el termostato calienta (o la válvula está abierta, el interruptor encendido), el suelo de la estancia brilla cálido en 3D.",
   "room_ceiling_hint": "Para una estancia más baja que la planta: lámparas de techo, ventiladores, tiras LED y dispositivos de techo cuelgan desde aquí, y las paredes de la estancia tienen esta altura.",

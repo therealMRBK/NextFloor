@@ -184,7 +184,12 @@ function edgeSettings(rooms: readonly Room[], pieces: Piece[]) {
     },
     /** A thickness set on a room edge; a shared wall takes the thicker one of its two rooms. */
     thicknessOf(list: Piece[]): number | undefined {
-      const values = list.map((p) => roomById.get(p.room)?.wall_thickness?.[p.edge]).filter((t): t is number => typeof t === "number" && t > 0);
+      const values = list
+        .map((p) => {
+          const entry = roomById.get(p.room)?.wall_thickness?.[p.edge];
+          return Array.isArray(entry) ? entry[(partStarts.get(`${p.room}:${p.edge}`) ?? []).indexOf(p.t0)] : entry;
+        })
+        .filter((t): t is number => typeof t === "number" && t > 0);
       return values.length ? Math.max(...values) : undefined;
     },
     /** A height of 0 on an edge means no wall at all: an open plan whose rooms share one space. */
@@ -361,4 +366,22 @@ export function locateOnWalls(walls: readonly Wall[], room: Room, edge: number, 
     if (covers) return { wall, s: along(wall, pointOnRoomEdge(room, edge, offset)) };
   }
   return null;
+}
+
+/**
+ * Inner size of a rectangular room from wall face to wall face: its outline runs along the wall centres inside the house (and along
+ * the inner faces of outer walls), so each side loses what its walls stand into the room. Null for a room that is not a rectangle.
+ */
+export function innerSize(room: Room, walls: readonly Wall[]): [number, number] | null {
+  const xs = room.points.map((p) => p[0]);
+  const zs = room.points.map((p) => p[1]);
+  if (room.points.length !== 4 || new Set(xs.map((v) => v.toFixed(3))).size !== 2 || new Set(zs.map((v) => v.toFixed(3))).size !== 2) return null;
+  const [x0, x1, z0, z1] = [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)];
+  const into = (onSide: (w: Wall) => boolean) =>
+    Math.max(0, ...walls.filter((w) => (w.roomLeft === room.id || w.roomRight === room.id) && onSide(w)).map((w) => (w.roomLeft === room.id ? w.left : w.right)));
+  const near = (a: number, b: number) => Math.abs(a - b) < 1e-3;
+  const along = (w: Wall, axis: 0 | 1, v: number) => near(w.a[axis], v) && near(w.b[axis], v);
+  const width = x1 - x0 - into((w) => along(w, 0, x0)) - into((w) => along(w, 0, x1));
+  const depth = z1 - z0 - into((w) => along(w, 1, z0)) - into((w) => along(w, 1, z1));
+  return [Math.round(width * 1000) / 1000, Math.round(depth * 1000) / 1000];
 }

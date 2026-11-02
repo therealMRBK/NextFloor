@@ -1103,6 +1103,8 @@
  "furn_fan_entity": "Ventilateur",
  "fan_hint": "La lumière est le kit d'éclairage du ventilateur (laissez vide s'il n'en a pas). Le ventilateur est trouvé dans la pièce ou choisi ici : en 3D, les pales tournent à sa vitesse, son icône l'allume ou l'éteint, un balayage haut/bas change la vitesse, un appui long ouvre le menu rapide. La hauteur est la distance de suspension au plafond (plus = une tige plus longue).",
  "room_ceiling": "Hauteur sous plafond",
+ "room_inner": "Intérieur {w} × {d}",
+ "room_inner_hint": "Mesuré de mur à mur : les murs intérieurs prennent la moitié de leur épaisseur, les murs extérieurs sont hors du contour.",
  "floor_heating": "Plancher chauffant (facultatif)",
  "floor_heating_hint": "Tant que le thermostat chauffe (ou que la vanne est ouverte, l'interrupteur activé), le sol de la pièce rougeoie en 3D.",
  "room_ceiling_hint": "Pour une pièce plus basse que l'étage : plafonniers, ventilateurs, rubans LED et appareils de plafond sont suspendus à partir d'ici, et les murs de la pièce ont cette hauteur.",

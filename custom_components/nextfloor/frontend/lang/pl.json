@@ -1147,6 +1147,8 @@
   "furn_fan_entity": "Wentylator",
   "fan_hint": "Światło to zestaw oświetleniowy wentylatora (zostaw puste, jeśli go nie ma). Wentylator jest wyszukiwany w pomieszczeniu lub wybierany tutaj: w 3D łopaty obracają się tak szybko, jak pracuje, jego ikona go przełącza, przesunięcie w górę/dół zmienia prędkość, długie przytrzymanie otwiera szybkie menu. Wysokość to, jak nisko wisi pod sufitem (więcej = dłuższy pręt).",
   "room_ceiling": "Wysokość sufitu",
+  "room_inner": "Wewnątrz {w} × {d}",
+  "room_inner_hint": "Mierzone od ściany do ściany: ściany wewnętrzne zabierają połowę grubości, zewnętrzne stoją poza obrysem.",
   "floor_heating": "Ogrzewanie podłogowe (opcjonalnie)",
   "floor_heating_hint": "Dopóki termostat grzeje (lub zawór jest otwarty, przełącznik włączony), podłoga pomieszczenia świeci ciepło w 3D.",
   "room_ceiling_hint": "Dla pomieszczenia niższego niż piętro: lampy sufitowe, wentylatory, taśmy LED i urządzenia sufitowe wiszą od tego miejsca, a ściany pomieszczenia mają taką wysokość.",

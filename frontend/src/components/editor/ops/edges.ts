@@ -117,10 +117,18 @@ export function joinAtCut(room: Room, edge: number, at: number, part: number): v
 }
 
 /** The thickness of one wall; null brings back the thickness of the house for walls of that kind. */
-export function setWallThickness(room: Room, edge: number, thickness: number | null): void {
-  const list = perEdge<number>(room.wall_thickness, room.points.length);
-  list[edge] = thickness;
-  room.wall_thickness = allNull(list) ? undefined : (list as number[]);
+export function setWallThickness(room: Room, edge: number, thickness: number | null, part?: number, partCount = 1): void {
+  const list = perEdge<number | (number | null)[]>(room.wall_thickness, room.points.length);
+  if (part === undefined || partCount < 2) list[edge] = thickness;
+  else {
+    // one part of a split edge: the others keep what the edge had
+    const current = list[edge];
+    const parts: (number | null)[] = Array.isArray(current) ? [...current] : new Array<number | null>(partCount).fill(typeof current === "number" ? current : null);
+    while (parts.length < partCount) parts.push(null);
+    parts[part] = thickness;
+    list[edge] = parts.every((v) => v === parts[0]) ? parts[0] : parts;
+  }
+  room.wall_thickness = allNull(list) ? undefined : (list as Room["wall_thickness"]);
 }
 
 /** A thickness typed for a wall: kept between 2 cm and 1.5 m, and null when it equals the default. */

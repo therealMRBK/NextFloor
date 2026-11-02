@@ -10,7 +10,8 @@ import type { EditorHost } from "../host.ts";
 import type { RectField } from "../ops/rooms.ts";
 import { SPOT_TYPES, spotCount, spotItems } from "../ops/spots.ts";
 import type { SideState } from "../side-state.ts";
-import { formatArea } from "../../../units.ts";
+import { formatArea, formatLength } from "../../../units.ts";
+import { generateWalls, innerSize } from "../../../geometry/walls.ts";
 import { roomSpeaker } from "../../../live/announce.ts";
 
 /** What the room form makes the editor do, and the parts of it that the editor still draws itself. */
@@ -129,6 +130,8 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
   const box = bounds(room.points);
   const areas = Object.values(host.hass?.areas ?? {}).sort((a, b) => a.name.localeCompare(b.name));
   const areaChoices: [string, string][] = [["", t("no_area")], ...areas.map((a): [string, string] => [a.area_id, a.name])];
+  // from wall face to wall face (the outline runs along the middle of inner walls)
+  const inner = host.floor ? innerSize(room, generateWalls(host.floor.rooms, { exterior: host.doc.settings.wall_exterior, interior: host.doc.settings.wall_interior }, host.floor.walls ?? []).walls) : null;
   const materials = FLOOR_MATERIALS.map((m): [string, string] => [m, t(`mat_${m}` as I18nKey)]);
   const packageButton = (pkg: PackageId) =>
     html`<button class="nf-btn" @click=${() => actions.applyPackage(pkg)}><b>${t(`pkg_${pkg}` as I18nKey)}</b><span>${t(`pkg_${pkg}_desc` as I18nKey)}</span></button>`;
@@ -143,6 +146,7 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
       ${entityField(host, t("floor_heating"), room.floor_heating ?? null, undefined, entityOptions(host.hass, (id) => /^(climate|switch|valve|binary_sensor|input_boolean)\./.test(id)), (v) => actions.patch({ floor_heating: v && v !== "none" ? v : null }))}
       ${room.floor_heating ? hint(t("floor_heating_hint"), "nf-wide") : nothing}
       ${announceFields(host, room, host.floor ?? null, actions)}
+      ${inner ? html`<p class="nf-sub nf-wide" title=${t("room_inner_hint")}>${t("room_inner", { w: formatLength(host.hass, inner[0]), d: formatLength(host.hass, inner[1]) })}</p>` : nothing}
       ${rectangle
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRect("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRect("z", v))}
           ${numberField(host, t("width"), box.x1 - box.x0, (v) => actions.setRect("w", v), 0.01, 0.05)}
