@@ -945,6 +945,8 @@
   "roof_shape": "Vorm",
   "roof_end_start": "Eind aan het nokbegin",
   "roof_end_end": "Eind aan het nokeinde",
+  "roof_halfhip": "Wolfseind begint op",
+  "roof_halfhip_hint": "Hoe hoog in de topgevel het schilddeel begint, als deel van de gevelhoogte: laag = een groot schild, hoog = alleen de top.",
   "roof_axis_x": "Nok ↔",
   "roof_axis_z": "Nok ↕",
   "roof_eave": "Goot (m)",

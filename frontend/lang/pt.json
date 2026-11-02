@@ -945,6 +945,8 @@
   "roof_shape": "Forma",
   "roof_end_start": "Remate no início da cumeeira",
   "roof_end_end": "Remate no fim da cumeeira",
+  "roof_halfhip": "A tacaniça começa a",
+  "roof_halfhip_hint": "A que altura da empena começa a tacaniça, como parte da altura da empena: baixo = tacaniça grande, alto = só a ponta.",
   "roof_axis_x": "Cumeeira ↔",
   "roof_axis_z": "Cumeeira ↕",
   "roof_eave": "Beiral (m)",

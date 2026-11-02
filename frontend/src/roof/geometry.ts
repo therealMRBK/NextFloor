@@ -48,7 +48,7 @@ export function sectionGeometry(s: RoofSection, overhang: SectionOverhang): Sect
     const halfLength = (frame.u1 - frame.u0) / 2;
     const run = Math.min(halfLength, Math.min(profile.vr, w - profile.vr) || w / 2);
     const eaveLow = Math.min(profile.y(0), profile.y(w));
-    const hipY = eaveLow + (profile.rh - eaveLow) * 0.55;
+    const hipY = eaveLow + (profile.rh - eaveLow) * Math.min(0.9, Math.max(0.2, s.halfhip ?? 0.55));
     const hipVA = gradA > 1e-6 ? Math.min(profile.vr, (hipY - s.eave_a) / gradA) : profile.vr;
     const hipVB = gradB > 1e-6 ? Math.max(profile.vr, w - (hipY - s.eave_b) / gradB) : profile.vr;
     const hipRun = Math.min(halfLength - 0.1, (profile.rh - hipY) / Math.max(0.2, gradA));
@@ -109,7 +109,7 @@ export function sectionGeometry(s: RoofSection, overhang: SectionOverhang): Sect
     case "halfhip": {
       // a gable whose top is hipped: the hip starts at 55 % of the gable's height and slopes like side a
       const eaveLow = Math.min(profile.y(0), profile.y(w));
-      const hipY = eaveLow + (profile.rh - eaveLow) * 0.55;
+      const hipY = eaveLow + (profile.rh - eaveLow) * Math.min(0.9, Math.max(0.2, s.halfhip ?? 0.55));
       const hipVA = gradA > 1e-6 ? Math.min(profile.vr, (hipY - s.eave_a) / gradA) : profile.vr;
       const hipVB = gradB > 1e-6 ? Math.max(profile.vr, w - (hipY - s.eave_b) / gradB) : profile.vr;
       const hipRun = Math.min((frame.u1 - frame.u0) / 2 - 0.1, (profile.rh - hipY) / Math.max(0.2, gradA));

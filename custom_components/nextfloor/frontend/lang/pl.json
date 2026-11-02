@@ -945,6 +945,8 @@
   "roof_shape": "Kształt",
   "roof_end_start": "Zakończenie na początku kalenicy",
   "roof_end_end": "Zakończenie na końcu kalenicy",
+  "roof_halfhip": "Naczółek zaczyna się na",
+  "roof_halfhip_hint": "Na jakiej wysokości szczytu zaczyna się naczółek, jako część wysokości szczytu: nisko = duży naczółek, wysoko = tylko wierzchołek.",
   "roof_axis_x": "Kalenica ↔",
   "roof_axis_z": "Kalenica ↕",
   "roof_eave": "Okap (m)",

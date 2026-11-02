@@ -422,6 +422,8 @@ export interface RoofSection {
   open?: boolean;
   /** Gable, hip and half-hip sections: their own shape at the start and at the end of the ridge (null: both as the shape says). */
   ends?: [RoofEnd, RoofEnd] | null;
+  /** Half-hips: how high up the gable the hip starts, as a share of the gable's height (null = 0.55). */
+  halfhip?: number | null;
 }
 
 /** The end of a ridge: an upright gable, a hip, or a half-hip. */

@@ -945,6 +945,8 @@
   "roof_shape": "Forma",
   "roof_end_start": "Final al inicio de la cumbrera",
   "roof_end_end": "Final al final de la cumbrera",
+  "roof_halfhip": "El faldón comienza a",
+  "roof_halfhip_hint": "A qué altura del hastial empieza el faldón, como parte de su altura: bajo = un faldón grande, alto = solo la punta.",
   "roof_axis_x": "Cumbrera ↔",
   "roof_axis_z": "Cumbrera ↕",
   "roof_eave": "Alero (m)",

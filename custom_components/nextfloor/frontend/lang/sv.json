@@ -945,6 +945,8 @@
   "roof_shape": "Form",
   "roof_end_start": "Avslut vid nockens början",
   "roof_end_end": "Avslut vid nockens slut",
+  "roof_halfhip": "Halvvalmen börjar vid",
+  "roof_halfhip_hint": "Hur högt upp på gaveln valmen börjar, som andel av gavelns höjd: lågt = en stor valm, högt = bara spetsen.",
   "roof_axis_x": "Nock ↔",
   "roof_axis_z": "Nock ↕",
   "roof_eave": "Takfot (m)",

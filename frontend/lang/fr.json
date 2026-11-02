@@ -2384,6 +2384,8 @@
  "live_days": "jours",
  "roof_end_start": "Extrémité au début du faîtage",
  "roof_end_end": "Extrémité à la fin du faîtage",
+ "roof_halfhip": "La croupe commence à",
+ "roof_halfhip_hint": "À quelle hauteur du pignon commence la croupe, en part de la hauteur du pignon : bas = grande croupe, haut = seule la pointe est en croupe.",
  "travel": "Voyage dans le temps : rejouer les dernières 24 heures ou 7 jours",
  "travel_play": "Lecture",
  "travel_pause": "Pause",

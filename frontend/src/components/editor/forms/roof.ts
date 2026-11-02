@@ -149,9 +149,16 @@ function endFields(host: EditorHost, section: RoofSection, set: (patch: Partial<
   const [start, end] = section.ends ?? [own, own];
   const choices: [RoofEnd, string][] = (["gable", "hip", "halfhip"] as const).map((e) => [e, t(`roof_shape_${e}` as I18nKey)]);
   const choose = (pair: [RoofEnd, RoofEnd]) => set({ ends: pair[0] === own && pair[1] === own ? null : pair });
+  const halfhip = start === "halfhip" || end === "halfhip";
   return html`<div class="nf-form">
     ${selectField(host, t("roof_end_start"), start, choices, (v) => choose([v, end]))}
     ${selectField(host, t("roof_end_end"), end, choices, (v) => choose([start, v]))}
+    ${halfhip
+      ? html`<label class="nf-field nf-wide" title=${t("roof_halfhip_hint")}
+          >${t("roof_halfhip")} · ${Math.round((section.halfhip ?? 0.55) * 100)} %
+          <input type="range" min="20" max="90" step="5" .value=${String(Math.round((section.halfhip ?? 0.55) * 100))} ?disabled=${!host.admin} @change=${(e: Event) => set({ halfhip: Number((e.target as HTMLInputElement).value) / 100 })} />
+        </label>`
+      : nothing}
   </div>`;
 }
 

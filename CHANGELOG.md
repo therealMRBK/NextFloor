@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Half-hips of any height**: a half-hip end of a roof section has a slider for how high up the gable its hip starts – from a large hip down low to only the tip.
 - **Areas within a room**: a room can take more Home Assistant areas as its parts (*＋ Area within the room*) – a reading corner, a shelf, the kitchenette of a living room – whose devices and sensors then belong to the room: in its panel, the climate, the lights and the warnings.
 - **Pets where they really are**: a pet from the packs can follow a room sensor (Bermuda, ESPresense or any sensor naming a room, with a tag on its collar) – it appears in the room the sensor names and roams it there.
 - **Light designer**: set a room's lamps as you like and press *＋ Save mood* in its panel – the mood is kept with the plan, a tap on ✨ sets it again, and *→* carries it over to another room's lamps (the first lamp takes the first setting …).

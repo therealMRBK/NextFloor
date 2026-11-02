@@ -945,6 +945,8 @@
   "roof_shape": "Forma",
   "roof_end_start": "Estremità all'inizio del colmo",
   "roof_end_end": "Estremità alla fine del colmo",
+  "roof_halfhip": "La falda a padiglione inizia al",
+  "roof_halfhip_hint": "A che altezza del timpano inizia la falda, come quota dell'altezza del timpano: basso = falda grande, alto = solo la punta.",
   "roof_axis_x": "Colmo ↔",
   "roof_axis_z": "Colmo ↕",
   "roof_eave": "Gronda (m)",
