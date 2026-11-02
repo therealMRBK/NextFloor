@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Favourites first**: the star menu can stand open from the start and a size larger (*★ Menu open* in the view options, card option `central_open`) for a wall tablet that mostly runs scenes; own buttons light up while their entity is on (the one they open or switch, or one you name); and the room panel lists the room's scenes at the top.
 - **Speakers and TVs get their own quick menu**: a tap on one opens play/pause, back and next, the volume, its sources (inputs, apps, Spotify Connect …) and the stations and playlists of *House → Presets*. A preset can now be kept to some speakers – the kitchen radio station on the kitchen speaker only.
 - **The car tells more**: a car plugged in at a wallbox nearby hangs on its charging cable in 3D (with the energy flow on), and the power runs along it while it charges. Its card says how far it is from home while it is away, when it leaves (a departure time it reports, or one set on the spot), and warns which doors, hatches, windows or the charge port stand open.
 - **More of the energy picture**: the house card now shows the last seven days as bars (sun and use per day, from Home Assistant's long-term statistics), gas and water meters (*Energy → Balance*) appear in the energy bar and on the card, the card stays above the open floor in the floor views, and a home battery shows its charge on its own front – a bar that fills, green when full, yellow, red when nearly empty.

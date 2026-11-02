@@ -676,6 +676,8 @@ SETTINGS_SCHEMA = vol.Schema(
                         vol.Required("action"): vol.In(["navigate", "more_info", "service", "fire_dom_event"]),
                         vol.Optional("target", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
                         vol.Optional("data", default=None): vol.Any(None, dict),
+                        # the entity whose state lights the button up while it is on
+                        vol.Optional("state_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
                     },
                     extra=vol.ALLOW_EXTRA,
                 )

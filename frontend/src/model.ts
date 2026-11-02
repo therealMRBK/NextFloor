@@ -520,6 +520,8 @@ export interface CustomButton {
   target?: string | null;
   /** service: its data; fire_dom_event: the event's detail (e.g. { browser_mod: { service, data } }). */
   data?: Record<string, unknown> | null;
+  /** The entity whose state lights the button up while it is on (null: the entity it opens or switches, when there is one). */
+  state_entity?: string | null;
 }
 
 /**

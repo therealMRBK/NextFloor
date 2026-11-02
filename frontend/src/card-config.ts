@@ -87,6 +87,8 @@ export interface CardConfig {
   glass_walls?: number;
   /** The plan's own sensors at the top of the card (default true). */
   sensor_bar?: boolean;
+  /** The star menu (favourites) stands open from the start, a size larger (default false). */
+  central_open?: boolean;
   /** Announcements (action nextfloor.announce) show and speak on this card (default true). */
   announcements?: boolean;
   /** The name of this screen, for announcements meant for some screens only (default: the name set in the panel on this device). */

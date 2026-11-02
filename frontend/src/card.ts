@@ -303,6 +303,7 @@ export class NextFloorCard extends LitElement {
       .markersOutside=${c?.markers_outside ?? null}
       ?tapInRoom=${c?.tap_in_room === true}
       .central=${c?.central !== false}
+      .centralOpen=${c?.central_open === true}
       .buttons=${c?.buttons?.map((button, i) => ({ id: `card_${i}`, ...button })) ?? null}
       .heatMode=${s.heat}
       .theme=${lookNow(c?.theme, this.hass?.states["sun.sun"]?.state)}

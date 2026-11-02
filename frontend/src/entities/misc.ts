@@ -182,3 +182,14 @@ export function runButton(hass: HomeAssistant, from: HTMLElement, button: { acti
       return;
   }
 }
+
+/**
+ * Whether an own button's entity is on, so the button lights up: the entity the button names itself (`state_entity`), else the one
+ * it opens (more-info) or the single entity its service is called for. Off, unknown, or none to tell: false.
+ */
+export function ownButtonOn(hass: HomeAssistant | undefined, button: { action: string; target?: string | null; data?: Record<string, unknown> | null; state_entity?: string | null }): boolean {
+  const data = button.data?.entity_id;
+  const id = button.state_entity || (button.action === "more_info" ? button.target : null) || (button.action === "service" && typeof data === "string" ? data : null);
+  const st = id ? hass?.states[id] : undefined;
+  return !!st && ["on", "open", "playing", "home", "heat", "cool", "unlocked"].includes(st.state);
+}

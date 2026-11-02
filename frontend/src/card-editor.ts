@@ -149,6 +149,7 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "alerts", "card_alerts", "card_alerts_hint")} ${switchOption(f, "alert_jump", "card_alert_jump", "card_alert_jump_hint")}
       ${switchOption(f, "scenes", "card_scenes", "card_scenes_hint")}
       ${switchOption(f, "sensor_bar", "card_sensor_bar", "card_sensor_bar_hint")}
+      ${switchOption(f, "central_open", "card_central_open", "card_central_open_hint")}
       ${switchOption(f, "announcements", "card_announcements", "card_announcements_hint")}
       ${f.value.announcements !== false ? html`<div class="grid">${textField(f, "screen_name", "screen_name")}</div>` : nothing}
       ${switchOption(f, "weather", "card_weather", "card_weather_hint")}

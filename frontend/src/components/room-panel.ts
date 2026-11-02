@@ -182,6 +182,24 @@ export class NfRoomPanel extends LitElement {
           : !ids.length
             ? html`<p class="nf-rp-note">${this.t("panel_empty")}</p>`
             : nothing}
+        ${scenes.length
+          ? this.section(
+              "panel_scenes",
+              [
+                html`<div class="nf-rp-scenes">
+                  ${scenes.map(
+                    (st) => html`<button
+                      class="nf-btn"
+                      ?disabled=${isUnavailable(st)}
+                      @click=${() => this.call(kindOf(st.entity_id) === "scene" ? "scene" : "script", "turn_on", { entity_id: st.entity_id })}
+                    >
+                      ${this.name(st.entity_id)}
+                    </button>`,
+                  )}
+                </div>`,
+              ],
+            )
+          : nothing}
         ${lights.length
           ? this.section(
               "panel_lights",
@@ -214,24 +232,6 @@ export class NfRoomPanel extends LitElement {
         ${media.length ? this.section("panel_media", media.map((st) => this.mediaRow(st))) : nothing}
         ${switches.length ? this.section("panel_switches", switches.map((st) => this.switchRow(st))) : nothing}
         ${sensors.length ? this.section("panel_sensors", sensors.map((st) => this.sensorRow(st))) : nothing}
-        ${scenes.length
-          ? this.section(
-              "panel_scenes",
-              [
-                html`<div class="nf-rp-scenes">
-                  ${scenes.map(
-                    (st) => html`<button
-                      class="nf-btn"
-                      ?disabled=${isUnavailable(st)}
-                      @click=${() => this.call(kindOf(st.entity_id) === "scene" ? "scene" : "script", "turn_on", { entity_id: st.entity_id })}
-                    >
-                      ${this.name(st.entity_id)}
-                    </button>`,
-                  )}
-                </div>`,
-              ],
-            )
-          : nothing}
         ${canAnnounce(this.hass) && roomHasSpeaker(this.hass, this.floor, room) ? this.announceSection(room) : nothing}
         ${this.pluginSections(room, ids)}
         ${hiddenCount

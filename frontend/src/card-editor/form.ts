@@ -37,12 +37,13 @@ export const DEFAULTS: Partial<CardConfig> = {
   marker_names: false,
   tap_in_room: false,
   central: true,
+  central_open: false,
   night: "off",
   idle_orbit: false,
 };
 
 /** The yes/no options that get a plain checkbox. */
-export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room";
+export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room" | "central_open";
 
 export type Choice = [value: string, label: I18nKey];
 

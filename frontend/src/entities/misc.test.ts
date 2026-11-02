@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { centroid, pointInPolygon } from "../model.ts";
 import { box, entity, floorWith, hassOf } from "./fixtures.ts";
-import { autoPlace, favoriteCall, floorControls, robotRoom, robotRoomSensor, roomKey, runButton } from "./misc.ts";
+import { autoPlace, favoriteCall, floorControls, ownButtonOn, robotRoom, robotRoomSensor, roomKey, runButton } from "./misc.ts";
 
 const ids = (n: number, prefix = "sensor.s") => Array.from({ length: n }, (_, i) => `${prefix}${i}`);
 
@@ -106,4 +106,12 @@ test("own buttons call a service or fire the DOM event, and ignore incomplete on
   runButton(hass, from, { action: "more_info", target: "" });
   assert.equal(calls.length, 1);
   assert.equal(events.length, 2);
+});
+
+test("an own button lights up while its entity is on", () => {
+  const hass = hassOf([entity("switch.party", "on"), entity("light.hall", "off")]);
+  assert.equal(ownButtonOn(hass, { action: "service", target: "switch.toggle", data: { entity_id: "switch.party" } }), true);
+  assert.equal(ownButtonOn(hass, { action: "more_info", target: "light.hall" }), false);
+  assert.equal(ownButtonOn(hass, { action: "navigate", target: "/lovelace/0", state_entity: "switch.party" }), true, "named by hand");
+  assert.equal(ownButtonOn(hass, { action: "service", target: "script.x", data: { entity_id: ["switch.party"] } }), false, "several entities tell nothing");
 });

@@ -309,6 +309,7 @@ export class NextFloorPanel extends LitElement {
         </details>
         <div class="nf-seg nf-quality">
           <button aria-pressed=${p.timeSlider} title=${this.t("time_of_day_hint")} @click=${() => this.toggleTimeSlider(!p.timeSlider)}>☀ ${this.t("time_of_day")}</button>
+          <button aria-pressed=${p.menuOpen} title=${this.t("menu_open_hint")} @click=${() => this.setPref("menuOpen", !p.menuOpen)}>★ ${this.t("menu_open")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
       </div>`;
@@ -527,6 +528,7 @@ export class NextFloorPanel extends LitElement {
           .walkButton=${true}
           .travelButton=${true}
           .accent=${p.accent}
+          .centralOpen=${p.menuOpen}
           ?furnish=${this._furnish}
           .selectedFurniture=${this._selFurniture}
           @furniture-select=${(e: CustomEvent<{ id: string | null }>) => (this._selFurniture = e.detail.id)}

@@ -93,6 +93,7 @@ function ownButtons(host: EditorHost): TemplateResult {
       ? textField(host, host.t(`own_target_${b.action}` as I18nKey), b.target ?? "", (v) => edit(i, { target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[b.action] })
       : nothing}
     ${b.action === "service" || b.action === "fire_dom_event" ? dataField(host, b, (data) => edit(i, { data })) : nothing}
+    ${entityField(host, host.t("own_button_state"), b.state_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(switch|light|input_boolean|binary_sensor|fan|cover|media_player|climate|lock|person|device_tracker)\./.test(id)), (v) => edit(i, { state_entity: v && v !== "none" ? v : null }))}
     <div class="nf-actions nf-wide">
       <button class="nf-btn" ?disabled=${i === 0} @click=${() => store(moveWithin(list, i, -1))}>↑</button>
       <button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button>

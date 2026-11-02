@@ -46,6 +46,7 @@ import {
   floorControls,
   favoriteCall,
   runButton,
+  ownButtonOn,
 } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
@@ -153,6 +154,7 @@ export class NfView3d extends LitElement {
     _thumbsCompact: { state: true },
     _armed: { state: true },
     central: { attribute: false },
+    centralOpen: { attribute: false },
     buttons: { attribute: false },
     _thumbs: { state: true },
     floorThumbs: { attribute: false },
@@ -359,6 +361,8 @@ export class NfView3d extends LitElement {
   private armTimer: ReturnType<typeof setTimeout> | undefined;
   /** Show the star with the central menu (card option central; default on). */
   declare central: boolean;
+  /** The star menu stands open from the start, a size larger (a wall tablet whose main use are its favourites). */
+  declare centralOpen: boolean;
   /** Own buttons from the card's YAML (replace the house's buttons when set). */
   declare buttons: CustomButton[] | null;
   private swipeSent = 0;
@@ -544,7 +548,7 @@ export class NfView3d extends LitElement {
       const host = this.renderRoot.querySelector(".nf-stage") as HTMLElement;
       // a tap into the 3D view closes the star menu, like any menu (#220)
       host.addEventListener("pointerdown", (e) => {
-        if (this._central && !(e.target as Element | null)?.closest?.(".nf-central, .nf-central-btn")) this._central = false;
+        if (this._central && !this.centralOpen && !(e.target as Element | null)?.closest?.(".nf-central, .nf-central-btn")) this._central = false;
       });
       this.viewer = mod.createViewer(host, {
         quality: this.quality,
@@ -612,7 +616,8 @@ export class NfView3d extends LitElement {
     const windowNode = this._pluginWindow?.node as (Node & { hass?: unknown }) | undefined;
     if (changed.has("hass") && windowNode && "hass" in windowNode) windowNode.hass = this.hass;
     // the star menu closes when a room or another floor is chosen (#220)
-    if (this._central && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
+    if (this._central && !this.centralOpen && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
+    if (changed.has("centralOpen") && this.centralOpen) this._central = true;
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture
@@ -1726,7 +1731,7 @@ export class NfView3d extends LitElement {
     const favorites = (b.settings.favorites ?? []).filter((id) => hass.states[id]);
     const own = this.buttons ?? b.settings.buttons ?? [];
     return html`${star}
-      <div class="nf-central" role="dialog" aria-label=${t("central")}>
+      <div class="nf-central ${this.centralOpen ? "nf-central-big" : ""}" role="dialog" aria-label=${t("central")}>
         <b>${floor ? floor.name : t("central_house")}</b>
         <div class="nf-central-row">
           <span>${t("central_lights")}${lights.length ? html` <small>${lightsOn}/${lights.length}</small>` : nothing}</span>
@@ -1769,6 +1774,7 @@ export class NfView3d extends LitElement {
               ${own.map(
                 (btn) => html`<button
                   class="nf-chip nf-own-btn"
+                  aria-pressed=${ownButtonOn(hass, btn)}
                   @click=${(e: Event) => {
                     runButton(hass, e.currentTarget as HTMLElement, btn);
                     if (btn.action !== "service") this._central = false;
@@ -2854,6 +2860,22 @@ export class NfView3d extends LitElement {
         margin: 0;
         font-size: 13px;
         opacity: 0.7;
+      }
+      /* opened from the start on a wall tablet: a size larger, easy to hit */
+      .nf-central-big {
+        width: min(420px, calc(100% - 24px));
+        font-size: 16px;
+      }
+      .nf-central-big .nf-chip,
+      .nf-central-big .nf-btn {
+        min-height: 44px;
+        padding: 8px 16px;
+        font-size: 15px;
+      }
+      .nf-own-btn[aria-pressed="true"] {
+        border-color: var(--nf-accent);
+        color: var(--nf-accent);
+        box-shadow: 0 0 12px color-mix(in srgb, var(--nf-accent) 45%, transparent);
       }
       .nf-low .nf-central {
         backdrop-filter: none;
