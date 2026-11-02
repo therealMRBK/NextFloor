@@ -2125,5 +2125,8 @@
   "furn_to_floor_hint": "El mueble pasa al mismo sitio en la planta elegida.",
   "arc": "Arco",
   "arc_hint": "Curva la pared en arco. Una habitación que comparte la pared se curva con ella, puertas y ventanas la siguen; Deshacer quita el arco.",
-  "arc_prompt": "¿Cuánto debe abombarse la pared (m)? Positivo hacia fuera, negativo hacia la habitación."
+  "arc_bulge": "Curvatura (m)",
+  "arc_bulge_hint": "Cuánto se curva el centro de la pared: positivo hacia fuera, negativo hacia la estancia.",
+  "arc_apply": "Curvar",
+  "arc_too_wide": "Una puerta o ventana de esta pared es demasiado ancha para esta curva. Haz la curva más plana o la abertura más estrecha."
 }

@@ -178,3 +178,20 @@ test("both rooms of a bent shared edge keep their openings whole on a piece of t
     assert.equal(left.wall_thickness![e], 0.3);
   }
 });
+
+test("an arc too sharp for a wide opening on it leaves the wall straight", async () => {
+  const { arcFreeWall, arcRoomEdge } = await import("./rooms.ts");
+  const { box, floorWith, opening } = await import("../../../entities/fixtures.ts");
+  // a 2 m window on a 3 m wall: a deep bulge would need pieces far shorter than the window
+  const walls = floorWith([], { walls: [{ id: "w", a: [0, 0], b: [3, 0] }], openings: [opening("o", "r", "window", { wall: "w", offset: 1.5, width: 2 })] });
+  assert.deepEqual(arcFreeWall(walls, "w", 1.2), []);
+  assert.equal(walls.walls!.length, 1);
+  const room = box("a", 0, 0, 3, 3);
+  const rooms = floorWith([room], { openings: [opening("d", "a", "window", { edge: 0, offset: 1.5, width: 2 })] });
+  assert.equal(arcRoomEdge(rooms, "a", 0, 1.2), false);
+  assert.equal(room.points.length, 4);
+  // a narrower window fits on a flat curve
+  const flat = floorWith([], { walls: [{ id: "w", a: [0, 0], b: [3, 0] }], openings: [opening("o", "r", "window", { wall: "w", offset: 1.5, width: 1.2 })] });
+  assert.deepEqual(arcFreeWall(structuredClone(flat), "w", 1.2), [], "but not on a deep one");
+  assert.ok(arcFreeWall(flat, "w", 0.15).length >= 2);
+});

@@ -67,6 +67,7 @@ import { setUnits } from "../units.ts";
 import "./editor/wall-view.ts";
 import { LibraryState, renderLibrary, renderPreview, type LibraryActions } from "./editor/forms/library.ts";
 import { arcFreeWall, arcRoomEdge, insertCorner } from "./editor/ops/rooms.ts";
+import type { ArcActions, ArcEdit } from "./editor/forms/arc.ts";
 import { dragStep, facingAngle, gridPositionAfter, hasLeftStart, headingAngle, outlineWithCornerAt, shifted, steppedDelta, straightEnd } from "./editor/ops/drags.ts";
 import { snapToPlan } from "./editor/ops/snapping.ts";
 import { draftLayer, guidesLayer } from "./editor/canvas/draft.ts";
@@ -190,6 +191,7 @@ export class NfEditor extends LitElement {
     _size: { state: true },
     _canUndo: { state: true },
     _canRedo: { state: true },
+    _arcEdit: { state: true },
   };
 
   declare hass: HomeAssistant;
@@ -229,6 +231,8 @@ export class NfEditor extends LitElement {
   private declare _measureLen: number;
   private declare _rectSize: [number, number];
   private declare _tool: Tool;
+  /** The wall whose arc row is open in the side bar, with the typed bulge. */
+  private declare _arcEdit: ArcEdit | null;
   /** The wall shown from the front (room and edge), or null. */
   private declare _wallView: { roomId: string; edge: number } | null;
   private declare _draft: Vec2[];
@@ -269,6 +273,7 @@ export class NfEditor extends LitElement {
     super();
     this.narrow = false;
     this._floorId = null;
+    this._arcEdit = null;
     this.roof.sectionId = null;
     this.roof.solarId = null;
     this.roof.picking = false;
@@ -332,23 +337,34 @@ export class NfEditor extends LitElement {
     };
   }
 
-  /** Asks how far a wall should bulge (metres; negative bends the other way), or null when cancelled. */
-  private askSagitta(): number | null {
-    const typed = prompt(this.t("arc_prompt"), "0.5");
-    if (typed === null) return null;
-    const value = Number(typed.replace(",", "."));
-    return Number.isFinite(value) && Math.abs(value) >= 0.01 ? value : null;
+  /** The arc row of the side bar: bends the wall its key names (`room:<id>:<edge>` or `wall:<id>`), or says why it could not. */
+  private arcActions(): ArcActions {
+    return {
+      edit: this._arcEdit,
+      setEdit: (edit) => (this._arcEdit = edit),
+      apply: (edit) => {
+        if (!this.isAdmin || Math.abs(edit.bulge) < 0.01) return;
+        const base = this._doc;
+        const next = structuredClone(base);
+        const floor = next.floors.find((f) => f.id === this._floorId);
+        if (!floor) return;
+        const [kind, id, edge] = edit.key.split(":");
+        const bent = kind === "wall" ? arcFreeWall(floor, id, edit.bulge).length > 0 : arcRoomEdge(floor, id, Number(edge), edit.bulge);
+        if (!bent) {
+          this._arcEdit = { ...edit, error: this.t("arc_too_wide") };
+          return;
+        }
+        this._arcEdit = null;
+        this.setDoc(next, base);
+      },
+    };
   }
 
   private freeWallActions(): FreeWallActions {
     return {
       update: (patch) => this.updateFreeWall(patch),
       remove: () => this.deleteFreeWall(),
-      arc: () => {
-        const id = this.sel.wall;
-        const sagitta = this.askSagitta();
-        if (id && sagitta !== null) this.change((_, floor) => void arcFreeWall(floor, id, sagitta));
-      },
+      arc: this.arcActions(),
       lockButton: this.fixButton("wall", this.sel.wall ?? ""),
     };
   }
@@ -1977,10 +1993,7 @@ export class NfEditor extends LitElement {
       setSlope: (room, edge, start, end) => this.changeRoom(room, (r) => setWallSlope(r, edge, start, end)),
       clearSlope: (room, edge) => this.changeRoom(room, (r) => clearWallSlope(r, edge, this.floor?.height ?? 2.5)),
       setThickness: (room, edge, thickness) => this.changeRoom(room, (r) => setWallThickness(r, edge, thickness)),
-      arc: (room, edge) => {
-        const sagitta = this.askSagitta();
-        if (sagitta !== null && this.isAdmin) this.change((_, floor) => void arcRoomEdge(floor, room.id, edge, sagitta));
-      },
+      arc: this.arcActions(),
       cut: (room, edge, part) => {
         const starts = this.edgeParts(room, edge);
         this.changeRoom(room, (r) => cutEdge(r, edge, part, starts));

@@ -2125,5 +2125,8 @@
   "furn_to_floor_hint": "Il mobile si sposta nello stesso punto del piano scelto.",
   "arc": "Arco",
   "arc_hint": "Curva la parete ad arco. Una stanza che condivide la parete si curva con lei, porte e finestre la seguono; Annulla toglie l'arco.",
-  "arc_prompt": "Di quanto deve incurvarsi la parete (m)? Positivo verso l'esterno, negativo verso la stanza."
+  "arc_bulge": "Curvatura (m)",
+  "arc_bulge_hint": "Quanto si incurva il centro della parete: positivo verso l'esterno, negativo verso la stanza.",
+  "arc_apply": "Curva",
+  "arc_too_wide": "Una porta o finestra in questa parete è troppo larga per questa curva. Rendi la curva più piatta o l'apertura più stretta."
 }

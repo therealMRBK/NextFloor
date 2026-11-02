@@ -6,6 +6,7 @@ import { bounds, cutsOut, isAxisRect, type FreeWall, OUTDOOR_TOP, OUTDOOR_TYPES,
 import { checkField, hint, numberField, selectField, toThousandths } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { wallEndForLength, wallHeightPatch } from "../ops/items.ts";
+import { arcButton, arcRow, type ArcActions } from "./arc.ts";
 
 export interface OutdoorActions {
   update(patch: Partial<OutdoorArea>): void;
@@ -120,8 +121,8 @@ export function renderMeasureForm(host: EditorHost, state: MeasureState, actions
 export interface FreeWallActions {
   update(patch: Partial<FreeWall>): void;
   remove(): void;
-  /** Bends the wall into an arc. */
-  arc(): void;
+  /** Bending the wall into an arc (its key is `wall:<id>`). */
+  arc: ArcActions;
   lockButton: TemplateResult | typeof nothing;
 }
 
@@ -137,7 +138,8 @@ export function renderFreeWallForm(host: EditorHost, wall: FreeWall, actions: Fr
       ${numberField(host, t("wall_thickness"), wall.thickness ?? host.doc.settings.wall_interior, (v) => actions.update({ thickness: between(0.02, 1, v) }), 0.01, 0.02)}
       ${numberField(host, t("wall_height"), wall.height ?? floorHeight, (v) => actions.update(wallHeightPatch(v, floorHeight)), 0.05, 0.05)}
     </div>
-    ${host.admin ? html`<div class="nf-actions"><button class="nf-btn" title=${t("arc_hint")} @click=${() => actions.arc()}>◠ ${t("arc")}</button><button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
+    ${host.admin ? html`<div class="nf-actions">${arcButton(host, `wall:${wall.id}`, actions.arc)}<button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
+    <div class="nf-form">${arcRow(host, `wall:${wall.id}`, actions.arc)}</div>
     ${hint(t("free_wall_hint"))}
   </section>`;
 }

@@ -2125,5 +2125,8 @@
   "furn_to_floor_hint": "Mebel trafia w to samo miejsce na wybranym piętrze.",
   "arc": "Łuk",
   "arc_hint": "Wygina ścianę w łuk. Pomieszczenie dzielące tę ścianę wygina się razem z nią, drzwi i okna przesuwają się; Cofnij usuwa łuk.",
-  "arc_prompt": "Jak bardzo ma się wygiąć ściana (m)? Dodatnio na zewnątrz, ujemnie do wnętrza pomieszczenia."
+  "arc_bulge": "Wygięcie (m)",
+  "arc_bulge_hint": "Jak bardzo środek ściany się wygina: dodatnio na zewnątrz, ujemnie do pomieszczenia.",
+  "arc_apply": "Wygnij",
+  "arc_too_wide": "Drzwi lub okno w tej ścianie są za szerokie dla tego łuku. Spłaszcz łuk albo zwęż otwór."
 }

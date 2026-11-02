@@ -8,7 +8,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Duplicate a floor**: the floor form copies the open floor on top of the house, with its rooms, walls, doors and windows, and on request its furniture, device pins and outdoor areas. The copy is unlinked from Home Assistant (areas, floor, furniture entities), so it can be set up for the new storey; energy devices stay on the original floor.
 - **Move furniture to another floor**: the furniture form moves an item to the same spot on another floor.
-- **Curved walls**: the ◠ Arc button on a wall of a room (in the room's wall list) or on a free wall bends it into an arc that bulges by the typed distance, outwards or into the room. A room sharing the wall bends along, doors and windows move with it and stay whole, and everything else (3D, solid walls, cut view, wall heights) treats the arc like any wall. Undo takes the arc back.
+- **Curved walls**: the ◠ Arc button on a wall of a room (in the room's wall list) or on a free wall bends it into an arc: type how far its middle bulges, outwards or into the room, and press *Bend*. A room sharing the wall bends along, doors and windows move with it and stay whole, and everything else (3D, solid walls, cut view, wall heights) treats the arc like any wall. Undo takes the arc back.
 
 ## 0.16.1
 

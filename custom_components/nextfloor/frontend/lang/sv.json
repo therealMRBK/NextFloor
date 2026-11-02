@@ -2125,5 +2125,8 @@
   "furn_to_floor_hint": "Möbeln flyttas till samma plats på det valda planet.",
   "arc": "Båge",
   "arc_hint": "Böjer väggen till en båge. Ett rum som delar väggen böjs med, dörrar och fönster följer med; Ångra tar bort bågen.",
-  "arc_prompt": "Hur mycket ska väggen bukta (m)? Positivt utåt, negativt in i rummet."
+  "arc_bulge": "Böjning (m)",
+  "arc_bulge_hint": "Hur långt väggens mitt buktar: positivt utåt, negativt in i rummet.",
+  "arc_apply": "Böj",
+  "arc_too_wide": "En dörr eller ett fönster i den här väggen är för brett för den här bågen. Gör bågen flackare eller öppningen smalare."
 }

@@ -2125,5 +2125,8 @@
   "furn_to_floor_hint": "O móvel passa para o mesmo sítio no piso escolhido.",
   "arc": "Arco",
   "arc_hint": "Curva a parede em arco. Uma divisão que partilha a parede curva-se com ela, portas e janelas acompanham; Desfazer retira o arco.",
-  "arc_prompt": "Quanto deve a parede abaular (m)? Positivo para fora, negativo para dentro da divisão."
+  "arc_bulge": "Curvatura (m)",
+  "arc_bulge_hint": "Quanto o meio da parede se curva: positivo para fora, negativo para dentro da divisão.",
+  "arc_apply": "Curvar",
+  "arc_too_wide": "Uma porta ou janela desta parede é larga demais para esta curva. Torne a curva mais plana ou a abertura mais estreita."
 }

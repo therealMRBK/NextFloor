@@ -2125,5 +2125,8 @@
  "furn_to_floor_hint": "Le meuble se place au même endroit à l'étage choisi.",
  "arc": "Arc",
  "arc_hint": "Courbe le mur en arc. Une pièce qui partage ce mur se courbe avec, les portes et fenêtres suivent ; Annuler retire l'arc.",
- "arc_prompt": "De combien le mur doit-il se bomber (m) ? Positif vers l'extérieur, négatif vers la pièce."
+ "arc_bulge": "Courbure (m)",
+ "arc_bulge_hint": "De combien le milieu du mur se bombe : positif vers l'extérieur, négatif vers la pièce.",
+ "arc_apply": "Courber",
+ "arc_too_wide": "Une porte ou une fenêtre de ce mur est trop large pour cette courbe. Rends la courbe plus plate ou l'ouverture plus étroite."
 }

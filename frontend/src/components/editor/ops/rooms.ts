@@ -131,10 +131,21 @@ export function insertCorner(floor: Floor, roomId: string, edge: number, at: Vec
   }
 }
 
-/** The pieces an arc may have so that every opening on it still fits on one piece. */
+/** The most an arc may turn from one piece to the next (degrees): coarser than that it reads as a kink, not a curve. */
+const MAX_PIECE_TURN = 22.5;
+
+/**
+ * The pieces an arc may have so that every opening on it still fits on one piece, or 0 when the widest opening would need
+ * pieces so long that the arc turns into a kink.
+ */
 function piecesFor(chordLength: number, sagitta: number, widest: number): number {
-  const arcLength = chordLength * (1 + (8 / 3) * (sagitta / Math.max(1e-6, chordLength)) ** 2);
-  return widest > 0 ? Math.max(2, Math.floor(arcLength / (widest + 0.1))) : 24;
+  const s = Math.min(Math.abs(sagitta), chordLength * 2);
+  const arcLength = chordLength * (1 + (8 / 3) * (s / Math.max(1e-6, chordLength)) ** 2);
+  const turn = (4 * Math.atan((2 * s) / Math.max(1e-6, chordLength)) * 180) / Math.PI;
+  const fewest = Math.max(2, Math.ceil(turn / MAX_PIECE_TURN));
+  if (widest <= 0) return 24;
+  const most = Math.floor(arcLength / (widest + 0.1));
+  return most >= fewest ? most : 0;
 }
 
 /** Where openings land on a bent edge: at the same share of its length, kept whole on their piece. */
@@ -179,7 +190,9 @@ export function arcRoomEdge(floor: Floor, roomId: string, edge: number, sagitta:
       .filter((x): x is [Room, number, boolean] => !!x),
   );
   const widest = Math.max(0, ...sharing.flatMap(([r, e]) => onEdge(r, e).map((o) => o.width)));
-  const inner = arcPoints(a, b, bulgeLeft, piecesFor(chord, sagitta, widest)).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
+  const pieces = piecesFor(chord, sagitta, widest);
+  if (!pieces) return false;
+  const inner = arcPoints(a, b, bulgeLeft, pieces).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
   if (!inner.length) return false;
   for (const [r, e, reversed] of sharing) {
     const corners = reversed ? [...inner].reverse() : inner;
@@ -208,7 +221,9 @@ export function arcFreeWall(floor: Floor, wallId: string, sagitta: number): stri
   const chord = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
   const moving = floor.openings.filter((o) => o.wall === wallId);
   const widest = Math.max(0, ...moving.map((o) => o.width));
-  const inner = arcPoints(wall.a, wall.b, sagitta, piecesFor(chord, sagitta, widest)).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
+  const pieces = piecesFor(chord, sagitta, widest);
+  if (!pieces) return [];
+  const inner = arcPoints(wall.a, wall.b, sagitta, pieces).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
   if (!inner.length) return [];
   const points = [wall.a, ...inner, wall.b];
   const chain = points.slice(1).map((p, i) => ({ ...wall, id: i === 0 ? wall.id : uid("wall"), a: points[i], b: p }));
