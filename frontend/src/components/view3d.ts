@@ -72,6 +72,7 @@ import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
 import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
+import { isHeatPump, readHeatPump, type HeatPumpInfo } from "../live/heat-pump.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -854,6 +855,12 @@ export class NfView3d extends LitElement {
         color: [80, 175, 255],
         ...(cable ? { via: [{ ...from, y: 0.35 }, { floorId: c.at.floorId, x: (from.x + c.at.x) / 2, z: (from.z + c.at.z) / 2, y: 0.08 }, { ...c.at, y: 0.5 }], cable: true } : {}),
       });
+    }
+    // a heat pump that heats: its heat flows into the house in orange
+    const hub = houseHub(b);
+    for (const p of this.liveHeatPumps(b)) {
+      const heat = p.pump.heat ?? (p.pump.mode === "heating" || p.pump.mode === "water" ? (p.pump.power ?? 0) * (p.pump.cop ?? 3) : 0);
+      if (hub && heat > 100 && p.pump.mode !== "cooling") livePic.arcs.push({ key: `heat:${p.id}`, from: { floorId: p.floorId, x: p.x, z: p.z, y: 0.8 }, to: hub, power: heat, color: [255, 120, 40] });
     }
     const liveFlows = (this.flows ?? this._flows) && !this.dimmed;
     v.setLiveEnergy(liveFlows ? livePic.arcs : [], liveFlows ? livePic.sparks : []);
@@ -2165,6 +2172,21 @@ export class NfView3d extends LitElement {
 
   /** The floating cards (house balance; car and music follow) and the points in the plan they hang over. */
   /** The cars of the parking spots: what each reports, and the point over the spot (over the car when it is there). */
+  /** Heat pumps in the plan whose device reports temperatures or heat. */
+  private liveHeatPumps(b: Building): { id: string; name: string; floorId: string; x: number; z: number; at: { floorId: string; x: number; z: number; y: number }; pump: HeatPumpInfo }[] {
+    const hass = this.hass;
+    if (!hass) return [];
+    const out: ReturnType<NfView3d["liveHeatPumps"]> = [];
+    for (const floor of b.floors)
+      for (const f of floor.furniture) {
+        if (!isHeatPump(f.type)) continue;
+        const link = this.furnitureLinks?.get(f.id);
+        const pump = readHeatPump(hass, link?.entity ?? link?.power ?? null);
+        if (pump) out.push({ id: f.id, name: f.name || furnitureName(hass, f.type), floorId: floor.id, x: f.x, z: f.z, at: { floorId: floor.id, x: f.x, z: f.z, y: mountBase(floor, f) + f.h + 0.5 }, pump });
+      }
+    return out;
+  }
+
   /** 3D printers in the plan whose device reports a print (the card shows while it prints, and a while after). */
   private livePrinters(b: Building): { id: string; name: string; at: { floorId: string; x: number; z: number; y: number }; printer: PrinterInfo }[] {
     const hass = this.hass;
@@ -2319,6 +2341,7 @@ export class NfView3d extends LitElement {
     if (this.liveCardsOn && !this.dimmed && !this.roomId) {
       for (const c of cars) cards.push({ kind: "car", at: c.at, spot: c.spot, name: c.name, car: c.car });
       for (const p of this.livePrinters(b)) cards.push({ kind: "printer", at: p.at, name: p.name, printer: p.printer });
+      for (const p of this.liveHeatPumps(b)) cards.push({ kind: "heatpump", at: p.at, name: p.name, pump: p.pump });
       for (const m of media) cards.push({ kind: "media", at: { ...m.at, y: m.at.y + 0.5 }, media: m });
     }
     if (JSON.stringify(cards) !== JSON.stringify(this._liveCards)) this._liveCards = cards;

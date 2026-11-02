@@ -16,6 +16,7 @@ import { formatNumber, translate } from "../i18n.ts";
 import type { HomeAssistant } from "../types.ts";
 import { curvePath } from "./day-curves.ts";
 import type { PrinterInfo } from "./printer.ts";
+import type { HeatPumpInfo } from "./heat-pump.ts";
 import type { PlanPoint } from "../viewer/live-energy.ts";
 
 export interface HouseCard {
@@ -52,7 +53,14 @@ export interface PrinterCard {
   printer: PrinterInfo;
 }
 
-export type LiveCard = HouseCard | CarCard | MediaCard | PrinterCard;
+export interface HeatPumpCard {
+  kind: "heatpump";
+  at: PlanPoint;
+  name: string;
+  pump: HeatPumpInfo;
+}
+
+export type LiveCard = HouseCard | CarCard | MediaCard | PrinterCard | HeatPumpCard;
 
 /** A button on a card was pressed: the 3D view calls the service (with extra data such as the volume). */
 export type LiveCardAction = (domain: string, service: string, entity: string, data?: Record<string, unknown>) => void;
@@ -255,10 +263,32 @@ function printerCard(hass: HomeAssistant | undefined, c: PrinterCard, i: number)
   </div>`;
 }
 
+/** A heat pump: what it does, flow and return, the outside, power and heat, and its COP as a ring (6 = full). */
+function heatPumpCard(hass: HomeAssistant | undefined, c: HeatPumpCard, i: number): TemplateResult {
+  const p = c.pump;
+  const t = (k: Parameters<typeof translate>[1]) => translate(hass, k);
+  const deg = (v: number | null) => (v === null ? "–" : `${formatNumber(hass, v, 1)}°`);
+  const icon = { heating: "🔥", water: "🚿", cooling: "❄", defrost: "🧊", idle: "⏸" }[p.mode];
+  return html`<div class="live-card live-card-heatpump ${p.mode === "idle" ? "" : "live-charging"}" data-i=${i}>
+    <div class="live-own">
+      ${ring(Math.min(1, (p.cop ?? 0) / 6), (p.cop ?? 0) >= 3.5 ? "#4ade80" : (p.cop ?? 0) >= 2.5 ? "#facc15" : "#fb923c")}
+      <div class="live-own-text"><b>${p.cop !== null ? formatNumber(hass, p.cop, 1) : icon}</b><span>${p.cop !== null ? "COP" : ""}</span></div>
+    </div>
+    <div class="live-rows">
+      <div class="live-title">${c.name}</div>
+      <div class="live-status">${icon} ${t(`heatpump_${p.mode}`)}</div>
+      ${p.flow !== null || p.return !== null ? html`<div class="live-row live-heat"><span>${t("heatpump_flow_return")}</span><b>${deg(p.flow)} → ${deg(p.return)}</b></div>` : nothing}
+      ${p.heat !== null ? html`<div class="live-row live-heat"><span>${t("heatpump_heat")}</span><b>${watts(hass, p.heat)}</b></div>` : nothing}
+      ${p.power !== null ? html`<div class="live-row live-house"><span>${t("heatpump_power")}</span><b>${watts(hass, p.power)}</b></div>` : nothing}
+      ${p.outside !== null ? html`<div class="live-status">🌡 ${t("heatpump_outside")} ${deg(p.outside)}</div>` : nothing}
+    </div>
+  </div>`;
+}
+
 export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction): TemplateResult | typeof nothing {
   if (!cards.length) return nothing;
   return html`<div class="live-cards">
-    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : mediaCard(hass, c, i, act)))}
+    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : c.kind === "heatpump" ? heatPumpCard(hass, c, i) : mediaCard(hass, c, i, act)))}
   </div>`;
 }
 

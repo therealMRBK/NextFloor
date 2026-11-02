@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Heat pump**: a heat pump from the packs linked to any entity of its device shows a card with what it does (heating, hot water, cooling, defrosting), flow and return, the outside temperature, the power it draws, the heat it delivers and its COP as a ring – and with the energy flow on, its heat runs into the house in orange.
 - **Your 3D printer, live**: link a 3D printer from the packs to any entity of your printer's device (Bambu Lab, OctoPrint, Moonraker/Klipper or PrusaLink), and while it prints a card floats above it with the model's picture, the progress, the time left and "done at", the layer, nozzle and bed temperatures and the filament colours of the AMS – and the print grows on the bed in 3D in the colour of its filament.
 - **"Today" on the wall tablet**: choose calendars in *House → Calendars for "Today"*, and a card top right in the 3D view lists the day's appointments (all-day ones first, past ones dimmed) together with the waste bins collected today or tomorrow. A tap on its title folds it; the card option `today: false` hides it on a dashboard card.
 - **Move a pin by hand**: when devices stand close together and their pins cover each other, *Move the pin* in the device's or furniture's form pushes the pin aside or up (in metres) while the device stays where it is.
