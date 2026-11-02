@@ -70,6 +70,7 @@ import { weatherEntity } from "../weather.ts";
 import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.ts";
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
+import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -156,6 +157,9 @@ export class NfView3d extends LitElement {
     central: { attribute: false },
     centralOpen: { attribute: false },
     keepCamera: { attribute: false },
+    today: { attribute: false },
+    _todayOpen: { state: true },
+    _todayItems: { state: true },
     zoom: { attribute: false },
     buttons: { attribute: false },
     _thumbs: { state: true },
@@ -367,6 +371,12 @@ export class NfView3d extends LitElement {
   declare centralOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   declare keepCamera: boolean;
+  /** The "Today" card top right: appointments of the plan's calendars and the bins due (default on). */
+  declare today: boolean;
+  private declare _todayOpen: boolean;
+  private declare _todayItems: TodayItem[];
+  private todayAt = 0;
+  private todayDay = "";
   /** How much closer the fitted views come (1 = fitted). */
   declare zoom: number;
   /** Own buttons from the card's YAML (replace the house's buttons when set). */
@@ -767,6 +777,7 @@ export class NfView3d extends LitElement {
     // a piece shown only while a helper is on (seasonal decoration) comes and goes with it
     if (hiddenFurniture(hass, b).join(",") !== this.shownFor?.key) v.setBuilding(this.shownBuilding(hass));
     this.shownStates = new Map(this.watched.map((id) => [id, hass.states[id]]));
+    this.refreshToday(b);
 
     const consumers = findConsumers(hass, b);
     const deviceMarkers = buildMarkers(hass, b);
@@ -2175,6 +2186,40 @@ export class NfView3d extends LitElement {
     return mediaNow(hass, spots);
   }
 
+  /** Today's appointments, loaded at most every 15 minutes, and again after midnight. */
+  private refreshToday(b: Building): void {
+    const hass = this.hass;
+    const calendars = b.settings.calendars ?? [];
+    const day = new Date().toDateString();
+    if (!hass || !calendars.length || (Date.now() - this.todayAt < 900_000 && day === this.todayDay)) return;
+    this.todayAt = Date.now();
+    this.todayDay = day;
+    void loadToday(hass, calendars).then((items) => (this._todayItems = items));
+  }
+
+  private renderToday() {
+    const b = this.building;
+    const hass = this.hass;
+    if (!b || !hass || this.today === false || this.clean || this.roomId) return nothing;
+    const bins = binsDue(hass, b, Date.now(), { today: translate(hass, "care_bin_today"), tomorrow: translate(hass, "care_bin_tomorrow") });
+    const items = sortDay([...bins, ...(this._todayItems ?? [])]);
+    if (!items.length && !(b.settings.calendars ?? []).length) return nothing;
+    const open = this._todayOpen !== false;
+    const date = new Intl.DateTimeFormat(hass.language ?? navigator.language, { weekday: "long", day: "numeric", month: "long" }).format(new Date());
+    return html`<section class="nf-today ${open ? "" : "nf-today-folded"}" style=${this.clock === "top_right" ? "top: 78px" : ""} aria-label=${translate(hass, "today")}>
+      <button class="nf-today-head" aria-expanded=${open} @click=${() => (this._todayOpen = !open)}>
+        <b>📅 ${translate(hass, "today")}</b><span>${date}</span>
+      </button>
+      ${open
+        ? items.length
+          ? html`<ul>
+              ${items.map((i) => html`<li class=${i.past ? "nf-today-past" : ""}><time>${i.kind === "bin" ? "🗑" : i.time || "●"}</time><span>${i.title}<small>${i.source}</small></span></li>`)}
+            </ul>`
+          : html`<p class="nf-today-none">${translate(hass, "today_none")}</p>`
+        : nothing}
+    </section>`;
+  }
+
   private week: WeekBars | null = null;
   private weekAt = 0;
 
@@ -2375,7 +2420,7 @@ export class NfView3d extends LitElement {
     >
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
-      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderPluginWindow()}
+      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
             ><b>${this._stats.fps ? translate(this.hass, "stats_fps", { fps: this._stats.fps, ms: this._stats.worstMs }) : translate(this.hass, "stats_idle")}</b>
@@ -2880,6 +2925,83 @@ export class NfView3d extends LitElement {
         margin: 0;
         font-size: 13px;
         opacity: 0.7;
+      }
+      /* "Today": the day's appointments and bins, top right, folds to its title */
+      .nf-today {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: min(280px, calc(100% - 24px));
+        max-height: calc(100% - 140px);
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 8px 12px 10px;
+        border-radius: 16px;
+        border: 1px solid var(--nf-line);
+        background: var(--nf-chrome);
+        box-shadow: var(--nf-shadow);
+        backdrop-filter: blur(10px);
+        color: var(--nf-text);
+        z-index: 3;
+      }
+      .nf-has-alerts .nf-today {
+        top: 58px;
+      }
+      .nf-low .nf-today {
+        backdrop-filter: none;
+      }
+      .nf-today-folded {
+        width: auto;
+        padding-bottom: 8px;
+      }
+      .nf-today-head {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        text-align: left;
+      }
+      .nf-today-head span {
+        font-size: 12px;
+        color: var(--nf-muted);
+      }
+      .nf-today ul {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .nf-today li {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 8px;
+        align-items: baseline;
+        font-size: 14px;
+      }
+      .nf-today time {
+        font-variant-numeric: tabular-nums;
+        color: var(--nf-accent);
+        font-weight: 600;
+      }
+      .nf-today small {
+        display: block;
+        font-size: 11px;
+        color: var(--nf-muted);
+      }
+      .nf-today-past {
+        opacity: 0.45;
+      }
+      .nf-today-none {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: var(--nf-muted);
       }
       /* opened from the start on a wall tablet: a size larger, easy to hit */
       .nf-central-big {

@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **"Today" on the wall tablet**: choose calendars in *House → Calendars for "Today"*, and a card top right in the 3D view lists the day's appointments (all-day ones first, past ones dimmed) together with the waste bins collected today or tomorrow. A tap on its title folds it; the card option `today: false` hides it on a dashboard card.
 - **Move a pin by hand**: when devices stand close together and their pins cover each other, *Move the pin* in the device's or furniture's form pushes the pin aside or up (in metres) while the device stays where it is.
 - **Small tablets and phones**: a 🔍 zoom in the view options (card option `zoom`) brings the fitted views closer so the house looks larger on a small tablet; *🎥 Keep camera* (card option `keep_camera`) keeps the camera's side, height and distance when you switch floors; the room panel takes a little more of the width on small landscape tablets; and on a phone the editor's tools are one dropdown instead of a row of eleven buttons.
 - **Favourites first**: the star menu can stand open from the start and a size larger (*★ Menu open* in the view options, card option `central_open`) for a wall tablet that mostly runs scenes; own buttons light up while their entity is on (the one they open or switch, or one you name); and the room panel lists the room's scenes at the top.

@@ -592,6 +592,8 @@ export interface BuildingSettings {
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
   announce_tts?: string | null;
   announce_phrases?: string[] | null;
+  /** Calendars whose appointments of the day show on the "Today" card of the 3D view. */
+  calendars?: string[] | null;
   /** Own sensors shown at the top of the 3D view (outside temperature, the alarm…), at most 12. */
   status_entities?: string[] | null;
   /** An own background behind the house instead of the look's sky: a colour and/or a picture (/local/… or https), dimmed. */

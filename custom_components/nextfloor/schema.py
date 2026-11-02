@@ -693,6 +693,8 @@ SETTINGS_SCHEMA = vol.Schema(
             ],
             vol.Length(max=20),
         ),
+        # calendars whose appointments of the day show on the "Today" card
+        vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
         vol.Optional("favorites", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=40)),
         # the camera the house view opens with (None = fitted from the front left)

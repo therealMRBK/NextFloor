@@ -39,6 +39,20 @@ function favorites(host: EditorHost): TemplateResult {
       : nothing}`;
 }
 
+/** The calendars of the "Today" card: their appointments of the day show top right in the 3D view, with the bins due. */
+function calendars(host: EditorHost): TemplateResult {
+  const list = host.doc.settings.calendars ?? [];
+  const store = (next: string[]) => host.change((d) => (d.settings.calendars = orUndefined(next)));
+  const options = entityOptions(host.hass, (id) => id.startsWith("calendar.") && !list.includes(id));
+  const row = (id: string, i: number) => html`<div class="nf-row nf-dev-row">
+    <span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>
+    ${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}
+  </div>`;
+  return html`<h4>📅 ${host.t("today_calendars")}</h4>
+    ${hint(host.t("today_calendars_hint"))} ${list.map(row)}
+    ${list.length < 12 ? html`<div class="nf-form">${entityField(host, host.t("favorites_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>` : nothing}`;
+}
+
 /** Stations and playlists that start on a speaker from its quick menu. */
 function mediaPresets(host: EditorHost): TemplateResult {
   const list = host.doc.settings.media_presets ?? [];
@@ -108,7 +122,7 @@ function ownButtons(host: EditorHost): TemplateResult {
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
 export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${mediaPresets(host)}</details>`;
+  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

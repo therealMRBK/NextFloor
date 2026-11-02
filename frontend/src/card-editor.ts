@@ -151,6 +151,7 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "sensor_bar", "card_sensor_bar", "card_sensor_bar_hint")}
       ${switchOption(f, "central_open", "card_central_open", "card_central_open_hint")}
       ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
+      ${switchOption(f, "today", "card_today", "card_today_hint")}
       <label class="field"
         >${f.t("view_zoom")}
         <select @change=${(e: Event) => f.set("zoom", Number((e.target as HTMLSelectElement).value))}>

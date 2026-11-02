@@ -91,6 +91,8 @@ export interface CardConfig {
   central_open?: boolean;
   /** Switching floors keeps the camera's side, height and distance (default false). */
   keep_camera?: boolean;
+  /** The "Today" card with the day's appointments and bins (default true). */
+  today?: boolean;
   /** How much closer the fitted views come, 0.6 … 2.5 (default 1). */
   zoom?: number;
   /** Announcements (action nextfloor.announce) show and speak on this card (default true). */
