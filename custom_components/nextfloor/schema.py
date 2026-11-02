@@ -55,6 +55,19 @@ ROOM_SCHEMA = vol.Schema(
         vol.Required("id"): _ID,
         vol.Required("name"): _NAME,
         vol.Required("area_id"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        # light moods saved in the room panel: each light off, or on with brightness and colour
+        vol.Optional("moods"): vol.All(
+            [
+                vol.Schema(
+                    {
+                        vol.Required("id"): vol.All(str, vol.Length(min=1, max=64)),
+                        vol.Required("name"): vol.All(str, vol.Length(max=60)),
+                        vol.Required("lights"): vol.All([dict], vol.Length(max=40)),
+                    }
+                )
+            ],
+            vol.Length(max=20),
+        ),
         # underfloor heating: the entity whose heating makes the floor glow
         vol.Optional("floor_heating"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Required("points"): vol.All([_POINT], vol.Length(min=3, max=MAX_POINTS)),

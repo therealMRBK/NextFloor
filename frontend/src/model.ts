@@ -63,6 +63,8 @@ export interface Room {
    * items hang from it, and its walls default to it (a wall shared with a room without a ceiling of its own keeps the floor height).
    */
   ceiling?: number | null;
+  /** Light moods saved in the room panel (the light designer): the lights as they were, to set again. */
+  moods?: LightMood[];
   /** Underfloor heating: the thermostat, valve or switch of the room's floor heating; its floor glows warm while it heats. */
   floor_heating?: string | null;
   /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */
@@ -623,6 +625,22 @@ export interface MapSettings {
   zoom?: number;
   /** Tile address with {z}, {x} and {y}; null = OpenStreetMap. */
   url?: string | null;
+}
+
+/** How one light of a mood is: off, or on with its brightness (0–255) and colour. */
+export interface LightSetting {
+  entity: string;
+  on: boolean;
+  brightness?: number;
+  rgb?: [number, number, number];
+  kelvin?: number;
+}
+
+/** A light mood of a room. */
+export interface LightMood {
+  id: string;
+  name: string;
+  lights: LightSetting[];
 }
 
 /** An own warning: shown in the warning bar while `entity` is in `state` (comma separated, or "<20" / ">80" for numbers). */

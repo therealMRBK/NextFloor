@@ -8,7 +8,8 @@ import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
 import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
-import type { Floor, Room } from "../model.ts";
+import type { Floor, LightMood, LightSetting, Room } from "../model.ts";
+import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { airingNeed, mouldRisk } from "../live/room-climate.ts";
 import { hassAt, loadHistory } from "../live/time-travel.ts";
 import { curvePath } from "../live/day-curves.ts";
@@ -55,6 +56,8 @@ export class NfRoomPanel extends LitElement {
     _said: { state: true },
     _folded: { state: true },
     _curve: { state: true },
+    _moodName: { state: true },
+    rooms: { attribute: false },
   };
 
   declare hass: HomeAssistant;
@@ -75,6 +78,10 @@ export class NfRoomPanel extends LitElement {
   /** Only the header shows (a small screen: the room stays in view, the devices are out of the way). Starts open for every room. */
   private declare _folded: boolean;
   private memo: { entities: HomeAssistant["entities"]; floor: Floor | null; room: Room; shown: string[]; more: string[] } | null = null;
+  /** Every room of the plan (a mood can be carried over to another one). */
+  declare rooms: Room[] | null;
+  /** The name typed for a new mood, while the field shows. */
+  private declare _moodName: string | null;
   /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
   private declare _curve: (number | null)[] | null;
   private curveFor = "";
@@ -89,6 +96,58 @@ export class NfRoomPanel extends LitElement {
     this._showAll = false;
     this._folded = false;
     this._curve = null;
+    this._moodName = null;
+    this.rooms = null;
+  }
+
+  private fireMoods(room: Room, moods: LightMood[]): void {
+    this.dispatchEvent(new CustomEvent("mood-change", { detail: { roomId: room.id, moods }, bubbles: true, composed: true }));
+  }
+
+  private runMood(settings: LightSetting[]): void {
+    for (const c of moodCalls(settings)) this.call("light", c.service, c.data);
+  }
+
+  /** The light designer: save the room's lights as a mood, set a mood again, carry it to another room, or drop it. */
+  private renderMoods(room: Room, lights: HassEntity[]): TemplateResult | typeof nothing {
+    const moods = room.moods ?? [];
+    // saving and dropping change the plan: only in the panel, for admins
+    const edit = !!this.rooms && !!(this.hass as { user?: { is_admin?: boolean } }).user?.is_admin;
+    if (!moods.length && !edit) return nothing;
+    const others = (this.rooms ?? []).filter((r) => r.id !== room.id && r.area_id);
+    const lightsOf = (r: Room) => areaEntities(this.hass, r.area_id).filter((id) => id.startsWith("light."));
+    const save = () => {
+      const name = (this._moodName ?? "").trim() || this.t("mood_new");
+      this.fireMoods(room, [...moods, { id: `mood_${Date.now().toString(36)}`, name, lights: lights.map(lightSetting) }]);
+      this._moodName = null;
+    };
+    return html`<div class="nf-rp-moods">
+      ${moods.map(
+        (m) => html`<span class="nf-rp-mood">
+          <button class="nf-btn" title=${this.t("mood_set")} @click=${() => this.runMood(m.lights)}>✨ ${m.name}</button>
+          ${others.length
+            ? html`<select class="nf-rp-mood-to" aria-label=${this.t("mood_carry")} title=${this.t("mood_carry")} @change=${(e: Event) => {
+                const sel = e.target as HTMLSelectElement;
+                const target = others.find((r) => r.id === sel.value);
+                sel.value = "";
+                if (target) this.runMood(carryMood(m, lightsOf(target)));
+              }}>
+                <option value="">→</option>
+                ${others.map((r) => html`<option value=${r.id}>${r.name}</option>`)}
+              </select>`
+            : nothing}
+          ${edit ? html`<button class="nf-btn nf-rp-small" aria-label=${this.t("delete")} @click=${() => this.fireMoods(room, moods.filter((x) => x.id !== m.id))}>✕</button>` : nothing}
+        </span>`,
+      )}
+      ${!edit
+        ? nothing
+        : this._moodName === null
+        ? html`<button class="nf-btn nf-rp-small" title=${this.t("mood_save_hint")} @click=${() => (this._moodName = "")}>＋ ${this.t("mood_save")}</button>`
+        : html`<span class="nf-rp-mood"
+            ><input type="text" maxlength="40" placeholder=${this.t("mood_new")} .value=${this._moodName} @input=${(e: Event) => (this._moodName = (e.target as HTMLInputElement).value)} @keydown=${(e: KeyboardEvent) => e.key === "Enter" && save()} />
+            <button class="nf-btn" @click=${save}>${this.t("mood_save")}</button></span
+          >`}
+    </div>`;
   }
 
   /** Loads the temperature history of the room's sensors (or thermostats) and samples it every quarter hour. */
@@ -258,7 +317,7 @@ export class NfRoomPanel extends LitElement {
         ${lights.length
           ? this.section(
               "panel_lights",
-              lights.map((st) => this.lightRow(st)),
+              [...lights.map((st) => this.lightRow(st)), ...(room ? [this.renderMoods(room, lights)] : [])],
               html`${lightsOn.length < lights.length
                 ? html`<button class="nf-btn nf-rp-small" @click=${() => this.call("light", "turn_on", { entity_id: lights.filter((l) => !isUnavailable(l)).map((l) => l.entity_id) })}>
                     ${this.t("panel_all_on")}
@@ -366,7 +425,7 @@ export class NfRoomPanel extends LitElement {
     );
   }
 
-  private section(title: I18nKey, rows: TemplateResult[], action: TemplateResult | typeof nothing = nothing) {
+  private section(title: I18nKey, rows: unknown[], action: TemplateResult | typeof nothing = nothing) {
     return html`<div class="nf-rp-sec">
       <div class="nf-rp-sec-head"><h3>${this.t(title)}</h3>${action}</div>
       ${rows}
@@ -812,6 +871,34 @@ export class NfRoomPanel extends LitElement {
       }
       .nf-rp-fail {
         color: #ff6b7a;
+      }
+      .nf-rp-moods {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .nf-rp-mood {
+        display: inline-flex;
+        gap: 2px;
+        align-items: center;
+      }
+      .nf-rp-mood-to {
+        width: 38px;
+        font: inherit;
+        background: var(--nf-bg2);
+        color: var(--nf-text);
+        border: 1px solid var(--nf-line);
+        border-radius: 8px;
+      }
+      .nf-rp-mood input {
+        width: 120px;
+        font: inherit;
+        padding: 4px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--nf-line);
+        background: var(--nf-bg2);
+        color: var(--nf-text);
       }
       .nf-rp-curve {
         position: relative;

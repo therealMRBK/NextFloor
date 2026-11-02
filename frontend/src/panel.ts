@@ -11,7 +11,7 @@ import { confirmEntities, outsideEntities } from "./devices.ts";
 import type { HeatMode } from "./heatmap.ts";
 import { awaitingLanguage, translate, type I18nKey } from "./i18n.ts";
 import { loadEditor } from "./load-editor.ts";
-import type { Building, Floor } from "./model.ts";
+import type { Building, Floor, LightMood } from "./model.ts";
 import { changeFurniture, changePlacement, dragDevice, dragFurniture, turned, withoutFurniture, withoutPlacement } from "./panel/edits.ts";
 import { furnishBar, type FurnishHost } from "./panel/furnish-bar.ts";
 import { NEXTFLOOR_MARK } from "./panel/mark.ts";
@@ -213,6 +213,11 @@ export class NextFloorPanel extends LitElement {
       this._selDevice = null;
     },
   };
+
+  /** The light designer's moods of a room, saved with the plan. */
+  private saveMoods(roomId: string, moods: LightMood[]): void {
+    this.applyEdit((b) => ({ ...b, floors: b.floors.map((f) => ({ ...f, rooms: f.rooms.map((r) => (r.id === roomId ? { ...r, moods: moods.length ? moods : undefined } : r)) })) }));
+  }
 
   private applyEdit(edit: (building: Building) => Building): void {
     const building = this.data.building;
@@ -558,6 +563,8 @@ export class NextFloorPanel extends LitElement {
               .floor=${building.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
               .confirmEntities=${confirmEntities(this.hass, building.floors)}
               .phrases=${building.settings.announce_phrases ?? null}
+              .rooms=${building.floors.flatMap((f) => f.rooms)}
+              @mood-change=${(e: CustomEvent<{ roomId: string; moods: LightMood[] }>) => this.saveMoods(e.detail.roomId, e.detail.moods)}
               @close=${() => (this._roomId = null)}
             ></nf-room-panel>`
           : this._outside
