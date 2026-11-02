@@ -12,7 +12,7 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Roofs | Windows in dormers; windows with a slanted top under the slope; a roof flush against a wall; gable and hip roofs over free shapes |
 | Trees in the way | Trees and tall plants that fade while they stand between the camera and the house |
 | Furniture studio in the editor | The furniture builder's templates right inside the editor (cabinets in any width with drawers and doors, shelves, lamps, devices with a display) |
-| More imports | Apple RoomPlan, DXF, Valetudo maps and glTF scenes |
+| More imports | Apple RoomPlan, Valetudo maps and glTF scenes |
 
 ## Live features
 
@@ -34,7 +34,7 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Dächer | Fenster in Gauben; Fenster mit schräger Oberkante unter der Dachschräge; Dach bündig an eine Wand; Sattel- und Walmdächer über freien Formen |
 | Bäume im Weg | Bäume und hohe Pflanzen, die ausblenden, solange sie zwischen Kamera und Haus stehen |
 | Möbel-Studio im Editor | Die Vorlagen der Möbel-Werkstatt direkt im Editor (Schränke in jeder Breite mit Schubladen und Türen, Regale, Lampen, Geräte mit Display) |
-| Weitere Importe | Apple RoomPlan, DXF, Valetudo-Karten und glTF-Szenen |
+| Weitere Importe | Apple RoomPlan, Valetudo-Karten und glTF-Szenen |
 
 ## Live-Funktionen
 
