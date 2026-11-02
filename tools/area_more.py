@@ -820,9 +820,78 @@ def build(bp):
         ("Platine vinyle", "Tocadiscos", "Giradischi", "Platenspeler", "Gramofon", "Gira-discos", "Skivspelare"),
         mount="surface", electric=True)
 
+    # ============================================================== pictures & frames
+    add = pack(
+        "nextfloor.a_bilder",
+        "Bilder & Rahmen",
+        "Pictures & frames",
+        "Bilderrahmen in vier Formaten, Leinwand, Poster, Tischrahmen, digitaler Bilderrahmen und Bilderleiste – jeweils mit deinem eigenen Foto",
+        ("Cadres et photos", "Cuadros y marcos", "Quadri e cornici", "Foto's & lijsten", "Obrazy i ramki", "Quadros e molduras", "Tavlor & ramar"),
+    )
+
+    def framed(m, rim=0.03):
+        return [
+            m.b(0, 0, m.w, m.d * 0.6, 0, m.h, "body", paint=True, edges="faint"),
+            m.b(0, m.d * 0.15, m.w - 2 * rim, m.d * 0.3, rim, m.h - 2 * rim, "white", picture=True),
+        ]
+
+    add("frame_landscape", "Bilderrahmen (quer)", "Picture frame (landscape)", (0.7, 0.03, 0.5), framed,
+        ("Cadre photo (paysage)", "Marco (horizontal)", "Cornice (orizzontale)", "Fotolijst (liggend)", "Ramka (pozioma)", "Moldura (horizontal)", "Tavelram (liggande)"),
+        mount="wall", wall_y=1.3, colors=FRAME_COLORS)
+    add("frame_portrait", "Bilderrahmen (hoch)", "Picture frame (portrait)", (0.5, 0.03, 0.7), framed,
+        ("Cadre photo (portrait)", "Marco (vertical)", "Cornice (verticale)", "Fotolijst (staand)", "Ramka (pionowa)", "Moldura (vertical)", "Tavelram (stående)"),
+        mount="wall", wall_y=1.2, colors=FRAME_COLORS)
+    add("frame_square", "Bilderrahmen (quadratisch)", "Picture frame (square)", (0.5, 0.03, 0.5), framed,
+        ("Cadre photo (carré)", "Marco (cuadrado)", "Cornice (quadrata)", "Fotolijst (vierkant)", "Ramka (kwadratowa)", "Moldura (quadrada)", "Tavelram (kvadratisk)"),
+        mount="wall", wall_y=1.3, colors=FRAME_COLORS)
+    add("frame_large", "Großer Bilderrahmen", "Large picture frame", (1.2, 0.04, 0.85), lambda m: framed(m, 0.05),
+        ("Grand cadre", "Marco grande", "Cornice grande", "Grote fotolijst", "Duża ramka", "Moldura grande", "Stor tavelram"),
+        mount="wall", wall_y=1.1, colors=FRAME_COLORS)
+    add("canvas", "Leinwandbild", "Canvas print", (1.0, 0.04, 0.7),
+        lambda m: [m.b(0, 0, m.w, m.d, 0, m.h, "white", picture=True)],
+        ("Toile imprimée", "Lienzo", "Stampa su tela", "Canvas", "Obraz na płótnie", "Tela", "Canvastavla"),
+        mount="wall", wall_y=1.2)
+    add("poster", "Poster", "Poster", (0.6, 0.01, 0.85),
+        lambda m: [m.b(0, 0, m.w, m.d, 0, m.h, "white", picture=True)],
+        ("Affiche", "Póster", "Poster", "Poster", "Plakat", "Póster", "Affisch"),
+        mount="wall", wall_y=1.0)
+    add("frame_table", "Tischrahmen", "Table frame", (0.2, 0.08, 0.25),
+        lambda m: [
+            m.b(0, 0.02, m.w, 0.02, 0, m.h, "body", paint=True, edges="faint"),
+            m.b(0, 0.031, m.w - 0.03, 0.004, 0.015, m.h - 0.03, "white", picture=True),
+            m.b(0, -0.02, 0.03, 0.05, 0, m.h * 0.7, "body", paint=True, rot=0),
+        ],
+        ("Cadre à poser", "Marco de mesa", "Cornice da tavolo", "Fotolijstje", "Ramka na stół", "Moldura de mesa", "Bordsram"),
+        mount="surface", colors=FRAME_COLORS)
+    add("frame_digital", "Digitaler Bilderrahmen", "Digital photo frame", (0.3, 0.1, 0.22),
+        lambda m: [
+            m.b(0, 0.02, m.w, 0.025, 0, m.h, "dark", edges="faint"),
+            m.b(0, 0.034, m.w - 0.03, 0.004, 0.015, m.h - 0.03, "dark", picture=True),
+            m.b(0, -0.025, 0.04, 0.05, 0, m.h * 0.7, "dark"),
+        ],
+        ("Cadre photo numérique", "Marco digital", "Cornice digitale", "Digitale fotolijst", "Cyfrowa ramka", "Moldura digital", "Digital fotoram"),
+        mount="surface", electric=True)
+    add("picture_ledge", "Bilderleiste mit Rahmen", "Picture ledge with frames", (1.2, 0.1, 0.45),
+        lambda m: [
+            m.b(0, 0, m.w, m.d, 0, 0.03, "body", paint=True),
+            m.b(-0.3, 0.0, 0.4, 0.02, 0.03, 0.32, "body", paint=True, rot=-3),
+            m.b(-0.3, 0.012, 0.36, 0.004, 0.05, 0.28, "white", picture=True, rot=-3),
+            m.b(0.3, -0.01, 0.35, 0.02, 0.03, 0.4, "body", paint=True, rot=2),
+        ],
+        ("Étagère à cadres", "Repisa para cuadros", "Mensola portaquadri", "Fotoplank met lijsten", "Półka na ramki", "Prateleira para quadros", "Tavelhylla med ramar"),
+        mount="wall", wall_y=1.3, colors=FRAME_COLORS)
+
     return out
 
 
+FRAME_COLORS = [
+    {"id": "black", "name": {"de": "Schwarz", "en": "Black"}, "hex": "#1d2026"},
+    {"id": "white", "name": {"de": "Weiß", "en": "White"}, "hex": "#eceae4"},
+    {"id": "oak", "name": {"de": "Eiche", "en": "Oak"}, "hex": "#b98d5a"},
+    {"id": "walnut", "name": {"de": "Nussbaum", "en": "Walnut"}, "hex": "#6b4a32"},
+    {"id": "gold", "name": {"de": "Gold", "en": "Gold"}, "hex": "#c9a24a"},
+    {"id": "silver", "name": {"de": "Silber", "en": "Silver"}, "hex": "#b8bec7"},
+]
 RING_BLUE = "#7fd0ff"
 CAR_COLORS = [
     {"id": "red", "name": {"de": "Rot", "en": "Red"}, "hex": "#b3232f"},

@@ -23,6 +23,7 @@ export const CATEGORIES = [
   "workshop",
   "music",
   "season",
+  "pictures",
   "vehicles",
   "building",
   "decor",
@@ -97,6 +98,7 @@ const BUILT_IN: Record<string, Category> = {
 // pack items by words in their id, checked in this order (the first hit wins)
 const RULES: [RegExp, Category][] = [
   [/xmas|advent|window_star|candle_arch|reindeer|pumpkin|easter|snowman|gift_pile|lights_outdoor/, "season"],
+  [/^frame_|^canvas$|^poster$|picture_ledge/, "pictures"],
   [/piano|drum_kit|guitar|synth|mic_stand|vinyl|easel|studio_monitor|mixing_desk/, "music"],
   [/lamp|pendant|light_pillar|light_bars|mood_spot|ceiling_panel|garden_spots|wall_light|light_cove|niche_led|shelf_led|monitor_light|workshop_light|painting_light|cabinet_light|moon_light|torch|lantern|ceiling_fan_light/, "lights"],
   [/cat_|dog_|pet_|litter|scratch|hamster|rabbit|bird_cage|small_animal|aquarium|terrarium/, "pets"],

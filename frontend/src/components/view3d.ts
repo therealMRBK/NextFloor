@@ -79,12 +79,14 @@ import { load3d } from "../load3d.ts";
 import { scaleGlow, buildMarkers, openMoreInfo, stateText, toggleEntity, withPluginPatch } from "../markers.ts";
 import { fanSpin } from "../entities/fans.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
+import { pictureUrl } from "../entities/pictures.ts";
+import { fetchImage } from "../api.ts";
 import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, pointInPolygon, surfaceHeight, type Building, type Furniture, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
 import { claim, forThisScreen, playAnnouncement, showFor, subscribeAnnouncements, type Announcement } from "../live/announce.ts";
-import type { DeviceMarker, NextFloorViewer, FloorStack, RobotInfo, Quality, ScreenState, SurfaceGrab, ViewerStats, WallMode } from "../viewer/viewer3d.ts";
+import type { DeviceMarker, LivePictureInput, NextFloorViewer, FloorStack, RobotInfo, Quality, ScreenState, SurfaceGrab, ViewerStats, WallMode } from "../viewer/viewer3d.ts";
 
 /** Which HTML markers are shown: none, only what has no 3D object or shows a value, or all. */
 export type MarkerMode = "none" | "important" | "all";
@@ -681,6 +683,33 @@ export class NfView3d extends LitElement {
    * the building or the entity registry changes.
    */
   private shownFor: { building: Building; key: string; shown: Building } | null = null;
+  /** Stored pictures of frames, loaded once each (image id -> data URL; "" while loading or gone). */
+  private framePictureData = new Map<string, string>();
+
+  /** The photos of picture frames: stored pictures (loaded once), URLs, and the picture of an image or camera entity. */
+  private framePictures(hass: HomeAssistant, b: Building): LivePictureInput[] {
+    const out: LivePictureInput[] = [];
+    for (const floor of b.floors)
+      for (const f of floor.furniture) {
+        if (!f.picture || !furnitureShown(hass, f)) continue;
+        const url = pictureUrl(hass, f.picture, (id) => this.storedPicture(hass, id));
+        if (url) out.push({ furnitureId: f.id, floorId: floor.id, url, border: f.picture_border ?? 0, fit: f.picture_fit === "contain" ? "contain" : "cover" });
+      }
+    return out;
+  }
+
+  private storedPicture(hass: HomeAssistant, id: string): string | null {
+    const known = this.framePictureData.get(id);
+    if (known !== undefined) return known || null;
+    this.framePictureData.set(id, "");
+    fetchImage(hass, id)
+      .then((data) => {
+        this.framePictureData.set(id, data);
+        this.syncDevices(true);
+      })
+      .catch(() => undefined);
+    return null;
+  }
 
   /** The building as the 3D view draws it: without the pieces whose visibility condition is not met. */
   private shownBuilding(hass: HomeAssistant | undefined): Building {
@@ -788,6 +817,7 @@ export class NfView3d extends LitElement {
     this.syncLhCards(v, b, livePic, liveCars, playing);
     // TV screens: a TV or monitor linked to a media player that runs shows what runs
     v.setLiveScreens(this.dimmed ? [] : liveScreens(hass, b, this.furnitureLinks));
+    v.setPictures(this.framePictures(hass, b));
     // lawn sprinklers that water now (at night on the wall tablet effects rest)
     v.setLiveWater(this.dimmed ? [] : liveSprays(hass, b, this.furnitureLinks));
     const persons = SHOW_PRESENCE ? personsInRooms(hass, b) : [];

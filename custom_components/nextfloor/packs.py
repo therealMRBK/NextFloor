@@ -59,6 +59,8 @@ PART_SCHEMA = vol.Schema(
         vol.Optional("glow", default=False): bool,
         # a screen (TV, monitor): shows the linked media player's app colour and picture on its front (+z)
         vol.Optional("screen", default=False): bool,
+        # a picture frame's opening: shows the item's own photo (a stored picture, a URL or an image entity)
+        vol.Optional("picture", default=False): bool,
         # a button or socket of a switch plate (0 = the first): glows while the entity of that gang is on
         vol.Optional("gang"): vol.All(vol.Coerce(int), vol.Range(min=0, max=7)),
         # moves with the item's cover entity: rolls up ("down"), gathers to a side, reaches out ("out") or slides away

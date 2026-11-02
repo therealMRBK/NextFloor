@@ -12,6 +12,7 @@ from custom_components.nextfloor.schema import (
     ROOM_SCHEMA,
     SETTINGS_SCHEMA,
     START_VIEW_SCHEMA,
+    image_ids,
 )
 
 ROOM = {"id": "r1", "name": "Bad", "area_id": None, "points": [[0, 0], [2, 0], [2, 2]], "floor_material": "tiles"}
@@ -148,3 +149,12 @@ def test_furniture_show_when() -> None:
     assert FURNITURE_SCHEMA({**FURN, "show_when": None})["show_when"] is None
     with pytest.raises(vol.Invalid):
         FURNITURE_SCHEMA({**FURN, "show_when": {"state": "on"}})
+
+
+def test_picture_frames() -> None:
+    frame = FURNITURE_SCHEMA({**FURN, "picture": "image:img_7", "picture_border": 12, "picture_fit": "contain"})
+    assert frame["picture_border"] == 12.0
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**FURN, "picture_fit": "stretch"})
+    floors = [{"background": None, "furniture": [frame, {**FURN, "id": "f2", "picture": "/local/a.jpg"}]}]
+    assert image_ids({"floors": floors}) == {"img_7"}

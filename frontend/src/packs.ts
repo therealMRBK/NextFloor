@@ -29,6 +29,8 @@ export interface PackPart {
   glow?: boolean;
   /** A screen: shows the colour and picture of the linked media player on its front face. */
   screen?: boolean;
+  /** A picture frame's opening: shows the item's own photo. */
+  picture?: boolean;
   /** A button or socket of a switch plate (0 = the first): glows while the entity of that gang is on. */
   gang?: number;
   /**
@@ -287,6 +289,9 @@ export function isElectric(type: string): boolean {
   return ELECTRIC_FURNITURE.has(type) || !!item?.electric || !!item?.light || !!item?.climate;
 }
 /** Whether a pack item is specifically a Home Assistant climate device. */
+/** Whether a piece can show an own photo (a picture frame: a pack item with a picture part). */
+export const hasPicture = (type: string): boolean => !!packItem(type)?.parts.some((p) => p.picture);
+
 export const isClimateFurniture = (type: string): boolean => !!packItem(type)?.climate;
 
 /** An item's name in a language: that language, else English, else whatever is there, else its id. */
@@ -335,6 +340,7 @@ const ENGLISH_NAMES: Record<string, string> = {
   a_loft: "Loft & industrial",
   a_gruen: "Indoor greenery",
   a_musik: "Music & studio",
+  a_bilder: "Pictures & frames",
 };
 
 /** The pack's name for the user's language: built-in packs are English outside German, other packs keep their own name. */

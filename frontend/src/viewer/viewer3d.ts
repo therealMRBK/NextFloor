@@ -62,7 +62,7 @@ import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
-import { pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
+import { pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
 import { coverReach, hasMesh, hasMovingParts, mountBase, packItem, setMeshSource, setPacks, type FurniturePack, type MeshSource } from "../packs.ts";
 import { withVehicles } from "../parking.ts";
 import { buildRoof, type RoofWindowState } from "./roof.ts";
@@ -81,6 +81,7 @@ import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
 import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
+import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
 import { circlePath, cleaningPath, stepRobot, type RobotInfo, type RobotMotion } from "./robot.ts";
 import { inReach } from "./tap-reach.ts";
@@ -239,6 +240,15 @@ export interface SunState {
 export type { SkyView, SkyWeather } from "./live-weather.ts";
 export type { EnergyArc, PlanPoint, SparkField } from "./live-energy.ts";
 export type { SoundSpot } from "./live-sound.ts";
+
+/** A frame's photo: the viewer finds the frame's picture part itself. */
+export interface LivePictureInput {
+  furnitureId: string;
+  floorId: string;
+  url: string;
+  border: number;
+  fit: "cover" | "contain";
+}
 
 /** What a TV shows (NextFloor TV screens): the viewer finds the screen of the furniture itself. */
 export type LiveScreenInput = Omit<LiveScreen, "x" | "z" | "rotation" | "rect"> & { furnitureId: string };
@@ -541,6 +551,8 @@ export class NextFloorViewer {
   private readonly glassAlpha = { value: 0.2 };
   /** Pictures on TVs that play, with an ambilight behind (live-screens.ts). */
   private readonly screenLayer: ScreenLayer;
+  /** Own photos in picture frames (live-pictures.ts). */
+  private readonly pictureLayer: PictureLayer;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
   private liveAnchors: PlanPoint[] = [];
   private liveAnchorCb: LiveAnchorCallback | null = null;
@@ -574,6 +586,8 @@ export class NextFloorViewer {
     this.waterLayer = new WaterLayer(this.scene, this.liftOf);
     this.screenLayer = new ScreenLayer(this.scene, this.liftOf);
     this.screenLayer.onChange = () => this.invalidate();
+    this.pictureLayer = new PictureLayer(this.scene, this.liftOf);
+    this.pictureLayer.onChange = () => this.invalidate();
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
     this.controls = this.makeControls();
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -1073,6 +1087,20 @@ export class NextFloorViewer {
     this.invalidate();
   }
 
+  /** Own photos in picture frames: the viewer finds the frame's picture part itself. */
+  setPictures(list: LivePictureInput[]): void {
+    const out: LivePicture[] = [];
+    for (const p of list) {
+      const floor = this.building?.floors.find((f) => f.id === p.floorId);
+      const f = floor?.furniture.find((m) => m.id === p.furnitureId);
+      const rect = f && floor ? pictureRect(f, floor) : null;
+      if (!f || !rect) continue;
+      out.push({ id: p.furnitureId, floorId: p.floorId, url: p.url, border: p.border, fit: p.fit, x: f.x, z: f.z, rotation: f.rotation, rect });
+    }
+    this.pictureLayer.set(out);
+    this.invalidate();
+  }
+
   /** Points in the plan the host floats cards over; the callback learns their screen position after every frame. */
   setLiveAnchors(points: PlanPoint[], cb: LiveAnchorCallback | null): void {
     this.liveAnchors = points;
@@ -1300,6 +1328,7 @@ export class NextFloorViewer {
     this.soundLayer.dispose();
     this.waterLayer.dispose();
     this.screenLayer.dispose();
+    this.pictureLayer.dispose();
     this.resizeObserver.disconnect();
     this.intersection?.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibility);
@@ -2892,6 +2921,7 @@ export class NextFloorViewer {
     const roofMoving = this.placeRoof(dt);
     const robotsMoving = this.stepRobots(now);
     // NextFloor's layers: each one steps every frame (no short-circuit), any of them moving keeps the frames coming
+    this.pictureLayer.step();
     const liveMoving = [this.weatherLayer, this.energyLayer, this.soundLayer, this.screenLayer, this.waterLayer].map((l) => l.step(now));
     const weatherMoving = liveMoving.some(Boolean);
     const moving = cameraMoving || floorsMoving || openingsMoving || flashing || roofMoving;

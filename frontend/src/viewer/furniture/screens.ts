@@ -67,3 +67,15 @@ export function screenRect(f: Furniture, floor?: Floor): ScreenRect | null {
   const rect = unmirrored(f, floor);
   return rect && f.mirror ? { ...rect, x0: -rect.x1, x1: -rect.x0 } : rect;
 }
+
+/** The picture part of a frame (a pack item's part marked `picture`) in local coordinates, mirrored like the item; null without one. */
+export function pictureRect(f: Furniture, floor?: Floor): ScreenRect | null {
+  const [w, d, h] = [Math.max(0.05, f.w), Math.max(0.05, f.d), Math.max(0.005, f.h)];
+  const item = packItem(f.type);
+  const part = item && fittedParts(item, w, d, h).find((p) => p.picture);
+  if (!part) return null;
+  const base = floor ? mountBase(floor, f) : 0;
+  const [x0, x1] = [(part.x - part.w / 2) * w, (part.x + part.w / 2) * w];
+  const rect = { x0, x1, y0: base + part.y * h, y1: base + (part.y + part.h) * h, z: (part.z + part.d / 2) * d };
+  return f.mirror ? { ...rect, x0: -rect.x1, x1: -rect.x0 } : rect;
+}

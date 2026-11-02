@@ -1,0 +1,682 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.a_bilder",
+ "name": "Bilder & Rahmen",
+ "publisher": "NextFloor",
+ "description": "Bilderrahmen in vier Formaten, Leinwand, Poster, Tischrahmen, digitaler Bilderrahmen und Bilderleiste – jeweils mit deinem eigenen Foto",
+ "release": 1,
+ "items": [
+  {
+   "id": "frame_landscape",
+   "name": {
+    "de": "Bilderrahmen (quer)",
+    "en": "Picture frame (landscape)"
+   },
+   "size": [
+    0.7,
+    0.03,
+    0.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "body",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.15,
+     "w": 0.9143,
+     "d": 0.3,
+     "y": 0.06,
+     "h": 0.88,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.3,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  },
+  {
+   "id": "frame_portrait",
+   "name": {
+    "de": "Bilderrahmen (hoch)",
+    "en": "Picture frame (portrait)"
+   },
+   "size": [
+    0.5,
+    0.03,
+    0.7
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "body",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.15,
+     "w": 0.88,
+     "d": 0.3,
+     "y": 0.0429,
+     "h": 0.9143,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.2,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  },
+  {
+   "id": "frame_square",
+   "name": {
+    "de": "Bilderrahmen (quadratisch)",
+    "en": "Picture frame (square)"
+   },
+   "size": [
+    0.5,
+    0.03,
+    0.5
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "body",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.15,
+     "w": 0.88,
+     "d": 0.3,
+     "y": 0.06,
+     "h": 0.88,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.3,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  },
+  {
+   "id": "frame_large",
+   "name": {
+    "de": "Großer Bilderrahmen",
+    "en": "Large picture frame"
+   },
+   "size": [
+    1.2,
+    0.04,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 0.6,
+     "y": 0,
+     "h": 1,
+     "color": "body",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.15,
+     "w": 0.9167,
+     "d": 0.3,
+     "y": 0.0588,
+     "h": 0.8824,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.1,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  },
+  {
+   "id": "canvas",
+   "name": {
+    "de": "Leinwandbild",
+    "en": "Canvas print"
+   },
+   "size": [
+    1.0,
+    0.04,
+    0.7
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.2
+  },
+  {
+   "id": "poster",
+   "name": {
+    "de": "Poster",
+    "en": "Poster"
+   },
+   "size": [
+    0.6,
+    0.01,
+    0.85
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 1,
+     "color": "white",
+     "picture": true
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.0
+  },
+  {
+   "id": "frame_table",
+   "name": {
+    "de": "Tischrahmen",
+    "en": "Table frame"
+   },
+   "size": [
+    0.2,
+    0.08,
+    0.25
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 1,
+     "d": 0.25,
+     "y": 0,
+     "h": 1,
+     "color": "body",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.3875,
+     "w": 0.85,
+     "d": 0.05,
+     "y": 0.06,
+     "h": 0.88,
+     "color": "white",
+     "picture": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.25,
+     "w": 0.15,
+     "d": 0.625,
+     "y": 0,
+     "h": 0.7,
+     "color": "body",
+     "paint": true,
+     "rot": 0
+    }
+   ],
+   "mount": "surface",
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  },
+  {
+   "id": "frame_digital",
+   "name": {
+    "de": "Digitaler Bilderrahmen",
+    "en": "Digital photo frame"
+   },
+   "size": [
+    0.3,
+    0.1,
+    0.22
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.2,
+     "w": 1,
+     "d": 0.25,
+     "y": 0,
+     "h": 1,
+     "color": "dark",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.34,
+     "w": 0.9,
+     "d": 0.04,
+     "y": 0.0682,
+     "h": 0.8636,
+     "color": "dark",
+     "picture": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.25,
+     "w": 0.1333,
+     "d": 0.5,
+     "y": 0,
+     "h": 0.7,
+     "color": "dark"
+    }
+   ],
+   "mount": "surface",
+   "electric": true
+  },
+  {
+   "id": "picture_ledge",
+   "name": {
+    "de": "Bilderleiste mit Rahmen",
+    "en": "Picture ledge with frames"
+   },
+   "size": [
+    1.2,
+    0.1,
+    0.45
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1,
+     "d": 1,
+     "y": 0,
+     "h": 0.0667,
+     "color": "body",
+     "paint": true
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.0,
+     "w": 0.3333,
+     "d": 0.2,
+     "y": 0.0667,
+     "h": 0.7111,
+     "color": "body",
+     "paint": true,
+     "rot": -3
+    },
+    {
+     "shape": "box",
+     "x": -0.25,
+     "z": 0.12,
+     "w": 0.3,
+     "d": 0.04,
+     "y": 0.1111,
+     "h": 0.6222,
+     "color": "white",
+     "picture": true,
+     "rot": -3
+    },
+    {
+     "shape": "box",
+     "x": 0.25,
+     "z": -0.1,
+     "w": 0.2917,
+     "d": 0.2,
+     "y": 0.0667,
+     "h": 0.8889,
+     "color": "body",
+     "paint": true,
+     "rot": 2
+    }
+   ],
+   "mount": "wall",
+   "wall_y": 1.3,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "de": "Schwarz",
+      "en": "Black"
+     },
+     "hex": "#1d2026"
+    },
+    {
+     "id": "white",
+     "name": {
+      "de": "Weiß",
+      "en": "White"
+     },
+     "hex": "#eceae4"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "de": "Eiche",
+      "en": "Oak"
+     },
+     "hex": "#b98d5a"
+    },
+    {
+     "id": "walnut",
+     "name": {
+      "de": "Nussbaum",
+      "en": "Walnut"
+     },
+     "hex": "#6b4a32"
+    },
+    {
+     "id": "gold",
+     "name": {
+      "de": "Gold",
+      "en": "Gold"
+     },
+     "hex": "#c9a24a"
+    },
+    {
+     "id": "silver",
+     "name": {
+      "de": "Silber",
+      "en": "Silver"
+     },
+     "hex": "#b8bec7"
+    }
+   ]
+  }
+ ]
+}

@@ -4,10 +4,12 @@ import { html, nothing, type TemplateResult } from "lit";
 import { colourLabel, furnitureName, packItemLabel, packLabel } from "../../../furniture-names.ts";
 import { holeInRoom } from "../../../geometry/holes.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, canLift, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
-import { hasMovingParts, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
+import { BUTTON_ACTIONS, canLift, uid, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
+import { hasMovingParts, hasPicture, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
 import { checkField, entityField, hint, iconField, markerField, numberField, selectField, textField } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
+import { storeImage } from "../../../api.ts";
+import { readPictureInBrowser } from "../background-tool.ts";
 import type { EditorHost } from "../host.ts";
 import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
@@ -165,6 +167,36 @@ function tapField(host: EditorHost, item: Furniture, actions: FurnitureActions):
   </div>`;
 }
 
+/** A picture frame: its photo (uploaded and stored with the plan, a URL, or an image or camera entity), the mat and how it fits. */
+function pictureFields(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
+  const t = host.t;
+  const value = item.picture ?? "";
+  const stored = value.startsWith("image:");
+  const upload = async (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file || !host.hass) return;
+    const { data } = await readPictureInBrowser(file);
+    const id = uid("img");
+    await storeImage(host.hass, id, data);
+    actions.update({ picture: `image:${id}` });
+  };
+  const entities = entityOptions(host.hass, (id) => /^(image|camera|media_player)\./.test(id));
+  return html`<div class="nf-form nf-links">
+    ${host.admin
+      ? html`<label class="nf-btn nf-wide nf-upload">📷 ${t(stored ? "picture_replace" : "picture_upload")}<input type="file" accept="image/*" hidden @change=${upload} /></label>`
+      : nothing}
+    ${stored
+      ? html`<p class="nf-sub nf-wide">${t("picture_stored")} <button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => actions.update({ picture: null })}>${t("delete")}</button></p>`
+      : html`${textField(host, t("picture_url"), /^[a-z_]+\.[a-z0-9_]+$/.test(value) ? "" : value, (v) => actions.update({ picture: v || null }), { wide: true, placeholder: "/local/holiday.jpg" })}
+        ${entityField(host, t("picture_entity"), /^[a-z_]+\.[a-z0-9_]+$/.test(value) ? value : null, undefined, entities, (v) => actions.update({ picture: v && v !== "none" ? v : null }))}`}
+    ${numberField(host, t("picture_border"), item.picture_border ?? 0, (v) => actions.update({ picture_border: Math.max(0, Math.min(40, Math.round(v))) || null }), 1, 0)}
+    ${selectField(host, t("picture_fit"), item.picture_fit ?? "cover", [["cover", t("picture_fit_cover")], ["contain", t("picture_fit_contain")]], (v) => actions.update({ picture_fit: v === "contain" ? "contain" : null }))}
+    ${hint(t("picture_hint"), "nf-wide")}
+  </div>`;
+}
+
 const CONDITION_DOMAINS = /^(input_boolean|input_select|switch|binary_sensor|sensor|calendar|schedule|sun|person|device_tracker|input_text|select)\./;
 
 /** Shown only while an entity is in a state: seasonal decoration behind a helper, a calendar, the sun. */
@@ -191,6 +223,7 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>
     ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
     ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
+    ${hasPicture(item.type) ? pictureFields(host, item, actions) : nothing}
     ${householdKind(item.type) ? careLink(host, item, householdKind(item.type)!, actions) : nothing} ${hasMovingParts(packItem(item.type)) ? coverLink(host, item, actions) : nothing} ${item.type === "parking" ? parkingForm(host, item, actions.packs, actions) : nothing}
     ${item.type.startsWith("pack:nextfloor.fahrzeuge:") && host.admin
       ? html`<section>${hint(host.t("vehicle_to_spot_hint"))}<div class="nf-actions"><button class="nf-btn nf-primary" @click=${() => actions.toSpot(item)}>🅿 ${host.t("vehicle_to_spot")}</button></div></section>`

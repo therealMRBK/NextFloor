@@ -323,6 +323,10 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("tap", default=None): vol.Any(None, _TAP_SCHEMA),
         # fixed against moving by accident
         vol.Optional("locked", default=None): vol.Any(None, bool),
+        # picture frames: the photo (a stored picture "image:<id>", a URL or an entity), its mat (%) and how it fits
+        vol.Optional("picture"): vol.Any(None, vol.All(str, vol.Length(max=500))),
+        vol.Optional("picture_border"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=40))),
+        vol.Optional("picture_fit"): vol.Any(None, vol.In(["cover", "contain"])),
         # shown only while an entity is in a state (seasonal decoration behind a helper)
         vol.Optional("show_when"): vol.Any(
             None,
@@ -798,4 +802,8 @@ def image_ids(building: dict) -> set[str]:
                 # a URL or a camera ("camera:<entity>") is no stored image
                 if not rule["image"].startswith(("http://", "https://", "camera:")):
                     ids.add(rule["image"])
+            # a picture frame's own photo stored with the plan
+            picture = item.get("picture") or ""
+            if picture.startswith("image:"):
+                ids.add(picture[len("image:") :])
     return ids

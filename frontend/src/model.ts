@@ -244,6 +244,12 @@ export interface Furniture extends LightEffectConfig {
   upright?: boolean;
   /** LED strip: how steeply its length rises (°, -80 to 80), e.g. up a sloped ceiling or along a stair. Its low end sits at the mount height, or its high end under the ceiling. */
   rise?: number;
+  /** Picture frames: the photo – a stored picture ("image:<id>"), a URL (/local/…, https://…) or an image, camera or media player entity. */
+  picture?: string | null;
+  /** Picture frames: the white mat around the photo, in % of the shorter side (0 or null = none). */
+  picture_border?: number | null;
+  /** Picture frames: the photo fills the opening (cropped, default) or shows whole on the mat. */
+  picture_fit?: "cover" | "contain" | null;
   /** Screens: pictures shown while an entity is in a state (first match wins; "*" = any state). */
   pictures?: ScreenPicture[];
   /** Screens: what shows around a rule picture – a dark screen (default) or a white one (for dark logos). */
