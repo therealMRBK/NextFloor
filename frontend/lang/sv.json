@@ -1095,6 +1095,8 @@
   "furn_entity_light": "Lampa eller brytare",
   "furn_color_entity": "Färg och ljusstyrka från (valfritt)",
   "furn_color_entity_hint": "För lampor som ett relä (Shelly, ställdon) tänder och släcker medan lampan själv känner sin färg och ljusstyrka: på/av kommer från brytaren ovan, färg och ljusstyrka från den här entiteten.",
+  "lamp_extra_light": "Ljuskälla {n} (valfritt)",
+  "lamp_extra_hint": "En armatur med flera ljus – huvudljus, nattljus, ljusring: när huvudljuset är av lyser den i 3D med nästa ljus som är på, lite svagare. Tänd ljusen ett och ett i rumspanelen.",
   "furn_entity_climate": "Värme (termostat)",
   "lamp_hint": "Tryck på lampan i 3D för att växla den, långt tryck för snabbmenyn. Brytare fungerar också (t.ex. ett relä för taklampan) – lampan lyser medan den är på. Bordslampor står på möbeln under dem.",
   "lamp_hint_pendant": "Höjd = nedhäng under taket. Tryck i 3D för att växla, långt tryck för detaljer.",

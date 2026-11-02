@@ -1095,6 +1095,8 @@
   "furn_entity_light": "Luz ou interruptor",
   "furn_color_entity": "Cor e brilho de (opcional)",
   "furn_color_entity_hint": "Para luzes que um relé (Shelly, atuador) liga e desliga enquanto a lâmpada conhece a sua cor e brilho: ligar/desligar vem do interruptor acima, cor e brilho desta entidade.",
+  "lamp_extra_light": "Lâmpada {n} (opcional)",
+  "lamp_extra_hint": "Um candeeiro com várias luzes – principal, luz de presença, anel ambiente: com a principal desligada brilha em 3D com a seguinte ligada, um pouco mais fraca. Ligue as luzes uma a uma no painel da divisão.",
   "furn_entity_climate": "Aquecimento (termóstato)",
   "lamp_hint": "Toque no candeeiro em 3D para o comutar, toque longo para o menu rápido. Também funcionam interruptores (p. ex. um relé para o candeeiro de teto): o candeeiro brilha enquanto está ligado. Os candeeiros de mesa assentam no móvel por baixo.",
   "lamp_hint_pendant": "Altura = queda abaixo do teto. Toque em 3D para comutar, toque longo para detalhes.",

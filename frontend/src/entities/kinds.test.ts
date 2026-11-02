@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { appColor, assumedCover, defaultHeight, domainOf, entityName, groupCovers, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, markerKind, lightGlow, tempUnit, toCelsius } from "./kinds.ts";
+import { appColor, assumedCover, defaultHeight, domainOf, entityName, fixtureGlow, groupCovers, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, markerKind, lightGlow, tempUnit, toCelsius } from "./kinds.ts";
 import { entity, hassOf } from "./fixtures.ts";
 
 test("the domain decides the kind; unknown domains have none", () => {
@@ -135,4 +135,12 @@ test("open all / close all take a garage remote along, but never a cover that as
   const silent = entity("cover.silent", "unknown");
   assert.deepEqual(groupCovers([blind, remote, garage, lost, silent], new Set(["cover.garage"])), ["cover.blind", "cover.remote"]);
   assert.deepEqual(groupCovers([blind, garage], null), ["cover.blind", "cover.garage"]);
+});
+
+test("a fixture with several bulbs glows with its main light, else dimmer with another one that is on", () => {
+  const main = { entity_id: "light.main", state: "off", attributes: {} };
+  const night = { entity_id: "light.night", state: "on", attributes: { brightness: 255, rgb_color: [255, 0, 0], color_mode: "rgb" } };
+  assert.deepEqual(fixtureGlow(main, [undefined, night]), { color: [1, 0, 0], level: 0.6 });
+  assert.equal(fixtureGlow({ ...main, state: "on" }, [night])?.level, 1, "the main light wins");
+  assert.equal(fixtureGlow(main, [{ ...night, state: "off" }]), null);
 });

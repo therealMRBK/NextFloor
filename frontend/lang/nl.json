@@ -1095,6 +1095,8 @@
   "furn_entity_light": "Licht of schakelaar",
   "furn_color_entity": "Kleur en helderheid van (optioneel)",
   "furn_color_entity_hint": "Voor lampen die een relais (Shelly, schakelactor) aan- en uitzet terwijl de lamp zelf haar kleur en helderheid kent: aan/uit komt van de schakelaar hierboven, kleur en helderheid van deze entiteit.",
+  "lamp_extra_light": "Lamp {n} (optioneel)",
+  "lamp_extra_hint": "Een armatuur met meerdere lichten – hoofdlicht, nachtlampje, sfeerring: staat het hoofdlicht uit, dan gloeit het in 3D met het volgende licht dat aan is, iets zwakker. Schakel de lichten afzonderlijk in het kamerpaneel.",
   "furn_entity_climate": "Verwarming (thermostaat)",
   "lamp_hint": "Tik op de lamp in 3D om haar te schakelen, lang drukken voor het snelmenu. Schakelaars werken ook (bijv. een relais voor de plafondlamp); de lamp brandt zolang hij aan is. Tafellampen staan op het meubel eronder.",
   "lamp_hint_pendant": "Hoogte = afhang onder het plafond. Tik in 3D om te schakelen, lang drukken voor details.",

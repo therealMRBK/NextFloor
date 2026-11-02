@@ -133,6 +133,20 @@ export function lightGlow(st: HassEntity | undefined, colorFrom?: HassEntity): {
   return { color: [1, 0.71, 0.28], level }; // the default warm amber
 }
 
+/**
+ * A fixture with several bulbs (a main light, a night light, an ambient ring): it glows with its main light, and while that is off
+ * with the first other light that is on, a little dimmer.
+ */
+export function fixtureGlow(main: HassEntity | undefined, others: (HassEntity | undefined)[], colorFrom?: HassEntity): { color: Rgb; level: number } | null {
+  const own = lightGlow(main, colorFrom);
+  if (own) return own;
+  for (const st of others) {
+    const glow = lightGlow(st);
+    if (glow) return { color: glow.color, level: glow.level * 0.6 };
+  }
+  return null;
+}
+
 /** Default height of a marker above the floor, in metres. */
 export function defaultHeight(kind: DeviceKind, floorHeight: number, mount: LampMount | null = null): number {
   if (kind === "light" && mount === "floor") return 1.95;

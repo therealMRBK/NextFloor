@@ -1095,6 +1095,8 @@
   "furn_entity_light": "Światło lub przełącznik",
   "furn_color_entity": "Kolor i jasność z (opcjonalnie)",
   "furn_color_entity_hint": "Dla świateł, które przekaźnik (Shelly, aktor) włącza i wyłącza, podczas gdy żarówka sama zna kolor i jasność: wł./wył. pochodzi z przełącznika powyżej, kolor i jasność z tej encji.",
+  "lamp_extra_light": "Źródło światła {n} (opcjonalnie)",
+  "lamp_extra_hint": "Oprawa z kilkoma światłami – główne, nocne, pierścień nastrojowy: gdy główne jest wyłączone, świeci w 3D następnym włączonym, nieco słabiej. Przełączaj światła osobno w panelu pomieszczenia.",
   "furn_entity_climate": "Ogrzewanie (termostat)",
   "lamp_hint": "Dotknij lampy w 3D, by ją przełączyć, przytrzymaj dla szybkiego menu. Działają też przełączniki (np. przekaźnik lampy sufitowej) – lampa świeci, gdy jest włączony. Lampy stołowe stoją na meblu pod nimi.",
   "lamp_hint_pendant": "Wysokość = zwis pod sufitem. Dotknij w 3D, by przełączyć, przytrzymaj dla szczegółów.",

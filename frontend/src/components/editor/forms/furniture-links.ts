@@ -142,6 +142,21 @@ function coolingLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkA
   );
 }
 
+/** Further bulbs of a lamp (night light, ambient ring): up to four lights of the same fixture, one more field than are set. */
+function extraLightFields(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
+  const t = host.t;
+  const current = item.extra_lights ?? [];
+  const options = entityOptions(host.hass, (id) => id.startsWith("light.") && id !== item.entity && id !== item.color_entity);
+  const set = (i: number) => (v: string | null) => {
+    const next = [...current];
+    if (v && v !== "none") next[i] = v;
+    else next.splice(i, 1);
+    actions.update({ extra_lights: next.filter(Boolean).length ? next.filter(Boolean) : undefined });
+  };
+  const rows = Math.min(4, current.length + 1);
+  return html`${Array.from({ length: rows }, (_, i) => entityField(host, t("lamp_extra_light", { n: i + 2 }), current[i] ?? null, undefined, options, set(i)))}${hint(t("lamp_extra_hint"), "nf-wide")}`;
+}
+
 export function furnitureLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult | typeof nothing {
   const { hass } = host;
   if (!hass) return nothing;
@@ -164,6 +179,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
       lamp && hasLink
         ? html`${entityField(host, t("furn_color_entity"), item.color_entity ?? null, undefined, kindOptions((id) => id.startsWith("light.") && id !== item.entity), set("color_entity"))}${hint(t("furn_color_entity_hint"), "nf-wide")}`
         : nothing,
+      lamp && hasLink ? extraLightFields(host, item, actions) : nothing,
       lamp ? glowField(host, item.glow_scale, (v) => actions.update({ glow_scale: v })) : nothing,
       lamp ? lightEffectFields(host, item, lightEffectSource(hass, item, item.entity && item.entity !== "none" ? item.entity : automaticLink(host, item, "entity"))?.attributes.effect_list, actions.update) : nothing,
       hasScreen(item.type) ? glowField(host, item.ambilight, (v) => actions.update({ ambilight: v }), { label: "ambilight", hint: "ambilight_hint", lowest: 0 }) : nothing,

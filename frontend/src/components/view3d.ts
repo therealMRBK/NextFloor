@@ -78,6 +78,7 @@ import "./quick-menu.ts";
 import { load3d } from "../load3d.ts";
 import { scaleGlow, buildMarkers, openMoreInfo, stateText, toggleEntity, withPluginPatch } from "../markers.ts";
 import { fanSpin } from "../entities/fans.ts";
+import { fixtureGlow } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage } from "../api.ts";
@@ -1296,6 +1297,9 @@ export class NfView3d extends LitElement {
   /** A lamp: its 3D model glows with the linked light and is tapped directly. */
   private lampMarker(hass: HomeAssistant, floor: Building["floors"][number], f: Furniture, entity: string | null): DeviceMarker & { fromFurniture: boolean } {
     const st = entity ? hass.states[entity] : undefined;
+    // further bulbs of the same fixture (a night light, an ambient ring): the lamp glows with them while its main light is off
+    const others = (f.extra_lights ?? []).map((id) => hass.states[id]).filter((s): s is HassEntity => !!s);
+    const otherOn = others.find((s) => isActive(s));
     const item = packItem(f.type);
     const model = LAMP_MODEL[f.type] ?? item?.light ?? "floor";
     // a height above the floor set by hand wins (a table lamp on a shelf, a floor lamp on a platform);
@@ -1345,10 +1349,10 @@ export class NfView3d extends LitElement {
       y,
       icon: iconSvg("light"),
       name: f.name || (entity ? entityName(hass, entity) : furnitureName(hass, f.type)),
-      text: st ? stateText(hass, st) : "",
-      active: st ? isActive(st) : false,
+      text: st && (isActive(st) || !otherOn) ? stateText(hass, st) : otherOn ? entityName(hass, otherOn.entity_id) : "",
+      active: (st ? isActive(st) : false) || !!otherOn,
       unavailable: st ? isUnavailable(st) : false,
-      glow: st ? scaleGlow(lightGlow(st, f.color_entity && f.color_entity !== "none" ? hass.states[f.color_entity] : undefined), f.glow_scale) : null,
+      glow: st || others.length ? scaleGlow(fixtureGlow(st, others, f.color_entity && f.color_entity !== "none" ? hass.states[f.color_entity] : undefined), f.glow_scale) : null,
       lamp: model,
       rotation: f.rotation,
       mirror: !!f.mirror,

@@ -1053,6 +1053,8 @@
  "furn_entity_light": "Lumière ou interrupteur",
  "furn_color_entity": "Couleur et luminosité depuis (facultatif)",
  "furn_color_entity_hint": "Pour les lumières qu'un relais (Shelly, actionneur) allume et éteint alors que l'ampoule connaît elle-même sa couleur et sa luminosité : l'allumage/extinction vient de l'interrupteur ci-dessus, la couleur et la luminosité de cette entité.",
+ "lamp_extra_light": "Ampoule {n} (facultatif)",
+ "lamp_extra_hint": "Un luminaire à plusieurs lumières – principale, veilleuse, anneau d'ambiance : lorsque la principale est éteinte, il brille en 3D avec la suivante allumée, un peu plus faiblement. Allumez-les une par une dans le panneau de la pièce.",
  "furn_entity_climate": "Chauffage (thermostat)",
  "lamp_hint": "Touchez la lampe en 3D pour l'allumer ou l'éteindre, appui long pour le menu rapide. Les interrupteurs fonctionnent aussi (p. ex. un relais pour le plafonnier) – la lampe brille tant qu'il est allumé. Les lampes de table reposent sur les meubles situés en dessous.",
  "lamp_hint_pendant": "Hauteur = longueur sous le plafond. Touchez en 3D pour allumer/éteindre, appui long pour les détails.",

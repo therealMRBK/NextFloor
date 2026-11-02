@@ -297,6 +297,8 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("state_split", default=None): vol.Any(None, vol.In(["left_right", "top_bottom"])),
         # lamps: a second entity with the colour and brightness (a relay switches, the bulb knows its colour)
         vol.Optional("color_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        # lamps: further lights of the same fixture (night light, ambient ring)
+        vol.Optional("extra_lights"): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=4)),
         # mirrored left-right
         vol.Optional("mirror", default=False): bool,
         vol.Optional("stair"): vol.Any(None, _STAIR_SCHEMA),

@@ -232,6 +232,8 @@ export interface Furniture extends LightEffectConfig {
   gang_entities?: (string | null)[];
   /** Lamps: a second entity whose colour and brightness the lamp shows while the linked switch is on (a relay switches the light, the bulb itself knows its colour). */
   color_entity?: EntityRef;
+  /** Lamps: further lights of the same fixture (a night light, an ambient ring), switched on their own; the lamp glows with them while its main light is off. */
+  extra_lights?: string[];
   /** Lawn sprinkler: how far its water reaches in m (null = 3 m). */
   spray?: number | null;
   /** Mirrored (left-right) – an L-sofa the other way round, a cabinet with its door on the other side. */

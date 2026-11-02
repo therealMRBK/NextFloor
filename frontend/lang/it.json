@@ -1095,6 +1095,8 @@
   "furn_entity_light": "Luce o interruttore",
   "furn_color_entity": "Colore e luminosità da (facoltativo)",
   "furn_color_entity_hint": "Per luci che un relè (Shelly, attuatore) accende e spegne mentre la lampadina conosce colore e luminosità: acceso/spento viene dall'interruttore sopra, colore e luminosità da questa entità.",
+  "lamp_extra_light": "Lampadina {n} (facoltativa)",
+  "lamp_extra_hint": "Una lampada con più luci – principale, luce notturna, anello d'atmosfera: a principale spenta brilla in 3D con la successiva accesa, un po' più tenue. Accendile una a una nel pannello della stanza.",
   "furn_entity_climate": "Riscaldamento (termostato)",
   "lamp_hint": "Tocca la lampada in 3D per commutarla, pressione lunga per il menu rapido. Funzionano anche gli interruttori (ad es. un relè per la plafoniera): la lampada brilla mentre è acceso. Le lampade da tavolo poggiano sull'arredo sottostante.",
   "lamp_hint_pendant": "Altezza = calata sotto il soffitto. Tocca in 3D per commutare, pressione lunga per i dettagli.",
