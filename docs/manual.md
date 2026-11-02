@@ -25,7 +25,8 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 1. **Add a floor.** *Add floor* offers the floors of Home Assistant (keeping plan and Home Assistant connected) or *Empty floor*. The floor form sets name, elevation, ceiling height and the Home Assistant floor. *Shift* and *Turn 90°* move or turn the whole floor; *Take every floor along* applies that to the whole house. *Add rooms from HA areas* drops a room per area as a start. *Duplicate floor* puts a copy on top of the house, with its furniture, device pins and outdoor areas if you like; the copy is unlinked from Home Assistant and set up for the new storey.
 2. **Draw rooms.** *Rectangle*: drag. *Free shape*: place corners, close by tapping the first corner or Enter, Esc cancels. Corners snap to the grid and to existing walls; Alt switches snapping off for one move.
 3. **Describe each room.** Name, *Area* (the link to Home Assistant devices) and *Floor* material. Position and size can be typed. Drag a corner handle to reshape; the **+** on an edge adds a corner.
-4. **Walls.** They come from the room edges. Each edge has height, thickness, a scissors button that splits it into parts, and *No wall* for open edges. A lower height makes a parapet or counter. Free-standing partitions use the *Wall* tool (Shift keeps straight). *Close gaps* in the floor form joins hairline gaps. **◠ Arc** on an edge (or on a free wall) opens a *Bulge* field: type how far the middle bulges (negative bends into the room) and press *Bend*. A room sharing the whole wall bends along, doors and windows move with it; a room touching only part of the wall, or a free wall standing on it, stays straight. A door or window too wide for a deep curve stops the bend with a note.
+   *＋ Area within the room* adds Home Assistant areas that are parts of the room without walls of their own (a reading corner, the kitchenette): their devices belong to the room. *Underfloor heating* names the thermostat, valve or switch whose heating makes the floor glow. A rectangular room shows its inside size from wall face to wall face.
+4. **Walls.** They come from the room edges. Each edge has height, thickness, a scissors button that splits it into parts, and *No wall* for open edges. A lower height makes a parapet or counter. Free-standing partitions use the *Wall* tool (Shift keeps straight). A split edge can have its own thickness on every part. *Close gaps* in the floor form joins hairline gaps. **◠ Arc** on an edge (or on a free wall) opens a *Bulge* field: type how far the middle bulges (negative bends into the room) and press *Bend*. A room sharing the whole wall bends along, doors and windows move with it; a room touching only part of the wall, or a free wall standing on it, stays straight. A door or window too wide for a deep curve stops the bend with a note.
 5. **Doors and windows.** *Doors & windows*, tap a wall, pick the kind (door, front door, double door, window, double window, terrace door, French doors, garage door, glass wall). Set width, position from the corner, sill and height; swap hinge side or opening direction. Style *Automatic* picks front door outside and room door inside.
 6. **Stairs and openings.** The *Stairs* tool draws a stair where you drag; it runs along the long side. It has a shape (straight, quarter turn, L with landing, half turn, U with landing, spiral), turns left or right and is built solid, on stringers, on a spine or cantilevered, with or without risers and railings. The risers follow the floor height; the form shows rise, going and step measure and warns when the stair is uncomfortable. *Leads down* makes a stair into a cellar that need not be drawn. A stair opens the floor above only where its steps lack 2.2 m of headroom; the stairs of the *Stairs & railings* pack cut their whole footprint. *Floor opening* cuts any other hole (gallery, shaft).
 7. **Template.** *Template (floor plan image)* puts a picture behind the plan; move, scale, turn and straighten it, set the scale from a known length, then trace.
@@ -46,24 +47,35 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 - **Wall view (▣):** in a room's wall list, *Wall view* shows the wall from the front with its doors, windows and the furniture against it; drag, or type the distance and height.
 - **Light switches and sockets** (smart home pack, 1 to 4 gang): each button with its own entity; it glows while what it switches is on.
 - **Awnings, curtains, blinds, roll-down screen, sliding gate:** *Moves with* picks the cover entity they follow.
+- **Sofas:** the built-in sofa has a *Shape* – straight, L (mirror it for the other side) or U.
+- **Picture frames** (pack *Pictures & frames*): upload a photo in the form, type a picture address (/local/…) or pick an image or camera entity; set the mat and whether the photo fills the frame.
+- **Show only while …:** any piece can wait for an entity – the Christmas tree only while a helper is on. Several states with commas, or the other way round; the editor always shows it.
+- **Move the pin:** pins of devices close together can be pushed aside or up in the form; the device stays where it is.
+- **Under a roof slope:** ceiling lamps and hanging items in an attic room have *📐 Up to the roof slope*.
+- **Layers:** a floor marked *Layer* in its form (the trees, the decoration) gets an eye at the top of the 3D view that shows or hides it.
 
 ## Connect devices
 
 In a room's form the **Devices** section lists the Home Assistant devices of that area. Tabs: *This area*, *Other areas*, *No area*; search by name. Each row: eye (hide in the 3D room panel), *Aa* (own name), star (add to the room panel without placing), *Place*.
 
 - Placing a light turns it into a lamp. *Light or switch* names the light; *Colour and brightness from* is for relay-switched bulbs; *Glow in 3D* scales the glow; *Ask before switching* protects against accidental taps; *Marker in 3D* decides on the pin above it.
-- Electric furniture (TV, fridge, washer …) finds its entity in the same area by itself ("Automatic"). TVs show the running app's colour and title; *Glow behind the TV* sets or switches off the ambilight. A power sensor shows the watts.
+- Electric furniture (TV, fridge, washer …) finds its entity in the same area by itself ("Automatic"). TVs show the running app's colour and title; *Glow behind the TV* sets or switches off the ambilight. A power sensor shows the watts. Every electric piece shows its draw beside its state, and its status lights light up while it runs.
+- **Lamps with several bulbs:** *Bulb 2, 3 …* adds the night light or ambient ring of the same fixture; the lamp glows with them while its main light is off.
+- **Blinds:** a window's *Kind of blind* is a roller shutter outside, a venetian blind whose slats follow the tilt, or a roller blind inside; *Second blind* covers the right half of a wide window; *Favourite position "My"* adds a **My** button to the blind's quick menu.
+- **3D printer and heat pump:** link the printer or heat pump from the packs to any entity of its device; a live card shows the print (picture, progress, time left, layer, temperatures, filaments – the print grows on the bed) or the heat pump (mode, flow and return, power, heat, COP).
+- **Robot mower:** a mower or dock from *Garden 2* linked to a `lawn_mower` mows lanes over its lawn while it mows.
+- **Pets:** a pet's *Room sensor* (Bermuda, ESPresense) lets it roam the room it is in.
 - Entity fields are searchable: type part of a name and pick. NextFloor never switches anything by assigning it.
 - **Parking spot** (library section *Parking*): *Vehicle* picks the model, *Sensor "car present"* decides when it shows, any entity of the car lets NextFloor find charge, range, plug, lock and climate on the car's device.
-- **Favourites and own buttons** (Settings area, *Favourites*): scenes, scripts, automations, switches and buttons for the central menu; own buttons open a dashboard path, entity details, a service call or a browser_mod popup. *Station or playlist* adds speaker presets.
+- **Favourites and own buttons** (Settings area, *Favourites*): scenes, scripts, automations, switches and buttons for the central menu; own buttons open a dashboard path, entity details, a service call or a browser_mod popup. *Station or playlist* adds speaker presets. A preset can be kept to some speakers. **Own warnings** turn any entity into a line in the warning bar (state, several with commas, or `<20` / `>80`), with a text, a room and a colour. **Calendars for "Today"** fill the *Today* card.
 
 ## Outside, roof and energy
 
-- **Outdoor:** drag out lawn, terrace, path, driveway, pool, flower bed, wild patch, hedge, fence or pergola. *Height offset* lowers or raises, *Slope* tilts, *Show the outline* toggles the glowing edge, *Cut out of the areas beneath* makes a hole (pond). Hedges and fences take a height. Garden and path lights come from the library and light the areas.
+- **Outdoor:** drag out lawn, terrace, path, driveway, pool, flower bed, wild patch, hedge, fence or pergola. *Height offset* lowers or raises, *Slope* tilts, *Show the outline* toggles the glowing edge, *Cut out of the areas beneath* makes a hole (pond). An area can be linked to a Home Assistant *Area* (its devices join Outside, a pin opens it); pools, ponds and beds can show a water temperature and pump on that pin. Hedges and fences take a height. Garden and path lights come from the library and light the areas.
 - **The Outside panel:** as soon as a device stands outside the rooms, the bar above the 3D view gets a **🌳 Outside** chip next to the floors. It opens the house view with a panel like a room's that lists the garden's devices. A device that stands on the roof or over a room but belongs outside (a weather station) gets *Belongs to Outside* in its form: it no longer counts for the room below and shows in the Outside panel. The dashboard card shows the chip with its room buttons.
-- **Roof:** the *Roof* tool builds roof sections from the rooms (shape, ridge direction, eaves, pitch; drag to move, corners to resize). The simple roof shape lives in Settings. Roof windows sit on a section and take a blind and contacts. Gable, hip and half-hip sections can end differently at each end of the ridge, and a wing that butts against a bigger roof runs into it with valleys.
+- **Roof:** the *Roof* tool builds roof sections from the rooms (shape, ridge direction, eaves, pitch; drag to move, corners to resize). The simple roof shape lives in Settings. Roof windows sit on a section and take a blind and contacts. Gable, hip and half-hip sections can end differently at each end of the ridge, and a wing that butts against a bigger roof runs into it with valleys. A half-hip end has a slider for how high its hip starts. Solar fields on flat roofs can stand on east-west racks, and on pitched roofs on a rack with its own tilt.
 - **Doors and windows (more):** a door takes a smart lock (tap the door to lock or unlock, it glows while unlocked); a window chooses its sill and board, can be left out of the rain warning, and below the ground gets a light well.
-- **Energy:** the checklist asks for a solar field, a meter and an inverter (battery and grid connection optional). A solar field goes on the best south-facing roof section (it uses the compass), in the garden or on a wall; set rows, columns, portrait/landscape. Meter, inverter, battery, wallbox are devices placed here; the energy balance fields default to "Automatic", and *Take over from the energy dashboard* reads your existing setup. **Cable routes** draws where a cable really runs (solar field to inverter, battery, inverter and grid to the house, sub-meters): *Draw route*, tap the points on the plan and switch floors where it goes through a ceiling, then *Done*; the flow follows the route instead of an arc, and *Show as cable* draws it as a visible cable.
+- **Energy:** the checklist asks for a solar field, a meter and an inverter (battery and grid connection optional). A solar field goes on the best south-facing roof section (it uses the compass), in the garden or on a wall; set rows, columns, portrait/landscape. Meter, inverter, battery, wallbox are devices placed here; the energy balance fields default to "Automatic", and *Take over from the energy dashboard* reads your existing setup. **Cable routes** draws where a cable really runs (solar field to inverter, battery, inverter and grid to the house, sub-meters): *Draw route*, tap the points on the plan and switch floors where it goes through a ceiling, then *Done*; the flow follows the route instead of an arc, and *Show as cable* draws it as a visible cable. *Gas meter* and *Water meter* add their readings to the balance.
 
 ## Compass and map
 
@@ -78,10 +90,13 @@ Under **Settings**:
 - **Move:** drag to turn, wheel to zoom, right button or two fingers to pan. Floor and room buttons at the top fly the camera there; *Back* or Esc goes up a level.
 - **Look:** quality *Auto / Tablet / High*; themes *Neon / Blueprint / Day* with an accent colour; markers *None / Important / All*.
 - **Switches at the bottom:** *Tall walls / Cut / Sloped*, *Solid*, *Apart / Stacked*, *Roof stays*, heat map (*Temp., Humidity, CO₂, Values*), *Room names*, *Weather*, *Power flow*, *Cards*.
+- **Maps:** besides temperature, humidity and CO₂ the map selector has **Mould** (the risk at each room's coldest wall), **Values** (with airing hints) and **Wi-Fi** (each access point's reach, its devices, the network devices offline). The temperature scale is a summer one from May to September.
 - **Walls:** *Sloped* cuts the walls on a slope, half height in front and full height at the back, like a doll's house; the slope turns with the camera. *Solid* shows opaque walls in their colours instead of glass; in an open room the walls in front of the camera are lowered. Set the colours in the editor: *Settings → Wall colour outside / inside*, and per room *Wall colour inside (this room)*. *Solid* and *Sloped* can be combined.
-- **Room panel:** lights (switch, brightness, colour temperature, colour dots, *All off*), blinds, media, sensors, scenes. Tapping a lamp pin switches it, a long press opens the quick menu, a blind opens its menu.
-- **Central menu (star):** all lights and blinds of the floor or house plus your favourites. **Search (magnifier):** type a device or room, the camera flies there.
-- **Warnings:** smoke, gas, CO, water, alarm panel and windows open in the rain appear as banners; a tap jumps into the room.
+- **Room panel:** lights (switch, brightness, colour temperature, colour dots, *All off*), blinds, media, sensors, scenes. Tapping a lamp pin switches it, a long press opens the quick menu, a blind opens its menu. Speakers and TVs open a quick menu with play/pause, skip, volume, sources and presets. Scenes stand at the top; *＋ Save mood* keeps the room's lights as a mood to set again or carry over to another room (→). The panel shows the room's temperature over the last 24 hours and when to air it.
+- **Central menu (star):** all lights and blinds of the floor or house plus your favourites. *★ Menu open* in ⚙ keeps it open and larger on this device; own buttons light up while their entity is on. **Search (magnifier):** type a device or room, the camera flies there.
+- **Warnings:** smoke, gas, CO, water, alarm panel and windows open in the rain appear as banners; a tap jumps into the room. A triggered alarm names the sensor that set it off and pulses its room.
+- **Small screens:** 🔍 in ⚙ brings the fitted views closer; *🎥 Keep camera* keeps side, height and distance when switching floors.
+- **Today:** with calendars chosen, a card top right lists today's appointments and the bins due today or tomorrow.
 
 ## Live features
 
@@ -92,7 +107,8 @@ Built in and free; they only need the devices you already have.
 - **Power flow:** particles from the solar modules to inverter, house, battery and grid; a glass card with the balance and self-sufficiency.
 - **TV screens:** what plays, in the app's colour, plus ambilight.
 - **Sound:** a card over every playing speaker or TV with cover and controls; sound rings in the app's colour; multiroom groups are joined by a thread.
-- **Car:** a card over the parking spot with charge ring, range, charging power, plug, inside temperature and buttons for lock, climate and charging.
+- **Car:** a card over the parking spot with charge ring, range, charging power, plug, inside temperature and buttons for lock, climate and charging. Away it tells how far it is from home; it shows the departure time and warns about open doors and hatches; plugged in at a wallbox it hangs on its cable.
+- **Energy:** the house card shows the last seven days as bars and stays above the open floor; a home battery shows its charge on its front.
 
 ## Getting around
 
@@ -134,7 +150,7 @@ data:
 
 ## Dashboard card
 
-Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. The same options exist in YAML under the names shown in the editor.
+Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. Newer options: `central_open` (star menu open and large), `keep_camera`, `zoom` (0.6–2.5) and `today` (the Today card, default on). The same options exist in YAML under the names shown in the editor.
 
 ## Wall tablet
 
@@ -144,7 +160,7 @@ The card's kiosk section returns to the start view after idle time, dims at nigh
 
 - **Extensions tab → Furniture packs:** import your own furniture packs as files or paste their JSON straight in, and remove your own packs again. Format: [packs.md](packs.md) (German).
 - **Extensions tab:** upload your own `.glb` model for a vehicle slot. The browser turns it the right way round, lightens it, removes textures and marks the paint; the file is stored on your Home Assistant (admins only, up to 12 MB). See [models.md](models.md).
-- **Furniture packs** come with the integration (26 packs, over 600 models) and need no setup. Own packs are JSON files, format in [packs.md](packs.md). The demo has a model showcase that shows every model live.
+- **Furniture packs** come with the integration (40 packs, almost 800 models) and need no setup. Own packs are JSON files, format in [packs.md](packs.md). The demo has a model showcase that shows every model live.
 
 ## Backup
 
