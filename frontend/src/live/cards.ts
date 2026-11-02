@@ -111,7 +111,7 @@ function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number): Te
 /** The last seven days: a bar per day for solar (filled) and consumption (outlined), in kWh. */
 function weekChart(hass: HomeAssistant | undefined, week: HouseCard["week"]): TemplateResult | typeof nothing {
   if (!week) return nothing;
-  const values = [...week.solar, ...week.use].filter((v): v is number => v !== null);
+  const values = [...week.solar, ...week.use].filter((v): v is number => v !== null && v > 0);
   if (!values.length) return nothing;
   const top = Math.max(...values) * 1.1 || 1;
   const [w, h] = [150, 30];

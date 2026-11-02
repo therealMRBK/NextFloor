@@ -1252,6 +1252,8 @@
   "heat_short_temperature": "Temp.",
   "heat_short_humidity": "Humedad",
   "heat_short_co2": "CO₂",
+  "heat_short_mould": "Moho",
+  "heat_short_wifi": "Wi-Fi",
   "heat_short_values": "Valores",
   "heat_temperature": "Temperatura",
   "heat_humidity": "Humedad",

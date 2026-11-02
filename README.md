@@ -33,33 +33,38 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 
 ---
 
-## ✨ Highlights
+## ✨ What it does
 
 | | |
 |---|---|
-| ✏️ **Plan editor** | Floors, rooms, walls, doors, windows, stairs, outdoor areas and a roof, drawn in Home Assistant with the 3D view beside the plan. |
-| 💡 **Live 3D** | Tap to switch, swipe to dim, long press for colours. Blinds, windows and doors follow their entities; a room panel lists everything in the room. |
-| 📢 **Announcements** | *"Dinner is ready!"* in the room that should hear it: through each room's speaker (Voice PE, Echo, Sonos …) and on every open NextFloor screen, from the room panel or the action `nextfloor.announce`. |
-| 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours – lights, doors, motion, energy. |
-| 🏡 **Household and garden** | Waste bins on pickup day, post in the mailbox, thirsty plants, pets that roam, robot vacuums on their lanes, sprinklers that water while their valve is open. |
-| 🔐 **Doors and windows** | Smart locks, lift-and-slide doors, sliding and top-hung windows, garage doors and gates that move, warnings for rain and for contacts that stop answering. |
-| 🛋️ **Furniture & vehicles** | 40 basic models and 26 packs with over 620 more, popular IKEA sizes, Tesla models in their paint colours. |
-| ⚡ **Energy & weather** | Solar fields and power flow, rain, snow, fog, sun and moon, sunlight through the windows. |
-| 📺 **Media** | TV screens with cover and ambilight, speakers with their cover and controls. |
-| 🖥️ **Wall tablet ready** | Alerts for smoke, gas, water and open windows, your own sensors at the top, kiosk mode with night dimming, a light quality level for Fire tablets. |
-| 🎨 **Fits your theme** | Takes colours, font and corner radius from Home Assistant; three looks (*Neon*, *Blueprint*, *Day*) and a heatmap. |
-| 🧩 **Dashboard card** | `custom:nextfloor-card` with a visual editor. |
-| 🌍 **Nine languages** | German, English, French, Spanish, Italian, Dutch, Polish, Portuguese and Swedish, following the language of your Home Assistant user. |
-| 🪑 **Furniture builder** | Build your own furniture in the browser with the [furniture builder](https://therealmrbk.github.io/NextFloor/builder/), share it in the community store and install others' furniture with one tap (Extensions → Community furniture). |
-| 📦 **Own 3D models** | Upload a `.glb` of your own on the Extensions page; NextFloor prepares it for you. Import plans from Sweet Home 3D or let an AI write one in NextFloor's plan format. |
-| 🧩 **Plugins** | New device kinds from plugins and a plugin store on the Extensions page (cameras with their field of view, alarm panels). |
+| ✏️ **Plan editor** | Floors, rooms, curved walls, doors, windows, shaped stairs, outdoor areas and roofs, drawn in Home Assistant with the 3D view beside the plan. Areas within a room, layers, inside sizes, wall thickness per part. |
+| 💡 **Live 3D** | Tap to switch, swipe to dim, long press for colours. Lamps with several bulbs, blinds (roller, venetian slats, inside blinds, Somfy *My*), windows and doors follow their entities; a room panel lists everything in the room, scenes first. |
+| ✨ **Light designer** | Save a room's lights as a mood, set it again with one tap, carry it over to another room. |
+| 🌡️ **Room climate** | Heat maps for temperature (summer and winter scale), humidity, CO₂ and **mould risk**, airing hints, each room's 24-hour temperature curve, underfloor heating that glows. |
+| ⚡ **Energy** | Solar fields (also east-west racks), power flow along real cable routes, battery charge on the unit, gas and water meters, the last 24 hours and **seven days** on the house card. |
+| 🔥 **Heat pump & 🖨️ 3D printer** | Live cards: flow and return, heat and COP; print progress, time left, layer, temperatures and filaments – the print grows on the bed. |
+| 🚗 **Car** | Charge, range, charging along its cable from the wallbox, departure time, distance away, open doors and hatches, lock and climate buttons. |
+| 📶 **Wi-Fi map** | Every access point's reach on the floor, its devices, and which network devices are offline. |
+| 📅 **Today** | The day's appointments and the bins due, on a card for the wall tablet. |
+| ⚠️ **Warnings** | Smoke, gas, water, the alarm with the sensor that set it off, windows open in the rain, contacts that stop answering – and **your own warnings** for any entity. |
+| 📢 **Announcements** | *"Dinner is ready!"* in the room that should hear it, through its speaker and on every open NextFloor screen. |
+| 🏡 **Household & garden** | Waste bins, mailbox, thirsty plants, pets that roam the room they really are in, robot vacuums and **robot mowers** on their lanes, sprinklers, pools with temperature and pump, gardens linked to their Home Assistant area. |
+| 📺 **Media** | TV screens with cover and ambilight; a quick menu for every speaker and TV with sources, volume and presets per speaker. |
+| 🛋️ **Furniture** | 40 basic models and **40 packs with almost 800 more** – season and decoration, wellness, music, loft, Japandi, workshop, vehicles, **picture frames with your own photos** – L- and U-sofas, IKEA sizes, Tesla models in their paint. Any piece can show only while a helper is on. |
+| 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours or days. |
+| 🖥️ **Wall tablet ready** | Kiosk mode with night dimming, the star menu open and large, zoom and a kept camera for small screens, a light quality level for old tablets. |
+| 🎨 **Fits your theme** | Colours, font and corner radius from Home Assistant; looks *Neon*, *Blueprint*, *Day*, solid painted walls. |
+| 🧩 **Card, plugins, languages** | `custom:nextfloor-card` with a visual editor, a plugin system with its own store, and nine languages. |
+| 🪑 **Build your own** | The [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) and a community store, own `.glb` models, Sweet Home 3D import, a plan format an AI can write. |
+
+<p align="center"><img src="https://raw.githubusercontent.com/therealMRBK/NextFloor/main/docs/images/new-furniture.jpg" width="760" alt="A picture frame with an own photo, an L- and a U-shaped sofa, a 3D printer printing with its live card, and a home battery showing its charge"></p>
 
 ## 💚 Free forever – a promise
 
 NextFloor is free, and it stays free. Not "free to try", not "free with a paid Pro", not "free until the next version": **free, for everyone, forever.** Every feature, every furniture pack and every update belongs to everyone the day it comes out.
 
-- **Nothing to buy, ever.** No Pro version, no paid modules, no packs sold one by one, no supporter pass that gets features first, no licence key, no shop. What others sell as add-ons – the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden – is simply part of NextFloor.
-- **New furniture all the time, for free.** 26 packs with over 620 models come with it, and new packs keep coming with the updates.
+- **Nothing to buy, ever.** No Pro version, no paid modules, no packs sold one by one, no supporter pass that gets features first, no licence key, no shop. Everything – the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden, the heat pump and the 3D printer – is simply part of NextFloor.
+- **New furniture all the time, for free.** 40 packs with almost 800 models come with it, and new packs keep coming with the updates.
 - **Build your own furniture.** The [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) runs in your browser: build it, see it exactly as NextFloor draws it, and share it in the community store, where everyone installs it with one tap.
 - **Extend it yourself.** A [plugin system](https://github.com/therealMRBK/NextFloor/blob/main/docs/plugins.md) with a reviewed [plugin store](https://github.com/therealMRBK/NextFloor-Plugins): new device kinds, light animations, room cards – from anyone.
 - **Your data stays home.** No account, no cloud, no usage data sent anywhere.
@@ -111,7 +116,7 @@ quality: auto           # optional: auto | low | high
 theme: neon             # optional: neon | blueprint | day
 accent: "#00e5ff"       # optional: accent colour for the neon look
 markers: important      # optional: none | important | all
-heatmap: none           # optional: none | temperature | humidity | co2
+heatmap: none           # optional: none | temperature | humidity | co2 | mould | values | wifi
 room_panel: true        # optional: tapping a room opens its details
 room_names: true        # optional: room names in 3D
 controls: true          # optional: switches in the card, or a list of walls, floors, temperature, humidity, co2
@@ -129,6 +134,11 @@ weather_entity: weather.home   # optional: which weather entity (default: as set
 idle_return: 0          # optional: kiosk, seconds without a touch until the start view returns
 night: "off"            # optional: kiosk, dim at night: off | sun | "22:00-06:00"
 idle_orbit: false       # optional: kiosk, slow camera turn after the idle return
+central_open: false     # optional: the star menu (favourites) open from the start and a size larger
+keep_camera: false      # optional: keep side, height and distance when switching floors
+zoom: 1                 # optional: 0.6 … 2.5, how close the fitted views come
+today: true             # optional: the "Today" card with appointments and bins
+sensor_bar: true        # optional: your own sensors at the top
 ```
 
 </details>
