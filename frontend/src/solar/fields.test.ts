@@ -152,3 +152,14 @@ test("a turned field is kept on its face by its middle, and a full turn changes 
   const wall = wallFaces(cottage({ type: "flat", pitch: 0, overhang: 0.5 }))[0];
   assert.deepEqual(fieldPlan(wall, field("x", { rotation: 90 })), fieldPlan(wall, field("x")));
 });
+
+test("east-west racks turn every second row and stand the pairs close; a rack on a slope lifts the upper edge", () => {
+  const face = flat();
+  const ew = fieldModules(face, field("x", { rows: 2, cols: 1, tilt: 10, rack: "ew" }));
+  // which way a module leans: from its low edge to its high edge, along the face
+  const lean = (m: (typeof ew)[number]) => [0, 1, 2].reduce((s, i) => s + (m.corners[2][i] - m.corners[0][i]) * face.es[i], 0);
+  assert.ok(lean(ew[0]) > 0 && lean(ew[1]) < 0, "the second row leans the other way");
+  assert.ok(rowPitch(flat(), field("x", { tilt: 10, rack: "ew" })) < rowPitch(flat(), field("x", { tilt: 10 })));
+  const racked = fieldModules(slope(), field("x", { rows: 1, cols: 1, tilt: 20 }))[0];
+  assert.equal(racked.posts.length, 2, "brackets under the raised edge");
+});

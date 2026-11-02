@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Solar racks**: a field on a flat roof can stand on **east-west racks** – every second row turned, the pairs back to back, low and close – and a field on a pitched roof can stand on a rack that tilts it further than the roof (the upper edge on brackets).
 - **L- and U-shaped sofas without a pack**: the built-in sofa has a *Shape* – straight, L (mirror it for the other side) or U – with a chaise at one or both ends; choosing one makes a small sofa large enough for it.
 - **Own warnings**: *House → Own warnings* turns any entity into a line in the warning bar while it is in a state – "Water tank empty" from the robot vacuum, "Dishwasher done", "Salt low" below 20 (several states with commas, `<20` or `>80` for numbers), for the whole house or one room. They look like the warning for a contact that stops answering. Thanks to @HA-Luz ([#52](https://github.com/therealMRBK/NextFloor/discussions/52)).
 - **Which sensor set the alarm off**: when an alarm panel is triggered, the banner names the door, window or motion sensor that set it off (Alarmo tells it, otherwise the one that changed just before), and only its room pulses red instead of the whole house.

@@ -160,6 +160,8 @@ export function renderSolarForm(deps: RoofPanelDeps, field: SolarField): Templat
         ${face?.flat && !ground ? numberField(host, t("solar_rotation"), field.rotation ?? 0, turnFlat, 5) : nothing}
         ${face?.wall ? numberField(host, t("solar_tilt_wall"), field.tilt ?? 0, (v) => set({ tilt: bounded(0, 90, Math.round)(v) }), 5, 0) : nothing}
         ${face?.flat ? numberField(host, t("solar_tilt"), field.tilt ?? 15, (v) => set({ tilt: bounded(0, 45, Math.round)(v) }), 1, 0) : nothing}
+        ${face?.flat && !face.unbounded ? checkField(host, t("solar_rack_ew"), field.rack === "ew", (on) => set({ rack: on ? "ew" : null }), { title: t("solar_rack_ew_hint") }) : nothing}
+        ${face && !face.flat && !face.wall ? numberField(host, t("solar_rack_tilt"), field.tilt ?? 0, (v) => set({ tilt: bounded(0, 45, Math.round)(v) || null }), 1, 0) : nothing}
         ${face?.wall || face?.flat ? checkField(host, t(flipText), !!field.flip, (flip) => set({ flip })) : nothing}
       </div>
       ${face?.flat && !ground

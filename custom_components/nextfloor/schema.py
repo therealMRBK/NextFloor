@@ -509,6 +509,8 @@ SOLAR_FIELD_SCHEMA = vol.Schema(
         # frames on flat ground (up to 45 degrees), away from a wall (up to 90: a canopy)
         vol.Optional("tilt", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=90))),
         vol.Optional("flip", default=False): bool,
+        # flat roofs: east-west racks (every second row turned)
+        vol.Optional("rack"): vol.Any(None, vol.In(["ew"])),
         vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("name", default=None): vol.Any(None, vol.All(str, vol.Length(max=80))),
         # modules per row when the rows differ, how shorter rows sit, modules left out ("row:column")

@@ -453,10 +453,12 @@ export interface SolarField {
   cols: number;
   /** Portrait (default) or landscape modules. */
   portrait: boolean;
-  /** Flat roofs: tilt of the frames in degrees (null = 15°). */
+  /** Flat roofs: tilt of the frames in degrees (null = 15°); pitched roofs: a rack tilting the modules further (null = lying on the roof). */
   tilt?: number | null;
   /** Flat roofs: the modules lean the other way. */
   flip?: boolean;
+  /** Flat roofs: rows facing one way (default), or east-west racks – every second row turned, the pairs back to back. */
+  rack?: "ew" | null;
   /** PV power sensor of this field, e.g. its string (null = the plant's sensor from the energy settings). */
   entity?: string | null;
   /** Name, e.g. "String 1 south". */

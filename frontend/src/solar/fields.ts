@@ -38,16 +38,19 @@ export function rowCounts(f: Pick<SolarField, "rows" | "cols" | "layout">): numb
 function tiltOf(face: RoofFace, f: Pick<SolarField, "tilt">): number {
   if (face.flat) return Math.min(45, Math.max(0, f.tilt ?? 15)) * DEG;
   if (face.wall) return Math.min(90, Math.max(0, f.tilt ?? 0)) * DEG;
-  return 0;
+  // a pitched roof: modules lie on it, or stand on a rack that tilts them further (a roof too flat for the sun)
+  return Math.min(45, Math.max(0, f.tilt ?? 0)) * DEG;
 }
 
 /** The distance from one row to the next: on a flat roof the module's depth plus a gap against shading. */
-export function rowPitch(face: RoofFace, f: Pick<SolarField, "portrait" | "tilt" | "module_w" | "module_h">): number {
+export function rowPitch(face: RoofFace, f: Pick<SolarField, "portrait" | "tilt" | "module_w" | "module_h"> & { rack?: SolarField["rack"] }): number {
   const [, height] = moduleSize(f);
   const tilt = tiltOf(face, f);
   // a wall: rows one above the other, as high as a tilted module reaches
   if (face.wall) return height * Math.cos(tilt) + MODULE_GAP;
-  if (!face.flat) return height + MODULE_GAP;
+  if (!face.flat && tilt < 0.001) return height + MODULE_GAP;
+  // east-west: the rows stand back to back in pairs, no gap against shading needed
+  if (face.flat && (f as Pick<SolarField, "rack">).rack === "ew") return height * Math.cos(tilt) + 0.08;
   return height * Math.cos(tilt) + Math.max(0.3, 2 * height * Math.sin(tilt));
 }
 
@@ -108,7 +111,7 @@ export function fieldModules(face: RoofFace, f: SolarField, withSkipped = false)
       const u0 = f.u + (col + shift) * (width + MODULE_GAP);
       const u1 = u0 + width;
       const s0 = f.v + row * pitch;
-      const s1 = s0 + (face.flat || face.wall ? depth : height);
+      const s1 = s0 + (face.flat || face.wall || tilt > 0.001 ? depth : height);
       if (![[u0, s0], [u1, s0], [u1, s1], [u0, s1]].every(([u, s]) => onFace(u, s))) continue;
 
       if (face.wall && tilt > 0.001) {
@@ -118,13 +121,20 @@ export function fieldModules(face: RoofFace, f: SolarField, withSkipped = false)
         const corners: [V3, V3, V3, V3] = [at(u0, s0, lowLift), at(u1, s0, lowLift), at(u1, s1, highLift), at(u0, s1, highLift)];
         const edge = f.flip ? s0 : s1;
         modules.push({ corners, posts: [u0 + 0.05, u1 - 0.05].map((u) => [at(u, edge, 0), at(u, edge, away)] as [V3, V3]), cell, skipped });
+      } else if (!face.flat && tilt > 0.001) {
+        // a rack on a pitched roof: the upper edge stands off the roof, on brackets
+        const away = LIFT + height * Math.sin(tilt);
+        const corners: [V3, V3, V3, V3] = [at(u0, s0, LIFT), at(u1, s0, LIFT), at(u1, s1, away), at(u0, s1, away)];
+        modules.push({ corners, posts: [u0 + 0.05, u1 - 0.05].map((u) => [at(u, s1, 0), at(u, s1, away)] as [V3, V3]), cell, skipped });
       } else if (!face.flat) {
         modules.push({ corners: [at(u0, s0, LIFT), at(u1, s0, LIFT), at(u1, s1, LIFT), at(u0, s1, LIFT)], posts: [], cell, skipped });
       } else {
-        // flat roof or ground: the module leans up towards +s (towards -s when flipped), on a low frame
+        // flat roof or ground: the module leans up towards +s (towards -s when flipped), on a low frame; east-west racks turn every
+        // second row the other way, so each pair stands back to back
         const low = 0.15;
         const high = low + height * Math.sin(tilt);
-        const [sLow, sHigh] = f.flip ? [s1, s0] : [s0, s1];
+        const flipped = f.rack === "ew" && row % 2 === 1 ? !f.flip : !!f.flip;
+        const [sLow, sHigh] = flipped ? [s1, s0] : [s0, s1];
         const corners: [V3, V3, V3, V3] = [at(u0, sLow, low), at(u1, sLow, low), at(u1, sHigh, high), at(u0, sHigh, high)];
         const posts = [u0 + 0.05, u1 - 0.05].flatMap((u) => [[at(u, sLow, 0), at(u, sLow, low)], [at(u, sHigh, 0), at(u, sHigh, high)]] as [V3, V3][]);
         modules.push({ corners, posts, cell, skipped });
