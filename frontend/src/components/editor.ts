@@ -123,6 +123,9 @@ const NO_GESTURE = "handled";
 
 type Tool = "select" | "rect" | "polygon" | "measure" | "opening" | "furniture" | "outdoor" | "hole" | "stairs" | "wall" | "roof" | "energy";
 
+/** The tools of the toolbar, in order (a phone gets them as one dropdown). */
+const TOOLS: Tool[] = ["select", "rect", "polygon", "wall", "opening", "furniture", "stairs", "outdoor", "hole", "roof", "energy"];
+
 type Drag =
   | { kind: "pan"; last: [number, number] }
   | { kind: "vertex"; roomId: string; index: number; base: Building; moved: boolean }
@@ -2794,8 +2797,18 @@ export class NfEditor extends LitElement {
       <div class="nf-editor ${this.narrow ? "nf-narrow" : ""}">
         <div class="nf-main">
           <div class="nf-toolbar">
-            <div class="nf-seg" role="group" aria-label=${this.t("tool_select")}>
-              ${(["select", "rect", "polygon", "wall", "opening", "furniture", "stairs", "outdoor", "hole", "roof", "energy"] as Tool[]).map(
+            ${this.narrow
+              ? html`<select class="nf-tool-select" aria-label=${this.t("tool_select")} ?disabled=${!floor} @change=${(e: Event) => {
+                  this._tool = (e.target as HTMLSelectElement).value as Tool;
+                  this._draft = [];
+                  this._cursor = null;
+                  this._sideOpen = this._tool !== "select";
+                }}>
+                  ${TOOLS.filter((tool) => this.isAdmin || tool === "select").map((tool) => html`<option value=${tool} ?selected=${this._tool === tool}>${this.t(`tool_${tool}` as I18nKey)}</option>`)}
+                </select>`
+              : nothing}
+            <div class="nf-seg" role="group" aria-label=${this.t("tool_select")} ?hidden=${this.narrow}>
+              ${TOOLS.map(
                 (tool) => html`<button
                   aria-pressed=${this._tool === tool}
                   ?disabled=${!floor || (!this.isAdmin && tool !== "select")}

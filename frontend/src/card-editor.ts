@@ -150,6 +150,13 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "scenes", "card_scenes", "card_scenes_hint")}
       ${switchOption(f, "sensor_bar", "card_sensor_bar", "card_sensor_bar_hint")}
       ${switchOption(f, "central_open", "card_central_open", "card_central_open_hint")}
+      ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
+      <label class="field"
+        >${f.t("view_zoom")}
+        <select @change=${(e: Event) => f.set("zoom", Number((e.target as HTMLSelectElement).value))}>
+          ${[0.8, 1, 1.25, 1.5, 1.75, 2, 2.5].map((z) => html`<option value=${z} ?selected=${(f.value.zoom ?? 1) === z}>${Math.round(z * 100)} %</option>`)}
+        </select>
+      </label>
       ${switchOption(f, "announcements", "card_announcements", "card_announcements_hint")}
       ${f.value.announcements !== false ? html`<div class="grid">${textField(f, "screen_name", "screen_name")}</div>` : nothing}
       ${switchOption(f, "weather", "card_weather", "card_weather_hint")}

@@ -743,12 +743,27 @@ export class NextFloorViewer {
 
   /** Show one floor (null = the whole house). */
   setFloor(floorId: string | null, animate = true): void {
+    // from one floor to another the camera may keep its side, height and distance (a tablet set up to look one way)
+    const keep = this.keepCamera && this.floorId !== null && floorId !== null && floorId !== this.floorId ? { theta: this.controls.view.theta, phi: this.controls.view.phi, radius: this.controls.view.radius } : null;
     this.floorId = floorId;
     this.roomId = null;
     this.labelsDirty = true;
     this.applyTargets(!animate);
     this.applyHighlight();
-    this.fit(animate ? 700 : 0);
+    this.fit(animate ? 700 : 0, keep);
+  }
+
+  /** Switching floors keeps the camera's side, height and distance instead of fitting the new floor from the start view's side. */
+  setKeepCamera(on: boolean): void {
+    this.keepCamera = on;
+  }
+
+  /** How much closer the fitted views come (1 = fitted, 2 = twice as close): small tablets see the house larger. */
+  setZoom(zoom: number): void {
+    const z = Math.min(3, Math.max(0.5, zoom || 1));
+    if (z === this.zoom) return;
+    this.zoom = z;
+    if (this.building) this.fit(400);
   }
 
   /** Pull the floors apart in the house view, or stack them. */
@@ -2231,7 +2246,10 @@ export class NextFloorViewer {
     this.invalidate();
   }
 
-  private fit(duration: number): void {
+  private keepCamera = false;
+  private zoom = 1;
+
+  private fit(duration: number, keep: { theta: number; phi: number; radius: number } | null = null): void {
     const box = new Box3();
     for (const fv of this.activeFloors()) {
       const y0 = fv.floor.elevation + fv.ty;
@@ -2265,7 +2283,11 @@ export class NextFloorViewer {
     // the start view's framing (#206): the point it looks at, counted from the opened floor
     const at = useRadius ? start!.target : null;
     if (at) center.set(at.x, at.y + (own ? this.floorBase(this.floorId) : 0), at.z);
-    this.controls.flyTo({ target: center, radius: useRadius ? start!.radius : radius, phi: start ? start.phi : 0.85, theta: start ? start.theta : -0.6 }, duration);
+    if (keep) {
+      this.controls.flyTo({ target: center, radius: keep.radius, phi: keep.phi, theta: keep.theta }, duration);
+      return;
+    }
+    this.controls.flyTo({ target: center, radius: (useRadius ? start!.radius : radius) / this.zoom, phi: start ? start.phi : 0.85, theta: start ? start.theta : -0.6 }, duration);
   }
 
   /** The ground grid lies under the lowest floor and reaches well beyond the building. */

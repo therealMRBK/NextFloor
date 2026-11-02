@@ -29,6 +29,10 @@ export interface DevicePrefs {
   timeSlider: boolean;
   /** The star menu (favourites) stands open from the start, a size larger. */
   menuOpen: boolean;
+  /** Switching floors keeps the camera's side, height and distance. */
+  keepCamera: boolean;
+  /** How much closer the fitted views come, in % (100 = fitted). */
+  zoom: number;
   /** A clock in a corner of the 3D view, or none. */
   clock: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
   /** How opaque the see-through walls are, in % (20: faint glass). */
@@ -82,6 +86,13 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   weather: flag("weather", true),
   timeSlider: flag("time_slider", false),
   menuOpen: flag("menu_open", false),
+  keepCamera: flag("keep_camera", false),
+  zoom: {
+    name: "zoom",
+    fallback: 100,
+    read: (raw) => (/^\d{2,3}$/.test(raw) ? Math.min(250, Math.max(60, Number(raw))) : 100),
+    write: (value) => String(Math.round(Math.min(250, Math.max(60, value)))),
+  },
   screenName: { name: "screen_name", fallback: "", read: (raw) => raw.slice(0, 60), write: (value) => value.trim().slice(0, 60) },
   announceMuted: flag("announce_muted", false),
   glassWalls: {

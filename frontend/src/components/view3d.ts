@@ -155,6 +155,8 @@ export class NfView3d extends LitElement {
     _armed: { state: true },
     central: { attribute: false },
     centralOpen: { attribute: false },
+    keepCamera: { attribute: false },
+    zoom: { attribute: false },
     buttons: { attribute: false },
     _thumbs: { state: true },
     floorThumbs: { attribute: false },
@@ -363,6 +365,10 @@ export class NfView3d extends LitElement {
   declare central: boolean;
   /** The star menu stands open from the start, a size larger (a wall tablet whose main use are its favourites). */
   declare centralOpen: boolean;
+  /** Switching floors keeps the camera's side, height and distance. */
+  declare keepCamera: boolean;
+  /** How much closer the fitted views come (1 = fitted). */
+  declare zoom: number;
   /** Own buttons from the card's YAML (replace the house's buttons when set). */
   declare buttons: CustomButton[] | null;
   private swipeSent = 0;
@@ -585,6 +591,8 @@ export class NfView3d extends LitElement {
       this.viewer.setStats(this.showStats);
       this.viewer.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
       this.viewer.setKeepRoof(this.keepRoof);
+      this.viewer.setKeepCamera(!!this.keepCamera);
+      this.viewer.setZoom(this.zoom ?? 1);
       this._low = this.viewer.low;
       // owned 3D models (cars and the like) come from the user's Home Assistant, with the user's login
       this.viewer.setMeshSource((id) =>
@@ -659,6 +667,8 @@ export class NfView3d extends LitElement {
     if (changed.has("glassWalls")) v.setGlassWalls((this.glassWalls ?? 20) / 100);
     if (changed.has("explode")) v.setExplode(this.explode);
     if (changed.has("keepRoof")) v.setKeepRoof(this.keepRoof);
+    if (changed.has("keepCamera")) v.setKeepCamera(!!this.keepCamera);
+    if (changed.has("zoom")) v.setZoom(this.zoom ?? 1);
     if (changed.has("floorStack")) v.setFloorStack(this.floorStack);
     if (changed.has("theme")) v.setTheme(this.theme);
     if (changed.has("_locked")) v.setNavigationLocked(this._locked);

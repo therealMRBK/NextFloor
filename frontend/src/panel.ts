@@ -292,6 +292,10 @@ export class NextFloorPanel extends LitElement {
             ${(["none", "top_left", "top_right", "bottom_left", "bottom_right"] as const).map((c) => html`<option value=${c} ?selected=${p.clock === c}>${this.t(`clock_${c}`)}</option>`)}
           </select>
         </label>
+        <label class="nf-seg nf-glass-pick" title=${this.t("view_zoom_hint")}
+          >🔍
+          <input type="range" min="60" max="250" step="10" .value=${String(p.zoom)} aria-label=${this.t("view_zoom")} @change=${(e: Event) => this.setPref("zoom", Number((e.target as HTMLInputElement).value))} />
+        </label>
         <label class="nf-seg nf-glass-pick" title=${this.t("glass_walls_hint")}
           >${this.t("glass_walls")}
           <input type="range" min="0" max="100" step="5" .value=${String(p.glassWalls)} aria-label=${this.t("glass_walls")} @input=${(e: Event) => this.setPref("glassWalls", Number((e.target as HTMLInputElement).value))} />
@@ -310,6 +314,7 @@ export class NextFloorPanel extends LitElement {
         <div class="nf-seg nf-quality">
           <button aria-pressed=${p.timeSlider} title=${this.t("time_of_day_hint")} @click=${() => this.toggleTimeSlider(!p.timeSlider)}>☀ ${this.t("time_of_day")}</button>
           <button aria-pressed=${p.menuOpen} title=${this.t("menu_open_hint")} @click=${() => this.setPref("menuOpen", !p.menuOpen)}>★ ${this.t("menu_open")}</button>
+          <button aria-pressed=${p.keepCamera} title=${this.t("keep_camera_hint")} @click=${() => this.setPref("keepCamera", !p.keepCamera)}>🎥 ${this.t("keep_camera")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
       </div>`;
@@ -529,6 +534,8 @@ export class NextFloorPanel extends LitElement {
           .travelButton=${true}
           .accent=${p.accent}
           .centralOpen=${p.menuOpen}
+          .keepCamera=${p.keepCamera}
+          .zoom=${p.zoom / 100}
           ?furnish=${this._furnish}
           .selectedFurniture=${this._selFurniture}
           @furniture-select=${(e: CustomEvent<{ id: string | null }>) => (this._selFurniture = e.detail.id)}

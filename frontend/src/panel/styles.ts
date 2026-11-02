@@ -387,6 +387,12 @@ export const panelStyles = css`
   .nf-furnish-bar {
     bottom: 68px;
   }
+  /* small landscape tablets: the room panel gets a little more of the width, its rows stay easy to hit */
+  @container nf ((min-width: 701px) and (max-width: 1180px)) {
+    .nf-room-panel {
+      width: min(420px, 44%);
+    }
+  }
   /* phones and portrait tablets: panel as a sheet at the bottom, the switches step aside */
   @container nf ((max-width: 700px) or ((orientation: portrait) and (max-width: 1000px))) {
     .nf-room-panel {

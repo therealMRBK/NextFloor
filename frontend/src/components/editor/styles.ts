@@ -91,6 +91,15 @@ export const editorStyles = css`
     align-items: center;
     padding: 10px 12px;
   }
+  /* phones: the tools as one dropdown instead of a row of eleven buttons */
+  .nf-tool-select {
+    font: inherit;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--nf-line);
+    background: var(--nf-bg2);
+    color: var(--nf-text);
+  }
   .nf-warn {
     color: var(--nf-warm);
     font-size: 12.5px;

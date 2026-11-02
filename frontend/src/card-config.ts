@@ -89,6 +89,10 @@ export interface CardConfig {
   sensor_bar?: boolean;
   /** The star menu (favourites) stands open from the start, a size larger (default false). */
   central_open?: boolean;
+  /** Switching floors keeps the camera's side, height and distance (default false). */
+  keep_camera?: boolean;
+  /** How much closer the fitted views come, 0.6 … 2.5 (default 1). */
+  zoom?: number;
   /** Announcements (action nextfloor.announce) show and speak on this card (default true). */
   announcements?: boolean;
   /** The name of this screen, for announcements meant for some screens only (default: the name set in the panel on this device). */
