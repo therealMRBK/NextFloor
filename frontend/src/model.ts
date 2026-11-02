@@ -357,6 +357,8 @@ export interface Floor {
   ha_floor: string | null;
   /** The camera this floor opens with (#182): another side than the house view; null = the house view's side. */
   start_view?: StartView | null;
+  /** A layer rather than a storey (all the trees, the decoration): the 3D view can show or hide it with an eye. */
+  layer?: boolean;
 }
 
 /** A wall drawn on its own, from a to b along its centre line. */

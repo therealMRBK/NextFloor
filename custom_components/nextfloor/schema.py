@@ -617,6 +617,8 @@ FLOOR_SCHEMA = vol.Schema(
         vol.Required("furniture"): vol.All([FURNITURE_SCHEMA], vol.Length(max=MAX_ITEMS)),
         vol.Required("placements"): vol.All([PLACEMENT_SCHEMA], vol.Length(max=MAX_ITEMS)),
         vol.Required("background"): vol.Any(None, BACKGROUND_SCHEMA),
+        # a layer rather than a storey (the trees, the decoration), shown or hidden with an eye
+        vol.Optional("layer"): bool,
         vol.Optional("outdoor", default=list): vol.All([OUTDOOR_SCHEMA], vol.Length(max=MAX_ITEMS)),
         # free-standing walls (partitions); room walls come from the room edges
         vol.Optional("walls", default=list): vol.All([FREE_WALL_SCHEMA], vol.Length(max=MAX_ITEMS)),

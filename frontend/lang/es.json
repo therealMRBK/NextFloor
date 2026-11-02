@@ -43,6 +43,8 @@
   "floor_empty": "Planta vacía",
   "level": "Nivel {n}",
   "ha_floor": "Planta en Home Assistant",
+  "floor_layer": "Capa (se puede mostrar y ocultar)",
+  "floor_layer_hint": "Esta planta no es un piso sino una capa – todos los árboles o la decoración. La vista 3D muestra arriba un ojo que la muestra u oculta en cada dispositivo.",
   "no_ha_floor": "– ninguna –",
   "area_rooms": "Añadir estancias desde áreas de HA ({n})",
   "area_rooms_hint": "Añade una estancia (4 × 3 m) por cada área de esta planta; después arrástrala a su sitio y ajusta las esquinas",

@@ -43,6 +43,8 @@
   "floor_empty": "Puste piętro",
   "level": "Poziom {n}",
   "ha_floor": "Piętro w Home Assistant",
+  "floor_layer": "Warstwa (do pokazania i ukrycia)",
+  "floor_layer_hint": "To piętro nie jest kondygnacją, lecz warstwą – np. wszystkie drzewa albo dekoracje. Widok 3D pokazuje u góry oko, które ją pokazuje lub ukrywa na każdym urządzeniu.",
   "no_ha_floor": "– brak –",
   "area_rooms": "Dodaj pomieszczenia z obszarów HA ({n})",
   "area_rooms_hint": "Dodaje pomieszczenie (4 × 3 m) dla każdego obszaru tego piętra – potem przeciągnij je na miejsce i dopasuj narożniki",

@@ -33,6 +33,8 @@
  "floor_empty": "Étage vide",
  "level": "Niveau {n}",
  "ha_floor": "Étage dans Home Assistant",
+ "floor_layer": "Calque (affichable et masquable)",
+ "floor_layer_hint": "Cet étage n'est pas un niveau mais un calque – tous les arbres ou la déco. La vue 3D affiche en haut un œil qui l'affiche ou le masque sur chaque appareil.",
  "no_ha_floor": "– aucun –",
  "area_rooms": "Ajouter des pièces depuis les zones HA ({n})",
  "area_rooms_hint": "Ajoute une pièce (4 × 3 m) pour chaque zone de cet étage – placez-la ensuite par glisser-déposer et ajustez les coins",

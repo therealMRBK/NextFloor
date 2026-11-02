@@ -43,6 +43,8 @@
   "floor_empty": "Lege verdieping",
   "level": "Niveau {n}",
   "ha_floor": "Verdieping in Home Assistant",
+  "floor_layer": "Laag (in- en uit te schakelen)",
+  "floor_layer_hint": "Deze verdieping is geen bouwlaag maar een laag – alle bomen of de decoratie. De 3D-weergave toont bovenaan een oog dat hem per apparaat toont of verbergt.",
   "no_ha_floor": "– geen –",
   "area_rooms": "Ruimtes toevoegen uit HA-gebieden ({n})",
   "area_rooms_hint": "Voegt per gebied van deze verdieping een ruimte (4 × 3 m) toe; sleep die daarna op zijn plaats en pas de hoeken aan",

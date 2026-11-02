@@ -747,10 +747,42 @@ export class NfView3d extends LitElement {
   private shownBuilding(hass: HomeAssistant | undefined): Building {
     const b = this.building!;
     const hidden = hiddenFurniture(hass, b);
-    const key = hidden.join(",");
+    const layers = b.floors.filter((f) => f.layer && this.hiddenLayers.has(f.id)).map((f) => f.id);
+    const key = [...hidden, ...layers.map((id) => `layer:${id}`)].join(",");
     if (this.shownFor?.building === b && this.shownFor.key === key) return this.shownFor.shown;
-    this.shownFor = { building: b, key, shown: withoutHidden(b, hidden) };
+    const shown = withoutHidden(b, hidden);
+    this.shownFor = { building: b, key, shown: layers.length ? { ...shown, floors: shown.floors.filter((f) => !layers.includes(f.id)) } : shown };
     return this.shownFor.shown;
+  }
+
+  /** Layers hidden on this device (the trees, the decoration), remembered in the browser. */
+  private hiddenLayers: Set<string> = (() => {
+    try {
+      return new Set<string>(JSON.parse(localStorage.getItem("nextfloor.hidden_layers") ?? "[]") as string[]);
+    } catch {
+      return new Set<string>();
+    }
+  })();
+
+  private toggleLayer(id: string): void {
+    if (this.hiddenLayers.has(id)) this.hiddenLayers.delete(id);
+    else this.hiddenLayers.add(id);
+    try {
+      localStorage.setItem("nextfloor.hidden_layers", JSON.stringify([...this.hiddenLayers]));
+    } catch {
+      // without storage the choice lasts until the page reloads
+    }
+    if (this.viewer && this.building) this.viewer.setBuilding(this.shownBuilding(this.hass));
+    this.requestUpdate();
+  }
+
+  /** The eyes of the layers, top middle: a tap shows or hides a layer. */
+  private renderLayers() {
+    const layers = (this.building?.floors ?? []).filter((f) => f.layer);
+    if (!layers.length || this.clean) return nothing;
+    return html`<div class="nf-layers" role="group" aria-label=${translate(this.hass, "floor_layer")}>
+      ${layers.map((f) => html`<button class="nf-chip" aria-pressed=${!this.hiddenLayers.has(f.id)} @click=${() => this.toggleLayer(f.id)}>${this.hiddenLayers.has(f.id) ? "◌" : "👁"} ${f.name}</button>`)}
+    </div>`;
   }
 
   private syncDevices(force: boolean): void {
@@ -785,7 +817,8 @@ export class NfView3d extends LitElement {
     this.refreshToday(b);
 
     const consumers = findConsumers(hass, b);
-    const deviceMarkers = buildMarkers(hass, b);
+    // hidden layers bring no pins either
+    const deviceMarkers = buildMarkers(hass, b.floors.some((f) => f.layer && this.hiddenLayers.has(f.id)) ? this.shownBuilding(hass) : b);
     this.placementInfo = new Map(deviceMarkers.map((m) => [m.id, { floorId: m.floorId, roomId: m.roomId, x: m.x, z: m.z, y: m.y, rotation: m.rotation ?? 0 }]));
     const furniture = this.furnitureMarkers(hass, b, new Set(deviceMarkers.map((m) => m.id)), new Set(consumers.map((c) => c.powerEntity)));
     consumers.push(...furniture.consumers);
@@ -1096,6 +1129,7 @@ export class NfView3d extends LitElement {
     const targets = new Map<string, string>();
     const subMeters = subMeterIds(b);
     for (const floor of b.floors) {
+      if (floor.layer && this.hiddenLayers.has(floor.id)) continue;
       for (const f of floor.furniture) {
         if (!furnitureShown(hass, f)) continue;
         const linked = this.furnitureLinks.get(f.id);
@@ -2564,7 +2598,7 @@ export class NfView3d extends LitElement {
     >
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
-      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderPluginWindow()}
+      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
             ><b>${this._stats.fps ? translate(this.hass, "stats_fps", { fps: this._stats.fps, ms: this._stats.worstMs }) : translate(this.hass, "stats_idle")}</b>
@@ -3069,6 +3103,18 @@ export class NfView3d extends LitElement {
         margin: 0;
         font-size: 13px;
         opacity: 0.7;
+      }
+      .nf-layers {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        z-index: 3;
+      }
+      .nf-has-alerts .nf-layers {
+        top: 58px;
       }
       /* "Today": the day's appointments and bins, top right, folds to its title */
       .nf-today {

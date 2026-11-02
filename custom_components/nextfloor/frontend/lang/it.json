@@ -43,6 +43,8 @@
   "floor_empty": "Piano vuoto",
   "level": "Livello {n}",
   "ha_floor": "Piano in Home Assistant",
+  "floor_layer": "Livello (mostrabile e nascondibile)",
+  "floor_layer_hint": "Questo piano non è un livello dell'edificio ma uno strato – tutti gli alberi o le decorazioni. La vista 3D mostra in alto un occhio che lo mostra o nasconde su ogni dispositivo.",
   "no_ha_floor": "– nessuno –",
   "area_rooms": "Aggiungi stanze dalle aree di HA ({n})",
   "area_rooms_hint": "Aggiunge una stanza (4 × 3 m) per ogni area di questo piano; poi trascinala in posizione e regola gli angoli",

@@ -88,6 +88,7 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
     ${host.admin ? shiftRow(host, state, floorActions, floor) : nothing}
     ${numberField(host, t("height"), floor.height, (v) => update({ height: Math.max(1, v) }), 0.05, 1)}
     ${Object.keys(host.hass?.floors ?? {}).length > 0 ? selectField(host, t("ha_floor"), floor.ha_floor ?? "", haChoices, (v) => update({ ha_floor: v || null }), { wide: true }) : nothing}
+    ${checkField(host, t("floor_layer"), !!floor.layer, (on) => update({ layer: on || undefined }), { title: t("floor_layer_hint") })}
     ${host.admin && lacking.length > 0
       ? html`<div class="nf-actions nf-wide"><button class="nf-btn nf-primary" title=${t("area_rooms_hint")} @click=${() => floorActions.addAreaRooms(floor)}>${t("area_rooms", { n: lacking.length })}</button></div>`
       : nothing}

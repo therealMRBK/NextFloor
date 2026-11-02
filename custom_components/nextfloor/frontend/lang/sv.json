@@ -43,6 +43,8 @@
   "floor_empty": "Tom våning",
   "level": "Nivå {n}",
   "ha_floor": "Våning i Home Assistant",
+  "floor_layer": "Lager (kan visas och döljas)",
+  "floor_layer_hint": "Den här våningen är inget plan utan ett lager – alla träd eller dekorationen. 3D-vyn visar ett öga överst som visar eller döljer det på varje enhet.",
   "no_ha_floor": "– ingen –",
   "area_rooms": "Lägg till rum från HA-områden ({n})",
   "area_rooms_hint": "Lägger till ett rum (4 × 3 m) för varje område på den här våningen – dra det sedan på plats och justera hörnen",
