@@ -108,7 +108,9 @@ function build(hass: HomeAssistant): Index {
   // entities that are not in the registry (YAML without a unique_id, a USB camera) have no area either
   if (hass.entities) for (const id of Object.keys(hass.states)) if (!hass.entities[id]) offerWithoutArea(id);
 
-  const rank = (id: string) => KIND_ORDER.indexOf(entityKind(hass, id)!);
+  // an entity a plugin takes on (a camera of an NVR) comes before the plain sensors of its device, so it is the device's main entry
+  const pluginRank = KIND_ORDER.indexOf("binary") - 0.5;
+  const rank = (id: string) => (kindOf(id) ? KIND_ORDER.indexOf(kindOf(id)!) : pluginRank);
   withoutArea.sort((a, b) => rank(a) - rank(b) || entityName(hass, a).localeCompare(entityName(hass, b)));
   for (const [areaId, ids] of byArea) {
     const areaName = hass.areas?.[areaId]?.name;

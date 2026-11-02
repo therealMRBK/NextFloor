@@ -23,6 +23,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **New stairs are shaped stairs**: a stair placed from now on opens the floor above only where its steps lack headroom, so the opening is smaller than the whole rectangle as before. Choose *Floor opening → Over the whole stair* in its form for the old opening; stairs already in the plan keep theirs.
 
+### Fixed
+
+- **Cameras of an NVR are easy to find in the device list**: with the *Cameras* plugin, a camera that shares its device with the NVR's motion, person and vehicle sensors (ONVIF) now leads that device's row instead of hiding behind "more" after the sensors. Thanks to @toshi24 ([#50](https://github.com/therealMRBK/NextFloor/discussions/50)).
+
 ## 0.16.1
 
 ### Added

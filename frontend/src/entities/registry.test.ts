@@ -172,3 +172,16 @@ test("wall buttons and doorbells (event entities) are offered, other events are 
   assert.equal(isRelevant(hass, "event.remote"), true);
   assert.equal(isRelevant(hass, "event.motion"), false);
 });
+
+test("an NVR's camera that a plugin takes on leads its device, before the device's motion sensors", () => {
+  registerPlugin({ id: "cams-test", name: "Cams", version: "1.0.0", apiVersion: 1, devices: [{ match: (id: string) => id.startsWith("camera."), kind: "sensor" }] } as never);
+  const nvr = { area_id: "ext", device_id: "nvr" };
+  const hass = hassOf(
+    [entity("binary_sensor.nvr_motion_1", "off", { device_class: "motion" }), entity("binary_sensor.nvr_person_1", "off", { device_class: "occupancy" }), entity("camera.camera_1_live", "idle")],
+    { "binary_sensor.nvr_motion_1": nvr, "binary_sensor.nvr_person_1": nvr, "camera.camera_1_live": nvr } as never,
+  );
+  const ids = areaEntities(hass, "ext");
+  assert.equal(ids[0], "camera.camera_1_live");
+  assert.equal(groupByDevice(hass, ids)[0].primary, "camera.camera_1_live");
+  resetPlugins();
+});
