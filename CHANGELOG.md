@@ -6,6 +6,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Outdoor areas like rooms**: a garden, terrace or pool can be linked to a Home Assistant area – its devices and sensors join the Outside panel, and a pin on the area opens it. A pool, pond or bed can show its water temperature and pump on that pin ("24.5 °C · pump on").
+- **Robot mowers mow their lawn**: a robot mower or its dock from the *Garden 2* pack linked to a `lawn_mower` drives lanes over its lawn in 3D while it mows (around the beds, ponds and terraces on it), and drives home when it returns.
 - **Wi-Fi map**: the map selector has a new **Wi-Fi** mode – every access point, router or mesh node from the packs linked to its device spreads its reach as a disc over the floor (through the walls), blue while it has room, amber when it is busy, red when it is down; its pin tells how many devices it carries, and the legend sums up the access points, their devices and which network devices of the plan are offline.
 - **Room climate**: the heat map has a new **Mould** mode – the risk at each room's coldest wall from its temperature and humidity – and the temperature map uses a summer scale from May to September (rooms count as hot later). Rooms without a sensor of their own take the temperature and humidity of their thermostat. The room panel shows the room's temperature over the last 24 hours as a small curve, and both the panel and the *Values* map tell when to air a room (too much CO₂, too damp, risk of mould).
 - **Underfloor heating**: a room can name its floor heating's thermostat, valve or switch, and its floor glows warm in 3D while it heats.

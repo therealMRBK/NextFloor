@@ -250,6 +250,11 @@ export function outsideEntities(hass: HomeAssistant, floors: readonly Floor[]): 
     const links = furnitureEntities(hass, [floor]);
     out.push(...floor.placements.filter((p) => p.outside || !indoors(p.x, p.z)).map((p) => p.entity_id));
     out.push(...floor.furniture.filter((f) => !indoors(f.x, f.z)).flatMap((f) => [links.get(f.id)?.entity, links.get(f.id)?.power]));
+    // gardens, terraces and pools linked to a Home Assistant area bring that area's devices, and a pool its pump and thermometer
+    for (const a of floor.outdoor ?? []) {
+      if (a.area_id) out.push(...primaryEntities(hass, areaEntities(hass, a.area_id)));
+      out.push(a.pump_entity, a.temp_entity);
+    }
   }
   return [...new Set(out.filter((id): id is string => !!id && !!hass.states[id]))];
 }

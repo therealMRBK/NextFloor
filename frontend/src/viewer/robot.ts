@@ -20,6 +20,10 @@ export interface RobotInfo {
   roomId?: string | null;
   /** Footprints of the furniture in its way (cabinets, sofas, beds; not tables or chairs). */
   obstacles?: Vec2[][];
+  /** Height it drives at above its floor (a robot mower on the lawn below the ground floor). */
+  y?: number;
+  /** A robot mower: a larger, green body. */
+  mower?: boolean;
 }
 
 /** Driving speed in m/s and turning speed in rad/s. */

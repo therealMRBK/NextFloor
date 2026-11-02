@@ -39,6 +39,7 @@ import {
   fridgeDoors,
   hasScreen,
   fromCelsius,
+  toCelsius,
   tempUnit,
   robotRoom,
   robotRoomSensor,
@@ -89,7 +90,7 @@ import { fixtureGlow } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage } from "../api.ts";
-import { ceilingOf, furnitureFootprint, isLamp, LAMP_MODEL, outdoorGround, pointInPolygon, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
+import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
@@ -794,6 +795,31 @@ export class NfView3d extends LitElement {
     this.confirmSet = confirmEntities(hass, b.floors);
     // under NextFloor's cards (a playing speaker, a car in its spot) the device's own pin steps aside
     const carded = new Set(this.liveCardsOn ? this._liveCards.flatMap((c) => (c.kind === "media" ? [c.media.entity] : c.kind === "car" ? [c.spot] : [])) : []);
+    // gardens, terraces and pools with an area, a thermometer or a pump: a pin of their own (a tap opens Outside)
+    for (const floor of b.floors)
+      for (const a of floor.outdoor ?? []) {
+        if (!a.area_id && !a.temp_entity && !a.pump_entity) continue;
+        const temp = a.temp_entity ? hass.states[a.temp_entity] : undefined;
+        const pump = a.pump_entity ? hass.states[a.pump_entity] : undefined;
+        const [cx, cz] = centroid(a.points);
+        const t = temp && Number.isFinite(Number(temp.state)) ? `${formatNumber(hass, fromCelsius(hass, toCelsius(Number(temp.state), temp.attributes.unit_of_measurement)), 1)} ${tempUnit(hass)}` : "";
+        const running = !!pump && isActive(pump);
+        deviceMarkers.push({
+          id: a.area_id ? `outdoor:${a.id}` : (a.pump_entity ?? a.temp_entity)!,
+          floorId: floor.id,
+          roomId: null,
+          x: cx,
+          z: cz,
+          y: outdoorTopAt(floor, a, cx, cz) + 0.7,
+          icon: mdiIcon(a.type === "pool" ? "pool" : a.type === "terrace" ? "table-chair" : "tree-outline"),
+          name: (a.area_id && hass.areas?.[a.area_id]?.name) || translate(hass, `out_${a.type}` as I18nKey),
+          text: [t, running ? translate(hass, "pool_pump_on") : ""].filter(Boolean).join(" · "),
+          active: running,
+          unavailable: false,
+          glow: null,
+          show: "always",
+        });
+      }
     // pins moved by hand (devices that stand close together): shifted in the plan and in height; lamps keep theirs at the lamp
     const shifts = new Map<string, NonNullable<Placement["pin_offset"]>>();
     for (const floor of b.floors) {
@@ -1286,6 +1312,20 @@ export class NfView3d extends LitElement {
         const room = reported ?? rooms.find((r) => pointInPolygon(rest, r.points));
         const obstacles = mode === "cleaning" && room ? this.robotObstacles(floor, room.points) : [];
         out.push({ id: f.id, floorId: floor.id, rest, restHeading: -a, mode, room: room?.points ?? null, roomId: room?.id ?? null, obstacles });
+      }
+      // robot mowers: a mower or its dock from the packs linked to a lawn_mower; it mows lanes over its lawn
+      for (const f of floor.furniture) {
+        if (!/:(robot_mower|mower_dock)$/.test(f.type)) continue;
+        const entity = this.furnitureLinks.get(f.id)?.entity ?? null;
+        if (!entity?.startsWith("lawn_mower.")) continue;
+        const state = hass.states[entity]?.state;
+        const mode: RobotInfo["mode"] = state === "mowing" ? "cleaning" : state === "returning" ? "returning" : state === "error" ? "error" : state === "docked" || !state ? "docked" : "idle";
+        const rest: [number, number] = [f.x, f.z];
+        const lawns = (floor.outdoor ?? []).filter((o) => o.type === "lawn" && o.points.length >= 3);
+        const lawn = lawns.find((o) => pointInPolygon(rest, o.points)) ?? [...lawns].sort((p, q) => polygonArea(q.points) - polygonArea(p.points))[0];
+        // what stands on the lawn: beds, ponds, pools, terraces cut out of it
+        const obstacles = lawn ? (floor.outdoor ?? []).filter((o) => o !== lawn && o.type !== "lawn" && o.points.some((p) => pointInPolygon(p, lawn.points))).map((o) => o.points) : [];
+        out.push({ id: f.id, floorId: floor.id, rest, restHeading: (-f.rotation * Math.PI) / 180, mode, room: lawn?.points ?? null, roomId: lawn?.id ?? null, obstacles, y: lawn ? outdoorTopAt(floor, lawn, rest[0], rest[1]) : groundLevel(floor), mower: true });
       }
     }
     return out;
@@ -2118,6 +2158,11 @@ export class NfView3d extends LitElement {
     }
     if (this.pluginTapped(entityId)) return;
     if (entityId.startsWith("gang:")) return this.tapPlate(entityId.slice(5), x, y);
+    // an outdoor area's pin opens Outside, with the devices of its area
+    if (entityId.startsWith("outdoor:")) {
+      this.fire("room-tap", { floorId: null, roomId: "nf-outside" });
+      return;
+    }
     // the street end of the grid cable opens the grid sensor: the balance's, else the meter's (#223)
     if (entityId === "grid") {
       const b = this.building;

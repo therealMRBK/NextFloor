@@ -3,7 +3,8 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { bounds, cutsOut, isAxisRect, type FreeWall, OUTDOOR_TOP, OUTDOOR_TYPES, outdoorStanding, SLOPE_DIRS, type Direction, type OutdoorArea, type OutdoorType, type SlopeDir, type Vec2 } from "../../../model.ts";
-import { checkField, hint, numberField, selectField, toThousandths } from "../fields.ts";
+import { checkField, entityField, hint, numberField, selectField, toThousandths } from "../fields.ts";
+import { entityOptions } from "../entities.ts";
 import type { EditorHost } from "../host.ts";
 import { wallEndForLength, wallHeightPatch } from "../ops/items.ts";
 import { arcButton, arcRow, type ArcActions } from "./arc.ts";
@@ -29,6 +30,11 @@ export function renderOutdoorForm(host: EditorHost, area: OutdoorArea, actions: 
     <div class="nf-h3row"><h3>${t("outdoor")}</h3>${actions.lockButton}</div>
     <div class="nf-form">
       ${selectField(host, t("outdoor_type"), area.type, types, (type) => set({ type }), { wide: true })}
+      ${selectField(host, t("area"), area.area_id ?? "", [["", t("no_area")], ...Object.values(host.hass?.areas ?? {}).sort((a, b) => a.name.localeCompare(b.name)).map((a): [string, string] => [a.area_id, a.name])], (id) => set({ area_id: id || null }), { wide: true, title: t("outdoor_area_hint") })}
+      ${area.type === "pool" || area.type === "wild" || area.type === "bed"
+        ? html`${entityField(host, t("pool_temp"), area.temp_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.") && host.hass?.states[id]?.attributes.device_class === "temperature"), (v) => set({ temp_entity: v && v !== "none" ? v : null }))}
+          ${entityField(host, t("pool_pump"), area.pump_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(switch|fan|valve|input_boolean|binary_sensor)\./.test(id)), (v) => set({ pump_entity: v && v !== "none" ? v : null }))}`
+        : nothing}
       ${isAxisRect(area.points)
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRectangle("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRectangle("z", v))}
           ${numberField(host, t("width"), box.x1 - box.x0, (v) => actions.setRectangle("w", v), 0.01, 0.1)} ${numberField(host, t("depth"), box.z1 - box.z0, (v) => actions.setRectangle("d", v), 0.01, 0.1)}`

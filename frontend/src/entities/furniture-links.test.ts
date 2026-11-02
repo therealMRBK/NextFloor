@@ -177,3 +177,14 @@ test("Outside lists what stands outside the rooms and what belongs to it; the ro
   assert.deepEqual(outsideEntities(hass, [floor]).sort(), ["sensor.weather", "switch.valve"]);
   assert.deepEqual(roomPanelEntities(hass, floor, room).shown, ["light.inside"], "the weather station is not the room's");
 });
+
+test("Outside lists the devices of the areas linked to gardens and pools, and a pool's pump", () => {
+  const hass = hassOf([entity("light.terrace", "on"), entity("switch.pool_pump", "off"), entity("sensor.pool_water", "24", { device_class: "temperature" })], { "light.terrace": { area_id: "terrasse" } });
+  const floor = floorWith([box("r", 0, 0, 4, 4)], {
+    outdoor: [
+      { id: "t", type: "terrace", points: [[5, 0], [8, 0], [8, 3], [5, 3]], area_id: "terrasse" },
+      { id: "p", type: "pool", points: [[9, 0], [12, 0], [12, 3], [9, 3]], pump_entity: "switch.pool_pump", temp_entity: "sensor.pool_water" },
+    ],
+  });
+  assert.deepEqual(outsideEntities(hass, [floor]).sort(), ["light.terrace", "sensor.pool_water", "switch.pool_pump"]);
+});

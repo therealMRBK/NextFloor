@@ -43,6 +43,7 @@ function mainEntity(item: Furniture, hass: EditorHost["hass"]): { accept: (id: s
   if (item.type === "radiator" || isClimateFurniture(item.type)) return { accept: (id) => id.startsWith("climate."), label: "furn_entity_climate" };
   if (tvLike) return { accept: (id) => /^(media_player|switch|input_boolean|light)\./.test(id), label: "furn_entity_tv" };
   if (item.type === "robot_vacuum") return { accept: (id) => id.startsWith("vacuum."), label: "furn_entity_vacuum" };
+  if (/:(robot_mower|mower_dock)$/.test(item.type)) return { accept: (id) => id.startsWith("lawn_mower."), label: "furn_entity_mower" };
   // a lawn sprinkler or an irrigation valve box: the valve (or the switch of a pump or a smart plug) that lets the water run
   if (/:(sprinkler|valve_box)$/.test(item.type)) return { accept: (id) => /^(valve|switch|input_boolean)\./.test(id), label: "furn_entity_water" };
   return { accept: (id) => /^(switch|media_player|fan|input_boolean|climate|vacuum|cover|valve)\./.test(id) || isStatusSensor(hass?.states[id]), label: "furn_entity" };

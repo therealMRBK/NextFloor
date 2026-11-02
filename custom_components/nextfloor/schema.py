@@ -453,6 +453,10 @@ OUTDOOR_SCHEMA = vol.Schema(
         # fences and pergolas: the closing edge is left out; pergola: X-bracing on the sides
         vol.Optional("open", default=False): bool,
         vol.Optional("bracing", default=False): bool,
+        # the Home Assistant area of the garden, terrace or pool, and a pool's water temperature and pump
+        vol.Optional("area_id"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("temp_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("pump_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # cut out of every area beneath it that contains it
         vol.Optional("cut", default=False): bool,
     },

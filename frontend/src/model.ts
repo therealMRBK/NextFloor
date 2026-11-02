@@ -728,6 +728,11 @@ export interface OutdoorArea {
   id: string;
   type: OutdoorType;
   points: Vec2[];
+  /** The Home Assistant area of this garden, terrace or pool: its devices and sensors are listed under Outside, and a pin opens it. */
+  area_id?: string | null;
+  /** Pools and ponds: the water temperature and the pump (or filter) shown on the area's pin. */
+  temp_entity?: string | null;
+  pump_entity?: string | null;
   /** Hedges and fences: their height in m (null = 1.2 m / 1.0 m). */
   height?: number | null;
   /** False hides the neon outline (a plot of several lawns without lines crossing it). */

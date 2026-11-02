@@ -79,6 +79,7 @@ export function watchedEntities(inputs: WatchInputs): string[] {
     ...b.presence.flatMap((p) => [p.person, p.sensor]),
     ...lightsOfRooms,
     ...roomsOf(b).map((r) => r.floor_heating),
+    ...b.floors.flatMap((f) => (f.outdoor ?? []).flatMap((a) => [a.temp_entity, a.pump_entity])),
     ...sensorsOfRooms,
     ...(inputs.alertSources ? alertEntities(inputs.alertSources) : []),
     ...parkingEntities(b.floors),

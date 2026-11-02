@@ -179,6 +179,8 @@ export class NextFloorPanel extends LitElement {
 
   private onRoomTap(e: CustomEvent<{ floorId: string; roomId: string | null }>): void {
     const { floorId, roomId } = e.detail;
+    // an outdoor area's pin opens Outside
+    if (roomId === "nf-outside") return this.openOutside();
     // in the house view, or on another floor, a tap opens the whole floor first and the rooms come next
     if ((this.data.building?.floors.length ?? 0) > 1 && floorId && this._floorId !== floorId) return this.openFloor(floorId);
     if (roomId) {

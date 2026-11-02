@@ -467,6 +467,7 @@ export class NextFloorViewer {
   private petTimer: ReturnType<typeof setTimeout> | undefined;
   private robotGeo: BufferGeometry | null = null;
   private robotMat: MeshBasicMaterial | null = null;
+  private mowerMat: MeshBasicMaterial | null = null;
   private robotLedGeo: BufferGeometry | null = null;
   private robotLast = 0;
   /** Owned 3D models standing in the floors (see meshes.ts), and the light they need. */
@@ -1370,6 +1371,7 @@ export class NextFloorViewer {
     this.robotGeo?.dispose();
     this.robotLedGeo?.dispose();
     this.robotMat?.dispose();
+    this.mowerMat?.dispose();
     this.meshLight?.dispose();
     this.renderer.dispose();
     // frees the GPU context now instead of when the garbage collector gets to it
@@ -2874,7 +2876,10 @@ export class NextFloorViewer {
     }
     const group = new Group();
     const ledMat = new MeshBasicMaterial({ color: ROBOT_LED[info.mode] });
-    group.add(new Mesh(this.robotGeo, this.robotMat!), new Mesh(this.robotLedGeo!, ledMat));
+    // a robot mower is the same robot, larger and in garden green
+    const body = info.mower ? (this.mowerMat ??= new MeshBasicMaterial({ color: 0x3f8a4a })) : this.robotMat!;
+    group.add(new Mesh(this.robotGeo, body), new Mesh(this.robotLedGeo!, ledMat));
+    if (info.mower) group.scale.set(1.7, 1.6, 1.7);
     return { info, motion: { pos: [...info.rest] as [number, number], heading: info.restHeading, path: [], next: 0 }, group, led: ledMat };
   }
 
@@ -2938,7 +2943,7 @@ export class NextFloorViewer {
       if (r.group.parent !== fv.group) fv.group.add(r.group);
       if (dt > 0) active = stepRobot(r.motion, r.info, dt) || active;
       else active ||= r.info.mode === "cleaning" || r.info.mode === "returning";
-      r.group.position.set(r.motion.pos[0], 0, r.motion.pos[1]);
+      r.group.position.set(r.motion.pos[0], r.info.y ?? 0, r.motion.pos[1]);
       r.group.rotation.y = r.motion.heading;
     }
     if (!active) this.robotLast = 0;
