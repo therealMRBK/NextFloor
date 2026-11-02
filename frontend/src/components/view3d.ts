@@ -1078,6 +1078,9 @@ export class NfView3d extends LitElement {
           }
         } else if ((f.type === "washer" || f.type === "dryer" || f.type === "dishwasher") && running) {
           screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8 });
+        } else if (plate && running && !plate.light && plate.parts.some((p) => p.glow || p.screen)) {
+          // any other electric pack item that runs: its status lights and display light up, like an appliance's
+          screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8, leds: true });
         }
         if (st && hasScreen(f.type)) {
           // a screen is lit or dark (what plays on it is drawn by NextFloor's TV screens); a light (an aquarium,
@@ -1116,7 +1119,8 @@ export class NfView3d extends LitElement {
                   : st && (f.type === "washer" || f.type === "dryer" || f.type === "dishwasher") && running && remainingMinutes(hass, deviceSiblings(hass, link.entity ?? link.power)) !== null
                     ? translate(hass, "care_time_left", { time: minutesText(remainingMinutes(hass, deviceSiblings(hass, link.entity ?? link.power))!) })
                     : st
-                    ? stateText(hass, st)
+                    ? // every device with a power sensor shows its draw beside its state, the same way
+                      [stateText(hass, st), power !== null && power > 5 && !isStatusSensor(st) ? formatPower(hass, power) : ""].filter(Boolean).join(" · ")
                     : power !== null
                       ? formatPower(hass, Math.max(0, power))
                       : "",

@@ -229,6 +229,8 @@ export interface ScreenState {
   gangs?: { gang: number; color: [number, number, number]; level: number }[];
   /** A heater from a pack without a screen part (a towel radiator): the whole item glows in the colour while it heats. */
   heat?: boolean;
+  /** An electric pack item that runs (a coffee machine, a compressor): its status lights and display light up. */
+  leds?: boolean;
 }
 
 /** Position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
@@ -2094,6 +2096,13 @@ export class NextFloorViewer {
           const col = new Color(...g.color.map((v) => Math.min(1, v * (0.45 + 0.55 * g.level))) as [number, number, number]);
           pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => p.gang === g.gang);
         }
+        continue;
+      }
+      if (st.leds) {
+        const item = packItem(f.type);
+        if (!item) continue;
+        const col = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
+        pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => !!p.glow || !!p.screen);
         continue;
       }
       if (st.heat) {

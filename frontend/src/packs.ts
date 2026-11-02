@@ -288,10 +288,10 @@ export function isElectric(type: string): boolean {
   const item = packItem(type);
   return ELECTRIC_FURNITURE.has(type) || !!item?.electric || !!item?.light || !!item?.climate;
 }
-/** Whether a pack item is specifically a Home Assistant climate device. */
 /** Whether a piece can show an own photo (a picture frame: a pack item with a picture part). */
 export const hasPicture = (type: string): boolean => !!packItem(type)?.parts.some((p) => p.picture);
 
+/** Whether a pack item is specifically a Home Assistant climate device. */
 export const isClimateFurniture = (type: string): boolean => !!packItem(type)?.climate;
 
 /** An item's name in a language: that language, else English, else whatever is there, else its id. */

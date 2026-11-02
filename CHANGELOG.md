@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Every electric piece works alike**: any electric piece of furniture with a switch or power sensor shows its draw beside its state on its pin ("On · 1.2 kW"), and its status lights and display light up while it runs – a coffee machine, a compressor, a 3D printer – like the washer and dishwasher always did.
 - **Lamps with several bulbs**: a lamp's form takes up to four more lights of the same fixture – a night light, an ambient ring, an uplight. While the main light is off, the lamp glows in 3D with the next light that is on, a little dimmer, and its pin says which one.
 - **Picture frames with your own photos**: the new *Pictures & frames* pack (frames in four formats and six colours, canvas, poster, table frame, digital photo frame, picture ledge) shows a photo you upload in the frame's form, a picture address (/local/…) or the current picture of an image or camera entity – a photo of the day changes on the wall by itself. A white mat of any width, and the photo fills the frame or shows whole.
 - **Show a piece only while …**: every piece of furniture can wait for a helper, a calendar, the sun or any sensor before it appears in 3D – the Christmas tree only while *input_boolean.christmas* is on, the paddling pool only in summer, a tent while a calendar says "camping". Several states separated by commas, or the other way round; the editor always shows the piece.
