@@ -39,6 +39,7 @@ const VARIANTS: Record<string, { label: I18nKey; values: readonly string[]; text
   inverter: { label: "furn_model", values: ["", "slim", "hybrid"], text: (v) => `inverter_${v || "std"}` },
   home_battery: { label: "furn_model", values: ["", "wall", "cube"], text: (v) => `battery_${v || "std"}` },
   lamp_pendant: { label: "pendant_shape", values: ["", "globe", "cone", "drum"], text: (v) => `pendant_${v || "shade"}` },
+  sofa: { label: "sofa_shape", values: ["", "l", "u"], text: (v) => `sofa_${v || "straight"}` },
 };
 
 /** The kind drop-down: the built-in kinds, then those of every pack, and the item's own kind when its pack is gone. */
@@ -81,7 +82,7 @@ function variantField(host: EditorHost, item: Furniture, actions: FurnitureActio
   const variants = VARIANTS[item.type];
   if (!variants) return nothing;
   const choices = variants.values.map((v): [string, string] => [v, host.t(variants.text(v) as I18nKey)]);
-  return html`<div class="nf-form">${selectField(host, host.t(variants.label), item.variant ?? "", choices, (v) => actions.update({ variant: v || null }), { wide: true })}</div>`;
+  return html`<div class="nf-form">${selectField(host, host.t(variants.label), item.variant ?? "", choices, (v) => actions.update({ variant: v || null, ...(item.type === "sofa" && v && item.d < 1.4 ? { d: 1.7, w: Math.max(item.w, v === "u" ? 3 : 2.4) } : {}) }), { wide: true })}</div>`;
 }
 
 /** The name of the item, and whether it is written under its marker. */

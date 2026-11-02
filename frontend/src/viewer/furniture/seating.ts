@@ -25,6 +25,46 @@ export function sofa(b: Builder, w: number, d: number, h: number, seats: number)
   }
 }
 
+/**
+ * An L- or U-shaped sofa: the back runs along the rear, a chaise reaches forward at the right end (an L; mirrored, the left) or at
+ * both ends (a U). The seat depth stays that of a sofa, whatever the depth of the whole.
+ */
+export function shapedSofa(b: Builder, w: number, d: number, h: number, shape: "l" | "u"): void {
+  const [x0, x1, z0, z1] = [-w / 2, w / 2, -d / 2, d / 2];
+  const seat = h * 0.5;
+  const back = Math.min(0.24, d * 0.2);
+  const depth = Math.min(0.95, d * 0.55);
+  const chaise = Math.min(0.9, w * (shape === "u" ? 0.28 : 0.34));
+  const arm = 0.16;
+  legs(b, w, d, 0.07, 0.05, 0.05, C.wood, true);
+  // the main bench along the back, and the chaise(s) reaching forward
+  b.pad({ x: [x0, x1], y: [0.07, seat - 0.08], z: [z0 + 0.02, z0 + depth] }, M.fabric, 0.04, EDGE_FURN);
+  const ends: [number, number][] = shape === "u" ? [[x0, x0 + chaise], [x1 - chaise, x1]] : [[x1 - chaise, x1]];
+  for (const [a, c] of ends) b.pad({ x: [a, c], y: [0.07, seat - 0.08], z: [z0 + depth - 0.04, z1] }, M.fabric, 0.04, EDGE_FURN);
+  b.loft([x0, x1, z0, z0 + back], [x0 + 0.01, x1 - 0.01, z0, z0 + back * 0.5], seat - 0.08, h, M.fabric, EDGE_FURN);
+  // arms: on the open end of an L, and along the outer sides of the chaises
+  if (shape === "l") b.pad({ x: [x0, x0 + arm], y: [seat - 0.08, h * 0.72], z: [z0 + 0.02, z0 + depth - 0.02] }, M.fabric, 0.04, EDGE_FURN);
+  for (const [a, c] of ends) {
+    const outer = a <= x0 + 1e-6 ? [a, a + arm] : [c - arm, c];
+    b.pad({ x: [outer[0], outer[1]], y: [seat - 0.08, h * 0.62], z: [z0 + 0.02, z1 - 0.02] }, M.fabric, 0.04, EDGE_FURN);
+  }
+  // cushions on the bench between the chaises, and one long cushion on each chaise
+  const from = shape === "u" ? x0 + chaise : x0 + arm;
+  const to = x1 - chaise;
+  const seats = Math.max(1, Math.round((to - from) / 0.62));
+  const cw = (to - from) / seats;
+  for (let i = 0; i < seats; i++) {
+    const a = from + cw * i + 0.02;
+    const c = a + cw - 0.04;
+    b.pad({ x: [a, c], y: [seat - 0.08, seat + 0.05], z: [z0 + back + 0.02, z0 + depth - 0.06] }, M.cushion, 0.04);
+    b.loft([a + 0.01, c - 0.01, z0 + back * 0.55, z0 + back + 0.14], [a + 0.03, c - 0.03, z0 + back * 0.4, z0 + back * 0.4 + 0.06], seat + 0.03, h * 0.93, M.cushion);
+  }
+  for (const [a, c] of ends) {
+    const inner = a <= x0 + 1e-6 ? [a + arm + 0.02, c - 0.02] : [a + 0.02, c - arm - 0.02];
+    b.pad({ x: [inner[0], inner[1]], y: [seat - 0.08, seat + 0.05], z: [z0 + back + 0.02, z1 - 0.06] }, M.cushion, 0.04);
+  }
+}
+
 export function bed(b: Builder, w: number, d: number, h: number): void {
   const [x0, x1, z0, z1] = [-w / 2, w / 2, -d / 2, d / 2];
   const frame = Math.min(0.32, h * 0.36);

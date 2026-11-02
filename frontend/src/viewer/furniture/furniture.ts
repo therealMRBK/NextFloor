@@ -7,7 +7,7 @@ import { builtinBase, type Furniture } from "../../model.ts";
 import { packItem } from "../../packs.ts";
 import { GeoBuffer, type LineBuffer } from "../geo.ts";
 import { Builder, contactShadow } from "./builder.ts";
-import { bunkBed, barStool, bed, bench, chair, officeChair, sofa, stool } from "./seating.ts";
+import { bunkBed, barStool, bed, bench, chair, officeChair, shapedSofa, sofa, stool } from "./seating.ts";
 import { bathtub, dishwasher, fridge, fridgeSmart, island, kitchenTall, kitchenUnit, kitchenWall, laundry, radiator, shower, sink, stove, washbasin, wc, worktopOnly } from "./kitchen.ts";
 import { coatRack, coffeeTable, desk, dresser, nightstand, plant, roundTable, rug, shelf, sideboard, stairs, table, tvBoard, tvWall } from "./living.ts";
 import { gridCabinet, homeBattery, inverter, meterCabinet, wallbox } from "./technical.ts";
@@ -23,7 +23,8 @@ type Shadow = "yes" | "no";
 function drawBuiltIn(b: Builder, f: Furniture, w: number, d: number, h: number, base: number): Shadow {
   switch (f.type) {
     case "sofa":
-      sofa(b, w, d, h, Math.max(1, Math.round((w - 0.4) / 0.62)));
+      if (f.variant === "l" || f.variant === "u") shapedSofa(b, w, d, h, f.variant);
+      else sofa(b, w, d, h, Math.max(1, Math.round((w - 0.4) / 0.62)));
       return "yes";
     case "armchair":
       sofa(b, w, d, h, 1);
