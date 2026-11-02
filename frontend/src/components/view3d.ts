@@ -1857,8 +1857,9 @@ export class NfView3d extends LitElement {
     </button>`;
   }
 
-  private renderClock() {
-    if (!this.clock || !this.hass) return nothing;
+  /** The clock in its corner; top left it shares the column with the sensor and energy bar (see renderTopLeft). */
+  private renderClock(inColumn = false) {
+    if (!this.clock || !this.hass || (this.clock === "top_left" && !inColumn)) return nothing;
     const locale = this.hass.language ?? navigator.language;
     const now = new Date(this._now);
     const time = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(now);
@@ -2127,6 +2128,13 @@ export class NfView3d extends LitElement {
     this.syncDevices(true);
   }
 
+  /** Top left: the clock there, with the own sensors and the energy bar below it instead of under it. */
+  private renderTopLeft() {
+    const bar = this.clean ? nothing : this.renderLhEnergy();
+    if (this.clock !== "top_left" || !this.hass) return bar;
+    return html`<div class="nf-topleft">${this.renderClock(true)}${bar}</div>`;
+  }
+
   /** NextFloor's energy bar: what the house makes, uses, stores and trades, and the switches for flows and cards. */
   private renderLhEnergy() {
     const own = this.ownSensors();
@@ -2215,7 +2223,7 @@ export class NfView3d extends LitElement {
       class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
     >
-      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.clean ? nothing : this.renderLhEnergy()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
+      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
@@ -2326,8 +2334,27 @@ export class NfView3d extends LitElement {
           box-shadow: 0 0 4px transparent;
         }
       }
-      .nf-has-alerts .nf-energy {
+      .nf-has-alerts .nf-energy,
+      .nf-has-alerts .nf-topleft {
         top: 58px;
+      }
+      /* the clock top left stacks above the sensor and energy bar rather than covering it */
+      .nf-topleft {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        max-width: calc(100% - 24px);
+        pointer-events: none;
+      }
+      .nf-topleft > .nf-clock,
+      .nf-topleft > .nf-energy {
+        position: static;
+        max-width: 100%;
       }
       .nf-scenes {
         position: absolute;
