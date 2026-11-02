@@ -2122,5 +2122,8 @@
  "floor_copy_make": "Créer la copie",
  "floor_copy_name": "{name} (copie)",
  "furn_to_floor": "Déplacer vers l'étage",
- "furn_to_floor_hint": "Le meuble se place au même endroit à l'étage choisi."
+ "furn_to_floor_hint": "Le meuble se place au même endroit à l'étage choisi.",
+ "arc": "Arc",
+ "arc_hint": "Courbe le mur en arc. Une pièce qui partage ce mur se courbe avec, les portes et fenêtres suivent ; Annuler retire l'arc.",
+ "arc_prompt": "De combien le mur doit-il se bomber (m) ? Positif vers l'extérieur, négatif vers la pièce."
 }

@@ -2122,5 +2122,8 @@
   "floor_copy_make": "Kopie maken",
   "floor_copy_name": "{name} (kopie)",
   "furn_to_floor": "Naar verdieping verplaatsen",
-  "furn_to_floor_hint": "Het meubel gaat naar dezelfde plek op de gekozen verdieping."
+  "furn_to_floor_hint": "Het meubel gaat naar dezelfde plek op de gekozen verdieping.",
+  "arc": "Boog",
+  "arc_hint": "Buigt de muur tot een boog. Een kamer die de muur deelt buigt mee, deuren en ramen gaan mee; Ongedaan maken haalt de boog weg.",
+  "arc_prompt": "Hoe ver moet de muur uitbuigen (m)? Positief naar buiten, negatief de kamer in."
 }

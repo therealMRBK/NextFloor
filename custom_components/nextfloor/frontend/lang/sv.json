@@ -2122,5 +2122,8 @@
   "floor_copy_make": "Skapa kopian",
   "floor_copy_name": "{name} (kopia)",
   "furn_to_floor": "Flytta till plan",
-  "furn_to_floor_hint": "Möbeln flyttas till samma plats på det valda planet."
+  "furn_to_floor_hint": "Möbeln flyttas till samma plats på det valda planet.",
+  "arc": "Båge",
+  "arc_hint": "Böjer väggen till en båge. Ett rum som delar väggen böjs med, dörrar och fönster följer med; Ångra tar bort bågen.",
+  "arc_prompt": "Hur mycket ska väggen bukta (m)? Positivt utåt, negativt in i rummet."
 }

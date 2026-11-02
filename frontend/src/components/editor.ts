@@ -66,7 +66,7 @@ import { renderDeviceList, renderRoomClimate, type DeviceListActions } from "./e
 import { setUnits } from "../units.ts";
 import "./editor/wall-view.ts";
 import { LibraryState, renderLibrary, renderPreview, type LibraryActions } from "./editor/forms/library.ts";
-import { insertCorner } from "./editor/ops/rooms.ts";
+import { arcFreeWall, arcRoomEdge, insertCorner } from "./editor/ops/rooms.ts";
 import { dragStep, facingAngle, gridPositionAfter, hasLeftStart, headingAngle, outlineWithCornerAt, shifted, steppedDelta, straightEnd } from "./editor/ops/drags.ts";
 import { snapToPlan } from "./editor/ops/snapping.ts";
 import { draftLayer, guidesLayer } from "./editor/canvas/draft.ts";
@@ -332,8 +332,25 @@ export class NfEditor extends LitElement {
     };
   }
 
+  /** Asks how far a wall should bulge (metres; negative bends the other way), or null when cancelled. */
+  private askSagitta(): number | null {
+    const typed = prompt(this.t("arc_prompt"), "0.5");
+    if (typed === null) return null;
+    const value = Number(typed.replace(",", "."));
+    return Number.isFinite(value) && Math.abs(value) >= 0.01 ? value : null;
+  }
+
   private freeWallActions(): FreeWallActions {
-    return { update: (patch) => this.updateFreeWall(patch), remove: () => this.deleteFreeWall(), lockButton: this.fixButton("wall", this.sel.wall ?? "") };
+    return {
+      update: (patch) => this.updateFreeWall(patch),
+      remove: () => this.deleteFreeWall(),
+      arc: () => {
+        const id = this.sel.wall;
+        const sagitta = this.askSagitta();
+        if (id && sagitta !== null) this.change((_, floor) => void arcFreeWall(floor, id, sagitta));
+      },
+      lockButton: this.fixButton("wall", this.sel.wall ?? ""),
+    };
   }
 
   private outdoorActions(): OutdoorActions {
@@ -1960,6 +1977,10 @@ export class NfEditor extends LitElement {
       setSlope: (room, edge, start, end) => this.changeRoom(room, (r) => setWallSlope(r, edge, start, end)),
       clearSlope: (room, edge) => this.changeRoom(room, (r) => clearWallSlope(r, edge, this.floor?.height ?? 2.5)),
       setThickness: (room, edge, thickness) => this.changeRoom(room, (r) => setWallThickness(r, edge, thickness)),
+      arc: (room, edge) => {
+        const sagitta = this.askSagitta();
+        if (sagitta !== null && this.isAdmin) this.change((_, floor) => void arcRoomEdge(floor, room.id, edge, sagitta));
+      },
       cut: (room, edge, part) => {
         const starts = this.edgeParts(room, edge);
         this.changeRoom(room, (r) => cutEdge(r, edge, part, starts));

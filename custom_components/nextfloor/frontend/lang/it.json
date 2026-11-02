@@ -2122,5 +2122,8 @@
   "floor_copy_make": "Crea la copia",
   "floor_copy_name": "{name} (copia)",
   "furn_to_floor": "Sposta al piano",
-  "furn_to_floor_hint": "Il mobile si sposta nello stesso punto del piano scelto."
+  "furn_to_floor_hint": "Il mobile si sposta nello stesso punto del piano scelto.",
+  "arc": "Arco",
+  "arc_hint": "Curva la parete ad arco. Una stanza che condivide la parete si curva con lei, porte e finestre la seguono; Annulla toglie l'arco.",
+  "arc_prompt": "Di quanto deve incurvarsi la parete (m)? Positivo verso l'esterno, negativo verso la stanza."
 }

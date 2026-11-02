@@ -1,6 +1,7 @@
 // Rooms: making, copying and removing them, moving a corner or the whole rectangle, and the ceiling lights of a room.
 
-import { bounds, pointInPolygon, uid, type Floor, type Placement, type Room, type Vec2 } from "../../../model.ts";
+import { bounds, pointInPolygon, uid, type Floor, type Opening, type Placement, type Room, type Vec2 } from "../../../model.ts";
+import { arcPoints, pieceAt, polylineLength } from "../../../geometry/arcs.ts";
 import { kindOf } from "../../../devices.ts";
 
 const thousandths = (v: number) => Math.round(v * 1000) / 1000;
@@ -128,4 +129,97 @@ export function insertCorner(floor: Floor, roomId: string, edge: number, at: Vec
       o.offset = thousandths(o.offset - firstHalf);
     }
   }
+}
+
+/** The pieces an arc may have so that every opening on it still fits on one piece. */
+function piecesFor(chordLength: number, sagitta: number, widest: number): number {
+  const arcLength = chordLength * (1 + (8 / 3) * (sagitta / Math.max(1e-6, chordLength)) ** 2);
+  return widest > 0 ? Math.max(2, Math.floor(arcLength / (widest + 0.1))) : 24;
+}
+
+/** Where openings land on a bent edge: at the same share of its length, kept whole on their piece. */
+function rehost(openings: Opening[], fractions: number[], points: Vec2[], firstEdge: number): void {
+  const total = polylineLength(points);
+  openings.forEach((o, k) => {
+    const { piece, offset } = pieceAt(points, fractions[k] * total);
+    const length = Math.hypot(points[piece + 1][0] - points[piece][0], points[piece + 1][1] - points[piece][1]);
+    o.edge = firstEdge + piece;
+    o.offset = thousandths(length > o.width ? Math.min(length - o.width / 2, Math.max(o.width / 2, offset)) : length / 2);
+  });
+}
+
+/**
+ * Bends a room's edge into an arc that bulges by `sagitta` metres away from the room (negative: into it). A room sharing the
+ * edge bends along. The arc is stored as short straight pieces; the pieces keep the wall's height and thickness, and the doors
+ * and windows on it move to the piece at the same share of the length.
+ */
+export function arcRoomEdge(floor: Floor, roomId: string, edge: number, sagitta: number): boolean {
+  const room = floor.rooms.find((r) => r.id === roomId);
+  if (!room || edge < 0 || edge >= room.points.length || Math.abs(sagitta) < 0.01) return false;
+  const a = room.points[edge];
+  const b = room.points[(edge + 1) % room.points.length];
+  const chord = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  if (chord < 0.2) return false;
+  // which side of a→b is outside this room
+  const [ux, uz] = [(b[0] - a[0]) / chord, (b[1] - a[1]) / chord];
+  const probe: Vec2 = [(a[0] + b[0]) / 2 + uz * 0.02, (a[1] + b[1]) / 2 - ux * 0.02];
+  const leftIsInside = pointInPolygon(probe, room.points);
+  const bulgeLeft = leftIsInside ? -sagitta : sagitta;
+  const onEdge = (r: Room, e: number) => floor.openings.filter((o) => o.room_id === r.id && !o.wall && o.edge === e);
+  // the rooms bending along: this one, and every room with the same edge (usually the other way round)
+  const sharing = floor.rooms.flatMap((r) =>
+    r.points
+      .map((p, i): [Room, number, boolean] | null => {
+        const q = r.points[(i + 1) % r.points.length];
+        const same = (m: Vec2, n: Vec2) => Math.abs(m[0] - n[0]) < 1e-3 && Math.abs(m[1] - n[1]) < 1e-3;
+        if (same(p, a) && same(q, b)) return [r, i, false];
+        if (same(p, b) && same(q, a)) return [r, i, true];
+        return null;
+      })
+      .filter((x): x is [Room, number, boolean] => !!x),
+  );
+  const widest = Math.max(0, ...sharing.flatMap(([r, e]) => onEdge(r, e).map((o) => o.width)));
+  const inner = arcPoints(a, b, bulgeLeft, piecesFor(chord, sagitta, widest)).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
+  if (!inner.length) return false;
+  for (const [r, e, reversed] of sharing) {
+    const corners = reversed ? [...inner].reverse() : inner;
+    const moving = onEdge(r, e);
+    const start = r.points[e];
+    const fractions = moving.map((o) => Math.min(1, Math.max(0, o.offset / chord)));
+    // park the openings while the corners go in, then put them on their piece
+    for (const o of moving) o.edge = -1;
+    corners.forEach((p, k) => insertCorner(floor, r.id, e + k, p));
+    r.wall_splits?.splice(e + 1, 0, ...corners.map(() => null));
+    if (r.wall_splits?.[e]) r.wall_splits[e] = null;
+    rehost(moving, fractions, [start, ...corners, r.points[(e + corners.length + 1) % r.points.length]], e);
+  }
+  return true;
+}
+
+/**
+ * Bends a free wall into an arc: it becomes a chain of free walls with the same thickness and height. Returns the ids of the
+ * new walls (the first one keeps the old id, so openings and selection stay valid).
+ */
+export function arcFreeWall(floor: Floor, wallId: string, sagitta: number): string[] {
+  const walls = floor.walls ?? [];
+  const index = walls.findIndex((w) => w.id === wallId);
+  if (index < 0 || Math.abs(sagitta) < 0.01) return [];
+  const wall = walls[index];
+  const chord = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
+  const moving = floor.openings.filter((o) => o.wall === wallId);
+  const widest = Math.max(0, ...moving.map((o) => o.width));
+  const inner = arcPoints(wall.a, wall.b, sagitta, piecesFor(chord, sagitta, widest)).map(([x, z]): Vec2 => [thousandths(x), thousandths(z)]);
+  if (!inner.length) return [];
+  const points = [wall.a, ...inner, wall.b];
+  const chain = points.slice(1).map((p, i) => ({ ...wall, id: i === 0 ? wall.id : uid("wall"), a: points[i], b: p }));
+  walls.splice(index, 1, ...chain);
+  floor.walls = walls;
+  const total = polylineLength(points);
+  for (const o of moving) {
+    const { piece, offset } = pieceAt(points, (o.offset / chord) * total);
+    const length = Math.hypot(points[piece + 1][0] - points[piece][0], points[piece + 1][1] - points[piece][1]);
+    o.wall = chain[piece].id;
+    o.offset = thousandths(length > o.width ? Math.min(length - o.width / 2, Math.max(o.width / 2, offset)) : length / 2);
+  }
+  return chain.map((w) => w.id);
 }

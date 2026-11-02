@@ -117,3 +117,64 @@ test("a corner on an edge without slope leaves the slopes of the other walls in 
   insertCorner(floor, "r", 0, [2, 0]);
   assert.deepEqual([room.wall_heights?.[3], room.wall_slopes?.[3]], [1, 3], "the sloping wall is now edge 3");
 });
+
+test("bending a shared edge bends both rooms the same way and keeps the door on it", async () => {
+  const { arcRoomEdge } = await import("./rooms.ts");
+  const { box, floorWith, opening } = await import("../../../entities/fixtures.ts");
+  const left = box("a", 0, 0, 4, 4);
+  const right = box("b", 4, 0, 8, 4);
+  const floor = floorWith([left, right], { openings: [opening("d", "a", "door", { edge: 1, offset: 2, width: 0.9 })] });
+  const edge = left.points.findIndex((p, i) => p[0] === 4 && left.points[(i + 1) % 4][0] === 4);
+  const before = left.points.length;
+  assert.equal(arcRoomEdge(floor, "a", edge, 0.8), true);
+  assert.ok(left.points.length > before);
+  // a bulges into b: the corners lie right of x = 4, and b has the very same corners
+  const added = left.points.filter((p) => p[0] > 4.001);
+  assert.ok(added.length >= 2);
+  for (const p of added) assert.ok(right.points.some((q) => q[0] === p[0] && q[1] === p[1]));
+  const door = floor.openings[0];
+  assert.ok(door.edge >= edge && door.edge < edge + added.length + 1);
+  assert.equal((left.wall_heights ?? []).length <= left.points.length, true);
+});
+
+test("a free wall bends into a chain of walls that keeps its openings", async () => {
+  const { arcFreeWall } = await import("./rooms.ts");
+  const { floorWith, opening } = await import("../../../entities/fixtures.ts");
+  const floor = floorWith([], { walls: [{ id: "w", a: [0, 0], b: [5, 0], thickness: 0.2 }], openings: [opening("o", "r", "window", { wall: "w", offset: 4, width: 1 })] });
+  const ids = arcFreeWall(floor, "w", 1);
+  assert.ok(ids.length >= 2 && ids[0] === "w");
+  assert.equal(floor.walls!.length, ids.length);
+  assert.ok(floor.walls!.every((w) => w.thickness === 0.2));
+  assert.ok(ids.includes(floor.openings[0].wall!));
+});
+
+test("both rooms of a bent shared edge keep their openings whole on a piece of the arc, and its wall height and thickness", async () => {
+  const { arcRoomEdge } = await import("./rooms.ts");
+  const { box, floorWith, opening } = await import("../../../entities/fixtures.ts");
+  const left = { ...box("a", 0, 0, 4, 5), wall_heights: [null, 2.2, null, null], wall_thickness: [null, 0.3, null, null] };
+  const right = box("b", 4, 0, 8, 5);
+  // edge 1 of a runs (4,0)→(4,5); b has the same edge the other way round as its edge 3
+  const floor = floorWith([left, right], {
+    openings: [opening("door", "a", "door", { edge: 1, offset: 1.2, width: 0.9 }), opening("window", "b", "window", { edge: 3, offset: 1.5, width: 1.2 })],
+  });
+  assert.equal(arcRoomEdge(floor, "a", 1, -0.6), true, "bulging into room a");
+  // a box has four edges; bending one into n pieces leaves n + 3
+  const pieces = (room: { points: unknown[] }) => room.points.length - 3;
+  const len = (pts: [number, number][], i: number) => Math.hypot(pts[(i + 1) % pts.length][0] - pts[i][0], pts[(i + 1) % pts.length][1] - pts[i][1]);
+  // the arc's corners are shared: every corner of a that lies off the old edge is also a corner of b
+  const bent = left.points.filter((p) => p[0] < 3.999 && p[1] > 0.001 && p[1] < 4.999);
+  assert.ok(bent.length >= 2, "corners on the arc");
+  for (const p of bent) assert.ok(right.points.some((q) => q[0] === p[0] && q[1] === p[1]), `b has ${p}`);
+  for (const [room, id, first] of [[left, "door", 1], [right, "window", 3]] as const) {
+    const o = floor.openings.find((x) => x.id === id)!;
+    const count = pieces(room);
+    assert.ok(o.edge >= first && o.edge < first + count, `${id} on a piece of the arc (edge ${o.edge})`);
+    const piece = len(room.points as [number, number][], o.edge);
+    assert.ok(o.offset - o.width / 2 >= -1e-6 && o.offset + o.width / 2 <= piece + 1e-6, `${id} fits its piece (${o.offset} ± ${o.width / 2} on ${piece})`);
+  }
+  // the pieces of a's wall keep its height and thickness
+  for (let e = 1; e < 1 + pieces(left); e++) {
+    assert.equal(left.wall_heights![e], 2.2);
+    assert.equal(left.wall_thickness![e], 0.3);
+  }
+});

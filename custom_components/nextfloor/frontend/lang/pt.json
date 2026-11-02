@@ -2122,5 +2122,8 @@
   "floor_copy_make": "Criar a cópia",
   "floor_copy_name": "{name} (cópia)",
   "furn_to_floor": "Mover para o piso",
-  "furn_to_floor_hint": "O móvel passa para o mesmo sítio no piso escolhido."
+  "furn_to_floor_hint": "O móvel passa para o mesmo sítio no piso escolhido.",
+  "arc": "Arco",
+  "arc_hint": "Curva a parede em arco. Uma divisão que partilha a parede curva-se com ela, portas e janelas acompanham; Desfazer retira o arco.",
+  "arc_prompt": "Quanto deve a parede abaular (m)? Positivo para fora, negativo para dentro da divisão."
 }

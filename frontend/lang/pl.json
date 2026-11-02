@@ -2122,5 +2122,8 @@
   "floor_copy_make": "Utwórz kopię",
   "floor_copy_name": "{name} (kopia)",
   "furn_to_floor": "Przenieś na piętro",
-  "furn_to_floor_hint": "Mebel trafia w to samo miejsce na wybranym piętrze."
+  "furn_to_floor_hint": "Mebel trafia w to samo miejsce na wybranym piętrze.",
+  "arc": "Łuk",
+  "arc_hint": "Wygina ścianę w łuk. Pomieszczenie dzielące tę ścianę wygina się razem z nią, drzwi i okna przesuwają się; Cofnij usuwa łuk.",
+  "arc_prompt": "Jak bardzo ma się wygiąć ściana (m)? Dodatnio na zewnątrz, ujemnie do wnętrza pomieszczenia."
 }
