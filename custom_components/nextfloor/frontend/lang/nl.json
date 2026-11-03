@@ -1452,6 +1452,8 @@
   "heat_sun": "Zon vandaag",
   "room_sun_hours": "{h} u zon vandaag ({facing})",
   "open_since": "open sinds {time}",
+  "presence_now": "er is iemand",
+  "presence_last": "{time} geleden gezien",
   "comfort_n": "Comfort {n}",
   "empty_lights_hint": "{n} lampen aan, al {min} min niemand.",
   "empty_lights_off": "Licht uit",

@@ -1824,6 +1824,8 @@
  "heat_sun": "今日日照",
  "room_sun_hours": "今日日照 {h} 小时（{facing}）",
  "open_since": "已开 {time}",
+ "presence_now": "有人",
+ "presence_last": "{time}前有人",
  "comfort_n": "舒适度 {n}",
  "empty_lights_hint": "{n} 盏灯开着，{min} 分钟没人。",
  "empty_lights_off": "关灯",

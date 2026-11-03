@@ -571,6 +571,17 @@ export class NfRoomPanel extends LitElement {
           .filter(Number.isFinite)
       : [];
     if (openSince.length) out.push(`🪟 ${this.t("open_since", { time: sinceText(Date.now() - Math.min(...openSince)) })}`);
+    // someone there now, or when somebody was last seen (motion, occupancy, presence sensors of the room)
+    const seen = roomEntities(this.hass, room)
+      .map((id) => this.hass.states[id])
+      .filter((st): st is HassEntity => !!st && st.entity_id.startsWith("binary_sensor.") && ["motion", "occupancy", "presence"].includes(String(st.attributes.device_class)));
+    if (seen.length) {
+      if (seen.some((st) => st.state === "on")) out.push(`🚶 ${this.t("presence_now")}`);
+      else {
+        const last = Math.max(...seen.map((st) => Date.parse(String(st.last_changed ?? "")) || 0));
+        if (last > 0) out.push(`🚶 ${this.t("presence_last", { time: sinceText(Date.now() - last) })}`);
+      }
+    }
     // the room's devices with a low battery
     const low = this.building ? planBatteries(this.hass, this.building).filter((b) => b.roomId === room.id && b.level < LOW_BATTERY) : [];
     if (low.length) out.push(`🪫 ${this.t("battery_low_n", { n: low.length, names: low.map((b) => `${this.name(b.entity)} ${Math.round(b.level)} %`).join(", ") })}`);

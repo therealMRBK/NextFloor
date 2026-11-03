@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Someone there?** The room panel says whether its motion, occupancy or presence sensors see someone now (*🚶 someone here*), or when they last did (*🚶 last seen 12 min ago*).
 - **Power of sockets and switch plates**: a socket or switch whose button is a smart plug or a measuring switch now counts its power – in the room's power and the heat map *Power*, in the room panel, and in the power flow – from the power sensor on that button's device.
 
 ## 0.22.0

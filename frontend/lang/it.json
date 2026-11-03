@@ -1452,6 +1452,8 @@
   "heat_sun": "Sole oggi",
   "room_sun_hours": "{h} h di sole oggi ({facing})",
   "open_since": "aperto da {time}",
+  "presence_now": "c'è qualcuno",
+  "presence_last": "visto {time} fa",
   "comfort_n": "Comfort {n}",
   "empty_lights_hint": "{n} luci accese, nessuno da {min} min.",
   "empty_lights_off": "Spegni luci",

@@ -1452,6 +1452,8 @@
   "heat_sun": "Sol i dag",
   "room_sun_hours": "{h} h sol i dag ({facing})",
   "open_since": "öppet i {time}",
+  "presence_now": "någon är här",
+  "presence_last": "sågs för {time} sedan",
   "comfort_n": "Komfort {n}",
   "empty_lights_hint": "{n} lampor tända, ingen här på {min} min.",
   "empty_lights_off": "Släck",
