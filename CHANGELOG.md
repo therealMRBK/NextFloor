@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Simplified Chinese**: the whole interface in Simplified Chinese (中文), fetched when Home Assistant runs in Chinese. Thanks to @Sugsss ([#59](https://github.com/therealMRBK/NextFloor/pull/59)).
 - **Rooms open to the floor above**: a room's *Ceiling height* may now be higher than its floor – a living room open up to the floor above or under the roof, a gallery. Its walls and windows rise with it, ceiling lights hang from the high ceiling, and the floor above stays open over it; that floor's editor shows the area hatched. Thanks to @Xtiger123X ([#55](https://github.com/therealMRBK/NextFloor/issues/55)).
 - **Furniture studio in the editor**: *🛠️ Build your own piece* at the top of the furniture library builds a cabinet (any width, doors, drawers, handles, plinth or legs), a shelf, a lamp (floor, table, pendant, wall) or a device with a display, in centimetres and with a front view that follows every change. It goes straight into the plan and into the pack *Own furniture*; *Change in the studio* on a placed piece changes it again, everywhere it stands.
 - **A meter per floor**: *Floor meter (power)* in the floor form takes a power sensor for that floor alone (a sub-meter, a flat). Its value shows on the floor label in the house view, and in the floor's own view the house card adds a row with it and its share of the house's use.
