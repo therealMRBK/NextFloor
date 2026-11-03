@@ -1,0 +1,76 @@
+{
+ "config": {
+  "step": {
+   "user": {
+    "title": "NextFloor",
+    "description": "添加一个侧边栏页面，在里面绘制你的家，并以 3D 查看。"
+   }
+  },
+  "abort": {
+   "single_instance_allowed": "NextFloor 已经配置好了。"
+  }
+ },
+ "services": {
+  "announce": {
+   "name": "播报",
+   "description": "在平面图的房间里播报消息，每个房间通过自己的音箱，并在每个打开的 NextFloor 屏幕上显示并朗读。",
+   "fields": {
+    "message": {
+     "name": "消息",
+     "description": "要说的话。"
+    },
+    "rooms": {
+     "name": "房间",
+     "description": "按房间名、房间 id 或区域 id 指定。留空：所有带音箱的房间（处于静音时段的房间会被跳过）。"
+    },
+    "floor": {
+     "name": "楼层",
+     "description": "只播报到这一层的房间（名称或 id）。"
+    },
+    "on_speakers": {
+     "name": "在音箱上",
+     "description": "在房间里说出来。"
+    },
+    "on_screens": {
+     "name": "在屏幕上",
+     "description": "在打开的 NextFloor 屏幕上显示并朗读。"
+    },
+    "screens": {
+     "name": "仅这些屏幕",
+     "description": "NextFloor 屏幕的名称（在每个屏幕上设置）。留空：所有屏幕。"
+    },
+    "tts_entity": {
+     "name": "文字转语音",
+     "description": "代替平面图里选定的那个，或第一个。"
+    }
+   }
+  }
+ },
+ "exceptions": {
+  "no_rooms": {
+   "message": "平面图里没有房间与给定的房间匹配。"
+  },
+  "no_tts": {
+   "message": "没有音箱能播报：请在 Home Assistant 里配置一个文字转语音实体。"
+  },
+  "not_loaded": {
+   "message": "NextFloor 尚未配置。"
+  }
+ },
+ "entity": {
+  "sensor": {
+   "floor_open": {
+    "name": "{floor}：开着的门窗"
+   },
+   "floor_lights_on": {
+    "name": "{floor}：开着的灯"
+   },
+   "house_open": {
+    "name": "开着的门窗"
+   },
+   "house_lights_on": {
+    "name": "开着的灯"
+   }
+  }
+ }
+}
