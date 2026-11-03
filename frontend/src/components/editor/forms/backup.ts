@@ -82,7 +82,7 @@ export function renderBackup(host: EditorHost, service: BackupService): Template
       html`<button class="nf-btn" @click=${() => service.exportPlan(false)}>${t("backup_export")}</button>`,
       html`<button class="nf-btn" title=${t("backup_export_share_hint")} @click=${() => service.exportPlan(true)}>${t("backup_export_share")}</button>`,
       html`<button class="nf-btn" title=${t("share_view_hint")} @click=${() => service.exportShareView()}>🔗 ${t("share_view")}</button>`,
-      filePicker(t("backup_import"), (file) => void service.importPlan(file), "application/json,.json,.sh3d,.dxf"),
+      filePicker(t("backup_import"), (file) => void service.importPlan(file), "application/json,.json,.sh3d,.dxf,.ifc"),
     )}
     ${hint(t("backup_hint"))} ${hint(t("import_other_hint"))}
     <h4 class="nf-lib-head">${t("backup_full")}</h4>

@@ -1266,6 +1266,8 @@
  "heatpump_water": "制备热水",
  "hint_stairs": "在楼梯要放的位置拖动——它沿长边延伸；之后再在右边设置形状、转向和构造",
  "import_dxf_found": "DXF：一个楼层上有 {rooms} 个房间（闭合多段线）和 {walls} 面单墙（直线）。",
+ "import_ifc_found": "IFC 文件中：{floors} 个楼层和 {rooms} 个房间（墙体由 NextFloor 根据房间生成）。",
+ "import_error_ifc_empty": "IFC 文件中没有带平面轮廓的空间（IfcSpace）。",
  "import_error_dxf_empty": "这个 DXF 文件里没有直线或多段线。",
  "import_error_sh3d": "这不是可读取的 Sweet Home 3D 文件（需要 Sweet Home 3D 5.3 或更新版本）。",
  "import_error_sh3d_empty": "这个 Sweet Home 3D 文件里没有房间或墙。",

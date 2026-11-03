@@ -187,7 +187,7 @@ The card's kiosk section returns to the start view after idle time, dims at nigh
 
 *📌 Save this state …* keeps the plan under a name (a version that stays when the automatic restore points go). *Compare* on a restore point lists what differs from the plan now, floor by floor.
 
-A plan from **Sweet Home 3D** (.sh3d, version 5.3 and newer) loads directly under *Backup → Import*: levels become floors, rooms become rooms, doors and windows sit in their walls, free walls stay free. Furniture is not taken over. A **DXF** drawing (.dxf) from a CAD program loads the same way: closed polylines become rooms, lines free walls.
+A plan from **Sweet Home 3D** (.sh3d, version 5.3 and newer) loads directly under *Backup → Import*: levels become floors, rooms become rooms, doors and windows sit in their walls, free walls stay free. Furniture is not taken over. A **DXF** drawing (.dxf) from a CAD program loads the same way: closed polylines become rooms, lines free walls. An **IFC** model (.ifc, from Revit, ArchiCAD, Allplan …) brings its storeys as floors and its spaces as rooms; NextFloor draws the walls from the rooms.
 
 Under *Backup* in the editor: **Export** / **Import** for the plan, **Share as template** (without personal device data), **Back up everything** (plan, pictures, packs in one file) and **Restore a full backup**. Back up before big changes.
 

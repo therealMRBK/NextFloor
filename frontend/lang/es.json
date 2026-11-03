@@ -664,6 +664,8 @@
   "import_other_hint": "Desde Sweet Home 3D: importa aquí el archivo .sh3d. Se traen plantas, estancias, puertas, ventanas y paredes libres; los muebles no.",
   "import_sh3d_found": "Sweet Home 3D: {floors} plantas, {rooms} estancias, {openings} puertas y ventanas, {walls} paredes libres ({furniture} muebles no se traen).",
   "import_dxf_found": "DXF: {rooms} estancias (polilíneas cerradas) y {walls} paredes libres (líneas) en una planta.",
+  "import_ifc_found": "En el archivo IFC: {floors} plantas y {rooms} habitaciones (NextFloor dibuja las paredes a partir de las habitaciones).",
+  "import_error_ifc_empty": "El archivo IFC no tiene espacios (IfcSpace) con planta.",
   "import_error_dxf_empty": "El archivo DXF no tiene líneas ni polilíneas.",
   "import_error_sh3d": "Este no es un archivo de Sweet Home 3D legible (necesita Sweet Home 3D 5.3 o posterior).",
   "import_error_sh3d_empty": "El archivo de Sweet Home 3D no tiene estancias ni paredes.",

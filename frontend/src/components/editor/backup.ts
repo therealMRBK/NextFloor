@@ -7,6 +7,7 @@ import type { I18nKey } from "../../i18n.ts";
 import { normalizeBuilding, type Building } from "../../model.ts";
 import { importSweetHome } from "../../import/sweethome.ts";
 import { importDxf } from "../../import/dxf.ts";
+import { importIfc } from "../../import/ifc.ts";
 import { download, exportFile, parseExport, shareViewHtml, storedImageIds } from "../../transfer.ts";
 import { getPacks } from "../../packs.ts";
 import type { HomeAssistant } from "../../types.ts";
@@ -148,6 +149,11 @@ export class BackupService {
         const result = await importSweetHome(new Uint8Array(await file.arrayBuffer()));
         building = result.building;
         question = `${t("import_sh3d_found", { ...result.report })}\n\n${question}`;
+      } else if (/\.ifc$/i.test(file.name)) {
+        // a BIM model: storeys as floors, spaces as rooms
+        const result = importIfc(await file.text());
+        building = result.building;
+        question = `${t("import_ifc_found", { floors: result.report.floors, rooms: result.report.rooms })}\n\n${question}`;
       } else if (/\.dxf$/i.test(file.name)) {
         // a CAD drawing: closed polylines become rooms, lines free walls
         const result = importDxf(await file.text());
@@ -156,7 +162,7 @@ export class BackupService {
       } else building = parseExport(await file.text());
     } catch (err) {
       const code = (err as Error).message;
-      const known: Record<string, string> = { not_json: "import_error_not_json", not_plan: "import_error_not_plan", not_zip: "import_error_sh3d", sh3d_no_xml: "import_error_sh3d", sh3d_empty: "import_error_sh3d_empty", dxf_empty: "import_error_dxf_empty" };
+      const known: Record<string, string> = { not_json: "import_error_not_json", not_plan: "import_error_not_plan", not_zip: "import_error_sh3d", sh3d_no_xml: "import_error_sh3d", sh3d_empty: "import_error_sh3d_empty", dxf_empty: "import_error_dxf_empty", ifc_empty: "import_error_ifc_empty" };
       this.deps.alert(known[code] ? t(known[code] as I18nKey) : t("backup_import_error", { error: code }));
       return;
     }
