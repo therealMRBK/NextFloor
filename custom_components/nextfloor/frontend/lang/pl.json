@@ -1433,6 +1433,8 @@
   "heat_power": "Pobór mocy",
   "heat_sun": "Słońce dziś",
   "room_sun_hours": "{h} h słońca dziś ({facing})",
+  "room_sun_year": "Słońce w ciągu roku",
+  "room_sun_year_hint": "Godziny słońca przez zewnętrzne okna pomieszczenia 15. dnia każdego miesiąca.",
   "room_energy": "dziś {today} · miesiąc {month}",
   "room_energy_hint": "Ze statystyk czujników mocy urządzeń w pomieszczeniu; koszt miesiąca według taryfy domu.",
   "heat_summer": "lato",

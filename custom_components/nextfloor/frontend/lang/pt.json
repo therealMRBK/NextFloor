@@ -1433,6 +1433,8 @@
   "heat_power": "Consumo de energia",
   "heat_sun": "Sol hoje",
   "room_sun_hours": "{h} h de sol hoje ({facing})",
+  "room_sun_year": "Sol ao longo do ano",
+  "room_sun_year_hint": "As horas de sol pelas janelas exteriores da divisão no dia 15 de cada mês.",
   "room_energy": "hoje {today} · mês {month}",
   "room_energy_hint": "Das estatísticas dos sensores de potência dos dispositivos da divisão; o custo do mês com a tarifa da casa.",
   "heat_summer": "verão",

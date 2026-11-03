@@ -89,3 +89,8 @@ function computeRoomSun(b: Building, floor: Floor, room: Room, place: { latitude
   }
   return { hours: Math.round(steps * STEP_HOURS * 10) / 10, facing };
 }
+
+/** Hours of sun of a room on the 15th of every month of `year` (January first), for the curve over the year. */
+export function roomSunYear(b: Building, floor: Floor, room: Room, place: { latitude: number; longitude: number; zone?: string | null }, year = new Date().getFullYear()): number[] {
+  return Array.from({ length: 12 }, (_, month) => roomSun(b, floor, room, place, new Date(Date.UTC(year, month, 15, 12))).hours);
+}

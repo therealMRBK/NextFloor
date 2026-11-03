@@ -11,7 +11,7 @@ import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts";
 import { roomPower, roomPowerSensors } from "../heatmap.ts";
 import { energyCost, loadRoomEnergy, type RoomEnergy } from "../live/room-energy.ts";
-import { roomSun } from "../live/sun-hours.ts";
+import { roomSun, roomSunYear } from "../live/sun-hours.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
@@ -64,6 +64,7 @@ export class NfRoomPanel extends LitElement {
     _moodName: { state: true },
     _undo: { state: true },
     _energy: { state: true },
+    _sunYear: { state: true },
     rooms: { attribute: false },
     building: { attribute: false },
   };
@@ -97,6 +98,8 @@ export class NfRoomPanel extends LitElement {
   private curveFor = "";
   /** What the room used today and this month (from the statistics of its power sensors), loaded when the room opens. */
   private declare _energy: RoomEnergy | null;
+  /** The curve of the room's sun over the year shows (a tap on the sun hours). */
+  private declare _sunYear: boolean;
   /** After "everything off": the calls that bring it back, offered for a few seconds. */
   private declare _undo: ServiceCall[] | null;
   private undoTimer: ReturnType<typeof setTimeout> | undefined;
@@ -114,6 +117,7 @@ export class NfRoomPanel extends LitElement {
     this._moodName = null;
     this._undo = null;
     this._energy = null;
+    this._sunYear = false;
     this.rooms = null;
     this.building = null;
   }
@@ -201,6 +205,27 @@ export class NfRoomPanel extends LitElement {
     } catch {
       this._energy = null;
     }
+  }
+
+  /** The sun over the year: a button with today's hours, and on a tap a bar per month (the 15th of each). */
+  private renderSunYear() {
+    const room = this.room;
+    const { latitude, longitude } = this.hass.config ?? {};
+    if (!room || !this.floor || !this.building || latitude === undefined || longitude === undefined) return nothing;
+    const place = { latitude, longitude };
+    const today = roomSun(this.building, this.floor, room, { ...place, zone: this.hass.config?.time_zone });
+    if (!today.facing.length) return nothing;
+    const toggle = html`<button class="nf-rp-sun-year" aria-expanded=${this._sunYear} title=${this.t("room_sun_year_hint")} @click=${() => (this._sunYear = !this._sunYear)}>
+      ☀ ${this.t("room_sun_year")}
+    </button>`;
+    if (!this._sunYear) return toggle;
+    const months = roomSunYear(this.building, this.floor, room, place);
+    const top = Math.max(1, ...months);
+    const names = Array.from({ length: 12 }, (_, m) => new Date(2026, m, 15).toLocaleDateString(this.hass.language, { month: "narrow" }));
+    return html`${toggle}
+      <div class="nf-rp-sun-bars" role="img" aria-label=${months.map((h, m) => `${names[m]} ${formatNumber(this.hass, h, 1)} h`).join(", ")}>
+        ${months.map((h, m) => html`<span title=${`${formatNumber(this.hass, h, 1)} h`}><i style=${`height:${Math.round((h / top) * 100)}%`}></i><b>${names[m]}</b></span>`)}
+      </div>`;
   }
 
   /** Today's and this month's use of the room, with the month's cost at the house's tariff. */
@@ -351,7 +376,7 @@ export class NfRoomPanel extends LitElement {
       <header class="nf-rp-head">
         <div>
           <h2>${room.name}</h2>
-          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()}
+          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()}
           ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>
@@ -809,6 +834,41 @@ export class NfRoomPanel extends LitElement {
         display: grid;
         gap: 14px;
         overscroll-behavior: contain;
+      }
+      .nf-rp-sun-year {
+        border: none;
+        background: none;
+        color: var(--nf-muted);
+        font: inherit;
+        font-size: 12px;
+        padding: 2px 0;
+        cursor: pointer;
+      }
+      .nf-rp-sun-bars {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 3px;
+        height: 54px;
+        margin: 2px 0 6px;
+      }
+      .nf-rp-sun-bars span {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2px;
+      }
+      .nf-rp-sun-bars i {
+        display: block;
+        width: 100%;
+        min-height: 2px;
+        border-radius: 3px 3px 0 0;
+        background: var(--nf-warm);
+      }
+      .nf-rp-sun-bars b {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--nf-muted);
       }
       .nf-rp-alloff {
         display: flex;

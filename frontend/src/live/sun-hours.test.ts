@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, floorWith, opening } from "../entities/fixtures.ts";
 import { emptyBuilding } from "../model.ts";
-import { compassOf, roomSun } from "./sun-hours.ts";
+import { compassOf, roomSun, roomSunYear } from "./sun-hours.ts";
 
 const BERLIN = { latitude: 52.5, longitude: 13.4, zone: "Europe/Berlin" };
 
@@ -42,4 +42,12 @@ test("a room without outside windows has no sun", () => {
   const { b, floor, room } = house(0);
   floor.openings = [];
   assert.deepEqual(roomSun(b, floor, room, BERLIN), { hours: 0, facing: [] });
+});
+
+test("over the year a north room gets sun only around midsummer", () => {
+  const { b, floor, room } = house(0);
+  const year = roomSunYear(b, floor, room, BERLIN, 2026);
+  assert.equal(year.length, 12);
+  assert.equal(year[11], 0);
+  assert.ok(year[5] > year[2] && year[5] > year[8]);
 });

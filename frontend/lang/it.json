@@ -1433,6 +1433,8 @@
   "heat_power": "Consumo elettrico",
   "heat_sun": "Sole oggi",
   "room_sun_hours": "{h} h di sole oggi ({facing})",
+  "room_sun_year": "Sole nell'anno",
+  "room_sun_year_hint": "Le ore di sole dalle finestre esterne della stanza il 15 di ogni mese.",
   "room_energy": "oggi {today} · mese {month}",
   "room_energy_hint": "Dalle statistiche dei sensori di potenza dei dispositivi della stanza; il costo del mese con la tariffa della casa.",
   "heat_summer": "estate",
