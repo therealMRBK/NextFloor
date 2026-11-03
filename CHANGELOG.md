@@ -14,6 +14,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Everything off, with undo**: the room panel has *⏻ Everything off* while two or more things are on – lights, switches, fans and media (playing speakers pause, TVs switch off). In a floor's view the bar on top has the same for the whole floor (*⏻* with the number of devices). For ten seconds *↶ Undo* brings everything back as it was, lights with their brightness and colour.
 - **Living area**: every room shows its living area in the editor, counted like the German Wohnflächenverordnung – the floor inside the walls, in full from 2 m clear height, half between 1 and 2 m under a slope, nothing below. The floor form adds it up for the floor and the house. Garages, cellars and utility rooms are left out by their name; *Counts as living area* in the room form decides it by hand.
 - **The plan on paper**: *🖨️ Print plan / PDF* in the floor form opens every floor as a clean black-on-white drawing at 1:100 – walls, doors with their swing, windows, garage doors, room names with their areas, the outer measurements and a metre bar – and a table of all areas at the end. The browser's print dialog prints it or saves it as PDF.
+- **Quality by itself**: with the quality on *Auto*, the 3D view now watches how fast the tablet draws while something moves. When it keeps drawing too slowly it uses fewer pixels, a quarter step at a time, and the simple look when even that is not enough; with plenty of room left the pixels come back slowly. *Low* and *High* stay as chosen.
 
 ## 0.21.0
 

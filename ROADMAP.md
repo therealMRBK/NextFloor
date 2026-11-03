@@ -7,7 +7,6 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Topic | What it is about |
 |---|---|
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
-| Quality by itself | The 3D view measures how fast the tablet draws and steps its quality up or down on its own |
 | Plan versions | Name a state of the plan ("before the renovation") and compare two of them: what moved, what is new |
 | Easy to read | A high-contrast look with larger text for wall tablets and for anyone who reads better that way |
 | First steps | A short tour on the first start and a sheet of the editor's keys (press ?) |
@@ -21,7 +20,6 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Thema | Worum es geht |
 |---|---|
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
-| Qualität von selbst | Die 3D-Ansicht misst, wie schnell das Tablet zeichnet, und stellt ihre Qualität selbst höher oder niedriger |
 | Planversionen | Einen Stand des Plans benennen („vor dem Umbau“) und zwei vergleichen: was verschoben ist, was neu ist |
 | Gut lesbar | Ein kontrastreicher Look mit größerer Schrift für Wandtablets und alle, die so besser lesen |
 | Erste Schritte | Eine kurze Tour beim ersten Start und eine Übersicht der Editor-Tasten (Taste ?) |

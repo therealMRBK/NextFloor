@@ -9,6 +9,7 @@ import { packModel, placement } from "./furniture/packs.ts";
 import { Builder } from "./furniture/builder.ts";
 import { seededRandom, stepPet, type PetMotion, type PetRoom } from "./pets.ts";
 import { isLowEnd } from "../hardware.ts";
+import { QualityGovernor } from "./quality-governor.ts";
 import {
   AdditiveBlending,
   Box3,
@@ -435,6 +436,10 @@ export class NextFloorViewer {
   private explode: boolean;
   private frame = 0;
   private lastFrame = 0;
+  /** The quality chosen (auto, low, high); auto may still step down by itself. */
+  private qualityMode: Quality = "auto";
+  /** Watches the frame times in auto quality and asks for fewer pixels or the simple look (null: not auto, or already low). */
+  private governor: QualityGovernor | null = null;
   private disposed = false;
   private readonly resizeObserver: ResizeObserver;
   private fpsFrames = 0;
@@ -573,7 +578,8 @@ export class NextFloorViewer {
     this.host = host;
     this.options = options;
     this.explode = options.explode ?? true;
-    this.renderer = this.makeRenderer(options.quality ?? "auto");
+    this.qualityMode = options.quality ?? "auto";
+    this.renderer = this.makeRenderer(this.qualityMode);
     this.labels = document.createElement("div");
     this.labels.className = "nf-labels";
     host.append(this.labels);
@@ -660,6 +666,17 @@ export class NextFloorViewer {
   }
 
   setQuality(quality: Quality): void {
+    this.qualityMode = quality;
+    this.swapRenderer(quality);
+  }
+
+  /** Auto quality found the tablet too slow even at one pixel per point: the simple look, while the choice stays "auto". */
+  private dropToLow(): void {
+    if (this.disposed || this.lowQuality) return;
+    this.swapRenderer("low");
+  }
+
+  private swapRenderer(quality: Quality): void {
     const canvas = this.renderer.domElement;
     const next = this.makeRenderer(quality);
     this.rebuildTier();
@@ -1395,7 +1412,9 @@ export class NextFloorViewer {
     if (this.weatherLayer) this.buildHouseShadow();
     this.highQuality = quality === "high";
     const renderer = new WebGLRenderer({ antialias: !low, alpha: true, powerPreference: low ? "low-power" : "default" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1 : quality === "high" ? 2.5 : 2));
+    const ratio = Math.min(window.devicePixelRatio || 1, low ? 1 : quality === "high" ? 2.5 : 2);
+    renderer.setPixelRatio(ratio);
+    this.governor = quality === "auto" && !low ? new QualityGovernor(ratio, Math.min(1, ratio)) : null;
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.domElement.className = "nf-canvas";
@@ -3037,6 +3056,13 @@ export class NextFloorViewer {
     if (this.tintTick) busy.push("tint");
     this.effectTick = this.tintTick = false;
     this.lastFrame = moving ? now : 0;
+    if (moving && this.governor) {
+      const step = this.governor.frame(dt, now);
+      if (step && "ratio" in step) {
+        this.renderer.setPixelRatio(step.ratio);
+        this.resize();
+      } else if (step) setTimeout(() => this.dropToLow(), 0);
+    }
     this.updateWalls();
     this.renderer.render(this.scene, this.camera);
     this.placeLhAnchors();
