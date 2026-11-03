@@ -124,23 +124,44 @@ class NextFloorData:
         async_dispatcher_send(self.hass, SIGNAL_BUILDING_UPDATED, self.revision)
         return self.revision
 
-    async def async_snapshot(self) -> None:
-        """Keep the current building as a restore point."""
-        self._history.append(
-            {
-                "id": uuid.uuid4().hex[:12],
-                "revision": self.revision,
-                "saved_at": time.time(),
-                "building": self.building,
-            }
-        )
-        self._history = self._history[-HISTORY_MAX:]
+    async def async_snapshot(self, name: str | None = None) -> str:
+        """Keep the current building as a restore point; a named one (a version) stays when older ones go."""
+        snapshot_id = uuid.uuid4().hex[:12]
+        point: dict[str, Any] = {
+            "id": snapshot_id,
+            "revision": self.revision,
+            "saved_at": time.time(),
+            "building": self.building,
+        }
+        if name:
+            point["name"] = name
+        self._history.append(point)
+        named = [h for h in self._history if h.get("name")][-HISTORY_MAX:]
+        unnamed = [h for h in self._history if not h.get("name")][-HISTORY_MAX:]
+        keep = {id(h) for h in named + unnamed}
+        self._history = [h for h in self._history if id(h) in keep]
         await self._history_store.async_save({"snapshots": self._history})
+        return snapshot_id
+
+    async def async_delete_snapshot(self, snapshot_id: str) -> bool:
+        """Remove a restore point; False when there is none of that id."""
+        before = len(self._history)
+        self._history = [h for h in self._history if h["id"] != snapshot_id]
+        if len(self._history) == before:
+            return False
+        await self._history_store.async_save({"snapshots": self._history})
+        return True
 
     def history(self) -> list[dict[str, Any]]:
         """Restore points, newest first, without their buildings."""
         return [
-            {"id": h["id"], "revision": h["revision"], "saved_at": h["saved_at"], **_summary(h["building"])}
+            {
+                "id": h["id"],
+                "revision": h["revision"],
+                "saved_at": h["saved_at"],
+                **({"name": h["name"]} if h.get("name") else {}),
+                **_summary(h["building"]),
+            }
             for h in reversed(self._history)
         ]
 

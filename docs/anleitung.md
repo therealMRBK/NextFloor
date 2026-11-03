@@ -223,6 +223,8 @@ Der Kiosk-Abschnitt der Karte kehrt nach einer Ruhezeit zur Startansicht zurück
 
 ## Sicherung
 
+*📌 Stand speichern …* hält den Plan unter einem Namen fest (eine Version, die bleibt, wenn die automatischen Wiederherstellungspunkte gehen). *Vergleichen* an einem Punkt listet Etage für Etage, was sich gegenüber dem Plan jetzt unterscheidet.
+
 Ein Plan aus **Sweet Home 3D** (.sh3d, ab Version 5.3) lässt sich unter *Sicherung → Importieren* direkt laden: Ebenen werden Etagen, Räume werden Räume, Türen und Fenster sitzen in ihren Wänden, freie Wände bleiben frei. Möbel werden nicht übernommen. Eine **DXF**-Zeichnung (.dxf) aus einem CAD-Programm lädt genauso: geschlossene Polylinien werden Räume, Linien freie Wände.
 
 Unter *Sicherung* im Editor: **Exportieren** / **Importieren** für den Plan, **Als Vorlage teilen** (ohne persönliche Geräte), **Alles sichern** (Plan, Bilder, Packs in einer Datei) und **Vollsicherung wiederherstellen**. Vor größeren Änderungen sichern.

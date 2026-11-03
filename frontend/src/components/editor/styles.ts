@@ -496,6 +496,23 @@ export const editorStyles = css`
     box-shadow: none;
     border: 1px solid var(--nf-line);
   }
+  .nf-version-actions {
+    display: inline-flex;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .nf-diff {
+    margin: 2px 0 10px 8px;
+    padding-left: 8px;
+    border-left: 2px solid color-mix(in srgb, var(--nf-soft, #8a9bb8) 35%, transparent);
+  }
+  .nf-diff-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
   .nf-check-open {
     width: 100%;
     margin: 0 0 8px;

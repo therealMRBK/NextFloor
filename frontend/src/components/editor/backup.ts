@@ -1,7 +1,8 @@
 // The backup side of the editor: restore points of the plan, a file with the plan alone, and a full backup with pictures and packs.
 // Everything the browser or the backend provides comes in through `deps`, so the flows can be tested without either.
 
-import { fetchBackup, fetchImage, listHistory, restoreBackup, restoreSnapshot, storeImage, takeSnapshot, type BackupFile, type Snapshot } from "../../api.ts";
+import { deleteSnapshot, fetchBackup, fetchImage, getSnapshot, listHistory, restoreBackup, restoreSnapshot, storeImage, takeSnapshot, type BackupFile, type Snapshot } from "../../api.ts";
+import { diffBuildings, type DiffEntry } from "./ops/plan-diff.ts";
 import type { I18nKey } from "../../i18n.ts";
 import { normalizeBuilding, type Building } from "../../model.ts";
 import { importSweetHome } from "../../import/sweethome.ts";
@@ -14,6 +15,8 @@ export interface BackupDeps {
     listHistory: typeof listHistory;
     restoreSnapshot: typeof restoreSnapshot;
     takeSnapshot: typeof takeSnapshot;
+    getSnapshot?: typeof getSnapshot;
+    deleteSnapshot?: typeof deleteSnapshot;
     fetchBackup: typeof fetchBackup;
     restoreBackup: typeof restoreBackup;
     fetchImage: typeof fetchImage;
@@ -21,14 +24,16 @@ export interface BackupDeps {
   };
   alert(text: string): void;
   confirm(text: string): boolean;
+  prompt?(text: string): string | null;
   download(filename: string, text: string): void;
   today(): string;
 }
 
 export const browserDeps: BackupDeps = {
-  api: { listHistory, restoreSnapshot, takeSnapshot, fetchBackup, restoreBackup, fetchImage, storeImage },
+  api: { listHistory, restoreSnapshot, takeSnapshot, getSnapshot, deleteSnapshot, fetchBackup, restoreBackup, fetchImage, storeImage },
   alert: (text) => alert(text),
   confirm: (text) => confirm(text),
+  prompt: (text) => prompt(text),
   download,
   today: () => new Date().toISOString().slice(0, 10),
 };
@@ -56,6 +61,8 @@ export class BackupService {
   /** The restore points, or null while they are not loaded. */
   history: Snapshot[] | null = null;
   busy = false;
+  /** An older state compared with the plan: what differs, or null while nothing is compared. */
+  compare: { snapshot: Snapshot; entries: DiffEntry[] } | null = null;
 
   constructor(host: BackupHost, deps: BackupDeps = browserDeps) {
     this.host = host;
@@ -78,6 +85,39 @@ export class BackupService {
     if (!hass || !this.deps.confirm(t("backup_restore_confirm", { time: this.timeOf(snapshot) }))) return;
     await this.deps.api.restoreSnapshot(hass, snapshot.id);
     this.host.say(t("backup_restored"));
+    await this.loadHistory();
+  }
+
+  /** Keeps the plan as it is now under a name of its own: a version that stays when the automatic points go. */
+  async saveVersion(): Promise<void> {
+    const { hass, t } = this.host;
+    const name = hass ? this.deps.prompt?.(t("version_name_prompt"))?.trim() : null;
+    if (!hass || !name) return;
+    await this.deps.api.takeSnapshot(hass, name.slice(0, 60));
+    this.host.say(t("version_saved", { name }));
+    await this.loadHistory();
+  }
+
+  /** Compares an older state with the plan as it is in the editor (unsaved changes included). */
+  async compareWith(snapshot: Snapshot): Promise<void> {
+    const { hass } = this.host;
+    const get = this.deps.api.getSnapshot;
+    if (!hass || !get) return;
+    if (this.compare?.snapshot.id === snapshot.id) {
+      this.compare = null;
+      return this.host.refresh();
+    }
+    const older = normalizeBuilding(await get(hass, snapshot.id));
+    this.compare = { snapshot, entries: diffBuildings(older, this.host.doc) };
+    this.host.refresh();
+  }
+
+  async deleteVersion(snapshot: Snapshot): Promise<void> {
+    const { hass, t } = this.host;
+    const remove = this.deps.api.deleteSnapshot;
+    if (!hass || !remove || !this.deps.confirm(t("version_delete_confirm", { name: snapshot.name ?? this.timeOf(snapshot) }))) return;
+    await remove(hass, snapshot.id);
+    if (this.compare?.snapshot.id === snapshot.id) this.compare = null;
     await this.loadHistory();
   }
 

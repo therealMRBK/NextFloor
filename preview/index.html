@@ -150,7 +150,7 @@ const params = new URLSearchParams(location.search);
       const images = { ...DEMO_PICTURES };
       const listeners = new Set();
       // invented restore points
-      const history = [{ id: "s0", revision: 0, saved_at: Date.now() / 1000 - 3600, building: structuredClone(building) }];
+      let history = [{ id: "s0", revision: 0, saved_at: Date.now() / 1000 - 3600, building: structuredClone(building) }];
 
       // furniture packs: the invented demo pack and the packs that come with NextFloor
       let importedPacks = null;
@@ -286,8 +286,18 @@ const params = new URLSearchParams(location.search);
             }
             case "nextfloor/history/list":
               return { snapshots: history.map(({ building: b, ...rest }) => ({ ...rest, floors: b.floors.length, rooms: b.floors.reduce((n, f) => n + f.rooms.length, 0), furniture: b.floors.reduce((n, f) => n + f.furniture.length, 0) })).reverse() };
-            case "nextfloor/history/snapshot":
-              history.push({ id: `s${history.length + 1}`, revision, saved_at: Date.now() / 1000, building: structuredClone(building) });
+            case "nextfloor/history/snapshot": {
+              const id = `s${history.length + 1}`;
+              history.push({ id, revision, saved_at: Date.now() / 1000, building: structuredClone(building), ...(msg.name ? { name: msg.name } : {}) });
+              return { id };
+            }
+            case "nextfloor/history/get": {
+              const snap = history.find((h) => h.id === msg.snapshot_id);
+              if (!snap) throw { code: "not_found", message: "Restore point not found" };
+              return { building: structuredClone(snap.building) };
+            }
+            case "nextfloor/history/delete":
+              history = history.filter((h) => h.id !== msg.snapshot_id);
               return null;
             case "nextfloor/history/restore": {
               const snap = history.find((h) => h.id === msg.snapshot_id);

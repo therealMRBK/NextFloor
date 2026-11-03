@@ -295,6 +295,30 @@ async def test_restore_points(hass: HomeAssistant, hass_ws_client, hass_storage)
     assert STORAGE_KEY_HISTORY in hass_storage
 
 
+async def test_named_versions_stay_and_can_be_fetched_and_removed(hass: HomeAssistant, hass_ws_client) -> None:
+    await _setup(hass)
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "nextfloor/building/save", "building": BUILDING})
+    assert (await client.receive_json())["success"]
+    await client.send_json_auto_id({"type": "nextfloor/history/snapshot", "name": "  Before the renovation  "})
+    version = (await client.receive_json())["result"]["id"]
+    # many unnamed points later the named one is still there
+    for _ in range(25):
+        await client.send_json_auto_id({"type": "nextfloor/history/snapshot"})
+        assert (await client.receive_json())["success"]
+    await client.send_json_auto_id({"type": "nextfloor/history/list"})
+    snapshots = (await client.receive_json())["result"]["snapshots"]
+    assert [s["name"] for s in snapshots if s.get("name")] == ["Before the renovation"]
+    assert len([s for s in snapshots if not s.get("name")]) == 20
+    await client.send_json_auto_id({"type": "nextfloor/history/get", "snapshot_id": version})
+    got = (await client.receive_json())["result"]["building"]
+    assert got["floors"][0]["rooms"][0]["name"] == "Living"
+    await client.send_json_auto_id({"type": "nextfloor/history/delete", "snapshot_id": version})
+    assert (await client.receive_json())["success"]
+    await client.send_json_auto_id({"type": "nextfloor/history/get", "snapshot_id": version})
+    assert (await client.receive_json())["error"]["code"] == "not_found"
+
+
 async def test_outdoor_roof_and_north_get_defaults(hass: HomeAssistant, hass_ws_client) -> None:
     await _setup(hass)
     client = await hass_ws_client(hass)

@@ -33,6 +33,8 @@ def async_register_commands(hass: HomeAssistant) -> None:
         ws_history_list,
         ws_history_snapshot,
         ws_history_restore,
+        ws_history_get,
+        ws_history_delete,
         ws_packs_list,
         ws_packs_import,
         ws_packs_remove,
@@ -162,16 +164,54 @@ def ws_history_list(hass: HomeAssistant, connection: websocket_api.ActiveConnect
     connection.send_result(msg["id"], {"snapshots": data.history()})
 
 
-@websocket_api.websocket_command({vol.Required("type"): "nextfloor/history/snapshot"})
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "nextfloor/history/snapshot",
+        vol.Optional("name"): vol.All(str, vol.Strip, vol.Length(max=60)),
+    }
+)
 @websocket_api.require_admin
 @websocket_api.async_response
 async def ws_history_snapshot(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    """Keep the current building as a restore point (e.g. before an import)."""
+    """Keep the current building as a restore point (e.g. before an import), or as a named version."""
     if (data := _data(hass, connection, msg)) is None:
         return
-    await data.async_snapshot()
+    snapshot_id = await data.async_snapshot(msg.get("name") or None)
+    connection.send_result(msg["id"], {"id": snapshot_id})
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "nextfloor/history/get", vol.Required("snapshot_id"): _IMAGE_ID}
+)
+@websocket_api.require_admin
+@callback
+def ws_history_get(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The building of a restore point, to compare it with the plan."""
+    if (data := _data(hass, connection, msg)) is None:
+        return
+    building = data.snapshot(msg["snapshot_id"])
+    if building is None:
+        connection.send_error(msg["id"], "not_found", "Restore point not found")
+        return
+    connection.send_result(msg["id"], {"building": complete(building)})
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "nextfloor/history/delete", vol.Required("snapshot_id"): _IMAGE_ID}
+)
+@websocket_api.require_admin
+@websocket_api.async_response
+async def ws_history_delete(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """Remove a restore point (a version that is no longer needed)."""
+    if (data := _data(hass, connection, msg)) is None:
+        return
+    if not await data.async_delete_snapshot(msg["snapshot_id"]):
+        connection.send_error(msg["id"], "not_found", "Restore point not found")
+        return
     connection.send_result(msg["id"])
 
 

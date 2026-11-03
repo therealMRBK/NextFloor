@@ -38,14 +38,26 @@ export interface Snapshot {
   floors: number;
   rooms: number;
   furniture: number;
+  /** A named version ("before the renovation"); unnamed points come and go by themselves. */
+  name?: string;
 }
 
 export async function listHistory(hass: HomeAssistant): Promise<Snapshot[]> {
   return (await call<{ snapshots: Snapshot[] }>(hass, "history/list")).snapshots;
 }
 
-export async function takeSnapshot(hass: HomeAssistant): Promise<void> {
-  await call(hass, "history/snapshot");
+/** Keeps the plan as a restore point, or as a named version; returns its id. */
+export async function takeSnapshot(hass: HomeAssistant, name?: string): Promise<string> {
+  return (await call<{ id: string }>(hass, "history/snapshot", name ? { name } : {})).id;
+}
+
+/** The plan of a restore point, to compare it with the current one. */
+export async function getSnapshot(hass: HomeAssistant, snapshotId: string): Promise<Building> {
+  return (await call<{ building: Building }>(hass, "history/get", { snapshot_id: snapshotId })).building;
+}
+
+export async function deleteSnapshot(hass: HomeAssistant, snapshotId: string): Promise<void> {
+  await call(hass, "history/delete", { snapshot_id: snapshotId });
 }
 
 /** Goes back to a snapshot and returns the new revision. */
