@@ -11,7 +11,7 @@ import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts";
 import { roomPower, roomPowerSensors } from "../heatmap.ts";
 import { energyCost, loadRoomEnergy, type RoomEnergy } from "../live/room-energy.ts";
-import { roomSun, roomSunYear } from "../live/sun-hours.ts";
+import { roomSun, roomSunYear, sunnyWindowsNow } from "../live/sun-hours.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
@@ -48,6 +48,9 @@ const TRANSPORT = {
 };
 const transport = (d: string) =>
   html`<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d=${d} /></svg>`;
+
+/** From this room temperature (°C) on, the sun on its windows is worth a shade hint. */
+const SHADE_FROM = 24;
 
 export class NfRoomPanel extends LitElement {
   static properties = {
@@ -205,6 +208,30 @@ export class NfRoomPanel extends LitElement {
     } catch {
       this._energy = null;
     }
+  }
+
+  /**
+   * The shade hint: the sun stands on some of the room's windows, the room is warm (24 °C or more) and their blinds are open – one
+   * tap lowers them.
+   */
+  private renderShade() {
+    const room = this.room;
+    const { latitude, longitude } = this.hass.config ?? {};
+    if (!room || !this.floor || !this.building || latitude === undefined || longitude === undefined) return nothing;
+    const temp = roomClimateValue(this.hass, this.floor, room, "temperature");
+    if (temp === null || temp < SHADE_FROM) return nothing;
+    const open = (id: string | null | undefined): id is string => {
+      const st = id && id !== "none" ? this.hass.states[id] : undefined;
+      if (!st || isUnavailable(st)) return false;
+      const pos = st.attributes.current_position;
+      return typeof pos === "number" ? pos > 30 : st.state === "open";
+    };
+    const covers = [...new Set(sunnyWindowsNow(this.building, this.floor, room, { latitude, longitude }).flatMap((o) => [o.cover, o.cover2].filter(open)))];
+    if (!covers.length) return nothing;
+    return html`<div class="nf-rp-shade">
+      <span>☀ ${this.t("shade_hint", { n: covers.length, temp: `${formatNumber(this.hass, fromCelsius(this.hass, temp), 1)} ${tempUnit(this.hass)}` })}</span>
+      <button class="nf-btn nf-rp-small" @click=${() => this.call("cover", "close_cover", { entity_id: covers })}>${this.t("shade_close")}</button>
+    </div>`;
   }
 
   /** The sun over the year: a button with today's hours, and on a tap a bar per month (the 15th of each). */
@@ -376,7 +403,7 @@ export class NfRoomPanel extends LitElement {
       <header class="nf-rp-head">
         <div>
           <h2>${room.name}</h2>
-          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()}
+          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
           ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>
@@ -834,6 +861,17 @@ export class NfRoomPanel extends LitElement {
         display: grid;
         gap: 14px;
         overscroll-behavior: contain;
+      }
+      .nf-rp-shade {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 4px 0;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        background: color-mix(in srgb, var(--nf-warm) 16%, transparent);
       }
       .nf-rp-sun-year {
         border: none;

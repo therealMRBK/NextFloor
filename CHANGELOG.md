@@ -22,6 +22,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Notes in the plan**: a right-click (or long press) in the editor has *✎ Note here* – a note pinned to that spot ("bleed the radiator", "fuse 12: cooker"), with an optional day it is due. In 3D it stands as a yellow pin on its floor, orange from the day it is due, and a tap shows its whole text; the search finds notes by their text.
 - **Sun in the rooms**: the heat map has a mode *Sun* that colours every room by the hours of sun it gets today through its outside windows – from the plan, its compass and the sun's path at the home's place (neighbours, trees and the roof's overhang are not counted). The room panel shows the same, with the directions its windows look to (*☀ 5.5 h of sun today (S, W)*); a tap on *☀ Sun over the year* adds a bar for every month.
 - **Share a view**: *🔗 Share a view* under *Backup* saves the house as a small HTML file that opens in any browser without Home Assistant – it shows the plan in 3D through NextFloor's online demo, with the furniture packs it uses and without any devices or entities, like a template. To show the house to family or a planner.
+- **Shade hint**: when the sun stands on a room's outside windows, the room is 24 °C or warmer and those windows' blinds are open, the room panel says so (*☀ Sun on 2 windows at 25.3 °C – lower the blinds?*) and *Lower* closes them in one tap.
 
 ## 0.21.0
 

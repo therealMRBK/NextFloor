@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, floorWith, opening } from "../entities/fixtures.ts";
 import { emptyBuilding } from "../model.ts";
-import { compassOf, roomSun, roomSunYear } from "./sun-hours.ts";
+import { compassOf, roomSun, roomSunYear, sunnyWindowsNow } from "./sun-hours.ts";
 
 const BERLIN = { latitude: 52.5, longitude: 13.4, zone: "Europe/Berlin" };
 
@@ -50,4 +50,13 @@ test("over the year a north room gets sun only around midsummer", () => {
   assert.equal(year.length, 12);
   assert.equal(year[11], 0);
   assert.ok(year[5] > year[2] && year[5] > year[8]);
+});
+
+test("the sun stands on a south window at noon, never on a north one, and on none at night", () => {
+  const noon = new Date("2026-07-15T11:00:00Z");
+  const south = house(2);
+  const north = house(0);
+  assert.deepEqual(sunnyWindowsNow(south.b, south.floor, south.room, BERLIN, noon).map((o) => o.id), ["w"]);
+  assert.deepEqual(sunnyWindowsNow(north.b, north.floor, north.room, BERLIN, noon), []);
+  assert.deepEqual(sunnyWindowsNow(south.b, south.floor, south.room, BERLIN, new Date("2026-07-15T23:00:00Z")), []);
 });

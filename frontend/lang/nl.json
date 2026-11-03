@@ -1433,6 +1433,8 @@
   "heat_power": "Stroomverbruik",
   "heat_sun": "Zon vandaag",
   "room_sun_hours": "{h} u zon vandaag ({facing})",
+  "shade_hint": "Zon op {n} ramen bij {temp} – rolluiken omlaag?",
+  "shade_close": "Omlaag",
   "room_sun_year": "Zon over het jaar",
   "room_sun_year_hint": "De zonuren door de buitenramen van de kamer op de 15e van elke maand.",
   "room_energy": "vandaag {today} · maand {month}",

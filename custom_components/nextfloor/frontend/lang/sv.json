@@ -1433,6 +1433,8 @@
   "heat_power": "Elförbrukning",
   "heat_sun": "Sol i dag",
   "room_sun_hours": "{h} h sol i dag ({facing})",
+  "shade_hint": "Sol på {n} fönster vid {temp} – sänka rullgardinerna?",
+  "shade_close": "Sänk",
   "room_sun_year": "Sol över året",
   "room_sun_year_hint": "Soltimmarna genom rummets ytterfönster den 15:e varje månad.",
   "room_energy": "i dag {today} · månad {month}",

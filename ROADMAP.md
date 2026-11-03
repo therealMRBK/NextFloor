@@ -7,6 +7,8 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Topic | What it is about |
 |---|---|
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
+| Clean this room | Send the robot vacuum to the room from its panel (rooms linked to the robot's segments) |
+| Fuse box | Circuits of the fuse box linked to rooms and devices; a tap on a circuit shows what hangs on it |
 
 ---
 
@@ -17,3 +19,5 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Thema | Worum es geht |
 |---|---|
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
+| Diesen Raum saugen | Den Saugroboter aus dem Raum-Panel in den Raum schicken (Räume mit den Segmenten des Roboters verknüpft) |
+| Sicherungskasten | Stromkreise des Sicherungskastens mit Räumen und Geräten verknüpft; ein Tipp auf einen Kreis zeigt, was daran hängt |

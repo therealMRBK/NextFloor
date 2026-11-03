@@ -2,7 +2,7 @@
 // compass and the sun's path at the home's place. Neighbours, trees and the overhang of the roof are not counted.
 
 import { generateWalls, locateOpening, openingHost, type Wall } from "../geometry/walls.ts";
-import type { Building, Floor, Room } from "../model.ts";
+import type { Building, Floor, Opening, Room } from "../model.ts";
 import { sunPosition, todayAt } from "../sun-position.ts";
 
 const DEG = Math.PI / 180;
@@ -25,7 +25,12 @@ const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 
 /** The outward directions of a room's windows in outside walls, in plan coordinates. */
 export function windowNormals(floor: Floor, room: Room, walls: readonly Wall[]): [number, number][] {
-  const out: [number, number][] = [];
+  return outsideWindows(floor, room, walls).map((w) => w.normal);
+}
+
+/** A room's windows (and glass doors) in outside walls, each with the direction it looks to. */
+export function outsideWindows(floor: Floor, room: Room, walls: readonly Wall[]): { opening: Opening; normal: [number, number] }[] {
+  const out: { opening: Opening; normal: [number, number] }[] = [];
   for (const o of floor.openings) {
     if (o.room_id !== room.id || o.type === "garage") continue;
     const host = openingHost(o, floor.rooms, floor.walls ?? []);
@@ -37,7 +42,7 @@ export function windowNormals(floor: Floor, room: Room, walls: readonly Wall[]):
     // the room lies on the wall's left (its normal (-dz, dx)); the window looks the other way
     const left: [number, number] = [-(wall.b[1] - wall.a[1]) / len, (wall.b[0] - wall.a[0]) / len];
     const intoRoom = wall.roomLeft === room.id ? left : ([-left[0], -left[1]] as [number, number]);
-    out.push([-intoRoom[0], -intoRoom[1]]);
+    out.push({ opening: o, normal: [-intoRoom[0], -intoRoom[1]] });
   }
   return out;
 }
@@ -93,4 +98,14 @@ function computeRoomSun(b: Building, floor: Floor, room: Room, place: { latitude
 /** Hours of sun of a room on the 15th of every month of `year` (January first), for the curve over the year. */
 export function roomSunYear(b: Building, floor: Floor, room: Room, place: { latitude: number; longitude: number; zone?: string | null }, year = new Date().getFullYear()): number[] {
   return Array.from({ length: 12 }, (_, month) => roomSun(b, floor, room, place, new Date(Date.UTC(year, month, 15, 12))).hours);
+}
+
+/** The room's outside windows the sun shines on right now (none at night or with the sun low). */
+export function sunnyWindowsNow(b: Building, floor: Floor, room: Room, place: { latitude: number; longitude: number }, now = new Date()): Opening[] {
+  const sun = sunPosition(now, place.latitude, place.longitude);
+  if (sun.elevation < MIN_ELEVATION) return [];
+  const s = toSun(sun.azimuth, b.settings.north ?? 0);
+  return outsideWindows(floor, room, wallsOf(b, floor))
+    .filter((w) => w.normal[0] * s[0] + w.normal[1] * s[1] > MIN_FACING)
+    .map((w) => w.opening);
 }

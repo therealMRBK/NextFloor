@@ -1433,6 +1433,8 @@
   "heat_power": "Consumo de energia",
   "heat_sun": "Sol hoje",
   "room_sun_hours": "{h} h de sol hoje ({facing})",
+  "shade_hint": "Sol em {n} janelas a {temp} – baixar os estores?",
+  "shade_close": "Baixar",
   "room_sun_year": "Sol ao longo do ano",
   "room_sun_year_hint": "As horas de sol pelas janelas exteriores da divisão no dia 15 de cada mês.",
   "room_energy": "hoje {today} · mês {month}",
