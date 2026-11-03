@@ -1131,6 +1131,14 @@ export function builtinBase(f: Pick<Furniture, "type" | "h"> & { variant?: strin
 /** Furniture that hangs from the ceiling: its height comes from the ceiling above it (the room's, or its own ceiling_y). */
 export const CEILING_TYPES = new Set<string>(["lamp_ceiling", "lamp_downlight", "lamp_spot", "lamp_panel", "lamp_pendant", "ceiling_fan"]);
 
+/** Rooms of lower floors whose own ceiling reaches above this floor's level (a living room open to the floor above, #55): this floor stays open over them. */
+export function roomsReachingUp(floors: readonly Floor[], floor: Floor): Vec2[][] {
+  return floors
+    .filter((f) => f.elevation < floor.elevation)
+    .flatMap((f) => f.rooms.filter((r) => r.points.length >= 3 && r.ceiling != null && r.ceiling > f.height + 0.005 && f.elevation + r.ceiling > floor.elevation + 0.05))
+    .map((r) => r.points);
+}
+
 /** The height of the ceiling above a point of a floor: the room's own ceiling, else the floor height. */
 export function ceilingAt(floor: Pick<Floor, "height" | "rooms">, x: number, z: number): number {
   const room = floor.rooms.find((r) => r.points.length >= 3 && pointInPolygon([x, z], r.points));

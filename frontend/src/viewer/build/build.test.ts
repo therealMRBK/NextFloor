@@ -39,11 +39,11 @@ test("walls fall into buckets: all interior walls in one, exterior walls by the 
   assert.equal(buckets.length, new Set([...wallBucket.values()]).size);
 });
 
-test("a wall is never taller than its floor, and a low wall keeps its own height", () => {
+test("a wall stands at the floor height, a low wall keeps its own height, a tall room's wall rises above the floor", () => {
   const { walls } = generateWalls([room("a", 0, 0, 4, 3)], { exterior: OUTER, interior: INNER });
   assert.equal(wallHeight(walls[0], 2.6), 2.6);
   assert.equal(wallHeight({ ...walls[0], height: 1 }, 2.6), 1);
-  assert.equal(wallHeight({ ...walls[0], height: 5 }, 2.6), 2.6);
+  assert.equal(wallHeight({ ...walls[0], height: 5 }, 2.6), 5);
 });
 
 test("roof limits: the top of a wall is its height unless a lower roof is above", () => {

@@ -130,7 +130,7 @@ export function buildLightSurface(
   walls.forEach((wall, wi) => {
     // a sloping wall reaches its higher end here; its lit face is trimmed along the slope below
     const slope = wall.heightEnd === undefined ? null : ([wall.height ?? floor.height, wall.heightEnd] as const);
-    const top = slope ? Math.max(...slope) : Math.min(floor.height, wall.height ?? floor.height);
+    const top = slope ? Math.max(...slope) : (wall.height ?? floor.height);
     const cutAt = Math.min(cut, top - 0.02);
     const [dx, dz] = [wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]];
     const length = Math.hypot(dx, dz);

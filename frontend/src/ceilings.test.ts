@@ -4,7 +4,9 @@ import { fanSpin } from "./entities/fans.ts";
 import { box, entity, floorWith, hassOf } from "./entities/fixtures.ts";
 import { furnitureEntities } from "./entities/furniture-links.ts";
 import { generateWalls } from "./geometry/walls.ts";
-import { canLift, ceilingAt, ceilingOf, type Furniture } from "./model.ts";
+import { canLift, ceilingAt, ceilingOf, roomsReachingUp, type Furniture } from "./model.ts";
+import { stairHoles } from "./viewer/build/build.ts";
+import { wallHeight } from "./viewer/build/placement.ts";
 import { mountBase } from "./packs.ts";
 
 const piece = (id: string, type: string, extra: Partial<Furniture> = {}): Furniture => ({ id, type, x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 0.3, variant: null, entity: null, power: null, ...extra });
@@ -89,4 +91,22 @@ test("a ceiling fan without a light kit does not take the room's ceiling light",
   const room = box("r", 0, 0, 4, 3, "area");
   const links = furnitureEntities(hass, [floorWith([room], { furniture: [piece("fan", "ceiling_fan")] })]).get("fan");
   assert.deepEqual(links, { entity: null, power: null, fan: "fan.bedroom" });
+});
+
+test("a room whose ceiling rises above its floor opens the floors it reaches into (#55)", () => {
+  const living = { ...box("living", 0, 0, 5, 4), ceiling: 5.2 };
+  const ground = { ...floorWith([living, box("kitchen", 5, 0, 8, 4)], { height: 2.7 }), id: "eg", elevation: 0 };
+  const upper = { ...floorWith([box("bed", 5, 0, 8, 4)], { height: 2.6 }), id: "og", elevation: 2.9 };
+  const attic = { ...floorWith([], { height: 2.4 }), id: "dg", elevation: 5.6 };
+  const floors = [ground, upper, attic];
+  assert.deepEqual(roomsReachingUp(floors, upper), [living.points]);
+  // 5.2 m stays below the attic at 5.6 m
+  assert.deepEqual(roomsReachingUp(floors, attic), []);
+  assert.equal(stairHoles(floors, upper).length, 1);
+  assert.equal(stairHoles(floors, attic).length, 0);
+  // the room's walls rise with its ceiling, a shared wall with a room without a ceiling of its own keeps the floor height
+  const walls = generateWalls(ground.rooms, { exterior: 0.3, interior: 0.12 }).walls;
+  const heights = walls.map((w) => wallHeight(w, ground.height));
+  assert.ok(heights.includes(5.2));
+  assert.ok(heights.includes(2.7));
 });

@@ -86,15 +86,18 @@ function corners(host: EditorHost, room: Room, rectangle: boolean, actions: Room
   </details>`;
 }
 
-/** The room's own ceiling height (a low bathroom on a high floor); at the floor height or above it is the floor's again. */
+/**
+ * The room's own ceiling height: a low bathroom on a high floor, or a living room open to the floor above (#55) – its walls rise
+ * with it and the floor above stays open over it. At the floor height it is the floor's again.
+ */
 function ceilingField(host: EditorHost, room: Room, floor: Floor, actions: RoomActions): TemplateResult {
   const t = host.t;
-  const set = (v: number) => actions.patch({ ceiling: v >= floor.height - 0.005 ? null : Math.max(1, Math.round(v * 1000) / 1000) });
+  const set = (v: number) => actions.patch({ ceiling: Math.abs(v - floor.height) < 0.005 ? null : Math.min(20, Math.max(1, Math.round(v * 1000) / 1000)) });
   return html`${numberField(host, t("room_ceiling"), room.ceiling ?? floor.height, set, 0.01, 1)}
     ${room.ceiling != null ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => actions.patch({ ceiling: null })}>${t("height_auto")}</button>` : nothing}
-    ${hint(t("room_ceiling_hint"), "nf-wide")}
+    ${hint(t("room_ceiling_tip"), "nf-wide")}
     ${room.ceiling != null && room.ceiling > floor.height + 0.005
-      ? html`<p class="nf-sub nf-warn nf-wide">${t("room_ceiling_above_floor", { ceiling: formatNumber(host.hass, room.ceiling, 2), floor: formatNumber(host.hass, floor.height, 2) })}</p>`
+      ? html`<p class="nf-sub nf-wide">${t("room_ceiling_through", { ceiling: formatNumber(host.hass, room.ceiling, 2), floor: formatNumber(host.hass, floor.height, 2) })}</p>`
       : nothing}`;
 }
 

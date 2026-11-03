@@ -13,7 +13,7 @@
 import { generateWalls } from "../../geometry/walls.ts";
 import { mergeHoles } from "../../geometry/holes.ts";
 import { isShapedStair, stairOpeningInPlan } from "../../geometry/stairs.ts";
-import { furnitureFootprint, isLamp, type Floor, type SolarField, type Vec2 } from "../../model.ts";
+import { furnitureFootprint, isLamp, roomsReachingUp, type Floor, type SolarField, type Vec2 } from "../../model.ts";
 import { hasMesh, mountBase, packItem } from "../../packs.ts";
 import type { RoofFace } from "../../solar.ts";
 import { cutAbove, cutLinesAbove, FURN_OFFSET, GeoBuffer, LineBuffer } from "../geo.ts";
@@ -99,19 +99,21 @@ export function buildFloorGeometry(
   };
 }
 
-/** The ceiling openings of a floor: stairwells placed on it, and stairs on the floor below that reach up to it. */
+/** The ceiling openings of a floor: stairwells placed on it, stairs on the floor below that reach up to it, and rooms below that rise through it. */
 export function stairHoles(floors: readonly Floor[], floor: Floor): Vec2[][] {
+  const voids = roomsReachingUp(floors, floor);
   // stairwells, and the shaped stairs that lead down from this floor
   const own = [
     ...floor.furniture.filter((f) => f.type === "stairwell").map(furnitureFootprint),
     ...floor.furniture.filter((f) => isShapedStair(f) && f.stair?.down).flatMap(stairOpeningInPlan),
   ].filter((ring) => ring.length >= 3);
   const below = floors.filter((f) => f.elevation < floor.elevation).sort((p, q) => q.elevation - p.elevation)[0];
-  if (!below) return mergeHoles(own);
+  if (!below) return mergeHoles([...own, ...voids]);
   const reaching = below.furniture.filter((f) => (f.type === "stairs" || packItem(f.type)?.hole) && !(isShapedStair(f) && f.stair?.down) && below.elevation + f.h >= floor.elevation - 0.3);
   // a shaped stair opens the floor only where its treads lack headroom; old stairs and pack stairs open their whole footprint
   const stairs = reaching.flatMap((f) => (isShapedStair(f) ? stairOpeningInPlan(f) : [furnitureFootprint(f)])).filter((ring) => ring.length >= 3);
   // overlapping openings become one outline (an L-shaped stairwell made of two)
-  return mergeHoles([...own, ...stairs]);
+  return mergeHoles([...own, ...stairs, ...voids]);
 }
+
 export type { WallPaint } from "./solids.ts";

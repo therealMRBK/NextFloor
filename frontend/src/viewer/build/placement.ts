@@ -7,11 +7,11 @@ import { unit } from "./outline.ts";
 import type { OpeningInfo, Span } from "./types.ts";
 
 /**
- * How tall a wall stands: its own height (a low wall, a counter), never above the floor height. A sloping wall may rise above
- * the floor height; this is its highest point.
+ * How tall a wall stands: its own height (a low wall, a counter), else the floor height. It may rise above the floor height:
+ * the wall of a room whose ceiling reaches into the floor above (#55), or a sloping wall, whose highest point this is.
  */
 export const wallHeight = (wall: Wall, floorHeight: number): number =>
-  wall.heightEnd === undefined ? Math.min(floorHeight, wall.height ?? floorHeight) : Math.max(wall.height ?? floorHeight, wall.heightEnd);
+  wall.heightEnd === undefined ? (wall.height ?? floorHeight) : Math.max(wall.height ?? floorHeight, wall.heightEnd);
 
 /**
  * Sorts the walls into buckets by the direction they face: all interior walls are one bucket, exterior walls fall into

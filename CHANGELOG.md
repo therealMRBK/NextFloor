@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.22.0
+
+### Added
+
+- **Rooms open to the floor above**: a room's *Ceiling height* may now be higher than its floor – a living room open up to the floor above or under the roof, a gallery. Its walls and windows rise with it, ceiling lights hang from the high ceiling, and the floor above stays open over it; that floor's editor shows the area hatched. Thanks to @Xtiger123X ([#55](https://github.com/therealMRBK/NextFloor/issues/55)).
+
 ## 0.21.0
 
 ### Added

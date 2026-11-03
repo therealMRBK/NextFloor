@@ -292,6 +292,11 @@ export const editorStyles = css`
     stroke: rgba(138, 155, 184, 0.35);
     stroke-dasharray: 4 4;
   }
+  .nf-void {
+    fill: rgba(138, 155, 184, 0.12);
+    stroke: rgba(138, 155, 184, 0.55);
+    stroke-dasharray: 2 3;
+  }
   .nf-wall {
     fill: #1b2a47;
   }

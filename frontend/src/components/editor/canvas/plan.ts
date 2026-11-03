@@ -3,7 +3,7 @@
 
 import { nothing, svg, type TemplateResult } from "lit";
 import type { I18nKey } from "../../../i18n.ts";
-import { bounds, centroid, isFixed, polygonArea, type Floor, type FreeWall, type OutdoorArea, type Room, type Vec2 } from "../../../model.ts";
+import { bounds, centroid, isFixed, polygonArea, roomsReachingUp, type Floor, type FreeWall, type OutdoorArea, type Room, type Vec2 } from "../../../model.ts";
 import type { Wall } from "../../../geometry/walls.ts";
 import { edgePlus, pointsAttribute, type CanvasContext } from "./context.ts";
 import { formatArea, formatLength } from "../../../units.ts";
@@ -38,13 +38,16 @@ export function gridLayer(ctx: CanvasContext, size: { w: number; h: number }): L
   return svg`<g pointer-events="none">${lines}</g>`;
 }
 
-/** The rooms of the floor below, faintly, as orientation. */
+/** The rooms of the floor below, faintly, as orientation; rooms below that rise through this floor are hatched – it stays open there. */
 export function floorBelowLayer(ctx: CanvasContext): Layer {
   const floors = ctx.host.doc.floors;
   const at = floors.findIndex((f) => f.id === ctx.floorId);
   const below = at > 0 ? floors[at - 1] : undefined;
   if (!below) return nothing;
-  return svg`<g pointer-events="none">${below.rooms.map((r) => svg`<polygon class="nf-ghost" points=${pointsAttribute(ctx, r.points)} />`)}</g>`;
+  const voids = roomsReachingUp(floors, floors[at]);
+  return svg`<g pointer-events="none">${below.rooms.map((r) => svg`<polygon class="nf-ghost" points=${pointsAttribute(ctx, r.points)} />`)}${voids.map(
+    (points) => svg`<polygon class="nf-void" points=${pointsAttribute(ctx, points)} />`,
+  )}</g>`;
 }
 
 /** The wall pieces; outer ones are drawn stronger, and walls lower than the floor lighter. */
