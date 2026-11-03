@@ -4,7 +4,7 @@
 import { defaultHeight, entityName, isActive, isUnavailable, kindOf, lightGlow, tempUnit } from "./devices.ts";
 import { formatNumber, translate, type I18nKey } from "./i18n.ts";
 import { iconSvg, mdiIcon } from "./icons.ts";
-import { ceilingAt, pointInPolygon, type Building, type Floor, type Placement, type Room } from "./model.ts";
+import { ceilingAt, offsetAt, pointInPolygon, type Building, type Floor, type Placement, type Room } from "./model.ts";
 import type { HassEntity, HomeAssistant } from "./types.ts";
 import type { DeviceMarker } from "./viewer/viewer3d.ts";
 import { lightAnimation } from "./light-effects.ts";
@@ -126,7 +126,8 @@ function markerFor(hass: HomeAssistant, floor: Floor, placed: Placement): Device
     roomId: room?.id ?? null,
     x: placed.x,
     z: placed.z,
-    y: placed.y ?? defaultHeight(kind, ceilingAt(floor, placed.x, placed.z), placed.mount ?? null),
+    // a pin in a room on its own level moves with its floor; a ceiling light keeps to the ceiling
+    y: placed.y ?? defaultHeight(kind, ceilingAt(floor, placed.x, placed.z), placed.mount ?? null) + (kind === "light" && (placed.mount ?? "ceiling") === "ceiling" ? 0 : offsetAt(floor, placed.x, placed.z)),
     lamp: kind === "light" ? (placed.mount ?? "ceiling") : null,
     ceiling: ceilingAt(floor, placed.x, placed.z),
     rotation: placed.rotation ?? 0,

@@ -1296,6 +1296,8 @@
  "room_ceiling": "Hauteur sous plafond",
  "room_ceiling_tip": "Plus bas que l'étage (une salle de bain sous l'escalier) ou plus haut (un séjour ouvert jusque sous le toit) : plafonniers, ventilateurs, rubans LED et appareils de plafond sont suspendus à partir d'ici, et les murs de la pièce ont cette hauteur.",
  "room_ceiling_through": "Le plafond ({ceiling} m) est plus haut que l'étage ({floor} m) : la pièce monte dans l'étage du dessus, ses murs suivent, et l'étage du dessus reste ouvert au-dessus d'elle. L'éditeur de l'étage supérieur montre la zone hachurée.",
+ "room_floor_offset": "Niveau du sol (m)",
+ "room_floor_offset_hint": "Si le sol de cette pièce est plus bas ou plus haut que l'étage (une entrée en contrebas : −0,39), sol, murs, portes, fenêtres et ce qui s'y trouve suivent ; le plafond reste. Ajoute les marches comme un escalier.",
  "room_inner": "Intérieur {w} × {d}",
  "room_inner_hint": "Mesuré de mur à mur : les murs intérieurs prennent la moitié de leur épaisseur, les murs extérieurs sont hors du contour.",
  "floor_heating": "Plancher chauffant (facultatif)",

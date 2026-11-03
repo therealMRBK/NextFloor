@@ -1344,6 +1344,8 @@
   "room_ceiling": "Pé-direito",
   "room_ceiling_tip": "Mais baixo que o piso (uma casa de banho sob a escada) ou mais alto (uma sala aberta até ao telhado): candeeiros de teto, ventoinhas, fitas LED e aparelhos de teto ficam pendurados aqui, e as paredes da divisão têm esta altura.",
   "room_ceiling_through": "O teto ({ceiling} m) está acima da altura do piso ({floor} m): a divisão entra no piso de cima, as paredes sobem com ela e o piso de cima fica aberto sobre ela. O editor do piso superior mostra a área tracejada.",
+  "room_floor_offset": "Nível do piso (m)",
+  "room_floor_offset_hint": "Se o piso desta divisão estiver mais baixo ou mais alto que o andar (uma entrada rebaixada: −0,39), piso, paredes, portas, janelas e o que lá está acompanham; o teto fica. Junta os degraus como escada.",
   "room_inner": "Interior {w} × {d}",
   "room_inner_hint": "Medido de parede a parede: as paredes interiores tiram metade da espessura, as exteriores ficam fora do contorno.",
   "floor_heating": "Piso radiante (opcional)",

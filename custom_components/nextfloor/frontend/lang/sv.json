@@ -1344,6 +1344,8 @@
   "room_ceiling": "Takhöjd",
   "room_ceiling_tip": "Lägre än våningen (ett badrum under trappan) eller högre (ett vardagsrum öppet upp till taket): taklampor, fläktar, LED-slingor och takmonterade enheter hänger då härifrån, och rummets väggar är så här höga.",
   "room_ceiling_through": "Taket ({ceiling} m) ligger över våningshöjden ({floor} m): rummet når upp i våningen ovanför, dess väggar växer med och våningen ovanför förblir öppen över det. Editorn för den övre våningen visar ytan skrafferad.",
+  "room_floor_offset": "Golvnivå (m)",
+  "room_floor_offset_hint": "Ligger rummets golv lägre eller högre än våningen (en nedsänkt entré: −0,39) följer golv, väggar, dörrar, fönster och det som står i rummet med; taket stannar. Lägg till stegen som en trappa.",
   "room_inner": "Invändigt {w} × {d}",
   "room_inner_hint": "Mätt vägg till vägg: innerväggar tar halva sin tjocklek, ytterväggar står utanför konturen.",
   "floor_heating": "Golvvärme (valfritt)",

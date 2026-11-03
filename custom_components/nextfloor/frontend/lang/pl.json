@@ -1344,6 +1344,8 @@
   "room_ceiling": "Wysokość sufitu",
   "room_ceiling_tip": "Niżej niż piętro (łazienka pod schodami) albo wyżej (salon otwarty aż pod dach): lampy sufitowe, wentylatory, taśmy LED i urządzenia sufitowe wiszą wtedy tutaj, a ściany pomieszczenia mają tę wysokość.",
   "room_ceiling_through": "Sufit ({ceiling} m) jest wyżej niż wysokość piętra ({floor} m): pomieszczenie sięga w piętro powyżej, jego ściany rosną razem z nim, a piętro powyżej pozostaje nad nim otwarte. Edytor wyższego piętra pokazuje ten obszar zakreskowany.",
+  "room_floor_offset": "Poziom podłogi (m)",
+  "room_floor_offset_hint": "Jeśli podłoga tego pomieszczenia leży niżej lub wyżej niż piętro (obniżone wejście: −0,39), podłoga, ściany, drzwi, okna i to, co w nim stoi, przesuwają się; sufit zostaje. Stopnie dodaj jako schody.",
   "room_inner": "Wewnątrz {w} × {d}",
   "room_inner_hint": "Mierzone od ściany do ściany: ściany wewnętrzne zabierają połowę grubości, zewnętrzne stoją poza obrysem.",
   "floor_heating": "Ogrzewanie podłogowe (opcjonalnie)",

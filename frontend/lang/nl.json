@@ -1344,6 +1344,8 @@
   "room_ceiling": "Plafondhoogte",
   "room_ceiling_tip": "Lager dan de verdieping (een badkamer onder de trap) of hoger (een woonkamer open tot onder het dak): plafondlampen, ventilatoren, ledstrips en plafondapparaten hangen dan hier, en de muren van de ruimte zijn zo hoog.",
   "room_ceiling_through": "Het plafond ({ceiling} m) ligt boven de verdiepingshoogte ({floor} m): de ruimte reikt tot in de verdieping erboven, de muren groeien mee en de verdieping erboven blijft boven de ruimte open (vide). De editor van de bovenste verdieping toont het vlak gearceerd.",
+  "room_floor_offset": "Vloerniveau (m)",
+  "room_floor_offset_hint": "Ligt de vloer van deze kamer lager of hoger dan de verdieping (een verlaagde entree: −0,39), dan gaan vloer, muren, deuren, ramen en wat erin staat mee; het plafond blijft. Zet de treden erbij als trap.",
   "room_inner": "Binnenmaat {w} × {d}",
   "room_inner_hint": "Van wand tot wand gemeten: binnenwanden nemen de helft van hun dikte, buitenwanden staan buiten de omtrek.",
   "floor_heating": "Vloerverwarming (optioneel)",

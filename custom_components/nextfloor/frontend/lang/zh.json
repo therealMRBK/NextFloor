@@ -1812,6 +1812,8 @@
  "studio_pack_publisher": "家具工作室",
  "room_ceiling_tip": "低于楼面（楼梯下的卫生间）或高于楼面（挑高到屋顶的客厅）：吊灯、风扇、灯带和吸顶设备都挂在这里，房间的墙也是这个高度。",
  "room_ceiling_through": "层高（{ceiling} m）高于楼层高度（{floor} m）：房间通到上一层，墙体随之升高，上一层在它上方保持开敞。上层的编辑器会用斜线标出这块区域。",
+ "room_floor_offset": "地面高度（米）",
+ "room_floor_offset_hint": "如果这个房间的地面比楼层低或高（例如下沉式入口：−0.39），地面、墙、门窗和房间里的东西都会随之移动；天花板保持不变。台阶请另外放一段楼梯。",
  "plan_dims": "尺寸标注",
  "plan_dims_hint": "给每段房间边线标注长度。",
  "heat_short_power": "功率",

@@ -1,7 +1,7 @@
 // Floor and living area of the rooms, counted like the German Wohnflächenverordnung: the floor inside the walls, in full where the
 // clear height is 2 m or more, half where it is between 1 and 2 m (under a slope), and not at all below 1 m.
 
-import { pointInPolygon, type Building, type Floor, type Room } from "../model.ts";
+import { pointInPolygon, roomOffset, type Building, type Floor, type Room } from "../model.ts";
 import { roofUnderAt } from "../roof/proposal.ts";
 import { generateWalls, type Wall } from "./walls.ts";
 
@@ -41,6 +41,7 @@ export function roomArea(b: Building, floor: Floor, room: Room, walls: readonly 
   });
   const ceiling = floor.elevation + (room.ceiling != null && room.ceiling > 0 ? room.ceiling : floor.height);
   const hasRoof = (b.settings.roof?.sections ?? []).some((s) => !s.open);
+  const level = roomOffset(room);
   let full = 0;
   let half = 0;
   let under = 0;
@@ -48,7 +49,8 @@ export function roomArea(b: Building, floor: Floor, room: Room, walls: readonly 
     for (let z = box.z0 + cell / 2; z < box.z1; z += cell) {
       if (!pointInPolygon([x, z], room.points) || near.some((w) => pointInPolygon([x, z], w.footprint))) continue;
       const roof = hasRoof ? roofUnderAt(b, x, z) : null;
-      const clear = Math.min(ceiling, roof ?? Infinity) - floor.elevation;
+      // a room on its own level: the clear height counts from its own floor
+      const clear = Math.min(ceiling, roof ?? Infinity) - floor.elevation - level;
       if (clear >= 2) full++;
       else if (clear >= 1) half++;
       else under++;

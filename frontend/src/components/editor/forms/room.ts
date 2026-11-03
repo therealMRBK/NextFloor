@@ -167,6 +167,8 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
       ${selectField(host, t("material"), room.floor_material, materials, (floor_material) => actions.patch({ floor_material }), { wide: true })}
       ${colorField(host, t("wall_paint_room"), room.wall_paint, host.doc.settings.wall_paint_inside ?? DEFAULT_PAINT_INSIDE, (wall_paint) => actions.patch({ wall_paint }))}
       ${host.floor ? ceilingField(host, room, host.floor, actions) : nothing}
+      ${numberField(host, t("room_floor_offset"), room.floor_offset ?? 0, (v) => actions.patch({ floor_offset: Math.abs(v) < 0.005 ? null : Math.max(-2, Math.min(2, Math.round(v * 1000) / 1000)) }), 0.01)}
+      ${hint(t("room_floor_offset_hint"), "nf-wide")}
       ${entityField(host, t("room_clean"), room.clean_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(script|button|input_button)\./.test(id)), (v) => actions.patch({ clean_entity: v && v !== "none" ? v : null }))}
       ${room.clean_entity ? nothing : hint(t("room_clean_hint"), "nf-wide")}
       ${entityField(host, t("floor_heating"), room.floor_heating ?? null, undefined, entityOptions(host.hass, (id) => /^(climate|switch|valve|binary_sensor|input_boolean)\./.test(id)), (v) => actions.patch({ floor_heating: v && v !== "none" ? v : null }))}

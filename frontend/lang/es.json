@@ -1344,6 +1344,8 @@
   "room_ceiling": "Altura del techo",
   "room_ceiling_tip": "Más bajo que la planta (un baño bajo la escalera) o más alto (un salón abierto hasta el tejado): las lámparas de techo, ventiladores, tiras LED y aparatos de techo cuelgan desde aquí, y las paredes de la habitación tienen esta altura.",
   "room_ceiling_through": "El techo ({ceiling} m) está por encima de la altura de la planta ({floor} m): la habitación llega a la planta de arriba, sus paredes suben con ella y la planta de arriba queda abierta sobre ella. El editor de la planta superior muestra la zona rayada.",
+  "room_floor_offset": "Nivel del suelo (m)",
+  "room_floor_offset_hint": "Si el suelo de esta habitación está más bajo o más alto que la planta (una entrada hundida: −0,39), suelo, paredes, puertas, ventanas y lo que hay en ella se mueven; el techo se queda. Añade los peldaños como escalera.",
   "room_inner": "Interior {w} × {d}",
   "room_inner_hint": "Medido de pared a pared: las paredes interiores restan la mitad de su grosor, las exteriores quedan fuera del contorno.",
   "floor_heating": "Suelo radiante (opcional)",

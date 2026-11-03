@@ -1,7 +1,7 @@
 // The wall solids: every wall cut into pieces at its openings, built as prisms that fold away above the cut height.
 
 import type { Wall } from "../../geometry/walls.ts";
-import { pointInPolygon, type Floor, type Vec2 } from "../../model.ts";
+import { pointInPolygon, roomOffset, type Floor, type Vec2 } from "../../model.ts";
 import { CAP_OFFSET, LOWER_OFFSET, PAINT_OFFSET, pushPrism, type GeoBuffer } from "../geo.ts";
 import { NEON, SLAB } from "./look.ts";
 import { clipAlong, unit } from "./outline.ts";
@@ -45,7 +45,7 @@ export function paintOfSide(poly: Vec2[], a: Vec2, b: Vec2, paint: WallPaint, ro
  * Pieces along the wall's axis, cut at every opening edge. Each piece leaves out all openings above it (two windows one
  * above the other, a window over a door), and the wall fills what remains.
  */
-function piecesOf(spans: Span[], height: number): Piece[] {
+function piecesOf(spans: Span[], height: number, bottom = -SLAB): Piece[] {
   const stops = [-Infinity, ...new Set(spans.flatMap((sp) => [sp.s0, sp.s1])).values(), Infinity].sort((a, b) => a - b);
   const pieces: Piece[] = [];
   for (let i = 0; i + 1 < stops.length; i++) {
@@ -54,7 +54,7 @@ function piecesOf(spans: Span[], height: number): Piece[] {
     const middle = Number.isFinite(t0) && Number.isFinite(t1) ? (t0 + t1) / 2 : Number.isFinite(t0) ? t0 + 1 : t1 - 1;
     const covering = spans.filter((sp) => sp.s0 < middle && sp.s1 > middle).map((sp) => [sp.sill, sp.top] as [number, number]).sort((a, b) => a[0] - b[0]);
     const ranges: [number, number][] = [];
-    let y = -SLAB;
+    let y = bottom;
     for (const [lower, upper] of covering) {
       if (lower > y + 1e-4) ranges.push([y, lower]);
       y = Math.max(y, upper);
@@ -86,7 +86,9 @@ export function buildWallSolids(
     const list = (spans.get(wall) ?? []).sort((p, q) => p.s0 - q.s0);
     const tops = wallTops(wall, floor.height, limits);
     const { H, topAt } = tops;
-    const pieces = piecesOf(list, H);
+    // a wall beside a room on a lower level reaches down to that room's floor
+    const lowest = Math.min(0, ...[wall.roomLeft, wall.roomRight].map((id) => roomOffset(floor.rooms.find((r) => r.id === id))));
+    const pieces = piecesOf(list, H, lowest - SLAB);
     // under a roof the pieces are cut into short steps, so each step's top lies in one roof plane
     const length = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
     // (a sloping wall is cut into steps the same way: its top then lies in one plane per step)

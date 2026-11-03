@@ -3,7 +3,7 @@
 // registry, filled through setPacks() with what the backend returned.
 
 import type { StudioRecipe } from "./studio/recipes.ts";
-import { builtinBase, ceilingAt, ceilingOf, ELECTRIC_FURNITURE, FURNITURE_SIZE, surfaceHeight, WALL_LAMP_Y, type Floor, type Furniture } from "./model.ts";
+import { builtinBase, ceilingAt, ceilingOf, ELECTRIC_FURNITURE, FURNITURE_SIZE, offsetAt, surfaceHeight, WALL_LAMP_Y, type Floor, type Furniture } from "./model.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
 
 /** One building block of an item. Positions and extents are fractions of the item's own size. */
@@ -356,6 +356,13 @@ export function packName(pack: { id: string; name: string }, language: string): 
 /** How high above the floor the underside of a piece is: pack items by their mount, wall lights, LED strips and own heights included. */
 export function mountBase(floor: Floor, piece: Pick<Furniture, "type" | "x" | "z" | "h"> & { mount_y?: number | null; ceiling_y?: number | null }): number {
   if (piece.mount_y != null) return piece.mount_y;
+  // a room on its own level (a sunken entrance): what stands or hangs on its walls moves with its floor; ceiling items stay
+  return levelledBase(floor, piece) + (hangsFromCeiling(piece) ? 0 : offsetAt(floor, piece.x, piece.z));
+}
+
+const hangsFromCeiling = (piece: Pick<Furniture, "type">): boolean => piece.type === "led_strip" || packItem(piece.type)?.mount === "ceiling";
+
+function levelledBase(floor: Floor, piece: Pick<Furniture, "type" | "x" | "z" | "h"> & { ceiling_y?: number | null }): number {
   if (piece.type === "lamp_wall") return WALL_LAMP_Y;
   // LED strips sit just below the ceiling of their room
   if (piece.type === "led_strip") return Math.max(0, ceilingAt(floor, piece.x, piece.z) - 0.04 - Math.max(0.02, piece.h));

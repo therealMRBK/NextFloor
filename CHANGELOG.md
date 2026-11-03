@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Added
+
+- **A room on its own level**: *Floor level* in the room form puts a room's floor lower or higher than its floor (a sunken entrance at −0.39 m, a split level). Its floor, the bottom of its walls, its doors and windows, the furniture and device pins in it move with it, the step to the rooms around it shows, and its living area counts from its own floor; the ceiling stays where it is. Thanks to @ayque ([#57](https://github.com/therealMRBK/NextFloor/issues/57)).
+
 ## 0.22.0
 
 ### Added

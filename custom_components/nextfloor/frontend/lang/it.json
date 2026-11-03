@@ -1344,6 +1344,8 @@
   "room_ceiling": "Altezza soffitto",
   "room_ceiling_tip": "Più basso del piano (un bagno sotto le scale) o più alto (un soggiorno aperto fino al tetto): plafoniere, ventilatori, strisce LED e dispositivi a soffitto pendono da qui, e le pareti della stanza sono così alte.",
   "room_ceiling_through": "Il soffitto ({ceiling} m) è sopra l'altezza del piano ({floor} m): la stanza arriva nel piano superiore, le sue pareti salgono con lei e il piano superiore resta aperto sopra di essa. L'editor del piano superiore mostra l'area tratteggiata.",
+  "room_floor_offset": "Livello del pavimento (m)",
+  "room_floor_offset_hint": "Se il pavimento di questa stanza è più basso o più alto del piano (un ingresso ribassato: −0,39), pavimento, pareti, porte, finestre e ciò che c'è dentro si spostano; il soffitto resta. Aggiungi i gradini come scala.",
   "room_inner": "Interno {w} × {d}",
   "room_inner_hint": "Misurato da parete a parete: le pareti interne tolgono metà del loro spessore, quelle esterne stanno fuori dal contorno.",
   "floor_heating": "Riscaldamento a pavimento (facoltativo)",

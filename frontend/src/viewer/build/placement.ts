@@ -1,7 +1,7 @@
 // Fold buckets of the walls, and the openings resolved onto their walls.
 
 import { locateOpening, openingHost, type Wall } from "../../geometry/walls.ts";
-import type { Floor, Vec2 } from "../../model.ts";
+import { roomOffset, type Floor, type Vec2 } from "../../model.ts";
 import { SECTORS } from "./look.ts";
 import { unit } from "./outline.ts";
 import type { OpeningInfo, Span } from "./types.ts";
@@ -106,8 +106,10 @@ export function placeOpenings(floor: Floor, walls: Wall[], wallBucket: Map<Wall,
     const roomOnLeft = wall.free ? axis[0] * (hp[1][0] - hp[0][0]) + axis[1] * (hp[1][1] - hp[0][1]) > 0 : wall.roomLeft === o.room_id;
     const leftNormal: Vec2 = [-axis[1], axis[0]];
     const toRoom: Vec2 = roomOnLeft ? leftNormal : [-leftNormal[0], -leftNormal[1]];
-    const top = Math.min(wallTops(wall, floor.height, limits).lowestTop(s0, s0 + width) - 0.02, o.sill + o.height);
-    const sill = Math.max(0, Math.min(o.sill, top - 0.1));
+    // sill and top count from the floor of the opening's room, which may lie on its own level (#57)
+    const level = roomOffset(floor.rooms.find((r) => r.id === o.room_id));
+    const top = Math.min(wallTops(wall, floor.height, limits).lowestTop(s0, s0 + width) - 0.02, level + o.sill + o.height);
+    const sill = Math.max(Math.min(0, level), Math.min(level + o.sill, top - 0.1));
     // looking at the wall from the room, "right" is (toRoom.z, -toRoom.x)
     const right: Vec2 = [toRoom[1], -toRoom[0]];
     const startIsLeft = axis[0] * right[0] + axis[1] * right[1] > 0;

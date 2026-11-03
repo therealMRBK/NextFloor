@@ -71,6 +71,11 @@ export interface Room {
   living?: boolean | null;
   /** Cleaning: the script or button that sends the robot vacuum to this room (its panel shows "Clean"). */
   clean_entity?: string | null;
+  /**
+   * The room's floor lies this much below (negative) or above its floor's level, in m (a sunken entrance, a split level; #57). Its
+   * floor, the bottom of its walls, its doors and windows and what stands in it move with it; its ceiling stays where it is.
+   */
+  floor_offset?: number | null;
   /** Underfloor heating: the thermostat, valve or switch of the room's floor heating; its floor glows warm while it heats. */
   floor_heating?: string | null;
   /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */
@@ -1170,6 +1175,15 @@ export function roomsReachingUp(floors: readonly Floor[], floor: Floor): Vec2[][
     .filter((f) => f.elevation < floor.elevation)
     .flatMap((f) => f.rooms.filter((r) => r.points.length >= 3 && r.ceiling != null && r.ceiling > f.height + 0.005 && f.elevation + r.ceiling > floor.elevation + 0.05))
     .map((r) => r.points);
+}
+
+/** How far a room's floor lies below or above its floor's level (m; 0 for a room without one). */
+export const roomOffset = (room: Pick<Room, "floor_offset"> | undefined): number => (room?.floor_offset && Number.isFinite(room.floor_offset) ? room.floor_offset : 0);
+
+/** The level of the floor at a point of a floor: the offset of the room it lies in (0 outside every room). */
+export function offsetAt(floor: Pick<Floor, "rooms">, x: number, z: number): number {
+  const room = floor.rooms.find((r) => r.points.length >= 3 && r.floor_offset && pointInPolygon([x, z], r.points));
+  return roomOffset(room);
 }
 
 /** The height of the ceiling above a point of a floor: the room's own ceiling, else the floor height. */

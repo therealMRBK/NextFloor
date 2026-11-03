@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { BufferGeometry } from "three";
 import { generateWalls } from "../../geometry/walls.ts";
-import { newFloor, type Floor, type Furniture, type Opening, type Room, type Vec2 } from "../../model.ts";
+import { newFloor, offsetAt, type Floor, type Furniture, type Opening, type Room, type Vec2 } from "../../model.ts";
 import { ALWAYS, CUT_OFFSET, LOWER_OFFSET } from "../geo.ts";
 import { buildFloorGeometry, stairHoles } from "./build.ts";
 import { bucketWalls, placeOpenings, roofLimits, wallHeight, wallTops } from "./placement.ts";
 import { clipAlong, counterClockwise, outlineOf, subtractSpans } from "./outline.ts";
+import { mountBase } from "../../packs.ts";
 
 const OUTER = 0.3;
 const INNER = 0.1;
@@ -243,4 +244,28 @@ test("a sloping wall: its top follows the slope, above the floor height too; ope
   const geo = buildFloorGeometry(f, OUTER, INNER);
   const ys = Array.from(geo.walls.getAttribute("position").array).filter((_, i) => i % 3 === 1);
   assert.ok(Math.max(...ys) > 4.6, "the wall is drawn up to its high end");
+});
+
+test("a room on its own level: its floor, its walls' bottom and its doors move with it (#57)", () => {
+  const hall = { ...room("h", 0, 0, 3, 3), floor_offset: -0.39 };
+  const living = room("l", 3, 0, 7, 3);
+  const floor = { ...newFloor("g", "G", 0), rooms: [hall, living], openings: [{ id: "d", room_id: "h", edge: 3, offset: 1.5, width: 1, type: "door", sill: 0, height: 2.1, hinge: "left", leaves: 1, swing: "in", cover: null, contact: null, contact2: null, tilt: null } as Opening] };
+  const walls = generateWalls(floor.rooms, { exterior: OUTER, interior: INNER }).walls;
+  const { openings } = placeOpenings(floor, walls, new Map(walls.map((w, i) => [w, i])), roofLimits(undefined));
+  assert.equal(openings[0].sill, -0.39);
+  assert.ok(Math.abs(openings[0].top - (2.1 - 0.39)) < 1e-9);
+  assert.equal(offsetAt(floor, 1, 1), -0.39);
+  assert.equal(offsetAt(floor, 5, 1), 0);
+  assert.equal(mountBase(floor, { type: "sofa", x: 1, z: 1, h: 0.8 }), -0.39);
+});
+
+test("the floor of a room on its own level is drawn at its level, with the step to the rooms around it", () => {
+  const hall = { ...room("h", 0, 0, 3, 3), floor_offset: -0.39 };
+  const floor = { ...newFloor("g", "G", 0), rooms: [hall, room("l", 3, 0, 7, 3)] };
+  const g = buildFloorGeometry(floor, OUTER, INNER, []);
+  const pos = g.floor.getAttribute("position");
+  const hallTris = g.roomTris.find((r) => r.roomId === "h")!;
+  for (let i = hallTris.start * 3; i < hallTris.end * 3; i++) assert.ok(Math.abs(pos.getY(i) + 0.39) < 1e-6);
+  const living = g.roomTris.find((r) => r.roomId === "l")!;
+  assert.ok(Math.abs(pos.getY(living.start * 3)) < 1e-6);
 });
