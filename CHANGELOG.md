@@ -2,16 +2,11 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
-## Unreleased
-
-### Added
-
-- **A room on its own level**: *Floor level* in the room form puts a room's floor lower or higher than its floor (a sunken entrance at −0.39 m, a split level). Its floor, the bottom of its walls, its doors and windows, the furniture and device pins in it move with it, the step to the rooms around it shows, and its living area counts from its own floor; the ceiling stays where it is. Thanks to @ayque ([#57](https://github.com/therealMRBK/NextFloor/issues/57)).
-
 ## 0.22.0
 
 ### Added
 
+- **A room on its own level**: *Floor level* in the room form puts a room's floor lower or higher than its floor (a sunken entrance at −0.39 m, a split level). Its floor, the bottom of its walls, its doors and windows, the furniture and device pins in it move with it, the step to the rooms around it shows, and its living area counts from its own floor; the ceiling stays where it is. Thanks to @ayque ([#57](https://github.com/therealMRBK/NextFloor/issues/57)).
 - **Simplified Chinese**: the whole interface in Simplified Chinese (中文), fetched when Home Assistant runs in Chinese. Thanks to @Sugsss ([#59](https://github.com/therealMRBK/NextFloor/pull/59)).
 - **Rooms open to the floor above**: a room's *Ceiling height* may now be higher than its floor – a living room open up to the floor above or under the roof, a gallery. Its walls and windows rise with it, ceiling lights hang from the high ceiling, and the floor above stays open over it; that floor's editor shows the area hatched. Thanks to @Xtiger123X ([#55](https://github.com/therealMRBK/NextFloor/issues/55)).
 - **Furniture studio in the editor**: *🛠️ Build your own piece* at the top of the furniture library builds a cabinet (any width, doors, drawers, handles, plinth or legs), a shelf, a lamp (floor, table, pendant, wall) or a device with a display, in centimetres and with a front view that follows every change. It goes straight into the plan and into the pack *Own furniture*; *Change in the studio* on a placed piece changes it again, everywhere it stands.
