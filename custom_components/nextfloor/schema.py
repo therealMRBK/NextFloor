@@ -775,7 +775,9 @@ SETTINGS_SCHEMA = vol.Schema(
                         {
                             vol.Required("id"): vol.All(str, vol.Length(min=1, max=64)),
                             vol.Required("name"): vol.All(str, vol.Length(max=80)),
-                            vol.Optional("rooms", default=list): vol.All([vol.All(str, vol.Length(max=64))], vol.Length(max=60)),
+                            vol.Optional("rooms", default=list): vol.All(
+                                [vol.All(str, vol.Length(max=64))], vol.Length(max=60)
+                            ),
                         }
                     )
                 ],
