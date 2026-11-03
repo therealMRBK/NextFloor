@@ -9,7 +9,8 @@ import { openMoreInfo, stateText } from "../markers.ts";
 import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts";
-import { roomPower } from "../heatmap.ts";
+import { roomPower, roomPowerSensors } from "../heatmap.ts";
+import { energyCost, loadRoomEnergy, type RoomEnergy } from "../live/room-energy.ts";
 import { roomSun } from "../live/sun-hours.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
@@ -62,6 +63,7 @@ export class NfRoomPanel extends LitElement {
     _curve: { state: true },
     _moodName: { state: true },
     _undo: { state: true },
+    _energy: { state: true },
     rooms: { attribute: false },
     building: { attribute: false },
   };
@@ -93,6 +95,8 @@ export class NfRoomPanel extends LitElement {
   /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
   private declare _curve: (number | null)[] | null;
   private curveFor = "";
+  /** What the room used today and this month (from the statistics of its power sensors), loaded when the room opens. */
+  private declare _energy: RoomEnergy | null;
   /** After "everything off": the calls that bring it back, offered for a few seconds. */
   private declare _undo: ServiceCall[] | null;
   private undoTimer: ReturnType<typeof setTimeout> | undefined;
@@ -109,6 +113,7 @@ export class NfRoomPanel extends LitElement {
     this._curve = null;
     this._moodName = null;
     this._undo = null;
+    this._energy = null;
     this.rooms = null;
     this.building = null;
   }
@@ -187,6 +192,31 @@ export class NfRoomPanel extends LitElement {
     }
   }
 
+  private async loadEnergy(room: Room): Promise<void> {
+    if (!this.floor || !this.building) return;
+    const ids = roomPowerSensors(this.hass, this.building, this.floor, room);
+    try {
+      const energy = await loadRoomEnergy(this.hass, ids);
+      if (this.room?.id === room.id) this._energy = energy;
+    } catch {
+      this._energy = null;
+    }
+  }
+
+  /** Today's and this month's use of the room, with the month's cost at the house's tariff. */
+  private renderEnergy() {
+    const e = this._energy;
+    if (!e || e.month <= 0) return nothing;
+    const id = this.building?.energy.tariff;
+    const st = id ? this.hass.states[id] : undefined;
+    const tariff = st ? { value: Number(st.state), unit: String(st.attributes.unit_of_measurement ?? "") } : null;
+    const cost = energyCost(e.month, tariff);
+    const kwh = (v: number) => `${formatNumber(this.hass, v, v < 10 ? 2 : 1)} kWh`;
+    return html`<p class="nf-rp-facts nf-rp-energy" title=${this.t("room_energy_hint")}>
+      ⚡ ${this.t("room_energy", { today: kwh(e.today), month: kwh(e.month) })}${cost ? ` · ${formatNumber(this.hass, cost.value, 2)} ${cost.currency}` : ""}
+    </p>`;
+  }
+
   /** The heating curve: the room's temperature over the last 24 hours, with its lowest and highest value. */
   private renderCurve() {
     const curve = this._curve;
@@ -213,7 +243,9 @@ export class NfRoomPanel extends LitElement {
     if (this.room && this.hass && this.curveFor !== this.room.id) {
       this.curveFor = this.room.id;
       this._curve = null;
+      this._energy = null;
       void this.loadCurve(this.room);
+      void this.loadEnergy(this.room);
     }
   }
 
@@ -319,7 +351,7 @@ export class NfRoomPanel extends LitElement {
       <header class="nf-rp-head">
         <div>
           <h2>${room.name}</h2>
-          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing}
+          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()}
           ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>

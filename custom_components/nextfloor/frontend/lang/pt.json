@@ -1433,6 +1433,8 @@
   "heat_power": "Consumo de energia",
   "heat_sun": "Sol hoje",
   "room_sun_hours": "{h} h de sol hoje ({facing})",
+  "room_energy": "hoje {today} · mês {month}",
+  "room_energy_hint": "Das estatísticas dos sensores de potência dos dispositivos da divisão; o custo do mês com a tarifa da casa.",
   "heat_summer": "verão",
   "heat_winter": "inverno",
   "air_co2": "arejar (CO₂)",

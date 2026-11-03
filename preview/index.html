@@ -338,6 +338,21 @@ const params = new URLSearchParams(location.search);
               importedPacks = importedPacks.filter((p) => p.id !== msg.pack_id);
               return null;
             case "recorder/statistics_during_period": {
+              // daily means (the week on the house card, a room's use this month): solar by the season, devices around their power now
+              if (msg.period === "day") {
+                const rows = (id) => {
+                  const out = [];
+                  const day = new Date(msg.start_time);
+                  day.setHours(0, 0, 0, 0);
+                  for (let k = 0; day.getTime() < Date.now(); k++, day.setDate(day.getDate() + 1)) {
+                    const now = Math.max(0, Number(hass.states[id]?.state) || 0);
+                    const mean = /pv|solar|balkon/.test(id) ? 600 + 250 * Math.sin(k) : Math.max(20, (now || 120) * (0.5 + 0.3 * Math.abs(Math.sin(k + id.length))));
+                    out.push({ start: day.getTime(), end: day.getTime() + 86400000, mean: Math.round(mean) });
+                  }
+                  return out;
+                };
+                return Object.fromEntries((msg.statistic_ids ?? []).map((id) => [id, rows(id)]));
+              }
               // today's solar curve: a sunny day, five-minute means from midnight up to now
               const midnight = new Date();
               midnight.setHours(0, 0, 0, 0);

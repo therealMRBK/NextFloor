@@ -88,6 +88,16 @@ export function heatColor(mode: HeatColorMode, value: number, summer = false): R
  * sensor, else the one on its entity's device), each counted once. Null when the room has none. The house's meters stay out.
  */
 export function roomPower(hass: HomeAssistant, building: Pick<Building, "energy">, floor: Floor, room: Room): number | null {
+  let sum: number | null = null;
+  for (const s of roomPowerSensors(hass, building, floor, room)) {
+    const w = readPower(hass.states[s]);
+    if (w !== null) sum = (sum ?? 0) + Math.max(0, w);
+  }
+  return sum;
+}
+
+/** The power sensors of a room's device pins and furniture, each once, without the house's meters. */
+export function roomPowerSensors(hass: HomeAssistant, building: Pick<Building, "energy">, floor: Floor, room: Room): string[] {
   const { grid, solar, battery } = building.energy;
   const meters = new Set([grid, solar, battery].filter(Boolean));
   const sensors = new Set<string>();
@@ -101,13 +111,7 @@ export function roomPower(hass: HomeAssistant, building: Pick<Building, "energy"
     const s = m.power && m.power !== "none" ? m.power : m.entity && m.entity !== "none" ? powerSensorFor(hass, m.entity) : null;
     if (s) sensors.add(s);
   }
-  let sum: number | null = null;
-  for (const s of sensors) {
-    if (meters.has(s)) continue;
-    const w = readPower(hass.states[s]);
-    if (w !== null) sum = (sum ?? 0) + Math.max(0, w);
-  }
-  return sum;
+  return [...sensors].filter((s) => !meters.has(s));
 }
 
 /** The reading of every room that has a fitting sensor, by room id. */

@@ -8,7 +8,6 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 |---|---|
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
 | Sun over the year | The hours of sun of each room for any day of the year, as a curve from January to December (today's hours are in 0.22) |
-| Energy per room | What each room used today and this month, in kWh and in money with the tariff (the power now is in 0.22) |
 
 ---
 
@@ -20,4 +19,3 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 |---|---|
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
 | Sonne übers Jahr | Die Sonnenstunden jedes Raums für jeden Tag des Jahres, als Kurve von Januar bis Dezember (die von heute kamen mit 0.22) |
-| Energie pro Raum | Was jeder Raum heute und im Monat verbraucht hat, in kWh und mit dem Tarif in Euro (die Leistung jetzt kam mit 0.22) |

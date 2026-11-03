@@ -1433,6 +1433,8 @@
   "heat_power": "Elförbrukning",
   "heat_sun": "Sol i dag",
   "room_sun_hours": "{h} h sol i dag ({facing})",
+  "room_energy": "i dag {today} · månad {month}",
+  "room_energy_hint": "Från statistiken för effektsensorerna i rummets enheter; månadens kostnad med husets tariff.",
   "heat_summer": "sommar",
   "heat_winter": "vinter",
   "air_co2": "vädra (CO₂)",
