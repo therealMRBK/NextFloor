@@ -257,6 +257,8 @@ _STAIR_SCHEMA = vol.Schema(
         vol.Optional("down"): bool,
         vol.Optional("rail"): vol.In(["none", "left", "right", "both"]),
         vol.Optional("opening"): vol.In(["headroom", "full", "none"]),
+        # an L or U stair: the risers from the floor up to its landing (None: shared by the flights' lengths)
+        vol.Optional("landing_after"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=1, max=40))),
     }
 )
 

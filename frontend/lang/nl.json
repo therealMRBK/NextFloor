@@ -2661,6 +2661,8 @@
   "stair_risers": "Stootborden",
   "stair_steps": "Optreden (aantal)",
   "stair_run_width": "Trapbreedte (m)",
+  "stair_landing_after": "Treden tot het bordes",
+  "stair_landing_hint": "Het bordes ligt {h} cm boven de vloer; de overige treden komen erna.",
   "stair_rail": "Leuning",
   "stair_rail_none": "Geen",
   "stair_rail_left": "Links",

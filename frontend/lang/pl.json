@@ -2661,6 +2661,8 @@
   "stair_risers": "Podstopnice",
   "stair_steps": "Liczba stopni",
   "stair_run_width": "Szerokość biegu (m)",
+  "stair_landing_after": "Stopnie do spocznika",
+  "stair_landing_hint": "Spocznik jest {h} cm nad podłogą; pozostałe stopnie są za nim.",
   "stair_rail": "Balustrada",
   "stair_rail_none": "Brak",
   "stair_rail_left": "Lewa",

@@ -2661,6 +2661,8 @@
   "stair_risers": "Sättsteg",
   "stair_steps": "Antal steg",
   "stair_run_width": "Trappbredd (m)",
+  "stair_landing_after": "Steg upp till vilplanet",
+  "stair_landing_hint": "Vilplanet ligger {h} cm över golvet; resten av stegen kommer efter.",
   "stair_rail": "Räcke",
   "stair_rail_none": "Inget",
   "stair_rail_left": "Vänster",

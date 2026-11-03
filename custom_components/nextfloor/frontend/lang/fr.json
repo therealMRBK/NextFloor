@@ -2661,6 +2661,8 @@
  "stair_risers": "Contremarches",
  "stair_steps": "Contremarches (nombre)",
  "stair_run_width": "Largeur de volée (m)",
+ "stair_landing_after": "Marches jusqu'au palier",
+ "stair_landing_hint": "Le palier est à {h} cm au-dessus du sol ; les autres marches viennent après.",
  "stair_rail": "Garde-corps",
  "stair_rail_none": "Aucun",
  "stair_rail_left": "Gauche",

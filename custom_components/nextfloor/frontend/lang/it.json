@@ -2661,6 +2661,8 @@
   "stair_risers": "Alzate chiuse",
   "stair_steps": "Alzate (numero)",
   "stair_run_width": "Larghezza rampa (m)",
+  "stair_landing_after": "Gradini fino al pianerottolo",
+  "stair_landing_hint": "Il pianerottolo è a {h} cm dal pavimento; gli altri gradini vengono dopo.",
   "stair_rail": "Ringhiera",
   "stair_rail_none": "Nessuna",
   "stair_rail_left": "Sinistra",

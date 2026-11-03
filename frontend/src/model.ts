@@ -1080,7 +1080,8 @@ export const WALL_LAMP_Y = 1.75;
 
 /** Items that can be lifted off the floor (a wall cabinet, a shelf, a wall light, an LED strip): everything but lamps hung from the ceiling and the ceiling-mounted pack items. */
 export function canLift(f: Pick<Furniture, "type">): boolean {
-  if (CEILING_TYPES.has(f.type) || ["stairs", "stairwell", "parking"].includes(f.type)) return false;
+  // stairs can stand on a landing or a step (the upper flight of a staircase), so they have a mount height too (#58)
+  if (CEILING_TYPES.has(f.type) || ["stairwell", "parking"].includes(f.type)) return false;
   return packItem(f.type)?.mount !== "ceiling";
 }
 

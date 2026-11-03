@@ -14,6 +14,13 @@ export interface StairActions {
 }
 
 /** Rise, average going on the walking line and the step measure (2 × rise + going) in metres. */
+/** The riser the landing of an L or U stair stands on now (the position of its landing tread in the layout). */
+function landingNow(cfg: StairConfig, item: Furniture): number {
+  const layout = stairLayout(cfg, item.w, item.d, item.h);
+  const at = layout.treads.findIndex((t) => t.landing);
+  return at >= 0 ? at + 1 : 1;
+}
+
 export function stairMeasures(item: Pick<Furniture, "w" | "d" | "h" | "stair">): { rise: number; going: number; measure: number; steps: number } {
   const layout = stairLayout(stairConfig(item), item.w, item.d, item.h);
   const walk = layout.treads.map(treadCentre);
@@ -72,6 +79,11 @@ export function stairForm(host: EditorHost, item: Furniture, actions: StairActio
     ${turned && cfg.shape !== "spiral"
       ? html`${numberField(host, t("stair_run_width"), cfg.run_width ?? stairLayout(cfg, item.w, item.d, item.h).flight, (v) => set({ run_width: Math.max(0.4, v) }), 0.01, 0.4)}
         ${cfg.run_width != null ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => set({ run_width: null })}>${t("height_auto")}</button>` : ""}`
+      : ""}
+    ${cfg.shape === "l" || cfg.shape === "u"
+      ? html`${numberField(host, t("stair_landing_after"), cfg.landing_after ?? landingNow(cfg, item), (v) => set({ landing_after: Math.round(Math.min(m.steps - 1, Math.max(1, v))) }), 1, 1)}
+        ${cfg.landing_after != null ? html`<button class="nf-btn nf-field-btn" ?disabled=${!host.admin} @click=${() => set({ landing_after: null })}>${t("height_auto")}</button>` : ""}
+        ${hint(t("stair_landing_hint", { h: cm(((cfg.landing_after ?? landingNow(cfg, item)) * Math.abs(item.h)) / m.steps) }), "nf-wide")}`
       : ""}
     ${selectField(host, t("stair_rail"), cfg.rail, STAIR_RAILS.map((r) => [r, t(`stair_rail_${r}` as I18nKey)] as const), (rail) => set({ rail }))}
     ${checkField(host, t("stair_down"), cfg.down, toggleDown, { title: t("stair_down_hint") })}

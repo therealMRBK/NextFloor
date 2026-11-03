@@ -37,9 +37,11 @@ export interface StairConfig {
   rail: StairRail;
   /** The opening in the floor the stair reaches (the floor above, or its own floor going down). */
   opening: StairOpening;
+  /** An L or U stair with a landing: the risers from the floor up to the landing (null = the flights share the risers by length). */
+  landing_after?: number | null;
 }
 
-export const DEFAULT_STAIR: StairConfig = { shape: "straight", turn: "right", build: "solid", risers: true, steps: null, run_width: null, down: false, rail: "none", opening: "headroom" };
+export const DEFAULT_STAIR: StairConfig = { shape: "straight", turn: "right", build: "solid", risers: true, steps: null, run_width: null, down: false, rail: "none", opening: "headroom", landing_after: null };
 
 /** A good starting size [w, d] for each shape, used when the shape is changed in the editor. */
 export const STAIR_SIZES: Record<StairShape, [number, number]> = {
@@ -73,6 +75,7 @@ export function stairConfig(item: { stair?: Partial<StairConfig> | null }): Stai
     down: s.down === true,
     rail: isOneOf(STAIR_RAILS, s.rail) ? s.rail : DEFAULT_STAIR.rail,
     opening: isOneOf(STAIR_OPENINGS, s.opening) ? s.opening : DEFAULT_STAIR.opening,
+    landing_after: typeof s.landing_after === "number" && Number.isFinite(s.landing_after) ? Math.max(1, Math.round(s.landing_after)) : null,
   };
 }
 
@@ -172,6 +175,13 @@ function share(count: number, first: number, second: number): [number, number] {
   return [a, count - a];
 }
 
+/** A landing at a chosen riser: treads before it and after it (the landing itself is one tread); null when it is not set. */
+function landingSplit(cfg: StairConfig, n: number): [number, number] | null {
+  if (cfg.landing_after == null) return null;
+  const before = Math.min(n - 1, Math.max(1, Math.round(cfg.landing_after))) - 1;
+  return [before, n - 1 - before];
+}
+
 /** Layout for a stair turning right; a left-turning stair is this one mirrored. */
 function rightLayout(cfg: StairConfig, w: number, d: number, n: number): { treads: Omit<Tread, "top">[]; flight: number; column: number } {
   const [x0, x1, zb, zf] = [-w / 2, w / 2, -d / 2, d / 2];
@@ -182,7 +192,7 @@ function rightLayout(cfg: StairConfig, w: number, d: number, n: number): { tread
       const corner: Vec2 = [x0 + f, zb + f];
       const outer: Vec2[] = [[x0, zb + f], [x0, zb], [x0 + f, zb]];
       const turn = cfg.shape === "l" ? 1 : Math.min(n, n >= 8 ? 3 : 2);
-      const [a, b] = share(n - turn, d - f, w - f);
+      const [a, b] = cfg.shape === "l" ? landingSplit(cfg, n) ?? share(n - turn, d - f, w - f) : share(n - turn, d - f, w - f);
       const first = flight([x0, zf], [x0 + f, zf], [x0, zb + f], corner, a);
       const middle = cfg.shape === "l" ? [tread(outer, [corner], true)] : winders(outer, corner, corner, corner, turn);
       const second = flight([x0 + f, zb], corner, [x1, zb], [x1, zb + f], b);
@@ -195,7 +205,7 @@ function rightLayout(cfg: StairConfig, w: number, d: number, n: number): { tread
       const outer: Vec2[] = [[x0, zt], [x0, zb], [x1, zb], [x1, zt]];
       const [entry, exit]: Vec2[] = [[x0 + f, zt], [x1 - f, zt]];
       const turn = cfg.shape === "u" ? 1 : Math.min(n, n >= 12 ? 6 : n >= 8 ? 4 : 2);
-      const [a, b] = share(n - turn, d - f, d - f);
+      const [a, b] = cfg.shape === "u" ? landingSplit(cfg, n) ?? share(n - turn, d - f, d - f) : share(n - turn, d - f, d - f);
       const first = flight([x0, zf], [x0 + f, zf], [x0, zt], entry, a);
       const middle = cfg.shape === "u" ? [tread(outer, [entry, exit], true)] : winders(outer, entry, [0, zt], exit, turn);
       // the second flight comes back towards the front, its outer (left) side along the right edge

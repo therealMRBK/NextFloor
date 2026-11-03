@@ -34,6 +34,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Temperatures on the floor label**: a floor's label in the house view shows its coolest and warmest room (*19–22 °C*).
 - **Door not locked at night**: *Warn at night when a door is not locked* in the settings names the plan's door locks that stand unlocked between 10 pm and 6 am, as a quiet note in the warning bar.
 - **A power sensor for lamps**: lamps now have the *Power sensor* field too, like every other electric piece – for a light behind a measuring switch or a smart plug. Its watts show on the lamp's pin and count in the power flow and the room's power. Thanks to @Robsonator ([#56](https://github.com/therealMRBK/NextFloor/discussions/56)).
+- **Stairs: the landing where you want it, and a mount height**: L and U stairs have *Risers up to the landing* – the flights can differ (8 up to the landing, 11 after it), the form says how high the landing lies. Stairs now have the *Mount height* like other furniture, so the upper flight can start on a landing. Thanks to @ayque ([#58](https://github.com/therealMRBK/NextFloor/issues/58)).
 
 ### Fixed
 

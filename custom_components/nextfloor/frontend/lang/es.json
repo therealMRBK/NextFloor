@@ -2661,6 +2661,8 @@
   "stair_risers": "Tabicas",
   "stair_steps": "Peldaños (número)",
   "stair_run_width": "Ancho de tramo (m)",
+  "stair_landing_after": "Peldaños hasta el descansillo",
+  "stair_landing_hint": "El descansillo está a {h} cm del suelo; el resto de peldaños viene después.",
   "stair_rail": "Barandilla",
   "stair_rail_none": "Ninguna",
   "stair_rail_left": "Izquierda",

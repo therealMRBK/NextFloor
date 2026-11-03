@@ -102,3 +102,16 @@ test("an L stair opens the floor over its treads only, not over the inside corne
   // a point on the landing is open
   assert.ok(rings.some((ring) => pointInPolygon([-0.6, -1.0], ring)), "landing is open");
 });
+
+test("a U stair can have its landing at a chosen riser (#58)", () => {
+  const cfg = { ...DEFAULT_STAIR, shape: "u" as const, steps: 19, landing_after: 8 };
+  const layout = stairLayout(cfg, 2.2, 2.6, 19 * 0.17);
+  const at = layout.treads.findIndex((t) => t.landing);
+  // 7 treads, then the landing on the 8th riser, then 11 more
+  assert.equal(at, 7);
+  assert.equal(layout.treads.length - at - 1, 11);
+  assert.ok(Math.abs(layout.treads[at].top - 8 * 0.17) < 1e-6);
+  // without it the flights share by length
+  const even = stairLayout({ ...cfg, landing_after: null }, 2.2, 2.6, 19 * 0.17);
+  assert.notEqual(even.treads.findIndex((t) => t.landing), 7);
+});

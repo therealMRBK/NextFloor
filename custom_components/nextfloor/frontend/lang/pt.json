@@ -2661,6 +2661,8 @@
   "stair_risers": "Espelhos",
   "stair_steps": "Degraus (número)",
   "stair_run_width": "Largura do lanço (m)",
+  "stair_landing_after": "Degraus até ao patamar",
+  "stair_landing_hint": "O patamar fica a {h} cm do chão; os outros degraus vêm depois.",
   "stair_rail": "Corrimão",
   "stair_rail_none": "Nenhum",
   "stair_rail_left": "Esquerda",
