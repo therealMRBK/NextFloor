@@ -39,6 +39,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 ### Fixed
 
 - **Floor pictures on a low card**: on a stage lower than 520 px (a dashboard card of 420 px) the floor pictures are smaller and stop above the star, the search and the buttons at the bottom left instead of sliding under them.
+- **Chinese interface**: the panel, the editor and the card are fully translated into Simplified Chinese – every text the interface shows, like the other language files, and a key a file lacks still falls back to English. Thanks to @Sugsss.
 
 ## 0.21.0
 
