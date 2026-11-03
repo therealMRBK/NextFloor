@@ -16,7 +16,7 @@ import { LOW_BATTERY, planBatteries } from "../live/batteries.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
-import { airingNeed, mouldRisk } from "../live/room-climate.ts";
+import { airingNeed, comfortScore, isSummer, mouldRisk } from "../live/room-climate.ts";
 import { hassAt, loadHistory } from "../live/time-travel.ts";
 import { curvePath } from "../live/day-curves.ts";
 import { controls, tokens } from "../styles.ts";
@@ -577,6 +577,9 @@ export class NfRoomPanel extends LitElement {
     const h = roomClimateValue(this.hass, this.floor, room, "humidity");
     const need = airingNeed(roomClimateValue(this.hass, this.floor, room, "co2"), h, mouldRisk(t, h));
     if (need) out.push(`💨 ${this.t(`air_${need}`)}`);
+    // how comfortable it is (0 … 100)
+    const comfort = comfortScore(t, h, roomClimateValue(this.hass, this.floor, room, "co2"), isSummer(new Date(), this.hass.config?.latitude));
+    if (comfort !== null && (t !== null || h !== null)) out.push(`😊 ${this.t("comfort_n", { n: comfort })}`);
     return out;
   }
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { airingNeed, isSummer, mouldRisk } from "./room-climate.ts";
+import { airingNeed, comfortScore, isSummer, mouldRisk } from "./room-climate.ts";
 
 test("mould risk grows with humidity at the cold wall", () => {
   assert.equal(mouldRisk(21, 45), 0, "a dry living room");
@@ -17,4 +17,15 @@ test("when to air a room, and the season", () => {
   assert.equal(isSummer(new Date(2026, 6, 1)), true);
   assert.equal(isSummer(new Date(2026, 0, 1)), false);
   assert.equal(isSummer(new Date(2026, 0, 1), -33), true, "January is summer in Sydney");
+});
+
+test("the comfort score: full in the band, one bad value always shows", () => {
+  assert.equal(comfortScore(21.5, 50, 600), 100);
+  assert.equal(comfortScore(null, null, null), null);
+  // 2 °C too cold costs 30
+  assert.equal(comfortScore(18, null, null), 70);
+  // fine air and temperature but 1400 ppm CO₂: never more than 30 above the worst part
+  assert.equal(comfortScore(21, 50, 1400), 30);
+  // 25 °C is fine in summer, not in winter
+  assert.ok(comfortScore(25, 50, null, true)! > comfortScore(25, 50, null, false)!);
 });

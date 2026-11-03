@@ -31,3 +31,25 @@ export function isSummer(now = new Date(), latitude = 50): boolean {
   const north = m >= 4 && m <= 8;
   return latitude < 0 ? !north : north;
 }
+
+/**
+ * How comfortable a room is, 0 … 100, from what its sensors say: the temperature in its band (20–23 °C, 22–26 °C in summer), the
+ * humidity between 40 and 60 %, CO₂ up to 800 ppm. The average of the parts that are known, but never more than 30 above the worst,
+ * so one bad value always shows. Null without any reading.
+ */
+export function comfortScore(temp: number | null, humidity: number | null, co2: number | null, summer = false): number | null {
+  const parts: number[] = [];
+  if (temp !== null) {
+    const [lo, hi] = summer ? [22, 26] : [20, 23];
+    const off = temp < lo ? lo - temp : temp > hi ? temp - hi : 0;
+    parts.push(Math.max(0, 100 - off * 15));
+  }
+  if (humidity !== null) {
+    const off = humidity < 40 ? 40 - humidity : humidity > 60 ? humidity - 60 : 0;
+    parts.push(Math.max(0, 100 - off * 4));
+  }
+  if (co2 !== null) parts.push(Math.max(0, Math.min(100, 100 - ((co2 - 800) / 600) * 100)));
+  if (!parts.length) return null;
+  const mean = parts.reduce((a, b) => a + b, 0) / parts.length;
+  return Math.round(Math.min(mean, Math.min(...parts) + 30));
+}

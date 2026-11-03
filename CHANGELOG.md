@@ -28,6 +28,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Heating with the window open**: when one of a room's windows or doors stands open (its contact or tilt sensor) while the room's thermostat heats, the room panel says so (*🪟 1 window open while the heating runs*) and *Heating off* switches it off – or to its lowest temperature where it has no off.
 - **Low batteries**: the batteries of the plan's devices – device pins, the contacts, locks and blinds of doors and windows, linked furniture – from the battery sensor on their device or their own battery attribute. Below 20 % they are in the plan check (*🪫 Battery low: kitchen window (12 %)*) and in their room's panel.
 - **Lights on, nobody there**: when a room's motion, occupancy and presence sensors have seen nobody for ten minutes while lights are on, the room panel says so and *Lights off* switches them off.
+- **Comfort score**: every room with climate sensors gets a score from 0 to 100 – the temperature in its band (20–23 °C, 22–26 °C in summer), humidity between 40 and 60 %, CO₂ up to 800 ppm, where one bad value always shows. As the heat map mode *Comfort* and in the room panel (*😊 Comfort 85*).
 
 ## 0.21.0
 

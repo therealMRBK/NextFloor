@@ -3,11 +3,11 @@
 import { roomClimateValue } from "./devices.ts";
 import { powerSensorFor, readPower } from "./energy.ts";
 import { roomSun } from "./live/sun-hours.ts";
-import { mouldRisk } from "./live/room-climate.ts";
+import { comfortScore, isSummer, mouldRisk } from "./live/room-climate.ts";
 import { pointInPolygon, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
-export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "power" | "sun" | "values" | "wifi";
+export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "comfort" | "power" | "sun" | "values" | "wifi";
 
 /** The modes that paint floors ("values" prints numbers at the room names instead). */
 export type HeatColorMode = Exclude<HeatMode, "none" | "values" | "wifi">;
@@ -43,6 +43,12 @@ export const HEAT_SCALES: Record<HeatColorMode, Scale> = {
     deviceClass: "",
     unit: "%",
     stops: [[0, [0.3, 0.88, 0.5]], [40, [0.98, 0.84, 0.3]], [70, [1, 0.5, 0.2]], [100, [0.75, 0.2, 0.55]]],
+  },
+  // how comfortable the room is, 0 … 100 (live/room-climate.ts)
+  comfort: {
+    deviceClass: "",
+    unit: "",
+    stops: [[0, [0.98, 0.25, 0.25]], [40, [1, 0.5, 0.2]], [65, [0.98, 0.84, 0.3]], [85, [0.3, 0.88, 0.5]], [100, [0.2, 0.8, 0.7]]],
   },
   // what the room's devices draw now (their power sensors added up)
   power: {
@@ -122,6 +128,11 @@ export function roomValues(hass: HomeAssistant, building: Building, mode: HeatCo
       if (mode === "power") {
         const w = roomPower(hass, building, floor, room);
         if (w !== null) values.set(room.id, w);
+        continue;
+      }
+      if (mode === "comfort") {
+        const v = comfortScore(roomClimateValue(hass, floor, room, "temperature"), roomClimateValue(hass, floor, room, "humidity"), roomClimateValue(hass, floor, room, "co2"), isSummer(new Date(), hass.config?.latitude));
+        if (v !== null) values.set(room.id, v);
         continue;
       }
       if (mode === "sun") {
