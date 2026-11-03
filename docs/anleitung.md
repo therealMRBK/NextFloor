@@ -34,6 +34,10 @@ Plan, Bilder und Packs liegen in Home Assistants `.storage`. Nichts davon verlä
 
 **3D daneben** zeigt das 3D-Modell neben dem Plan. *Ansicht als Start der Etage / des Raums* merkt sich die aktuelle 3D-Kamera.
 
+## Plan prüfen
+
+*✓ Plan prüfen* oben in der Seitenleiste des Editors listet Etage für Etage, was fehlt oder schief ist: Räume ohne Bereich, Bereiche ohne Raum, noch nicht gesetzte Geräte eines Raums, übereinanderliegende Räume, Türen und Fenster neben der Wand und Verknüpfungen zu Entitäten, die Home Assistant nicht mehr kennt. Blaue Knöpfe lösen es per Tipp (Rückgängig geht wie immer), *Zeigen* öffnet die Stelle.
+
 ## Einrichten
 
 Werkzeug *Möbel*, Raum antippen, rechts aus der Bibliothek wählen. Neue Stücke landen in der Raummitte.

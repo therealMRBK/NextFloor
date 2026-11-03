@@ -34,6 +34,10 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 
 **3D beside** shows the 3D model next to the plan while you draw. *View as this floor's / room's start* remembers the current 3D camera for later.
 
+## Check the plan
+
+*✓ Check the plan* at the top of the editor's side panel lists what is missing or off, floor by floor: rooms without an area, areas without a room, devices of a room not placed yet, overlapping rooms, doors and windows off their wall, and links to entities Home Assistant no longer knows. Blue buttons fix it in one tap (undo works as always), *Show* opens the place.
+
 ## Furnish
 
 *Furniture* tool, tap a room, pick from the library on the right. New pieces appear in the middle of the room.

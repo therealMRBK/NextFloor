@@ -496,6 +496,38 @@ export const editorStyles = css`
     box-shadow: none;
     border: 1px solid var(--nf-line);
   }
+  .nf-check-open {
+    width: 100%;
+    margin: 0 0 8px;
+  }
+  .nf-check-floor {
+    margin: 10px 0 4px;
+    font-size: 0.85em;
+    color: var(--nf-muted, #8d9bbd);
+  }
+  .nf-check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .nf-check-list li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--nf-soft, #8a9bb8) 10%, transparent);
+  }
+  .nf-check-text {
+    font-size: 0.9em;
+    line-height: 1.3;
+  }
+  .nf-check-ok {
+    font-size: 1em;
+  }
   .nf-studio-view {
     display: block;
     width: 100%;

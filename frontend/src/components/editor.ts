@@ -107,6 +107,8 @@ import { furnitureName } from "../furniture-names.ts";
 import { getPacks, isPackType, mountBase, packItem, packType, setPacks, type FurniturePack } from "../packs.ts";
 import { buildItem, newRecipe, STUDIO_PACK, studioId } from "../studio/recipes.ts";
 import { renderStudio, type StudioDraft } from "./editor/forms/studio.ts";
+import { planCheckButton, renderPlanCheck } from "./editor/forms/plan-check.ts";
+import { checkPlan, type CheckFinding } from "./editor/ops/plan-check.ts";
 
 /** Items that can be fixed against moving. */
 type FixKind = "room" | "opening" | "furniture" | "device" | "wall" | "outdoor";
@@ -182,6 +184,7 @@ export class NfEditor extends LitElement {
     _solid3d: { state: true },
     _sidePinned: { state: true },
     _studio: { state: true },
+    _check: { state: true },
     _sideOpen: { state: true },
     _floorId: { state: true },
     _energyNote: { state: true },
@@ -223,6 +226,8 @@ export class NfEditor extends LitElement {
   private declare _sidePinned: boolean;
   /** The furniture studio while it is open in the side panel. */
   private declare _studio: StudioDraft | null;
+  /** The plan check is open in the side panel. */
+  private declare _check: boolean;
   private declare _sideOpen: boolean;
   private declare _floorId: string | null;
   /** What the import from the energy dashboard did (shown under its button). */
@@ -320,6 +325,7 @@ export class NfEditor extends LitElement {
     }
     this._sidePinned = pinned;
     this._studio = null;
+    this._check = false;
     this._measureLen = 3;
     this._rectSize = [4, 3];
     this._tool = "select";
@@ -454,6 +460,42 @@ export class NfEditor extends LitElement {
       const [w, d, h] = item.size;
       this.change((doc) => doc.floors.forEach((f) => f.furniture.forEach((m) => m.type === type && Object.assign(m, { w, d, h }))));
     } else this.addFurniture(type);
+  }
+
+  /** Does what a finding of the plan check offers: opens its floor and shows the place, or makes the fix. */
+  private fixFinding(f: CheckFinding): void {
+    if (f.floorId !== this._floorId) this.floorActions().openFloor(f.floorId);
+    const onFloor = (doc: Building) => doc.floors.find((fl) => fl.id === f.floorId);
+    const fix = f.fix;
+    switch (fix.do) {
+      case "show_room":
+        return this.selectItem("room", fix.roomId);
+      case "show_opening":
+        return this.selectItem("opening", fix.openingId);
+      case "show_furniture":
+        return this.selectItem("furniture", fix.furnitureId);
+      case "set_area":
+        return this.change((doc) => {
+          const room = onFloor(doc)?.rooms.find((r) => r.id === fix.roomId);
+          if (room) Object.assign(room, areaChoice(room, fix.areaId, this.hass?.areas ?? {}));
+        });
+      case "add_area_rooms": {
+        const floor = onFloor(this._doc);
+        if (floor) this.addAreaRooms(floor);
+        return;
+      }
+      case "place_devices":
+        return this.change((doc) => {
+          const floor = onFloor(doc);
+          const room = floor?.rooms.find((r) => r.id === fix.roomId);
+          if (floor && room) placeInRoom(doc, floor, room, fix.entityIds);
+        });
+      case "remove_placements":
+        return this.change((doc) => {
+          const floor = onFloor(doc);
+          if (floor) floor.placements = floor.placements.filter((p) => !fix.entityIds.includes(p.entity_id));
+        });
+    }
   }
 
   /** The studio button under the form of a piece built in the studio. */
@@ -3030,6 +3072,11 @@ export class NfEditor extends LitElement {
     }
     return html`
       ${admin ? nothing : html`<p class="nf-note">${this.t("read_only")}</p>`}
+      ${this._check
+        ? renderPlanCheck(this.host, checkPlan(this._doc, this.hass), { fix: (f) => this.fixFinding(f), close: () => (this._check = false) })
+        : admin
+          ? planCheckButton(this.host, () => (this._check = true))
+          : nothing}
       ${renderFloors(this.host, this.side, this.floorActions(), floor, this._floorId)}
       ${this._tool === "measure" && floor
         ? renderMeasureForm(this.host, this.measureState(), this.measureActions())
