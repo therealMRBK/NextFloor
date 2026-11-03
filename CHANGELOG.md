@@ -31,6 +31,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Comfort score**: every room with climate sensors gets a score from 0 to 100 – the temperature in its band (20–23 °C, 22–26 °C in summer), humidity between 40 and 60 %, CO₂ up to 800 ppm, where one bad value always shows. As the heat map mode *Comfort* and in the room panel (*😊 Comfort 85*).
 - **Open for …**: the room panel shows how long the room's windows and doors stand open (*🪟 open for 12 min*), the one open longest – handy for airing.
 - **Measurements in the plan**: *📏 Measurements* in the editor's bar labels every room edge with its length; the switch is remembered on the browser.
+- **Temperatures on the floor label**: a floor's label in the house view shows its coolest and warmest room (*19–22 °C*).
+- **Door not locked at night**: *Warn at night when a door is not locked* in the settings names the plan's door locks that stand unlocked between 10 pm and 6 am, as a quiet note in the warning bar.
 
 ## 0.21.0
 

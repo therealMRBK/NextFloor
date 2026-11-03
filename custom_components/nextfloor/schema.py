@@ -798,6 +798,8 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("rain_warning", default=True): bool,
         # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
         vol.Optional("contact_warning"): bool,
+        # a note at night (22:00 to 6:00) for the plan's door locks that stand unlocked
+        vol.Optional("night_lock_warning"): bool,
         # motion, occupancy and presence sensors show their marker only while they detect something
         vol.Optional("motion_markers_active"): bool,
         # own sensors shown at the top of the 3D view

@@ -622,6 +622,8 @@ export interface BuildingSettings {
   outage_sensor?: string | null;
   /** Warn when a door or window contact has been unavailable for 10 minutes (empty battery, out of reach); default off. */
   contact_warning?: boolean;
+  /** Warn at night (22:00–6:00) about the plan's door locks that stand unlocked. */
+  night_lock_warning?: boolean;
   /** Motion, occupancy and presence sensors show their marker only while they detect something (default off). */
   motion_markers_active?: boolean;
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */

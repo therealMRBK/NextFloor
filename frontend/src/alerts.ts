@@ -8,7 +8,7 @@ import { pointInPolygon, type Building, type Opening, type OwnAlert } from "./mo
 import type { HomeAssistant } from "./types.ts";
 import { weatherEntity } from "./weather.ts";
 
-export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage" | "contact_lost" | "own";
+export type AlertKind = "smoke" | "gas" | "co" | "water" | "alarm" | "alarm_pending" | "window_rain" | "power_outage" | "contact_lost" | "unlocked_night" | "own";
 
 export interface Alert {
   kind: AlertKind;
@@ -38,10 +38,12 @@ export interface AlertSources {
   contacts?: { floorId: string; roomId: string; entity: string }[];
   /** Own warnings of the plan (House → Own warnings). */
   own?: OwnAlert[];
+  /** The door locks of the plan, watched at night (empty unless that warning is on). */
+  locks?: { floorId: string; roomId: string; entity: string }[];
 }
 
 /** Warnings that only show in the banner: the room does not pulse and the view does not jump to it. */
-export const QUIET_ALERTS: ReadonlySet<AlertKind> = new Set<AlertKind>(["contact_lost", "own"]);
+export const QUIET_ALERTS: ReadonlySet<AlertKind> = new Set<AlertKind>(["contact_lost", "unlocked_night", "own"]);
 
 /**
  * Whether an own warning's condition is met: the entity is in one of the states (comma separated, any case), or its number is below
@@ -115,6 +117,9 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
     outage: building.settings.outage_sensor && building.settings.outage_sensor !== "none" ? building.settings.outage_sensor : null,
     contacts: building.settings.contact_warning && links ? openingContacts(building, links) : [],
     own: (building.settings.own_alerts ?? []).filter((r) => r.entity),
+    locks: building.settings.night_lock_warning
+      ? building.floors.flatMap((f) => f.openings.filter((o) => o.lock && o.lock !== "none").map((o) => ({ entity: o.lock!, roomId: o.room_id, floorId: f.id })))
+      : [],
   };
 }
 
@@ -124,6 +129,7 @@ export function alertEntities(sources: AlertSources): string[] {
   for (const id of [sources.weather, sources.rain, sources.outage]) if (id) ids.push(id);
   for (const c of sources.contacts ?? []) ids.push(c.entity);
   for (const r of sources.own ?? []) ids.push(r.entity);
+  for (const l of sources.locks ?? []) ids.push(l.entity);
   return ids;
 }
 
@@ -270,7 +276,11 @@ export function findAlerts(hass: HomeAssistant, building: Building, sources: Ale
     const room = r.room_id ? building.floors.find((f) => f.rooms.some((x) => x.id === r.room_id)) : undefined;
     return { kind: "own", entity: r.entity, roomId: room ? r.room_id! : null, floorId: room?.id ?? null, text: r.text, ...(r.color ? { color: r.color } : {}), ...(r.tap ? { tap: r.tap } : {}) };
   });
-  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now), ...own];
+  // door locks left unlocked between 22:00 and 6:00
+  const hour = new Date(now).getHours();
+  const night = hour >= 22 || hour < 6;
+  const unlocked: Alert[] = night ? (sources.locks ?? []).filter((l) => hass.states[l.entity]?.state === "unlocked").map((l) => ({ kind: "unlocked_night", entity: l.entity, roomId: l.roomId, floorId: l.floorId })) : [];
+  return [...sensorWarnings(hass, sources), ...rainWarnings(hass, building, sources, links), ...alarmWarnings(hass, sources, building), ...outage, ...contactWarnings(hass, sources, now), ...unlocked, ...own];
 }
 
 const PULSE: Record<AlertKind, [number, number, number]> = {
@@ -283,6 +293,7 @@ const PULSE: Record<AlertKind, [number, number, number]> = {
   alarm_pending: [1, 0.62, 0.2],
   power_outage: [1, 0.62, 0.2],
   contact_lost: [1, 0.62, 0.2],
+  unlocked_night: [1, 0.62, 0.2],
   own: [1, 0.62, 0.2],
 };
 

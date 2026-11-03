@@ -4,7 +4,7 @@ import { alarmCause, ownAlertMet, alertColor, alertEntities, alertSources, alert
 import type { OpeningEntities } from "./devices.ts";
 import { emptyBuilding, newFloor, type Opening } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
-import { entity as entity2, hassOf } from "./entities/fixtures.ts";
+import { box, entity as entity2, floorWith, hassOf, opening } from "./entities/fixtures.ts";
 
 type Attrs = Record<string, unknown>;
 const entity = (entity_id: string, state: string, attributes: Attrs = {}) => ({ entity_id, state, attributes });
@@ -217,4 +217,18 @@ test("own warnings: a state, one of several, or a number below or above a value"
   const alerts = findAlerts(hass, b, alertSources(hass, b), new Map());
   assert.equal(alerts[0].kind, "own");
   assert.equal(alertText(hass, b, alerts[0]), "Dishwasher done");
+});
+
+test("an unlocked door lock warns at night only, and only with the warning on", () => {
+  const hass = hassOf([entity("lock.front", "unlocked")]);
+  const b = emptyBuilding();
+  b.floors = [{ ...floorWith([box("f", 0, 0, 3, 3)]), openings: [opening("d", "f", "door", { lock: "lock.front" })] }];
+  const night = new Date(2026, 10, 3, 23, 0).getTime();
+  const day = new Date(2026, 10, 3, 14, 0).getTime();
+  assert.equal(findAlerts(hass, b, alertSources(hass, b), new Map(), night).filter((a) => a.kind === "unlocked_night").length, 0);
+  b.settings = { ...b.settings, night_lock_warning: true };
+  const sources = alertSources(hass, b);
+  assert.deepEqual(findAlerts(hass, b, sources, new Map(), night).filter((a) => a.kind === "unlocked_night").map((a) => a.entity), ["lock.front"]);
+  assert.equal(findAlerts(hass, b, sources, new Map(), day).filter((a) => a.kind === "unlocked_night").length, 0);
+  assert.ok(alertEntities(sources).includes("lock.front"));
 });

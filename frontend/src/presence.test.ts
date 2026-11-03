@@ -82,7 +82,7 @@ test("floor counts and their text leave out what is zero", () => {
     { entity_id: "light.two", x: 2, z: 1, y: null, mount: null },
   ];
   const counts = floorCounts(hass, building, new Map(), personsInRooms(hass, building)).get("g");
-  assert.deepEqual(counts, { rooms: 2, lightsOn: 1, open: 0, persons: 1, power: null });
+  assert.deepEqual(counts, { rooms: 2, lightsOn: 1, open: 0, persons: 1, power: null, temps: null });
   const text = floorInfoText(hass, counts!);
   assert.equal(text.split(" · ").length, 3, text);
   assert.equal(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: null }).includes(" · "), false);
@@ -95,4 +95,11 @@ test("a span of time reads as minutes, then hours", () => {
   assert.equal(sinceText(30_000), "0 min");
   assert.equal(sinceText(12 * 60_000), "12 min");
   assert.equal(sinceText(125 * 60_000), "2:05 h");
+});
+
+test("the floor label shows the coolest and the warmest room", () => {
+  const hass = { language: "en", states: {}, entities: {}, areas: {}, config: { unit_system: { temperature: "°C" } } } as unknown as HomeAssistant;
+  const text = floorInfoText(hass, { rooms: 3, lightsOn: 0, open: 0, persons: 0, power: null, temps: [19.4, 22.2] });
+  assert.ok(text.endsWith("19–22 °C"), text);
+  assert.ok(floorInfoText(hass, { rooms: 3, lightsOn: 0, open: 0, persons: 0, power: null, temps: [21.1, 21.3] }).endsWith(" 21 °C"));
 });

@@ -1,7 +1,7 @@
 // People and floor summaries. A room sensor (ESPresense, Bermuda ...) reports the room a person is in as
 // its state; this finds that room in the plan. Also the counts on the floor labels of the house view.
 
-import { kindOf, openingState, primaryEntities, type OpeningEntities, roomEntities } from "./devices.ts";
+import { fromCelsius, kindOf, openingState, primaryEntities, roomClimateValue, tempUnit, type OpeningEntities, roomEntities } from "./devices.ts";
 import { readPower } from "./energy.ts";
 import { formatNumber, translate } from "./i18n.ts";
 import { centroid, type Building, type Floor, type Room } from "./model.ts";
@@ -81,6 +81,8 @@ export interface FloorCounts {
   persons: number;
   /** What the floor's own meter reads now, in watts (null: no meter or no number). */
   power: number | null;
+  /** The coolest and the warmest room of the floor (°C), when at least two rooms have a temperature. */
+  temps?: [number, number] | null;
 }
 
 function lightsOnFloor(hass: HomeAssistant, floor: Floor): number {
@@ -123,9 +125,16 @@ export function floorCounts(hass: HomeAssistant, building: Building, links: Map<
         open: openingsOnFloor(hass, floor, links),
         persons: persons.filter((p) => p.floorId === floor.id).length,
         power: floor.power_entity ? readPower(hass.states[floor.power_entity]) : null,
+        temps: tempRange(hass, floor),
       },
     ]),
   );
+}
+
+/** The coolest and the warmest room of a floor, when two or more rooms report a temperature. */
+function tempRange(hass: HomeAssistant, floor: Floor): [number, number] | null {
+  const values = floor.rooms.map((r) => roomClimateValue(hass, floor, r, "temperature")).filter((v): v is number => v !== null);
+  return values.length >= 2 ? [Math.min(...values), Math.max(...values)] : null;
 }
 
 /** The label text: "3 rooms · 2 lights on · 1 open · 1 person", leaving out what is zero. */
@@ -134,6 +143,10 @@ export function floorInfoText(hass: HomeAssistant | undefined, c: FloorCounts): 
   if (c.lightsOn > 0) parts.push(translate(hass, "floor_lights", { n: c.lightsOn }));
   if (c.open > 0) parts.push(translate(hass, "floor_open", { n: c.open }));
   if (c.persons > 0) parts.push(translate(hass, "floor_persons", { n: c.persons }));
+  if (c.temps && hass) {
+    const [lo, hi] = c.temps.map((t) => formatNumber(hass, fromCelsius(hass, t), 0));
+    parts.push(lo === hi ? `${lo} ${tempUnit(hass)}` : `${lo}–${hi} ${tempUnit(hass)}`);
+  }
   if (c.power != null) parts.push(`⚡ ${powerText(hass, c.power)}`);
   return parts.join(" · ");
 }
