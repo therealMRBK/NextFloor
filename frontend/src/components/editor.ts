@@ -505,6 +505,8 @@ export class NfEditor extends LitElement {
     const onFloor = (doc: Building) => doc.floors.find((fl) => fl.id === f.floorId);
     const fix = f.fix;
     switch (fix.do) {
+      case "show_floor":
+        return;
       case "show_room":
         return this.selectItem("room", fix.roomId);
       case "show_opening":

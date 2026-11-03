@@ -4,17 +4,19 @@
 import { entityKind, entityName, groupByDevice, isPlaceable, roomEntities } from "../../../devices.ts";
 import { powerSensorFor, readPower } from "../../../energy.ts";
 import { energyCost } from "../../../live/room-energy.ts";
+import { LOW_BATTERY, planBatteries } from "../../../live/batteries.ts";
 import { locateOpening, openingHost, generateWalls } from "../../../geometry/walls.ts";
 import { isLamp, pointInPolygon, type Building, type Floor, type Room, type Vec2 } from "../../../model.ts";
 import type { HomeAssistant } from "../../../types.ts";
 import { placedInRoom } from "./device-list.ts";
 import { unplacedAreas } from "./floors.ts";
 
-export type CheckKind = "room_no_area" | "areas_unplaced" | "devices_unplaced" | "rooms_overlap" | "opening_off_wall" | "entity_missing" | "furniture_entity_missing" | "standby";
+export type CheckKind = "room_no_area" | "areas_unplaced" | "devices_unplaced" | "rooms_overlap" | "opening_off_wall" | "entity_missing" | "furniture_entity_missing" | "standby" | "battery_low";
 
 /** What a tap on a finding does: show it, or fix it right away. */
 export type CheckFix =
   | { do: "show_room"; roomId: string }
+  | { do: "show_floor" }
   | { do: "set_area"; roomId: string; areaId: string }
   | { do: "add_area_rooms" }
   | { do: "place_devices"; roomId: string; entityIds: string[] }
@@ -162,6 +164,13 @@ export function checkPlan(doc: Building, hass: HomeAssistant | undefined): Check
         const missing = furnitureEntityFields(m).filter((id) => id !== "none" && !hass.states[id]);
         if (missing.length && !(isLamp(m.type) && !m.entity)) out.push({ kind: "furniture_entity_missing", floorId: floor.id, vars: { id: missing[0] }, fix: { do: "show_furniture", furnitureId: m.id }, changes: false });
       }
+    }
+  }
+  // low batteries of the plan's devices, by floor
+  if (hass) {
+    for (const b of planBatteries(hass, doc)) {
+      if (b.level >= LOW_BATTERY) break;
+      out.push({ kind: "battery_low", floorId: b.floorId, vars: { name: entityName(hass, b.entity), level: Math.round(b.level) }, fix: b.roomId ? { do: "show_room", roomId: b.roomId } : { do: "show_floor" }, changes: false });
     }
   }
   return out;

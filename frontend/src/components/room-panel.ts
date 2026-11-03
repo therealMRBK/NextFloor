@@ -12,6 +12,7 @@ import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts
 import { roomPower, roomPowerSensors } from "../heatmap.ts";
 import { energyCost, loadRoomEnergy, type RoomEnergy } from "../live/room-energy.ts";
 import { roomSun, roomSunYear, sunnyWindowsNow } from "../live/sun-hours.ts";
+import { LOW_BATTERY, planBatteries } from "../live/batteries.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
@@ -51,6 +52,8 @@ const transport = (d: string) =>
 
 /** From this room temperature (°C) on, the sun on its windows is worth a shade hint. */
 const SHADE_FROM = 24;
+/** Minutes without anybody seen before lights on count as forgotten. */
+const EMPTY_MINUTES = 10;
 
 export class NfRoomPanel extends LitElement {
   static properties = {
@@ -208,6 +211,25 @@ export class NfRoomPanel extends LitElement {
     } catch {
       this._energy = null;
     }
+  }
+
+  /**
+   * Lights on, nobody there: the room's motion, occupancy and presence sensors have seen nobody for ten minutes while lights are on –
+   * say so, and switch them off in one tap.
+   */
+  private renderEmptyLights(room: Room, lightsOn: HassEntity[]) {
+    if (!lightsOn.length || !this.room) return nothing;
+    const sensors = roomEntities(this.hass, room)
+      .map((id) => this.hass.states[id])
+      .filter((st): st is HassEntity => !!st && st.entity_id.startsWith("binary_sensor.") && ["motion", "occupancy", "presence"].includes(String(st.attributes.device_class)));
+    if (!sensors.length || sensors.some((st) => st.state !== "off")) return nothing;
+    const quietSince = Math.max(...sensors.map((st) => Date.parse(String(st.last_changed ?? "")) || 0));
+    const minutes = Math.floor((Date.now() - quietSince) / 60_000);
+    if (!quietSince || minutes < EMPTY_MINUTES) return nothing;
+    return html`<div class="nf-rp-shade">
+      <span>💡 ${this.t("empty_lights_hint", { n: lightsOn.length, min: minutes })}</span>
+      <button class="nf-btn nf-rp-small" @click=${() => this.call("light", "turn_off", { entity_id: lightsOn.map((l) => l.entity_id) })}>${this.t("empty_lights_off")}</button>
+    </div>`;
   }
 
   /** A window or door of the room stands open while its heating runs: say so, and turn the heating off (or to its lowest) in one tap. */
@@ -436,7 +458,7 @@ export class NfRoomPanel extends LitElement {
         <div>
           <h2>${room.name}</h2>
           ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
-          ${this.renderOpenWhileHeating(climates)}
+          ${this.renderOpenWhileHeating(climates)} ${this.renderEmptyLights(room, lightsOn)}
           ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>
@@ -538,6 +560,9 @@ export class NfRoomPanel extends LitElement {
     // what the room's devices draw now
     const power = this.floor && this.building ? roomPower(this.hass, this.building, this.floor, room) : null;
     if (power !== null) out.push(`⚡ ${powerText(this.hass, power)}`);
+    // the room's devices with a low battery
+    const low = this.building ? planBatteries(this.hass, this.building).filter((b) => b.roomId === room.id && b.level < LOW_BATTERY) : [];
+    if (low.length) out.push(`🪫 ${this.t("battery_low_n", { n: low.length, names: low.map((b) => `${this.name(b.entity)} ${Math.round(b.level)} %`).join(", ") })}`);
     // the circuits of the fuse box that feed it
     const circuits = (this.building?.settings.circuits ?? []).filter((c) => c.rooms.includes(room.id)).map((c) => c.name);
     if (circuits.length) out.push(`🔌 ${circuits.join(", ")}`);
