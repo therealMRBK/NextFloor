@@ -314,6 +314,16 @@ export class NfRoomPanel extends LitElement {
     void this.hass.callService(domain, service, data);
   }
 
+  /** "Clean": runs the script or presses the button that sends the robot vacuum to this room. */
+  private renderClean(room: Room) {
+    const id = room.clean_entity;
+    const st = id ? this.hass.states[id] : undefined;
+    if (!id || !st) return nothing;
+    const domain = id.slice(0, id.indexOf("."));
+    const run = () => (domain === "script" ? this.call("script", "turn_on", { entity_id: id }) : this.call(domain, "press", { entity_id: id }));
+    return html`<div class="nf-rp-alloff"><button class="nf-btn nf-rp-small" ?disabled=${isUnavailable(st)} title=${this.t("room_clean_run_hint")} @click=${run}>🧹 ${this.t("room_clean_run")}</button></div>`;
+  }
+
   /** Switches off what is on in the room and offers to undo it for ten seconds. */
   private allOff(states: HassEntity[]): void {
     const plan = allOffPlan(states);
@@ -415,6 +425,7 @@ export class NfRoomPanel extends LitElement {
       </header>
       <div class="nf-rp-body" ?hidden=${this._folded}>
         ${this.renderAllOff([...lights, ...media, ...switches])}
+        ${this.renderClean(room)}
         ${!room.area_id && !outside
           ? html`<p class="nf-rp-note">${this.t("panel_no_area")}</p>`
           : !ids.length

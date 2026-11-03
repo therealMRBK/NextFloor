@@ -69,6 +69,8 @@ export interface Room {
   moods?: LightMood[];
   /** Whether the room counts as living area (null: by its name – a garage, cellar or utility room does not). */
   living?: boolean | null;
+  /** Cleaning: the script or button that sends the robot vacuum to this room (its panel shows "Clean"). */
+  clean_entity?: string | null;
   /** Underfloor heating: the thermostat, valve or switch of the room's floor heating; its floor glows warm while it heats. */
   floor_heating?: string | null;
   /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */

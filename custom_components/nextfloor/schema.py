@@ -111,6 +111,8 @@ ROOM_SCHEMA = vol.Schema(
             ],
             vol.Length(max=MAX_POINTS),
         ),
+        # cleaning: the script or button that sends the robot vacuum to this room
+        vol.Optional("clean_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # whether the room counts as living area (None: by its name, a garage or cellar does not)
         vol.Optional("living", default=None): vol.Any(None, bool),
         # the room's own ceiling height (None = the floor height)
