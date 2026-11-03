@@ -1439,6 +1439,8 @@
   "heat_power": "Consumo elettrico",
   "heat_sun": "Sole oggi",
   "room_sun_hours": "{h} h di sole oggi ({facing})",
+  "open_heating_hint": "{n} finestre aperte mentre il riscaldamento è acceso.",
+  "open_heating_off": "Spegni riscaldamento",
   "room_clean": "Pulizia (script o pulsante)",
   "room_clean_hint": "Uno script o pulsante che manda il robot aspirapolvere in questa stanza (es. la pulizia per stanza della tua integrazione). Il pannello della stanza mostra allora «🧹 Pulisci».",
   "room_clean_run": "Pulisci",

@@ -210,6 +210,28 @@ export class NfRoomPanel extends LitElement {
     }
   }
 
+  /** A window or door of the room stands open while its heating runs: say so, and turn the heating off (or to its lowest) in one tap. */
+  private renderOpenWhileHeating(climates: HassEntity[]) {
+    const room = this.room;
+    if (!room || !this.floor) return nothing;
+    const heating = climates.filter((c) => c.attributes.hvac_action === "heating" || (c.state === "heat" && c.attributes.hvac_action === undefined));
+    if (!heating.length) return nothing;
+    const on = (id: string | null | undefined) => !!id && id !== "none" && this.hass.states[id]?.state === "on";
+    const open = this.floor.openings.filter((o) => o.room_id === room.id && [o.contact, o.contact2, o.tilt, o.tilt2].some(on));
+    if (!open.length) return nothing;
+    const down = () => {
+      for (const c of heating) {
+        const modes = (c.attributes.hvac_modes as string[] | undefined) ?? [];
+        if (modes.includes("off")) this.call("climate", "set_hvac_mode", { entity_id: c.entity_id, hvac_mode: "off" });
+        else if (typeof c.attributes.min_temp === "number") this.call("climate", "set_temperature", { entity_id: c.entity_id, temperature: c.attributes.min_temp });
+      }
+    };
+    return html`<div class="nf-rp-shade nf-rp-open-heat">
+      <span>🪟 ${this.t("open_heating_hint", { n: open.length })}</span>
+      <button class="nf-btn nf-rp-small" @click=${down}>${this.t("open_heating_off")}</button>
+    </div>`;
+  }
+
   /**
    * The shade hint: the sun stands on some of the room's windows, the room is warm (24 °C or more) and their blinds are open – one
    * tap lowers them.
@@ -414,6 +436,7 @@ export class NfRoomPanel extends LitElement {
         <div>
           <h2>${room.name}</h2>
           ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
+          ${this.renderOpenWhileHeating(climates)}
           ${this.renderCurve()}
         </div>
         <button class="nf-rp-close" aria-label=${this.t(this._folded ? "panel_unfold" : "panel_fold")} title=${this.t(this._folded ? "panel_unfold" : "panel_fold")} aria-expanded=${this._folded ? "false" : "true"} @click=${() => (this._folded = !this._folded)}>

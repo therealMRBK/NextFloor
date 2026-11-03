@@ -1439,6 +1439,8 @@
   "heat_power": "Consumo eléctrico",
   "heat_sun": "Sol hoy",
   "room_sun_hours": "{h} h de sol hoy ({facing})",
+  "open_heating_hint": "{n} ventanas abiertas con la calefacción en marcha.",
+  "open_heating_off": "Apagar calefacción",
   "room_clean": "Limpieza (script o botón)",
   "room_clean_hint": "Un script o botón que envía el robot aspirador a esta habitación (p. ej. la limpieza por habitaciones de tu integración). El panel de la habitación mostrará «🧹 Limpiar».",
   "room_clean_run": "Limpiar",

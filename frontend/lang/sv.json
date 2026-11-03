@@ -1439,6 +1439,8 @@
   "heat_power": "Elförbrukning",
   "heat_sun": "Sol i dag",
   "room_sun_hours": "{h} h sol i dag ({facing})",
+  "open_heating_hint": "{n} fönster öppna medan värmen är på.",
+  "open_heating_off": "Värme av",
   "room_clean": "Städning (skript eller knapp)",
   "room_clean_hint": "Ett skript eller en knapp som skickar robotdammsugaren till rummet (t.ex. rumsstädningen i din robotintegration). Rumspanelen visar då ”🧹 Dammsug”.",
   "room_clean_run": "Dammsug",

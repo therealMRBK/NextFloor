@@ -25,6 +25,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Shade hint**: when the sun stands on a room's outside windows, the room is 24 °C or warmer and those windows' blinds are open, the room panel says so (*☀ Sun on 2 windows at 25.3 °C – lower the blinds?*) and *Lower* closes them in one tap.
 - **Clean this room**: a room's form has *Cleaning* – the script or button that sends the robot vacuum there (the room cleaning of your robot's integration). The room panel then shows *🧹 Clean*.
 - **Fuse box**: the house settings have a *Fuse box* – circuits by name ("F12 kitchen") with the rooms they feed. The room panel names a room's circuits (*🔌 F12*), and the search finds a circuit and opens its room.
+- **Heating with the window open**: when one of a room's windows or doors stands open (its contact or tilt sensor) while the room's thermostat heats, the room panel says so (*🪟 1 window open while the heating runs*) and *Heating off* switches it off – or to its lowest temperature where it has no off.
 
 ## 0.21.0
 

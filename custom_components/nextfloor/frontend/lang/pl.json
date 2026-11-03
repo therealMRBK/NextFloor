@@ -1439,6 +1439,8 @@
   "heat_power": "Pobór mocy",
   "heat_sun": "Słońce dziś",
   "room_sun_hours": "{h} h słońca dziś ({facing})",
+  "open_heating_hint": "{n} okien otwartych przy włączonym ogrzewaniu.",
+  "open_heating_off": "Wyłącz ogrzewanie",
   "room_clean": "Sprzątanie (skrypt lub przycisk)",
   "room_clean_hint": "Skrypt lub przycisk, który wysyła robota sprzątającego do tego pomieszczenia (np. sprzątanie pokoju z Twojej integracji). Panel pomieszczenia pokaże wtedy „🧹 Odkurz”.",
   "room_clean_run": "Odkurz",

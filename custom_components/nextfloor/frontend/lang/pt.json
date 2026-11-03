@@ -1439,6 +1439,8 @@
   "heat_power": "Consumo de energia",
   "heat_sun": "Sol hoje",
   "room_sun_hours": "{h} h de sol hoje ({facing})",
+  "open_heating_hint": "{n} janelas abertas com o aquecimento ligado.",
+  "open_heating_off": "Desligar aquecimento",
   "room_clean": "Limpeza (script ou botão)",
   "room_clean_hint": "Um script ou botão que envia o robô aspirador para esta divisão (p. ex. a limpeza por divisão da tua integração). O painel da divisão mostra então «🧹 Aspirar».",
   "room_clean_run": "Aspirar",

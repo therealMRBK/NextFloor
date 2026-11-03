@@ -1439,6 +1439,8 @@
   "heat_power": "Stroomverbruik",
   "heat_sun": "Zon vandaag",
   "room_sun_hours": "{h} u zon vandaag ({facing})",
+  "open_heating_hint": "{n} ramen open terwijl de verwarming aan staat.",
+  "open_heating_off": "Verwarming uit",
   "room_clean": "Schoonmaken (script of knop)",
   "room_clean_hint": "Een script of knop die de robotstofzuiger naar deze kamer stuurt (bv. de kamerreiniging van je robotintegratie). Het kamerpaneel toont dan ‘🧹 Zuigen’.",
   "room_clean_run": "Zuigen",

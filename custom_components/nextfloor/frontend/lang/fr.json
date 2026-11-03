@@ -1379,6 +1379,8 @@
  "heat_power": "Consommation",
  "heat_sun": "Soleil aujourd'hui",
  "room_sun_hours": "{h} h de soleil aujourd'hui ({facing})",
+ "open_heating_hint": "{n} fenêtres ouvertes pendant que le chauffage tourne.",
+ "open_heating_off": "Chauffage éteint",
  "room_clean": "Nettoyage (script ou bouton)",
  "room_clean_hint": "Un script ou bouton qui envoie l'aspirateur robot dans cette pièce (p. ex. le nettoyage par pièce de ton intégration). Le panneau de la pièce affiche alors « 🧹 Nettoyer ».",
  "room_clean_run": "Nettoyer",
