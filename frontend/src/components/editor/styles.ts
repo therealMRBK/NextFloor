@@ -496,6 +496,21 @@ export const editorStyles = css`
     box-shadow: none;
     border: 1px solid var(--nf-line);
   }
+  .nf-studio-view {
+    display: block;
+    width: 100%;
+    max-height: 200px;
+    margin: 6px 0 10px;
+    background: color-mix(in srgb, var(--nf-soft, #8a9bb8) 10%, transparent);
+    border-radius: 8px;
+  }
+  .nf-studio-glow {
+    filter: drop-shadow(0 0 4px rgba(255, 214, 120, 0.8));
+  }
+  .nf-lib-studio {
+    width: 100%;
+    margin: 4px 0 8px;
+  }
   .nf-form {
     display: grid;
     grid-template-columns: 1fr 1fr;

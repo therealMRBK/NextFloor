@@ -51,6 +51,30 @@ def test_a_climate_pack_item_is_accepted() -> None:
     assert clean["items"][0]["climate"] is True
 
 
+def test_a_studio_recipe_is_kept_and_checked() -> None:
+    payload = copy.deepcopy(PAYLOAD)
+    recipe = {
+        "kind": "cabinet",
+        "name": "Sideboard",
+        "w": 160,
+        "d": 45,
+        "h": 80,
+        "doors": 2,
+        "drawers": 1,
+        "base": "plinth",
+        "handle": "bar",
+        "body": "white",
+        "front": "#8a6a4a",
+    }
+    payload["items"][0]["recipe"] = recipe
+    clean = packs.validate_payload(payload)
+    assert clean["items"][0]["recipe"]["doors"] == 2
+    assert clean["items"][0]["recipe"]["shelves"] == 0
+    payload["items"][0]["recipe"] = {**recipe, "kind": "sofa"}
+    with pytest.raises(packs.PackError):
+        packs.validate_payload(payload)
+
+
 def test_a_pack_needs_items() -> None:
     with pytest.raises(packs.PackError):
         packs.validate_payload({**PAYLOAD, "items": []})

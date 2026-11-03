@@ -142,6 +142,8 @@ export class LibraryState {
 
 export interface LibraryActions {
   add(type: string): void;
+  /** Opens the furniture studio for a piece of one's own. */
+  studio(): void;
   packs: readonly FurniturePack[];
 }
 
@@ -271,6 +273,7 @@ export function renderLibrary(host: EditorHost, state: LibraryState, roomName: s
   return html`<section>
       <h3>${t("furniture_add")}</h3>
       <p class="nf-sub">${roomName ? t("furniture_into", { room: roomName }) : t("furniture_pick_room")}</p>
+      <button class="nf-btn nf-lib-studio" title=${t("studio_hint")} @click=${() => actions.studio()}>🛠️ ${t("studio_new")}</button>
       <input
         class="nf-search"
         type="search"

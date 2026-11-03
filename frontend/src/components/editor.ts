@@ -1,7 +1,7 @@
 // 2D editor: floors, rooms (rectangles and free shapes), snapping, undo, background template.
 
 import { html, LitElement, nothing, svg, type PropertyValues, type TemplateResult } from "lit";
-import { fetchImage, storeImage } from "../api.ts";
+import { fetchImage, importPack, storeImage } from "../api.ts";
 import { defaultHeight, entityName, kindOf, roomEntities } from "../devices.ts";
 import { closeGaps, suggestedThickness } from "../geometry/gaps.ts";
 import { keepInRoom, snapToWall } from "../geometry/snap.ts";
@@ -104,7 +104,9 @@ import "./entity-picker.ts";
 import type { HassFloor, HomeAssistant } from "../types.ts";
 import type { WallMode } from "../viewer/viewer3d.ts";
 import { furnitureName } from "../furniture-names.ts";
-import { mountBase, setPacks, type FurniturePack } from "../packs.ts";
+import { getPacks, isPackType, mountBase, packItem, packType, setPacks, type FurniturePack } from "../packs.ts";
+import { buildItem, newRecipe, STUDIO_PACK, studioId } from "../studio/recipes.ts";
+import { renderStudio, type StudioDraft } from "./editor/forms/studio.ts";
 
 /** Items that can be fixed against moving. */
 type FixKind = "room" | "opening" | "furniture" | "device" | "wall" | "outdoor";
@@ -179,6 +181,7 @@ export class NfEditor extends LitElement {
     _wall3d: { state: true },
     _solid3d: { state: true },
     _sidePinned: { state: true },
+    _studio: { state: true },
     _sideOpen: { state: true },
     _floorId: { state: true },
     _energyNote: { state: true },
@@ -218,6 +221,8 @@ export class NfEditor extends LitElement {
   private declare _solid3d: boolean;
   /** Sidebar beside the 3D pane: pinned open always, or folded to a strip while nothing is selected. */
   private declare _sidePinned: boolean;
+  /** The furniture studio while it is open in the side panel. */
+  private declare _studio: StudioDraft | null;
   private declare _sideOpen: boolean;
   private declare _floorId: string | null;
   /** What the import from the energy dashboard did (shown under its button). */
@@ -314,6 +319,7 @@ export class NfEditor extends LitElement {
       // no storage
     }
     this._sidePinned = pinned;
+    this._studio = null;
     this._measureLen = 3;
     this._rectSize = [4, 3];
     this._tool = "select";
@@ -398,8 +404,63 @@ export class NfEditor extends LitElement {
   private libraryActions(): LibraryActions {
     return {
       add: (type) => this.addFurniture(type),
+      studio: () => this.openStudio(null),
       packs: this.packs ?? [],
     };
+  }
+
+  /** Opens the furniture studio: for a new piece, or for the studio piece of the given type to change it. */
+  private openStudio(type: string | null): void {
+    const item = type ? packItem(type) : undefined;
+    const itemId = item?.recipe && type?.startsWith(`pack:${STUDIO_PACK}:`) ? item.id : null;
+    this._studio = { recipe: itemId && item?.recipe ? { ...item.recipe } : newRecipe("cabinet", ""), itemId, busy: false, error: null };
+    this._tool = "furniture";
+  }
+
+  /**
+   * Keeps the studio piece in the "own furniture" pack (a new release of it, so the backend replaces the pack) and puts a new piece
+   * into the plan; a changed piece takes its new size everywhere it stands.
+   */
+  private async saveStudio(): Promise<void> {
+    const draft = this._studio;
+    if (!draft || !this.hass || !this.isAdmin) return;
+    const language = this.hass.language ?? "en";
+    const own = getPacks().find((p) => p.id === STUDIO_PACK);
+    const items = own?.items ?? [];
+    const recipe = { ...draft.recipe, name: draft.recipe.name || this.t(`studio_kind_${draft.recipe.kind}` as I18nKey) };
+    const id = draft.itemId ?? studioId(recipe.name, items.map((i) => i.id));
+    const item = buildItem(recipe, id, language);
+    const pack: FurniturePack = {
+      id: STUDIO_PACK,
+      name: own?.name ?? this.t("studio_pack_name"),
+      publisher: own?.publisher ?? this.t("studio_pack_publisher"),
+      release: (own?.release ?? 0) + 1,
+      items: draft.itemId ? items.map((i) => (i.id === id ? item : i)) : [...items, item],
+    };
+    this._studio = { ...draft, busy: true, error: null };
+    try {
+      const { builtin: _b, imported_at: _i, ...payload } = pack;
+      await importPack(this.hass, JSON.stringify({ format: "nfpack", version: 1, ...payload }));
+    } catch (err) {
+      this._studio = { ...draft, busy: false, error: this.t("studio_error", { detail: (err as { message?: string }).message ?? String(err) }) };
+      return;
+    }
+    // the plan knows the piece right away; the reloaded packs bring the same
+    setPacks([...getPacks().filter((p) => p.id !== STUDIO_PACK), pack]);
+    this.dispatchEvent(new CustomEvent("packs-changed", { bubbles: true, composed: true }));
+    this._studio = null;
+    const type = packType(STUDIO_PACK, id);
+    if (draft.itemId) {
+      const [w, d, h] = item.size;
+      this.change((doc) => doc.floors.forEach((f) => f.furniture.forEach((m) => m.type === type && Object.assign(m, { w, d, h }))));
+    } else this.addFurniture(type);
+  }
+
+  /** The studio button under the form of a piece built in the studio. */
+  private studioButton(): TemplateResult | typeof nothing {
+    const type = this.furnitureItem?.type;
+    if (!type || !isPackType(type) || !packItem(type)?.recipe || !type.startsWith(`pack:${STUDIO_PACK}:`) || !this.isAdmin) return nothing;
+    return html`<button class="nf-btn nf-lib-studio" @click=${() => this.openStudio(type)}>🛠️ ${this.t("studio_open")}</button>`;
   }
 
   private deviceActions(): DeviceActions {
@@ -2935,7 +2996,14 @@ export class NfEditor extends LitElement {
     if (this._tool === "energy") return this.renderEnergyPanel();
     // furnishing: the library and the selected item come first
     if (this._tool === "furniture" && floor && admin) {
-      return html`${this.furnitureItem ? renderFurnitureForm(this.host, this.furnitureItem, this.furnitureActions()) : nothing} ${renderLibrary(this.host, this.lib, this.room?.name, this.libraryActions())}`;
+      if (this._studio) {
+        return renderStudio(this.host, this._studio, {
+          change: (recipe) => this._studio && (this._studio = { ...this._studio, recipe, error: null }),
+          save: () => void this.saveStudio(),
+          close: () => (this._studio = null),
+        });
+      }
+      return html`${this.furnitureItem ? html`${renderFurnitureForm(this.host, this.furnitureItem, this.furnitureActions())}${this.studioButton()}` : nothing} ${renderLibrary(this.host, this.lib, this.room?.name, this.libraryActions())}`;
     }
     // a selected item shows only its own form, with a way back to the floor and room
     const item =

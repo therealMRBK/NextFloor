@@ -6,7 +6,6 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 
 | Topic | What it is about |
 |---|---|
-| Furniture builder in the editor | The furniture builder's templates right inside the editor (cabinets in any width with drawers and doors, shelves, lamps, devices with a display) |
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
 | Energy per floor | The flow of a single floor's own meter in the floor views |
 
@@ -18,6 +17,5 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 
 | Thema | Worum es geht |
 |---|---|
-| Möbel-Werkstatt im Editor | Die Vorlagen der Möbel-Werkstatt direkt im Editor (Schränke in jeder Breite mit Schubladen und Türen, Regale, Lampen, Geräte mit Display) |
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
 | Energie pro Etage | Der Fluss eines eigenen Etagenzählers in den Etagenansichten |

@@ -109,6 +109,29 @@ COLORWAY_SCHEMA = vol.Schema(
     }
 )
 
+# The settings of an item built in the editor's furniture studio, kept so it can be opened there again (sizes in cm).
+_COUNT = vol.All(vol.Coerce(int), vol.Range(min=0, max=12))
+RECIPE_SCHEMA = vol.Schema(
+    {
+        vol.Required("kind"): vol.In(["cabinet", "shelf", "lamp", "device"]),
+        vol.Required("name"): vol.All(str, vol.Length(max=60)),
+        vol.Required("w"): vol.All(vol.Coerce(float), vol.Range(min=1, max=1000)),
+        vol.Required("d"): vol.All(vol.Coerce(float), vol.Range(min=1, max=1000)),
+        vol.Required("h"): vol.All(vol.Coerce(float), vol.Range(min=1, max=1000)),
+        vol.Optional("doors", default=0): _COUNT,
+        vol.Optional("drawers", default=0): _COUNT,
+        vol.Optional("shelves", default=0): _COUNT,
+        vol.Optional("base", default="none"): vol.In(["none", "legs", "plinth"]),
+        vol.Optional("handle", default="none"): vol.In(["bar", "knob", "none"]),
+        vol.Optional("back", default=False): bool,
+        vol.Optional("lamp", default="floor"): vol.In(["floor", "table", "pendant", "wall"]),
+        vol.Optional("display", default=False): bool,
+        vol.Optional("mount", default="floor"): vol.In(["floor", "surface", "wall"]),
+        vol.Optional("body", default="body"): _COLOR,
+        vol.Optional("front", default="body"): _COLOR,
+    }
+)
+
 ITEM_SCHEMA = vol.Schema(
     {
         vol.Required("id"): _ID,
@@ -162,6 +185,7 @@ ITEM_SCHEMA = vol.Schema(
         vol.Optional("symbol"): vol.All([SYMBOL_SCHEMA], vol.Length(max=40)),
         # colours to choose from; the first one is the default
         vol.Optional("colors"): vol.All([COLORWAY_SCHEMA], vol.Length(min=2, max=24)),
+        vol.Optional("recipe"): RECIPE_SCHEMA,
     }
 )
 

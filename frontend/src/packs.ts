@@ -2,6 +2,7 @@
 // Placed pack furniture has the type "pack:<pack id>:<item id>". Each bundle (main, editor, 3D) holds its own
 // registry, filled through setPacks() with what the backend returned.
 
+import type { StudioRecipe } from "./studio/recipes.ts";
 import { builtinBase, ceilingAt, ceilingOf, ELECTRIC_FURNITURE, FURNITURE_SIZE, surfaceHeight, WALL_LAMP_Y, type Floor, type Furniture } from "./model.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
 
@@ -100,6 +101,8 @@ export interface PackItem {
   symbol?: PackSymbol[];
   /** Colours to choose from, stored as the furniture's variant. The first is the default. */
   colors?: { id: string; name: Record<string, string>; hex: string }[];
+  /** Built in the editor's furniture studio: its settings, so it can be opened there again. */
+  recipe?: StudioRecipe;
 }
 
 export interface FurniturePack {

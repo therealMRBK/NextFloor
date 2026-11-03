@@ -39,6 +39,7 @@ Plan, Bilder und Packs liegen in Home Assistants `.storage`. Nichts davon verlä
 Werkzeug *Möbel*, Raum antippen, rechts aus der Bibliothek wählen. Neue Stücke landen in der Raummitte.
 
 - Die Bibliothek hat Bereiche (Leuchten, Wohnen, Essen, Küche, Schlafen, Bad, Arbeiten, Parken) und danach die Möbel-Packs. Die Suche findet deutsche und englische Namen, Packnamen und mehrere Wörter in beliebiger Reihenfolge.
+- **Möbel-Werkstatt:** *🛠️ Eigenes Möbel bauen* oben in der Bibliothek. Vorlage wählen (Schrank, Regal, Lampe, Gerät), Maße in cm eintippen und Türen, Schubladen, Böden, Griffe, Unterbau und Farben einstellen; die Frontansicht zeigt jede Änderung sofort. *In den Plan setzen* legt es im Pack *Eigene Möbel* ab (es steht dann auch in der Bibliothek). Ein Werkstatt-Möbel auswählen und *In der Werkstatt ändern* drücken, um es später zu ändern – jedes Exemplar im Plan bekommt die neue Größe.
 - Ziehen verschiebt, Eckgriffe ändern die Größe, am Drehgriff drehst du, oder du tippst Position, Größe und Drehung ein. *Spiegeln* vertauscht links und rechts, *Duplizieren* kopiert, *Fixieren* sperrt, *Auf Etage verschieben* bringt das Stück an dieselbe Stelle einer anderen Etage.
 - Elektrische Stücke lassen sich mit Geräten verbinden (siehe unten). Leuchten sind Möbel mit einem Licht dahinter; der Leuchten-Bereich hat zwölf Arten.
 - **Spots setzen:** am Raum legt ein Raster aus Leuchten (Spalten × Reihen) an, die alle einem Licht folgen, mit einem Schritt rückgängig zu machen.

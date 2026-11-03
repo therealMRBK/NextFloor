@@ -39,6 +39,7 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 *Furniture* tool, tap a room, pick from the library on the right. New pieces appear in the middle of the room.
 
 - The library has sections (lights, living, dining, kitchen, sleeping, bath, work, parking) and then the furniture packs. The search finds German and English names, pack names and several words in any order.
+- **Furniture studio:** *🛠️ Build your own piece* at the top of the library. Pick a template (cabinet, shelf, lamp, device), type the measurements in cm and set doors, drawers, boards, handles, base and colours; the front view follows every change. *Put into the plan* keeps it in the pack *Own furniture* (it shows up in the library too). Select a studio piece and press *Change in the studio* to change it later – every copy in the plan takes the new size.
 - Drag to move, drag corners to resize, use the turn handle or type position, size and rotation. *Mirror* flips left and right, *Duplicate* copies, *Fix* locks, *Move to floor* takes the item to the same spot on another floor.
 - Items marked with an electrical symbol can be linked to devices (see below). Lamps are furniture with a light behind them; the lights section has twelve kinds.
 - **Place spots:** a room's *Place spots* lays out a grid of lamps (columns × rows) that all follow one light, undoable in one step.
