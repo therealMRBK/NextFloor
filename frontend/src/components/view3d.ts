@@ -14,7 +14,7 @@ import type { PlacementInfo } from "../plugins/api.ts";
 import { onPluginsChanged, pluginTap } from "../plugins/registry.ts";
 import { alertColor, alertSources, alertText, contactsPending, findAlerts, QUIET_ALERTS, type Alert, type AlertSources } from "../alerts.ts";
 import { iconPath, iconSvg, mdiIcon } from "../icons.ts";
-import { deviceSensors, energySummary, findConsumers, readPower, subMeterIds, subMeterLabel, type Consumer, type EnergySummary } from "../energy.ts";
+import { deviceSensors, energySummary, findConsumers, powerSensorFor, readPower, subMeterIds, subMeterLabel, type Consumer, type EnergySummary } from "../energy.ts";
 import { mapCredit, mapShown } from "../map-geo.ts";
 import { type CustomButton, type EntityRef } from "../model.ts";
 
@@ -1137,6 +1137,15 @@ export class NfView3d extends LitElement {
         // a curtain, roller screen, awning or gate: a tap opens the menu of the cover it follows
         if (f.cover_entity && hasMovingParts(plate)) targets.set(f.id, f.cover_entity);
         if (plate?.gangs) {
+          // a smart plug or measuring switch behind a button: its power counts in the flow like any device's
+          for (const g of (f.gang_entities ?? []).slice(0, plate.gangs)) {
+            const sensor = g && g !== "none" ? powerSensorFor(hass, g) : null;
+            const w = sensor ? readPower(hass.states[sensor]) : null;
+            if (sensor && w !== null && !consumerSensors.has(sensor)) {
+              consumerSensors.add(sensor);
+              consumers.push({ id: g!, powerEntity: sensor, floorId: floor.id, x: f.x, z: f.z, power: Math.max(0, w) });
+            }
+          }
           const gangs = gangGlows(hass, (f.gang_entities ?? []).slice(0, plate.gangs), /socket/.test(f.type));
           if (gangs.length) screens.set(f.id, { color: gangs[0].color, level: gangs[0].level, gangs });
           if (gangEntities(f.gang_entities, plate.gangs).length) targets.set(f.id, `gang:${f.id}`);

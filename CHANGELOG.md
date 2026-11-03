@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.23.0
+
+### Added
+
+- **Power of sockets and switch plates**: a socket or switch whose button is a smart plug or a measuring switch now counts its power – in the room's power and the heat map *Power*, in the room panel, and in the power flow – from the power sensor on that button's device.
+
 ## 0.22.0
 
 ### Added

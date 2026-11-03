@@ -67,3 +67,13 @@ test("a room's power adds up the power sensors of its pins and furniture, the ho
   assert.equal(roomValues(hass, b, "power").get("w"), 1620);
   assert.equal(roomPower(hass, b, floor, box("empty", 20, 20, 22, 22)), null);
 });
+
+test("a socket's smart plug counts in its room's power", () => {
+  const hass = hassOf(
+    [entity("switch.plug", "on"), entity("sensor.plug_power", "45", { device_class: "power", unit_of_measurement: "W" })],
+    { "switch.plug": { device_id: "p" }, "sensor.plug_power": { device_id: "p" } },
+  );
+  const room = box("w", 0, 0, 5, 4);
+  const floor = { ...floorWith([room]), furniture: [{ id: "s", type: "pack:nextfloor.switches:socket_1", x: 1, z: 1, rotation: 0, w: 0.08, d: 0.02, h: 0.08, variant: null, gang_entities: ["switch.plug"] }] };
+  assert.equal(roomPower(hass, emptyBuilding(), floor, room), 45);
+});

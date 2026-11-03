@@ -116,6 +116,11 @@ export function roomPowerSensors(hass: HomeAssistant, building: Pick<Building, "
     if (!inside(m.x, m.z)) continue;
     const s = m.power && m.power !== "none" ? m.power : m.entity && m.entity !== "none" ? powerSensorFor(hass, m.entity) : null;
     if (s) sensors.add(s);
+    // a switch plate or socket: the power sensors on the devices of its buttons (a smart plug, a measuring switch)
+    for (const g of m.gang_entities ?? []) {
+      const gs = g && g !== "none" ? powerSensorFor(hass, g) : null;
+      if (gs) sensors.add(gs);
+    }
   }
   return [...sensors].filter((s) => !meters.has(s));
 }
