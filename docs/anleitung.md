@@ -54,6 +54,7 @@ Werkzeug *Möbel*, Raum antippen, rechts aus der Bibliothek wählen. Neue Stück
 - **Pin verschieben:** Pins dicht stehender Geräte schiebst du im Formular zur Seite oder nach oben; das Gerät bleibt stehen.
 - **Unter der Dachschräge:** Deckenleuchten und hängende Stücke im Dachgeschoss haben *📐 An die Dachschräge*.
 - **Ebenen:** Eine Etage mit *Ebene* im Formular (die Bäume, die Deko) bekommt oben in der 3D-Ansicht ein Auge, das sie ein- und ausblendet.
+- **Etagen-Zähler:** *Etagen-Zähler (Leistung)* im Etagenformular nimmt einen Leistungssensor nur für diese Etage. Sein Wert steht auf dem Etagen-Schild, und die Haus-Karte in der Ansicht dieser Etage zeigt ihn mit seinem Anteil am Haus.
 
 ## Geräte verbinden
 

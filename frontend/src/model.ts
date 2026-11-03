@@ -363,6 +363,8 @@ export interface Floor {
   start_view?: StartView | null;
   /** A layer rather than a storey (all the trees, the decoration): the 3D view can show or hide it with an eye. */
   layer?: boolean;
+  /** The floor's own meter: a power sensor whose use shows on the floor label and, in this floor's view, on the house card. */
+  power_entity?: string | null;
 }
 
 /** A wall drawn on its own, from a to b along its centre line. */

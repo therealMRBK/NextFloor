@@ -54,6 +54,7 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 - **Move the pin:** pins of devices close together can be pushed aside or up in the form; the device stays where it is.
 - **Under a roof slope:** ceiling lamps and hanging items in an attic room have *📐 Up to the roof slope*.
 - **Layers:** a floor marked *Layer* in its form (the trees, the decoration) gets an eye at the top of the 3D view that shows or hides it.
+- **Floor meter:** *Floor meter (power)* in the floor form takes a power sensor for that floor alone. Its value shows on the floor label, and the house card in that floor's view shows it with its share of the house.
 
 ## Connect devices
 

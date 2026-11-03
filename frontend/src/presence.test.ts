@@ -82,8 +82,11 @@ test("floor counts and their text leave out what is zero", () => {
     { entity_id: "light.two", x: 2, z: 1, y: null, mount: null },
   ];
   const counts = floorCounts(hass, building, new Map(), personsInRooms(hass, building)).get("g");
-  assert.deepEqual(counts, { rooms: 2, lightsOn: 1, open: 0, persons: 1 });
+  assert.deepEqual(counts, { rooms: 2, lightsOn: 1, open: 0, persons: 1, power: null });
   const text = floorInfoText(hass, counts!);
   assert.equal(text.split(" · ").length, 3, text);
-  assert.equal(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0 }).includes(" · "), false);
+  assert.equal(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: null }).includes(" · "), false);
+  // the floor's own meter joins the label
+  assert.ok(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 1250 }).endsWith("⚡ 1.25 kW") || floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 1250 }).endsWith("⚡ 1,25 kW"));
+  assert.ok(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 640 }).endsWith("⚡ 640 W"));
 });

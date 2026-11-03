@@ -2,7 +2,8 @@
 // its state; this finds that room in the plan. Also the counts on the floor labels of the house view.
 
 import { kindOf, openingState, primaryEntities, type OpeningEntities, roomEntities } from "./devices.ts";
-import { translate } from "./i18n.ts";
+import { readPower } from "./energy.ts";
+import { formatNumber, translate } from "./i18n.ts";
 import { centroid, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
@@ -78,6 +79,8 @@ export interface FloorCounts {
   lightsOn: number;
   open: number;
   persons: number;
+  /** What the floor's own meter reads now, in watts (null: no meter or no number). */
+  power: number | null;
 }
 
 function lightsOnFloor(hass: HomeAssistant, floor: Floor): number {
@@ -114,7 +117,13 @@ export function floorCounts(hass: HomeAssistant, building: Building, links: Map<
   return new Map(
     building.floors.map((floor) => [
       floor.id,
-      { rooms: floor.rooms.length, lightsOn: lightsOnFloor(hass, floor), open: openingsOnFloor(hass, floor, links), persons: persons.filter((p) => p.floorId === floor.id).length },
+      {
+        rooms: floor.rooms.length,
+        lightsOn: lightsOnFloor(hass, floor),
+        open: openingsOnFloor(hass, floor, links),
+        persons: persons.filter((p) => p.floorId === floor.id).length,
+        power: floor.power_entity ? readPower(hass.states[floor.power_entity]) : null,
+      },
     ]),
   );
 }
@@ -125,5 +134,12 @@ export function floorInfoText(hass: HomeAssistant | undefined, c: FloorCounts): 
   if (c.lightsOn > 0) parts.push(translate(hass, "floor_lights", { n: c.lightsOn }));
   if (c.open > 0) parts.push(translate(hass, "floor_open", { n: c.open }));
   if (c.persons > 0) parts.push(translate(hass, "floor_persons", { n: c.persons }));
+  if (c.power != null) parts.push(`⚡ ${powerText(hass, c.power)}`);
   return parts.join(" · ");
+}
+
+/** Watts as "640 W" or "1,25 kW". */
+export function powerText(hass: HomeAssistant | undefined, w: number): string {
+  const a = Math.abs(w);
+  return a >= 1000 ? `${formatNumber(hass, w / 1000, a >= 10000 ? 1 : 2)} kW` : `${Math.round(w)} W`;
 }

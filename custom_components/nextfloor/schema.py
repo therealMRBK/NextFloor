@@ -632,6 +632,8 @@ FLOOR_SCHEMA = vol.Schema(
         vol.Required("background"): vol.Any(None, BACKGROUND_SCHEMA),
         # a layer rather than a storey (the trees, the decoration), shown or hidden with an eye
         vol.Optional("layer"): bool,
+        # the floor's own meter: a power sensor shown on the floor label and the house card of this floor
+        vol.Optional("power_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("outdoor", default=list): vol.All([OUTDOOR_SCHEMA], vol.Length(max=MAX_ITEMS)),
         # free-standing walls (partitions); room walls come from the room edges
         vol.Optional("walls", default=list): vol.All([FREE_WALL_SCHEMA], vol.Length(max=MAX_ITEMS)),

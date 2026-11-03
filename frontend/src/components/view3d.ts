@@ -48,7 +48,7 @@ import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visi
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage } from "../api.ts";
 import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
-import { floorCounts, floorInfoText, personsInRooms } from "../presence.ts";
+import { floorCounts, floorInfoText, personsInRooms, powerText } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
 import { claim, forThisScreen, playAnnouncement, showFor, subscribeAnnouncements, type Announcement } from "../live/announce.ts";
@@ -2371,10 +2371,16 @@ export class NfView3d extends LitElement {
       .catch(() => (this.week = null));
   }
 
-  /** Gas and water with the house's balance: what their sensors read now. */
-  private meterRows(b: Building): { icon: string; label: string; value: string }[] {
+  /** The open floor's own meter (with its share of the house's use), then gas and water with the house's balance: what their sensors read now. */
+  private meterRows(b: Building, consumption: number | null = null): { icon: string; label: string; value: string }[] {
     const hass = this.hass;
     const rows: { icon: string; label: string; value: string }[] = [];
+    const floor = this.floorId ? b.floors.find((f) => f.id === this.floorId) : undefined;
+    const floorPower = floor?.power_entity ? readPower(hass?.states[floor.power_entity]) : null;
+    if (floor && floorPower !== null) {
+      const share = consumption && consumption > 0 ? ` · ${translate(hass, "floor_power_share", { n: Math.round((Math.max(0, floorPower) / consumption) * 100) })}` : "";
+      rows.push({ icon: "⚡", label: floor.name, value: `${powerText(hass, floorPower)}${share}` });
+    }
     for (const [key, icon, label] of [["gas", "🔥", "energy_gas_short"], ["water", "💧", "energy_water_short"]] as const) {
       const id = b.energy[key];
       const st = id ? hass?.states[id] : undefined;
@@ -2411,7 +2417,7 @@ export class NfView3d extends LitElement {
       // over the middle of the house, above the roof
       let x = 0, z = 0, n = 0;
       for (const r of top.rooms) for (const [px, pz] of r.points) (x += px), (z += pz), n++;
-      cards.push({ kind: "house", at: { floorId: top.id, x: n ? x / n : hub.x, z: n ? z / n : hub.z, y: top.height + (this.floorId ? 1.2 : 3.2) }, summary: s, autarky: pic.autarky, curves: this.dayCurves ?? undefined, week: this.week ?? undefined, meters: this.meterRows(b) });
+      cards.push({ kind: "house", at: { floorId: top.id, x: n ? x / n : hub.x, z: n ? z / n : hub.z, y: top.height + (this.floorId ? 1.2 : 3.2) }, summary: s, autarky: pic.autarky, curves: this.dayCurves ?? undefined, week: this.week ?? undefined, meters: this.meterRows(b, s.consumption) });
       this.refreshDayCurves(b);
       this.refreshWeek(b);
     }
