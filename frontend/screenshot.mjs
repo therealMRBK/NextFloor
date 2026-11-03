@@ -176,6 +176,8 @@ const shots = [
   { name: "dev-floor-power", dev: true, query: "?pv=5400", width: 1335, height: 800, settle: 2500, then: process.env.FLOOR_VIEW ?? undefined, viewScript: "const p = document.querySelector('nextfloor-panel'); const b = structuredClone(p.data.building); b.floors.forEach((f, i) => (f.power_entity = i === 0 ? 'sensor.netz_leistung' : 'sensor.balkon_leistung')); p.data.edit(b); p._clean = true;", afterWait: 1500 },
   // the plan check in the editor's side panel
   { name: "dev-plan-check", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._check = true; e.requestUpdate();", settle: 800 },
+  // the plan on paper: the printout replaces the page (window.open caught), first floor page and the table below it
+  { name: "dev-print", dev: true, query: "", width: 1100, height: 1500, editor: true, editorScript: "window.open = () => ({ document: { open() {}, write(h) { window.__printed = h; }, close() {} } }); e.printPlan(); setTimeout(() => { document.documentElement.innerHTML = window.__printed.replace(/<script[\\s\\S]*?<\\/script>/, ''); }, 50);", settle: 800 },
   { name: "dev-imperial", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._doc = { ...e._doc, settings: { ...e._doc.settings, units: \"imperial\" } }; e.requestUpdate();", settle: 600 },
   // ../preview/screenshots/lhouse.json: an L-shaped house, a wing roof meeting the main roof at a right angle
   { name: "dev-lhouse", dev: true, query: "?state=/preview/screenshots/lhouse.json&noshowcase", width: 1400, height: 850, settle: 1500, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(6, 3, 6); w.theta = 0.9; w.phi = 0.95; w.radius = 22; v.viewer.flyTo(w, 1);" },

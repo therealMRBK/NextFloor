@@ -65,7 +65,7 @@ import { renderFreeWallForm, renderMeasureForm, renderOutdoorForm, type FreeWall
 import { insertRoofCorner, roofOutline } from "./editor/ops/roof.ts";
 import { insertOutdoorCorner, outdoorRectangleAfter, removeOutdoorCorner } from "./editor/ops/items.ts";
 import { renderDeviceList, renderRoomClimate, type DeviceListActions } from "./editor/forms/device-list.ts";
-import { setUnits } from "../units.ts";
+import { formatArea, formatLength, setUnits } from "../units.ts";
 import "./editor/wall-view.ts";
 import { LibraryState, renderLibrary, renderPreview, type LibraryActions } from "./editor/forms/library.ts";
 import { arcFreeWall, arcRoomEdge, insertCorner } from "./editor/ops/rooms.ts";
@@ -109,6 +109,7 @@ import { buildItem, newRecipe, STUDIO_PACK, studioId } from "../studio/recipes.t
 import { renderStudio, type StudioDraft } from "./editor/forms/studio.ts";
 import { planCheckButton, renderPlanCheck } from "./editor/forms/plan-check.ts";
 import { checkPlan, type CheckFinding } from "./editor/ops/plan-check.ts";
+import { printHtml } from "./editor/print.ts";
 
 /** Items that can be fixed against moving. */
 type FixKind = "room" | "opening" | "furniture" | "device" | "wall" | "outdoor";
@@ -460,6 +461,27 @@ export class NfEditor extends LitElement {
       const [w, d, h] = item.size;
       this.change((doc) => doc.floors.forEach((f) => f.furniture.forEach((m) => m.type === type && Object.assign(m, { w, d, h }))));
     } else this.addFurniture(type);
+  }
+
+  /** The plan on paper in a window of its own; the browser's print dialog opens there (and can save a PDF). */
+  private printPlan(): void {
+    const t = (key: I18nKey) => this.t(key);
+    const html = printHtml(this._doc, {
+      title: this.t("print_title"),
+      room: t("print_room"),
+      floorArea: t("print_floor_area"),
+      living: t("print_living"),
+      low: t("print_low"),
+      total: t("print_total"),
+      note: t("living_area_hint"),
+      area: (m2) => formatArea(this.hass, m2),
+      length: (m) => formatLength(this.hass, m),
+    });
+    const win = window.open("", "_blank");
+    if (!win) return void alert(this.t("print_blocked"));
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
   }
 
   /** Does what a finding of the plan check offers: opens its floor and shows the place, or makes the fix. */
@@ -2176,6 +2198,7 @@ export class NfEditor extends LitElement {
         this._draft = [];
         this.fit();
       },
+      print: () => this.printPlan(),
       addFloor: (from) => this.addFloor(from),
       moveFloor: (direction) => this.moveFloor(direction),
       deleteFloor: () => this.deleteFloor(),

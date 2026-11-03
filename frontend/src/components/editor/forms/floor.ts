@@ -5,6 +5,8 @@ import type { Floor } from "../../../model.ts";
 import type { HassFloor } from "../../../types.ts";
 import { checkField, entityField, hint, numberField, selectField, textField } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
+import { floorAreas, totalOf } from "../../../geometry/living-area.ts";
+import { formatArea } from "../../../units.ts";
 import type { EditorHost } from "../host.ts";
 import { freeHaFloors, linkableHaFloors, unplacedAreas } from "../ops/floors.ts";
 import type { SideState } from "../side-state.ts";
@@ -24,6 +26,20 @@ export interface FloorActions {
   turn(): void;
   /** Makes the editor's current 3D camera the one this floor opens with. */
   rememberView(): void;
+  /** Opens the plan on paper (every floor, with the areas) to print or save as PDF. */
+  print(): void;
+}
+
+/** The living area of the floor and the house, and the button for the plan on paper. */
+function areaRow(host: EditorHost, floor: Floor, floorActions: FloorActions): TemplateResult | typeof nothing {
+  if (floor.layer || !floor.rooms.length) return nothing;
+  const t = host.t;
+  const here = totalOf(floorAreas(host.doc, floor)).living;
+  const house = totalOf(host.doc.floors.flatMap((f) => floorAreas(host.doc, f))).living;
+  return html`<p class="nf-sub nf-wide" title=${t("living_area_hint")}>
+      ${t(host.doc.floors.length > 1 ? "living_area_floor_house" : "living_area_floor", { floor: formatArea(host.hass, here), house: formatArea(host.hass, house) })}
+    </p>
+    <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("print_plan_hint")} @click=${() => floorActions.print()}>🖨️ ${t("print_plan")}</button></div>`;
 }
 
 /** The chips of the floors, top floor first, and the button that adds one: straight away, or after choosing a floor of Home Assistant. */
@@ -92,6 +108,7 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
     ${checkField(host, t("floor_layer"), !!floor.layer, (on) => update({ layer: on || undefined }), { title: t("floor_layer_hint") })}
     ${entityField(host, t("floor_power"), floor.power_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.") && host.hass?.states[id]?.attributes.device_class === "power"), (v) => update({ power_entity: v && v !== "none" ? v : null }))}
     ${floor.power_entity ? hint(t("floor_power_hint"), "nf-wide") : nothing}
+    ${areaRow(host, floor, floorActions)}
     ${host.admin && lacking.length > 0
       ? html`<div class="nf-actions nf-wide"><button class="nf-btn nf-primary" title=${t("area_rooms_hint")} @click=${() => floorActions.addAreaRooms(floor)}>${t("area_rooms", { n: lacking.length })}</button></div>`
       : nothing}

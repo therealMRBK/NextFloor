@@ -67,6 +67,8 @@ export interface Room {
   ceiling?: number | null;
   /** Light moods saved in the room panel (the light designer): the lights as they were, to set again. */
   moods?: LightMood[];
+  /** Whether the room counts as living area (null: by its name – a garage, cellar or utility room does not). */
+  living?: boolean | null;
   /** Underfloor heating: the thermostat, valve or switch of the room's floor heating; its floor glows warm while it heats. */
   floor_heating?: string | null;
   /** Announcements: the room's speaker (null = automatic, "none" = the room never speaks). */

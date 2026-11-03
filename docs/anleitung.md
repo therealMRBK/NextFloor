@@ -34,6 +34,10 @@ Plan, Bilder und Packs liegen in Home Assistants `.storage`. Nichts davon verlä
 
 **3D daneben** zeigt das 3D-Modell neben dem Plan. *Ansicht als Start der Etage / des Raums* merkt sich die aktuelle 3D-Kamera.
 
+## Flächen und der Plan auf Papier
+
+Das Raumformular zeigt die *Wohnfläche* des Raums (gerechnet wie die Wohnflächenverordnung: voll ab 2 m lichter Höhe, zur Hälfte zwischen 1 und 2 m, darunter nicht); Garagen, Keller und Technikräume bleiben nach ihrem Namen draußen, *Zählt zur Wohnfläche* entscheidet es von Hand. Das Etagenformular zählt sie für Etage und Haus zusammen, und *🖨️ Plan drucken / PDF* öffnet jede Etage in 1:100 mit Maßen und der Flächentabelle – drucken oder im Druckdialog als PDF speichern.
+
 ## Plan prüfen
 
 *✓ Plan prüfen* oben in der Seitenleiste des Editors listet Etage für Etage, was fehlt oder schief ist: Räume ohne Bereich, Bereiche ohne Raum, noch nicht gesetzte Geräte eines Raums, übereinanderliegende Räume, Türen und Fenster neben der Wand und Verknüpfungen zu Entitäten, die Home Assistant nicht mehr kennt. Blaue Knöpfe lösen es per Tipp (Rückgängig geht wie immer), *Zeigen* öffnet die Stelle.

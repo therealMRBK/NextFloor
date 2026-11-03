@@ -111,6 +111,8 @@ ROOM_SCHEMA = vol.Schema(
             ],
             vol.Length(max=MAX_POINTS),
         ),
+        # whether the room counts as living area (None: by its name, a garage or cellar does not)
+        vol.Optional("living", default=None): vol.Any(None, bool),
         # the room's own ceiling height (None = the floor height)
         vol.Optional("ceiling", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=20))),
         # announcements: the room's speaker ("none": the room never speaks) and a quiet time ("HH:MM")

@@ -5,13 +5,14 @@ import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { bounds, DEFAULT_PAINT_INSIDE, FLOOR_MATERIALS, isAxisRect, polygonArea, type Floor, type FurnitureType, type Room } from "../../../model.ts";
 import { PACKAGES, type PackageId } from "../../../packages.ts";
 import { entityOptions } from "../entities.ts";
-import { colorField, entityField, hint, numberField, selectField, textField } from "../fields.ts";
+import { checkField, colorField, entityField, hint, numberField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import type { RectField } from "../ops/rooms.ts";
 import { SPOT_TYPES, spotCount, spotItems } from "../ops/spots.ts";
 import type { SideState } from "../side-state.ts";
 import { formatArea, formatLength } from "../../../units.ts";
-import { generateWalls, innerSize } from "../../../geometry/walls.ts";
+import { generateWalls, innerSize, type Wall } from "../../../geometry/walls.ts";
+import { countsAsLiving, roomArea } from "../../../geometry/living-area.ts";
 import { roomSpeaker } from "../../../live/announce.ts";
 
 /** What the room form makes the editor do, and the parts of it that the editor still draws itself. */
@@ -86,6 +87,21 @@ function corners(host: EditorHost, room: Room, rectangle: boolean, actions: Room
   </details>`;
 }
 
+/** The room's living area (counted like the Wohnflächenverordnung), with its floor area when part of it lies under a slope. */
+function livingLine(host: EditorHost, room: Room, walls: readonly Wall[]): TemplateResult | typeof nothing {
+  const floor = host.floor;
+  // only this room: the form draws again on every step of a drag
+  const a = floor ? roomArea(host.doc, floor, room, walls) : undefined;
+  if (!a || a.floor <= 0) return nothing;
+  const t = host.t;
+  if (!countsAsLiving(room)) return html`<p class="nf-sub nf-wide">${t("living_area_none", { floor: formatArea(host.hass, a.floor) })}</p>`;
+  return html`<p class="nf-sub nf-wide" title=${t("living_area_hint")}>
+    ${a.low > 0.05
+      ? t("living_area_low", { living: formatArea(host.hass, a.living), floor: formatArea(host.hass, a.floor), low: formatArea(host.hass, a.low) })
+      : t("living_area", { living: formatArea(host.hass, a.living) })}
+  </p>`;
+}
+
 /**
  * The room's own ceiling height: a low bathroom on a high floor, or a living room open to the floor above (#55) – its walls rise
  * with it and the floor above stays open over it. At the floor height it is the floor's again.
@@ -134,7 +150,8 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
   const areas = Object.values(host.hass?.areas ?? {}).sort((a, b) => a.name.localeCompare(b.name));
   const areaChoices: [string, string][] = [["", t("no_area")], ...areas.map((a): [string, string] => [a.area_id, a.name])];
   // from wall face to wall face (the outline runs along the middle of inner walls)
-  const inner = host.floor ? innerSize(room, generateWalls(host.floor.rooms, { exterior: host.doc.settings.wall_exterior, interior: host.doc.settings.wall_interior }, host.floor.walls ?? []).walls) : null;
+  const walls = host.floor ? generateWalls(host.floor.rooms, { exterior: host.doc.settings.wall_exterior, interior: host.doc.settings.wall_interior }, host.floor.walls ?? []).walls : [];
+  const inner = host.floor ? innerSize(room, walls) : null;
   const materials = FLOOR_MATERIALS.map((m): [string, string] => [m, t(`mat_${m}` as I18nKey)]);
   const packageButton = (pkg: PackageId) =>
     html`<button class="nf-btn" @click=${() => actions.applyPackage(pkg)}><b>${t(`pkg_${pkg}` as I18nKey)}</b><span>${t(`pkg_${pkg}_desc` as I18nKey)}</span></button>`;
@@ -154,6 +171,8 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
       ${room.floor_heating ? hint(t("floor_heating_hint"), "nf-wide") : nothing}
       ${announceFields(host, room, host.floor ?? null, actions)}
       ${inner ? html`<p class="nf-sub nf-wide" title=${t("room_inner_hint")}>${t("room_inner", { w: formatLength(host.hass, inner[0]), d: formatLength(host.hass, inner[1]) })}</p>` : nothing}
+      ${livingLine(host, room, walls)}
+      ${checkField(host, t("room_living"), countsAsLiving(room), (on) => actions.patch({ living: on === countsAsLiving({ name: room.name, living: null }) ? null : on }), { title: t("living_area_hint") })}
       ${rectangle
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRect("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRect("z", v))}
           ${numberField(host, t("width"), box.x1 - box.x0, (v) => actions.setRect("w", v), 0.01, 0.05)}

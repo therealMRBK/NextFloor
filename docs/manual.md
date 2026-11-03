@@ -34,6 +34,10 @@ Open the **Editor** tab (administrators only). The toolbar holds the tools; the 
 
 **3D beside** shows the 3D model next to the plan while you draw. *View as this floor's / room's start* remembers the current 3D camera for later.
 
+## Areas and the plan on paper
+
+The room form shows the room's *Living area* (counted like the German Wohnflächenverordnung: in full from 2 m clear height, half between 1 and 2 m, nothing below); garages, cellars and utility rooms are left out by their name, *Counts as living area* decides it by hand. The floor form adds it up for the floor and the house, and *🖨️ Print plan / PDF* opens every floor at 1:100 with measurements and the table of areas – print it, or save it as PDF in the print dialog.
+
 ## Check the plan
 
 *✓ Check the plan* at the top of the editor's side panel lists what is missing or off, floor by floor: rooms without an area, areas without a room, devices of a room not placed yet, overlapping rooms, doors and windows off their wall, and links to entities Home Assistant no longer knows. Blue buttons fix it in one tap (undo works as always), *Show* opens the place.
