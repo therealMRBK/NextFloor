@@ -29,6 +29,8 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 
 <p align="center">🎬 <a href="https://therealmrbk.github.io/NextFloor/tutorial/">Watch the setup video in your browser, from the empty page (45 min, English voice, subtitles en/de)</a></p>
 
+<p align="center">📖 <b>English</b> · <a href="https://github.com/therealMRBK/NextFloor/blob/main/README.zh-CN.md">简体中文</a></p>
+
 <p align="center">📖 <a href="https://github.com/therealMRBK/NextFloor/blob/main/docs/manual.md">Manual</a> · <a href="https://github.com/therealMRBK/NextFloor/blob/main/docs/anleitung.md">Anleitung (Deutsch)</a> · 🗺️ <a href="https://github.com/therealMRBK/NextFloor/blob/main/ROADMAP.md">Roadmap</a> · 📝 <a href="https://github.com/therealMRBK/NextFloor/blob/main/CHANGELOG.md">Changelog</a></p>
 
 ---
