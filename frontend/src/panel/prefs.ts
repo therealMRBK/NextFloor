@@ -76,7 +76,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   quality: word("quality", ["auto", "low", "high"], "auto"),
   stats: flag("stats", false),
   markers: word("markers", ["none", "important", "all"], "important"),
-  heat: word("heat", ["none", "temperature", "humidity", "co2", "mould", "power", "values", "wifi"], "none"),
+  heat: word("heat", ["none", "temperature", "humidity", "co2", "mould", "power", "sun", "values", "wifi"], "none"),
   theme: word("theme", LOOKS, "neon"),
   clock: word("clock", ["none", "top_left", "top_right", "bottom_left", "bottom_right"], "none"),
   accent: { name: "accent", fallback: null, read: (raw) => (/^#[0-9a-f]{6}$/i.test(raw) ? raw : null), write: (value) => value ?? "" },

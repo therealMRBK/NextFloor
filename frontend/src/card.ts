@@ -359,7 +359,7 @@ export class NextFloorCard extends LitElement {
   private renderRoomPanel(): TemplateResult {
     const b = this.data.building!;
     return html`<nf-room-panel
-            .energy=${this.data.building?.energy ?? null}
+            .building=${this.data.building ?? null}
       class="nf-card-panel"
       .hass=${this.hass}
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}

@@ -2,11 +2,12 @@
 
 import { roomClimateValue } from "./devices.ts";
 import { powerSensorFor, readPower } from "./energy.ts";
+import { roomSun } from "./live/sun-hours.ts";
 import { mouldRisk } from "./live/room-climate.ts";
 import { pointInPolygon, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
-export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "power" | "values" | "wifi";
+export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "power" | "sun" | "values" | "wifi";
 
 /** The modes that paint floors ("values" prints numbers at the room names instead). */
 export type HeatColorMode = Exclude<HeatMode, "none" | "values" | "wifi">;
@@ -48,6 +49,12 @@ export const HEAT_SCALES: Record<HeatColorMode, Scale> = {
     deviceClass: "power",
     unit: "W",
     stops: [[0, [0.25, 0.4, 0.6]], [100, [0.3, 0.88, 0.5]], [500, [0.98, 0.84, 0.3]], [1500, [1, 0.5, 0.2]], [3000, [0.98, 0.25, 0.25]]],
+  },
+  // hours of sun through the room's outside windows today (live/sun-hours.ts)
+  sun: {
+    deviceClass: "",
+    unit: "h",
+    stops: [[0, [0.22, 0.3, 0.55]], [2, [0.35, 0.6, 0.85]], [4, [0.98, 0.84, 0.3]], [7, [1, 0.62, 0.2]], [10, [1, 0.42, 0.25]]],
   },
 };
 
@@ -111,6 +118,12 @@ export function roomValues(hass: HomeAssistant, building: Building, mode: HeatCo
       if (mode === "power") {
         const w = roomPower(hass, building, floor, room);
         if (w !== null) values.set(room.id, w);
+        continue;
+      }
+      if (mode === "sun") {
+        const { latitude, longitude, time_zone } = hass.config ?? {};
+        if (latitude === undefined || longitude === undefined || floor.layer) continue;
+        values.set(room.id, roomSun(building, floor, room, { latitude, longitude, zone: time_zone }).hours);
         continue;
       }
       const reading = mode === "mould" ? mouldRisk(roomClimateValue(hass, floor, room, "temperature"), roomClimateValue(hass, floor, room, "humidity")) : roomClimateValue(hass, floor, room, mode);

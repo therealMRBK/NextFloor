@@ -10,6 +10,7 @@ import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts";
 import { roomPower } from "../heatmap.ts";
+import { roomSun } from "../live/sun-hours.ts";
 import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
@@ -62,7 +63,7 @@ export class NfRoomPanel extends LitElement {
     _moodName: { state: true },
     _undo: { state: true },
     rooms: { attribute: false },
-    energy: { attribute: false },
+    building: { attribute: false },
   };
 
   declare hass: HomeAssistant;
@@ -85,8 +86,8 @@ export class NfRoomPanel extends LitElement {
   private memo: { entities: HomeAssistant["entities"]; floor: Floor | null; room: Room; shown: string[]; more: string[] } | null = null;
   /** Every room of the plan (a mood can be carried over to another one). */
   declare rooms: Room[] | null;
-  /** The house's energy settings: its meters stay out of the room's power. */
-  declare energy: Building["energy"] | null;
+  /** The whole plan: its meters stay out of the room's power, its compass turns the room's sun. */
+  declare building: Building | null;
   /** The name typed for a new mood, while the field shows. */
   private declare _moodName: string | null;
   /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
@@ -109,7 +110,7 @@ export class NfRoomPanel extends LitElement {
     this._moodName = null;
     this._undo = null;
     this.rooms = null;
-    this.energy = null;
+    this.building = null;
   }
 
   private fireMoods(room: Room, moods: LightMood[]): void {
@@ -417,8 +418,14 @@ export class NfRoomPanel extends LitElement {
     const hum = value("humidity", "%");
     if (hum) out.push(hum);
     // what the room's devices draw now
-    const power = this.floor ? roomPower(this.hass, { energy: this.energy ?? ({} as Building["energy"]) }, this.floor, room) : null;
+    const power = this.floor && this.building ? roomPower(this.hass, this.building, this.floor, room) : null;
     if (power !== null) out.push(`⚡ ${powerText(this.hass, power)}`);
+    // hours of sun through its outside windows today
+    const { latitude, longitude, time_zone } = this.hass.config ?? {};
+    if (this.floor && latitude !== undefined && longitude !== undefined && this.building) {
+      const sun = roomSun(this.building, this.floor, room, { latitude, longitude, zone: time_zone });
+      if (sun.facing.length) out.push(`☀ ${this.t("room_sun_hours", { h: formatNumber(this.hass, sun.hours, 1), facing: sun.facing.join(", ") })}`);
+    }
     // airing hints: too much CO₂, too damp, or a risk of mould at the coldest wall
     const t = roomClimateValue(this.hass, this.floor, room, "temperature");
     const h = roomClimateValue(this.hass, this.floor, room, "humidity");

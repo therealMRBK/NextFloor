@@ -189,6 +189,8 @@ const shots = [
   { name: "dev-heat-power", dev: true, query: "", width: 1280, height: 800, click: "Erdgeschoss", viewScript: "document.querySelector('nextfloor-panel').setPref('heat', 'power');", afterWait: 1200 },
   // notes: two notes on the ground floor (one due), seen in 3D
   { name: "dev-notes", dev: true, query: "", width: 1280, height: 800, click: "Erdgeschoss", viewScript: "const p = document.querySelector('nextfloor-panel'); const b = structuredClone(p.data.building); const f = b.floors.sort((a, c) => a.elevation - c.elevation)[0]; f.notes = [{ id: 'n1', x: 2, z: 2, text: 'Heizkörper entlüften', due: '2026-01-10' }, { id: 'n2', x: 9, z: 6, text: 'Sicherung 12: Herd und Backofen' }]; p.data.edit(b); p._clean = true;", afterWait: 1500 },
+  // the heat map by sun: hours of sun through each room's outside windows today
+  { name: "dev-heat-sun", dev: true, query: "", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer", viewScript: "document.querySelector('nextfloor-panel').setPref('heat', 'sun');", afterWait: 1200 },
   { name: "dev-imperial", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._doc = { ...e._doc, settings: { ...e._doc.settings, units: \"imperial\" } }; e.requestUpdate();", settle: 600 },
   // ../preview/screenshots/lhouse.json: an L-shaped house, a wing roof meeting the main roof at a right angle
   { name: "dev-lhouse", dev: true, query: "?state=/preview/screenshots/lhouse.json&noshowcase", width: 1400, height: 850, settle: 1500, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(6, 3, 6); w.theta = 0.9; w.phi = 0.95; w.radius = 22; v.viewer.flyTo(w, 1);" },

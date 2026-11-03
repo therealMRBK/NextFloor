@@ -489,7 +489,7 @@ export class NextFloorPanel extends LitElement {
     const t = this.t;
     const pair = (a: [boolean, () => void, string], b: [boolean, () => void, string]) =>
       html`<div class="nf-seg">${[a, b].map(([on, act, text]) => html`<button aria-pressed=${on} @click=${act}>${text}</button>`)}</div>`;
-    const heats: HeatMode[] = ["none", "temperature", "humidity", "co2", "mould", "power", "values", "wifi"];
+    const heats: HeatMode[] = ["none", "temperature", "humidity", "co2", "mould", "power", "sun", "values", "wifi"];
     const stacks: FloorStack[] = ["dim", "stacked", "single"];
     const several = building.floors.length > 1;
     // folded: one button stands for all switches, so a small screen keeps the house in view
@@ -588,7 +588,7 @@ export class NextFloorPanel extends LitElement {
         ></nf-view3d>
         ${room
           ? html`<nf-room-panel
-            .energy=${this.data.building?.energy ?? null}
+            .building=${this.data.building ?? null}
               class="nf-room-panel"
               .hass=${this.hass}
               .room=${room}
@@ -601,7 +601,7 @@ export class NextFloorPanel extends LitElement {
             ></nf-room-panel>`
           : this._outside
             ? html`<nf-room-panel
-            .energy=${this.data.building?.energy ?? null}
+            .building=${this.data.building ?? null}
                 class="nf-room-panel"
                 .hass=${this.hass}
                 .room=${null}

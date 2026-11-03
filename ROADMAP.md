@@ -7,7 +7,7 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Topic | What it is about |
 |---|---|
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
-| Sun in the rooms | Which rooms get sun at which hours, through which windows, over the day and the year – from the plan, the compass and the sun's path |
+| Sun over the year | The hours of sun of each room for any day of the year, as a curve from January to December (today's hours are in 0.22) |
 | Energy per room | What each room used today and this month, in kWh and in money with the tariff (the power now is in 0.22) |
 | Share a view | The house as a file that opens in any browser without Home Assistant, to show it to family or a planner |
 
@@ -20,6 +20,6 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Thema | Worum es geht |
 |---|---|
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
-| Sonne in den Räumen | Welche Räume wann Sonne bekommen, durch welche Fenster, über den Tag und das Jahr – aus Plan, Kompass und Sonnenbahn |
+| Sonne übers Jahr | Die Sonnenstunden jedes Raums für jeden Tag des Jahres, als Kurve von Januar bis Dezember (die von heute kamen mit 0.22) |
 | Energie pro Raum | Was jeder Raum heute und im Monat verbraucht hat, in kWh und mit dem Tarif in Euro (die Leistung jetzt kam mit 0.22) |
 | Ansicht teilen | Das Haus als Datei, die in jedem Browser ohne Home Assistant aufgeht – zum Zeigen für Familie oder Planer |
