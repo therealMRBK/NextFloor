@@ -195,6 +195,8 @@ const shots = [
   { name: "dev-sun-year", dev: true, query: "", ha: "light", width: 1280, height: 800, click: "Erdgeschoss", then: "Wohnzimmer", viewScript: "const f = (r) => { for (const el of r.querySelectorAll('*')) { if (el.tagName === 'NF-ROOM-PANEL') return el; if (el.shadowRoot) { const h = f(el.shadowRoot); if (h) return h; } } return null; }; const rp = f(document); rp._sunYear = true;", afterWait: 800 },
   // the heat map by comfort score
   { name: "dev-heat-comfort", dev: true, query: "", width: 1280, height: 800, click: "Erdgeschoss", viewScript: "document.querySelector('nextfloor-panel').setPref('heat', 'comfort');", afterWait: 1200 },
+  // the plan with every room edge's length
+  { name: "dev-dims", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e.setDims(true);", settle: 600 },
   { name: "dev-imperial", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._doc = { ...e._doc, settings: { ...e._doc.settings, units: \"imperial\" } }; e.requestUpdate();", settle: 600 },
   // ../preview/screenshots/lhouse.json: an L-shaped house, a wing roof meeting the main roof at a right angle
   { name: "dev-lhouse", dev: true, query: "?state=/preview/screenshots/lhouse.json&noshowcase", width: 1400, height: 850, settle: 1500, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(6, 3, 6); w.theta = 0.9; w.phi = 0.95; w.radius = 22; v.viewer.flyTo(w, 1);" },

@@ -13,7 +13,7 @@ import { roomPower, roomPowerSensors } from "../heatmap.ts";
 import { energyCost, loadRoomEnergy, type RoomEnergy } from "../live/room-energy.ts";
 import { roomSun, roomSunYear, sunnyWindowsNow } from "../live/sun-hours.ts";
 import { LOW_BATTERY, planBatteries } from "../live/batteries.ts";
-import { powerText } from "../presence.ts";
+import { powerText, sinceText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
 import { airingNeed, comfortScore, isSummer, mouldRisk } from "../live/room-climate.ts";
@@ -560,6 +560,17 @@ export class NfRoomPanel extends LitElement {
     // what the room's devices draw now
     const power = this.floor && this.building ? roomPower(this.hass, this.building, this.floor, room) : null;
     if (power !== null) out.push(`⚡ ${powerText(this.hass, power)}`);
+    // how long its windows and doors stand open (the one open longest)
+    const openSince = this.floor
+      ? this.floor.openings
+          .filter((op) => op.room_id === room.id)
+          .flatMap((op) => [op.contact, op.contact2, op.tilt, op.tilt2])
+          .map((id) => (id && id !== "none" ? this.hass.states[id] : undefined))
+          .filter((st): st is HassEntity => st?.state === "on")
+          .map((st) => Date.parse(String(st.last_changed ?? "")))
+          .filter(Number.isFinite)
+      : [];
+    if (openSince.length) out.push(`🪟 ${this.t("open_since", { time: sinceText(Date.now() - Math.min(...openSince)) })}`);
     // the room's devices with a low battery
     const low = this.building ? planBatteries(this.hass, this.building).filter((b) => b.roomId === room.id && b.level < LOW_BATTERY) : [];
     if (low.length) out.push(`🪫 ${this.t("battery_low_n", { n: low.length, names: low.map((b) => `${this.name(b.entity)} ${Math.round(b.level)} %`).join(", ") })}`);

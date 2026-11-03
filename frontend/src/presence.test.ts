@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { emptyBuilding, newFloor, type Building, type Room } from "./model.ts";
-import { floorCounts, floorInfoText, initials, personsInRooms, roomForState } from "./presence.ts";
+import { floorCounts, floorInfoText, initials, personsInRooms, roomForState, sinceText } from "./presence.ts";
 import type { HomeAssistant } from "./types.ts";
 
 type Attrs = Record<string, unknown>;
@@ -89,4 +89,10 @@ test("floor counts and their text leave out what is zero", () => {
   // the floor's own meter joins the label
   assert.ok(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 1250 }).endsWith("⚡ 1.25 kW") || floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 1250 }).endsWith("⚡ 1,25 kW"));
   assert.ok(floorInfoText(hass, { rooms: 2, lightsOn: 0, open: 0, persons: 0, power: 640 }).endsWith("⚡ 640 W"));
+});
+
+test("a span of time reads as minutes, then hours", () => {
+  assert.equal(sinceText(30_000), "0 min");
+  assert.equal(sinceText(12 * 60_000), "12 min");
+  assert.equal(sinceText(125 * 60_000), "2:05 h");
 });

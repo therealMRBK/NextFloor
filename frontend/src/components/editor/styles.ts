@@ -390,6 +390,13 @@ export const editorStyles = css`
     stroke: #ff5fd2;
     stroke-width: 2;
   }
+  .nf-dim {
+    font: 600 10px var(--nf-font);
+    fill: var(--nf-text);
+    paint-order: stroke;
+    stroke: rgba(10, 16, 32, 0.85);
+    stroke-width: 3px;
+  }
   .nf-note rect {
     fill: #ffe58a;
     stroke: #8a6d00;

@@ -159,3 +159,27 @@ export function roomHandlesLayer(ctx: CanvasContext, room: Room, selectedCorner:
   };
   return svg`<g>${pts.map((p, i) => edge(p, pts[(i + 1) % pts.length], i))}${pts.map(corner)}</g>`;
 }
+
+/** Every room edge labelled with its length, a little inside the room, along the edge (the switch "Measurements"). */
+export function dimensionsLayer(ctx: CanvasContext, floor: Floor): Layer {
+  const labels = floor.rooms.flatMap((room) => {
+    if (room.points.length < 3) return [];
+    const [cx, cz] = centroid(room.points);
+    return room.points.map((a, i) => {
+      const b = room.points[(i + 1) % room.points.length];
+      const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (length < 0.4) return nothing;
+      const mid: Vec2 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      // a little towards the room's middle, so the label stays inside it
+      const towards = Math.hypot(cx - mid[0], cz - mid[1]) || 1;
+      const inset = Math.min(0.35, towards / 2);
+      const at: Vec2 = [mid[0] + ((cx - mid[0]) / towards) * inset, mid[1] + ((cz - mid[1]) / towards) * inset];
+      const [x, y] = ctx.toScreen(at);
+      let angle = (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
+      if (angle > 90) angle -= 180;
+      if (angle < -90) angle += 180;
+      return svg`<text class="nf-dim" x=${x} y=${y} transform=${`rotate(${angle.toFixed(1)} ${x} ${y})`} text-anchor="middle" dominant-baseline="middle">${formatLength(ctx.host.hass, length)}</text>`;
+    });
+  });
+  return svg`<g pointer-events="none">${labels}</g>`;
+}

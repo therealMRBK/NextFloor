@@ -74,6 +74,7 @@ import { dragStep, facingAngle, gridPositionAfter, hasLeftStart, headingAngle, o
 import { snapToPlan } from "./editor/ops/snapping.ts";
 import { draftLayer, guidesLayer } from "./editor/canvas/draft.ts";
 import { devicesLayer, furnitureLayer, notesLayer } from "./editor/canvas/items.ts";
+import { dimensionsLayer } from "./editor/canvas/plan.ts";
 import { renderNoteForm } from "./editor/forms/note.ts";
 import { openingsLayer } from "./editor/canvas/openings.ts";
 import { cutMarksLayer, floorBelowLayer, freeWallsLayer, gridLayer, meterLayer, outdoorHandlesLayer, outdoorLayer, roomHandlesLayer, roomsLayer, wallsLayer } from "./editor/canvas/plan.ts";
@@ -190,6 +191,7 @@ export class NfEditor extends LitElement {
     _check: { state: true },
     _keys: { state: true },
     _note: { state: true },
+    _dims: { state: true },
     _tour: { state: true },
     _sideOpen: { state: true },
     _floorId: { state: true },
@@ -238,6 +240,8 @@ export class NfEditor extends LitElement {
   private declare _keys: boolean;
   /** The note selected in the plan (its form shows in the side panel). */
   private declare _note: string | null;
+  /** Every room edge labelled with its length (remembered on this browser). */
+  private declare _dims: boolean;
   /** The step of the first-start tour shown, or null. */
   private declare _tour: number | null;
   private tourChecked = false;
@@ -341,6 +345,13 @@ export class NfEditor extends LitElement {
     this._check = false;
     this._keys = false;
     this._note = null;
+    this._dims = (() => {
+      try {
+        return localStorage.getItem("nextfloor.plan_dims") === "1";
+      } catch {
+        return false;
+      }
+    })();
     this._tour = null;
     this._measureLen = 3;
     this._rectSize = [4, 3];
@@ -534,6 +545,15 @@ export class NfEditor extends LitElement {
           const floor = onFloor(doc);
           if (floor) floor.placements = floor.placements.filter((p) => !fix.entityIds.includes(p.entity_id));
         });
+    }
+  }
+
+  private setDims(on: boolean): void {
+    this._dims = on;
+    try {
+      localStorage.setItem("nextfloor.plan_dims", on ? "1" : "0");
+    } catch {
+      // no storage: the switch holds for this visit
     }
   }
 
@@ -2120,6 +2140,7 @@ export class NfEditor extends LitElement {
         ${freeWallsLayer(ctx, floor, this.sel.wall)} ${walls ? openingsLayer(ctx, floor, walls, this.sel.opening) : nothing} ${meterLayer(ctx, floor)}
         ${this._tool === "select" ? devicesLayer(ctx, floor, this.sel.device) : nothing}
         ${this._tool === "select" ? notesLayer(ctx, floor, this._note) : nothing}
+        ${this._dims ? dimensionsLayer(ctx, floor) : nothing}
         ${showRoomHandles ? roomHandlesLayer(ctx, room, this.sel.corner) : nothing}
         ${outdoorHandlesLayer(ctx, this.outdoorArea, this._tool)}
         ${room && this._tool === "select" ? cutMarksLayer(ctx, room) : nothing}
@@ -3003,6 +3024,7 @@ export class NfEditor extends LitElement {
               <button @click=${() => this.fit()}>${this.t("fit")}</button>
               <button aria-pressed=${this._split} title=${this.t("split_3d_hint")} @click=${() => this.toggleSplit()}>${this.t("split_3d")}</button>
               ${this.isAdmin ? html`<button aria-pressed=${!!this._doc.settings.lock_plan} title=${this.t("lock_plan_hint")} @click=${() => this.toggleLockPlan()}>${this.t("lock_plan")}</button>` : nothing}
+              <button aria-pressed=${this._dims} title=${this.t("plan_dims_hint")} @click=${() => this.setDims(!this._dims)}>📏 ${this.t("plan_dims")}</button>
             </div>
             ${walls?.warnings.length ? html`<span class="nf-warn">${this.t("overlap_warning")}</span>` : nothing}
           </div>

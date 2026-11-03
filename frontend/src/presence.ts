@@ -143,3 +143,9 @@ export function powerText(hass: HomeAssistant | undefined, w: number): string {
   const a = Math.abs(w);
   return a >= 1000 ? `${formatNumber(hass, w / 1000, a >= 10000 ? 1 : 2)} kW` : `${Math.round(w)} W`;
 }
+
+/** A span of time as "12 min" or "2:05 h". */
+export function sinceText(ms: number): string {
+  const minutes = Math.max(0, Math.floor(ms / 60_000));
+  return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, "0")} h`;
+}

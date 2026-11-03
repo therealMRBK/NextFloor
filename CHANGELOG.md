@@ -29,6 +29,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Low batteries**: the batteries of the plan's devices – device pins, the contacts, locks and blinds of doors and windows, linked furniture – from the battery sensor on their device or their own battery attribute. Below 20 % they are in the plan check (*🪫 Battery low: kitchen window (12 %)*) and in their room's panel.
 - **Lights on, nobody there**: when a room's motion, occupancy and presence sensors have seen nobody for ten minutes while lights are on, the room panel says so and *Lights off* switches them off.
 - **Comfort score**: every room with climate sensors gets a score from 0 to 100 – the temperature in its band (20–23 °C, 22–26 °C in summer), humidity between 40 and 60 %, CO₂ up to 800 ppm, where one bad value always shows. As the heat map mode *Comfort* and in the room panel (*😊 Comfort 85*).
+- **Open for …**: the room panel shows how long the room's windows and doors stand open (*🪟 open for 12 min*), the one open longest – handy for airing.
+- **Measurements in the plan**: *📏 Measurements* in the editor's bar labels every room edge with its length; the switch is remembered on the browser.
 
 ## 0.21.0
 
