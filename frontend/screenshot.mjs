@@ -185,6 +185,8 @@ const shots = [
   // first steps: the tour card (step 1) and the key sheet
   { name: "dev-tour", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._tour = 0; e.requestUpdate();", settle: 600 },
   { name: "dev-keys", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._keys = true; e.requestUpdate();", settle: 600 },
+  // the heat map by power use: rooms by what their devices draw
+  { name: "dev-heat-power", dev: true, query: "", width: 1280, height: 800, click: "Erdgeschoss", viewScript: "document.querySelector('nextfloor-panel').setPref('heat', 'power');", afterWait: 1200 },
   { name: "dev-imperial", dev: true, query: "", width: 1400, height: 900, editor: true, editorScript: "e._doc = { ...e._doc, settings: { ...e._doc.settings, units: \"imperial\" } }; e.requestUpdate();", settle: 600 },
   // ../preview/screenshots/lhouse.json: an L-shaped house, a wing roof meeting the main roof at a right angle
   { name: "dev-lhouse", dev: true, query: "?state=/preview/screenshots/lhouse.json&noshowcase", width: 1400, height: 850, settle: 1500, viewScript: "document.querySelector(\"nextfloor-panel\")._clean = true; const w = v.viewer.getView(); w.target.set(6, 3, 6); w.theta = 0.9; w.phi = 0.95; w.radius = 22; v.viewer.flyTo(w, 1);" },

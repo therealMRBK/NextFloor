@@ -1,11 +1,12 @@
-// Heat map: the floor of a room is coloured by what its sensors say (temperature, humidity, CO₂).
+// Heat map: the floor of a room is coloured by what its sensors say (temperature, humidity, CO₂), or by the power its devices draw.
 
 import { roomClimateValue } from "./devices.ts";
+import { powerSensorFor, readPower } from "./energy.ts";
 import { mouldRisk } from "./live/room-climate.ts";
-import type { Building } from "./model.ts";
+import { pointInPolygon, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
-export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "values" | "wifi";
+export type HeatMode = "none" | "temperature" | "humidity" | "co2" | "mould" | "power" | "values" | "wifi";
 
 /** The modes that paint floors ("values" prints numbers at the room names instead). */
 export type HeatColorMode = Exclude<HeatMode, "none" | "values" | "wifi">;
@@ -42,6 +43,12 @@ export const HEAT_SCALES: Record<HeatColorMode, Scale> = {
     unit: "%",
     stops: [[0, [0.3, 0.88, 0.5]], [40, [0.98, 0.84, 0.3]], [70, [1, 0.5, 0.2]], [100, [0.75, 0.2, 0.55]]],
   },
+  // what the room's devices draw now (their power sensors added up)
+  power: {
+    deviceClass: "power",
+    unit: "W",
+    stops: [[0, [0.25, 0.4, 0.6]], [100, [0.3, 0.88, 0.5]], [500, [0.98, 0.84, 0.3]], [1500, [1, 0.5, 0.2]], [3000, [0.98, 0.25, 0.25]]],
+  },
 };
 
 /** Summer's temperature scale: rooms count as hot later than in winter (26 °C is fine in July, not in January). */
@@ -69,11 +76,43 @@ export function heatColor(mode: HeatColorMode, value: number, summer = false): R
   return mix(lowColour, highColour, (value - lowValue) / (highValue - lowValue));
 }
 
+/**
+ * What the devices of a room draw now, in watts: the power sensors of its device pins and of its furniture (a piece's own power
+ * sensor, else the one on its entity's device), each counted once. Null when the room has none. The house's meters stay out.
+ */
+export function roomPower(hass: HomeAssistant, building: Pick<Building, "energy">, floor: Floor, room: Room): number | null {
+  const { grid, solar, battery } = building.energy;
+  const meters = new Set([grid, solar, battery].filter(Boolean));
+  const sensors = new Set<string>();
+  const inside = (x: number, z: number) => room.points.length >= 3 && pointInPolygon([x, z], room.points);
+  for (const p of floor.placements) {
+    const s = inside(p.x, p.z) ? powerSensorFor(hass, p.entity_id) : null;
+    if (s) sensors.add(s);
+  }
+  for (const m of floor.furniture) {
+    if (!inside(m.x, m.z)) continue;
+    const s = m.power && m.power !== "none" ? m.power : m.entity && m.entity !== "none" ? powerSensorFor(hass, m.entity) : null;
+    if (s) sensors.add(s);
+  }
+  let sum: number | null = null;
+  for (const s of sensors) {
+    if (meters.has(s)) continue;
+    const w = readPower(hass.states[s]);
+    if (w !== null) sum = (sum ?? 0) + Math.max(0, w);
+  }
+  return sum;
+}
+
 /** The reading of every room that has a fitting sensor, by room id. */
 export function roomValues(hass: HomeAssistant, building: Building, mode: HeatColorMode): Map<string, number> {
   const values = new Map<string, number>();
   for (const floor of building.floors) {
     for (const room of floor.rooms) {
+      if (mode === "power") {
+        const w = roomPower(hass, building, floor, room);
+        if (w !== null) values.set(room.id, w);
+        continue;
+      }
       const reading = mode === "mould" ? mouldRisk(roomClimateValue(hass, floor, room, "temperature"), roomClimateValue(hass, floor, room, "humidity")) : roomClimateValue(hass, floor, room, mode);
       if (reading !== null) values.set(room.id, reading);
     }

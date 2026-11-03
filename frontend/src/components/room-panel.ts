@@ -8,7 +8,9 @@ import { iconPath } from "../icons.ts";
 import { openMoreInfo, stateText } from "../markers.ts";
 import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
-import type { Floor, LightMood, LightSetting, Room } from "../model.ts";
+import type { Building, Floor, LightMood, LightSetting, Room } from "../model.ts";
+import { roomPower } from "../heatmap.ts";
+import { powerText } from "../presence.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
 import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
 import { airingNeed, mouldRisk } from "../live/room-climate.ts";
@@ -60,6 +62,7 @@ export class NfRoomPanel extends LitElement {
     _moodName: { state: true },
     _undo: { state: true },
     rooms: { attribute: false },
+    energy: { attribute: false },
   };
 
   declare hass: HomeAssistant;
@@ -82,6 +85,8 @@ export class NfRoomPanel extends LitElement {
   private memo: { entities: HomeAssistant["entities"]; floor: Floor | null; room: Room; shown: string[]; more: string[] } | null = null;
   /** Every room of the plan (a mood can be carried over to another one). */
   declare rooms: Room[] | null;
+  /** The house's energy settings: its meters stay out of the room's power. */
+  declare energy: Building["energy"] | null;
   /** The name typed for a new mood, while the field shows. */
   private declare _moodName: string | null;
   /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
@@ -104,6 +109,7 @@ export class NfRoomPanel extends LitElement {
     this._moodName = null;
     this._undo = null;
     this.rooms = null;
+    this.energy = null;
   }
 
   private fireMoods(room: Room, moods: LightMood[]): void {
@@ -410,6 +416,9 @@ export class NfRoomPanel extends LitElement {
     else if (climateTemp && room.climate?.temperature !== "none") out.push(`${formatNumber(this.hass, climateTemp.attributes.current_temperature as number, 1)} ${tempUnit(this.hass)}`);
     const hum = value("humidity", "%");
     if (hum) out.push(hum);
+    // what the room's devices draw now
+    const power = this.floor ? roomPower(this.hass, { energy: this.energy ?? ({} as Building["energy"]) }, this.floor, room) : null;
+    if (power !== null) out.push(`⚡ ${powerText(this.hass, power)}`);
     // airing hints: too much CO₂, too damp, or a risk of mould at the coldest wall
     const t = roomClimateValue(this.hass, this.floor, room, "temperature");
     const h = roomClimateValue(this.hass, this.floor, room, "humidity");

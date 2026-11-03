@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { HEAT_SCALES, heatColor, heatGradient, type HeatColorMode } from "./heatmap.ts";
+import { box, entity, floorWith, hassOf } from "./entities/fixtures.ts";
+import { HEAT_SCALES, heatColor, heatGradient, roomPower, roomValues, type HeatColorMode } from "./heatmap.ts";
+import { emptyBuilding } from "./model.ts";
 
 const modes = Object.keys(HEAT_SCALES) as HeatColorMode[];
 
@@ -41,4 +43,27 @@ test("the gradient lists every stop, from 0 % to 100 %", () => {
     assert.equal(css.match(/rgb\(/g)?.length, HEAT_SCALES[mode].stops.length);
     assert.ok(css.includes(" 0%") && css.endsWith(" 100%)"));
   }
+});
+
+test("a room's power adds up the power sensors of its pins and furniture, the house's meters left out", () => {
+  const hass = hassOf([
+    entity("sensor.tv_power", "120", { device_class: "power", unit_of_measurement: "W" }),
+    entity("sensor.heater", "1.5", { device_class: "power", unit_of_measurement: "kW" }),
+    entity("sensor.grid", "900", { device_class: "power", unit_of_measurement: "W" }),
+  ]);
+  const room = box("w", 0, 0, 5, 4);
+  const floor = {
+    ...floorWith([room]),
+    placements: [
+      { entity_id: "sensor.heater", x: 1, z: 1, y: null, mount: null },
+      { entity_id: "sensor.grid", x: 2, z: 1, y: null, mount: null },
+      { entity_id: "sensor.tv_power", x: 9, z: 9, y: null, mount: null },
+    ],
+    furniture: [{ id: "tv", type: "tv", x: 3, z: 3, rotation: 0, w: 1, d: 0.1, h: 0.6, variant: null, power: "sensor.tv_power" }],
+  };
+  const b = { ...emptyBuilding(), floors: [floor] };
+  b.energy = { ...b.energy, grid: "sensor.grid" };
+  assert.equal(roomPower(hass, b, floor, room), 1620);
+  assert.equal(roomValues(hass, b, "power").get("w"), 1620);
+  assert.equal(roomPower(hass, b, floor, box("empty", 20, 20, 22, 22)), null);
 });
