@@ -40,6 +40,18 @@ const params = new URLSearchParams(location.search);
       let building = params.has("empty") ? { version: 1, floors: [], settings: { wall_exterior: 0.24, wall_interior: 0.12, grid: 0.05 } } : DEMO_BUILDING;
       // ?state=<url of a plan as JSON> starts from that plan (the tutorial recorder hands the end of one episode to the next)
       if (params.has("state")) building = await (await fetch(params.get("state"))).json();
+      // ?shared: a plan shared as a file from NextFloor (a small page that embeds this one) arrives by message, with its own packs
+      let sharedPacks = [];
+      if (params.has("shared")) {
+        const shared = await new Promise((resolve) => {
+          addEventListener("message", (e) => {
+            if (e.data && e.data.type === "nextfloor-share" && e.data.building && Array.isArray(e.data.building.floors)) resolve(e.data);
+          });
+          (window.parent !== window ? window.parent : window.opener)?.postMessage({ type: "nextfloor-share-ready" }, "*");
+        });
+        building = shared.building;
+        sharedPacks = Array.isArray(shared.packs) ? shared.packs : [];
+      }
       window.nfDemoState = () => structuredClone(building);
       // ?map and ?north=180 switch the real map and the compass on for a look (the demo ships with both off)
       if (params.has("map") || params.has("north")) {
@@ -158,7 +170,7 @@ const params = new URLSearchParams(location.search);
       let packsLoad = null;
       function previewPacks() {
         packsLoad ??= (async () => {
-          const list = [DEMO_PACK];
+          const list = [DEMO_PACK, ...sharedPacks];
           for (const id of window.PACK_IDS) {
             try {
               const res = await fetch(`../custom_components/nextfloor/packs/${id}.json`);

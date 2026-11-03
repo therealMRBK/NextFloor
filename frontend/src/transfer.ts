@@ -2,6 +2,7 @@
 // Home Assistant removed (entities, areas, energy sensors, people), so it can go to someone else.
 
 import { normalizeBuilding, type Building } from "./model.ts";
+import type { FurniturePack } from "./packs.ts";
 
 export const EXPORT_FORMAT = "nextfloor";
 
@@ -42,6 +43,34 @@ export function exportFile(building: Building, shareable: boolean): ExportFile {
 // a plan written by hand or by an AI may leave out the version and the settings; normalizeBuilding fills them in
 const looksLikePlan = (b: Building | undefined): b is Building => !!b && (b.version === 1 || b.version === undefined) && Array.isArray(b.floors) && b.floors.every((f) => !!f && typeof f === "object");
 
+/** Where shared views open: the online demo of the released version, which takes the plan by message. */
+export const SHARE_VIEWER = "https://therealmrbk.github.io/NextFloor/preview/?shared&noshowcase";
+
+/**
+ * The house as a small page of its own: it embeds the online demo and hands it the plan (without the entities, like a template) and
+ * the furniture packs it uses, so it opens in any browser without Home Assistant.
+ */
+export function shareViewHtml(building: Building, packs: readonly FurniturePack[], title: string, note: string, viewer = SHARE_VIEWER): string {
+  const used = new Set(building.floors.flatMap((f) => f.furniture.map((m) => m.type)).filter((t) => t.startsWith("pack:")).map((t) => t.split(":")[1]));
+  const data = { building: withoutEntities(building), packs: packs.filter((p) => !p.builtin && used.has(p.id)) };
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+  return `<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title>
+<style>html,body{margin:0;height:100%;background:#111;color:#ddd;font-family:system-ui,sans-serif}iframe{border:0;width:100%;height:100%;display:block}noscript p{padding:2em}</style></head>
+<body><iframe id="nf" src="${esc(viewer)}" allow="fullscreen" title="${esc(title)}"></iframe>
+<noscript><p>${esc(note)}</p></noscript>
+<script id="nf-plan" type="application/json">${json}</script>
+<script>
+const data = JSON.parse(document.getElementById("nf-plan").textContent);
+const frame = document.getElementById("nf");
+addEventListener("message", (e) => {
+  if (e.source === frame.contentWindow && e.data && e.data.type === "nextfloor-share-ready") frame.contentWindow.postMessage({ type: "nextfloor-share", building: data.building, packs: data.packs }, "*");
+});
+</script></body></html>
+`;
+}
+
 /** Reads an export file (or a bare building). Throws Error("not_json") or Error("not_plan"). */
 export function parseExport(text: string): Building {
   let parsed: unknown;
@@ -71,9 +100,9 @@ export function storedImageIds(building: Building): string[] {
 }
 
 /** Offers a text as a file download. */
-export function download(filename: string, text: string): void {
+export function download(filename: string, text: string, type = "application/json"): void {
   const link = document.createElement("a");
-  const href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+  const href = URL.createObjectURL(new Blob([text], { type }));
   Object.assign(link, { href, download: filename });
   link.click();
   setTimeout(() => URL.revokeObjectURL(href), 1000);

@@ -7,7 +7,8 @@ import type { I18nKey } from "../../i18n.ts";
 import { normalizeBuilding, type Building } from "../../model.ts";
 import { importSweetHome } from "../../import/sweethome.ts";
 import { importDxf } from "../../import/dxf.ts";
-import { download, exportFile, parseExport, storedImageIds } from "../../transfer.ts";
+import { download, exportFile, parseExport, shareViewHtml, storedImageIds } from "../../transfer.ts";
+import { getPacks } from "../../packs.ts";
 import type { HomeAssistant } from "../../types.ts";
 
 export interface BackupDeps {
@@ -25,7 +26,7 @@ export interface BackupDeps {
   alert(text: string): void;
   confirm(text: string): boolean;
   prompt?(text: string): string | null;
-  download(filename: string, text: string): void;
+  download(filename: string, text: string, type?: string): void;
   today(): string;
 }
 
@@ -119,6 +120,14 @@ export class BackupService {
     await remove(hass, snapshot.id);
     if (this.compare?.snapshot.id === snapshot.id) this.compare = null;
     await this.loadHistory();
+  }
+
+  /** The house as a page that opens in any browser (through the online demo), without the entities: to show it to someone. */
+  exportShareView(): void {
+    const t = this.host.t;
+    const html = shareViewHtml(this.host.doc, getPacks(), t("share_view_title"), t("share_view_needs_js"));
+    this.deps.download(`nextfloor-${t("share_view_file")}-${this.deps.today()}.html`, html, "text/html");
+    this.host.say(t("share_view_done"));
   }
 
   /** Saves the plan alone as a file; a shareable one has the entities taken out. */

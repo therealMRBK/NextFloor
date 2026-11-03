@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { emptyBuilding, newFloor, type Building } from "./model.ts";
-import { exportFile, EXPORT_FORMAT, parseExport, storedImageIds, withoutEntities } from "./transfer.ts";
+import { exportFile, EXPORT_FORMAT, parseExport, shareViewHtml, storedImageIds, withoutEntities } from "./transfer.ts";
 
 function linked(): Building {
   const b = emptyBuilding();
@@ -95,4 +95,19 @@ test("the smallest plan in docs/plan-format.md imports", async () => {
   assert.deepEqual(b.floors[0].openings.map((o) => o.type), ["door", "window", "garage"]);
   assert.equal(b.floors[0].openings[2].width, 2.5);
   assert.equal(b.floors[0].rooms[0].floor_material, "wood");
+});
+
+test("a shared view embeds the plan without entities and only the packs it uses", () => {
+  const b = emptyBuilding();
+  b.floors = [{ ...newFloor("g", "EG </script>", 0), placements: [{ entity_id: "light.x", x: 1, z: 1, y: null, mount: null }], furniture: [{ id: "f", type: "pack:own_studio:shelf", x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 1, variant: null }] }];
+  const own = { id: "own_studio", name: "Own", publisher: "Me", items: [] };
+  const other = { id: "other", name: "Other", publisher: "Me", items: [] };
+  const html = shareViewHtml(b, [own, other, { ...own, id: "nextfloor.ikea", builtin: true }], "Our home", "needs js", "https://example.org/preview/?shared");
+  const json = html.match(/<script id="nf-plan" type="application\/json">(.*?)<\/script>/s)![1];
+  assert.ok(!json.includes("</script>"));
+  const data = JSON.parse(json);
+  assert.equal(data.building.floors[0].name, "EG </script>");
+  assert.equal(data.building.floors[0].placements.length, 0);
+  assert.deepEqual(data.packs.map((p: { id: string }) => p.id), ["own_studio"]);
+  assert.ok(html.includes('src="https://example.org/preview/?shared"'));
 });
