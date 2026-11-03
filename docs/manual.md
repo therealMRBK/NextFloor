@@ -165,7 +165,7 @@ NextFloor adds sensors to Home Assistant: *Open windows and doors* and *Lights o
 
 ## Dashboard card
 
-Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. Newer options: `central_open` (star menu open and large), `keep_camera`, `zoom` (0.6–2.5) and `today` (the Today card, default on). The same options exist in YAML under the names shown in the editor.
+Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. Newer options: `central_open` (star menu open and large), `keep_camera`, `readable` (stronger contrast and larger text), `zoom` (0.6–2.5) and `today` (the Today card, default on). The same options exist in YAML under the names shown in the editor.
 
 ## Wall tablet
 

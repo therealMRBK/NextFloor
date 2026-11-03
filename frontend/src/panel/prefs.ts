@@ -31,6 +31,8 @@ export interface DevicePrefs {
   menuOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   keepCamera: boolean;
+  /** Easy to read: stronger contrast and larger text for wall tablets. */
+  readable: boolean;
   /** How much closer the fitted views come, in % (100 = fitted). */
   zoom: number;
   /** A clock in a corner of the 3D view, or none. */
@@ -87,6 +89,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   timeSlider: flag("time_slider", false),
   menuOpen: flag("menu_open", false),
   keepCamera: flag("keep_camera", false),
+  readable: flag("readable", false),
   zoom: {
     name: "zoom",
     fallback: 100,

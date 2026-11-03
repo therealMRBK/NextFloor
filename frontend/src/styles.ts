@@ -17,7 +17,7 @@ export const tokens = css`
     --nf-bg: var(--primary-background-color, #111111);
     --nf-bg2: var(--secondary-background-color, #1c1c1c);
     /* floating bars and cards over the 3D view: the card colour, a little see-through */
-    --nf-chrome: color-mix(in srgb, var(--nf-surface) 84%, transparent);
+    --nf-chrome: color-mix(in srgb, var(--nf-surface) var(--nf-chrome-mix, 84%), transparent);
     --nf-chrome-solid: var(--nf-surface);
     --nf-line: var(--divider-color, rgba(255, 255, 255, 0.12));
     /* quiet fills for buttons and fields, and the tonal accent of an active control */
@@ -34,6 +34,23 @@ export const tokens = css`
     --nf-title-font: var(--nf-font);
     font-family: var(--nf-font);
     color: var(--nf-text);
+  }
+`;
+
+/**
+ * Easy to read (a host with the `readable` attribute): the quiet greys of Home Assistant's theme become the text colour, lines and
+ * floating bars get stronger, and the bars and the room panel a size larger. Custom properties reach into the inner components.
+ */
+export const readableStyles = css`
+  :host([readable]) {
+    --secondary-text-color: var(--primary-text-color, #e1e1e1);
+    --divider-color: color-mix(in srgb, var(--primary-text-color, #e1e1e1) 40%, transparent);
+    --nf-chrome-mix: 97%;
+  }
+  :host([readable]) nf-room-panel,
+  :host([readable]) .nf-nav,
+  :host([readable]) .nf-overlay {
+    zoom: 1.2;
   }
 `;
 

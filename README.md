@@ -136,6 +136,7 @@ night: "off"            # optional: kiosk, dim at night: off | sun | "22:00-06:0
 idle_orbit: false       # optional: kiosk, slow camera turn after the idle return
 central_open: false     # optional: the star menu (favourites) open from the start and a size larger
 keep_camera: false      # optional: keep side, height and distance when switching floors
+readable: false         # optional: stronger contrast and larger text (wall tablets)
 zoom: 1                 # optional: 0.6 … 2.5, how close the fitted views come
 today: true             # optional: the "Today" card with appointments and bins
 sensor_bar: true        # optional: your own sensors at the top

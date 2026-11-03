@@ -17,7 +17,7 @@ import { furnishBar, type FurnishHost } from "./panel/furnish-bar.ts";
 import { NEXTFLOOR_MARK } from "./panel/mark.ts";
 import { browserStorage, PrefStore, type DevicePrefs } from "./panel/prefs.ts";
 import { panelStyles } from "./panel/styles.ts";
-import { colorSchemeOf, controls, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
 import { LOOKS, lookNow, type Look } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
 import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
@@ -139,6 +139,7 @@ export class NextFloorPanel extends LitElement {
   }
 
   protected willUpdate(changed: PropertyValues): void {
+    this.toggleAttribute("readable", !!this._prefs?.readable);
     if (changed.has("hass") && this.hass) {
       this.style.colorScheme = colorSchemeOf(this.hass);
       this.data.setHass(this.hass);
@@ -328,6 +329,7 @@ export class NextFloorPanel extends LitElement {
           <button aria-pressed=${p.timeSlider} title=${this.t("time_of_day_hint")} @click=${() => this.toggleTimeSlider(!p.timeSlider)}>☀ ${this.t("time_of_day")}</button>
           <button aria-pressed=${p.menuOpen} title=${this.t("menu_open_hint")} @click=${() => this.setPref("menuOpen", !p.menuOpen)}>★ ${this.t("menu_open")}</button>
           <button aria-pressed=${p.keepCamera} title=${this.t("keep_camera_hint")} @click=${() => this.setPref("keepCamera", !p.keepCamera)}>🎥 ${this.t("keep_camera")}</button>
+          <button aria-pressed=${p.readable} title=${this.t("readable_hint")} @click=${() => this.setPref("readable", !p.readable)}>Aa ${this.t("readable")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
       </div>`;
@@ -570,6 +572,7 @@ export class NextFloorPanel extends LitElement {
           .accent=${p.accent}
           .centralOpen=${p.menuOpen}
           .keepCamera=${p.keepCamera}
+          .readable=${p.readable}
           .zoom=${p.zoom / 100}
           ?furnish=${this._furnish}
           .selectedFurniture=${this._selFurniture}
@@ -612,7 +615,7 @@ export class NextFloorPanel extends LitElement {
     `;
   }
 
-  static styles = [tokens, controls, panelStyles];
+  static styles = [tokens, controls, panelStyles, readableStyles];
 }
 
 if (!customElements.get("nextfloor-panel")) customElements.define("nextfloor-panel", NextFloorPanel);

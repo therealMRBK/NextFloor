@@ -91,6 +91,8 @@ export interface CardConfig {
   central_open?: boolean;
   /** Switching floors keeps the camera's side, height and distance (default false). */
   keep_camera?: boolean;
+  /** Easy to read: stronger contrast and larger text, for wall tablets (default false). */
+  readable?: boolean;
   /** The "Today" card with the day's appointments and bins (default true). */
   today?: boolean;
   /** How much closer the fitted views come, 0.6 … 2.5 (default 1). */

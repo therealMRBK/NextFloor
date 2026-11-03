@@ -209,7 +209,7 @@ NextFloor legt Sensoren in Home Assistant an: *Offene Fenster und Türen* und *L
 
 ## Dashboard-Karte
 
-Im Karten-Dialog des Dashboards *NextFloor* hinzufügen (`type: custom:nextfloor-card`). Der visuelle Editor stellt Etage, Größe, Aussehen, Akzent, Wände, Qualität, Etagen darunter, Symbole, Heatmap, Stromfluss, Karten, Schalter in der Karte, Raum-Knöpfe, zentralen Stern, Raumnamen, Energiewerte, Raumdetails beim Antippen, Vollbild, Etagen auseinander, Dach ausblenden, Warnungen, Szenen-Knöpfe und Wetter ein. Neuere Optionen: `central_open` (Sternmenü offen und groß), `keep_camera`, `zoom` (0,6–2,5) und `today` (Karte Heute, Standard an). Dieselben Optionen gibt es in YAML unter den im Editor gezeigten Namen.
+Im Karten-Dialog des Dashboards *NextFloor* hinzufügen (`type: custom:nextfloor-card`). Der visuelle Editor stellt Etage, Größe, Aussehen, Akzent, Wände, Qualität, Etagen darunter, Symbole, Heatmap, Stromfluss, Karten, Schalter in der Karte, Raum-Knöpfe, zentralen Stern, Raumnamen, Energiewerte, Raumdetails beim Antippen, Vollbild, Etagen auseinander, Dach ausblenden, Warnungen, Szenen-Knöpfe und Wetter ein. Neuere Optionen: `central_open` (Sternmenü offen und groß), `keep_camera`, `readable` (kräftigere Kontraste und größere Schrift), `zoom` (0,6–2,5) und `today` (Karte Heute, Standard an). Dieselben Optionen gibt es in YAML unter den im Editor gezeigten Namen.
 
 ## Wandtablet
 

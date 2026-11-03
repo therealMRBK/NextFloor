@@ -13,7 +13,7 @@ import { awaitingLanguage, translate } from "./i18n.ts";
 import { nightActive } from "./kiosk.ts";
 import { screenMuted, screenName } from "./panel/prefs.ts";
 import { loadCardEditor } from "./load-card-editor.ts";
-import { colorSchemeOf, controls, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
 import { lookNow } from "./themes.ts";
@@ -161,6 +161,7 @@ export class NextFloorCard extends LitElement {
   }
 
   protected willUpdate(changed: PropertyValues): void {
+    this.toggleAttribute("readable", this._config?.readable === true);
     if (changed.has("hass")) this.style.colorScheme = colorSchemeOf(this.hass);
     if (!changed.has("hass") || !this.hass) return;
     this.data.setHass(this.hass);
@@ -305,6 +306,7 @@ export class NextFloorCard extends LitElement {
       .central=${c?.central !== false}
       .centralOpen=${c?.central_open === true}
       .keepCamera=${c?.keep_camera === true}
+      .readable=${c?.readable === true}
       .today=${c?.today !== false}
       .zoom=${typeof c?.zoom === "number" ? c.zoom : 1}
       .buttons=${c?.buttons?.map((button, i) => ({ id: `card_${i}`, ...button })) ?? null}
@@ -396,7 +398,7 @@ export class NextFloorCard extends LitElement {
     </ha-card>`;
   }
 
-  static styles = [tokens, controls, cardStyles];
+  static styles = [tokens, controls, cardStyles, readableStyles];
 }
 
 if (!customElements.get("nextfloor-card")) {

@@ -119,6 +119,7 @@ export class NfView3d extends LitElement {
     central: { attribute: false },
     centralOpen: { attribute: false },
     keepCamera: { attribute: false },
+    readable: { type: Boolean, reflect: true },
     today: { attribute: false },
     _todayOpen: { state: true },
     _todayItems: { state: true },
@@ -333,6 +334,8 @@ export class NfView3d extends LitElement {
   declare centralOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   declare keepCamera: boolean;
+  /** Easy to read: the pins and labels in the 3D view a size larger. */
+  declare readable: boolean;
   /** The "Today" card top right: appointments of the plan's calendars and the bins due (default on). */
   declare today: boolean;
   private declare _todayOpen: boolean;
@@ -2748,6 +2751,22 @@ export class NfView3d extends LitElement {
       }
       .nf-canvas:active {
         cursor: grabbing;
+      }
+      :host([readable]) .nf-pin {
+        font-size: 15px;
+        padding: 6px 12px;
+      }
+      :host([readable]) .nf-pin-info small,
+      :host([readable]) .nf-pin-floor span {
+        font-size: 14px;
+        opacity: 1;
+      }
+      :host([readable]) .nf-pin-floor b {
+        font-size: 18px;
+      }
+      :host([readable]) .nf-dev {
+        font-size: 14px;
+        color: var(--nf-text);
       }
       .nf-labels {
         position: absolute;
