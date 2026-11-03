@@ -154,6 +154,10 @@ data:
 
 `floor` limits it to one floor, `on_speakers: false` keeps the speakers silent, `tts_entity` picks the voice. The action returns which speaker said it and which rooms were left out (and why).
 
+## Sensors for automations
+
+NextFloor adds sensors to Home Assistant: *Open windows and doors* and *Lights on*, for the house and for every floor (on the device *NextFloor*). They count the contacts, garage doors, device pins and lamps of the plan, and their attribute `entities` lists what is open or on – e.g. a notification "{{ state_attr('sensor.nextfloor_open_windows_and_doors', 'entities') | join(', ') }}" when the alarm is armed.
+
 ## Dashboard card
 
 Add *NextFloor* in the dashboard's card dialog (`type: custom:nextfloor-card`). The visual editor sets floor, size, look, accent, walls, quality, floors below, markers, heat map, power flow, cards, switches in the card, room buttons, central star, room names, energy values, room details on tap, full screen, floors apart, roof fade, warnings, scene buttons and weather. Newer options: `central_open` (star menu open and large), `keep_camera`, `zoom` (0.6–2.5) and `today` (the Today card, default on). The same options exist in YAML under the names shown in the editor.

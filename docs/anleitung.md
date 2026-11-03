@@ -198,6 +198,10 @@ data:
 
 `floor` beschränkt es auf eine Etage, `on_speakers: false` lässt die Lautsprecher still, `tts_entity` wählt die Stimme. Die Aktion meldet zurück, welcher Lautsprecher es gesagt hat und welche Räume (und warum) ausgelassen wurden.
 
+## Sensoren für Automationen
+
+NextFloor legt Sensoren in Home Assistant an: *Offene Fenster und Türen* und *Lichter an*, fürs Haus und für jede Etage (am Gerät *NextFloor*). Sie zählen Kontakte, Garagentore, Geräte-Pins und Lampen des Plans, und ihr Attribut `entities` nennt, was offen oder an ist – z. B. für eine Benachrichtigung „{{ state_attr('sensor.nextfloor_offene_fenster_und_turen', 'entities') | join(', ') }}“ beim Scharfschalten der Alarmanlage.
+
 ## Dashboard-Karte
 
 Im Karten-Dialog des Dashboards *NextFloor* hinzufügen (`type: custom:nextfloor-card`). Der visuelle Editor stellt Etage, Größe, Aussehen, Akzent, Wände, Qualität, Etagen darunter, Symbole, Heatmap, Stromfluss, Karten, Schalter in der Karte, Raum-Knöpfe, zentralen Stern, Raumnamen, Energiewerte, Raumdetails beim Antippen, Vollbild, Etagen auseinander, Dach ausblenden, Warnungen, Szenen-Knöpfe und Wetter ein. Neuere Optionen: `central_open` (Sternmenü offen und groß), `keep_camera`, `zoom` (0,6–2,5) und `today` (Karte Heute, Standard an). Dieselben Optionen gibt es in YAML unter den im Editor gezeigten Namen.

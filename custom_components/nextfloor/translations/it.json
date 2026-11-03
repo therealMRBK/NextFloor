@@ -56,5 +56,21 @@
     "not_loaded": {
       "message": "NextFloor non è configurato."
     }
+  },
+  "entity": {
+    "sensor": {
+      "floor_open": {
+        "name": "{floor}: finestre e porte aperte"
+      },
+      "floor_lights_on": {
+        "name": "{floor}: luci accese"
+      },
+      "house_open": {
+        "name": "Finestre e porte aperte"
+      },
+      "house_lights_on": {
+        "name": "Luci accese"
+      }
+    }
   }
 }

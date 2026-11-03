@@ -8,6 +8,7 @@ from pathlib import Path
 from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
@@ -31,6 +32,8 @@ from .websocket import async_register_commands
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 _STATIC_REGISTERED = f"{DOMAIN}_static_registered"
+# sensors from the plan: open windows and doors, lights on (per floor and for the house)
+PLATFORMS = [Platform.SENSOR]
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -91,11 +94,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         require_admin=False,
         config={},
     )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Remove panel and card."""
+    """Remove panel, card and sensors."""
+    await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     frontend.async_remove_panel(hass, PANEL_URL_PATH)
     frontend.remove_extra_js_url(hass, await _async_main_url(hass))
     hass.data.pop(DOMAIN, None)

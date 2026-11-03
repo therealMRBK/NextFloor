@@ -56,5 +56,21 @@
     "not_loaded": {
       "message": "O NextFloor não está configurado."
     }
+  },
+  "entity": {
+    "sensor": {
+      "floor_open": {
+        "name": "{floor}: janelas e portas abertas"
+      },
+      "floor_lights_on": {
+        "name": "{floor}: luzes acesas"
+      },
+      "house_open": {
+        "name": "Janelas e portas abertas"
+      },
+      "house_lights_on": {
+        "name": "Luzes acesas"
+      }
+    }
   }
 }
