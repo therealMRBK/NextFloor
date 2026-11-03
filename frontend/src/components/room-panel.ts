@@ -10,6 +10,7 @@ import { pluginRoomSections } from "../plugins/registry.ts";
 import { canAnnounce, roomHasSpeaker } from "../live/announce.ts";
 import type { Floor, LightMood, LightSetting, Room } from "../model.ts";
 import { carryMood, lightSetting, moodCalls } from "../live/moods.ts";
+import { allOffPlan, type ServiceCall } from "../live/all-off.ts";
 import { airingNeed, mouldRisk } from "../live/room-climate.ts";
 import { hassAt, loadHistory } from "../live/time-travel.ts";
 import { curvePath } from "../live/day-curves.ts";
@@ -57,6 +58,7 @@ export class NfRoomPanel extends LitElement {
     _folded: { state: true },
     _curve: { state: true },
     _moodName: { state: true },
+    _undo: { state: true },
     rooms: { attribute: false },
   };
 
@@ -85,6 +87,9 @@ export class NfRoomPanel extends LitElement {
   /** The room's temperature over the last 24 hours (°C, quarter hours), loaded when the room opens. */
   private declare _curve: (number | null)[] | null;
   private curveFor = "";
+  /** After "everything off": the calls that bring it back, offered for a few seconds. */
+  private declare _undo: ServiceCall[] | null;
+  private undoTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
     super();
@@ -97,6 +102,7 @@ export class NfRoomPanel extends LitElement {
     this._folded = false;
     this._curve = null;
     this._moodName = null;
+    this._undo = null;
     this.rooms = null;
   }
 
@@ -193,7 +199,10 @@ export class NfRoomPanel extends LitElement {
 
   protected willUpdate(changed: Map<string, unknown>): void {
     const before = changed.get("room") as Room | null | undefined;
-    if (changed.has("room") && before?.id !== this.room?.id) this._folded = false;
+    if (changed.has("room") && before?.id !== this.room?.id) {
+      this._folded = false;
+      this._undo = null;
+    }
     if (this.room && this.hass && this.curveFor !== this.room.id) {
       this.curveFor = this.room.id;
       this._curve = null;
@@ -212,6 +221,29 @@ export class NfRoomPanel extends LitElement {
 
   private call(domain: string, service: string, data: Record<string, unknown>): void {
     void this.hass.callService(domain, service, data);
+  }
+
+  /** Switches off what is on in the room and offers to undo it for ten seconds. */
+  private allOff(states: HassEntity[]): void {
+    const plan = allOffPlan(states);
+    for (const c of plan.off) this.call(c.domain, c.service, c.data);
+    this._undo = plan.undo;
+    clearTimeout(this.undoTimer);
+    this.undoTimer = setTimeout(() => (this._undo = null), 10_000);
+  }
+
+  private undoAllOff(): void {
+    for (const c of this._undo ?? []) this.call(c.domain, c.service, c.data);
+    this._undo = null;
+    clearTimeout(this.undoTimer);
+  }
+
+  /** "Everything off" while something is on, and its undo right after. */
+  private renderAllOff(states: HassEntity[]): TemplateResult | typeof nothing {
+    if (this._undo) return html`<div class="nf-rp-alloff"><span>${this.t("all_off_done")}</span><button class="nf-btn nf-rp-small" @click=${() => this.undoAllOff()}>↶ ${this.t("all_off_undo")}</button></div>`;
+    const { count } = allOffPlan(states);
+    if (count < 2) return nothing;
+    return html`<div class="nf-rp-alloff"><button class="nf-btn nf-rp-small" title=${this.t("all_off_hint")} @click=${() => this.allOff(states)}>⏻ ${this.t("all_off_n", { n: count })}</button></div>`;
   }
 
   private get areaName(): string | undefined {
@@ -291,6 +323,7 @@ export class NfRoomPanel extends LitElement {
         </button>
       </header>
       <div class="nf-rp-body" ?hidden=${this._folded}>
+        ${this.renderAllOff([...lights, ...media, ...switches])}
         ${!room.area_id && !outside
           ? html`<p class="nf-rp-note">${this.t("panel_no_area")}</p>`
           : !ids.length
@@ -728,6 +761,15 @@ export class NfRoomPanel extends LitElement {
         display: grid;
         gap: 14px;
         overscroll-behavior: contain;
+      }
+      .nf-rp-alloff {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        margin: 6px 0 2px;
+        font-size: 13px;
+        color: var(--nf-muted);
       }
       .nf-rp-note {
         color: var(--nf-muted);

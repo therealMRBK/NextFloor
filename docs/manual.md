@@ -115,6 +115,7 @@ Built in and free; they only need the devices you already have.
 - **Sound:** a card over every playing speaker or TV with cover and controls; sound rings in the app's colour; multiroom groups are joined by a thread.
 - **Car:** a card over the parking spot with charge ring, range, charging power, plug, inside temperature and buttons for lock, climate and charging. Away it tells how far it is from home; it shows the departure time and warns about open doors and hatches; plugged in at a wallbox it hangs on its cable.
 - **Energy:** the house card shows the last seven days as bars and stays above the open floor; a home battery shows its charge on its front.
+- **Everything off:** *⏻ Everything off* in the room panel, or *⏻* in the bar on top for the open floor, switches off lights, switches, fans and media. *↶ Undo* brings it all back for ten seconds.
 
 ## Getting around
 

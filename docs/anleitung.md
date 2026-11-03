@@ -159,6 +159,7 @@ Eingebaut und kostenlos; sie brauchen nur die Geräte, die du schon hast.
 - **Klang:** eine Karte über jedem spielenden Lautsprecher oder Fernseher mit Cover und Bedienung; Schallringe in der Farbe der App; Multiroom-Gruppen verbindet ein Faden.
 - **Auto:** eine Karte über dem Stellplatz mit Ladering, Reichweite, Ladeleistung, Stecker, Innentemperatur und Knöpfen für Schloss, Klima und Laden. Unterwegs sagt sie, wie weit es von zu Hause ist; sie zeigt die Abfahrtszeit und warnt vor offenen Türen und Klappen; an einer Wallbox eingesteckt hängt es am Kabel.
 - **Energie:** Die Hauskarte zeigt die letzten sieben Tage als Balken und steht auch über der geöffneten Etage; ein Hausspeicher zeigt seinen Ladestand an der Front.
+- **Alles aus:** *⏻ Alles aus* im Raum-Panel, oder *⏻* in der Leiste oben für die offene Etage, schaltet Lichter, Schalter, Ventilatoren und Medien aus. *↶ Rückgängig* holt zehn Sekunden lang alles zurück.
 
 ## Im Haus unterwegs
 

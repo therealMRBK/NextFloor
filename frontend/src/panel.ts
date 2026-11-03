@@ -20,6 +20,7 @@ import { panelStyles } from "./panel/styles.ts";
 import { colorSchemeOf, controls, tokens } from "./styles.ts";
 import { LOOKS, lookNow, type Look } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
+import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
 import type { FloorStack, Quality, WallMode } from "./viewer/viewer3d.ts";
 
 type Mode = "view" | "editor" | "extensions";
@@ -44,6 +45,7 @@ export class NextFloorPanel extends LitElement {
     _timeOfDay: { state: true },
     _outside: { state: true },
     _timeDrag: { state: true },
+    _floorUndo: { state: true },
   };
 
   declare hass: HomeAssistant;
@@ -70,6 +72,9 @@ export class NextFloorPanel extends LitElement {
   private outsideMemo: { building: Building; entities: unknown; ids: string[] } | null = null;
   /** The hour under the finger while the slider is dragged: the view follows only when it is let go (old tablets). */
   private declare _timeDrag: number | null;
+  /** After "everything off" on a floor: the calls that bring it back, offered for a few seconds. */
+  private declare _floorUndo: ServiceCall[] | null;
+  private floorUndoTimer: ReturnType<typeof setTimeout> | undefined;
 
   private readonly data = new BuildingController(this);
   private readonly store = new PrefStore(browserStorage());
@@ -90,6 +95,7 @@ export class NextFloorPanel extends LitElement {
     this._timeOfDay = null;
     this._outside = false;
     this._timeDrag = null;
+    this._floorUndo = null;
   }
 
   /** Shows or hides the time-of-day switch; hiding it goes back to the real sun. */
@@ -409,6 +415,28 @@ export class NextFloorPanel extends LitElement {
     e.preventDefault();
   };
 
+  /** Everything off on the open floor (the house when it has one floor), then its undo for ten seconds. */
+  private allOffChip(building: Building) {
+    const floor = this._floorId ? building.floors.find((f) => f.id === this._floorId) : building.floors.length === 1 ? building.floors[0] : undefined;
+    if (!floor || !this.hass) return nothing;
+    if (this._floorUndo) {
+      const undo = this._floorUndo;
+      return html`<button class="nf-chip" aria-pressed="true" @click=${() => {
+        for (const c of undo) void this.hass.callService(c.domain, c.service, c.data);
+        this._floorUndo = null;
+        clearTimeout(this.floorUndoTimer);
+      }}>↶ ${this.t("all_off_undo")}</button>`;
+    }
+    const plan = allOffPlan(floorSwitchables(floor).map((id) => this.hass.states[id]));
+    if (plan.count < 2) return nothing;
+    return html`<button class="nf-chip" title=${this.t("all_off_floor", { floor: floor.name, n: plan.count })} @click=${() => {
+      for (const c of plan.off) void this.hass.callService(c.domain, c.service, c.data);
+      this._floorUndo = plan.undo;
+      clearTimeout(this.floorUndoTimer);
+      this.floorUndoTimer = setTimeout(() => (this._floorUndo = null), 10_000);
+    }}>⏻ ${plan.count}</button>`;
+  }
+
   /** The bar of floors and rooms above the stage. */
   private renderNav(building: Building) {
     const shown: Floor[] = building.floors.filter((f) => !this._floorId || f.id === this._floorId);
@@ -421,9 +449,9 @@ export class NextFloorPanel extends LitElement {
     const floorChips = several
       ? html`<button class="nf-chip" aria-pressed=${this._floorId === null} @click=${() => this.openFloor(null)}>${this.t("all_floors")}</button>
           ${[...building.floors].reverse().map((f) => html`<button class="nf-chip" aria-pressed=${f.id === this._floorId} @click=${() => this.openFloor(f.id)}>${f.name}</button>`)}
-          ${outside}
+          ${outside} ${this.allOffChip(building)}
           <span class="nf-sep"></span>`
-      : html`${outside}`;
+      : html`${outside} ${this.allOffChip(building)}`;
     const roomChips = shown.flatMap((floor) => [
       // in the house view a small floor label comes before the rooms of each floor
       shown.length > 1 && floor.rooms.length ? html`<span class="nf-nav-floor">${floor.name}</span>` : nothing,

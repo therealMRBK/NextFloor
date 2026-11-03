@@ -10,7 +10,6 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Place devices for me | The unplaced devices of a room put at sensible spots in one go (lights on the ceiling, sensors on the walls), then fine-tuned by hand |
 | Plan on paper | A clean 2D plan with measurements, room names and areas, to print or to save as PDF |
 | Living area | Square metres per room, per floor and for the house, with the area under low slopes apart |
-| Everything off | One button per room and floor that switches all off, with undo for a few seconds |
 | Quality by itself | The 3D view measures how fast the tablet draws and steps its quality up or down on its own |
 
 ---
@@ -25,5 +24,4 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Geräte setzen lassen | Die noch nicht gesetzten Geräte eines Raums auf einmal an sinnvolle Stellen (Lichter an die Decke, Sensoren an die Wände), danach von Hand feinjustieren |
 | Plan auf Papier | Ein sauberer 2D-Plan mit Maßen, Raumnamen und Flächen zum Drucken oder als PDF |
 | Wohnfläche | Quadratmeter pro Raum, pro Etage und fürs Haus, die Fläche unter niedrigen Schrägen getrennt |
-| Alles aus | Ein Knopf pro Raum und Etage, der alles ausschaltet, mit Rückgängig für ein paar Sekunden |
 | Qualität von selbst | Die 3D-Ansicht misst, wie schnell das Tablet zeichnet, und stellt ihre Qualität selbst höher oder niedriger |
