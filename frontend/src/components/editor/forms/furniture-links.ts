@@ -184,7 +184,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
       lamp ? glowField(host, item.glow_scale, (v) => actions.update({ glow_scale: v })) : nothing,
       lamp ? lightEffectFields(host, item, lightEffectSource(hass, item, item.entity && item.entity !== "none" ? item.entity : automaticLink(host, item, "entity"))?.attributes.effect_list, actions.update) : nothing,
       hasScreen(item.type) ? glowField(host, item.ambilight, (v) => actions.update({ ambilight: v }), { label: "ambilight", hint: "ambilight_hint", lowest: 0 }) : nothing,
-      lamp || item.type === "grid_point" ? nothing : entityField(host, t(meterParent(host.doc, item) ? "meter_sub_power" : powerLabel(item.type)), item.power ?? null, automaticLink(host, item, "power"), power, (v) => actions.update({ power: v })),
+      item.type === "grid_point" ? nothing : entityField(host, t(meterParent(host.doc, item) ? "meter_sub_power" : powerLabel(item.type)), item.power ?? null, automaticLink(host, item, "power"), power, (v) => actions.update({ power: v })),
     )}
     ${isCooling(item.type) ? coolingLinks(host, item, actions) : nothing}
     ${item.type === "meter" ? subMeterLinks(host, item, actions) : nothing}

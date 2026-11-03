@@ -33,6 +33,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Measurements in the plan**: *📏 Measurements* in the editor's bar labels every room edge with its length; the switch is remembered on the browser.
 - **Temperatures on the floor label**: a floor's label in the house view shows its coolest and warmest room (*19–22 °C*).
 - **Door not locked at night**: *Warn at night when a door is not locked* in the settings names the plan's door locks that stand unlocked between 10 pm and 6 am, as a quiet note in the warning bar.
+- **A power sensor for lamps**: lamps now have the *Power sensor* field too, like every other electric piece – for a light behind a measuring switch or a smart plug. Its watts show on the lamp's pin and count in the power flow and the room's power. Thanks to @Robsonator ([#56](https://github.com/therealMRBK/NextFloor/discussions/56)).
 
 ## 0.21.0
 

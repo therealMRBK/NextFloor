@@ -1134,6 +1134,15 @@ export class NfView3d extends LitElement {
         }
         if (isLamp(f.type)) {
           const lamp = this.lampMarker(hass, floor, f, linked?.entity ?? null);
+          // a lamp with a power sensor (a smart plug, a measuring switch): its watts on the pin and in the house's balance
+          const lampW = linked?.power ? readPower(hass.states[linked.power]) : null;
+          if (linked?.power && lampW !== null) {
+            if (lampW >= 1) lamp.text = lamp.text ? `${lamp.text} · ${powerText(hass, lampW)}` : powerText(hass, lampW);
+            if (!consumerSensors.has(linked.power)) {
+              consumerSensors.add(linked.power);
+              consumers.push({ id: lamp.id, powerEntity: linked.power, floorId: floor.id, x: f.x, z: f.z, power: Math.max(0, lampW) });
+            }
+          }
           markers.push(lamp);
           if (f.type === "ceiling_fan") {
             const fan = linked?.fan ? hass.states[linked.fan] : undefined;
