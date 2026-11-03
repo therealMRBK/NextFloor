@@ -17,6 +17,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Quality by itself**: with the quality on *Auto*, the 3D view now watches how fast the tablet draws while something moves. When it keeps drawing too slowly it uses fewer pixels, a quarter step at a time, and the simple look when even that is not enough; with plenty of room left the pixels come back slowly. *Low* and *High* stay as chosen.
 - **Plan versions**: *📌 Save this state …* under *Backup → Restore points* keeps the plan under a name ("before the renovation"); named states stay when the automatic restore points go, and can be deleted again. *Compare* on any point lists, floor by floor, what differs from the plan as it is now – rooms added, removed, renamed or reshaped (with the change in m²), doors and windows, furniture moved, devices placed or removed.
 - **Easy to read**: *Aa Easy to read* in the view options (and `readable: true` for the card) gives stronger contrast and larger text – the bars and the room panel a size larger, the pins and floor labels in 3D in bigger letters, Home Assistant's quiet greys in the full text colour. Made for wall tablets across the room and for anyone who reads better that way.
+- **First steps**: a new plan starts with a short tour of four cards – drawing rooms, doors and windows, furniture and devices, looking and checking – naming the buttons as the editor shows them; it can be skipped and does not come back. The round *?* in the corner of the plan (or the *?* key) opens the sheet of the editor's keys.
 
 ## 0.21.0
 

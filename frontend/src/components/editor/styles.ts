@@ -390,6 +390,81 @@ export const editorStyles = css`
     stroke: #ff5fd2;
     stroke-width: 2;
   }
+  .nf-keys-open {
+    position: absolute;
+    right: 12px;
+    bottom: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--nf-line);
+    background: var(--nf-chrome, rgba(20, 28, 48, 0.8));
+    color: var(--nf-text);
+    font: 700 15px var(--nf-font);
+    cursor: pointer;
+  }
+  .nf-keys {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 20;
+  }
+  .nf-keys-card {
+    max-width: min(520px, 92%);
+    max-height: 85%;
+    overflow: auto;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: var(--nf-surface, #1c1c1c);
+    box-shadow: var(--nf-shadow);
+  }
+  .nf-keys dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 14px;
+    margin: 8px 0 0;
+    font-size: 13px;
+  }
+  .nf-keys dt {
+    white-space: nowrap;
+  }
+  .nf-keys dd {
+    margin: 0;
+    color: var(--nf-muted);
+  }
+  .nf-keys kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--nf-line);
+    font: 600 12px var(--nf-font);
+  }
+  .nf-tour {
+    position: absolute;
+    left: 16px;
+    bottom: 36px;
+    max-width: 340px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: var(--nf-surface, #1c1c1c);
+    border: 1px solid var(--nf-accent, #03a9f4);
+    box-shadow: var(--nf-shadow);
+    z-index: 15;
+  }
+  .nf-tour h3 {
+    margin: 2px 0 6px;
+  }
+  .nf-tour p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .nf-tour-step {
+    font-size: 11px;
+    color: var(--nf-muted);
+  }
   .nf-hint {
     position: absolute;
     left: 12px;

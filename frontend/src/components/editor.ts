@@ -110,6 +110,7 @@ import { renderStudio, type StudioDraft } from "./editor/forms/studio.ts";
 import { planCheckButton, renderPlanCheck } from "./editor/forms/plan-check.ts";
 import { checkPlan, type CheckFinding } from "./editor/ops/plan-check.ts";
 import { printHtml } from "./editor/print.ts";
+import { renderKeySheet, renderTour, tourDone, tourDue } from "./editor/first-steps.ts";
 
 /** Items that can be fixed against moving. */
 type FixKind = "room" | "opening" | "furniture" | "device" | "wall" | "outdoor";
@@ -186,6 +187,8 @@ export class NfEditor extends LitElement {
     _sidePinned: { state: true },
     _studio: { state: true },
     _check: { state: true },
+    _keys: { state: true },
+    _tour: { state: true },
     _sideOpen: { state: true },
     _floorId: { state: true },
     _energyNote: { state: true },
@@ -229,6 +232,11 @@ export class NfEditor extends LitElement {
   private declare _studio: StudioDraft | null;
   /** The plan check is open in the side panel. */
   private declare _check: boolean;
+  /** The sheet of the editor's keys is open (press ?). */
+  private declare _keys: boolean;
+  /** The step of the first-start tour shown, or null. */
+  private declare _tour: number | null;
+  private tourChecked = false;
   private declare _sideOpen: boolean;
   private declare _floorId: string | null;
   /** What the import from the energy dashboard did (shown under its button). */
@@ -327,6 +335,8 @@ export class NfEditor extends LitElement {
     this._sidePinned = pinned;
     this._studio = null;
     this._check = false;
+    this._keys = false;
+    this._tour = null;
     this._measureLen = 3;
     this._rectSize = [4, 3];
     this._tool = "select";
@@ -697,6 +707,11 @@ export class NfEditor extends LitElement {
     // entering or leaving the roof tool: the 3D half frames the whole house (or the floor) again
     if (changed.has("_tool") && (this.houseTool || changed.get("_tool") === "roof" || changed.get("_tool") === "energy")) this.reframe3d = true;
     if (changed.has("building") && this.building !== this._doc) {
+      // the tour is for a first start: a plan without rooms, on a browser that has not seen it
+      if (!this.tourChecked && this.building) {
+        this.tourChecked = true;
+        if (!this.building.floors.some((f) => f.rooms.length) && tourDue()) this._tour = 0;
+      }
       this._doc = this.building;
       this._doc3d = this.building;
       if (!this._doc.floors.some((f) => f.id === this._floorId)) this._floorId = this._doc.floors[0]?.id ?? null;
@@ -2032,7 +2047,13 @@ export class NfEditor extends LitElement {
       this._draft = this._draft.slice(0, -1);
     } else if (e.key === "Enter" && this._tool === "polygon") {
       this.closeDraft();
+    } else if (e.key === "?" && !mod) {
+      this._keys = !this._keys;
     } else if (e.key === "Escape") {
+      if (this._keys) {
+        this._keys = false;
+        return;
+      }
       if (this._ctx) {
         this._ctx = null;
         return;
@@ -2978,6 +2999,14 @@ export class NfEditor extends LitElement {
             </svg>
             ${this.renderContext()}
             <p class="nf-hint ${this._fixedHint ? "nf-hint-fixed" : ""}">${!floor ? this.t("hint_empty") : this._fixedHint ? this.t("fixed_drag_hint") : this.t(`hint_${this._tool}` as I18nKey)}</p>
+            <button class="nf-keys-open" title=${this.t("keys_title")} aria-label=${this.t("keys_title")} @click=${() => (this._keys = true)}>?</button>
+            ${this.isAdmin
+              ? renderTour((k, vars) => this.t(k, vars), this._tour, (step) => {
+                  this._tour = step;
+                  if (step === null) tourDone();
+                })
+              : nothing}
+            ${this._keys ? renderKeySheet((k) => this.t(k), () => (this._keys = false)) : nothing}
           </div>
           ${this._split && !this.narrow
             ? html`<div class="nf-split-handle" title=${this.t("split_handle_hint")} @pointerdown=${this.onSplitDown}></div>`
