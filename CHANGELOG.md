@@ -35,6 +35,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Door not locked at night**: *Warn at night when a door is not locked* in the settings names the plan's door locks that stand unlocked between 10 pm and 6 am, as a quiet note in the warning bar.
 - **A power sensor for lamps**: lamps now have the *Power sensor* field too, like every other electric piece – for a light behind a measuring switch or a smart plug. Its watts show on the lamp's pin and count in the power flow and the room's power. Thanks to @Robsonator ([#56](https://github.com/therealMRBK/NextFloor/discussions/56)).
 
+### Fixed
+
+- **Floor pictures on a low card**: on a stage lower than 520 px (a dashboard card of 420 px) the floor pictures are smaller and stop above the star, the search and the buttons at the bottom left instead of sliding under them.
+
 ## 0.21.0
 
 ### Added

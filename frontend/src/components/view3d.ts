@@ -65,6 +65,9 @@ export type ClockCorner = "top_left" | "top_right" | "bottom_left" | "bottom_rig
 const LOCK_KEY = "nextfloor.lock3d";
 
 
+/** Below this stage height (px) the floor pictures get small and stop above the buttons at the bottom. */
+const SHORT_STAGE = 520;
+
 export class NfView3d extends LitElement {
   static properties = {
     hass: { attribute: false },
@@ -153,6 +156,7 @@ export class NfView3d extends LitElement {
     startView: { attribute: false },
     _low: { state: true },
     _narrowStage: { state: true },
+    _shortStage: { state: true },
     _alerts: { state: true },
     _sceneFired: { state: true },
   };
@@ -288,6 +292,8 @@ export class NfView3d extends LitElement {
   declare panelOpen: boolean;
   /** The stage is narrower than 700 px (smaller floor pictures, phone layout). */
   private declare _narrowStage: boolean;
+  /** The stage is low (a small card): the floor pictures leave room for the buttons below them. */
+  private declare _shortStage: boolean;
   private stopPlugins: (() => void) | null = null;
   private pluginsDirty = false;
   private resizeObs: ResizeObserver | null = null;
@@ -448,6 +454,7 @@ export class NfView3d extends LitElement {
     this._low = false;
     this.panelOpen = false;
     this._narrowStage = false;
+    this._shortStage = false;
     this.alerts = true;
     this.alertJump = false;
     this.announcements = false;
@@ -512,7 +519,10 @@ export class NfView3d extends LitElement {
     const stage = this.renderRoot.querySelector(".nf-stage");
     if (!stage || this.resizeObs || typeof ResizeObserver !== "function") return;
     this.resizeObs = new ResizeObserver((entries) => {
-      const narrow = (entries[0]?.contentRect.width ?? 1000) < 700;
+      const rect = entries[0]?.contentRect;
+      const narrow = (rect?.width ?? 1000) < 700 || (rect?.height ?? 1000) < SHORT_STAGE;
+      const short = (rect?.height ?? 1000) < SHORT_STAGE;
+      if (short !== this._shortStage) this._shortStage = short;
       if (narrow === this._narrowStage) return;
       this._narrowStage = narrow;
       this.scheduleThumbs();
@@ -1619,7 +1629,7 @@ export class NfView3d extends LitElement {
         // private mode: the choice lasts for this page only
       }
     };
-    return html`<nav class="nf-thumbs ${this.narrowThumbs ? "nf-thumbs-small" : ""} ${compact ? "nf-thumbs-compact" : ""}" aria-label=${translate(this.hass, "floors")}>
+    return html`<nav class="nf-thumbs ${this.narrowThumbs ? "nf-thumbs-small" : ""} ${this._shortStage ? "nf-thumbs-short" : ""} ${compact ? "nf-thumbs-compact" : ""}" aria-label=${translate(this.hass, "floors")}>
       <button class="nf-thumbs-fold" title=${translate(this.hass, compact ? "thumbs_show" : "thumbs_fold")} aria-label=${translate(this.hass, compact ? "thumbs_show" : "thumbs_fold")} @click=${fold}>${compact ? "▸" : "◂"}</button>
       <button class="nf-thumb nf-thumb-house" aria-pressed=${this.floorId === null} @click=${() => this.fire("floor-tap", { floorId: null })}>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 10v10h14V10" /></svg>
@@ -3027,6 +3037,12 @@ export class NfView3d extends LitElement {
       .nf-thumb-house span {
         position: static;
         text-shadow: none;
+      }
+      /* a low stage (a card of 420 px): the pictures start under the top bar and stop above the buttons at the bottom left */
+      .nf-thumbs.nf-thumbs-short {
+        top: 52px;
+        transform: none;
+        max-height: calc(100% - 52px - 150px);
       }
       .nf-thumbs-small .nf-thumb {
         width: 104px;
