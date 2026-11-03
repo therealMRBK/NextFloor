@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { emptyBuilding, newFloor } from "./model.ts";
+import { box, floorWith, hassOf } from "./entities/fixtures.ts";
 import { searchIndex, searchItems } from "./search.ts";
 import type { HomeAssistant } from "./types.ts";
 
@@ -73,4 +74,12 @@ test("best matches first: prefix before contains, rooms before devices, and the 
 test("an empty query finds nothing", () => {
   const { hass, building } = demo();
   assert.deepEqual(searchItems(searchIndex(hass, building), "   "), []);
+});
+
+test("notes are found by their text", () => {
+  const floor = { ...floorWith([box("k", 0, 0, 4, 4)]), notes: [{ id: "n1", x: 1, z: 1, text: "Sicherung 12 ist der Herd" }] };
+  const found = searchItems(searchIndex(hassOf([]), { ...emptyBuilding(), floors: [floor] }), "herd");
+  assert.equal(found.length, 1);
+  assert.equal(found[0].kind, "note");
+  assert.equal(found[0].roomId, "k");
 });

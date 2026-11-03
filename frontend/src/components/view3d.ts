@@ -2768,6 +2768,22 @@ export class NfView3d extends LitElement {
         font-size: 14px;
         color: var(--nf-text);
       }
+      .nf-note-pin {
+        background: #ffe58a;
+        color: #3a2e00;
+        border-color: #c9a400;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .nf-note-pin.nf-note-due {
+        background: #ffa726;
+        color: #2a1600;
+      }
+      .nf-note-pin.nf-note-open {
+        white-space: normal;
+        text-align: left;
+      }
       .nf-labels {
         position: absolute;
         inset: 0;

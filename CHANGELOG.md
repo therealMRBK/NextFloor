@@ -19,6 +19,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Easy to read**: *Aa Easy to read* in the view options (and `readable: true` for the card) gives stronger contrast and larger text – the bars and the room panel a size larger, the pins and floor labels in 3D in bigger letters, Home Assistant's quiet greys in the full text colour. Made for wall tablets across the room and for anyone who reads better that way.
 - **First steps**: a new plan starts with a short tour of four cards – drawing rooms, doors and windows, furniture and devices, looking and checking – naming the buttons as the editor shows them; it can be skipped and does not come back. The round *?* in the corner of the plan (or the *?* key) opens the sheet of the editor's keys.
 - **Power per room**: the heat map has a new mode *Power* that colours every room by what its devices draw now – the power sensors of its device pins and furniture added up, each counted once, the house's own meters left out (from blue at nothing over green and yellow to red at 3 kW). The room panel shows the same next to temperature and humidity (*⚡ 340 W*).
+- **Notes in the plan**: a right-click (or long press) in the editor has *✎ Note here* – a note pinned to that spot ("bleed the radiator", "fuse 12: cooker"), with an optional day it is due. In 3D it stands as a yellow pin on its floor, orange from the day it is due, and a tap shows its whole text; the search finds notes by their text.
 
 ## 0.21.0
 

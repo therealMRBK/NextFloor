@@ -6,7 +6,7 @@ import { pluginDrawsWedge } from "../../../plugins/registry.ts";
 import { furnitureName } from "../../../furniture-names.ts";
 import { iconPath } from "../../../icons.ts";
 import { deviceIcon } from "../fields.ts";
-import { ENERGY_DEVICES, isLamp, type Floor, type Furniture, type Placement } from "../../../model.ts";
+import { ENERGY_DEVICES, isLamp, noteDue, type Floor, type Furniture, type Placement } from "../../../model.ts";
 import { furnitureSymbol } from "../../furniture2d.ts";
 import type { CanvasContext } from "./context.ts";
 import { formatLength } from "../../../units.ts";
@@ -90,4 +90,15 @@ export function devicesLayer(ctx: CanvasContext, floor: Floor, selectedId: strin
       ${selected && placed.locked ? svg`<text class="nf-lock" x=${x + 16} y=${y - 12}>🔒</text>` : nothing}`;
   };
   return svg`<g>${floor.placements.map(one)}</g>`;
+}
+
+/** The notes of a floor: a small sticky note at its spot (orange once it is due), the selected one ringed. */
+export function notesLayer(ctx: CanvasContext, floor: Floor, selectedId: string | null): Layer {
+  return svg`${(floor.notes ?? []).map((note) => {
+    const [x, y] = ctx.toScreen([note.x, note.z]);
+    return svg`<g data-note=${note.id} class=${`nf-note${noteDue(note) ? " nf-note-due" : ""}${note.id === selectedId ? " nf-note-sel" : ""}`} transform="translate(${x} ${y})">
+      <title>${note.text}</title>
+      <rect x="-11" y="-11" width="22" height="22" rx="4" /><text y="5" text-anchor="middle">✎</text>
+    </g>`;
+  })}`;
 }

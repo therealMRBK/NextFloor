@@ -390,6 +390,26 @@ export const editorStyles = css`
     stroke: #ff5fd2;
     stroke-width: 2;
   }
+  .nf-note rect {
+    fill: #ffe58a;
+    stroke: #8a6d00;
+    stroke-width: 1;
+  }
+  .nf-note text {
+    fill: #3a2e00;
+    font: 700 13px var(--nf-font);
+    pointer-events: none;
+  }
+  .nf-note-due rect {
+    fill: #ffa726;
+  }
+  .nf-note-sel rect {
+    stroke: var(--nf-accent, #03a9f4);
+    stroke-width: 3;
+  }
+  .nf-note {
+    cursor: pointer;
+  }
   .nf-keys-open {
     position: absolute;
     right: 12px;

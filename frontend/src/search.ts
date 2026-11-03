@@ -1,11 +1,11 @@
-// Quick find: rooms and devices of the plan, looked up by name, room or entity id.
+// Quick find: rooms, devices and notes of the plan, looked up by name, room, entity id or the note's text.
 
 import { defaultHeight, entityName, furnitureEntities, kindOf, type DeviceKind } from "./devices.ts";
 import { ceilingAt, centroid, pointInPolygon, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
 
 export interface SearchItem {
-  kind: "room" | "device";
+  kind: "room" | "device" | "note";
   name: string;
   /** Where it is: room (and floor, when the building has several). Empty for a room on a single-floor plan. */
   where: string;
@@ -59,6 +59,12 @@ function indexFloor(hass: HomeAssistant, floor: Floor, links: ReturnType<typeof 
     if (!entity) continue;
     const ceiling = ceilingAt(floor, piece.x, piece.z) - 0.3;
     push(entity, piece.x, piece.z, Math.min(ceiling, Math.max(0.5, piece.h)));
+  }
+  for (const note of floor.notes ?? []) {
+    if (!note.text) continue;
+    const room = roomContaining(floor, note.x, note.z);
+    const where = [room?.name, multiFloor ? floor.name : undefined].filter((part): part is string => !!part).join(" · ");
+    items.push({ kind: "note", name: `✎ ${note.text.length > 60 ? `${note.text.slice(0, 59)}…` : note.text}`, where, floorId: floor.id, roomId: room?.id ?? null, entity: null, icon: null, x: note.x, z: note.z, y: 1.3 });
   }
   return items;
 }

@@ -367,7 +367,22 @@ export interface Floor {
   layer?: boolean;
   /** The floor's own meter: a power sensor whose use shows on the floor label and, in this floor's view, on the house card. */
   power_entity?: string | null;
+  /** Notes pinned to a spot of the floor ("filter due in March", "fuse 12"), shown in 3D and found by the search. */
+  notes?: PlanNote[];
 }
+
+/** A note pinned to a spot of a floor. */
+export interface PlanNote {
+  id: string;
+  x: number;
+  z: number;
+  text: string;
+  /** When it is due ("YYYY-MM-DD"): from that day on its pin turns orange. */
+  due?: string | null;
+}
+
+/** Whether a note is due on a day ("YYYY-MM-DD", today by default). */
+export const noteDue = (note: Pick<PlanNote, "due">, today = new Date().toISOString().slice(0, 10)): boolean => !!note.due && note.due <= today;
 
 /** A wall drawn on its own, from a to b along its centre line. */
 export interface FreeWall {

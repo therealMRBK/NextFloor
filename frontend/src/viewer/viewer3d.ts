@@ -43,9 +43,9 @@ import {
   type BufferGeometry,
   type Material,
 } from "three";
-import type { Building, Floor, Room, StartView } from "../model.ts";
+import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
-import { CEILING_TYPES, ceilingOf, centroid, DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
+import { CEILING_TYPES, ceilingOf, centroid, noteDue, DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
@@ -362,6 +362,8 @@ interface FloorView {
   /** Room box and room labels with their centres, so labels are placed without recomputing them. */
   bbox: { x0: number; x1: number; z0: number; z1: number } | null;
   roomPins: { pin: HTMLButtonElement; room: Room; cx: number; cz: number }[];
+  /** The floor's notes as pins; a tap opens the whole text. */
+  notePins: { pin: HTMLButtonElement; note: PlanNote }[];
   /** Size of the floor label, measured once per text (reading it every frame forces a layout). */
   labelSize: { w: number; h: number } | null;
   materials: FloorMaterials;
@@ -1718,6 +1720,23 @@ export class NextFloorViewer {
           bbox.z1 = Math.max(bbox.z1, z);
         }
       }
+      const notePins: FloorView["notePins"] = [];
+      for (const note of floor.notes ?? []) {
+        if (!note.text) continue;
+        const pin = document.createElement("button");
+        pin.className = `nf-pin nf-note-pin${noteDue(note) ? " nf-note-due" : ""}`;
+        pin.title = note.text;
+        const short = note.text.length > 28 ? `${note.text.slice(0, 27)}…` : note.text;
+        pin.textContent = `✎ ${short}`;
+        pin.addEventListener("click", () => {
+          const open = pin.classList.toggle("nf-note-open");
+          pin.textContent = `✎ ${open ? note.text : short}`;
+          this.labelsDirty = true;
+          this.invalidate();
+        });
+        this.labels.append(pin);
+        notePins.push({ pin, note });
+      }
       this.floors.push({
         floor,
         rank: ordered.indexOf(floor),
@@ -1755,6 +1774,7 @@ export class NextFloorViewer {
         lampRanges: new Map(),
         bbox,
         roomPins,
+        notePins,
         labelSize: null,
         materials,
         mask,
@@ -3203,6 +3223,12 @@ export class NextFloorViewer {
       for (const roomPin of fv.roomPins) {
         const spot = hide ? null : this.screenPoint([roomPin.cx, y, roomPin.cz], 1.1);
         this.labelPlacer.place(roomPin.pin, spot && !spot.off ? centredAt(spot) : null);
+      }
+      // notes stand on their floor's views (and in a room), not in the house view
+      const noNotes = house || fv.o < 0.9 || this.otherFloor(fv);
+      for (const { pin, note } of fv.notePins) {
+        const spot = noNotes ? null : this.screenPoint([note.x, fv.floor.elevation + fv.y + 1.3, note.z]);
+        this.labelPlacer.place(pin, spot && !spot.off ? centredAt(spot) : null);
       }
     }
   }

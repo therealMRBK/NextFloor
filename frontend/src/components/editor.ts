@@ -73,7 +73,8 @@ import type { ArcActions, ArcEdit } from "./editor/forms/arc.ts";
 import { dragStep, facingAngle, gridPositionAfter, hasLeftStart, headingAngle, outlineWithCornerAt, shifted, steppedDelta, straightEnd } from "./editor/ops/drags.ts";
 import { snapToPlan } from "./editor/ops/snapping.ts";
 import { draftLayer, guidesLayer } from "./editor/canvas/draft.ts";
-import { devicesLayer, furnitureLayer } from "./editor/canvas/items.ts";
+import { devicesLayer, furnitureLayer, notesLayer } from "./editor/canvas/items.ts";
+import { renderNoteForm } from "./editor/forms/note.ts";
 import { openingsLayer } from "./editor/canvas/openings.ts";
 import { cutMarksLayer, floorBelowLayer, freeWallsLayer, gridLayer, meterLayer, outdoorHandlesLayer, outdoorLayer, roomHandlesLayer, roomsLayer, wallsLayer } from "./editor/canvas/plan.ts";
 import { renderEdgeHeights, type EdgeActions } from "./editor/forms/edges.ts";
@@ -188,6 +189,7 @@ export class NfEditor extends LitElement {
     _studio: { state: true },
     _check: { state: true },
     _keys: { state: true },
+    _note: { state: true },
     _tour: { state: true },
     _sideOpen: { state: true },
     _floorId: { state: true },
@@ -234,6 +236,8 @@ export class NfEditor extends LitElement {
   private declare _check: boolean;
   /** The sheet of the editor's keys is open (press ?). */
   private declare _keys: boolean;
+  /** The note selected in the plan (its form shows in the side panel). */
+  private declare _note: string | null;
   /** The step of the first-start tour shown, or null. */
   private declare _tour: number | null;
   private tourChecked = false;
@@ -242,7 +246,7 @@ export class NfEditor extends LitElement {
   /** What the import from the energy dashboard did (shown under its button). */
   private declare _energyNote: string | null;
   /** Open context menu (right-click, long press) at a plan point, for one item. */
-  private declare _ctx: { x: number; y: number; kind: FixKind; id: string } | null;
+  private declare _ctx: { x: number; y: number; kind: FixKind; id: string; at?: Vec2 } | null;
   /** A drag on a fixed item was turned into panning: the hint line says why. */
   private declare _fixedHint: boolean;
   private fixedPan = false;
@@ -336,6 +340,7 @@ export class NfEditor extends LitElement {
     this._studio = null;
     this._check = false;
     this._keys = false;
+    this._note = null;
     this._tour = null;
     this._measureLen = 3;
     this._rectSize = [4, 3];
@@ -528,6 +533,15 @@ export class NfEditor extends LitElement {
           if (floor) floor.placements = floor.placements.filter((p) => !fix.entityIds.includes(p.entity_id));
         });
     }
+  }
+
+  /** A new note at a spot of the open floor, selected so its text can be typed. */
+  private addNote(at: Vec2): void {
+    if (!this.isAdmin || !this.floor) return;
+    const id = uid("note");
+    this.change((_, floor) => (floor.notes = [...(floor.notes ?? []), { id, x: Math.round(at[0] * 100) / 100, z: Math.round(at[1] * 100) / 100, text: "" }]));
+    this._note = id;
+    this._sideOpen = true;
   }
 
   /** The studio button under the form of a piece built in the studio. */
@@ -1151,6 +1165,14 @@ export class NfEditor extends LitElement {
 
   private onPointerDown(e: PointerEvent): void {
     this._ctx = null;
+    // a note is picked, not dragged: its form has the text, the day and the spot
+    const note = (e.target as Element | null)?.closest?.("[data-note]")?.getAttribute("data-note");
+    if (note && this._tool === "select") {
+      this._note = note;
+      this._sideOpen = true;
+      return;
+    }
+    if (this._note) this._note = null;
     this._fixedHint = false;
     this.fixedPan = false;
     this.pointerDown(e);
@@ -2095,6 +2117,7 @@ export class NfEditor extends LitElement {
       ${floor ? svg`${outdoorLayer(ctx, floor, this.sel.outdoor)} ${roomsLayer(ctx, floor, this.sel.room, this.sel.edge)} ${furnitureLayer(ctx, floor, this.sel.furniture)}
         ${freeWallsLayer(ctx, floor, this.sel.wall)} ${walls ? openingsLayer(ctx, floor, walls, this.sel.opening) : nothing} ${meterLayer(ctx, floor)}
         ${this._tool === "select" ? devicesLayer(ctx, floor, this.sel.device) : nothing}
+        ${this._tool === "select" ? notesLayer(ctx, floor, this._note) : nothing}
         ${showRoomHandles ? roomHandlesLayer(ctx, room, this.sel.corner) : nothing}
         ${outdoorHandlesLayer(ctx, this.outdoorArea, this._tool)}
         ${room && this._tool === "select" ? cutMarksLayer(ctx, room) : nothing}
@@ -2697,7 +2720,7 @@ export class NfEditor extends LitElement {
     const [kind, id] = hit;
     this.selectItem(kind, id);
     if (kind === "opening" || kind === "furniture") this.sel.room = this.sel.room ?? room;
-    this._ctx = { x: local[0], y: local[1], kind, id };
+    this._ctx = { x: local[0], y: local[1], kind, id, at: world };
   }
 
   private deleteItem(kind: FixKind, id: string): void {
@@ -2737,6 +2760,7 @@ export class NfEditor extends LitElement {
             <button ?disabled=${fixed} @click=${run(() => this.rotateFurniture(90))}>↻ ${this.t("ctx_rotate")}</button>
             <button ?disabled=${fixed} @click=${run(() => this.mirrorFurniture())}>⇋ ${this.t("furn_mirror")}</button>`
         : nothing}
+      ${c.at ? html`<button @click=${run(() => this.addNote(c.at!))}>✎ ${this.t("note_add")}</button>` : nothing}
       <button class="nf-ctx-danger" @click=${run(() => this.deleteItem(c.kind, c.id))}>✕ ${this.t("delete")}</button>
     </div>`;
   }
@@ -3114,6 +3138,17 @@ export class NfEditor extends LitElement {
                 : this.freeWall
                   ? renderFreeWallForm(this.host, this.freeWall, this.freeWallActions())
                   : null;
+    const note = this._note ? floor?.notes?.find((n) => n.id === this._note) : undefined;
+    if (note) {
+      return html`<button class="nf-btn nf-back" @click=${() => (this._note = null)}>‹ ${this.t("back_to_floor")}</button>
+        ${renderNoteForm(this.host, note, {
+          patch: (patch) => this.change((_, f) => Object.assign(f.notes!.find((n) => n.id === note.id)!, patch)),
+          remove: () => {
+            this.change((_, f) => (f.notes = (f.notes ?? []).filter((n) => n.id !== note.id)));
+            this._note = null;
+          },
+        })}`;
+    }
     if (item) {
       return html`<button class="nf-btn nf-back" @click=${() => this.selectItem("room", this.sel.room)}>‹ ${this.t(room ? "back_to_room" : "back_to_floor", { room: room?.name ?? "" })}</button>
         ${item}`;
