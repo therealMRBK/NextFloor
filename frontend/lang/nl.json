@@ -110,6 +110,7 @@
   "check_opening_off_wall": "Een deur of raam in ‘{room}’ zit niet in een muur.",
   "check_entity_missing": "{n} apparaatpinnen wijzen naar entiteiten die Home Assistant niet meer kent ({ids}).",
   "check_furniture_entity_missing": "Een meubel is gekoppeld aan {id} – die entiteit bestaat niet meer.",
+  "check_standby": "{name} verbruikt {w} W terwijl uit – ongeveer {cost} per jaar.",
   "check_fix_show": "Tonen",
   "check_fix_set_area": "‘{area}’ koppelen",
   "check_fix_add_rooms": "Kamers toevoegen",

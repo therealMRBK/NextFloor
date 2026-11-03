@@ -7,7 +7,6 @@ Ideas for what comes next. There are no fixed dates; everything lands in NextFlo
 | Topic | What it is about |
 |---|---|
 | More imports | More plan and scan formats besides JSON, Sweet Home 3D and DXF |
-| Standby finder | Devices that draw power while they are off, listed with what they cost over a year |
 
 ---
 
@@ -18,4 +17,3 @@ Ideen für das, was als Nächstes kommt. Es gibt keine festen Termine; alles kom
 | Thema | Worum es geht |
 |---|---|
 | Weitere Importe | Weitere Plan- und Scan-Formate neben JSON, Sweet Home 3D und DXF |
-| Standby-Fresser | Geräte, die im Aus-Zustand Strom ziehen, mit ihren Kosten übers Jahr |

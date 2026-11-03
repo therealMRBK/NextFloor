@@ -110,6 +110,7 @@
   "check_opening_off_wall": "En dörr eller ett fönster i ”{room}” sitter inte på någon vägg.",
   "check_entity_missing": "{n} enhetsnålar pekar på entiteter som Home Assistant inte längre känner till ({ids}).",
   "check_furniture_entity_missing": "En möbel är kopplad till {id} – den entiteten finns inte längre.",
+  "check_standby": "{name} drar {w} W fast den är av – ungefär {cost} om året.",
   "check_fix_show": "Visa",
   "check_fix_set_area": "Koppla ”{area}”",
   "check_fix_add_rooms": "Lägg till rummen",

@@ -38,3 +38,19 @@ test("a door on a wall is fine, one past the end of its wall is found", () => {
   const off = { ...floorWith([room]), openings: [opening("d1", "r", "door", { edge: 9, offset: 1, width: 0.9 })] };
   assert.equal(checkPlan({ ...emptyBuilding(), floors: [off] }, undefined).filter((f) => f.kind === "opening_off_wall").length, 1);
 });
+
+test("a device that is off but still draws power is a standby eater, with its cost a year", () => {
+  const hass = hassOf(
+    [entity("switch.tv", "off"), entity("sensor.tv_power", "12", { device_class: "power", unit_of_measurement: "W" }), entity("sensor.tariff", "0.30", { unit_of_measurement: "EUR/kWh" })],
+    { "switch.tv": { device_id: "d1" }, "sensor.tv_power": { device_id: "d1" } },
+  );
+  const room = box("w", 0, 0, 5, 4);
+  const floor = { ...floorWith([room]), placements: [{ entity_id: "switch.tv", x: 1, z: 1, y: null, mount: null }] };
+  const doc = { ...emptyBuilding(), floors: [floor] };
+  doc.energy = { ...doc.energy, tariff: "sensor.tariff" };
+  const found = checkPlan(doc, hass).find((f) => f.kind === "standby");
+  assert.ok(found, JSON.stringify(checkPlan(doc, hass).map((f) => f.kind)));
+  assert.equal(found.vars.w, 12);
+  // 12 W all year: 105 kWh, 32 €
+  assert.equal(found.vars.cost, "32 €");
+});

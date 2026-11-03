@@ -110,6 +110,7 @@
   "check_opening_off_wall": "Drzwi lub okno w „{room}” nie są na żadnej ścianie.",
   "check_entity_missing": "{n} pinezek wskazuje encje, których Home Assistant już nie zna ({ids}).",
   "check_furniture_entity_missing": "Mebel jest powiązany z {id} – ta encja już nie istnieje.",
+  "check_standby": "{name} pobiera {w} W, choć wyłączony – ok. {cost} rocznie.",
   "check_fix_show": "Pokaż",
   "check_fix_set_area": "Przypisz „{area}”",
   "check_fix_add_rooms": "Dodaj pomieszczenia",

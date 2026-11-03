@@ -110,6 +110,7 @@
   "check_opening_off_wall": "Una puerta o ventana de «{room}» no está en ninguna pared.",
   "check_entity_missing": "{n} marcadores apuntan a entidades que Home Assistant ya no conoce ({ids}).",
   "check_furniture_entity_missing": "Un mueble está vinculado a {id}: esa entidad ya no existe.",
+  "check_standby": "{name} consume {w} W apagado: unos {cost} al año.",
   "check_fix_show": "Mostrar",
   "check_fix_set_area": "Asignar «{area}»",
   "check_fix_add_rooms": "Añadir las habitaciones",

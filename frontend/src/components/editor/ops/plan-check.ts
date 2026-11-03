@@ -1,14 +1,16 @@
 // The plan check: what is missing or off in the plan, found in one pass over the building. Each finding names where it is and, where
 // one is clear, the fix the editor can make in one tap.
 
-import { entityKind, groupByDevice, isPlaceable, roomEntities } from "../../../devices.ts";
+import { entityKind, entityName, groupByDevice, isPlaceable, roomEntities } from "../../../devices.ts";
+import { powerSensorFor, readPower } from "../../../energy.ts";
+import { energyCost } from "../../../live/room-energy.ts";
 import { locateOpening, openingHost, generateWalls } from "../../../geometry/walls.ts";
 import { isLamp, pointInPolygon, type Building, type Floor, type Room, type Vec2 } from "../../../model.ts";
 import type { HomeAssistant } from "../../../types.ts";
 import { placedInRoom } from "./device-list.ts";
 import { unplacedAreas } from "./floors.ts";
 
-export type CheckKind = "room_no_area" | "areas_unplaced" | "devices_unplaced" | "rooms_overlap" | "opening_off_wall" | "entity_missing" | "furniture_entity_missing";
+export type CheckKind = "room_no_area" | "areas_unplaced" | "devices_unplaced" | "rooms_overlap" | "opening_off_wall" | "entity_missing" | "furniture_entity_missing" | "standby";
 
 /** What a tap on a finding does: show it, or fix it right away. */
 export type CheckFix =
@@ -80,6 +82,34 @@ function entityValues(item: object): string[] {
 /** The entities a piece of furniture links: the light, power sensor, doors, state, extra lights … */
 const furnitureEntityFields = (m: Floor["furniture"][number]): string[] => entityValues(m);
 
+/** A device that is off but still draws more than this (W) is listed as a standby eater. */
+const STANDBY_W = 3;
+const OFF = new Set(["off", "standby", "idle"]);
+
+/** Devices of the plan that are off but draw power: their entity says off, the power sensor on their device still reads watts. */
+function standbyFindings(hass: HomeAssistant, doc: Building, floor: Floor, out: CheckFinding[]): void {
+  const id = doc.energy.tariff;
+  const st = id ? hass.states[id] : undefined;
+  const tariff = st ? { value: Number(st.state), unit: String(st.attributes.unit_of_measurement ?? "") } : null;
+  const seen = new Set<string>();
+  const check = (entity: string | null | undefined, show: CheckFix) => {
+    if (!entity || entity === "none" || seen.has(entity)) return;
+    seen.add(entity);
+    const state = hass.states[entity]?.state;
+    if (!state || !OFF.has(state) || entity.startsWith("light.")) return;
+    const sensor = powerSensorFor(hass, entity);
+    const w = sensor ? readPower(hass.states[sensor]) : null;
+    if (w === null || w <= STANDBY_W) return;
+    const cost = energyCost((w * 24 * 365) / 1000, tariff);
+    out.push({ kind: "standby", floorId: floor.id, vars: { name: entityName(hass, entity), w: Math.round(w), cost: cost ? `${cost.value.toFixed(0)} ${cost.currency}` : `${Math.round((w * 24 * 365) / 1000)} kWh` }, fix: show, changes: false });
+  };
+  for (const m of floor.furniture) check(m.entity, { do: "show_furniture", furnitureId: m.id });
+  for (const p of floor.placements) {
+    const room = floor.rooms.find((r) => r.points.length >= 3 && pointInPolygon([p.x, p.z], r.points));
+    if (room) check(p.entity_id, { do: "show_room", roomId: room.id });
+  }
+}
+
 /** Every finding of the plan check, floor by floor. A finding needs Home Assistant's states only where it says so. */
 export function checkPlan(doc: Building, hass: HomeAssistant | undefined): CheckFinding[] {
   const out: CheckFinding[] = [];
@@ -123,6 +153,7 @@ export function checkPlan(doc: Building, hass: HomeAssistant | undefined): Check
         if (!host || !locateOpening(walls, o, host)) out.push({ kind: "opening_off_wall", floorId: floor.id, vars: { room: floor.rooms.find((r) => r.id === o.room_id)?.name ?? "" }, fix: { do: "show_opening", openingId: o.id }, changes: false });
       }
     }
+    if (hass) standbyFindings(hass, doc, floor, out);
     // links to entities Home Assistant no longer knows (renamed or removed)
     if (hass && Object.keys(hass.states).length) {
       const gone = floor.placements.map((p) => p.entity_id).filter((id) => !hass.states[id]);

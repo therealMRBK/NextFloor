@@ -19,6 +19,7 @@ const ICON: Record<CheckFinding["kind"], string> = {
   opening_off_wall: "🚪",
   entity_missing: "❓",
   furniture_entity_missing: "❓",
+  standby: "🔌",
 };
 
 /** The text of a finding; a room without an area that has a free area of its name says so. */

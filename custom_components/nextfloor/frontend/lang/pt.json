@@ -110,6 +110,7 @@
   "check_opening_off_wall": "Uma porta ou janela em «{room}» não está numa parede.",
   "check_entity_missing": "{n} marcadores apontam para entidades que o Home Assistant já não conhece ({ids}).",
   "check_furniture_entity_missing": "Um móvel está ligado a {id} – essa entidade já não existe.",
+  "check_standby": "{name} consome {w} W desligado – cerca de {cost} por ano.",
   "check_fix_show": "Mostrar",
   "check_fix_set_area": "Associar «{area}»",
   "check_fix_add_rooms": "Adicionar divisões",

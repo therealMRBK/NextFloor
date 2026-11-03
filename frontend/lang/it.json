@@ -110,6 +110,7 @@
   "check_opening_off_wall": "Una porta o finestra in «{room}» non è su una parete.",
   "check_entity_missing": "{n} segnaposto puntano a entità che Home Assistant non conosce più ({ids}).",
   "check_furniture_entity_missing": "Un mobile è collegato a {id} – quell'entità non esiste più.",
+  "check_standby": "{name} assorbe {w} W da spento – circa {cost} l'anno.",
   "check_fix_show": "Mostra",
   "check_fix_set_area": "Collega «{area}»",
   "check_fix_add_rooms": "Aggiungi le stanze",
