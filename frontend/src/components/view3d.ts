@@ -1701,7 +1701,7 @@ export class NfView3d extends LitElement {
 
   private goTo(item: SearchItem): void {
     this._find = null;
-    if (item.kind === "room") {
+    if (item.kind === "room" || item.kind === "circuit") {
       if (item.roomId) this.openRoom(item.floorId, item.roomId);
       return;
     }

@@ -515,6 +515,9 @@ export class NfRoomPanel extends LitElement {
     // what the room's devices draw now
     const power = this.floor && this.building ? roomPower(this.hass, this.building, this.floor, room) : null;
     if (power !== null) out.push(`⚡ ${powerText(this.hass, power)}`);
+    // the circuits of the fuse box that feed it
+    const circuits = (this.building?.settings.circuits ?? []).filter((c) => c.rooms.includes(room.id)).map((c) => c.name);
+    if (circuits.length) out.push(`🔌 ${circuits.join(", ")}`);
     // hours of sun through its outside windows today
     const { latitude, longitude, time_zone } = this.hass.config ?? {};
     if (this.floor && latitude !== undefined && longitude !== undefined && this.building) {

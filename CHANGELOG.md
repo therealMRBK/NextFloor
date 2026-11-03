@@ -24,6 +24,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Share a view**: *🔗 Share a view* under *Backup* saves the house as a small HTML file that opens in any browser without Home Assistant – it shows the plan in 3D through NextFloor's online demo, with the furniture packs it uses and without any devices or entities, like a template. To show the house to family or a planner.
 - **Shade hint**: when the sun stands on a room's outside windows, the room is 24 °C or warmer and those windows' blinds are open, the room panel says so (*☀ Sun on 2 windows at 25.3 °C – lower the blinds?*) and *Lower* closes them in one tap.
 - **Clean this room**: a room's form has *Cleaning* – the script or button that sends the robot vacuum there (the room cleaning of your robot's integration). The room panel then shows *🧹 Clean*.
+- **Fuse box**: the house settings have a *Fuse box* – circuits by name ("F12 kitchen") with the rooms they feed. The room panel names a room's circuits (*🔌 F12*), and the search finds a circuit and opens its room.
 
 ## 0.21.0
 

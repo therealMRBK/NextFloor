@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, uid, type ButtonAction, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
+import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
 import { actions, checkField, colorField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
@@ -57,6 +57,24 @@ function ownAlerts(host: EditorHost): TemplateResult {
   return html`<h4>⚠ ${host.t("own_alerts")}</h4>
     ${hint(host.t("own_alerts_hint"))} ${list.map(card)}
     ${list.length < 40 ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("alert"), entity: "", state: null, text: host.t("own_alert_new") }])}>+ ${host.t("own_alert_add")}</button>`) : nothing}`;
+}
+
+/** The fuse box: circuits by name, each with the rooms it feeds (chips to add and remove). */
+function circuits(host: EditorHost): TemplateResult {
+  const list = host.doc.settings.circuits ?? [];
+  const store = (next: Circuit[]) => host.change((d) => (d.settings.circuits = orUndefined(next)));
+  const edit = (i: number, patch: Partial<Circuit>) => store(patchAt(list, i, patch));
+  const rooms = host.doc.floors.flatMap((f) => f.rooms.map((r) => ({ id: r.id, label: host.doc.floors.length > 1 ? `${r.name} · ${f.name}` : r.name })));
+  const nameOf = (id: string) => rooms.find((r) => r.id === id)?.label ?? id;
+  const card = (c: Circuit, i: number) => html`<div class="nf-form nf-own-button">
+    ${textField(host, host.t("circuit_name"), c.name, (v) => edit(i, { name: v || host.t("circuit_new") }), { wide: true, maxlength: 80 })}
+    <div class="nf-wide">${c.rooms.map((id) => html`<span class="nf-chip">${nameOf(id)} <button class="nf-btn nf-field-btn" title=${host.t("delete")} @click=${() => edit(i, { rooms: c.rooms.filter((r) => r !== id) })}>✕</button></span>`)}</div>
+    ${selectField(host, host.t("circuit_add_room"), "", [["", "–"], ...rooms.filter((r) => !c.rooms.includes(r.id)).map((r): [string, string] => [r.id, r.label])], (v) => v && edit(i, { rooms: [...c.rooms, v] }), { wide: true })}
+    <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
+  </div>`;
+  return html`<h4>🔌 ${host.t("circuits")}</h4>
+    ${hint(host.t("circuits_hint"))} ${list.map(card)}
+    ${list.length < 120 ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("circuit"), name: host.t("circuit_new"), rooms: [] }])}>+ ${host.t("circuit_add")}</button>`) : nothing}`;
 }
 
 /** The calendars of the "Today" card: their appointments of the day show top right in the 3D view, with the bins due. */
@@ -142,7 +160,7 @@ function ownButtons(host: EditorHost): TemplateResult {
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
 export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
+  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

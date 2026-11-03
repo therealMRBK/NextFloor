@@ -83,3 +83,12 @@ test("notes are found by their text", () => {
   assert.equal(found[0].kind, "note");
   assert.equal(found[0].roomId, "k");
 });
+
+test("a circuit of the fuse box is found and leads to its first room", () => {
+  const b = { ...emptyBuilding(), floors: [{ ...floorWith([box("k", 0, 0, 4, 4), box("b", 4, 0, 6, 4)]) }] };
+  b.settings = { ...b.settings, circuits: [{ id: "c", name: "F12 Küche und Bad", rooms: ["k", "b"] }] };
+  const [found] = searchItems(searchIndex(hassOf([]), b), "f12");
+  assert.equal(found.kind, "circuit");
+  assert.equal(found.roomId, "k");
+  assert.equal(found.where, "k, b");
+});

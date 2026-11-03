@@ -631,6 +631,8 @@ export interface BuildingSettings {
   own_alerts?: OwnAlert[] | null;
   /** Calendars whose appointments of the day show on the "Today" card of the 3D view. */
   calendars?: string[] | null;
+  /** The fuse box: its circuits with the rooms on them ("F12 kitchen"); the room panel names them and the search finds them. */
+  circuits?: Circuit[] | null;
   /** Own sensors shown at the top of the 3D view (outside temperature, the alarm…), at most 12. */
   status_entities?: string[] | null;
   /** An own background behind the house instead of the look's sky: a colour and/or a picture (/local/… or https), dimmed. */
@@ -858,6 +860,13 @@ export interface EnergyRoute {
 
 /** The most points a cable route can have. */
 export const MAX_ROUTE_POINTS = 30;
+
+/** A circuit of the fuse box and the rooms it feeds. */
+export interface Circuit {
+  id: string;
+  name: string;
+  rooms: string[];
+}
 
 /** A person and the sensor whose state names the room they are in (ESPresense, Bermuda, …). */
 export interface PresenceLink {

@@ -5,7 +5,7 @@ import { ceilingAt, centroid, pointInPolygon, type Building, type Floor, type Ro
 import type { HomeAssistant } from "./types.ts";
 
 export interface SearchItem {
-  kind: "room" | "device" | "note";
+  kind: "room" | "device" | "note" | "circuit";
   name: string;
   /** Where it is: room (and floor, when the building has several). Empty for a room on a single-floor plan. */
   where: string;
@@ -69,11 +69,20 @@ function indexFloor(hass: HomeAssistant, floor: Floor, links: ReturnType<typeof 
   return items;
 }
 
-/** Everything findable: rooms, placed devices, and furniture or lamps that are linked to an entity. */
+/** Everything findable: rooms, placed devices, furniture or lamps that are linked to an entity, notes, and the fuse box's circuits. */
 export function searchIndex(hass: HomeAssistant, building: Building): SearchItem[] {
   const links = furnitureEntities(hass, building.floors);
   const multiFloor = building.floors.length > 1;
-  return building.floors.flatMap((floor) => indexFloor(hass, floor, links, multiFloor));
+  const items = building.floors.flatMap((floor) => indexFloor(hass, floor, links, multiFloor));
+  // a circuit leads to the first of its rooms; the place lists all of them
+  for (const c of building.settings.circuits ?? []) {
+    const rooms = building.floors.flatMap((f) => f.rooms.filter((r) => c.rooms.includes(r.id) && hasArea(r)).map((r) => ({ f, r })));
+    if (!rooms.length) continue;
+    const [{ f, r }] = rooms;
+    const [x, z] = centroid(r.points);
+    items.push({ kind: "circuit", name: `🔌 ${c.name}`, where: rooms.map((x) => x.r.name).join(", "), floorId: f.id, roomId: r.id, entity: null, icon: null, x, z, y: 0 });
+  }
+  return items;
 }
 
 /** Lower is better: a name that starts with the query beats one that merely contains it; rooms beat devices. */

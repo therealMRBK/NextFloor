@@ -766,6 +766,22 @@ SETTINGS_SCHEMA = vol.Schema(
                 vol.Length(max=40),
             ),
         ),
+        # the fuse box: circuits with the rooms they feed
+        vol.Optional("circuits"): vol.Any(
+            None,
+            vol.All(
+                [
+                    vol.Schema(
+                        {
+                            vol.Required("id"): vol.All(str, vol.Length(min=1, max=64)),
+                            vol.Required("name"): vol.All(str, vol.Length(max=80)),
+                            vol.Optional("rooms", default=list): vol.All([vol.All(str, vol.Length(max=64))], vol.Length(max=60)),
+                        }
+                    )
+                ],
+                vol.Length(max=120),
+            ),
+        ),
         # calendars whose appointments of the day show on the "Today" card
         vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
