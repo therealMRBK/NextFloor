@@ -111,3 +111,97 @@ test("a shared view embeds the plan without entities and only the packs it uses"
   assert.deepEqual(data.packs.map((p: { id: string }) => p.id), ["own_studio"]);
   assert.ok(html.includes('src="https://example.org/preview/?shared"'));
 });
+
+// A plan with a link to Home Assistant in every place the model has one: nothing of it may stay in a shared copy.
+function leaky(): Building {
+  const b = linked();
+  b.settings = {
+    ...b.settings,
+    map: { on: true, lat: 52.52, lon: 13.405 },
+    favorites: ["scene.movie", "script.goodnight"],
+    buttons: [{ id: "b1", label: "Blinds", icon: "", action: "more_info", target: "cover.living", data: null } as never],
+    own_alerts: [{ id: "a1", name: "Tank", entity: "sensor.tank", state: "<20" } as never],
+    calendars: ["calendar.family"],
+    status_entities: ["sensor.outside_temp"],
+    circuits: [{ id: "c1", name: "F12 kitchen", rooms: ["r"] }],
+    weather_entity: "weather.home",
+    rain_sensor: "binary_sensor.rain",
+    outage_sensor: "binary_sensor.grid_lost",
+    announce_tts: "tts.cloud",
+    announce_phrases: ["Dinner at 6, the code is 1234"],
+    media_presets: [{ id: "m1", label: "Radio", type: "music", content: "x", speakers: ["media_player.kitchen"] }],
+    backdrop: { color: "#112233", image: "/local/private/garden.jpg", dim: 0.3 },
+    plugins: [{ url: "/local/nextfloor/my-plugin.js" } as never],
+    wall_exterior: 0.3,
+    north: 40,
+  };
+  b.energy = { ...b.energy, consumption: "sensor.house_w", gas: "sensor.gas", water: "sensor.water", battery: "sensor.bat", battery_soc: "sensor.soc", tariff: "sensor.tariff" };
+  const floor = b.floors[0];
+  floor.ha_floor = "ground_floor";
+  floor.power_entity = "sensor.floor_power";
+  Object.assign(floor.rooms[0], { sub_areas: ["reading_corner"], panel: ["sensor.x"], hidden: ["light.y"], no_state: ["cover.z"], clean_entity: "script.clean_living", floor_heating: "climate.floor", announce_speaker: "media_player.living", moods: [{ id: "m", name: "Movie", lights: [{ entity_id: "light.a", on: true }] }], climate: { temperature: "sensor.t", humidity: "sensor.h" } });
+  Object.assign(floor.furniture[0], {
+    temp_entity: "sensor.fridge_t",
+    cover_entity: "cover.curtain",
+    state_entity: "binary_sensor.bed",
+    gang_entities: ["switch.a", null],
+    show_when: { entity: "input_boolean.xmas", state: "on" },
+    tap: { action: "service", target: "light.turn_on", data: null },
+    picture: "/local/family.jpg",
+    car: { device: "0123456789abcdef0123456789abcdef", soc: "sensor.car_soc" },
+    types: [{ state: "home", vehicle: "car" }],
+  });
+  floor.furniture.push({ id: "frame", type: "picture_frame", x: 2, z: 2, rotation: 0, w: 0.5, d: 0.05, h: 0.4, variant: null, picture: "image:abc123" } as never);
+  floor.furniture.push({ id: "cam", type: "picture_frame", x: 3, z: 2, rotation: 0, w: 0.5, d: 0.05, h: 0.4, variant: null, picture: "camera.front_door" } as never);
+  floor.openings = [{ id: "o", type: "door", room_id: "r", edge: 0, offset: 0.5, width: 0.9, height: 2, cover: "cover.a", contact: "binary_sensor.d", tilt: "sensor.tilt", lock: "lock.front" } as never];
+  floor.outdoor = [{ id: "pool", type: "pool", points: [[0, 0], [1, 0], [1, 1]], area_id: "garden", temp_entity: "sensor.pool_t", pump_entity: "switch.pump" } as never];
+  return b;
+}
+
+test("a shared copy keeps nothing that names, locates or controls this Home Assistant", () => {
+  const copy = withoutEntities(leaky());
+  const text = JSON.stringify(copy);
+  // no entity id as a value or as a key anywhere, no device id
+  assert.doesNotMatch(text, /"(?:alarm_control_panel|binary_sensor|button|calendar|camera|climate|cover|fan|input_[a-z]+|light|lock|media_player|person|scene|script|sensor|switch|tts|weather)\.[a-z0-9_]+"/);
+  assert.doesNotMatch(text, /[0-9a-f]{32}/);
+  // the map position, favourites, buttons, alerts, calendars, fuse box, plugins and phrases are gone, the look stays
+  const s = copy.settings as unknown as Record<string, unknown>;
+  for (const k of ["map", "favorites", "buttons", "own_alerts", "calendars", "status_entities", "circuits", "weather_entity", "rain_sensor", "outage_sensor", "announce_tts", "announce_phrases", "media_presets", "plugins"]) assert.equal(s[k], undefined, k);
+  assert.equal(s.wall_exterior, 0.3);
+  assert.equal(s.north, 40);
+  assert.deepEqual(s.backdrop, { color: "#112233", dim: 0.3 });
+  assert.doesNotMatch(text, /52\.52|13\.405|\/local\/|Dinner|F12 kitchen|garden\.jpg/);
+  // areas, the Home Assistant floor, room links, moods and own actions are cleared
+  const floor = copy.floors[0];
+  assert.equal(floor.ha_floor, null);
+  assert.equal(floor.outdoor[0].area_id, null);
+  assert.deepEqual([floor.rooms[0].sub_areas, floor.rooms[0].panel, floor.rooms[0].hidden, floor.rooms[0].no_state], [null, [], [], []]);
+  assert.equal(floor.rooms[0].moods, undefined);
+  assert.equal(floor.furniture[0].tap, undefined);
+  assert.equal(floor.furniture[0].show_when, undefined);
+  assert.equal(floor.furniture[0].pictures, undefined);
+  // a stored picture travels, a /local file or a camera does not
+  assert.equal(floor.furniture.find((f) => f.id === "frame")!.picture, "image:abc123");
+  assert.equal(floor.furniture.find((f) => f.id === "cam")!.picture, null);
+  assert.equal(floor.furniture[0].picture, null);
+  // what makes the house the house stays
+  assert.equal(floor.rooms[0].points.length, 4);
+  assert.equal(floor.furniture[0].type, "tv");
+  assert.equal(floor.openings[0].type, "door");
+});
+
+test("the share view embeds the cleaned plan only", () => {
+  const html = shareViewHtml(leaky(), [], "House", "needs JS");
+  assert.doesNotMatch(html, /sensor\.|light\.|52\.52|calendar\.family|scene\.movie/);
+});
+
+test("withoutEntities leaves the original untouched and its result still reads back", () => {
+  const original = leaky();
+  const before = JSON.stringify(original);
+  const copy = withoutEntities(original);
+  assert.equal(JSON.stringify(original), before);
+  const back = parseExport(JSON.stringify(exportFile(original, true)));
+  assert.equal(back.floors[0].rooms[0].points.length, 4);
+  assert.equal(back.settings.wall_exterior, 0.3);
+  assert.ok(copy.settings);
+});

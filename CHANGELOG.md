@@ -2,11 +2,16 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
-## Unreleased
+## 0.24.0
 
 ### Added
 
+- **NextFloor is in the official HACS store.** Install it by searching for *NextFloor* in HACS, no custom repository needed any more. If you installed it as a custom repository, nothing changes: your installation, plan and settings stay as they are and updates keep coming through HACS. A one-time notification in Home Assistant tells you so, in your language. The README, the manual and the Anleitung now describe the store install. Thank you to the HACS team for the review.
 - **Choose what a double tap on a room switches** (thanks @mymoll, #62): settings → *Double tap on a room*: the lamps in the plan and every light of the room's area (as before), only the lamps in the plan, or nothing. Smart plugs that Home Assistant reports as lights (Hue plugs) are no longer switched by accident when they are not placed as a lamp. The card can override it with `room_double_tap: auto | area | plan | off`.
+
+### Fixed
+
+- **Shared plans and share views kept data of your home** (thanks to the HACS review): the copy for sharing removed the entity links but kept the settings as they were, so the map position of your home, favourites, own buttons and warnings, calendars, status sensors, the fuse box, announcement phrases and plugin paths travelled with the file, and so did picture rules of screens, light moods, own tap actions, room panel entity lists and Home Assistant areas. A shared copy now keeps only the look of the house (walls, roof, north, units, start view) plus its rooms, furniture and doors, and every field that names an entity, area or device of your Home Assistant is cleared on top of that, so a field added later cannot slip through. Your own plan and the normal backup are not changed. Files you shared earlier still hold the old data; share them again if that matters.
 
 ## 0.23.1
 

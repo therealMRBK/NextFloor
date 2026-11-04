@@ -12,7 +12,7 @@ This guide follows the way you actually work: install, draw, furnish, connect, t
 
 Needs Home Assistant 2025.1 or newer.
 
-- **HACS:** add `therealMRBK/NextFloor` as a custom repository (category Integration), install, restart Home Assistant, then add the integration under Settings → Devices & services. A *NextFloor* entry appears in the sidebar.
+- **HACS:** NextFloor is in the official HACS store: search for *NextFloor* in HACS, download it, restart Home Assistant, then add the integration under Settings → Devices & services. A *NextFloor* entry appears in the sidebar. (Installed earlier as a custom repository? Nothing to change: updates keep coming through HACS, which lists it as a regular repository by itself.)
 - **By hand:** copy `custom_components/nextfloor` into your configuration folder, restart, add the integration.
 - **Updates:** through HACS, then restart Home Assistant and reload the browser tab (on the companion app: Settings → Companion app → reset the frontend cache).
 

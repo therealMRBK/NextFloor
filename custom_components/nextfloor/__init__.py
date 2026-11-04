@@ -27,6 +27,7 @@ from .const import (
 )
 from .meshes import async_register_mesh_view
 from .storage import NextFloorData
+from .store_notice import async_notify_official_store
 from .websocket import async_register_commands
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
@@ -95,6 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         config={},
     )
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await async_notify_official_store(hass, entry)
     return True
 
 

@@ -1,5 +1,5 @@
-// Plan files: save the building as JSON and load it again. A shareable copy has every link to this
-// Home Assistant removed (entities, areas, energy sensors, people), so it can go to someone else.
+// Plan files: save the building as JSON and load it again. A shareable copy has every link to this Home Assistant
+// removed (entities, areas, energy sensors, people, the map position, favourites, own buttons), so it can go to someone else.
 
 import { normalizeBuilding, type Building } from "./model.ts";
 import type { FurniturePack } from "./packs.ts";
@@ -13,22 +13,89 @@ export interface ExportFile {
   building: Building;
 }
 
-/** The building with all links to entities and areas cut. Background pictures are dropped as well. */
+// Home Assistant entity ids ("light.kitchen", "sensor.grid_power"): a known domain, a dot, a slug.
+const ENTITY_DOMAINS =
+  "alarm_control_panel|automation|binary_sensor|button|calendar|camera|climate|conversation|cover|date|datetime|device_tracker|event|fan|group|humidifier|image|input_boolean|input_button|input_datetime|input_number|input_select|input_text|lawn_mower|light|lock|media_player|notify|number|person|remote|scene|script|select|sensor|siren|stt|sun|switch|text|time|timer|todo|tts|update|vacuum|valve|water_heater|weather|zone";
+const ENTITY_ID = new RegExp(`^(?:${ENTITY_DOMAINS})\\.[a-z0-9_]+$`);
+const DEVICE_ID = /^[0-9a-f]{32}$/;
+/** Keys whose value is a Home Assistant area or floor, whatever it looks like. */
+const AREA_KEYS = new Set(["area_id", "ha_floor"]);
+const AREA_LIST_KEYS = new Set(["sub_areas"]);
+/** Whole fields that only work with a Home Assistant behind them and are dropped from a shared copy. */
+const DROPPED_KEYS = new Set(["tap", "show_when", "pictures", "moods"]);
+
+/**
+ * Cuts every remaining link to this Home Assistant out of a value, whatever field it sits in: strings that are entity or device ids become
+ * null (or leave a list), object keys that are entity ids go, areas and the Home Assistant floor are cleared. It runs on top of the
+ * explicit clean-up in `withoutEntities`, so a field that is added to the model later cannot leak through by being forgotten there.
+ */
+function scrub(value: unknown): unknown {
+  if (typeof value === "string") return ENTITY_ID.test(value) || DEVICE_ID.test(value) ? null : value;
+  if (Array.isArray(value)) return value.map((v) => scrub(v)).filter((v) => v !== null);
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      if (ENTITY_ID.test(k) || DROPPED_KEYS.has(k)) continue;
+      if (AREA_KEYS.has(k)) out[k] = null;
+      else if (AREA_LIST_KEYS.has(k)) out[k] = null;
+      else out[k] = scrub(v);
+    }
+    return out;
+  }
+  return value;
+}
+
+/** The only building settings a shared copy keeps: how the house looks, nothing that names, locates or controls anything of the original. */
+const SHARED_SETTINGS = [
+  "wall_exterior",
+  "wall_interior",
+  "wall_paint_outside",
+  "wall_paint_inside",
+  "grid",
+  "north",
+  "roof",
+  "weather_effects",
+  "rain_warning",
+  "sun_patches",
+  "lock_plan",
+  "start_view",
+  "units",
+  "motion_markers_active",
+  "room_double_tap",
+] as const;
+
+/**
+ * The building with all links to Home Assistant cut: entities, areas, energy sensors, people, the map position, favourites, own buttons and
+ * alerts, calendars, status entities, the fuse box and plugins. Background pictures are dropped as well. Settings are built from an
+ * allowlist; floors, energy and the rest are cleaned explicitly and then scrubbed of anything that still looks like an entity.
+ */
 export function withoutEntities(source: Building): Building {
   const copy = structuredClone(source);
-  copy.energy = { ...copy.energy, grid: null, solar: null, battery: null, battery_soc: null, tariff: null };
+  const settings: Record<string, unknown> = {};
+  for (const k of SHARED_SETTINGS) if (copy.settings?.[k] !== undefined) settings[k] = copy.settings[k];
+  // the backdrop keeps its colour, but its picture may be a file of this Home Assistant
+  const backdrop = copy.settings?.backdrop;
+  if (backdrop && (backdrop.color || backdrop.dim != null)) settings.backdrop = { color: backdrop.color ?? null, dim: backdrop.dim ?? null };
+  copy.settings = settings as unknown as Building["settings"];
+  copy.energy = { ...copy.energy, grid: null, solar: null, battery: null, battery_soc: null, tariff: null, consumption: null, gas: null, water: null };
   copy.presence = [];
   for (const floor of copy.floors) {
     floor.background = null;
     floor.placements = [];
-    floor.rooms.forEach((room) => (room.area_id = null));
+    floor.power_entity = null;
+    floor.ha_floor = null;
+    for (const room of floor.rooms) {
+      Object.assign(room, { area_id: null, sub_areas: null, panel: [], hidden: [], no_state: [] });
+    }
     floor.furniture.forEach((piece) => {
       Object.assign(piece, { entity: null, power: null });
       delete piece.effect_animations; // HA program names are private, like entity links.
+      // a picture frame's photo: only a stored picture or an https address travels, not /local files, cameras or media players
+      if (piece.picture && !(piece.picture.startsWith("image:") || piece.picture.startsWith("https://"))) piece.picture = null;
     });
     floor.openings.forEach((opening) => Object.assign(opening, { cover: null, contact: null, tilt: null }));
   }
-  return copy;
+  return scrub(copy) as Building;
 }
 
 export function exportFile(building: Building, shareable: boolean): ExportFile {

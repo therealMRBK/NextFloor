@@ -19,7 +19,7 @@
 <p align="center">
 <a href="https://github.com/therealMRBK/NextFloor/releases"><img src="https://img.shields.io/github/v/release/therealMRBK/NextFloor?style=flat-square" alt="版本"></a>
 <a href="https://github.com/therealMRBK/NextFloor/actions"><img src="https://img.shields.io/github/actions/workflow/status/therealMRBK/NextFloor/ci.yml?branch=main&style=flat-square&label=CI" alt="CI"></a>
-<a href="https://hacs.xyz"><img src="https://img.shields.io/badge/HACS-custom-orange?style=flat-square" alt="HACS"></a>
+<a href="https://hacs.xyz"><img src="https://img.shields.io/badge/HACS-%E5%AE%98%E6%96%B9%E5%95%86%E5%BA%97-41bdf5?style=flat-square" alt="HACS 官方商店"></a>
 <a href="#-永久免费--一个承诺"><img src="https://img.shields.io/badge/%E4%BB%B7%E6%A0%BC-%E6%B0%B8%E4%B9%85%E5%85%8D%E8%B4%B9-2ea44f?style=flat-square" alt="永久免费"></a>
 <a href="https://github.com/therealMRBK/NextFloor/blob/main/LICENSE"><img src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-MIT-blue?style=flat-square" alt="MIT"></a>
 <a href="#-由-ai-协助构建"><img src="https://img.shields.io/badge/%E6%9E%84%E5%BB%BA%E6%96%B9%E5%BC%8F-AI%20%E5%8D%8F%E5%8A%A9-8a63d2?style=flat-square" alt="由 AI 协助构建"></a>
@@ -98,10 +98,12 @@ NextFloor 是免费的，而且会一直免费。不是"免费试用"，不是"�
 
 **HACS**（推荐）
 
-1. 点上面的 HACS 按钮，或在 HACS 里进入 ⋮ → *自定义仓库*，把 `https://github.com/therealMRBK/NextFloor` 添加为**集成**。
-2. 安装 **NextFloor** 并重启 Home Assistant。
+1. NextFloor 已进入 **HACS 官方商店**：打开 HACS，搜索 **NextFloor** 并下载（或点上面的 HACS 按钮）。
+2. 重启 Home Assistant。
 3. 添加集成：[![开始配置 NextFloor。](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=nextfloor)，或 *设置 → 设备与服务 → 添加集成 → NextFloor*。
 4. 在侧边栏打开 **NextFloor**，切到**编辑器**，画出你的第一个楼层。
+
+**之前是通过自定义仓库安装的？** 无需任何更改。NextFloor 现已进入 HACS 官方商店，你的安装、平面图和设置保持不变，更新仍通过 HACS 提供。HACS 刷新列表后会自动把它识别为普通仓库。
 
 **手动安装：** 把 `custom_components/nextfloor` 复制到 `config/custom_components/` 并重启。需要 Home Assistant 2025.1 或更高版本。
 

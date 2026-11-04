@@ -19,7 +19,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 <p align="center">
 <a href="https://github.com/therealMRBK/NextFloor/releases"><img src="https://img.shields.io/github/v/release/therealMRBK/NextFloor?style=flat-square" alt="Release"></a>
 <a href="https://github.com/therealMRBK/NextFloor/actions"><img src="https://img.shields.io/github/actions/workflow/status/therealMRBK/NextFloor/ci.yml?branch=main&style=flat-square&label=CI" alt="CI"></a>
-<a href="https://hacs.xyz"><img src="https://img.shields.io/badge/HACS-custom-orange?style=flat-square" alt="HACS"></a>
+<a href="https://hacs.xyz"><img src="https://img.shields.io/badge/HACS-official%20store-41bdf5?style=flat-square" alt="In the official HACS store"></a>
 <a href="#-free-forever--a-promise"><img src="https://img.shields.io/badge/price-free%20forever-2ea44f?style=flat-square" alt="Free forever"></a>
 <a href="https://github.com/therealMRBK/NextFloor/blob/main/LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue?style=flat-square" alt="MIT"></a>
 <a href="#made-with-ai"><img src="https://img.shields.io/badge/built%20with-AI%20assistance-8a63d2?style=flat-square" alt="Built with AI"></a>
@@ -98,10 +98,12 @@ I believe in open source: software that anyone may read, change and share, and t
 
 **HACS** (recommended)
 
-1. Click the HACS button above, or in HACS go to ⋮ → *Custom repositories* and add `https://github.com/therealMRBK/NextFloor` as **Integration**.
-2. Install **NextFloor** and restart Home Assistant.
+1. NextFloor is in the **official HACS store**: open HACS, search for **NextFloor** and download it (or click the HACS button above).
+2. Restart Home Assistant.
 3. Add the integration: [![Start setting up NextFloor.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=nextfloor) or *Settings → Devices & services → Add integration → NextFloor*.
 4. Open **NextFloor** in the sidebar, switch to **Editor** and draw your first floor.
+
+**Already installed as a custom repository?** Nothing to change. NextFloor is now part of the official HACS store, your installation, plan and settings stay as they are and updates keep coming through HACS. HACS lists it as a regular repository by itself once it has refreshed its list.
 
 **Manual:** copy `custom_components/nextfloor` into `config/custom_components/` and restart. Requires Home Assistant 2025.1 or newer.
 
