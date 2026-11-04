@@ -10,7 +10,7 @@ import { join } from "node:path";
 const audioDir = process.argv[2];
 const spoken = process.argv[3] === "de" ? "de" : "en";
 const lang = process.env.LANG_UI === "de" ? "de" : "en";
-const root = process.env.OUT ?? `/root/claude/nextfloor-launch/tutorial/${lang}`;
+const root = process.env.OUT ?? `${import.meta.dirname}/out/${lang}`;
 if (!audioDir || !existsSync(audioDir)) throw new Error("usage: node tutorial/voiceover.mjs <audio-dir> [de|en]");
 const ffmpeg = execFileSync("python3", ["-c", "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"]).toString().trim();
 

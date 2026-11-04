@@ -3,7 +3,7 @@
 //   node tutorial/record.mjs 1        records episode 1 (the empty start)
 //   node tutorial/record.mjs 3 4      records 3 and 4 (needs the plan left by episode 2)
 //   node tutorial/record.mjs all
-// Env: LANG_UI=en|de (language of the app in the picture), OUT=<dir> (default /root/claude/nextfloor-launch/tutorial/<lang>)
+// Env: LANG_UI=en|de (language of the app in the picture), OUT=<dir> (default frontend/tutorial/out/<lang>)
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -11,7 +11,7 @@ import { translate } from "../src/i18n.ts";
 import { Recorder } from "./rec.mjs";
 
 const lang = process.env.LANG_UI === "de" ? "de" : "en";
-const outRoot = process.env.OUT ?? `/root/claude/nextfloor-launch/tutorial/${lang}`;
+const outRoot = process.env.OUT ?? `${import.meta.dirname}/out/${lang}`;
 const files = readdirSync(join(import.meta.dirname, "episodes")).filter((f) => f.endsWith(".mjs")).sort();
 const wanted = process.argv.slice(2);
 // development: SCRATCH=/path/to/episode.mjs FROM=<episode whose end plan is the start> node tutorial/record.mjs scratch

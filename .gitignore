@@ -15,3 +15,8 @@ private/
 *.glb
 nextfloor_meshes/
 preview/.tutorial-state.json
+
+# local tutorial recordings
+frontend/tutorial/out/
+# tool installers do not belong here
+*.whl

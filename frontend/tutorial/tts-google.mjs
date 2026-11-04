@@ -9,7 +9,7 @@ const spoken = process.argv[3] === "de" ? "de" : "en";
 const voice = process.argv[4] ?? (spoken === "de" ? "de-DE-Chirp3-HD-Charon" : "en-US-Chirp3-HD-Charon");
 const key = process.env.GOOGLE_TTS_API_KEY;
 const lang = process.env.LANG_UI === "de" ? "de" : "en";
-const root = process.env.OUT ?? `/root/claude/nextfloor-launch/tutorial/${lang}`;
+const root = process.env.OUT ?? `${import.meta.dirname}/out/${lang}`;
 if (!out || !key) throw new Error("usage: GOOGLE_TTS_API_KEY=… node tutorial/tts-google.mjs <out-dir> [en|de] [voice]");
 mkdirSync(out, { recursive: true });
 const { segments } = JSON.parse(readFileSync(join(root, "narration.json"), "utf8"));

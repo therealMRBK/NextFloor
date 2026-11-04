@@ -15,7 +15,7 @@ node tutorial/build.mjs                # video, subtitles, transcripts, chapters
 LANG_UI=de node tutorial/record.mjs all && LANG_UI=de node tutorial/build.mjs   # the app in German in the picture
 ```
 
-Output (default `/root/claude/nextfloor-launch/tutorial/<en|de>/`): `nextfloor-tutorial.<lang>.mp4`, `nextfloor-tutorial.{de,en}.{srt,vtt}`,
+Output (default `frontend/tutorial/out/<en|de>/`, set `OUT` to change it): `nextfloor-tutorial.<lang>.mp4`, `nextfloor-tutorial.{de,en}.{srt,vtt}`,
 `transcript.{de,en}.md`, `narration.{de,en}.txt` (one numbered text per segment, for text-to-speech), `narration.json`, `chapters.txt`.
 
 Voice-over: make one audio file per segment named by its number (`001.mp3` …), then

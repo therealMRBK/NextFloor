@@ -5,7 +5,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const lang = process.env.LANG_UI === "de" ? "de" : "en";
-const root = process.env.OUT ?? `/root/claude/nextfloor-launch/tutorial/${lang}`;
+const root = process.env.OUT ?? `${import.meta.dirname}/out/${lang}`;
 const ffmpeg = execFileSync("python3", ["-c", "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"]).toString().trim();
 const episodes = readdirSync(root).filter((d) => /^ep\d+$/.test(d)).sort();
 
