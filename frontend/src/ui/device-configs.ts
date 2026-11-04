@@ -47,7 +47,7 @@ export const DEVICE_CONFIGS: Record<string, DeviceConfig> = {
 /** Aktoren der Anker (verifizierte Entitaeten). */
 const ACTORS: Record<string, { id: string; label: string }> = {
   shelly_hwr_ecke: { id: "light.shellyhwrgeb", label: "RGB-Leuchte HWR" },
-  shelly_bad_nord: { id: "light.shellybadlinks_2", label: "Leuchte Bad Nord" },
+  shelly_bad_nord: { id: "switch.bad_luefter_dauer", label: "Bad-Lüfter (Dauer)" },
   shelly_bad_sued: { id: "light.shellybadrechts_2", label: "Leuchte Bad Süd" },
   array_buero_zwerchhaus_1: { id: "light.shelly_dg_buero1", label: "RGB Büro 1" },
   array_buero_zwerchhaus_2: { id: "light.shelly_dg_buero2", label: "RGB Büro 2" },

@@ -107,8 +107,8 @@ export class DevicePopup {
           });
         }
       } catch { /* unten als "keine Reaktion" gemeldet */ }
-      for (let i = 0; i < 10; i++) {
-        await new Promise((r) => window.setTimeout(r, 250));
+      for (let i = 0; i < 14; i++) {
+        await new Promise((r) => window.setTimeout(r, i === 0 ? 120 : 180));
         if (st() !== before) { paint(); return true; }
       }
       paint();
