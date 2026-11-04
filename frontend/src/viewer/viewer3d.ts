@@ -1458,7 +1458,7 @@ export class NextFloorViewer {
       const sx = ((v.x + 1) / 2) * rect.width;
       const sy = ((1 - v.y) / 2) * rect.height;
       const d = Math.hypot(sx - px, sy - py);
-      if (d < 26 && (!best || d < best.d)) best = { id: marker.name.replace(/^wifi:/, ""), d };
+      if (d < 26 && (!best || d < best.d)) best = { id: marker.name.replace(/^wifi:/, "").replace(/^keller_/, ""), d };
     }
     if (!best) { this.popup.hide(); return; }
     void this.popup.show(best.id, DevicePopup.token());
