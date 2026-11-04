@@ -81,3 +81,14 @@ export function chimneyLift(inside: number, outside: number | null): number {
   if (!Number.isFinite(d)) return 1;
   return Math.max(0, Math.min(1.5, d / 10));
 }
+
+/** Badluefter als Senke: Dauerbetrieb oder Statusrelais, Stufe aus dem Stufensensor. */
+export function readBadFan(states: Record<string, any>): { on: boolean; power: number; source: string } {
+  const dauer = states["switch.bad_luefter_dauer"];
+  const status = states["binary_sensor.lufter_schalten_status"];
+  const stufe = Number(states["sensor.lufter_stufe_status"]?.state);
+  const on = dauer?.state === "on" || status?.state === "on";
+  if (!on) return { on: false, power: 0, source: "Badluefter aus" };
+  const power = Number.isFinite(stufe) && stufe > 0 ? Math.min(1, stufe / 100) : 1;
+  return { on: true, power, source: `bad_luefter_dauer=${dauer?.state ?? "?"} stufe=${Number.isFinite(stufe) ? stufe : "?"}` };
+}

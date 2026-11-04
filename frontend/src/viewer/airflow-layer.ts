@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import { SensorHistory, windowOpenProb } from "../airflow/triangulation.ts";
 import { VectorField, type FieldOptions, type Opening } from "../airflow/vector-field.ts";
-import { chimneyLift, readFan, readLuke, readOutside } from "../airflow/climate-state.ts";
+import { chimneyLift, readBadFan, readFan, readLuke, readOutside } from "../airflow/climate-state.ts";
 
 /**
  * Partikel-Stroemung im Viewer.
@@ -19,6 +19,8 @@ import { chimneyLift, readFan, readLuke, readOutside } from "../airflow/climate-
 
 const HOUSE = { x0: 0, x1: 10.25, z0: 0, z1: 7.15, y0: 0.2, y1: 5.9 };
 const LUKE = { x: 4.74, z: 6.25, w: 1.98, d: 1.04 };
+/** Bad EG, Nordost-Ecke, knapp unter dem Ringanker (x=0 ist der Ostgiebel). */
+const BAD_SINK = { x: 1.2, y: 2.5, z: 6.5 };
 const AUGE = { x: 5.35, z: 3.5, w: 2.0, d: 2.0 };
 
 interface Probe { id: string; x: number; y: number; z: number; rh: string | null; climate: string | null }
@@ -26,7 +28,7 @@ interface Probe { id: string; x: number; y: number; z: number; rh: string | null
 const PROBES: Probe[] = [
   { id: "wohnen", x: 5.1, y: 1.2, z: 2.4, rh: null, climate: "climate.heizung_kreis_a" },
   { id: "kueche", x: 5.1, y: 1.2, z: 6.0, rh: null, climate: "climate.heizung_kreis_b" },
-  { id: "bad", x: 9.2, y: 1.2, z: 5.4, rh: "sensor.bad_luftfeuchtigkeit", climate: "climate.heizung_kreis_c" },
+  { id: "bad", x: 1.2, y: 1.2, z: 6.4, rh: "sensor.bad_luftfeuchtigkeit", climate: "climate.heizung_kreis_c" },
   { id: "buero", x: 5.4, y: 3.5, z: 6.0, rh: "sensor.buero_luftfeuchte", climate: "climate.heizung_kreis_d" },
   { id: "schlafen", x: 2.0, y: 3.5, z: 2.0, rh: null, climate: "climate.heizung_kreis_e" },
   { id: "technik", x: 1.5, y: 0.8, z: 6.4, rh: "sensor.techniknische_luftfeuchtigkeit", climate: null },
@@ -60,6 +62,8 @@ export class AirflowLayer {
   private fanDir: 1 | 0 | -1 = 1;
   private fanPower = 0;
   private fanSource = "noch nicht gelesen";
+  private badPower = 0;
+  private badSource = "noch nicht gelesen";
   private rh = new Map<string, number>();
 
   private readonly scene: THREE.Scene;
@@ -111,6 +115,9 @@ export class AirflowLayer {
         radius: 5.0,
       }],
       wind: [0.3, -0.2],
+      sinks: this.badPower > 0
+        ? [{ ...BAD_SINK, power: this.badPower, radius: 3.5 }]
+        : [],
     };
   }
 
@@ -122,10 +129,12 @@ export class AirflowLayer {
       this.lukeOpen = readLuke(hass.states);
       this.outside = readOutside(hass.states);
       const fan = readFan(hass.states, [
-        "fan.pendelluefter_wohnen", "fan.pendelluefter", "fan.helios_kwl_eg",
-        "select.pendelluefter_modus", "select.lueftung_modus",
+        "switch.lufter_wohnzimmer", "fan.pendelluefter_wohnen", "fan.pendelluefter",
+        "fan.helios_kwl_eg", "select.pendelluefter_modus", "select.lueftung_modus",
       ]);
       this.fanDir = fan.dir; this.fanPower = fan.power; this.fanSource = fan.source;
+      const bad = readBadFan(hass.states);
+      this.badPower = bad.on ? bad.power : 0; this.badSource = bad.source;
       let sum = 0; let n = 0;
       for (const p of PROBES) {
         if (p.rh) {
@@ -190,6 +199,9 @@ export class AirflowLayer {
       this.pos[j] += v[0] * dt * 1.6;
       this.pos[j + 1] += v[1] * dt * 1.6;
       this.pos[j + 2] += v[2] * dt * 1.6;
+      const bd = (this.pos[j] - BAD_SINK.x) ** 2 + (this.pos[j + 1] - BAD_SINK.y) ** 2 +
+                 (this.pos[j + 2] - BAD_SINK.z) ** 2;
+      if (this.badPower > 0 && bd < 0.04) { this.respawn(i); continue; }
       if (this.pos[j] < HOUSE.x0 || this.pos[j] > HOUSE.x1 ||
           this.pos[j + 1] < HOUSE.y0 || this.pos[j + 1] > HOUSE.y1 ||
           this.pos[j + 2] < HOUSE.z0 || this.pos[j + 2] > HOUSE.z1) this.respawn(i);
@@ -200,7 +212,7 @@ export class AirflowLayer {
 
   /** Kurzfassung des gelesenen Zustands (fuer Konsole/Diagnose). */
   get state(): string {
-    return `fan dir ${this.fanDir} power ${this.fanPower} [${this.fanSource}] luke ${this.lukeOpen} lift ${chimneyLift(this.tRef, this.outside).toFixed(2)}`;
+    return `fan dir ${this.fanDir} power ${this.fanPower} [${this.fanSource}] bad ${this.badPower} [${this.badSource}] luke ${this.lukeOpen} lift ${chimneyLift(this.tRef, this.outside).toFixed(2)}`;
   }
 
   setEnabled(on: boolean): void {

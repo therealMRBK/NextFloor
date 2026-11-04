@@ -25,6 +25,15 @@ export interface Opening {
   lift?: number;
 }
 
+/** Punktuelle Absaugung (Luefter): 1/r^2 nach innen, Partikel werden dort entfernt. */
+export interface Sink {
+  x: number; y: number; z: number;
+  /** 0..1 Volumenstrom-Anteil. */
+  power: number;
+  /** Einzugsradius in m. */
+  radius: number;
+}
+
 export interface Fan {
   x: number; y: number; z: number;
   dir: [number, number, number];
@@ -41,6 +50,8 @@ export interface FieldOptions {
   probes: { x: number; y: number; z: number; t: number }[];
   openings: Opening[];
   fans: Fan[];
+  /** Aktive Absaugungen (Badluefter u. a.). */
+  sinks?: Sink[];
   /** Wind von aussen in m/s (Nordkomponente positiv). */
   wind?: [number, number];
 }
@@ -84,6 +95,16 @@ export class VectorField {
       if (r > f.radius) continue;
       const k = (1 - r / f.radius) * f.speed;
       out[0] += f.dir[0] * k; out[1] += f.dir[1] * k; out[2] += f.dir[2] * k;
+    }
+
+    // 3b. Senken: 1/r^2 zum Einzugspunkt
+    for (const sk of this.o.sinks ?? []) {
+      const dx = x - sk.x; const dy = y - sk.y; const dz = z - sk.z;
+      const r2 = dx * dx + dy * dy + dz * dz;
+      const r = Math.sqrt(r2) || 1e-3;
+      if (r > sk.radius) continue;
+      const k = (sk.power * 1.5) / Math.max(0.04, r2);
+      out[0] -= (dx / r) * k; out[1] -= (dy / r) * k; out[2] -= (dz / r) * k;
     }
 
     // 4. Wind
