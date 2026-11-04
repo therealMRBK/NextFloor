@@ -87,6 +87,7 @@ import { WifiLayer } from "./wifi-layer.ts";
 import { HEATING_MODES, LAYER_LABELS, LayerController, type LayerState } from "./layer-controller.ts";
 import { TimeController, type Snapshot } from "./time-controller.ts";
 import { TimelineSlider } from "../ui/timeline-slider.ts";
+import { DevicePopup } from "../ui/device-popup.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -579,6 +580,7 @@ export class NextFloorViewer {
   private readonly timeController: TimeController;
   private readonly timeline: TimelineSlider;
   private timeSnapshot: Snapshot | null = null;
+  private readonly popup: DevicePopup;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
   private liveAnchors: PlanPoint[] = [];
   private liveAnchorCb: LiveAnchorCallback | null = null;
@@ -622,6 +624,11 @@ export class NextFloorViewer {
     this.layerController.init();
     this.timeController = new TimeController((snap) => this.applySnapshot(snap));
     this.timeline = new TimelineSlider(this.host, (offsetH) => void this.seek(offsetH));
+    this.popup = new DevicePopup(this.host);
+    this.host.addEventListener("click", this.onPick);
+    // Testhaken: ?nfpopup=<anker> oeffnet das Popup ohne Mausklick (nur Diagnose).
+    const dbg = new URLSearchParams(location.search).get("nfpopup");
+    if (dbg) window.setTimeout(() => void this.popup.show(dbg, DevicePopup.token()), 2500);
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
     this.controls = this.makeControls();
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -1397,6 +1404,7 @@ export class NextFloorViewer {
     this.intersection?.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibility);
     this.host?.removeEventListener("pointerdown", this.onTouch);
+    this.host?.removeEventListener("click", this.onPick);
     clearTimeout(this.petTimer);
     this.controls.dispose();
     this.clear();
@@ -1434,6 +1442,27 @@ export class NextFloorViewer {
     this.energyLayer.setVisible(st.electrical);
     this.invalidate();
   }
+
+  /** Klick auf eine Ankerkugel oeffnet das Geraete-Popup. */
+  private readonly onPick = (e: MouseEvent): void => {
+    const rect = this.host.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    // Anker sind im Modell nur ~9 cm gross: Treffer in Bildschirmkoordinaten suchen,
+    // das ist robuster als ein Strahl auf eine so kleine Kugel.
+    let best: { id: string; d: number } | null = null;
+    const v = new Vector3();
+    for (const marker of this.wifiLayer.markers) {
+      v.copy(marker.position).project(this.camera);
+      if (v.z > 1) continue;
+      const sx = ((v.x + 1) / 2) * rect.width;
+      const sy = ((1 - v.y) / 2) * rect.height;
+      const d = Math.hypot(sx - px, sy - py);
+      if (d < 26 && (!best || d < best.d)) best = { id: marker.name.replace(/^wifi:/, ""), d };
+    }
+    if (!best) { this.popup.hide(); return; }
+    void this.popup.show(best.id, DevicePopup.token());
+  };
 
   /** Zeitschieber: 0 = live, negativ = Historie, positiv = Prognose. */
   private async seek(offsetH: number): Promise<void> {

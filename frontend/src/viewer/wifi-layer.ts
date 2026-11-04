@@ -70,6 +70,9 @@ export class WifiLayer {
 
   get count(): number { return this.built ? this.group.children.length : 0; }
 
+  /** Ankerkugein fuer das Raycasting (nur wenn der Layer sichtbar ist). */
+  get markers(): THREE.Object3D[] { return this.group.visible ? this.group.children : []; }
+
   setVisible(on: boolean): void { this.group.visible = on; }
 
   dispose(): void { this.clear(); this.scene.remove(this.group); }
