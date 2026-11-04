@@ -60,7 +60,7 @@ import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
-import { timberMesh } from "./timber.ts";
+import { timberMesh, refreshHeatingColours, setHeatingMode, setRoomTemp } from "./timber.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
@@ -84,7 +84,7 @@ import { SoundLayer, type SoundSpot } from "./live-sound.ts";
 import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { AirflowLayer } from "./airflow-layer.ts";
 import { WifiLayer } from "./wifi-layer.ts";
-import { LAYER_LABELS, LayerController, type LayerState } from "./layer-controller.ts";
+import { HEATING_MODES, LAYER_LABELS, LayerController, type LayerState } from "./layer-controller.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -1417,6 +1417,9 @@ export class NextFloorViewer {
   /** Gewerke ein-/ausblenden. */
   private applyLayers(st: LayerState): void {
     this.setNamed("heating-plates", st.heating);
+    setHeatingMode(st.heatingMode);
+    setRoomTemp(LayerController.roomTemperature());
+    refreshHeatingColours();
     this.setNamed("live-water", st.plumbing);
     this.wifiLayer.setVisible(st.wifi);
     this.airflowLayer.setEnabled(st.airflow);
@@ -1434,8 +1437,9 @@ export class NextFloorViewer {
     const bar = document.createElement("div");
     bar.className = "nf-layers";
     bar.style.cssText = [
-      "position:absolute", "left:10px", "top:10px", "display:flex", "gap:6px",
-      "z-index:5", "font:12px/1.2 system-ui,sans-serif", "flex-wrap:wrap",
+      "position:absolute", "left:10px", "top:110px", "display:flex",
+      "flex-direction:column", "align-items:flex-start", "gap:6px",
+      "z-index:5", "font:12px/1.2 system-ui,sans-serif",
     ].join(";");
     for (const l of LAYER_LABELS) {
       const b = document.createElement("button");
@@ -1455,6 +1459,25 @@ export class NextFloorViewer {
       b.addEventListener("click", () => { this.layerController.toggle(l.key); paint(); });
       bar.appendChild(b);
     }
+    const mode = document.createElement("button");
+    mode.type = "button";
+    mode.dataset.layer = "heatingMode";
+    const paintMode = () => {
+      const m = this.layerController.current.heatingMode;
+      const label = HEATING_MODES.find((x) => x.key === m)?.label ?? "FBH";
+      mode.textContent = `♨  Farbskala: ${label}`;
+      mode.style.cssText = [
+        "padding:3px 8px", "margin-left:16px", "border-radius:6px", "cursor:pointer",
+        "border:1px dashed rgba(255,255,255,.3)", "background:rgba(0,0,0,.3)", "color:#cfd8dc",
+      ].join(";");
+    };
+    paintMode();
+    mode.addEventListener("click", () => {
+      const next = this.layerController.current.heatingMode === "fbh_mix" ? "knx_room_temp" : "fbh_mix";
+      this.layerController.setHeatingMode(next);
+      paintMode();
+    });
+    bar.appendChild(mode);
     this.host.appendChild(bar);
   }
 

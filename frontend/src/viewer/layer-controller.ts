@@ -6,7 +6,10 @@
  * ausblendet, entscheidet der Viewer. Der Zustand liegt im localStorage, damit
  * die Auswahl ein Neuladen ueberlebt.
  */
+export type HeatingMode = "fbh_mix" | "knx_room_temp";
+
 export interface LayerState {
+  heatingMode: HeatingMode;
   airflow: boolean;
   wifi: boolean;
   electrical: boolean;
@@ -22,7 +25,14 @@ export const LAYER_LABELS: { key: keyof LayerState; label: string; icon: string 
   { key: "heating", label: "Heizung", icon: "♨️" },
 ];
 
+/** Zweiter Schalter: Farbskala der Heizplatten. */
+export const HEATING_MODES: { key: HeatingMode; label: string }[] = [
+  { key: "fbh_mix", label: "FBH" },
+  { key: "knx_room_temp", label: "Raum" },
+];
+
 export const LAYER_DEFAULTS: LayerState = {
+  heatingMode: "fbh_mix",
   airflow: false, wifi: false, electrical: false, plumbing: false, heating: true,
 };
 
@@ -56,7 +66,31 @@ export class LayerController {
     this.apply(this.state);
   }
 
-  toggle(key: keyof LayerState): void { this.set(key, !this.state[key]); }
+  toggle(key: keyof LayerState): void {
+    if (key === "heatingMode") return;
+    this.set(key, !(this.state[key] as boolean));
+  }
+
+  setHeatingMode(mode: HeatingMode): void {
+    if (this.state.heatingMode === mode) return;
+    this.state = { ...this.state, heatingMode: mode };
+    try { localStorage.setItem(KEY, JSON.stringify(this.state)); } catch { /* ignorieren */ }
+    this.apply(this.state);
+  }
+
+  /** Raumluft-Mittel aus den climate-Entitaeten des HA-Frontends (null wenn nicht lesbar). */
+  static roomTemperature(): number | null {
+    const el = document.querySelector("home-assistant") as any;
+    const states = el?.hass?.states;
+    if (!states) return null;
+    let sum = 0; let n = 0;
+    for (const id of Object.keys(states)) {
+      if (!id.startsWith("climate.")) continue;
+      const t = Number(states[id]?.attributes?.current_temperature);
+      if (Number.isFinite(t)) { sum += t; n++; }
+    }
+    return n ? Math.round((sum / n) * 10) / 10 : null;
+  }
 
   /** Beim Start einmal anwenden. */
   init(): void { this.apply(this.state); }

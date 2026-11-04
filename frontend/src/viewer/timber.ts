@@ -23,6 +23,32 @@ export const HEATING_MIN = 20;
 export const HEATING_MAX = 35;
 /** IIR damping of the screed's thermal inertia (alpha per update). */
 let heatingMix = 0.55;
+/** Farbskala der Platten: FBH-Mischtemperatur oder KNX-Raumluft. */
+export type HeatingMode = "fbh_mix" | "knx_room_temp";
+let heatingMode: HeatingMode = "fbh_mix";
+/** Raumluft 18-24 Grad auf 0..1 normiert (Modus knx_room_temp). */
+let roomScale = 0.4;
+
+export function setHeatingMode(mode: HeatingMode): void { heatingMode = mode; }
+
+export function setRoomTemp(celsius: number | null): void {
+  if (celsius === null || !Number.isFinite(celsius)) return;
+  roomScale = Math.max(0, Math.min(1, (celsius - 18) / (24 - 18)));
+}
+
+/** Alle Platten-Meshes, damit ein Moduswechsel ohne Neuaufbau wirkt. */
+const plateMeshes: { mesh: InstancedMesh; list: readonly Timber[] }[] = [];
+export function refreshHeatingColours(): void {
+  for (const { mesh, list } of plateMeshes) {
+    let n = 0;
+    for (const t of list) {
+      if (t.tone !== HEATING) { }
+      mesh.setColorAt(n, heatingColour());
+      n++;
+    }
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  }
+}
 
 /** Set the plate tint from the circuit telemetry: T_eff = T_return + u * (T_flow - T_return). */
 export function setHeatingMix(flow: number, back: number, valve: number): void {
@@ -34,7 +60,8 @@ export function setHeatingMix(flow: number, back: number, valve: number): void {
 
 /** Blue (cold) to red (warm) through a neutral amber. */
 function heatingColour(): Color {
-  const hue = (1 - heatingMix) * 0.62;
+  const t = heatingMode === "fbh_mix" ? heatingMix : roomScale;
+  const hue = (1 - t) * 0.62;
   return new Color().setHSL(hue, 0.75, 0.5);
 }
 
@@ -92,7 +119,11 @@ export function timberMesh(floor: Floor): Group | null {
   if (plates.length) {
     const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false });
     const plateMesh = fill(plates, material, () => heatingColour());
-    if (plateMesh) { plateMesh.name = "heating-plates"; group.add(plateMesh); }
+    if (plateMesh) {
+      plateMesh.name = "heating-plates";
+      plateMeshes.push({ mesh: plateMesh, list: plates });
+      group.add(plateMesh);
+    }
   }
   return group.children.length ? group : null;
 }
