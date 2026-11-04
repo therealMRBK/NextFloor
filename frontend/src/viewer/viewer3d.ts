@@ -85,6 +85,8 @@ import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { AirflowLayer } from "./airflow-layer.ts";
 import { WifiLayer } from "./wifi-layer.ts";
 import { HEATING_MODES, LAYER_LABELS, LayerController, type LayerState } from "./layer-controller.ts";
+import { TimeController, type Snapshot } from "./time-controller.ts";
+import { TimelineSlider } from "../ui/timeline-slider.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -574,6 +576,9 @@ export class NextFloorViewer {
   private readonly airflowLayer: AirflowLayer;
   private readonly wifiLayer: WifiLayer;
   private readonly layerController: LayerController;
+  private readonly timeController: TimeController;
+  private readonly timeline: TimelineSlider;
+  private timeSnapshot: Snapshot | null = null;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
   private liveAnchors: PlanPoint[] = [];
   private liveAnchorCb: LiveAnchorCallback | null = null;
@@ -615,6 +620,8 @@ export class NextFloorViewer {
     this.layerController = new LayerController((st) => this.applyLayers(st));
     this.buildLayerBar();
     this.layerController.init();
+    this.timeController = new TimeController((snap) => this.applySnapshot(snap));
+    this.timeline = new TimelineSlider(this.host, (offsetH) => void this.seek(offsetH));
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
     this.controls = this.makeControls();
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -1385,6 +1392,7 @@ export class NextFloorViewer {
     this.pictureLayer.dispose();
     this.airflowLayer.dispose();
     this.wifiLayer.dispose();
+    this.timeline.dispose();
     this.resizeObserver.disconnect();
     this.intersection?.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibility);
@@ -1425,6 +1433,23 @@ export class NextFloorViewer {
     this.airflowLayer.setEnabled(st.airflow);
     this.energyLayer.setVisible(st.electrical);
     this.invalidate();
+  }
+
+  /** Zeitschieber: 0 = live, negativ = Historie, positiv = Prognose. */
+  private async seek(offsetH: number): Promise<void> {
+    const snap = await this.timeController.setOffset(offsetH);
+    this.timeline.report(snap);
+  }
+
+  /** Aktueller Zeitsnapshot (leer im Live-Modus). */
+  get snapshot(): Snapshot | null { return this.timeSnapshot; }
+
+  /** Snapshot an die Layer geben (Heatmap nutzt die Raumtemperatur, wenn vorhanden). */
+  private applySnapshot(snap: Snapshot): void {
+    this.timeSnapshot = snap;
+    this.host.dataset.timeSnapshot = JSON.stringify({ mode: snap.mode, ts: snap.ts, n: Object.keys(snap.values).length, note: snap.note ?? "" });
+    const t = snap.values["forecast.raumtemperatur"];
+    if (typeof t === "number") { setRoomTemp(t); refreshHeatingColours(); }
   }
 
   /** Sichtbarkeit aller Objekte mit diesem Namen. */
