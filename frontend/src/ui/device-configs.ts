@@ -46,14 +46,14 @@ export const DEVICE_CONFIGS: Record<string, DeviceConfig> = {
 
 /** Aktoren der Anker (verifizierte Entitaeten). */
 const ACTORS: Record<string, { id: string; label: string }> = {
-  shelly_hwr_ecke: { id: "light.shellyhwrgeb", label: "RGB-Leuchte HWR" },
+  shelly_hwr_ecke: { id: "light.shelly_hwr_knx", label: "RGB-Leuchte HWR (KNX)" },
   shelly_bad_nord: { id: "switch.bad_luefter_dauer", label: "Bad-Lüfter (Dauer)" },
   shelly_bad_sued: { id: "light.shellybadrechts_2", label: "Leuchte Bad Süd" },
-  array_buero_zwerchhaus_1: { id: "light.shelly_dg_buero1", label: "RGB Büro 1" },
-  array_buero_zwerchhaus_2: { id: "light.shelly_dg_buero2", label: "RGB Büro 2" },
-  array_buero_zwerchhaus_3: { id: "light.shelly_dg_buero3", label: "RGB Büro 3" },
-  array_buero_zwerchhaus_4: { id: "light.shelly_dg_buero4", label: "RGB Büro 4" },
-  array_buero_zwerchhaus_5: { id: "light.shelly_dg_buero5", label: "RGB Büro 5" },
+  array_buero_zwerchhaus_1: { id: "light.shelly_dg_buero1_knx", label: "RGB Büro 1 (KNX)" },
+  array_buero_zwerchhaus_2: { id: "light.shelly_dg_buero2_knx", label: "RGB Büro 2 (KNX)" },
+  array_buero_zwerchhaus_3: { id: "light.shelly_dg_buero3_knx", label: "RGB Büro 3 (KNX)" },
+  array_buero_zwerchhaus_4: { id: "light.shelly_dg_buero4_knx", label: "RGB Büro 4 (KNX)" },
+  // Büro 5: es gibt keine Entität light.shelly_dg_buero5 (nur 1-4 vorhanden)
 };
 
 export function actorFor(key: string): { id: string; label: string } | undefined {
