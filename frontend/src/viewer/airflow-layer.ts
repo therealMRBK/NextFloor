@@ -1,6 +1,6 @@
 
 import * as THREE from "three";
-import { SensorHistory, windowOpenProb } from "../airflow/triangulation.ts";
+import { SensorHistory, doorOpenProbReference, windowOpenProb } from "../airflow/triangulation.ts";
 import { VectorField, type FieldOptions, type Opening } from "../airflow/vector-field.ts";
 import { chimneyLift, readBadFan, readFan, readLuke, readOutside } from "../airflow/climate-state.ts";
 
@@ -64,6 +64,8 @@ export class AirflowLayer {
   private fanSource = "noch nicht gelesen";
   private badPower = 0;
   private badSource = "noch nicht gelesen";
+  /** 0..1 Tuer Bad offen, null wenn nicht schaetzbar. */
+  private badDoorOpen: number | null = null;
   private rh = new Map<string, number>();
 
   private readonly scene: THREE.Scene;
@@ -133,13 +135,26 @@ export class AirflowLayer {
         "fan.helios_kwl_eg", "select.pendelluefter_modus", "select.lueftung_modus",
       ]);
       this.fanDir = fan.dir; this.fanPower = fan.power; this.fanSource = fan.source;
+      // Tuerzustand Bad/Flur ohne Flursensor: Referenz = Mittel Buero/Technik
+      const badRh = num(hass.states["sensor.bad_luftfeuchtigkeit"]?.state);
+      const refRh = [num(hass.states["sensor.buero_luftfeuchte"]?.state),
+                     num(hass.states["sensor.techniknische_luftfeuchtigkeit"]?.state)]
+        .filter((v): v is number => v !== null);
+      if (badRh !== null && refRh.length) {
+        const ref = refRh.reduce((a, c) => a + c, 0) / refRh.length;
+        this.badDoorOpen = doorOpenProbReference(badRh, ref, this.histOf("sensor.bad_luftfeuchtigkeit"), this.histOf("ref_rh"));
+      }
       const bad = readBadFan(hass.states);
       this.badPower = bad.on ? bad.power : 0; this.badSource = bad.source;
       let sum = 0; let n = 0;
       for (const p of PROBES) {
         if (p.rh) {
           const v = num(hass.states[p.rh]?.state);
-          if (v !== null) { this.rh.set(p.id, v); this.histOf(p.rh).push({ t, temp: null, rh: v }); }
+          if (v !== null) {
+            this.rh.set(p.id, v);
+            this.histOf(p.rh).push({ t, temp: null, rh: v });
+            if (p.id === "buero") this.histOf("ref_rh").push({ t, temp: null, rh: v });
+          }
         }
         if (p.climate) {
           const tc = num(hass.states[p.climate]?.attributes?.current_temperature);
@@ -212,7 +227,7 @@ export class AirflowLayer {
 
   /** Kurzfassung des gelesenen Zustands (fuer Konsole/Diagnose). */
   get state(): string {
-    return `fan dir ${this.fanDir} power ${this.fanPower} [${this.fanSource}] bad ${this.badPower} [${this.badSource}] luke ${this.lukeOpen} lift ${chimneyLift(this.tRef, this.outside).toFixed(2)}`;
+    return `fan dir ${this.fanDir} power ${this.fanPower} [${this.fanSource}] bad ${this.badPower} [${this.badSource}] tuer ${this.badDoorOpen ?? "n/a"} luke ${this.lukeOpen} lift ${chimneyLift(this.tRef, this.outside).toFixed(2)}`;
   }
 
   setEnabled(on: boolean): void {

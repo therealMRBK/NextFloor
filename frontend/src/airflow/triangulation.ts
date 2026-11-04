@@ -78,6 +78,20 @@ export function windowOpenProb(
  * gleichzeitig feuchter wird, ist die Tuer offen. Ohne Flursensor: null
  * (nicht schaetzbar — lieber None als eine erfundene Zahl).
  */
+/**
+ * Ersatz fuer den fehlenden Flursensor: Referenz ist der Mittelwert der
+ * angrenzenden Zonen (Buero, Techniknische). Liegt das Bad mehr als 15 % ueber
+ * dieser Referenz, staut sich Feuchte -> Tuer zu. Faellt das Bad schnell und
+ * steigt die Referenz, ist die Tuer offen.
+ */
+export function doorOpenProbReference(badRh: number | null, refRh: number | null,
+                                      badHist: SensorHistory, refHist: SensorHistory): number | null {
+  const d = doorOpenProb(badRh, refRh, badHist, refHist);
+  if (d === null) return null;
+  if (badRh !== null && refRh !== null && badRh - refRh > 15) return 0;
+  return d;
+}
+
 export function doorOpenProb(
   badRh: number | null,
   flurRh: number | null,
