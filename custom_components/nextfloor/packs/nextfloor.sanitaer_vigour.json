@@ -1,0 +1,208 @@
+{
+  "format": "nfpack",
+  "version": 1,
+  "id": "nextfloor.sanitaer_vigour",
+  "name": "Sanitär VIGOUR",
+  "publisher": "hermes/homelab",
+  "description": "Sanitaer nach Angebot 2330287 (Groetsch/Ehm), Serie VIGOUR derby. Duschwanne clivia und Badewanne one sind NICHT verbaut (Betreiber 2026-11-04).",
+  "release": {
+    "date": "2026-11-04"
+  },
+  "items": [
+    {
+      "id": "vigour_derby_wand_wc",
+      "name": {
+        "de": "Wand-Tiefspül-WC derby"
+      },
+      "size": [
+        0.36,
+        0.54,
+        0.355
+      ],
+      "parts": [
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.36,
+          "d": 0.54,
+          "y": 0.0,
+          "h": 0.2556,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        },
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.36,
+          "d": 0.4968,
+          "y": 0.2556,
+          "h": 0.0994,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        }
+      ],
+      "surface": "white",
+      "source": {
+        "angebot": "2330287",
+        "pos": "2.04.005/006",
+        "fabrikat": "VIGOUR",
+        "serie": "derby"
+      }
+    },
+    {
+      "id": "vigour_derby_urinal",
+      "name": {
+        "de": "Urinal derby verdeckter Zulauf"
+      },
+      "size": [
+        0.285,
+        0.3,
+        0.565
+      ],
+      "parts": [
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.285,
+          "d": 0.3,
+          "y": 0.0,
+          "h": 0.565,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        }
+      ],
+      "surface": "white",
+      "source": {
+        "angebot": "2330287",
+        "pos": "2.04.010/011",
+        "fabrikat": "VIGOUR",
+        "serie": "derby"
+      }
+    },
+    {
+      "id": "vigour_derby_wt_600",
+      "name": {
+        "de": "Waschtisch derby 600"
+      },
+      "size": [
+        0.6,
+        0.485,
+        0.17
+      ],
+      "parts": [
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.6,
+          "d": 0.485,
+          "y": 0.0,
+          "h": 0.17,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        },
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": -0.1725,
+          "w": 0.05,
+          "d": 0.14,
+          "y": 0.17,
+          "h": 0.16,
+          "color": "#c8ccd2",
+          "edges": "faint"
+        }
+      ],
+      "surface": "white",
+      "source": {
+        "angebot": "2330287",
+        "pos": "2.04.012/014",
+        "fabrikat": "VIGOUR",
+        "serie": "derby"
+      }
+    },
+    {
+      "id": "vigour_derby_plus_handtuch",
+      "name": {
+        "de": "Faltpapier-Handtuchspender derby plus"
+      },
+      "size": [
+        0.28,
+        0.125,
+        0.31
+      ],
+      "parts": [
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.28,
+          "d": 0.125,
+          "y": 0.0,
+          "h": 0.31,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        },
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0075,
+          "w": 0.05,
+          "d": 0.14,
+          "y": 0.31,
+          "h": 0.16,
+          "color": "#c8ccd2",
+          "edges": "faint"
+        }
+      ],
+      "surface": "white",
+      "source": {
+        "angebot": "2330287",
+        "serie": "derby plus"
+      }
+    },
+    {
+      "id": "vigour_derby_plus_seife",
+      "name": {
+        "de": "Seifenspender derby plus"
+      },
+      "size": [
+        0.066,
+        0.11,
+        0.266
+      ],
+      "parts": [
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.0,
+          "w": 0.066,
+          "d": 0.11,
+          "y": 0.0,
+          "h": 0.266,
+          "color": "#f2f2ee",
+          "edges": "faint"
+        },
+        {
+          "shape": "box",
+          "x": 0.0,
+          "z": 0.015,
+          "w": 0.05,
+          "d": 0.14,
+          "y": 0.266,
+          "h": 0.16,
+          "color": "#c8ccd2",
+          "edges": "faint"
+        }
+      ],
+      "surface": "white",
+      "source": {
+        "angebot": "2330287",
+        "serie": "derby plus"
+      }
+    }
+  ]
+}
