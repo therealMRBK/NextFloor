@@ -83,6 +83,7 @@ import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
 import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { AirflowLayer } from "./airflow-layer.ts";
+import { WifiLayer } from "./wifi-layer.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -570,6 +571,7 @@ export class NextFloorViewer {
   /** Own photos in picture frames (live-pictures.ts). */
   private readonly pictureLayer: PictureLayer;
   private readonly airflowLayer: AirflowLayer;
+  private readonly wifiLayer: WifiLayer;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
   private liveAnchors: PlanPoint[] = [];
   private liveAnchorCb: LiveAnchorCallback | null = null;
@@ -607,6 +609,7 @@ export class NextFloorViewer {
     this.pictureLayer = new PictureLayer(this.scene, this.liftOf);
     this.pictureLayer.onChange = () => this.invalidate();
     this.airflowLayer = new AirflowLayer(this.scene);
+    this.wifiLayer = new WifiLayer(this.scene);
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
     this.controls = this.makeControls();
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -716,6 +719,7 @@ export class NextFloorViewer {
   setBuilding(building: Building): void {
     const first = this.building === null;
     this.building = building;
+    this.wifiLayer.setBuilding(building);
     this.rebuild();
     if (first) this.fit(0);
     this.invalidate();
@@ -1375,6 +1379,7 @@ export class NextFloorViewer {
     this.screenLayer.dispose();
     this.pictureLayer.dispose();
     this.airflowLayer.dispose();
+    this.wifiLayer.dispose();
     this.resizeObserver.disconnect();
     this.intersection?.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibility);
