@@ -13,3 +13,5 @@
 
 - **Changelog:** every change that reaches users goes into `CHANGELOG.md` in the same commit, under the version it ships in, sorted into **Added**, **Changed** and **Fixed** (bump `manifest.json` when a release is cut). Say what the user notices, not what the code did. Use the same text for the GitHub release notes.
 - **README is shown inside HACS too, which does not resolve relative paths:** keep every image and link in `README.md` absolute (`raw.githubusercontent.com/therealMRBK/NextFloor/main/…` for images, `github.com/therealMRBK/NextFloor/blob/main/…` for files).
+
+- **Token economy:** ask `graphify query` before reading or grepping files, and `graphify update .` after code changes. No broad exploration when the scope is clear: read only the lines you need. While developing, run only the affected test file (`npx tsx --test src/<file>.test.ts`); the full gate (typecheck, tests, build, ruff, HA tests) runs once before each commit, with its output filtered to pass/fail lines. Do not spawn subagents for work that fits in a few commands. Do not take screenshots unless the change is visual and the check can answer a concrete question.
