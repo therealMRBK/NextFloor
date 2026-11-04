@@ -28,6 +28,8 @@ export interface CardConfig {
   markers_outside?: MarkerKind[];
   /** Devices are switched by a tap only in the opened room; elsewhere a tap opens the floor or room (a long press still acts). */
   tap_in_room?: boolean;
+  /** What a double tap on a room switches: auto (the plan setting, default), area, plan or off (#62). */
+  room_double_tap?: "auto" | "area" | "plan" | "off";
   /** Every device with an own name shows it under its marker (#156). */
   marker_names?: boolean;
   /** The star with the central menu: all lights / blinds of the floor or house and the favourites (default true, #145). */

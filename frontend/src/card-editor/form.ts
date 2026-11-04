@@ -36,6 +36,7 @@ export const DEFAULTS: Partial<CardConfig> = {
   controls_hide_after: 0,
   marker_names: false,
   tap_in_room: false,
+  room_double_tap: "auto",
   central: true,
   central_open: false,
   keep_camera: false,

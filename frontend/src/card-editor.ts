@@ -273,7 +273,7 @@ export class NextFloorCardEditor extends LitElement {
         ${choice(f, "heatmap", "heatmap", [["none", "heat_off"], ["temperature", "heat_temperature"], ["humidity", "heat_humidity"], ["co2", "heat_co2"], ["mould", "heat_mould"], ["values", "heat_values"], ["wifi", "heat_wifi"]], v.heatmap)}
         ${followOrForce(f, "flows", "flows", v.flows)} ${followOrForce(f, "holograms", "holos", v.holograms)}
       </div>
-      ${switchOption(f, "tap_in_room", "card_tap_in_room", "card_tap_in_room_hint")} ${this.markersOutside()} ${this.controlsSection()} ${this.floorThumbsToggle()} ${switchOption(f, "room_names", "card_room_names")} ${switchOption(f, "energy", "card_energy")}
+      ${switchOption(f, "tap_in_room", "card_tap_in_room", "card_tap_in_room_hint")} ${choice(f, "room_double_tap", "room_double_tap", [["auto", "card_room_double_tap_auto"], ["area", "room_double_tap_area"], ["plan", "room_double_tap_plan"], ["off", "room_double_tap_off"]], v.room_double_tap)} ${this.markersOutside()} ${this.controlsSection()} ${this.floorThumbsToggle()} ${switchOption(f, "room_names", "card_room_names")} ${switchOption(f, "energy", "card_energy")}
       ${switchOption(f, "room_buttons", "card_room_buttons", "card_room_buttons_hint")} ${switchOption(f, "room_panel", "card_room_panel", "card_room_panel_hint")} ${switchOption(f, "fullscreen_button", "card_fullscreen_button", "card_fullscreen_button_hint")}
       ${switchOption(f, "explode", "card_explode")} ${switchOption(f, "roof_fade", "card_roof_fade", "card_roof_fade_hint")} ${switchOption(f, "stats", "card_stats", "card_stats_hint")}`;
   }

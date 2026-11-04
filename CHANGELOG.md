@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Added
+
+- **Choose what a double tap on a room switches** (thanks @mymoll, #62): settings → *Double tap on a room*: the lamps in the plan and every light of the room's area (as before), only the lamps in the plan, or nothing. Smart plugs that Home Assistant reports as lights (Hue plugs) are no longer switched by accident when they are not placed as a lamp. The card can override it with `room_double_tap: auto | area | plan | off`.
+
 ## 0.23.1
 
 ### Fixed

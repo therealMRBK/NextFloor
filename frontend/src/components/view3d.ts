@@ -8,6 +8,7 @@ import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
+import { roomToggleLights, roomToggleMode, type RoomToggle } from "./view3d/room-toggle.ts";
 import { ownTaps } from "./view3d/own-taps.ts";
 import { lightAnimation, lightEffectSource } from "../light-effects.ts";
 import type { PlacementInfo } from "../plugins/api.ts";
@@ -83,6 +84,7 @@ export class NfView3d extends LitElement {
     markerNames: { attribute: false },
     markersOutside: { attribute: false },
     tapInRoom: { type: Boolean },
+    roomDoubleTap: { attribute: false },
     heatMode: { attribute: false },
     theme: { attribute: false },
     accent: { attribute: false },
@@ -190,6 +192,8 @@ export class NfView3d extends LitElement {
   declare markersOutside: MarkerKind[] | null;
   /** Card option tap_in_room: a tap switches a device only in the opened room, elsewhere it opens the floor or room. */
   declare tapInRoom: boolean;
+  /** Card option room_double_tap: what a double tap on a room switches (auto = the plan setting). */
+  declare roomDoubleTap: RoomToggle | "auto";
   declare heatMode: HeatMode;
   /** Imported furniture packs (a new list rebuilds pack furniture). */
   declare packs: unknown;
@@ -394,6 +398,7 @@ export class NfView3d extends LitElement {
     this.markerMode = "important";
     this.markersOutside = null;
     this.tapInRoom = false;
+    this.roomDoubleTap = "auto";
     this.heatMode = "none";
     this.theme = "neon";
     this.accent = null;
@@ -998,21 +1003,15 @@ export class NfView3d extends LitElement {
     if (a.roomId) setTimeout(() => this.fire("room-tap", { floorId: a.floorId, roomId: a.roomId }), 60);
   }
 
-  /** Double tap on a room: all its lights off when one is on, otherwise all on. */
+  /** Double tap on a room: all its lights off when one is on, otherwise all on (plan setting / card option room_double_tap). */
   private onRoomDoubleTap(floorId: string, roomId: string): void {
     const b = this.building;
     const hass = this.hass;
     const floor = b?.floors.find((f) => f.id === floorId);
     const room = floor?.rooms.find((r) => r.id === roomId);
     if (!b || !hass || !floor || !room) return;
-    const ids = new Set(roomEntities(hass, room).filter((id) => kindOf(id) === "light"));
-    for (const p of floor.placements) if (kindOf(p.entity_id) === "light" && pointInPolygon([p.x, p.z], room.points)) ids.add(p.entity_id);
-    for (const f of floor.furniture) {
-      const e = this.furnitureLinks.get(f.id)?.entity;
-      if (e && isLamp(f.type) && pointInPolygon([f.x, f.z], room.points)) ids.add(e);
-    }
-    // devices that ask before switching stay out of the all-at-once toggle
-    const lights = [...ids].filter((id) => !this.confirmSet.has(id));
+    const mode = roomToggleMode(b.settings.room_double_tap, this.roomDoubleTap);
+    const lights = roomToggleLights(hass, floor, room, this.furnitureLinks, this.confirmSet, mode);
     if (!lights.length) return;
     const anyOn = lights.some((id) => hass.states[id]?.state === "on");
     void hass.callService("homeassistant", anyOn ? "turn_off" : "turn_on", { entity_id: lights });

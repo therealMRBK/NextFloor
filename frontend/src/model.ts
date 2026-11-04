@@ -631,6 +631,8 @@ export interface BuildingSettings {
   night_lock_warning?: boolean;
   /** Motion, occupancy and presence sensors show their marker only while they detect something (default off). */
   motion_markers_active?: boolean;
+  /** What a double tap on a room switches: null = its plan lamps and every light of its area, plan = only the plan's lamps, off = nothing (#62). */
+  room_double_tap?: "plan" | "off" | null;
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
   announce_tts?: string | null;
   announce_phrases?: string[] | null;

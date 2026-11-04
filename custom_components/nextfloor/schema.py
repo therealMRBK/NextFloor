@@ -806,6 +806,8 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("night_lock_warning"): bool,
         # motion, occupancy and presence sensors show their marker only while they detect something
         vol.Optional("motion_markers_active"): bool,
+        # what a double tap on a room switches (None = the plan's lamps and every light of the area)
+        vol.Optional("room_double_tap"): vol.Any(None, vol.In(["plan", "off"])),
         # own sensors shown at the top of the 3D view
         vol.Optional("status_entities"): vol.Any(
             None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))

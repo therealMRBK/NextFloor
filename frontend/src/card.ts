@@ -303,6 +303,7 @@ export class NextFloorCard extends LitElement {
       .markerNames=${c?.marker_names === true}
       .markersOutside=${c?.markers_outside ?? null}
       ?tapInRoom=${c?.tap_in_room === true}
+      .roomDoubleTap=${c?.room_double_tap ?? "auto"}
       .central=${c?.central !== false}
       .centralOpen=${c?.central_open === true}
       .keepCamera=${c?.keep_camera === true}

@@ -93,6 +93,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${hint(t("outage_hint"), "nf-wide")}
       ${checkField(host, t("contact_warning"), !!s.contact_warning, (on) => set({ contact_warning: on || undefined }), { title: t("contact_warning_hint") })}
       ${checkField(host, t("night_lock_warning"), !!s.night_lock_warning, (on) => set({ night_lock_warning: on || undefined }), { title: t("night_lock_warning_hint") })}
+      ${selectField(host, t("room_double_tap"), s.room_double_tap ?? "area", [["area", t("room_double_tap_area")], ["plan", t("room_double_tap_plan")], ["off", t("room_double_tap_off")]] as const, (v) => set({ room_double_tap: v === "plan" || v === "off" ? v : null }), { title: t("room_double_tap_hint") })}
       ${checkField(host, t("motion_markers_active"), !!s.motion_markers_active, (on) => set({ motion_markers_active: on || undefined }), { title: t("motion_markers_active_hint") })}
       ${host.hass ? statusFields(host, s.status_entities ?? [], (status_entities) => set({ status_entities: status_entities.length ? status_entities : null })) : nothing}
       ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
