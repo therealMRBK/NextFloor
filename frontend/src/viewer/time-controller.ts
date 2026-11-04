@@ -113,7 +113,7 @@ export class TimeController {
     const st = el?.hass?.states;
     if (!st) return null;
     for (const id of Object.keys(st)) {
-      if (/sensor\.(aussentemperatur|aussen_temperatur|outdoor_temperature)/.test(id)) {
+      if (/aussentemperatur|aussen_temperatur|outdoor_temperature/i.test(id)) {
         const v = Number(st[id]?.state);
         if (Number.isFinite(v)) return v;
       }
