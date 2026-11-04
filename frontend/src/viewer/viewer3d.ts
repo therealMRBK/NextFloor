@@ -60,7 +60,7 @@ import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
-import { timberMesh, refreshHeatingColours, setHeatingMode, setRoomTemp } from "./timber.ts";
+import { timberMesh, refreshHeatingColours, setHeatingMode, setRoomTemp, setRoomTemps } from "./timber.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
@@ -88,6 +88,7 @@ import { HEATING_MODES, LAYER_LABELS, LayerController, type LayerState } from ".
 import { TimeController, type Snapshot } from "./time-controller.ts";
 import { TimelineSlider } from "../ui/timeline-slider.ts";
 import { DevicePopup } from "../ui/device-popup.ts";
+import { readRoomTemps } from "../ui/room-climate.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -1435,6 +1436,9 @@ export class NextFloorViewer {
     this.setNamed("heating-plates", st.heating);
     setHeatingMode(st.heatingMode);
     setRoomTemp(LayerController.roomTemperature());
+    const temps = readRoomTemps((document.querySelector("home-assistant") as any)?.hass?.states);
+    setRoomTemps(temps);
+    this.host.dataset.roomTemps = JSON.stringify(temps);
     refreshHeatingColours();
     this.setNamed("live-water", st.plumbing);
     this.wifiLayer.setVisible(st.wifi);

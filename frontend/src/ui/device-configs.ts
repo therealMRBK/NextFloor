@@ -44,8 +44,28 @@ export const DEVICE_CONFIGS: Record<string, DeviceConfig> = {
   },
 };
 
+/** Aktoren der Anker (verifizierte Entitaeten). */
+const ACTORS: Record<string, { id: string; label: string }> = {
+  shelly_hwr_ecke: { id: "light.shellyhwrgeb", label: "RGB-Leuchte HWR" },
+  shelly_bad_nord: { id: "light.shellybadlinks_2", label: "Leuchte Bad Nord" },
+  shelly_bad_sued: { id: "light.shellybadrechts_2", label: "Leuchte Bad Süd" },
+  array_buero_zwerchhaus_1: { id: "light.shelly_dg_buero1", label: "RGB Büro 1" },
+  array_buero_zwerchhaus_2: { id: "light.shelly_dg_buero2", label: "RGB Büro 2" },
+  array_buero_zwerchhaus_3: { id: "light.shelly_dg_buero3", label: "RGB Büro 3" },
+  array_buero_zwerchhaus_4: { id: "light.shelly_dg_buero4", label: "RGB Büro 4" },
+  array_buero_zwerchhaus_5: { id: "light.shelly_dg_buero5", label: "RGB Büro 5" },
+};
+
+export function actorFor(key: string): { id: string; label: string } | undefined {
+  return ACTORS[key];
+}
+
 export function configFor(key: string): DeviceConfig {
-  return DEVICE_CONFIGS[key] ?? {
+  const direct = DEVICE_CONFIGS[key];
+  if (direct) return { ...direct, actor: direct.actor ?? actorFor(key) };
+  const act = actorFor(key);
+  if (act) return { label: key, raum: "", entities: [], actor: act };
+  return {
     label: key, raum: "",
     entities: [], hint: "für dieses Gerät ist noch keine Entität hinterlegt",
   };

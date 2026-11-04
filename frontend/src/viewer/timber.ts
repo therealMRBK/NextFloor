@@ -28,6 +28,19 @@ export type HeatingMode = "fbh_mix" | "knx_room_temp";
 let heatingMode: HeatingMode = "fbh_mix";
 /** Raumluft 18-24 Grad auf 0..1 normiert (Modus knx_room_temp). */
 let roomScale = 0.4;
+/** Raum-ID -> Ist-Temperatur (KNX-Heizkreise), fuer raumweise Plattenfarbe. */
+let roomTemps: Record<string, number> = {};
+
+export function setRoomTemps(map: Record<string, number>): void { roomTemps = map; }
+
+/** Plattenfarbe: raumweise Temperatur, sonst globale Skala. */
+function plateScale(t: Timber): number {
+  if (heatingMode !== "knx_room_temp") return heatingMix;
+  const room = String(t.id).startsWith("fbh_") ? String(t.id).slice(4) : "";
+  const local = room ? roomTemps[room] : undefined;
+  if (typeof local === "number") return Math.max(0, Math.min(1, (local - 18) / (24 - 18)));
+  return roomScale;
+}
 
 export function setHeatingMode(mode: HeatingMode): void { heatingMode = mode; }
 
@@ -42,8 +55,7 @@ export function refreshHeatingColours(): void {
   for (const { mesh, list } of plateMeshes) {
     let n = 0;
     for (const t of list) {
-      if (t.tone !== HEATING) { }
-      mesh.setColorAt(n, heatingColour());
+      mesh.setColorAt(n, heatingColour(t));
       n++;
     }
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -59,8 +71,8 @@ export function setHeatingMix(flow: number, back: number, valve: number): void {
 }
 
 /** Blue (cold) to red (warm) through a neutral amber. */
-function heatingColour(): Color {
-  const t = heatingMode === "fbh_mix" ? heatingMix : roomScale;
+function heatingColour(timber?: Timber): Color {
+  const t = timber ? plateScale(timber) : (heatingMode === "fbh_mix" ? heatingMix : roomScale);
   const hue = (1 - t) * 0.62;
   return new Color().setHSL(hue, 0.75, 0.5);
 }
@@ -118,7 +130,7 @@ export function timberMesh(floor: Floor): Group | null {
   if (frame) group.add(frame);
   if (plates.length) {
     const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false });
-    const plateMesh = fill(plates, material, () => heatingColour());
+    const plateMesh = fill(plates, material, (t) => heatingColour(t));
     if (plateMesh) {
       plateMesh.name = "heating-plates";
       plateMeshes.push({ mesh: plateMesh, list: plates });
