@@ -223,7 +223,7 @@ Der Kiosk-Abschnitt der Karte kehrt nach einer Ruhezeit zur Startansicht zurück
 
 - **Reiter Erweiterungen → Möbel-Packs:** eigene Möbel-Packs als Datei importieren oder ihr JSON direkt einfügen, und eigene Packs wieder entfernen. Format: [packs.md](packs.md).
 - **Reiter Erweiterungen:** eigenes `.glb`-Modell für einen Fahrzeug-Platz hochladen. Der Browser dreht es richtig herum, macht es leichter, entfernt Texturen und markiert den Lack; die Datei liegt danach auf deinem Home Assistant (nur Administratoren, bis 12 MB). Siehe [models.md](models.md).
-- **Möbel-Packs** kommen mit der Integration (40 Packs, fast 800 Modelle) und brauchen keine Einrichtung. Eigene Packs sind JSON-Dateien, Format in [packs.md](packs.md). Die Demo hat eine Modellschau, die jedes Modell live zeigt.
+- **Möbel-Packs** kommen mit der Integration (41 Packs, fast 800 Modelle) und brauchen keine Einrichtung. Eigene Packs sind JSON-Dateien, Format in [packs.md](packs.md). Die Demo hat eine Modellschau, die jedes Modell live zeigt.
 
 ## Sicherung
 

@@ -3,16 +3,15 @@
   "version": 1,
   "id": "nextfloor.sanitaer_vigour",
   "name": "Sanitär VIGOUR",
-  "publisher": "hermes/homelab",
-  "description": "Sanitaer nach Angebot 2330287 (Groetsch/Ehm), Serie VIGOUR derby. Duschwanne clivia und Badewanne one sind NICHT verbaut (Betreiber 2026-11-04).",
-  "release": {
-    "date": "2026-11-04"
-  },
+  "publisher": "huepfer13",
+  "description": "Sanitär der Serie VIGOUR derby: Wand-WC, Urinal, Waschtisch 60, Faltpapier-Handtuchspender und Seifenspender",
+  "release": 1,
   "items": [
     {
       "id": "vigour_derby_wand_wc",
       "name": {
-        "de": "Wand-Tiefspül-WC derby"
+        "de": "Wand-Tiefspül-WC derby",
+        "en": "Wall-hung washdown WC derby"
       },
       "size": [
         0.36,
@@ -43,18 +42,13 @@
           "edges": "faint"
         }
       ],
-      "surface": "white",
-      "source": {
-        "angebot": "2330287",
-        "pos": "2.04.005/006",
-        "fabrikat": "VIGOUR",
-        "serie": "derby"
-      }
+      "surface": false
     },
     {
       "id": "vigour_derby_urinal",
       "name": {
-        "de": "Urinal derby verdeckter Zulauf"
+        "de": "Urinal derby verdeckter Zulauf",
+        "en": "Urinal derby, concealed supply"
       },
       "size": [
         0.285,
@@ -74,18 +68,13 @@
           "edges": "faint"
         }
       ],
-      "surface": "white",
-      "source": {
-        "angebot": "2330287",
-        "pos": "2.04.010/011",
-        "fabrikat": "VIGOUR",
-        "serie": "derby"
-      }
+      "surface": false
     },
     {
       "id": "vigour_derby_wt_600",
       "name": {
-        "de": "Waschtisch derby 600"
+        "de": "Waschtisch derby 600",
+        "en": "Washbasin derby 600"
       },
       "size": [
         0.6,
@@ -116,18 +105,13 @@
           "edges": "faint"
         }
       ],
-      "surface": "white",
-      "source": {
-        "angebot": "2330287",
-        "pos": "2.04.012/014",
-        "fabrikat": "VIGOUR",
-        "serie": "derby"
-      }
+      "surface": false
     },
     {
       "id": "vigour_derby_plus_handtuch",
       "name": {
-        "de": "Faltpapier-Handtuchspender derby plus"
+        "de": "Faltpapier-Handtuchspender derby plus",
+        "en": "Folded paper towel dispenser derby plus"
       },
       "size": [
         0.28,
@@ -158,16 +142,13 @@
           "edges": "faint"
         }
       ],
-      "surface": "white",
-      "source": {
-        "angebot": "2330287",
-        "serie": "derby plus"
-      }
+      "surface": false
     },
     {
       "id": "vigour_derby_plus_seife",
       "name": {
-        "de": "Seifenspender derby plus"
+        "de": "Seifenspender derby plus",
+        "en": "Soap dispenser derby plus"
       },
       "size": [
         0.066,
@@ -198,11 +179,7 @@
           "edges": "faint"
         }
       ],
-      "surface": "white",
-      "source": {
-        "angebot": "2330287",
-        "serie": "derby plus"
-      }
+      "surface": false
     }
   ]
 }
