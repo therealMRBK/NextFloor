@@ -53,7 +53,8 @@ const ACTORS: Record<string, { id: string; label: string }> = {
   array_buero_zwerchhaus_2: { id: "light.shelly_dg_buero2_knx", label: "RGB Büro 2 (KNX)" },
   array_buero_zwerchhaus_3: { id: "light.shelly_dg_buero3_knx", label: "RGB Büro 3 (KNX)" },
   array_buero_zwerchhaus_4: { id: "light.shelly_dg_buero4_knx", label: "RGB Büro 4 (KNX)" },
-  // Büro 5: es gibt keine Entität light.shelly_dg_buero5 (nur 1-4 vorhanden)
+  // Büro 5: nativer Shelly rgbDGBuero5 (.118) - per config-flow adoptiert, KEIN KNX-Kanal
+  array_buero_zwerchhaus_5: { id: "light.rgbdgbuero5", label: "RGB Büro 5" },
 };
 
 export function actorFor(key: string): { id: string; label: string } | undefined {
