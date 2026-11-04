@@ -15,7 +15,8 @@ function pushOpeningLines(lines: LineBuffer, sp: Span, cut: number): void {
   const bucket = info.bucket;
   const at = (s: number, n: number, y: number) => [info.start[0] + info.axis[0] * (s - sp.s0) + info.toRoom[0] * n, y, info.start[1] + info.axis[1] * (s - sp.s0) + info.toRoom[1] * n];
   const foldAt = (y: number) => (y > cut + 1e-6 ? bucket : ALWAYS);
-  const bottom = Math.max(sp.sill, 0.004);
+  // just above the floor the opening stands on (below 0 in a lowered room)
+  const bottom = sp.sill < 0 ? sp.sill + 0.004 : Math.max(sp.sill, 0.004);
   for (const n of [info.faceRoom, -info.faceOut]) {
     for (const s of [sp.s0, sp.s1]) lines.segSplit(at(s, n, bottom), at(s, n, sp.top), EDGE_SOFT, cut, bucket);
     lines.seg(at(sp.s0, n, sp.top), at(sp.s1, n, sp.top), EDGE_SOFT, foldAt(sp.top));

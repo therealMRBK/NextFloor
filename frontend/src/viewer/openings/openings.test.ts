@@ -141,3 +141,12 @@ test("an open sliding door stays in the wall and moves along it; a top-hung wind
   // a tilt sensor opens a top-hung window as well
   assert.notDeepEqual(positions(build(top, { tilt: 1 }).frames), positions(build(top).frames));
 });
+
+test("a door in a lowered room stands on that room's floor, not on the floor level", () => {
+  const lowered = { ...room, floor_offset: -0.39 };
+  const opening = { id: "o", room_id: "a", edge: 0, offset: 1.5, width: 0.9, type: "door", sill: 0, height: 1.87, hinge: "left", leaves: 1, swing: "in", cover: null, contact: null, contact2: null, tilt: null } as Opening;
+  const infos = buildFloorGeometry({ ...newFloor("f", "F", 0), rooms: [lowered], openings: [opening] }, 0.3, 0.1).openings;
+  const parts = buildOpeningParts(infos, new Map([["o", CLOSED]]), 1.2);
+  const ys = positions(parts.frames).filter((_, i) => i % 3 === 1);
+  assert.ok(Math.abs(Math.min(...ys) - -0.39) < 0.02, `lowest part at ${Math.min(...ys)}`);
+});

@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## 0.23.1
+
+### Fixed
+
+- **Doors in a lowered room** (thanks @ayque): the door leaf, frame, threshold and handle now start on the room's own lower floor instead of the floor level, so there is no gap under the door any more; the edge lines of the opening follow too.
+
 ## 0.23.0
 
 ### Added

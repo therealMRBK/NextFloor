@@ -10,21 +10,23 @@ import { flatPanel, panel, splitBox, type Frame } from "./primitives.ts";
 /** The frame (Zarge) around a door or garage opening, covering the reveal on both faces. An open garage door glows warm. */
 export function doorFrame(c: Ctx): void {
   const { info, state, frame, fold } = c;
-  const [W, T] = [info.width, info.top];
+  // B: the floor the door stands on – below 0 in a room set lower than its floor (floor_offset)
+  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
   const garageOpen = info.opening.type === "garage" && (c.markClosed ? !!state.sensed && (state.cover ?? 1) >= 0.95 : (state.cover ?? 1) < 0.95);
   const side = garageOpen ? shade(OPEN_WARM, 0.8) : new Color(FRAME);
   const top = garageOpen ? shade(OPEN_WARM, 1) : new Color(FRAME_TOP);
   const [n0, n1] = [-info.faceOut - 0.012, info.faceRoom + 0.012];
   const piece = (x0: number, x1: number, y0: number) => splitBox(c.frames, frame, { x0, x1, n0, n1, y0, y1: T + 0.045 }, side, top, fold);
-  piece(-0.045, 0.02, 0);
-  piece(W - 0.02, W + 0.045, 0);
+  piece(-0.045, 0.02, B);
+  piece(W - 0.02, W + 0.045, B);
   piece(0.02, W - 0.02, T - 0.02);
 }
 
 /** A door: one leaf or two, each turning around its hinge (or sliding), with sidelights, a threshold and handles. */
 export function doorLeaves(c: Ctx): void {
   const { info, state, frame, fold, mid } = c;
-  const [W, T] = [info.width, info.top];
+  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
+  const H = T - B;
   const style = openingStyle(info.opening, info.exterior);
   const passage = style === "passage";
   const front = isFrontDoor(style);
@@ -42,10 +44,10 @@ export function doorLeaves(c: Ctx): void {
   if (lights) {
     for (const [a, b] of lights.panels) {
       const post = (xa: number, xb: number, ya: number, yb: number) => splitBox(c.frames, frame, { x0: xa, x1: xb, n0: mid - 0.03, n1: mid + 0.03, y0: ya, y1: yb }, frameColor, frameTop, fold);
-      post(a, a + 0.04, 0.02, T - 0.02);
-      post(b - 0.04, b, 0.02, T - 0.02);
-      post(a, b, 0.02, 0.1);
-      panel(c.glass, frame, a + 0.04, b - 0.04, mid, 0.1, T - 0.02, GLASS, fold);
+      post(a, a + 0.04, B + 0.02, T - 0.02);
+      post(b - 0.04, b, B + 0.02, T - 0.02);
+      post(a, b, B + 0.02, B + 0.1);
+      panel(c.glass, frame, a + 0.04, b - 0.04, mid, B + 0.1, T - 0.02, GLASS, fold);
     }
     x0 = lights.x0;
     x1 = lights.x1;
@@ -54,7 +56,7 @@ export function doorLeaves(c: Ctx): void {
   const thickness = front ? 0.06 : 0.04;
   if (front) {
     // a threshold across the wall, and a small light over the door outside
-    splitBox(c.frames, frame, { x0: 0.02, x1: W - 0.02, n0: -info.faceOut - 0.02, n1: info.faceRoom, y0: 0, y1: 0.02 }, new Color(SILL), frameTop, fold);
+    splitBox(c.frames, frame, { x0: 0.02, x1: W - 0.02, n0: -info.faceOut - 0.02, n1: info.faceRoom, y0: B, y1: B + 0.02 }, new Color(SILL), frameTop, fold);
     if (info.exterior) splitBox(c.frames, frame, { x0: W / 2 - 0.08, x1: W / 2 + 0.08, n0: -info.faceOut - 0.1, n1: -info.faceOut, y0: T + 0.1, y1: T + 0.17 }, shade(OPEN_WARM, 0.55), shade(OPEN_WARM, 0.85), { cut: fold.cut, bucket: ALWAYS });
   }
 
@@ -80,16 +82,16 @@ export function doorLeaves(c: Ctx): void {
     const part = (xa: number, xb: number, ya: number, yb: number, na = -thickness, nb = 0) => splitBox(c.frames, leafFrame, { x0: xa, x1: xb, n0: na, n1: nb, y0: ya, y1: yb }, side, top, leafFold);
     if (style === "glass") {
       // a glass door: slim stiles and rails around a pane
-      part(0, 0.05, 0.01, T - 0.01);
-      part(leafWidth - 0.05, leafWidth, 0.01, T - 0.01);
-      part(0.05, leafWidth - 0.05, 0.01, 0.12);
+      part(0, 0.05, B + 0.01, T - 0.01);
+      part(leafWidth - 0.05, leafWidth, B + 0.01, T - 0.01);
+      part(0.05, leafWidth - 0.05, B + 0.01, B + 0.12);
       part(0.05, leafWidth - 0.05, T - 0.08, T - 0.01);
-      panel(c.glass, leafFrame, 0.05, leafWidth - 0.05, -thickness / 2, 0.12, T - 0.08, GLASS, leafFold);
-    } else part(0, leafWidth, 0.01, T - 0.01);
-    if (style === "front_glass") panel(c.glass, leafFrame, 0.12, leafWidth - 0.12, 0.001, T * 0.55, T - 0.18, GLASS, leafFold);
-    else if (front) panel(c.glass, leafFrame, 0.1, 0.18, 0.001, 0.3, T - 0.3, GLASS, leafFold);
+      panel(c.glass, leafFrame, 0.05, leafWidth - 0.05, -thickness / 2, B + 0.12, T - 0.08, GLASS, leafFold);
+    } else part(0, leafWidth, B + 0.01, T - 0.01);
+    if (style === "front_glass") panel(c.glass, leafFrame, 0.12, leafWidth - 0.12, 0.001, B + H * 0.55, T - 0.18, GLASS, leafFold);
+    else if (front) panel(c.glass, leafFrame, 0.1, 0.18, 0.001, B + 0.3, T - 0.3, GLASS, leafFold);
     // a handle on both sides: a knob on a room door, a bar on a front door
-    const height = Math.min(1.05, T * 0.5);
+    const height = B + Math.min(1.05, H * 0.5);
     const half = front ? 0.3 : 0.012;
     const [hx0, hx1] = front ? [leafWidth - 0.11, leafWidth - 0.08] : [leafWidth - 0.16, leafWidth - 0.05];
     const handle = (na: number, nb: number) => splitBox(c.frames, leafFrame, { x0: hx0, x1: hx1, n0: na, n1: nb, y0: height - half, y1: height + half }, new Color(HANDLE), new Color(HANDLE_TOP), leafFold);
@@ -98,7 +100,7 @@ export function doorLeaves(c: Ctx): void {
     // an unlocked smart lock: the leaf's free edge glows in the accent (cyan follows the user's accent colour)
     if (state.unlocked) {
       const glow = new Color(UNLOCKED);
-      splitBox(c.frames, leafFrame, { x0: leafWidth - 0.012, x1: leafWidth + 0.004, n0: -thickness - 0.004, n1: 0.004, y0: 0.06, y1: T - 0.06 }, glow, glow, { cut: fold.cut, bucket: ALWAYS });
+      splitBox(c.frames, leafFrame, { x0: leafWidth - 0.012, x1: leafWidth + 0.004, n0: -thickness - 0.004, n1: 0.004, y0: B + 0.06, y1: T - 0.06 }, glow, glow, { cut: fold.cut, bucket: ALWAYS });
     }
   }
 }
@@ -106,11 +108,11 @@ export function doorLeaves(c: Ctx): void {
 /** A sectional garage door: the closed part hangs in the opening, the open part lies under the ceiling. */
 export function garageDoor(c: Ctx): void {
   const { info, state, frame, fold } = c;
-  const [W, T] = [info.width, info.top];
+  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
   const closed = Math.min(1, Math.max(0, state.cover ?? 1));
   const color = new Color(0xd4e0ff);
   const plane = info.faceRoom - 0.03;
-  if (closed > 0.01) panel(c.blinds, frame, 0.02, W - 0.02, plane, T * (1 - closed), T, color, fold, 0.5);
-  const lifted = (1 - closed) * T;
+  if (closed > 0.01) panel(c.blinds, frame, 0.02, W - 0.02, plane, B + (T - B) * (1 - closed), T, color, fold, 0.5);
+  const lifted = (1 - closed) * (T - B);
   if (lifted > 0.01) flatPanel(c.blinds, frame, 0.02, W - 0.02, plane, plane + lifted, T + 0.03, color, fold.bucket, 0.5);
 }
