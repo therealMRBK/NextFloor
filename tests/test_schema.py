@@ -94,6 +94,16 @@ def test_plugins_are_optional_and_limited() -> None:
     assert len(SETTINGS_SCHEMA({**SETTINGS, "plugins": many[:20]})["plugins"]) == 20
 
 
+def test_furniture_screen_sources() -> None:
+    item = {"id": "f", "type": "desk", "x": 1, "z": 1, "rotation": 0, "w": 1, "d": 1, "h": 1, "variant": None}
+    assert FURNITURE_SCHEMA(item)["screen_device"] is None
+    assert "screen_sources" not in FURNITURE_SCHEMA(item)
+    linked = FURNITURE_SCHEMA({**item, "screen_device": "media_player.x", "screen_sources": ["binary_sensor.a"]})
+    assert linked["screen_sources"] == ["binary_sensor.a"]
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**item, "screen_sources": ["binary_sensor.a"] * 5})
+
+
 def test_furniture_tap_action() -> None:
     item = {"id": "f1", "type": "table", "x": 1, "z": 1, "rotation": 0, "w": 0.5, "d": 0.5, "h": 0.8, "variant": None}
     assert FURNITURE_SCHEMA(item)["tap"] is None

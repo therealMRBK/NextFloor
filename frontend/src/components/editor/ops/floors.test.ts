@@ -124,6 +124,8 @@ test("a copied piece of furniture keeps no link to Home Assistant", () => {
     room_sensor: "sensor.vacuum_room",
     type_entity: "sensor.car_kind",
     gang_entities: ["light.a", "light.b"],
+    screen_device: "media_player.xbox",
+    screen_sources: ["binary_sensor.a_in_game"],
     pictures: [{ entity: "media_player.tv", state: "*", image: "x" }],
     car: { device: "sensor.car_soc", soc: "sensor.car_soc" },
     tap: { action: "more-info", target: "light.a" },

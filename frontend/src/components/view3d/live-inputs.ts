@@ -3,6 +3,7 @@
 
 import { hasScreen, isActive, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
 import { appColor, isLive, showsSomething } from "../../live/media.ts";
+import { gameOnScreen, screenDeviceOn } from "../../live/screen-sources.ts";
 import type { Building, Floor, Furniture } from "../../model.ts";
 import type { HomeAssistant } from "../../types.ts";
 import { mountBase } from "../../packs.ts";
@@ -70,7 +71,12 @@ export function liveScreens(hass: HomeAssistant, building: Building, links: Read
   const screens: LiveScreenInput[] = [];
   for (const floor of building.floors) {
     for (const furniture of floor.furniture) {
-      if (!hasScreen(furniture.type)) continue;
+      if (!hasScreen(furniture.type) || !screenDeviceOn(hass, furniture)) continue;
+      const game = gameOnScreen(hass, furniture);
+      if (game) {
+        screens.push({ id: furniture.id, furnitureId: furniture.id, floorId: floor.id, color: appColor(null), title: game.title, subtitle: "", app: null, picture: game.picture, playing: true, ambilight: furniture.ambilight ?? 1 });
+        continue;
+      }
       const linked = links?.get(furniture.id)?.entity ?? null;
       const player = linked?.startsWith("media_player.") ? linked : playerBeside(floor, furniture);
       const state = player ? hass.states[player] : undefined;
