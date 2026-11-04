@@ -60,6 +60,7 @@ import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
+import { timberMesh } from "./timber.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
@@ -1634,6 +1635,9 @@ export class NextFloorViewer {
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();
+      // the timber frame of this floor: thousands of beams as one instanced mesh
+      const frameMesh = timberMesh(floor);
+      if (frameMesh) group.add(frameMesh);
       const floorMesh = new Mesh(geo.floor, materials.floor);
       const shadowMesh = new Mesh(geo.shadow, materials.shadow);
       shadowMesh.renderOrder = 1;

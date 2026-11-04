@@ -352,6 +352,19 @@ export interface Background {
   rotation?: number;
 }
 
+/** A timber of the frame: a straight run from `a` to `b`, cross section w x d, both in floor-local metres. */
+export interface Timber {
+  id: string;
+  a: [number, number, number];
+  b: [number, number, number];
+  /** Width across the run. */
+  w: number;
+  /** Depth along the run's side (the box's second cross-section edge). */
+  d: number;
+  /** Colour family: oak, dark, light, copper, steel. */
+  tone?: string;
+}
+
 export interface Floor {
   id: string;
   name: string;
@@ -366,6 +379,8 @@ export interface Floor {
   outdoor: OutdoorArea[];
   /** Free-standing walls (a partition through half a room); room walls come from the room edges. */
   walls?: FreeWall[];
+  /** Structural timbers — the frame, rafters, purlins and the heating pipes of this floor (viewer/timber.ts). */
+  timbers?: Timber[];
   /** Linked floor of Home Assistant's floor registry. */
   ha_floor: string | null;
   /** The camera this floor opens with (#182): another side than the house view; null = the house view's side. */
