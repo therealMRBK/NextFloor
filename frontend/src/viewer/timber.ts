@@ -92,7 +92,7 @@ export function timberMesh(floor: Floor): Group | null {
   if (plates.length) {
     const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, depthWrite: false });
     const plateMesh = fill(plates, material, () => heatingColour());
-    if (plateMesh) group.add(plateMesh);
+    if (plateMesh) { plateMesh.name = "heating-plates"; group.add(plateMesh); }
   }
   return group.children.length ? group : null;
 }

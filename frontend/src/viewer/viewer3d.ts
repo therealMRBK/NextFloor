@@ -84,6 +84,7 @@ import { SoundLayer, type SoundSpot } from "./live-sound.ts";
 import { WaterLayer, type SpraySpot } from "./live-water.ts";
 import { AirflowLayer } from "./airflow-layer.ts";
 import { WifiLayer } from "./wifi-layer.ts";
+import { LAYER_LABELS, LayerController, type LayerState } from "./layer-controller.ts";
 import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
@@ -572,6 +573,7 @@ export class NextFloorViewer {
   private readonly pictureLayer: PictureLayer;
   private readonly airflowLayer: AirflowLayer;
   private readonly wifiLayer: WifiLayer;
+  private readonly layerController: LayerController;
   /** NextFloor's floating cards: their points in the plan and who is told where they are on screen. */
   private liveAnchors: PlanPoint[] = [];
   private liveAnchorCb: LiveAnchorCallback | null = null;
@@ -610,6 +612,9 @@ export class NextFloorViewer {
     this.pictureLayer.onChange = () => this.invalidate();
     this.airflowLayer = new AirflowLayer(this.scene);
     this.wifiLayer = new WifiLayer(this.scene);
+    this.layerController = new LayerController((st) => this.applyLayers(st));
+    this.buildLayerBar();
+    this.layerController.init();
     this.weatherLayer.onFlash = (on) => this.host.classList.toggle("live-flash", on);
     this.controls = this.makeControls();
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -1407,6 +1412,50 @@ export class NextFloorViewer {
     this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
     this.labels.remove();
+  }
+
+  /** Gewerke ein-/ausblenden. */
+  private applyLayers(st: LayerState): void {
+    this.setNamed("heating-plates", st.heating);
+    this.setNamed("live-water", st.plumbing);
+    this.wifiLayer.setVisible(st.wifi);
+    this.airflowLayer.setEnabled(st.airflow);
+    this.energyLayer.setVisible(st.electrical);
+    this.invalidate();
+  }
+
+  /** Sichtbarkeit aller Objekte mit diesem Namen. */
+  private setNamed(name: string, on: boolean): void {
+    this.scene.traverse((o: any) => { if (o.name === name) o.visible = on; });
+  }
+
+  /** Schalterleiste in der linken oberen Ecke des Hosts. */
+  private buildLayerBar(): void {
+    const bar = document.createElement("div");
+    bar.className = "nf-layers";
+    bar.style.cssText = [
+      "position:absolute", "left:10px", "top:10px", "display:flex", "gap:6px",
+      "z-index:5", "font:12px/1.2 system-ui,sans-serif", "flex-wrap:wrap",
+    ].join(";");
+    for (const l of LAYER_LABELS) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.dataset.layer = l.key;
+      b.textContent = `${l.icon} ${l.label}`;
+      const paint = () => {
+        const on = this.layerController.current[l.key];
+        b.style.cssText = [
+          "padding:4px 8px", "border-radius:6px", "cursor:pointer",
+          "border:1px solid rgba(255,255,255,.25)",
+          `background:${on ? "rgba(0,200,255,.28)" : "rgba(0,0,0,.35)"}`,
+          `color:${on ? "#eaffff" : "#bbb"}`,
+        ].join(";");
+      };
+      paint();
+      b.addEventListener("click", () => { this.layerController.toggle(l.key); paint(); });
+      bar.appendChild(b);
+    }
+    this.host.appendChild(bar);
   }
 
   invalidate(): void {
