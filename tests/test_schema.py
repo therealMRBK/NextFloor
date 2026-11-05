@@ -181,6 +181,20 @@ def test_opening_blinds() -> None:
         OPENING_SCHEMA({**base, "blind": "curtain"})
 
 
+def test_a_glass_pane_over_several_edges_and_its_pane_count() -> None:
+    """A glass wall can say how many panes it has, and a pane over several edges names its pieces."""
+    base = {"id": "o1", "room_id": "r1", "edge": 0, "offset": 0.5, "width": 1.0, "type": "window", "sill": 0, "height": 2.4}
+    plain = OPENING_SCHEMA(base)
+    assert plain["panes"] is None and plain["front"] is None
+    one = OPENING_SCHEMA({**base, "panes": 0})
+    assert one["panes"] == 0
+    front = OPENING_SCHEMA({**base, "panes": 0, "front": "front_ab"})
+    assert front["front"] == "front_ab"
+    for bad in ({"panes": 41}, {"panes": -1}, {"front": "x" * 65}):
+        with pytest.raises(vol.Invalid):
+            OPENING_SCHEMA({**base, **bad})
+
+
 def test_pin_offsets() -> None:
     placed = PLACEMENT_SCHEMA({"entity_id": "light.a", "x": 1, "z": 1, "y": None, "pin_offset": {"x": 0.4, "y": -0.2}})
     assert placed["pin_offset"] == {"x": 0.4, "y": -0.2}
