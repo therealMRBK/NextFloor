@@ -22,17 +22,21 @@ export function glassWall(c: Ctx): void {
   // a pane over several edges has jambs only at its two outer ends; where two pieces meet, the glass runs on
   if (c.first) bar(0, fw, S, T);
   if (c.last) bar(W - fw, W, S, T);
-  bar(fw, W - fw, S, S + 0.03);
-  bar(fw, W - fw, T - fw, T);
+  // the 4 cm at each end is the rebate of a jamb. A piece of a pane that does not end here has no jamb, so
+  // its rails and its glass reach the wall end: leaving the rebate would open an 8 cm slot through the
+  // pane at every bend, and that slot is the bright vertical line seen between two pieces.
+  const [xa, xb] = [c.first ? fw : 0, c.last ? W - fw : W];
+  bar(xa, xb, S, S + 0.03);
+  bar(xa, xb, T - fw, T);
   // a piece of a pane over several edges is part of one sheet: it gets no mullions of its own, and a pane
   // that is to be divided is placed as separate openings instead (their jambs are the divisions)
   const asked = info.opening.front ? 0 : info.opening.panes;
-  const panes = Math.max(1, asked == null ? Math.max(1, Math.round((W - 2 * fw) / 0.9)) : Math.round(asked));
-  const paneWidth = (W - 2 * fw) / panes;
-  for (let k = 1; k < panes; k++) bar(fw + k * paneWidth - 0.02, fw + k * paneWidth + 0.02, S + 0.03, T - fw);
+  const panes = Math.max(1, asked == null ? Math.max(1, Math.round((xb - xa) / 0.9)) : Math.round(asked));
+  const paneWidth = (xb - xa) / panes;
+  for (let k = 1; k < panes; k++) bar(xa + k * paneWidth - 0.02, xa + k * paneWidth + 0.02, S + 0.03, T - fw);
   for (let k = 0; k < panes; k++) {
-    const x0 = fw + k * paneWidth + (k ? 0.02 : 0);
-    const x1 = fw + (k + 1) * paneWidth - (k < panes - 1 ? 0.02 : 0);
+    const x0 = xa + k * paneWidth + (k ? 0.02 : 0);
+    const x1 = xa + (k + 1) * paneWidth - (k < panes - 1 ? 0.02 : 0);
     panel(c.glass, frame, x0, x1, mid, S + 0.03, T - fw, GLASS, fold);
   }
 }

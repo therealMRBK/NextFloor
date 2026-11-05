@@ -216,4 +216,19 @@ test("a pane over several edges is glazed as one, without jambs where its pieces
   assert.ok(triangles(joined.frames) < triangles(apart.frames), "no jamb where two pieces of one pane meet");
   // the glass itself stays the same, however the pieces are grouped
   assert.equal(triangles(joined.glass), triangles(apart.glass));
+  // and it reaches both ends of every piece that runs on: the 4 cm rebate of a jamb, left in place at a
+  // join, is an 8 cm slot through the pane, which reads as a bright vertical line at the bend
+  const extent = (info: (typeof infos)[number], k: number) => {
+    const p = positions(joined.glass);
+    const [from, to] = [joined.glassTris[k].start * 9, joined.glassTris[k].end * 9];
+    const along = [];
+    for (let i = from; i < to; i += 3) along.push((p[i] - info.start[0]) * info.axis[0] + (p[i + 2] - info.start[1]) * info.axis[1]);
+    return [Math.min(...along), Math.max(...along)];
+  };
+  for (let k = 0; k < infos.length; k++) {
+    const [lo, hi] = extent(infos[k], k);
+    const w = infos[k].width;
+    assert.ok(Math.abs(lo - (k === 0 ? 0.04 : 0)) < 1e-6, `piece ${k} starts at ${lo.toFixed(3)}, its jamb rebate is 0.04 or nothing`);
+    assert.ok(Math.abs(hi - (k === infos.length - 1 ? w - 0.04 : w)) < 1e-6, `piece ${k} ends at ${hi.toFixed(3)} of ${w.toFixed(3)}`);
+  }
 });
