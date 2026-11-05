@@ -90,7 +90,7 @@ export function buildWallSolids(
   // as the room, is the white line seen at a bend from outside. The band stays empty there, exactly as it
   // does between two openings; above and below the pane the overflow is still the wall that fills the
   // corner of the mitre, so the bend does not open into a hole.
-  const nearJoin = (p: Vec2) => joins.points.some((j) => Math.hypot(j[0] - p[0], j[1] - p[1]) < 0.08);
+  const nearJoin = (p: Vec2) => joins.points.some((j) => Math.hypot(j[0] - p[0], j[1] - p[1]) < 0.03);
   const bandOf = (sp: Span | undefined) => (sp && sp.info.opening.front ? ([sp.sill, sp.top] as [number, number]) : null);
   const cutBand = (ranges: [number, number][], band: [number, number]): [number, number][] => {
     const out: [number, number][] = [];
