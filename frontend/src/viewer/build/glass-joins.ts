@@ -4,6 +4,7 @@
 // which corners are internal.
 
 import type { Vec2 } from "../../model.ts";
+import type { Wall } from "../../geometry/walls.ts";
 import type { Span } from "./types.ts";
 
 type Point = readonly [number, number];
@@ -25,6 +26,29 @@ export interface GlassJoins {
   points: Vec2[];
   /** Whether this end of a span is an internal join of its own pane. */
   at(front: string, p: Point): boolean;
+}
+
+/**
+ * Where along `wall` a piece of a pane ends at an internal join. The wall solids and the edge lines work
+ * in wall coordinates (`s` from `wall.a`), so they use this instead of comparing world points: the corner
+ * of a footprint sits half a wall thickness off the axis, and a distance test there is a guess.
+ */
+export function joinPositions(list: readonly Span[], joins: GlassJoins): number[] {
+  const out: number[] = [];
+  for (const sp of list) {
+    const front = sp.info.opening.front;
+    if (!front) continue;
+    const [p0, p1] = spanEnds(sp);
+    if (joins.at(front, p0)) out.push(sp.s0);
+    if (joins.at(front, p1)) out.push(sp.s1);
+  }
+  return out;
+}
+
+/** How far `p` lies along `wall` from its start, in metres. */
+export function alongWall(wall: Wall, p: Vec2): number {
+  const length = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]) || 1;
+  return ((p[0] - wall.a[0]) * (wall.b[0] - wall.a[0]) + (p[1] - wall.a[1]) * (wall.b[1] - wall.a[1])) / length;
 }
 
 /** Every place where two spans of the same pane share an end. */

@@ -6,7 +6,7 @@ import type { Floor, Vec2 } from "../../model.ts";
 import { ALWAYS, CUT_OFFSET, EDGE_BASE, EDGE_CUT, EDGE_SOFT, EDGE_TOP, LOWER_OFFSET, type LineBuffer } from "../geo.ts";
 import type { Outline } from "./outline.ts";
 import { subtractSpans } from "./outline.ts";
-import { glassJoins, spanEnds } from "./glass-joins.ts";
+import { alongWall, glassJoins, joinPositions, spanEnds } from "./glass-joins.ts";
 import { wallTops, type roofLimits } from "./placement.ts";
 import type { Span } from "./types.ts";
 
@@ -76,9 +76,17 @@ export function pushEdgeLines(
   // where two pieces of one pane meet, the corner is not a jamb (glass-joins.ts is shared with the wall solids)
   const joins = glassJoins(spans.values());
   const insidePane = new Set(joins.points.map(pointKey));
+  // internal joins in wall coordinates: a footprint corner off the axis is not a point to compare with
+  const joinAt = new Map<Wall, number[]>();
+  for (const [wall, list] of spans) joinAt.set(wall, joinPositions(list, joins));
   for (const corner of outline.corners) {
-    // a corner inside a continuous pane has no wall vertical running through the glass
-    if (insidePane.has(pointKey(corner.p))) continue;
+    // a corner inside a continuous pane has no wall vertical running through the glass: the pane runs on
+    // over the bend, so the wall only turns behind it
+    const s = alongWall(corner.wall, corner.p);
+    const list = spans.get(corner.wall) ?? [];
+    const inPane = list.some((sp) => !!sp.info.opening.front && s > sp.s0 + 0.05 && s < sp.s1 - 0.05);
+    const atJoin = (joinAt.get(corner.wall) ?? []).some((j) => Math.abs(j - s) < 0.06);
+    if (inPane || atJoin || insidePane.has(pointKey(corner.p))) continue;
     const height = wallTops(corner.wall, floor.height, limits).topAt(corner.p[0], corner.p[1]);
     lines.segSplit([corner.p[0], 0.004, corner.p[1]], [corner.p[0], height, corner.p[1]], EDGE_SOFT, Math.min(cut, height), wallBucket.get(corner.wall)!);
   }
