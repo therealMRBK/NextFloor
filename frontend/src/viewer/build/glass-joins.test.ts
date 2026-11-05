@@ -141,6 +141,37 @@ function facesInGlass(solids: GeoBuffer, p: Vec2, axis: Vec2, band: [number, num
   return found;
 }
 
+/**
+ * How much wall surface stands in the glass band around `p`, in square metres. Unlike `facesInGlass`
+ * this counts every face, whatever way it runs: the strip that shows from outside at a bend runs along
+ * the wall, so a test that only looks at cross-sections cannot see it.
+ */
+function wallInGlass(solids: GeoBuffer, p: Vec2, radius = 0.35, band: [number, number] = BAND): number {
+  const v: number[] = (solids as unknown as { p: number[] }).p;
+  let area = 0;
+  for (let i = 0; i + 8 < v.length; i += 9) {
+    const ys = [v[i + 1], v[i + 4], v[i + 7]];
+    const [lo, hi] = [Math.min(...ys), Math.max(...ys)];
+    if (lo > band[1] || hi < band[0] || hi - lo < 0.05) continue;
+    const pts: Vec2[] = [
+      [v[i], v[i + 2]],
+      [v[i + 3], v[i + 5]],
+      [v[i + 6], v[i + 8]],
+    ];
+    const cx = (pts[0][0] + pts[1][0] + pts[2][0]) / 3;
+    const cz = (pts[0][1] + pts[1][1] + pts[2][1]) / 3;
+    if (Math.hypot(cx - p[0], cz - p[1]) > radius) continue;
+    const across = Math.max(
+      Math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]),
+      Math.hypot(pts[2][0] - pts[1][0], pts[2][1] - pts[1][1]),
+      Math.hypot(pts[2][0] - pts[0][0], pts[2][1] - pts[0][1]),
+    );
+    if (across < 0.01) continue; // a degenerate sliver is no surface at all
+    area += across * (hi - lo);
+  }
+  return area;
+}
+
 test("where two pieces of one pane meet, no jamb and no wall surface stand in the glass", () => {
   const { room, walls, spans, lines, solids } = scene("F");
   const joins = glassJoins(spans.values());
@@ -148,6 +179,9 @@ test("where two pieces of one pane meet, no jamb and no wall surface stand in th
   for (const p of joins.points) {
     assert.equal(verticalLinesAt(lines, p), 0, `no vertical line at ${p}`);
     assert.equal(facesInGlass(solids, p, axisAt(walls, p)), 0, `no wall face in the glass at ${p}`);
+    // the mitre of a bend leaves a strip of wall on the outer face, a few centimetres wide and full
+    // height: from outside it stands in front of the glass and reads as a white line at every bend
+    assert.ok(wallInGlass(solids, p) < 0.02, `no wall surface in the glass at ${p}`);
   }
   // the same points in wall coordinates, which is what the solids and the corner filter use
   for (const wall of [...spans.keys()]) {
@@ -162,6 +196,7 @@ test("the control: three separate glass walls do show a jamb and a wall surface 
   const corner = room.points[1];
   assert.ok(verticalLinesAt(lines, corner) > 0, "a separate glass wall keeps its jamb");
   assert.ok(facesInGlass(solids, corner, axisAt(walls, corner)) > 0, "and the wall end stands in the glass");
+  assert.ok(wallInGlass(solids, corner) > 1, "lots of it, so the measure above can fail");
 });
 
 test("joinPosition is the wall coordinate of a piece end, not a guessed distance", () => {
