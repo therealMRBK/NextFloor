@@ -74,3 +74,19 @@ test("the suggested thickness is the median gap, clamped between 8 and 50 cm", (
   assert.equal(suggestedThickness([]), null);
   assert.equal(suggestedThickness([-0.05, 0.02]), null);
 });
+
+test("a straight wall split into several edges stays straight when only a part of it faces a neighbour", () => {
+  // room "a" has a vertex in the middle of its right wall; "b" faces only the upper half, "c" the lower half with another gap
+  const a: Room = { id: "a", name: "a", area_id: null, floor_material: "wood", points: [[0, 0], [5, 0], [5, 3], [5, 6], [0, 6]] };
+  const { rooms } = closeGaps([a, room("b", 5.4, 0, 9, 3), room("c", 5.2, 3, 9, 6)]);
+  const xs = rooms[0].points.filter((p) => p[0] > 1).map((p) => p[0]);
+  assert.equal(new Set(xs).size, 1, "no corner appears inside the wall");
+  assert.equal(rooms[0].points.length, 5);
+});
+
+test("an unpaired part of a split wall follows the paired part", () => {
+  const a: Room = { id: "a", name: "a", area_id: null, floor_material: "wood", points: [[0, 0], [5, 0], [5, 3], [5, 6], [0, 6]] };
+  const { rooms } = closeGaps([a, room("b", 5.4, 0, 9, 3)]);
+  const xs = rooms[0].points.filter((p) => p[0] > 1).map((p) => p[0]);
+  assert.deepEqual(xs, [5.2, 5.2, 5.2]);
+});

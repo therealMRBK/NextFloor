@@ -82,6 +82,27 @@ export function closeGaps(rooms: readonly Room[], maxGap = 0.6): GapResult {
       paired.add(i).add(j);
     }
   }
+  // a straight wall drawn as several collinear edges moves as one, otherwise a corner would appear inside it
+  const at = new Map(sides.map((s, i) => [`${s.room}:${s.index}`, i]));
+  for (let changed = paired.size > 0; changed; ) {
+    changed = false;
+    sides.forEach((s, i) => {
+      const next = at.get(`${s.room}:${(s.index + 1) % rooms[s.room].points.length}`);
+      if (next === undefined || next === i) return;
+      const n = sides[next];
+      const collinear = Math.abs(cross(s.dir, n.dir)) < 1e-6 && Math.abs(s.offset - n.offset) < 2e-3 && s.outside === n.outside;
+      if (!collinear || paired.has(i) === paired.has(next)) return;
+      paired.add(i).add(next);
+      changed = true;
+    });
+  }
+  // a paired run joins the group of its neighbour (checked again below, after the groups are known)
+  sides.forEach((s, i) => {
+    const next = at.get(`${s.room}:${(s.index + 1) % rooms[s.room].points.length}`);
+    if (next === undefined || next === i || !paired.has(i) || !paired.has(next)) return;
+    const n = sides[next];
+    if (Math.abs(cross(s.dir, n.dir)) < 1e-6 && Math.abs(s.offset - n.offset) < 2e-3 && s.outside === n.outside) leader[root(i)] = root(next);
+  });
   const copy = () => rooms.map((r) => ({ ...r, points: r.points.map((p) => [p[0], p[1]] as Vec2) }));
   if (gaps.length === 0) return { rooms: copy(), gaps };
 
@@ -91,7 +112,9 @@ export function closeGaps(rooms: readonly Room[], maxGap = 0.6): GapResult {
   // at most one shift per group and vertex, so collinear neighbours do not move a corner twice
   const shifts = rooms.map((r) => r.points.map(() => new Map<number, Vec2>()));
   for (const [group, members] of groups) {
-    const target = members.reduce((sum, i) => sum + sides[i].offset, 0) / members.length;
+    // a wall counts once, however many collinear edges it consists of
+    const walls = new Map(members.map((i) => [`${sides[i].room}:${Math.round(sides[i].offset * 500)}`, sides[i].offset]));
+    const target = [...walls.values()].reduce((sum, o) => sum + o, 0) / walls.size;
     for (const i of members) {
       const s = sides[i];
       const move: Vec2 = [s.normal[0] * (target - s.offset), s.normal[1] * (target - s.offset)];

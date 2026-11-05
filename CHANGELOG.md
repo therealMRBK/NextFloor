@@ -8,6 +8,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Sanitary pack VIGOUR derby** (thanks @huepfer13, #63): a wall-hung WC, a urinal, a 60 cm washbasin, a paper towel dispenser and a soap dispenser in the sizes of the VIGOUR derby series. That makes 41 furniture packs.
 
+### Fixed
+
+- **Close gaps no longer puts corners into straight walls** (#65): a wall that consists of several edges in a row (for example with a point in the middle of it) is now moved as one wall. Before, each part moved to its own neighbour, so a corner appeared in the wall that was not there before.
+
 ## 0.24.0
 
 ### Added
