@@ -183,7 +183,16 @@ def test_opening_blinds() -> None:
 
 def test_a_glass_pane_over_several_edges_and_its_pane_count() -> None:
     """A glass wall can say how many panes it has, and a pane over several edges names its pieces."""
-    base = {"id": "o1", "room_id": "r1", "edge": 0, "offset": 0.5, "width": 1.0, "type": "window", "sill": 0, "height": 2.4}
+    base = {
+        "id": "o1",
+        "room_id": "r1",
+        "edge": 0,
+        "offset": 0.5,
+        "width": 1.0,
+        "type": "window",
+        "sill": 0,
+        "height": 2.4,
+    }
     plain = OPENING_SCHEMA(base)
     assert plain["panes"] is None and plain["front"] is None
     one = OPENING_SCHEMA({**base, "panes": 0})
