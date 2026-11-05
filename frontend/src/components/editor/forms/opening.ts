@@ -106,6 +106,32 @@ function sidelightFields(host: EditorHost, o: Opening, actions: OpeningActions):
   return nothing;
 }
 
+/**
+ * A glass wall: how many panes its mullions make. Empty keeps the old spacing of about 0.9 m, 0 gives one single pane for
+ * the full-width glazing modern houses have.
+ */
+function glassWallPanes(host: EditorHost, o: Opening, actions: OpeningActions): TemplateResult | typeof nothing {
+  if (o.type !== "window" || openingStyle(o, actions.isExterior(o)) !== "glass_wall") return nothing;
+  return html`<label class="nf-field"
+      >${host.t("glass_panes")}
+      <input
+        type="number"
+        step="1"
+        min="0"
+        max="40"
+        placeholder=${host.t("glass_panes_auto")}
+        .value=${o.panes == null ? "" : String(o.panes)}
+        ?disabled=${!host.admin}
+        @change=${(e: Event) => {
+          const raw = (e.target as HTMLInputElement).value.trim();
+          const v = Number(raw);
+          actions.update({ panes: raw === "" || !Number.isFinite(v) ? null : Math.min(40, Math.max(0, Math.round(v))) });
+        }}
+      />
+    </label>
+    ${hint(host.t("glass_panes_hint"), "nf-wide")}`;
+}
+
 /** The sensors of one sash of a window: what kind they are, the entity, the tilt, and for the main sash the tilt angle. */
 function sashSensors(host: EditorHost, o: Opening, sash: 1 | 2, actions: OpeningActions, lists: ReturnType<typeof choices>): TemplateResult {
   const main = sash === 1;
@@ -192,7 +218,7 @@ export function renderOpeningForm(host: EditorHost, o: Opening, actions: Opening
       ${numberField(host, t("opening_position"), o.offset, (v) => at({ offset: Math.max(0, v) }), 0.01, 0)}
       ${window ? numberField(host, t("sill"), o.sill, (v) => at({ sill: Math.max(0, v) }), 0.01, 0) : nothing}
       ${numberField(host, t("opening_height"), o.height, (v) => at({ height: Math.max(0.3, v) }), 0.01, 0.3)}
-      ${garage ? nothing : styleField(host, o, actions)} ${sidelightFields(host, o, actions)}
+      ${garage ? nothing : styleField(host, o, actions)} ${sidelightFields(host, o, actions)} ${glassWallPanes(host, o, actions)}
       ${window && o.style !== "glass_wall"
         ? selectField(host, t("window_opens"), o.opens ?? "turn", WINDOW_OPENINGS.map((w) => [w, t(`window_opens_${w}` as I18nKey)] as const), (v) => at({ opens: v === "turn" ? null : v }), { wide: true, title: t("window_opens_hint") })
         : nothing}

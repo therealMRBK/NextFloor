@@ -120,6 +120,11 @@ export interface Opening {
   /** Width of the sidelight(s) in m (null = automatic); with two, `sidelight_width2` is the right one (seen from the room). */
   sidelight_width?: number | null;
   sidelight_width2?: number | null;
+  /**
+   * Glass walls: how many panes the mullions divide the wall into (null = one about every 0.9 m, as it always was;
+   * 0 = one single pane without a mullion, for the large glazing modern houses have).
+   */
+  panes?: number | null;
   /** Contact of the second leaf (null = none). */
   contact2: string | null;
   /** Windows: which sensors report the sash (null: a contact, plus a tilt sensor when one is set). */

@@ -8,7 +8,10 @@ import type { Ctx } from "./context.ts";
 import { FRAME, FRAME_TOP, GLASS, OPEN_ANGLE, OPEN_WARM, SASH, SILL, TILT_ANGLE, TOP_HUNG_ANGLE } from "./palette.ts";
 import { panel, splitBox, type Frame } from "./primitives.ts";
 
-/** An indoor glass wall: a slim frame, mullions about every 0.9 m, glass from the floor up, no sashes. */
+/**
+ * An indoor glass wall: a slim frame, glass from the floor up, no sashes. The mullions divide it into as many panes as the
+ * opening asks for; without a number they come about every 0.9 m, and none at all for a single full pane.
+ */
 export function glassWall(c: Ctx): void {
   const { info, frame, fold, mid } = c;
   const [W, S, T] = [info.width, info.sill, info.top];
@@ -20,7 +23,8 @@ export function glassWall(c: Ctx): void {
   bar(W - fw, W, S, T);
   bar(fw, W - fw, S, S + 0.03);
   bar(fw, W - fw, T - fw, T);
-  const panes = Math.max(1, Math.round((W - 2 * fw) / 0.9));
+  const asked = info.opening.panes;
+  const panes = Math.max(1, asked == null ? Math.max(1, Math.round((W - 2 * fw) / 0.9)) : Math.round(asked));
   const paneWidth = (W - 2 * fw) / panes;
   for (let k = 1; k < panes; k++) bar(fw + k * paneWidth - 0.02, fw + k * paneWidth + 0.02, S + 0.03, T - fw);
   for (let k = 0; k < panes; k++) {

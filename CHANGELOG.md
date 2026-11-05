@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Glass walls without mullions**: a glass wall divided into panes of about 0.9 m by itself, with no way to say otherwise. Its form now has a *Panes* field: `0` gives one single pane across the whole wall, for the large glazing modern houses have, and any other number sets how many panes the mullions make. Left empty, a plan keeps exactly the spacing it had.
 - **Sanitary pack VIGOUR derby** (thanks @huepfer13, #63): a wall-hung WC, a urinal, a 60 cm washbasin, a paper towel dispenser and a soap dispenser in the sizes of the VIGOUR derby series. That makes 41 furniture packs.
 
 ### Fixed

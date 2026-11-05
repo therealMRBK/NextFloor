@@ -150,3 +150,19 @@ test("a door in a lowered room stands on that room's floor, not on the floor lev
   const ys = positions(parts.frames).filter((_, i) => i % 3 === 1);
   assert.ok(Math.abs(Math.min(...ys) - -0.39) < 0.02, `lowest part at ${Math.min(...ys)}`);
 });
+
+test("a glass wall divides into about 0.9 m panes unless it is told how many", () => {
+  const wall = (panes?: number | null) => build({ type: "window", sill: 0, height: 2.4, width: 3.6, style: "glass_wall", ...(panes === undefined ? {} : { panes }) });
+  const auto = wall();
+  const one = wall(0);
+  const three = wall(3);
+  // one pane: no mullion at all, so fewer frame boxes and a single sheet of glass
+  assert.ok(triangles(one.frames) < triangles(auto.frames), "a single pane has no mullions");
+  assert.equal(triangles(one.glass), 4, "one pane is one quad, glazed on both sides");
+  // a number of its own wins over the automatic spacing
+  assert.ok(triangles(three.frames) < triangles(auto.frames));
+  assert.ok(triangles(three.frames) > triangles(one.frames), "three panes have two mullions");
+  assert.equal(triangles(three.glass), 12, "three panes");
+  // an unchanged plan keeps exactly what it drew before: the automatic spacing
+  assert.equal(triangles(auto.glass), 16, "3.6 m gives four panes of about 0.88 m");
+});
