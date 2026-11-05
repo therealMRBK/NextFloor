@@ -16,5 +16,8 @@ export interface Ctx {
   frames: GeoBuffer;
   glass: GeoBuffer;
   blinds: GeoBuffer;
+  /** For a piece of a pane over several edges: whether it is the first or the last one, which carry the jambs. */
+  first: boolean;
+  last: boolean;
 }
 

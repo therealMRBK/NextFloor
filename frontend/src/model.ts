@@ -125,6 +125,12 @@ export interface Opening {
    * 0 = one single pane without a mullion, for the large glazing modern houses have).
    */
   panes?: number | null;
+  /**
+   * Glass walls: the pieces of one pane that follows a curved wall share this id. Each piece is a normal opening on its own
+   * edge with a legal offset and width, stored in order along the wall; the 3D view draws them as one pane without a jamb
+   * where two of them meet. Null for a pane that fits on a single edge.
+   */
+  front?: string | null;
   /** Contact of the second leaf (null = none). */
   contact2: string | null;
   /** Windows: which sensors report the sash (null: a contact, plus a tilt sensor when one is set). */

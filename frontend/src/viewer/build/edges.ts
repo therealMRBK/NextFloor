@@ -6,11 +6,18 @@ import type { Floor, Vec2 } from "../../model.ts";
 import { ALWAYS, CUT_OFFSET, EDGE_BASE, EDGE_CUT, EDGE_SOFT, EDGE_TOP, LOWER_OFFSET, type LineBuffer } from "../geo.ts";
 import type { Outline } from "./outline.ts";
 import { subtractSpans } from "./outline.ts";
+import { glassJoins, spanEnds } from "./glass-joins.ts";
 import { wallTops, type roofLimits } from "./placement.ts";
 import type { Span } from "./types.ts";
 
-/** Jambs, sill and lintel edges of an opening on both wall faces, split at the cut height. */
-function pushOpeningLines(lines: LineBuffer, sp: Span, cut: number): void {
+/** A 2 cm grid, so an outline corner and a glass join meet at the same key despite rounding. */
+const pointKey = (p: readonly [number, number]) => `${Math.round(p[0] * 50)},${Math.round(p[1] * 50)}`;
+
+/**
+ * Jambs, sill and lintel edges of an opening on both wall faces, split at the cut height. A piece that joins
+ * another piece of the same pane has no jamb at that end: the glass runs on.
+ */
+function pushOpeningLines(lines: LineBuffer, sp: Span, cut: number, hideStart = false, hideEnd = false): void {
   const { info } = sp;
   const bucket = info.bucket;
   const at = (s: number, n: number, y: number) => [info.start[0] + info.axis[0] * (s - sp.s0) + info.toRoom[0] * n, y, info.start[1] + info.axis[1] * (s - sp.s0) + info.toRoom[1] * n];
@@ -18,12 +25,14 @@ function pushOpeningLines(lines: LineBuffer, sp: Span, cut: number): void {
   // just above the floor the opening stands on (below 0 in a lowered room)
   const bottom = sp.sill < 0 ? sp.sill + 0.004 : Math.max(sp.sill, 0.004);
   for (const n of [info.faceRoom, -info.faceOut]) {
-    for (const s of [sp.s0, sp.s1]) lines.segSplit(at(s, n, bottom), at(s, n, sp.top), EDGE_SOFT, cut, bucket);
+    if (!hideStart) lines.segSplit(at(sp.s0, n, bottom), at(sp.s0, n, sp.top), EDGE_SOFT, cut, bucket);
+    if (!hideEnd) lines.segSplit(at(sp.s1, n, bottom), at(sp.s1, n, sp.top), EDGE_SOFT, cut, bucket);
     lines.seg(at(sp.s0, n, sp.top), at(sp.s1, n, sp.top), EDGE_SOFT, foldAt(sp.top));
     if (sp.sill > 0.01) lines.seg(at(sp.s0, n, sp.sill), at(sp.s1, n, sp.sill), EDGE_SOFT, foldAt(sp.sill));
   }
   // edges across the wall thickness (the reveals), and the cut section of the jambs
-  for (const s of [sp.s0, sp.s1]) {
+  for (const [s, hide] of [[sp.s0, hideStart], [sp.s1, hideEnd]] as const) {
+    if (hide) continue;
     lines.seg(at(s, info.faceRoom, sp.top), at(s, -info.faceOut, sp.top), EDGE_SOFT, foldAt(sp.top));
     if (sp.sill > 0.01) lines.seg(at(s, info.faceRoom, sp.sill), at(s, -info.faceOut, sp.sill), EDGE_SOFT, foldAt(sp.sill));
     if (sp.sill < cut && sp.top > cut) lines.seg(at(s, info.faceRoom, cut), at(s, -info.faceOut, cut), EDGE_CUT, CUT_OFFSET + bucket);
@@ -64,9 +73,20 @@ export function pushEdgeLines(
       }
     }
   }
+  // where two pieces of one pane meet, the corner is not a jamb (glass-joins.ts is shared with the wall solids)
+  const joins = glassJoins(spans.values());
+  const insidePane = new Set(joins.points.map(pointKey));
   for (const corner of outline.corners) {
+    // a corner inside a continuous pane has no wall vertical running through the glass
+    if (insidePane.has(pointKey(corner.p))) continue;
     const height = wallTops(corner.wall, floor.height, limits).topAt(corner.p[0], corner.p[1]);
     lines.segSplit([corner.p[0], 0.004, corner.p[1]], [corner.p[0], height, corner.p[1]], EDGE_SOFT, Math.min(cut, height), wallBucket.get(corner.wall)!);
   }
-  for (const list of spans.values()) for (const sp of list) pushOpeningLines(lines, sp, cut);
+  for (const list of spans.values()) {
+    for (const sp of list) {
+      const front = sp.info.opening.front;
+      const [p0, p1] = spanEnds(sp);
+      pushOpeningLines(lines, sp, cut, front ? joins.at(front, p0) : false, front ? joins.at(front, p1) : false);
+    }
+  }
 }

@@ -4,6 +4,7 @@ import { newFloor, type Opening } from "../../model.ts";
 import { buildFloorGeometry } from "../build.ts";
 import { buildOpeningParts, CLOSED, type OpeningState } from "../openings.ts";
 import { slidingPanes } from "./windows.ts";
+import { frontPieces } from "../../geometry/glass-front.ts";
 
 const room = { id: "a", name: "a", area_id: null, points: [[0, 0], [6, 0], [6, 5], [0, 5]] as [number, number][], floor_material: "wood" as const };
 
@@ -165,4 +166,54 @@ test("a glass wall divides into about 0.9 m panes unless it is told how many", (
   assert.equal(triangles(three.glass), 12, "three panes");
   // an unchanged plan keeps exactly what it drew before: the automatic spacing
   assert.equal(triangles(auto.glass), 16, "3.6 m gives four panes of about 0.88 m");
+});
+
+test("a pane over several edges is glazed as one, without jambs where its pieces meet", () => {
+  // a curved wall: ten edges of 1 m, each turning 10 degrees the same way, closed by one back edge
+  const points: [number, number][] = [[0, 0]];
+  let [x, z, a] = [0, 0, 0];
+  for (let i = 0; i < 10; i++) {
+    a += (10 * Math.PI) / 180;
+    x += Math.cos(a);
+    z += Math.sin(a);
+    points.push([x, z]);
+  }
+  const curved = { ...room, points };
+  const pieces = frontPieces(curved, 0, 6);
+  assert.ok(pieces);
+  assert.equal(pieces.length, 6);
+  const openings = pieces.map(
+    (p, k) =>
+      ({
+        id: `g${k}`,
+        room_id: "a",
+        edge: p.edge,
+        offset: p.offset,
+        width: p.width,
+        front: "f",
+        type: "window",
+        sill: 0,
+        height: 2.4,
+        style: "glass_wall",
+        hinge: "left",
+        leaves: 1,
+        swing: "in",
+        cover: null,
+        contact: null,
+        contact2: null,
+        tilt: null,
+      }) as Opening,
+  );
+  const infos = buildFloorGeometry({ ...newFloor("f", "F", 0), rooms: [curved], openings }, 0.3, 0.1).openings;
+  // every piece finds its own wall: none is dropped
+  assert.equal(infos.length, 6);
+  const joined = buildOpeningParts(infos, new Map([["f", CLOSED]]), 1.2);
+  const apart = buildOpeningParts(
+    infos.map((i) => ({ ...i, opening: { ...i.opening, front: null } })),
+    new Map(),
+    1.2,
+  );
+  assert.ok(triangles(joined.frames) < triangles(apart.frames), "no jamb where two pieces of one pane meet");
+  // the glass itself stays the same, however the pieces are grouped
+  assert.equal(triangles(joined.glass), triangles(apart.glass));
 });

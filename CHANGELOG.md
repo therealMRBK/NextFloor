@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **A glass wall that follows a curved wall as one pane**: a curved wall is stored as a chain of short straight edges, and a glass wall could only be as wide as one of them, so glazing an arc meant one pane per edge with a mullion at every bend. A glass wall placed on a curved wall now runs on from edge to edge as a single pane, with jambs only at its two ends, and stays one pane when it is moved, lengthened or deleted. It is stored as an ordinary opening per edge, sharing a `front` id, so the plan, the printed plan, the sun hours and the walls themselves need no special case.
 - **Glass walls without mullions**: a glass wall divided into panes of about 0.9 m by itself, with no way to say otherwise. Its form now has a *Panes* field: `0` gives one single pane across the whole wall, for the large glazing modern houses have, and any other number sets how many panes the mullions make. Left empty, a plan keeps exactly the spacing it had.
 - **Sanitary pack VIGOUR derby** (thanks @huepfer13, #63): a wall-hung WC, a urinal, a 60 cm washbasin, a paper towel dispenser and a soap dispenser in the sizes of the VIGOUR derby series. That makes 41 furniture packs.
 

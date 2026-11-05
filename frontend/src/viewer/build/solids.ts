@@ -5,6 +5,7 @@ import { pointInPolygon, roomOffset, type Floor, type Vec2 } from "../../model.t
 import { CAP_OFFSET, LOWER_OFFSET, PAINT_OFFSET, pushPrism, type GeoBuffer } from "../geo.ts";
 import { NEON, SLAB } from "./look.ts";
 import { clipAlong, unit } from "./outline.ts";
+import { glassJoins } from "./glass-joins.ts";
 import { wallTops, type roofLimits } from "./placement.ts";
 import type { Span } from "./types.ts";
 
@@ -80,6 +81,9 @@ export function buildWallSolids(
   const offset = paint ? PAINT_OFFSET : 0;
   const sideColor = paint ? (poly: Vec2[]) => (a: Vec2, b: Vec2) => paintOfSide(poly, a, b, paint, floor.rooms) : null;
   const top = paint ? PAINT_TOP : NEON.wallTop;
+  // the two wall ends at an internal join of one pane are not a jamb: without this, a full-height wall
+  // face stays there, which reads as a frame across the glass
+  const joins = glassJoins(spans.values());
   for (const wall of walls) {
     const bucket = wallBucket.get(wall)!;
     const axis = unit([wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]]);
@@ -114,7 +118,14 @@ export function buildWallSolids(
       if (poly.length < 3) continue;
       // the faces between two steps of one piece lie inside the wall: leave them out, or they show as stripes through see-through walls
       const at = (p: Vec2, t: number) => Math.abs(along(p) - t) < 1e-4;
-      const skipSide = (p: Vec2, q: Vec2) => (step.inner0 && at(p, step.t0) && at(q, step.t0)) || (step.inner1 && at(p, step.t1) && at(q, step.t1));
+      const roofSide = (p: Vec2, q: Vec2) => (step.inner0 && at(p, step.t0) && at(q, step.t0)) || (step.inner1 && at(p, step.t1) && at(q, step.t1));
+      // a short end face that starts at an internal join is the wall showing through the bend; a real wall
+      // face is longer than half a metre, so it is never taken for one
+      const paneSide = (p: Vec2, q: Vec2) => {
+        if (!joins.points.length || Math.hypot(p[0] - q[0], p[1] - q[1]) > 0.5) return false;
+        return joins.points.some((j) => Math.min(Math.hypot(j[0] - p[0], j[1] - p[1]), Math.hypot(j[0] - q[0], j[1] - q[1])) < 0.05);
+      };
+      const skipSide = (p: Vec2, q: Vec2) => roofSide(p, q) || paneSide(p, q);
       // the roof over this step: the lowest point of its footprint decides what is left of each range
       const roofTop = underRoof ? Math.min(...poly.map(([x, z]) => topAt(x, z))) : H;
       for (const [y0, y1raw] of step.ranges) {
