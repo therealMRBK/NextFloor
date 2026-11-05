@@ -23,9 +23,9 @@ export function glassWall(c: Ctx): void {
   if (c.first) bar(0, fw, S, T);
   if (c.last) bar(W - fw, W, S, T);
   // the 4 cm at each end is the rebate of a jamb. A piece of a pane that does not end here has no jamb, so
-  // its rails and its glass reach the wall end: leaving the rebate would open an 8 cm slot through the
-  // pane at every bend, and that slot is the bright vertical line seen between two pieces.
-  const [xa, xb] = [c.first ? fw : 0, c.last ? W - fw : W];
+  // its rails and its glass reach the wall end — and run past it into the bisector of the bend, where the
+  // next piece begins: two pieces whose ends stop at their own wall's middle stand a slot apart.
+  const [xa, xb] = [c.first ? fw : -c.over[0], c.last ? W - fw : W + c.over[1]];
   bar(xa, xb, S, S + 0.03);
   bar(xa, xb, T - fw, T);
   // a piece of a pane over several edges is part of one sheet: it gets no mullions of its own, and a pane

@@ -168,8 +168,8 @@ test("a glass wall divides into about 0.9 m panes unless it is told how many", (
   assert.equal(triangles(auto.glass), 16, "3.6 m gives four panes of about 0.88 m");
 });
 
-test("a pane over several edges is glazed as one, without jambs where its pieces meet", () => {
-  // a curved wall: ten edges of 1 m, each turning 10 degrees the same way, closed by one back edge
+/** A curved wall: ten edges of 1 m, each turning 10 degrees the same way, closed by one back edge. */
+function curvedRoom() {
   const points: [number, number][] = [[0, 0]];
   let [x, z, a] = [0, 0, 0];
   for (let i = 0; i < 10; i++) {
@@ -178,11 +178,14 @@ test("a pane over several edges is glazed as one, without jambs where its pieces
     z += Math.sin(a);
     points.push([x, z]);
   }
-  const curved = { ...room, points };
-  const pieces = frontPieces(curved, 0, 6);
-  assert.ok(pieces);
-  assert.equal(pieces.length, 6);
-  const openings = pieces.map(
+  return { ...room, points };
+}
+
+/** Six pieces of one pane on that wall, in the order the plan lists them. */
+function pane(backwards = false) {
+  const curved = curvedRoom();
+  const pieces = frontPieces(curved, 0, 6)!;
+  const list = pieces.map(
     (p, k) =>
       ({
         id: `g${k}`,
@@ -204,7 +207,67 @@ test("a pane over several edges is glazed as one, without jambs where its pieces
         tilt: null,
       }) as Opening,
   );
-  const infos = buildFloorGeometry({ ...newFloor("f", "F", 0), rooms: [curved], openings }, 0.3, 0.1).openings;
+  // the order the openings are listed in is the order the plan happens to hold them, which on a curved
+  // wall is not necessarily the order along the outline
+  return buildFloorGeometry({ ...newFloor("f", "F", 0), rooms: [curved], openings: backwards ? list.reverse() : list }, 0.3, 0.1).openings;
+}
+
+/** The plan points where two pieces of one pane meet, and the two outer ends of the pane. */
+function paneEnds(infos: readonly { start: [number, number]; axis: [number, number]; width: number }[]) {
+  const key = (p: [number, number]) => `${Math.round(p[0] * 50)},${Math.round(p[1] * 50)}`;
+  const end = (i: number): [number, number] => [infos[i].start[0] + infos[i].axis[0] * infos[i].width, infos[i].start[1] + infos[i].axis[1] * infos[i].width];
+  const count = new Map<string, number>();
+  const at = new Map<string, [number, number]>();
+  infos.forEach((_, i) => {
+    for (const p of [infos[i].start as [number, number], end(i)]) {
+      count.set(key(p), (count.get(key(p)) ?? 0) + 1);
+      at.set(key(p), p);
+    }
+  });
+  const joins = [...count].filter(([, n]) => n > 1).map(([k]) => at.get(k)!);
+  const outer = [...count].filter(([, n]) => n === 1).map(([k]) => at.get(k)!);
+  return { joins, outer };
+}
+
+/** One pane must be one sheet: no slot between its pieces and no frame standing in it. */
+function assertOneSheet(infos: ReturnType<typeof pane>) {
+  const joined = buildOpeningParts(infos, new Map([["f", CLOSED]]), 1.2);
+  const gp = positions(joined.glass);
+  const fp = positions(joined.frames);
+  const { joins, outer } = paneEnds(infos);
+  assert.equal(joins.length, infos.length - 1, "one join between each two pieces, and none at the outer ends");
+  assert.equal(outer.length, 2, "a pane has two outer ends");
+  for (const [jx, jz] of joins) {
+    // the glass sits in the middle of the wall, so two walls at an angle have two different middles, and
+    // ends that stop at their own middle stand 2.6 cm apart on a 10 degree bend — a slot through the pane
+    const near: [number, number, number][] = [];
+    // the glass stands in the middle of the wall, half a thickness off the axis the join sits on
+    for (let i = 0; i + 2 < gp.length; i += 3) if (Math.hypot(gp[i] - jx, gp[i + 2] - jz) < 0.2) near.push([gp[i], gp[i + 1], gp[i + 2]]);
+    let worst = 0;
+    // in plan only: two vertices on one vertical line are the same point of the sheet, whatever their height
+    for (const a of near) for (const b of near) worst = Math.max(worst, Math.hypot(a[0] - b[0], a[2] - b[2]));
+    assert.ok(near.length > 0, "the pieces reach the join");
+    assert.ok(worst < 0.002, `the two pieces meet at (${jx.toFixed(2)},${jz.toFixed(2)}), not ${worst.toFixed(3)} m apart`);
+    // a jamb drawn at a join is a 4 cm post standing in the middle of the glass
+    let post = 0;
+    for (let i = 0; i + 2 < fp.length; i += 3) {
+      if (fp[i + 1] < 0.1 || fp[i + 1] > 2.3) continue;
+      if (Math.hypot(fp[i] - jx, fp[i + 2] - jz) < 0.2) post++;
+    }
+    assert.equal(post, 0, "no frame stands in the glass at a join");
+  }
+  for (const [ox, oz] of outer) {
+    let jamb = 0;
+    for (let i = 0; i + 2 < fp.length; i += 3) {
+      if (fp[i + 1] < 0.1 || fp[i + 1] > 2.3) continue;
+      if (Math.hypot(fp[i] - ox, fp[i + 2] - oz) < 0.2) jamb++;
+    }
+    assert.ok(jamb > 0, "the outer ends of a pane do carry a jamb");
+  }
+}
+
+test("a pane over several edges is glazed as one, without jambs where its pieces meet", () => {
+  const infos = pane();
   // every piece finds its own wall: none is dropped
   assert.equal(infos.length, 6);
   const joined = buildOpeningParts(infos, new Map([["f", CLOSED]]), 1.2);
@@ -216,19 +279,14 @@ test("a pane over several edges is glazed as one, without jambs where its pieces
   assert.ok(triangles(joined.frames) < triangles(apart.frames), "no jamb where two pieces of one pane meet");
   // the glass itself stays the same, however the pieces are grouped
   assert.equal(triangles(joined.glass), triangles(apart.glass));
-  // and it reaches both ends of every piece that runs on: the 4 cm rebate of a jamb, left in place at a
-  // join, is an 8 cm slot through the pane, which reads as a bright vertical line at the bend
-  const extent = (info: (typeof infos)[number], k: number) => {
-    const p = positions(joined.glass);
-    const [from, to] = [joined.glassTris[k].start * 9, joined.glassTris[k].end * 9];
-    const along = [];
-    for (let i = from; i < to; i += 3) along.push((p[i] - info.start[0]) * info.axis[0] + (p[i + 2] - info.start[1]) * info.axis[1]);
-    return [Math.min(...along), Math.max(...along)];
-  };
-  for (let k = 0; k < infos.length; k++) {
-    const [lo, hi] = extent(infos[k], k);
-    const w = infos[k].width;
-    assert.ok(Math.abs(lo - (k === 0 ? 0.04 : 0)) < 1e-6, `piece ${k} starts at ${lo.toFixed(3)}, its jamb rebate is 0.04 or nothing`);
-    assert.ok(Math.abs(hi - (k === infos.length - 1 ? w - 0.04 : w)) < 1e-6, `piece ${k} ends at ${hi.toFixed(3)} of ${w.toFixed(3)}`);
-  }
+  assertOneSheet(infos);
+});
+
+test("the order the plan lists the pieces in does not decide where the jambs go", () => {
+  // the openings of a curved wall are stored in the order the plan holds them, which is not always the
+  // order along the outline. Taking the first and the last of that list as the pane's ends puts both
+  // jambs of a two-piece pane right where the two pieces meet.
+  const infos = pane(true);
+  assert.equal(infos.length, 6);
+  assertOneSheet(infos);
 });
