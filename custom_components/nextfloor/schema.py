@@ -668,6 +668,21 @@ FLOOR_SCHEMA = vol.Schema(
     extra=vol.ALLOW_EXTRA,
 )
 
+# two places, each known in the plan (metres) and in a robot's map grid, tie the grid to the plan
+_COORD = vol.All(vol.Coerce(float), vol.Range(min=-100000, max=100000))
+_POINT = vol.All([_COORD], vol.Length(min=2, max=2))
+VACUUM_MAP_SCHEMA = vol.Schema(
+    {
+        vol.Required("a"): _POINT,
+        vol.Required("ga"): _POINT,
+        vol.Required("b"): _POINT,
+        vol.Required("gb"): _POINT,
+        # the robot's grid runs the other way round than the plan does (its y grows along plan -z)
+        vol.Optional("mirror", default=False): bool,
+    },
+    extra=vol.PREVENT_EXTRA,
+)
+
 # a real map under the plan (tiles loaded by the browser): where the plan's anchor point lies on Earth
 MAP_SCHEMA = vol.Schema(
     {
@@ -710,6 +725,8 @@ SETTINGS_SCHEMA = vol.Schema(
         # direction of north in the plan, degrees clockwise from "up"
         vol.Optional("north", default=0): vol.All(vol.Coerce(float), vol.Range(min=-360, max=360)),
         vol.Optional("map", default=None): vol.Any(None, MAP_SCHEMA),
+        # a robot vacuum's own map on the plan (live/vacuum-map.ts)
+        vol.Optional("vacuum_map", default=None): vol.Any(None, VACUUM_MAP_SCHEMA),
         # plugin modules the panel and the card import (docs/plugins.md); no default, so plans stay as stored
         vol.Optional("plugins"): vol.All([PLUGIN_SCHEMA], vol.Length(max=20)),
         # plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident

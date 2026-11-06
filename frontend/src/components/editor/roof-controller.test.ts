@@ -23,6 +23,7 @@ function setup(roof: Record<string, unknown> = { type: "gable", pitch: 35, overh
       doc = next;
       calls.changes++;
     },
+    pickPoint: () => {},
     replace: (next) => void (doc = next),
   };
   const controller = new RoofController({ host, floorId: () => calls.floor, setFloorId: (id) => (calls.floor = id), confirm: () => calls.confirmed, refresh: () => calls.refresh++ });

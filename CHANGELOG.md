@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Added
+
+- **A robot vacuum's own trail on the plan**: a `robot_vacuum` on the plan drove lanes the view invented inside the room it reports. When the robot's integration puts its map on a camera — `vacuum_position`, `charger` and `path` as attributes, which NarwalIntegration's map card does — the view shows the truth instead: the robot stands where it says it is, facing where it faces, and the floor keeps the pad it has really driven, while the dock is drawn where the robot reports it. The robot's grid is tied to the plan by two places known in both (`settings.vacuum_map`); `mirror` covers a map whose y axis runs along plan −z, which two places alone cannot tell apart from a turn. The camera is found by its attributes, so nothing has to be chosen; the calibration is one tap — select the robot's dock, let it drive away, tap it on the plan — and a plan without one keeps the lanes it had. Ten minutes after the robot docks the pad fades out — the timeline keeps a finished clean, the floor does not. The attribute names are the vacuum map card's, so the Xiaomi map extractors, the Roborock integration, NarwalIntegration and any other integration that publishes them fit — including units in millimetres, since the two places set the scale. The manual and the Anleitung describe the calibration.
+
 ## 0.24.0
 
 ### Added

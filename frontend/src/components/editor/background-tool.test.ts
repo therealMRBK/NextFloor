@@ -32,7 +32,8 @@ function setup(floorExtra: Partial<Floor> = {}, tool = "select") {
         floor = copy;
         doc.floors = [copy];
       },
-      replace: () => undefined,
+      pickPoint: () => {},
+    replace: () => undefined,
     },
     refresh: () => calls.refresh++,
     api: { fetchImage: async (_h, id) => `data:${id}`, storeImage: async (_h, id) => void stored.push(id) },
