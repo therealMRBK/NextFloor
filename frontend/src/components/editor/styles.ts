@@ -9,12 +9,12 @@ export const editorStyles = css`
   .nf-editor {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: minmax(0, 1fr) 320px;
     height: 100%;
     min-height: 0;
   }
   .nf-editor:has(> .nf-side-strip) {
-    grid-template-columns: 1fr 52px;
+    grid-template-columns: minmax(0, 1fr) 52px;
   }
   .nf-side-strip {
     padding: 10px 6px;
@@ -80,9 +80,19 @@ export const editorStyles = css`
   }
   .nf-main {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     min-height: 0;
     min-width: 0;
+  }
+  /* a row of tools wider than the plan scrolls inside its pill instead of pushing the plan over the side bar (#67) */
+  .nf-toolbar .nf-seg {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nf-toolbar .nf-seg > button {
+    flex: none;
   }
   .nf-toolbar {
     display: flex;

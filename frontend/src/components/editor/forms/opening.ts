@@ -150,6 +150,7 @@ function blindFields(host: EditorHost, o: Opening, actions: OpeningActions, list
           ? html`${selectField(host, t("blind_kind"), o.blind ?? "roller", [["roller", t("blind_roller")], ["venetian", t("blind_venetian")], ["inside", t("blind_inside")]], (v) => actions.update({ blind: v === "roller" ? null : (v as Opening["blind"]) }))}
             ${entityField(host, t("cover2_entity"), o.cover2 ?? null, undefined, lists.covers, (v) => actions.update({ cover2: noneAsNull(v) }))}`
           : nothing}
+        ${!window && o.type !== "garage" ? entityField(host, t("cover2_entity"), o.cover2 ?? null, undefined, lists.covers, (v) => actions.update({ cover2: noneAsNull(v) })) : nothing}
         ${numberField(host, t("cover_my"), o.my_position ?? 0, (v) => actions.update({ my_position: v > 0 ? Math.min(100, Math.round(v)) : null }), 5, 0)}
         ${hint(t("blind_hint"), "nf-wide")}`
       : nothing}`;

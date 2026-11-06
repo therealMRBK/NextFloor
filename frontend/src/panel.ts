@@ -244,7 +244,9 @@ export class NextFloorPanel extends LitElement {
   }
 
   private readonly onKey = (e: KeyboardEvent) => {
-    if (e.key === "Escape" && this._mode === "view") this.back();
+    if (e.key !== "Escape" || this._mode !== "view") return;
+    if (this._prefs.clean) this.setPref("clean", false);
+    else this.back();
   };
 
   connectedCallback(): void {

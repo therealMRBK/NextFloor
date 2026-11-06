@@ -159,6 +159,7 @@ export class NfView3d extends LitElement {
     _low: { state: true },
     _narrowStage: { state: true },
     _shortStage: { state: true },
+    _phoneStage: { state: true },
     _alerts: { state: true },
     _sceneFired: { state: true },
   };
@@ -298,6 +299,8 @@ export class NfView3d extends LitElement {
   private declare _narrowStage: boolean;
   /** The stage is low (a small card): the floor pictures leave room for the buttons below them. */
   private declare _shortStage: boolean;
+  /** The stage is as narrow as a phone held upright: the floor pictures step aside, the floor tabs above do the job (#70). */
+  private declare _phoneStage: boolean;
   private stopPlugins: (() => void) | null = null;
   private pluginsDirty = false;
   private resizeObs: ResizeObserver | null = null;
@@ -460,6 +463,7 @@ export class NfView3d extends LitElement {
     this.panelOpen = false;
     this._narrowStage = false;
     this._shortStage = false;
+    this._phoneStage = false;
     this.alerts = true;
     this.alertJump = false;
     this.announcements = false;
@@ -528,6 +532,8 @@ export class NfView3d extends LitElement {
       const narrow = (rect?.width ?? 1000) < 700 || (rect?.height ?? 1000) < SHORT_STAGE;
       const short = (rect?.height ?? 1000) < SHORT_STAGE;
       if (short !== this._shortStage) this._shortStage = short;
+      const phone = (rect?.width ?? 1000) < 520;
+      if (phone !== this._phoneStage) this._phoneStage = phone;
       if (narrow === this._narrowStage) return;
       this._narrowStage = narrow;
       this.scheduleThumbs();
@@ -616,6 +622,11 @@ export class NfView3d extends LitElement {
     // the star menu closes when a room or another floor is chosen (#220)
     if (this._central && !this.centralOpen && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
     if (changed.has("centralOpen") && this.centralOpen) this._central = true;
+    // before the viewer exists: the card loads it late and `clock` does not change again, so the clock never ticked (#68)
+    if (changed.has("clock")) {
+      clearInterval(this.clockTimer);
+      this.clockTimer = this.clock ? setInterval(() => (this._now = Date.now()), 10000) : undefined;
+    }
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture
@@ -648,7 +659,7 @@ export class NfView3d extends LitElement {
     this.pluginsDirty = false;
     if (forced || changed.has("hass")) this.syncDevices(forced);
     if (changed.has("autoOrbit")) v.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
-    if (changed.has("_thumbs") || changed.has("_narrowStage")) v.setLabelInset(this._thumbs.length ? (this.narrowThumbs ? 136 : 184) : 0);
+    if (changed.has("_thumbs") || changed.has("_narrowStage") || changed.has("_phoneStage")) v.setLabelInset(this._thumbs.length && !this._phoneStage ? (this.narrowThumbs ? 136 : 184) : 0);
     if (changed.has("floorId")) v.setFloor(this.floorId);
     if (changed.has("roomId") && (this.roomId || changed.get("roomId"))) v.selectRoom(this.roomId);
     if (changed.has("tapInRoom")) v.setTapInRoom(this.tapInRoom);
@@ -662,10 +673,6 @@ export class NfView3d extends LitElement {
     if (changed.has("floorStack")) v.setFloorStack(this.floorStack);
     if (changed.has("theme")) v.setTheme(this.theme);
     if (changed.has("_locked")) v.setNavigationLocked(this._locked);
-    if (changed.has("clock")) {
-      clearInterval(this.clockTimer);
-      this.clockTimer = this.clock ? setInterval(() => (this._now = Date.now()), 10000) : undefined;
-    }
     if (changed.has("accent")) v.setAccent(this.accent ?? null);
     if (changed.has("surfaceGrab")) v.setSurfaceGrab(this.surfaceGrab ?? null);
     if (changed.has("furnishTypes")) v.setFurnishTypes(this.furnishTypes ?? null);
@@ -1622,7 +1629,7 @@ export class NfView3d extends LitElement {
   }
 
   private renderThumbs() {
-    if (!this._thumbs.length || !this.building) return nothing;
+    if (!this._thumbs.length || !this.building || this._phoneStage) return nothing;
     const names = new Map(this.building.floors.map((f) => [f.id, f.name]));
     // the highest floor on top
     const order = [...this._thumbs].sort(
@@ -3518,8 +3525,12 @@ export class NfView3d extends LitElement {
         cursor: pointer;
         z-index: 4;
       }
+      /* in the clean view the button sits at the top: a tablet's taskbar or gesture bar covers the bottom edge and the button was lost there (#75) */
       .nf-eye-clean {
-        left: 12px;
+        left: auto;
+        bottom: auto;
+        right: calc(12px + env(safe-area-inset-right, 0px));
+        top: calc(12px + env(safe-area-inset-top, 0px));
         opacity: 0.55;
       }
       .nf-eye:hover,

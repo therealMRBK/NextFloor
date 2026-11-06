@@ -424,6 +424,24 @@ export const panelStyles = css`
   .nf-overlay > * {
     pointer-events: auto;
   }
+  /* phones: one row along the bottom that scrolls sideways (a fade shows there is more), instead of a narrow column that spills over the picture (#70) */
+  @container nf (max-width: 700px) {
+    .nf-overlay {
+      left: 12px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding-right: 28px;
+      pointer-events: auto;
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+    .nf-overlay > * {
+      flex: none;
+    }
+  }
   .nf-quality button {
     padding: 5px 11px;
     min-height: 30px;

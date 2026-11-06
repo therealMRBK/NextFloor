@@ -4,13 +4,18 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## Unreleased
 
+### Fixed
+
+- **Close gaps no longer puts corners into straight walls** (thanks @Dragi2k, #65): a wall that consists of several edges in a row (for example with a point in the middle of it) is now moved as one wall. Before, each part moved to its own neighbour, so a corner appeared in the wall that was not there before.
+- **Clean view on a tablet** (thanks @Melles96, #75): the eye button that brings the controls back now sits at the top edge, so a tablet's taskbar or gesture bar can no longer cover it. *Esc* brings the controls back as well.
+- **Phones held upright** (thanks @Duell10111, #70): the floor pictures step aside (the floor tabs above do their job), and the row of view switches along the bottom is one row that scrolls sideways, with a fade at its edge, instead of a column that spilled over the floor cards and the star.
+- **Editor side bar covered** (thanks @marcelgschwendtner, #67): a row of tools wider than the plan no longer pushes the plan over the side bar; the row scrolls inside its pill.
+- **Second blind on a door** (thanks @tfischer84, #79): a sliding door can now have a second blind for its right half, as a window can.
+- **Clock on the card** (thanks @HA-Luz, #68): the clock now keeps ticking; it only moved when the view was reloaded.
+
 ### Added
 
 - **Sanitary pack VIGOUR derby** (thanks @huepfer13, #63): a wall-hung WC, a urinal, a 60 cm washbasin, a paper towel dispenser and a soap dispenser in the sizes of the VIGOUR derby series. That makes 41 furniture packs.
-
-### Fixed
-
-- **Close gaps no longer puts corners into straight walls** (#65): a wall that consists of several edges in a row (for example with a point in the middle of it) is now moved as one wall. Before, each part moved to its own neighbour, so a corner appeared in the wall that was not there before.
 
 ## 0.24.0
 
