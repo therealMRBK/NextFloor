@@ -1679,6 +1679,7 @@
   "climate_humidity": "Humedad",
   "climate_co2": "CO₂",
   "climate_hint": "Estos sensores cuentan para el mapa de calor y el panel de la estancia. «Automático» toma los sensores del área y los colocados en la estancia, pero no las temperaturas de dispositivos (impresora 3D, bomba de calor, impulsión …).",
+  "climate_more": "… y otro sensor (promedio)",
   "plan_locked": "Plano bloqueado",
   "plan_lock": "Bloquear el plano",
   "plan_unlock": "Desbloquear el plano",

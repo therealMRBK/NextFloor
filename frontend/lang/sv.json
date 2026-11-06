@@ -1679,6 +1679,7 @@
   "climate_humidity": "Luftfuktighet",
   "climate_co2": "CO₂",
   "climate_hint": "De här sensorerna gäller för värmekartan och rumspanelen. ”Automatiskt” tar områdets sensorer och de som placerats i rummet, men inga enhetstemperaturer (3D-skrivare, värmepump, framledning …).",
+  "climate_more": "… och en sensor till (medelvärde)",
   "plan_locked": "Planritningen låst",
   "plan_lock": "Lås planritningen",
   "plan_unlock": "Lås upp planritningen",

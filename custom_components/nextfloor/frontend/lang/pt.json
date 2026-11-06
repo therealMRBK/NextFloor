@@ -1679,6 +1679,7 @@
   "climate_humidity": "Humidade",
   "climate_co2": "CO₂",
   "climate_hint": "Estes sensores contam para o mapa de calor e o painel da divisão. «Automático» usa os sensores da área e os colocados na divisão, mas não temperaturas de dispositivos (impressora 3D, bomba de calor, ida …).",
+  "climate_more": "… e outro sensor (média)",
   "plan_locked": "Planta bloqueada",
   "plan_lock": "Bloquear a planta",
   "plan_unlock": "Desbloquear a planta",

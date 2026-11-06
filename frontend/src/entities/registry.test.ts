@@ -126,6 +126,7 @@ test("a room's climate: automatic from the area, or a chosen sensor, or none", (
   assert.equal(roomClimateValue(hass, null, room, "co2"), null);
   assert.deepEqual(roomClimateSensors(hass, null, { ...room, climate: { temperature: "sensor.chosen" } }, "temperature"), ["sensor.chosen"]);
   assert.deepEqual(roomClimateSensors(hass, null, { ...room, climate: { temperature: "none" } }, "temperature"), []);
+  assert.deepEqual(roomClimateSensors(hass, null, { ...room, climate: { temperature: ["sensor.t1", "sensor.chosen", "sensor.gone"] } }, "temperature"), ["sensor.t1", "sensor.chosen"], "several chosen sensors are all read");
 });
 
 test("a sensor of the area placed in another room counts there, one placed inside counts here", () => {

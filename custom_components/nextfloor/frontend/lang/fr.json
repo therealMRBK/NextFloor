@@ -1634,6 +1634,7 @@
  "climate_humidity": "Humidité",
  "climate_co2": "CO₂",
  "climate_hint": "Ces capteurs servent à la carte de chaleur et au panneau de la pièce. « Automatique » prend les capteurs de la zone et ceux placés dans la pièce, mais pas les températures d'appareils (imprimante 3D, pompe à chaleur, départ …).",
+ "climate_more": "… et un autre capteur (moyenne)",
  "plan_locked": "Plan verrouillé",
  "plan_lock": "Verrouiller le plan",
  "plan_unlock": "Déverrouiller le plan",

@@ -1679,6 +1679,7 @@
   "climate_humidity": "Vlhkost",
   "climate_co2": "CO₂",
   "climate_hint": "Tyto snímače se počítají pro tepelnou mapu a panel místnosti. „Automaticky“ přebírá snímače oblasti a umístěné v místnosti, ale nikoli teploty zařízení (3D tiskárna, tepelné čerpadlo, napájení …).",
+  "climate_more": "… a další snímač (průměr)",
   "plan_locked": "Plán zamknut",
   "plan_lock": "Zamknout plán",
   "plan_unlock": "Odemknout plán",

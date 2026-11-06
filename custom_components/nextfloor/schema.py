@@ -24,6 +24,8 @@ _POINT = vol.All([_COORD], vol.Length(min=2, max=2))
 _ENTITY_REF = vol.Any(None, vol.All(str, vol.Length(max=255)))
 
 _SENSOR_REF = vol.Any(None, vol.All(str, vol.Length(max=255)))
+# a room's climate value may average several sensors
+_SENSOR_REFS = vol.Any(_SENSOR_REF, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12)))
 
 # a camera to open with: angles, distance and (optional) the point it looks at; for a floor or a room the
 # point's height is counted from that floor
@@ -47,9 +49,9 @@ ROOM_SCHEMA = vol.Schema(
         vol.Optional("climate", default=None): vol.Any(
             None,
             {
-                vol.Optional("temperature", default=None): _SENSOR_REF,
-                vol.Optional("humidity", default=None): _SENSOR_REF,
-                vol.Optional("co2", default=None): _SENSOR_REF,
+                vol.Optional("temperature", default=None): _SENSOR_REFS,
+                vol.Optional("humidity", default=None): _SENSOR_REFS,
+                vol.Optional("co2", default=None): _SENSOR_REFS,
             },
         ),
         vol.Required("id"): _ID,

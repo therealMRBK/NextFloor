@@ -239,7 +239,8 @@ export function isRoomClimateSensor(hass: HomeAssistant, entityId: string): bool
 export function roomClimateSensors(hass: HomeAssistant, floor: Floor | null, room: Room, key: ClimateKey): string[] {
   const chosen = room.climate?.[key];
   if (chosen === "none") return [];
-  if (chosen) return hass.states[chosen] ? [chosen] : [];
+  // one sensor, or several that are averaged
+  if (chosen) return [chosen].flat().filter((id) => hass.states[id]);
   const placedSensors = (floor?.placements ?? []).filter((p) => p.entity_id.startsWith("sensor."));
   const inside = placedSensors.filter((p) => pointInPolygon([p.x, p.z], room.points)).map((p) => p.entity_id);
   const insideElsewhere = new Set(placedSensors.filter((p) => !pointInPolygon([p.x, p.z], room.points)).map((p) => p.entity_id));

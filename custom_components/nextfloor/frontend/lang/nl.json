@@ -1679,6 +1679,7 @@
   "climate_humidity": "Luchtvochtigheid",
   "climate_co2": "CO₂",
   "climate_hint": "Deze sensoren tellen voor de heatmap en het ruimtepaneel. „Automatisch” neemt de sensoren van het gebied en die in de ruimte geplaatst zijn, maar geen apparaattemperaturen (3D-printer, warmtepomp, aanvoer …).",
+  "climate_more": "… en nog een sensor (gemiddelde)",
   "plan_locked": "Plattegrond vergrendeld",
   "plan_lock": "Plattegrond vergrendelen",
   "plan_unlock": "Plattegrond ontgrendelen",

@@ -1679,6 +1679,7 @@
   "climate_humidity": "Umidità",
   "climate_co2": "CO₂",
   "climate_hint": "Questi sensori valgono per la mappa di calore e il pannello della stanza. «Automatico» prende i sensori dell'area e quelli posizionati nella stanza, ma non le temperature dei dispositivi (stampante 3D, pompa di calore, mandata …).",
+  "climate_more": "… e un altro sensore (media)",
   "plan_locked": "Planimetria bloccata",
   "plan_lock": "Blocca la planimetria",
   "plan_unlock": "Sblocca la planimetria",

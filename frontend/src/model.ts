@@ -12,9 +12,9 @@ export type Vec2 = [number, number];
 
 /** Sensors a room's climate is read from (null = automatic, "none" = no value). */
 export interface RoomClimate {
-  temperature?: string | null;
-  humidity?: string | null;
-  co2?: string | null;
+  temperature?: string | string[] | null;
+  humidity?: string | string[] | null;
+  co2?: string | string[] | null;
 }
 
 /** A wall height on a room edge, or one per part of a split edge. */

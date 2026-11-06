@@ -1679,6 +1679,7 @@
   "climate_humidity": "Wilgotność",
   "climate_co2": "CO₂",
   "climate_hint": "Te czujniki liczą się dla mapy ciepła i panelu pomieszczenia. „Automatycznie” bierze czujniki obszaru i umieszczone w pomieszczeniu, ale nie temperatury urządzeń (drukarka 3D, pompa ciepła, zasilanie …).",
+  "climate_more": "… i kolejny czujnik (średnia)",
   "plan_locked": "Plan zablokowany",
   "plan_lock": "Zablokuj plan",
   "plan_unlock": "Odblokuj plan",

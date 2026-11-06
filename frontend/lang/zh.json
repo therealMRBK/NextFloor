@@ -1045,6 +1045,7 @@
  "climate_humidity": "湿度",
  "climate_co2": "CO₂",
  "climate_hint": "这些传感器用于热力图和房间面板。“自动”使用该区域的传感器以及放置在房间中的传感器，但不包括设备温度（3D 打印机、热泵、供水…）。",
+ "climate_more": "…再加一个传感器（取平均值）",
  "plan_locked": "平面图已锁定",
  "plan_lock": "锁定平面图",
  "plan_unlock": "解锁平面图",

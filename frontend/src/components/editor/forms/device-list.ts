@@ -127,7 +127,7 @@ export function renderRoomClimate(host: EditorHost, room: Room, patch: (patch: P
   const { hass } = host;
   if (!hass) return nothing;
   const chosen = !!room.climate && Object.values(room.climate).some((x) => x != null);
-  const change = (key: ClimateKey, value: string | null) => {
+  const change = (key: ClimateKey, value: string | string[] | null) => {
     const next = { ...(room.climate ?? {}), [key]: value };
     patch({ climate: Object.values(next).every((x) => x == null) ? null : next });
   };
@@ -136,7 +136,15 @@ export function renderRoomClimate(host: EditorHost, room: Room, patch: (patch: P
     const wanted = entityOptions(hass, (id) => isNumeric(id) && hass.states[id]?.attributes.device_class === CLIMATE_CLASSES[key]);
     // the room's own sensors first, then the others; device temperatures (a printer, a heat pump) come last
     const options = rankedBy(wanted, (id) => (entityAreaId(hass, id) === room.area_id ? 0 : 1) + (isRoomClimateSensor(hass, id) ? 0 : 2));
-    return entityField(host, label, room.climate?.[key] ?? null, found[0] ?? null, options, (v) => change(key, v));
+    const picked = [room.climate?.[key] ?? null].flat();
+    // several sensors are averaged: once one is chosen, another can be added; "none" in a slot drops it
+    const save = (list: (string | null)[]) => {
+      const ids = list.filter((id): id is string => !!id && id !== "none");
+      change(key, list[0] === "none" ? "none" : ids.length > 1 ? ids : (ids[0] ?? null));
+    };
+    const real = picked[0] && picked[0] !== "none";
+    const slots = real ? [...picked, null] : picked;
+    return slots.map((id, i) => entityField(host, i ? host.t("climate_more") : label, id, i ? undefined : (found[0] ?? null), options, (v) => save(slots.map((x, j) => (j === i ? v : x)))));
   };
   return html`<details class="nf-points" ?open=${chosen}>
     <summary>${host.t("climate")}</summary>
