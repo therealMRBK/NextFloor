@@ -97,8 +97,8 @@ test("a game names the account that plays: the device's name, the user's own nam
   hass.devices = { a: { id: "a", name: "Gamertag" }, b: { id: "b", name: "Other" } } as never;
   assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "Gamertag");
   assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => s.subtitle), ["Gamertag"]);
-  hass.devices = { a: { id: "a", name: "Gamertag", name_by_user: "Luca" } } as never;
-  assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "Luca");
+  hass.devices = { a: { id: "a", name: "Gamertag", name_by_user: "Own name" } } as never;
+  assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "Own name");
   hass.devices = {};
   assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "");
 });
