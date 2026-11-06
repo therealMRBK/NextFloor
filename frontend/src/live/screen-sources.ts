@@ -6,6 +6,8 @@
 import { deviceSiblings } from "../devices.ts";
 import type { Furniture } from "../model.ts";
 import type { HomeAssistant } from "../types.ts";
+import type { PlanPoint } from "../viewer/live-energy.ts";
+import { appColor, type MediaNow } from "./media.ts";
 
 const NOT_ON = ["off", "standby", "unavailable", "unknown"];
 const NO_TEXT = ["unavailable", "unknown", ""];
@@ -46,6 +48,12 @@ export function gameOnScreen(hass: HomeAssistant, f: Furniture): { title: string
   const artId = artOf(hass, account);
   const picture = artId ? hass.states[artId].attributes.entity_picture : null;
   return { title: NO_TEXT.includes(title) ? "" : title, picture: typeof picture === "string" && picture ? picture : null };
+}
+
+/** The game on a screen, for its card above the screen; it has no player of its own, so the card goes by the screen's id. */
+export function gameNow(hass: HomeAssistant, f: Furniture, name: string, at: PlanPoint): MediaNow | null {
+  const game = screenDeviceOn(hass, f) ? gameOnScreen(hass, f) : null;
+  return game && { entity: f.id, name, at, playing: true, title: game.title, artist: "", picture: game.picture, volume: null, color: appColor(null), app: null, group: [], rings: f.sound_rings ?? 1, game: true };
 }
 
 /** The entities a screen's picture follows. */

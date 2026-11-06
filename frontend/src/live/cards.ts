@@ -225,26 +225,28 @@ function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act
   const btn = (label: string, icon: string, service: string) =>
     html`<button class="live-btn" title=${label} aria-label=${label} @click=${(ev: Event) => (ev.stopPropagation(), act("media_player", service, m.entity))}>${icon}</button>`;
   // compact (cover and title); a tap opens the controls
-  return html`<div class="live-card live-card-media" data-i=${i} style=${`--live-soc:${color}`} @click=${(ev: Event) => (ev.currentTarget as HTMLElement).classList.toggle("live-open")}>
+  return html`<div class="live-card live-card-media" data-i=${i} style=${`--live-soc:${color}`} @click=${m.game ? nothing : (ev: Event) => (ev.currentTarget as HTMLElement).classList.toggle("live-open")}>
     ${m.picture ? html`<img class="live-cover" src=${m.picture} alt="" loading="lazy" />` : html`<div class="live-cover live-cover-none">♪</div>`}
     <div class="live-rows">
       <div class="live-title" title=${m.title}>${m.title || m.name}</div>
       <div class="live-status">${m.artist || m.app || m.name}</div>
-      <div class="live-actions">
-        ${btn(t("live_media_prev"), "⏮", "media_previous_track")} ${btn(t("live_media_playpause"), "⏯", "media_play_pause")} ${btn(t("live_media_next"), "⏭", "media_next_track")}
-        ${m.volume !== null
-          ? html`<input
-              class="live-volume"
-              type="range"
-              min="0"
-              max="100"
-              .value=${String(Math.round(m.volume * 100))}
-              aria-label=${t("live_media_volume")}
-              @click=${(ev: Event) => ev.stopPropagation()}
-              @change=${(ev: Event) => act("media_player", "volume_set", m.entity, { volume_level: Number((ev.target as HTMLInputElement).value) / 100 })}
-            />`
-          : nothing}
-      </div>
+      ${m.game
+        ? nothing
+        : html`<div class="live-actions">
+            ${btn(t("live_media_prev"), "⏮", "media_previous_track")} ${btn(t("live_media_playpause"), "⏯", "media_play_pause")} ${btn(t("live_media_next"), "⏭", "media_next_track")}
+            ${m.volume !== null
+              ? html`<input
+                  class="live-volume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  .value=${String(Math.round(m.volume * 100))}
+                  aria-label=${t("live_media_volume")}
+                  @click=${(ev: Event) => ev.stopPropagation()}
+                  @change=${(ev: Event) => act("media_player", "volume_set", m.entity, { volume_level: Number((ev.target as HTMLInputElement).value) / 100 })}
+                />`
+              : nothing}
+          </div>`}
     </div>
   </div>`;
 }

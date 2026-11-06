@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, entity, floorWith, hassOf } from "../../entities/fixtures.ts";
 import type { Building, Furniture } from "../../model.ts";
+import { gameNow } from "../../live/screen-sources.ts";
 import { liveScreens, readSun, roofWindowStates, skyLightness } from "./live-inputs.ts";
 
 const tv = (extra: Partial<Furniture> = {}): Furniture => ({ id: "tv", type: "tv_board", x: 2, z: 2, rotation: 0, w: 1.4, d: 0.4, h: 0.5, variant: null, ...extra });
@@ -79,6 +80,15 @@ test("a game without a title or art still shows, with what is known", () => {
   delete hass.states["image.a_hero"];
   delete hass.states["image.a_square"];
   assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => [s.title, s.picture]), [["", null]]);
+});
+
+test("a game on a screen makes a card without a player's controls, only while the console is on", () => {
+  const at = { floorId: "g", x: 2, z: 2, y: 1 };
+  const card = gameNow(xboxHass("on", "a"), monitor(), "Monitor", at);
+  assert.deepEqual([card?.entity, card?.title, card?.picture, card?.playing, card?.game, card?.name], ["tv", "Halo", "/a-hero", true, true, "Monitor"]);
+  assert.equal(gameNow(xboxHass("off", "a"), monitor(), "Monitor", at), null, "console off");
+  assert.equal(gameNow(xboxHass("on", null), monitor(), "Monitor", at), null, "nobody plays");
+  assert.equal(gameNow(xboxHass("on", "a"), tv(), "TV", at), null, "a plain TV has no game");
 });
 
 test("a roof window motor sets the sash by its position, or open and closed by its state", () => {

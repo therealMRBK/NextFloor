@@ -21,6 +21,8 @@ export interface MediaNow {
   group: string[];
   /** Size of its sound rings (1 = as usual, 0 = none). */
   rings: number;
+  /** A game on a monitor: nothing here can control it, so its card has no buttons. */
+  game?: boolean;
 }
 
 /** App colours: the ring around a speaker and the card's edge take the colour of what plays. */
