@@ -91,6 +91,18 @@ test("a game on a screen makes a card without a player's controls, only while th
   assert.equal(gameNow(xboxHass("on", "a"), tv(), "TV", at), null, "a plain TV has no game");
 });
 
+test("a game names the account that plays: the device's name, the user's own name first, nothing without a device", () => {
+  const at = { floorId: "g", x: 2, z: 2, y: 1 };
+  const hass = xboxHass("on", "a");
+  hass.devices = { a: { id: "a", name: "Gamertag" }, b: { id: "b", name: "Other" } } as never;
+  assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "Gamertag");
+  assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => s.subtitle), ["Gamertag"]);
+  hass.devices = { a: { id: "a", name: "Gamertag", name_by_user: "Luca" } } as never;
+  assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "Luca");
+  hass.devices = {};
+  assert.equal(gameNow(hass, monitor(), "Monitor", at)?.artist, "");
+});
+
 test("a roof window motor sets the sash by its position, or open and closed by its state", () => {
   const windows = [{ id: "a", face: "main:a", u: 0, v: 0, window: "cover.motor" }, { id: "b", face: "main:a", u: 0, v: 0, window: "cover.plain" }, { id: "c", face: "main:a", u: 0, v: 0, window: "none" }];
   const hass = hassOf([entity("cover.motor", "open", { current_position: 40 }), entity("cover.plain", "opening")]);

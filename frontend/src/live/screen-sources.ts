@@ -39,21 +39,28 @@ export function screenDeviceOn(hass: HomeAssistant, f: Furniture): boolean {
   return !!st && !NOT_ON.includes(st.state);
 }
 
+/** Who plays: the name of the account's device, which is the gamertag unless it was renamed. */
+function accountName(hass: HomeAssistant, account: string): string {
+  const id = hass.entities?.[account]?.device_id;
+  const device = id ? hass.devices?.[id] : undefined;
+  return device?.name_by_user || device?.name || "";
+}
+
 /** The game of the first of a screen's accounts that is in game. */
-export function gameOnScreen(hass: HomeAssistant, f: Furniture): { title: string; picture: string | null } | null {
+export function gameOnScreen(hass: HomeAssistant, f: Furniture): { title: string; picture: string | null; player: string } | null {
   const account = (f.screen_sources ?? []).find((id) => hass.states[id]?.state === "on");
   if (!account) return null;
   const titleId = titleOf(hass, account);
   const title = titleId ? hass.states[titleId].state : "";
   const artId = artOf(hass, account);
   const picture = artId ? hass.states[artId].attributes.entity_picture : null;
-  return { title: NO_TEXT.includes(title) ? "" : title, picture: typeof picture === "string" && picture ? picture : null };
+  return { title: NO_TEXT.includes(title) ? "" : title, picture: typeof picture === "string" && picture ? picture : null, player: accountName(hass, account) };
 }
 
 /** The game on a screen, for its card above the screen; it has no player of its own, so the card goes by the screen's id. */
 export function gameNow(hass: HomeAssistant, f: Furniture, name: string, at: PlanPoint): MediaNow | null {
   const game = screenDeviceOn(hass, f) ? gameOnScreen(hass, f) : null;
-  return game && { entity: f.id, name, at, playing: true, title: game.title, artist: "", picture: game.picture, volume: null, color: appColor(null), app: null, group: [], rings: f.sound_rings ?? 1, game: true };
+  return game && { entity: f.id, name, at, playing: true, title: game.title, artist: game.player, picture: game.picture, volume: null, color: appColor(null), app: null, group: [], rings: f.sound_rings ?? 1, game: true };
 }
 
 /** The entities a screen's picture follows. */
