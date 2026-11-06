@@ -61,7 +61,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 | 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours or days. |
 | 🖥️ **Wall tablet ready** | Kiosk mode with night dimming, the star menu open and large, zoom and a kept camera for small screens, **quality that steps down by itself** on slow tablets, an **easy-to-read** mode with stronger contrast and larger text. |
 | 🎨 **Fits your theme** | Colours, font and corner radius from Home Assistant; looks *Neon*, *Blueprint*, *Day*, solid painted walls. |
-| 🧩 **Card, plugins, languages** | `custom:nextfloor-card` with a visual editor, a plugin system with its own store, and ten languages (now with Simplified Chinese). |
+| 🧩 **Card, plugins, languages** | `custom:nextfloor-card` with a visual editor, a plugin system with its own store, and eleven languages (now with Czech). |
 | 🪑 **Build your own** | The **🛠️ furniture studio right in the editor** (cabinets with doors and drawers, shelves, lamps, devices with a display), the [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) and a community store, own `.glb` models, Sweet Home 3D and DXF import, a plan format an AI can write – and **share a view** of your house as a file that opens in any browser. |
 
 <p align="center"><img src="https://raw.githubusercontent.com/therealMRBK/NextFloor/main/docs/images/new-0-22.jpg" width="900" alt="New in 0.22: the furniture studio in the editor, the heat map by hours of sun with the room panel, the plan check, and the plan on paper with living areas"></p>

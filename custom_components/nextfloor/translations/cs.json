@@ -1,0 +1,76 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Přidá stránku na postranní panel, na které si nakreslíte svůj dům a uvidíte ho ve 3D."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor je již nakonfigurován."
+    }
+  },
+  "services": {
+    "announce": {
+      "name": "Oznámení",
+      "description": "Přečte zprávu v místnostech plánu (každou přes její vlastní reproduktor) a zároveň ji zobrazí a přečte na každé otevřené obrazovce NextFloor.",
+      "fields": {
+        "message": {
+          "name": "Zpráva",
+          "description": "Co má být řečeno."
+        },
+        "rooms": {
+          "name": "Místnosti",
+          "description": "Místnosti podle názvu, ID místnosti nebo ID oblasti. Prázdné: každá místnost s reproduktorem (místnosti v době nočního klidu/ticha jsou vynechány)."
+        },
+        "floor": {
+          "name": "Podlaží",
+          "description": "Pouze místnosti tohoto podlaží (název nebo ID)."
+        },
+        "on_speakers": {
+          "name": "Na reproduktorech",
+          "description": "Hlásit v místnostech."
+        },
+        "on_screens": {
+          "name": "Na obrazovkách",
+          "description": "Zobrazit a přečíst na otevřených obrazovkách NextFloor."
+        },
+        "screens": {
+          "name": "Pouze tyto obrazovky",
+          "description": "Názvy obrazovek NextFloor (nastavené na každé obrazovce). Prázdné: všechny."
+        },
+        "tts_entity": {
+          "name": "Převod textu na řeč (TTS)",
+          "description": "Místo vybrané v plánu nebo první dostupné."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Žádná místnost v plánu neodpovídá zadaným parametrům."
+    },
+    "no_tts": {
+      "message": "Žádný reproduktor nemohl zprávu přečíst: nakonfigurujte v Home Assistant entitu převodu textu na řeč."
+    },
+    "not_loaded": {
+      "message": "NextFloor není nakonfigurován."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "floor_open": {
+        "name": "{floor}: otevřená okna a dveře"
+      },
+      "floor_lights_on": {
+        "name": "{floor}: rozsvícená světla"
+      },
+      "house_open": {
+        "name": "Otevřená okna a dveře"
+      },
+      "house_lights_on": {
+        "name": "Rozsvícená světla"
+      }
+    }
+  }
+}

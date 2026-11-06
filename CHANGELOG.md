@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## Unreleased
+
+### Added
+
+- **Czech** (thanks @MiraK-2000, #76): the whole interface, the setup and the announcement action in Czech. That makes eleven languages.
+
 ## 0.25.0
 
 ### Fixed
