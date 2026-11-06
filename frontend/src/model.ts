@@ -617,6 +617,12 @@ export interface BuildingSettings {
   lock_plan?: boolean;
   /** The camera the house view opens with (3D view, card, kiosk); null = fitted from the front left. */
   start_view?: StartView | null;
+  /**
+   * A robot vacuum's own map, tied to the plan: two places known in both the plan (m) and the robot's
+   * map grid. Without it the robot's trail and pose cannot be placed, and the 3D view keeps the lanes
+   * it invents for the room (see live/vacuum-map.ts).
+   */
+  vacuum_map?: VacuumCalibration | null;
   /** A real map under the plan (null = none). */
   map?: MapSettings | null;
   /** How lengths and areas are shown in the editor: metres or feet and inches (inputs stay in metres). */
@@ -648,6 +654,23 @@ export interface BuildingSettings {
   backdrop?: { color?: string | null; image?: string | null; dim?: number | null } | null;
   /** Plugin modules to load (Extensions page); see docs/plugins.md. */
   plugins?: PluginRef[];
+}
+
+/** Two places, each known in the plan (m) and in a robot's map grid. */
+export interface VacuumCalibration {
+  /** Plan position of the first place. */
+  a: [number, number];
+  /** The robot's grid position there. */
+  ga: [number, number];
+  /** Plan position of the second place. */
+  b: [number, number];
+  /** The robot's grid position there. */
+  gb: [number, number];
+  /**
+   * The robot's grid runs the other way round than the plan does: its y grows along plan -z. Two places
+   * cannot tell a mirror from a turn (both put them exactly where they belong), so it has to be stated.
+   */
+  mirror?: boolean;
 }
 
 /** A real map as the base of the plan: the plan point (x, z in metres) that lies at lat / lon, turned by the plan's north. */

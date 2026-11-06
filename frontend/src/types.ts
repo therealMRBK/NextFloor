@@ -41,6 +41,8 @@ export interface HassEntity {
   state: string;
   attributes: Record<string, unknown>;
   last_changed?: string;
+  /** Last time the state or any attribute changed: a map camera's attributes only move when it renders. */
+  last_updated?: string;
 }
 
 export interface HassConnection {

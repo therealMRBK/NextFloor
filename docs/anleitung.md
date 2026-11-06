@@ -168,6 +168,19 @@ Eingebaut und kostenlos; sie brauchen nur die Geräte, die du schon hast.
 - **Auto:** eine Karte über dem Stellplatz mit Ladering, Reichweite, Ladeleistung, Stecker, Innentemperatur und Knöpfen für Schloss, Klima und Laden. Unterwegs sagt sie, wie weit es von zu Hause ist; sie zeigt die Abfahrtszeit und warnt vor offenen Türen und Klappen; an einer Wallbox eingesteckt hängt es am Kabel.
 - **Energie:** Die Hauskarte zeigt die letzten sieben Tage als Balken und steht auch über der geöffneten Etage; ein Hausspeicher zeigt seinen Ladestand an der Front.
 - **Alles aus:** *⏻ Alles aus* im Raum-Panel, oder *⏻* in der Leiste oben für die offene Etage, schaltet Lichter, Schalter, Ventilatoren und Medien aus. *↶ Rückgängig* holt zehn Sekunden lang alles zurück.
+- **Saugroboter:** Ein `robot_vacuum` im Plan fuhr bisher Spuren, die die Ansicht selbst im gemeldeten Raum erfunden hat. Legt die Integration des Roboters ihre Karte auf eine Kamera (`vacuum_position`, `charger`, `path`, wie die Kartenkarte von NarwalIntegration), zeigt sie die Wahrheit: Der Roboter steht, wo er sich meldet, blickt, wohin er blickt, und der Boden behält die Spur, die er wirklich gefahren ist. Die Station steht, wo der Roboter sie meldet. Siehe *Saugroboter im Plan* unten.
+
+### Saugroboter im Plan
+
+Die Kamera findet sich selbst — jede `camera`, deren Attribute `vacuum_position` tragen, genügt; es muss nichts ausgewählt werden. Was die Ansicht nicht wissen kann, ist, wie das Raster des Roboters auf dem Plan liegt: Der Roboter zählt in eigenen Zellen, der Plan in Metern.
+
+Wähle im Plan die Station des Roboters und drücke *Von der jetzigen Position des Roboters kalibrieren*: Lass den Roboter mindestens 1,5 m wegfahren und tippe ihn dann im Plan an, wo er steht. Die Station ist der Anker — der Plan weiß, wo sie steht, die Kamera weiß, wo sie und der Roboter in ihrem Raster liegen —, also genügt ein Tipp, und alles Weitere (Position, Blickrichtung, Spur, Station) folgt.
+
+Zwei Orte können eine Spiegelung nicht von einer Drehung unterscheiden, weil beide sie genau dorthin bringen, wo sie hingehören; läuft die y-Achse der Karte entlang Plan −z, braucht es den Haken *gespiegelt*, sonst kommen die Räume verkehrt heraus. Die zwei Orte liegen als `settings.vacuum_map` (`a`/`ga` und `b`/`gb`, dazu `mirror`); ohne sie zeichnet die Ansicht weiter ihre erfundenen Spuren.
+
+Die Spur ist so fein, wie die Integration sie sendet: Eine Kartenkarte, die ihren `path` auf wenige hundert Punkte kürzt, ergibt eine grobe Spur, eine mit mehr Punkten eine feinere.
+
+Zehn Minuten nachdem der Roboter andockt, blendet die Spur aus; der Boden behält also nicht die Reinigung von gestern. Die Zeitreise (⏪) ist der Ort, an dem eine fertige Reinigung bleibt, und sie hält den ganzen Tag.\n\nDiese Attributnamen stammen von der Vacuum-Map-Card, nicht von einer Marke: Die Xiaomi-Kartenextraktoren (Roborock, Viomi, Roidmi, Dreame, Ijai), die Roborock-Integration und NarwalIntegration liefern sie alle, und ein Gerät, das in Millimetern statt in Kartenzellen meldet, funktioniert genauso — den Maßstab geben die zwei Orte. Die Integration muss sie allerdings als Attribute bereitstellen; manche tun das nur auf Ansage (die Kartenextraktoren wollen `vacuum_position` und `path` in ihrer `attributes:`-Liste).
 
 ## Im Haus unterwegs
 

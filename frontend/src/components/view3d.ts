@@ -53,6 +53,7 @@ import { floorCounts, floorInfoText, personsInRooms, powerText } from "../presen
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
 import { claim, forThisScreen, playAnnouncement, showFor, subscribeAnnouncements, type Announcement } from "../live/announce.ts";
+import { mapCamera, readVacuum } from "../live/vacuum-map.ts";
 import type { DeviceMarker, LivePictureInput, NextFloorViewer, FloorStack, RobotInfo, Quality, ScreenState, SurfaceGrab, ViewerStats, WallMode } from "../viewer/viewer3d.ts";
 
 /** Which HTML markers are shown: none, only what has no 3D object or shows a value, or all. */
@@ -1337,6 +1338,10 @@ export class NfView3d extends LitElement {
   /** Robot vacuums (docks with a vacuum entity): where they rest and what they do. */
   private robotInfos(hass: HomeAssistant, b: Building): RobotInfo[] {
     const out: RobotInfo[] = [];
+    // the robot's own map: a camera that describes one, and the two places that tie its grid to the plan
+    const camera = mapCamera(hass);
+    const live = readVacuum(hass, camera, b.settings.vacuum_map ?? null);
+    let liveTaken = false;
     for (const floor of b.floors) {
       for (const f of floor.furniture) {
         if (f.type !== "robot_vacuum") continue;
@@ -1353,7 +1358,31 @@ export class NfView3d extends LitElement {
         const reported = mode === "cleaning" ? robotRoom(hass, rooms, entity, robotRoomSensor(hass, entity, f.room_sensor)) : null;
         const room = reported ?? rooms.find((r) => pointInPolygon(rest, r.points));
         const obstacles = mode === "cleaning" && room ? this.robotObstacles(floor, room.points) : [];
-        out.push({ id: f.id, floorId: floor.id, rest, restHeading: -a, mode, room: room?.points ?? null, roomId: room?.id ?? null, obstacles });
+        // the first robot vacuum takes the map the camera describes: it shows where that robot really is
+        // and where it has been, instead of the lanes this view invents for the room
+        // a robot map is only as current as the last frame something asked of the camera: while it cleans, a
+        // pose from minutes ago would nail it to the wrong spot for good, so an old one is not used at all
+        const seenAt = camera ? Date.parse(hass.states[camera]?.last_updated ?? "") : Number.NaN;
+        const fresh = !Number.isFinite(seenAt) || Date.now() - seenAt < 2 * 60 * 1000;
+        const own = entity?.startsWith("vacuum.") && live && !liveTaken && (fresh || (mode !== "cleaning" && mode !== "returning")) ? live : null;
+        if (own) liveTaken = true;
+        // when it stopped cleaning: its pad fades ten minutes later, so a finished clean does not lie on the
+        // floor all day — the timeline is where the day stays
+        const stoppedAt = entity ? Date.parse(hass.states[entity]?.last_changed ?? "") : Number.NaN;
+        const settledAt = mode === "cleaning" || mode === "returning" ? null : Number.isFinite(stoppedAt) ? stoppedAt : null;
+        out.push({
+          id: f.id,
+          floorId: floor.id,
+          rest,
+          restHeading: -a,
+          mode,
+          room: room?.points ?? null,
+          roomId: room?.id ?? null,
+          obstacles,
+          track: own?.path ?? null,
+          pose: own?.pose ?? null,
+          settledAt,
+        });
       }
       // robot mowers: a mower or its dock from the packs linked to a lawn_mower; it mows lanes over its lawn
       for (const f of floor.furniture) {

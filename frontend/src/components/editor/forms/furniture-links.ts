@@ -11,6 +11,7 @@ import { checkField, entityField, glowField, hint, iconField, markerField, pinSh
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
+import { calibrationFrom, gridPlaces, mapCamera, type Place } from "../../../live/vacuum-map.ts";
 
 /** What the forms of a piece of furniture make the editor do. */
 export interface FurnitureLinkActions {
@@ -60,6 +61,62 @@ function automaticLink(host: EditorHost, item: Furniture, key: "entity" | "power
 const powerLabel = (type: string): I18nKey => (type === "meter" ? "energy_grid" : type === "inverter" ? "energy_solar_sensor" : type === "home_battery" ? "energy_battery_sensor" : "furn_power");
 
 const linkBlock = (...rows: (TemplateResult | typeof nothing)[]): TemplateResult => html`<div class="nf-form nf-links">${rows}</div>`;
+
+/**
+ * A robot vacuum's own map, tied to the plan. The dock is the anchor — the plan knows where it stands, the camera
+ * knows where it stands in the robot's grid — so one tap on the robot is all a calibration needs.
+ */
+/**
+ * Where the robot and its dock are right now. Some integrations only fill the map camera's attributes while they
+ * render a frame, so asking for the picture is what makes the position current; the wait is for that frame to
+ * arrive, and short enough not to be noticed when it does not change anything.
+ */
+async function currentPlaces(host: EditorHost): Promise<{ at: [number, number] | null; dock: [number, number] | null }> {
+  const camera = host.hass ? mapCamera(host.hass) : null;
+  if (!host.hass || !camera) return { at: null, dock: null };
+  const stamp = () => {
+    const attributes = host.hass?.states[camera]?.attributes ?? {};
+    return `${String(attributes.render_count ?? "")}|${JSON.stringify(attributes.vacuum_position ?? null)}`;
+  };
+  const before = stamp();
+  try {
+    await host.hass.fetchWithAuth?.(`/api/camera_proxy/${camera}`);
+  } catch {
+    // the picture is only a way to make the robot render; without it the attributes may simply be older
+  }
+  for (let i = 0; i < 8 && stamp() === before; i++) await new Promise((resolve) => setTimeout(resolve, 100));
+  return gridPlaces(host.hass, camera);
+}
+
+function robotMapBlock(host: EditorHost, item: Furniture): TemplateResult {
+  const t = host.t;
+  const cal = host.doc.settings.vacuum_map ?? null;
+  const places = host.hass ? gridPlaces(host.hass, mapCamera(host.hass)) : { at: null, dock: null };
+  const cells = cal ? Math.hypot(cal.gb[0] - cal.ga[0], cal.gb[1] - cal.ga[1]) : 0;
+  const metres = cal && cells > 0 ? Math.hypot(cal.b[0] - cal.a[0], cal.b[1] - cal.a[1]) / cells : 0;
+  const pick = () => {
+    // the place is taken from the tap, the robot's own position from right after it: it is only exact while the
+    // robot stands still, which is what the hint asks of it
+    host.pickPoint((point) => {
+      if (!point) return;
+      void currentPlaces(host).then((fresh) => {
+        if (!fresh.at || !fresh.dock) return;
+        const dock: Place = { plan: [item.x, item.z], grid: fresh.dock };
+        const res = calibrationFrom(dock, { plan: point, grid: fresh.at }, cal?.mirror ?? false);
+        if (res.cal) host.change((doc) => void (doc.settings.vacuum_map = res.cal));
+      });
+    });
+  };
+  return linkBlock(
+    hint(places.at && places.dock ? (cal ? t("robot_cal_done", { m: metres.toFixed(2) }) : t("robot_cal_none")) : t("robot_cal_need"), "nf-wide"),
+    html`<button class="nf-btn nf-wide" ?disabled=${!host.admin || !places.at || !places.dock} @click=${pick}>${t("robot_cal_do")}</button>`,
+    cal
+      ? checkField(host, t("robot_cal_mirror"), !!cal.mirror, (on) => host.change((doc) => void (doc.settings.vacuum_map = { ...cal, mirror: on })))
+      : nothing,
+    cal ? html`<button class="nf-btn nf-wide" ?disabled=${!host.admin} @click=${() => host.change((doc) => void (doc.settings.vacuum_map = null))}>${t("robot_cal_forget")}</button>` : nothing,
+    hint(t("robot_cal_hint"), "nf-wide"),
+  );
+}
 
 /** Advanced energy mode: the sub-meter an inverter or home battery sits behind (a balcony plant in a flat), else the main meter. */
 function deviceMeterLink(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult | typeof nothing {
@@ -206,6 +263,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
     ${item.type === "robot_vacuum"
       ? linkBlock(entityField(host, t("furn_robot_room"), item.room_sensor ?? null, robotRoomSensor(hass, furnitureEntities(hass, host.doc.floors).get(item.id)?.entity ?? null, null), kindOptions(isNumeric), (v) => actions.update({ room_sensor: v })))
       : nothing}
+    ${item.type === "robot_vacuum" && hasLink ? robotMapBlock(host, item) : nothing}
     ${item.type === "fridge_smart"
       ? html`${linkBlock(entityField(host, t("furn_door_left"), item.door_left ?? null, undefined, doors, (v) => actions.update({ door_left: v })), entityField(host, t("furn_door_right"), item.door_right ?? null, undefined, doors, (v) => actions.update({ door_right: v })))}
         ${hint(t("fridge_hint"))}`

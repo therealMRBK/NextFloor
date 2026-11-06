@@ -123,7 +123,20 @@ Built in and free; they only need the devices you already have.
 - **Sound:** a card over every playing speaker or TV with cover and controls; sound rings in the app's colour; multiroom groups are joined by a thread.
 - **Car:** a card over the parking spot with charge ring, range, charging power, plug, inside temperature and buttons for lock, climate and charging. Away it tells how far it is from home; it shows the departure time and warns about open doors and hatches; plugged in at a wallbox it hangs on its cable.
 - **Energy:** the house card shows the last seven days as bars and stays above the open floor; a home battery shows its charge on its front.
+- **Robot vacuum:** a `robot_vacuum` on the plan used to drive lanes the view invented inside the room it reports. When the robot's integration puts its map on a camera (`vacuum_position`, `charger`, `path`, as NarwalIntegration's map card does), it shows the truth instead: the robot stands where it says it is, facing where it faces, and the floor keeps the pad it has really driven. The dock is drawn where the robot reports it. See *Robot vacuum on the plan* below.
 - **Everything off:** *⏻ Everything off* in the room panel, or *⏻* in the bar on top for the open floor, switches off lights, switches, fans and media. *↶ Undo* brings it all back for ten seconds.
+
+### Robot vacuum on the plan
+
+The camera is found by itself — any `camera` whose attributes carry `vacuum_position` will do, so nothing has to be chosen. What the view cannot know is how the robot's grid lies on your plan: the robot counts in its own cells, the plan counts in metres.
+
+To tie the two together, select the robot's dock in the plan and press *Calibrate from where the robot is now*: let the robot drive at least 1.5 m away, then tap it where it stands on the plan. The dock is the anchor — the plan knows where it stands, the camera knows where it and the robot lie in the robot's grid — so one tap is enough, and everything else (the pose, the trail, the dock) follows.
+
+Two places cannot tell a mirror from a turn, since both put them exactly where they belong, so a map whose y axis runs along plan −z needs the *mirrored* tick; without it the rooms come out flipped. The two places are stored as `settings.vacuum_map` (`a`/`ga` and `b`/`gb`, plus `mirror`), so a plan without it keeps drawing the lanes the view invents.
+
+The trail is as detailed as the robot's integration sends it: a map card that trims its `path` to a few hundred points gives a coarse trail, one that sends more gives a finer one.
+
+Ten minutes after the robot docks the pad fades out, so the floor does not keep last night's clean on it — the timeline (⏪) is where a finished clean stays, and it holds the whole day.\n\nThose attribute names are the vacuum map card's, not one brand's: the Xiaomi map extractors (Roborock, Viomi, Roidmi, Dreame, Ijai), the Roborock integration and NarwalIntegration all publish them, and a unit that reports in millimetres rather than in map cells works just as well — the two places set the scale. What the integration has to do is expose them as attributes; some do only when asked (the map extractors want `vacuum_position` and `path` in their `attributes:` list).
 
 ## Getting around
 

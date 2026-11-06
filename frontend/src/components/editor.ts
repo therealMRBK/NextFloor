@@ -253,6 +253,10 @@ export class NfEditor extends LitElement {
   private declare _ctx: { x: number; y: number; kind: FixKind; id: string; at?: Vec2 } | null;
   /** A drag on a fixed item was turned into panning: the hint line says why. */
   private declare _fixedHint: boolean;
+  /** Set while a form waits for one tap on the plan (a calibration place). */
+  private _pick: ((at: Vec2 | null) => void) | null = null;
+  /** When the armed pick lapses, so a forgotten one cannot swallow a later tap on the plan. */
+  private _pickTimer: number | undefined;
   private fixedPan = false;
   /** Frame the 3D half again after the next render (the roof tool shows the whole house). */
   private reframe3d = false;
@@ -718,6 +722,7 @@ export class NfEditor extends LitElement {
       t: (key, vars) => editor.t(key, vars),
       change: (mutate) => editor.change(mutate),
       replace: (next) => editor.setDoc(next),
+      pickPoint: (onPick) => editor.pickPoint(onPick),
     };
   }
 
@@ -1135,6 +1140,22 @@ export class NfEditor extends LitElement {
     return [p[0] * scale + ox, p[1] * scale + oy];
   }
 
+  /** Asks for one tap on the plan; a pick left armed lapses after a minute, or on Escape. */
+  pickPoint(onPick: (at: Vec2 | null) => void): void {
+    this._pick?.(null);
+    this._pick = onPick;
+    clearTimeout(this._pickTimer);
+    this._pickTimer = window.setTimeout(() => this.cancelPick(), 60_000);
+    this.requestUpdate();
+  }
+
+  private cancelPick(): void {
+    clearTimeout(this._pickTimer);
+    if (!this._pick) return;
+    this._pick = null;
+    this.requestUpdate();
+  }
+
   private toWorld(sx: number, sy: number): Vec2 {
     const { scale, ox, oy } = this._view;
     return [(sx - ox) / scale, (sy - oy) / scale];
@@ -1186,6 +1207,14 @@ export class NfEditor extends LitElement {
   // ------------------------------------------------------------------ pointer input
 
   private onPointerDown(e: PointerEvent): void {
+    // a form is waiting for one place on the plan: this tap is it
+    if (this._pick) {
+      const [sx, sy] = this.localPoint(e);
+      const pick = this._pick;
+      this.cancelPick();
+      pick(this.toWorld(sx, sy));
+      return;
+    }
     this._ctx = null;
     // a note is picked, not dragged: its form has the text, the day and the spot
     const note = (e.target as Element | null)?.closest?.("[data-note]")?.getAttribute("data-note");
@@ -2056,6 +2085,11 @@ export class NfEditor extends LitElement {
     const path = e.composedPath();
     if (path.some((el) => el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement)) return;
     if (!this.isConnected || !this.offsetParent) return;
+    if (e.key === "Escape" && this._pick) {
+      e.preventDefault();
+      this.cancelPick();
+      return;
+    }
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.key.toLowerCase() === "z") {
       e.preventDefault();
@@ -3046,7 +3080,7 @@ export class NfEditor extends LitElement {
               ${this.planLayers(floor, walls?.walls ?? null)}
             </svg>
             ${this.renderContext()}
-            <p class="nf-hint ${this._fixedHint ? "nf-hint-fixed" : ""}">${!floor ? this.t("hint_empty") : this._fixedHint ? this.t("fixed_drag_hint") : this.t(`hint_${this._tool}` as I18nKey)}</p>
+            <p class="nf-hint ${this._fixedHint ? "nf-hint-fixed" : ""}">${this._pick ? this.t("robot_cal_doing") : !floor ? this.t("hint_empty") : this._fixedHint ? this.t("fixed_drag_hint") : this.t(`hint_${this._tool}` as I18nKey)}</p>
             <button class="nf-keys-open" title=${this.t("keys_title")} aria-label=${this.t("keys_title")} @click=${() => (this._keys = true)}>?</button>
             ${this.isAdmin
               ? renderTour((k, vars) => this.t(k, vars), this._tour, (step) => {

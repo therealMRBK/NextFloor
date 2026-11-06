@@ -85,6 +85,7 @@ import { ScreenLayer, type LiveScreen } from "./live-screens.ts";
 import { PictureLayer, type LivePicture } from "./live-pictures.ts";
 import { addMeshLighting, applyEnvironment, disposeMeshInstance, instantiateMesh, loadMesh } from "./meshes.ts";
 import { circlePath, cleaningPath, stepRobot, type RobotInfo, type RobotMotion } from "./robot.ts";
+import { TRAIL_HOLD_MS, trailGeometry, trailOpacity } from "./robot-trail.ts";
 import { inReach } from "./tap-reach.ts";
 import type { AnimationName } from "../light-effects.ts";
 
@@ -473,6 +474,10 @@ export class NextFloorViewer {
   private petMat: MeshBasicMaterial | null = null;
   private petTimer: ReturnType<typeof setTimeout> | undefined;
   private robotGeo: BufferGeometry | null = null;
+  /** The pad each robot has driven, by robot id: the ribbon of its own map's trail. */
+  private readonly robotTrails = new Map<string, Mesh>();
+  /** The timer that next changes how strong a pad shows (it fades out after the clean). */
+  private readonly trailTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private robotMat: MeshBasicMaterial | null = null;
   private mowerMat: MeshBasicMaterial | null = null;
   private robotLedGeo: BufferGeometry | null = null;
@@ -1387,6 +1392,14 @@ export class NextFloorViewer {
     this.haloTexture.dispose();
     for (const r of this.robots.values()) r.led.dispose();
     this.robots.clear();
+    for (const trail of this.robotTrails.values()) {
+      trail.removeFromParent();
+      trail.geometry.dispose();
+      (trail.material as Material).dispose();
+    }
+    this.robotTrails.clear();
+    for (const timer of this.trailTimers.values()) clearTimeout(timer);
+    this.trailTimers.clear();
     this.robotGeo?.dispose();
     this.robotLedGeo?.dispose();
     this.robotMat?.dispose();
@@ -2872,7 +2885,13 @@ export class NextFloorViewer {
         was === "cleaning" &&
         ((r.info.roomId ?? null) !== (info.roomId ?? null) || JSON.stringify(r.info.obstacles ?? []) !== JSON.stringify(info.obstacles ?? []));
       r.info = info;
-      if (info.mode === "cleaning" && (was !== "cleaning" || moved || !r.motion.path.length)) {
+      this.setRobotTrail(info);
+      // a robot that reports where it is needs no lanes invented for it: it stands there, facing where it faces
+      if (info.pose) {
+        r.motion.pos = [info.pose.x, info.pose.z];
+        r.motion.heading = info.pose.heading;
+        r.motion.path = [];
+      } else if (info.mode === "cleaning" && (was !== "cleaning" || moved || !r.motion.path.length)) {
         // start the lanes at the point nearest to where the robot is
         const path = info.room ? cleaningPath(info.room, undefined, undefined, info.obstacles) : circlePath(info.rest);
         const path2 = path.length ? path : circlePath(info.rest);
@@ -2892,9 +2911,77 @@ export class NextFloorViewer {
       r.group.removeFromParent();
       r.led.dispose();
       this.robots.delete(id);
+      const gone = this.robotTrails.get(id);
+      gone?.removeFromParent();
+      gone?.geometry.dispose();
+      (gone?.material as Material | undefined)?.dispose();
+      this.robotTrails.delete(id);
+      const trailTimer = this.trailTimers.get(id);
+      if (trailTimer !== undefined) {
+        clearTimeout(trailTimer);
+        this.trailTimers.delete(id);
+      }
     }
     this.robotLast = 0;
     this.invalidate();
+  }
+
+  /**
+   * The pad the robot has driven: its own map's trail, laid flat on the floor of its floor. It is rebuilt
+   * only when the trail changes, so a camera that repeats the same path every frame costs nothing.
+   */
+  private setRobotTrail(info: RobotInfo): void {
+    const segments = info.track ?? [];
+    const key = segments.map((s) => (s.length ? `${s.length}:${s[0].map((v) => v.toFixed(2))}/${s[s.length - 1].map((v) => v.toFixed(2))}` : "")).join("|");
+    const old = this.robotTrails.get(info.id);
+    if (old && old.userData.key === key) {
+      // the same pad, but time passes: it may have to fade now
+      this.showRobotTrail(info);
+      return;
+    }
+    let mesh = old;
+    if (!mesh) {
+      const material = new MeshBasicMaterial({ color: 0x36c8ff, transparent: true, opacity: 0.34, depthWrite: false, side: DoubleSide });
+      mesh = new Mesh(trailGeometry([], 0.16, 0), material);
+      mesh.renderOrder = 3;
+      mesh.name = `robot-trail:${info.id}`;
+      this.robotTrails.set(info.id, mesh);
+      const parent = this.robots.get(info.id)?.group.parent;
+      if (parent) parent.add(mesh);
+    }
+    mesh.geometry.dispose();
+    mesh.geometry = trailGeometry(segments, 0.16, (info.y ?? 0) + 0.012);
+    mesh.userData.key = key;
+    this.showRobotTrail(info);
+  }
+
+  /**
+   * How strong the pad is right now, and a timer for the moment that next changes: full while the robot
+   * drives and for ten minutes after, then fading out. The timeline is where a finished clean stays, so
+   * the floor is not covered in last night's pad.
+   */
+  private showRobotTrail(info: RobotInfo): void {
+    const mesh = this.robotTrails.get(info.id);
+    if (!mesh) return;
+    const pending = this.trailTimers.get(info.id);
+    if (pending !== undefined) {
+      clearTimeout(pending);
+      this.trailTimers.delete(info.id);
+    }
+    const now = Date.now();
+    const strength = trailOpacity(info.settledAt, now);
+    (mesh.material as MeshBasicMaterial).opacity = 0.34 * strength;
+    mesh.visible = (info.track?.length ?? 0) > 0 && strength > 0.01;
+    // still driving, or already gone: nothing to wait for
+    if (strength <= 0 || (strength >= 1 && info.settledAt == null)) return;
+    const wait = strength >= 1 ? Math.max(0, (info.settledAt ?? now) + TRAIL_HOLD_MS - now) : 250;
+    this.trailTimers.set(
+      info.id,
+      setTimeout(() => {
+        this.showRobotTrail(info);
+        this.invalidate();
+      }, wait),
+    );
   }
 
   private makeRobot(info: RobotInfo): { info: RobotInfo; motion: RobotMotion; group: Group; led: MeshBasicMaterial } {
@@ -2998,6 +3085,8 @@ export class NextFloorViewer {
       const fv = this.floorMap.get(r.info.floorId);
       if (!fv) continue;
       if (r.group.parent !== fv.group) fv.group.add(r.group);
+      const trail = this.robotTrails.get(r.info.id);
+      if (trail && trail.parent !== fv.group) fv.group.add(trail);
       if (dt > 0) active = stepRobot(r.motion, r.info, dt) || active;
       else active ||= r.info.mode === "cleaning" || r.info.mode === "returning";
       r.group.position.set(r.motion.pos[0], r.info.y ?? 0, r.motion.pos[1]);

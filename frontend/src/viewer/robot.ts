@@ -22,6 +22,12 @@ export interface RobotInfo {
   obstacles?: Vec2[][];
   /** Height it drives at above its floor (a robot mower on the lawn below the ground floor). */
   y?: number;
+  /** The pad it has driven on, from its own map (segments in the plan); null keeps the drawn lanes. */
+  track?: Vec2[][] | null;
+  /** Where it really is, from its own map; null lets it drive the drawn lanes. */
+  pose?: { x: number; z: number; heading: number } | null;
+  /** When it stopped cleaning (ms since the epoch), so its pad can fade; null while it still drives. */
+  settledAt?: number | null;
   /** A robot mower: a larger, green body. */
   mower?: boolean;
 }
