@@ -14,6 +14,7 @@ import {
 } from "../model.ts";
 import { furnishRoom, type PackageId } from "../packages.ts";
 import { generateWalls, locateOpening, openingHost, type Wall } from "../geometry/walls.ts";
+import { arcOfNearest, frontExtent, frontOf, frontPieces, outlineLength, withFront } from "../geometry/glass-front.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import {
   bounds,
@@ -1658,6 +1659,21 @@ export class NfEditor extends LitElement {
         const opening = before?.openings.find((o) => o.id === drag.id);
         const host = opening && before ? openingHost(opening, before.rooms, before.walls ?? []) : null;
         if (!opening || !host) return;
+        const group = before ? frontOf(before.openings, opening) : [opening];
+        const extent = !opening.wall && group.length > 1 && before ? frontExtent(host.room, group) : null;
+        if (extent) {
+          // the pane slides along the outline as a whole and keeps its length
+          const step = fine ? 0.01 : this._doc.settings.grid;
+          const at = arcOfNearest(host.room, world) - extent.width / 2;
+          const snapped = step > 0 ? Math.round(at / step) * step : at;
+          const from = Math.max(0, Math.min(outlineLength(host.room) - extent.width, snapped));
+          this.live(drag, (_, floor) => {
+            const o = floor.openings.find((x) => x.id === drag.id);
+            const next = o ? withFront(floor.openings, host.room, o, from, extent.width, () => uid("opening")) : null;
+            if (next) floor.openings = next;
+          });
+          return;
+        }
         const offset = this.dropOffset(host.room, host.edge, world, opening.width, fine);
         this.live(drag, (_, floor) => void (floor.openings.find((o) => o.id === drag.id)!.offset = offset));
         return;
@@ -2863,7 +2879,12 @@ export class NfEditor extends LitElement {
   }
 
   private get opening(): Opening | undefined {
-    return this.sel.opening ? this.floor?.openings.find((o) => o.id === this.sel.opening) : undefined;
+    const o = this.sel.opening ? this.floor?.openings.find((x) => x.id === this.sel.opening) : undefined;
+    if (!o?.front || !this.floor) return o;
+    // a pane over several edges shows the length of all of it, so the form sets what the user sees
+    const room = this.floor.rooms.find((r) => r.id === o.room_id);
+    const extent = room ? frontExtent(room, frontOf(this.floor.openings, o)) : null;
+    return extent ? { ...o, width: extent.width } : o;
   }
 
   private get furnitureItem(): Furniture | undefined {
@@ -2907,6 +2928,42 @@ export class NfEditor extends LitElement {
     const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
     const defaults = OPENING_PRESETS[preset] as { type: OpeningType; leaves: 1 | 2; sill: number; height: number; width: number; style?: Opening["style"]; opens?: Opening["opens"] };
     const type: OpeningType = defaults.type;
+    // a glass wall wider than the edge it is dropped on runs on along the outline as one pane: it is stored
+    // as one ordinary opening per edge it covers, all sharing a `front` id
+    if (defaults.style === "glass_wall" && !wall) {
+      const at = arcOfNearest(room, this.toWorld(...screen));
+      const pieces = frontPieces(room, at - defaults.width / 2, defaults.width);
+      if (pieces && pieces.length > 1) {
+        const front = uid("front");
+        const made = pieces.map(
+          (p): Opening => ({
+            id: uid("opening"),
+            room_id: best.roomId ?? room.id,
+            edge: p.edge,
+            // not rounded: neighbouring pieces must meet exactly, or the seam shows in 3D
+            offset: p.offset,
+            width: p.width,
+            front,
+            type,
+            sill: defaults.sill,
+            height: defaults.height,
+            hinge: "left",
+            leaves: defaults.leaves,
+            swing: "in",
+            ...(AUTO_STYLES.has(defaults.style!) ? {} : { style: defaults.style }),
+            ...(defaults.opens ? { opens: defaults.opens } : {}),
+            cover: null,
+            contact: null,
+            contact2: null,
+            tilt: null,
+          }),
+        );
+        this.change((_, f) => f.openings.push(...made));
+        this._tool = "select";
+        this.selectItem("opening", made[0].id);
+        return true;
+      }
+    }
     const width = round(Math.min(defaults.width, Math.max(0.3, len - 0.1)));
     const opening: Opening = {
       id: uid("opening"),
@@ -2937,13 +2994,38 @@ export class NfEditor extends LitElement {
 
   private updateOpening(patch: Partial<Opening>): void {
     const id = this.sel.opening;
-    this.change((_, floor) => Object.assign(floor.openings.find((o) => o.id === id)!, patch));
+    this.change((_, floor) => {
+      const o = floor.openings.find((x) => x.id === id);
+      if (!o) return;
+      const group = frontOf(floor.openings, o);
+      const room = o.wall ? null : floor.rooms.find((r) => r.id === o.room_id);
+      // a glass wall's length or place re-splits it over the edges it then covers; everything else
+      // (height, sill, panes) is the same on every piece
+      const resplit = room && o.type === "window" && o.style === "glass_wall" && (patch.width != null || patch.offset != null);
+      const extent = resplit && room ? frontExtent(room, group) : null;
+      if (resplit && room && extent) {
+        const width = Math.max(0.3, patch.width ?? extent.width);
+        let from = extent.from;
+        // a new length grows to both sides, the way it does on a straight wall
+        if (patch.width != null) from += (extent.width - width) / 2;
+        if (patch.offset != null) from += patch.offset - o.offset;
+        from = Math.max(0, Math.min(outlineLength(room) - width, from));
+        const next = withFront(floor.openings, room, { ...o, ...patch }, from, width, () => uid("opening"));
+        if (next) floor.openings = next;
+        return;
+      }
+      for (const p of group) Object.assign(p, patch);
+    });
   }
 
   private deleteOpening(): void {
     const id = this.sel.opening;
     if (!id || !this.isAdmin || !this.confirmFixedDelete("opening", id)) return;
-    this.change((_, floor) => (floor.openings = floor.openings.filter((o) => o.id !== id)));
+    this.change((_, floor) => {
+      const o = floor.openings.find((x) => x.id === id);
+      const gone = new Set((o ? frontOf(floor.openings, o) : [o]).map((x) => x?.id));
+      floor.openings = floor.openings.filter((x) => !gone.has(x.id));
+    });
     this.sel.opening = null;
   }
 

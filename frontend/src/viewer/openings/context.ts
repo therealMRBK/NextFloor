@@ -16,5 +16,13 @@ export interface Ctx {
   frames: GeoBuffer;
   glass: GeoBuffer;
   blinds: GeoBuffer;
+  /** For a piece of a pane over several edges: whether it is the first or the last one, which carry the jambs. */
+  first: boolean;
+  last: boolean;
+  /**
+   * How far the glass runs past each end of the piece, in metres, to meet the next piece of the pane:
+   * `[at its start, at its end]`. The glass sits in the middle of the wall, and two walls at an angle have
+   * two different middles, so the ends would otherwise stand a few centimetres apart and leave a slot.
+   */
+  over: [number, number];
 }
-

@@ -102,12 +102,15 @@ function windowSymbol(f: Frame, o: Opening): Sym {
 }
 
 export function openingsLayer(ctx: CanvasContext, floor: Floor, walls: readonly Wall[], selectedId: string | null): TemplateResult {
+  // selecting one piece of a pane over several edges selects all of them
+  const selectedFront = floor.openings.find((o) => o.id === selectedId)?.front ?? null;
   const one = (o: Opening) => {
     const f = frameOf(ctx, o, floor, walls);
     if (!f) return nothing;
     const gap = [f.at(f.p0, f.across[0] + 0.01), f.at(f.p1, f.across[0] + 0.01), f.at(f.p1, -f.across[1] - 0.01), f.at(f.p0, -f.across[1] - 0.01)];
     const front = o.type === "door" && isFrontDoor(openingStyle(o, f.exterior));
-    const klass = `nf-open nf-open-${o.type}${front ? " nf-open-front" : ""}${o.id === selectedId ? " nf-open-sel" : ""}`;
+    const on = o.id === selectedId || (!!o.front && o.front === selectedFront);
+    const klass = `nf-open nf-open-${o.type}${front ? " nf-open-front" : ""}${on ? " nf-open-sel" : ""}`;
     const symbol = o.type === "garage" ? garageSymbol(f, o) : o.type === "door" ? doorSymbol(ctx, f, o) : windowSymbol(f, o);
     return svg`<g data-opening=${o.id} class=${klass}><polygon class="nf-open-gap" points=${gap.map((p) => p.join(",")).join(" ")} />${symbol}</g>`;
   };

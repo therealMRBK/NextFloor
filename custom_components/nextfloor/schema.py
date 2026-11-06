@@ -167,6 +167,10 @@ OPENING_SCHEMA = vol.Schema(
         vol.Optional("sidelight_width2", default=None): vol.Any(
             None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=3))
         ),
+        # glass walls: how many panes the mullions make (None = about every 0.9 m, 0 = one single pane)
+        vol.Optional("panes", default=None): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=0, max=40))),
+        # glass walls: pieces of one pane that follows a curved wall share this id, one per room edge
+        vol.Optional("front", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
         vol.Optional("contact2", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # windows: a plain contact, a handle sensor (open / tilted / closed), or a contact and a tilt sensor
         vol.Optional("sensor", default=None): vol.Any(None, vol.In(["contact", "handle", "contact_tilt"])),

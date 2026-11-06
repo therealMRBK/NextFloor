@@ -2,6 +2,7 @@
 
 import { pointInPolygon, type Floor, type Vec2 } from "../../../model.ts";
 import { openingHost } from "../../../geometry/walls.ts";
+import { frontExtent, frontOf, outlineLength, withFront } from "../../../geometry/glass-front.ts";
 
 export type NudgeTarget =
   | { kind: "device"; id: string }
@@ -66,6 +67,20 @@ export function nudge(floor: Floor, target: NudgeTarget, dx: number, dz: number)
       const length = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
       const along = (dx * (b[0] - a[0]) + dz * (b[1] - a[1])) / length;
       if (Math.abs(along) < 1e-9) return NO_CHANGE;
+      // a pane over several edges slides as a whole, and keeps the length of all of its pieces
+      const group = frontOf(floor.openings, opening);
+      const extent = !opening.wall && group.length > 1 ? frontExtent(host.room, group) : null;
+      if (extent) {
+        const from = Math.max(0, Math.min(outlineLength(host.room) - extent.width, extent.from + along));
+        if (Math.abs(from - extent.from) < 1e-9) return NO_CHANGE;
+        return {
+          apply(f) {
+            const o = f.openings.find((x) => x.id === target.id);
+            const next = o ? withFront(f.openings, host.room, o, from, extent.width) : null;
+            if (next) f.openings = next;
+          },
+        };
+      }
       const half = Math.min(opening.width, length) / 2;
       const offset = thousandths(Math.min(length - half, Math.max(half, opening.offset + along)));
       return {

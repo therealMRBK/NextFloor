@@ -8,7 +8,10 @@ import type { Ctx } from "./context.ts";
 import { FRAME, FRAME_TOP, GLASS, OPEN_ANGLE, OPEN_WARM, SASH, SILL, TILT_ANGLE, TOP_HUNG_ANGLE } from "./palette.ts";
 import { panel, splitBox, type Frame } from "./primitives.ts";
 
-/** An indoor glass wall: a slim frame, mullions about every 0.9 m, glass from the floor up, no sashes. */
+/**
+ * An indoor glass wall: a slim frame, glass from the floor up, no sashes. The mullions divide it into as many panes as the
+ * opening asks for; without a number they come about every 0.9 m, and none at all for a single full pane.
+ */
 export function glassWall(c: Ctx): void {
   const { info, frame, fold, mid } = c;
   const [W, S, T] = [info.width, info.sill, info.top];
@@ -16,16 +19,24 @@ export function glassWall(c: Ctx): void {
   const frameColor = new Color(FRAME);
   const frameTop = new Color(FRAME_TOP);
   const bar = (x0: number, x1: number, y0: number, y1: number) => splitBox(c.frames, frame, { x0, x1, n0: mid - fd, n1: mid + fd, y0, y1 }, frameColor, frameTop, fold);
-  bar(0, fw, S, T);
-  bar(W - fw, W, S, T);
-  bar(fw, W - fw, S, S + 0.03);
-  bar(fw, W - fw, T - fw, T);
-  const panes = Math.max(1, Math.round((W - 2 * fw) / 0.9));
-  const paneWidth = (W - 2 * fw) / panes;
-  for (let k = 1; k < panes; k++) bar(fw + k * paneWidth - 0.02, fw + k * paneWidth + 0.02, S + 0.03, T - fw);
+  // a pane over several edges has jambs only at its two outer ends; where two pieces meet, the glass runs on
+  if (c.first) bar(0, fw, S, T);
+  if (c.last) bar(W - fw, W, S, T);
+  // the 4 cm at each end is the rebate of a jamb. A piece of a pane that does not end here has no jamb, so
+  // its rails and its glass reach the wall end — and run past it into the bisector of the bend, where the
+  // next piece begins: two pieces whose ends stop at their own wall's middle stand a slot apart.
+  const [xa, xb] = [c.first ? fw : -c.over[0], c.last ? W - fw : W + c.over[1]];
+  bar(xa, xb, S, S + 0.03);
+  bar(xa, xb, T - fw, T);
+  // a piece of a pane over several edges is part of one sheet: it gets no mullions of its own, and a pane
+  // that is to be divided is placed as separate openings instead (their jambs are the divisions)
+  const asked = info.opening.front ? 0 : info.opening.panes;
+  const panes = Math.max(1, asked == null ? Math.max(1, Math.round((xb - xa) / 0.9)) : Math.round(asked));
+  const paneWidth = (xb - xa) / panes;
+  for (let k = 1; k < panes; k++) bar(xa + k * paneWidth - 0.02, xa + k * paneWidth + 0.02, S + 0.03, T - fw);
   for (let k = 0; k < panes; k++) {
-    const x0 = fw + k * paneWidth + (k ? 0.02 : 0);
-    const x1 = fw + (k + 1) * paneWidth - (k < panes - 1 ? 0.02 : 0);
+    const x0 = xa + k * paneWidth + (k ? 0.02 : 0);
+    const x1 = xa + (k + 1) * paneWidth - (k < panes - 1 ? 0.02 : 0);
     panel(c.glass, frame, x0, x1, mid, S + 0.03, T - fw, GLASS, fold);
   }
 }
