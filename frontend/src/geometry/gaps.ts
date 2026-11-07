@@ -73,14 +73,28 @@ export function closeGaps(rooms: readonly Room[], maxGap = 0.6): GapResult {
   const root = (i: number): number => (leader[i] === i ? i : (leader[i] = root(leader[i])));
   const gaps: number[] = [];
   const paired = new Set<number>();
+  const candidates: [number, number, number][] = [];
   for (let i = 0; i < sides.length; i++) {
     for (let j = i + 1; j < sides.length; j++) {
       const gap = gapBetween(sides[i], sides[j], maxGap);
-      if (gap === null) continue;
-      gaps.push(thousandths(gap));
-      leader[root(i)] = root(j);
-      paired.add(i).add(j);
+      if (gap !== null) candidates.push([i, j, gap]);
     }
+  }
+  // narrowest gaps first; a pair that would pull two different walls of one room onto the same line is left out, so a
+  // wall that changes its thickness keeps its step instead of being flattened to one line (#65)
+  candidates.sort((a, b) => Math.abs(a[2]) - Math.abs(b[2]));
+  const members = new Map<number, number[]>(sides.map((_, i) => [i, [i]]));
+  const clash = (a: number[], b: number[]) => a.some((x) => b.some((y) => sides[x].room === sides[y].room && Math.abs(sides[x].offset - sides[y].offset) >= 2e-3));
+  for (const [i, j, gap] of candidates) {
+    const [ri, rj] = [root(i), root(j)];
+    if (ri !== rj) {
+      if (clash(members.get(ri)!, members.get(rj)!)) continue;
+      leader[ri] = rj;
+      members.set(rj, [...members.get(rj)!, ...members.get(ri)!]);
+      members.delete(ri);
+    }
+    gaps.push(thousandths(gap));
+    paired.add(i).add(j);
   }
   // a straight wall drawn as several collinear edges moves as one, otherwise a corner would appear inside it
   const at = new Map(sides.map((s, i) => [`${s.room}:${s.index}`, i]));

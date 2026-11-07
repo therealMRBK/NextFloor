@@ -90,3 +90,15 @@ test("an unpaired part of a split wall follows the paired part", () => {
   const xs = rooms[0].points.filter((p) => p[0] > 1).map((p) => p[0]);
   assert.deepEqual(xs, [5.2, 5.2, 5.2]);
 });
+
+test("a wall that changes its thickness keeps its step: one room's two walls are never pulled onto one line (#65)", () => {
+  // the bedroom's right wall faces the kitchen's left wall, which steps back by 30 cm halfway (a thicker wall there)
+  const bedroom = room("bed", 0, 7.65, 3.81, 10.81);
+  const kitchen: Room = { id: "k", name: "k", area_id: null, floor_material: "wood", points: [[4.28, 8.76], [4.28, 7.68], [6.47, 7.68], [6.47, 10.98], [3.98, 10.98], [3.98, 8.76]] };
+  const { rooms } = closeGaps([bedroom, kitchen]);
+  const xs = new Set(rooms[1].points.map((p) => p[0]).filter((x) => x < 5));
+  assert.equal(xs.size, 2, "the kitchen keeps its step");
+  assert.ok(xs.has(4.28), "the thick part is left as it is");
+  assert.equal(box(rooms[0]).x1, 3.895, "the bedroom meets the near part of the kitchen wall in the middle");
+  assert.ok(rooms[1].points.some((p) => p[0] === 3.895));
+});

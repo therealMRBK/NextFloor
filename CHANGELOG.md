@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.25.3]
+
+### Fixed
+
+- **Close gaps flattened a wall that changes its thickness** (thanks @Dragi2k for the plan, #65): when one room faced two walls of another room at different distances (a wall that is thicker over part of its length), all of them were pulled onto one line, so the step disappeared and the room changed its shape. Each room now keeps its step: the nearer wall closes its gap, the thicker part stays as drawn.
+
 ## [0.25.2]
 
 ### Fixed
@@ -487,7 +493,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...main
+[0.25.3]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...v0.25.3
 [0.25.2]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...v0.25.2
 [0.25.1]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...v0.25.1
 [0.25.0]: https://github.com/therealMRBK/NextFloor/compare/v0.24.0...v0.25.0
