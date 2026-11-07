@@ -97,3 +97,27 @@ test("a store pack is refused when it is not the reviewed file", async () => {
   assert.equal(await downloadStorePack(entry, fetcher), '{"format":"nfpack"}');
   await assert.rejects(downloadStorePack({ ...entry, sha256: "0".repeat(64) }, fetcher), /checksum/);
 });
+
+test("the JavaScript SHA-256 matches the browser's for empty, short and multi-block input", async () => {
+  const { sha256Hex } = await import("./sha256.ts");
+  for (const text of ["", "abc", "export default 1;", "x".repeat(55), "x".repeat(56), "y".repeat(1000)]) {
+    const b = new TextEncoder().encode(text);
+    assert.equal(sha256Hex(b), await hex(b), `length ${b.length}`);
+  }
+});
+
+test("without crypto.subtle (Home Assistant over plain http) a store plugin is still checked and imported from memory (#78)", async () => {
+  const subtle = Object.getOwnPropertyDescriptor(globalThis.crypto, "subtle");
+  const sum = await hex(bytes);
+  Object.defineProperty(globalThis.crypto, "subtle", { value: undefined, configurable: true });
+  try {
+    assert.equal(globalThis.crypto.subtle, undefined);
+    const r = await resolveModuleUrl({ url: FILE, enabled: true, sha256: sum }, serving(bytes));
+    assert.match(r.url, /^blob:/);
+    r.revoke?.();
+    await assert.rejects(resolveModuleUrl({ url: FILE, enabled: true, sha256: SHA }, serving(bytes)), /checksum/);
+  } finally {
+    if (subtle) Object.defineProperty(globalThis.crypto, "subtle", subtle);
+    else delete (globalThis.crypto as { subtle?: unknown }).subtle;
+  }
+});

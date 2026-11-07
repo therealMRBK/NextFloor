@@ -3,6 +3,7 @@
 //  2. A dashboard resource (e.g. installed by HACS) that loads before NextFloor pushes its plugin
 //     onto `window.__nextfloorPlugins`; it is picked up when NextFloor starts.
 
+import { sha256Hex } from "./sha256.ts";
 import { PLUGIN_API_VERSION, isAllowedPluginUrl, pluginFetchUrl, type NextFloorPlugin, type PluginRef } from "./api.ts";
 import { registerPlugin } from "./registry.ts";
 
@@ -48,16 +49,17 @@ const toHex = (buf: ArrayBuffer): string => [...new Uint8Array(buf)].map((b) => 
 /**
  * What to import for a plugin. Plugins from the store carry the SHA-256 of their file: the file is
  * fetched, checked and imported from memory, so it cannot differ from the one that was reviewed.
- * Browsers without `crypto.subtle` (plain http) import the address as is; store addresses are pinned
- * to a commit, so they cannot change either.
+ * Browsers without `crypto.subtle` (Home Assistant over plain http) check the file with a hash written in
+ * JavaScript: importing a store address directly fails anyway, as GitHub serves it as plain text (#78).
  */
 export async function resolveModuleUrl(ref: PluginRef, fetcher: typeof fetch = (...args) => fetch(...args)): Promise<{ url: string; revoke?: () => void }> {
+  if (!ref.sha256) return { url: ref.url };
   const subtle = globalThis.crypto?.subtle;
-  if (!ref.sha256 || !subtle) return { url: ref.url };
   const res = await fetcher(ref.url, { cache: "no-store" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const bytes = await res.arrayBuffer();
-  if (toHex(await subtle.digest("SHA-256", bytes)) !== ref.sha256.toLowerCase()) throw new Error("checksum mismatch: the file is not the one that was reviewed");
+  const sum = subtle ? toHex(await subtle.digest("SHA-256", bytes)) : sha256Hex(bytes);
+  if (sum !== ref.sha256.toLowerCase()) throw new Error("checksum mismatch: the file is not the one that was reviewed");
   const blobUrl = URL.createObjectURL(new Blob([bytes], { type: "text/javascript" }));
   return { url: blobUrl, revoke: () => URL.revokeObjectURL(blobUrl) };
 }
