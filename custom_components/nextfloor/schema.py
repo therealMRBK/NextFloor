@@ -328,6 +328,8 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("room_sensor", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # ask before switching the linked entity
         vol.Optional("confirm", default=False): bool,
+        # lights: the room panel shows only the switch
+        vol.Optional("simple"): bool,
         # its marker in 3D: None = automatic, always, without watts, or hidden
         vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
         # an own symbol for the marker: a Material Design icon name without "mdi:"
@@ -815,6 +817,8 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
         vol.Optional("favorites", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=40)),
+        # facts the room panel leaves out of its header
+        vol.Optional("room_facts_off"): vol.Any(None, [vol.In(["sun", "comfort", "air", "circuits"])]),
         # a favourite shown on one floor only: entity id -> floor id
         vol.Optional("favorite_floors"): vol.Any(
             None, {vol.All(str, vol.Length(max=255)): vol.All(str, vol.Length(max=64))}

@@ -101,6 +101,7 @@ export function renderDeviceForm(host: EditorHost, placed: Placement, actions: D
       ${numberField(host, t("x"), placed.x, (v) => set({ x: v }))} ${numberField(host, t("z"), placed.z, (v) => set({ z: v }))}
       ${numberField(host, t("marker_height"), placed.y ?? automatic, (v) => set({ y: Math.max(0, v) }), 0.05, 0)}
       ${numberField(host, t("rotation"), placed.rotation ?? 0, (v) => set({ rotation: ((v % 360) + 360) % 360 }), 1)}
+      ${light ? checkField(host, t("device_simple"), !!placed.simple, (on) => set({ simple: on || undefined }), { title: t("device_simple_hint") }) : nothing}
       ${kind && TOGGLE_KINDS.has(kind) ? checkField(host, t("device_confirm"), !!placed.confirm, (on) => set({ confirm: on }), { title: t("device_confirm_hint") }) : nothing}
       ${checkField(host, t("device_outside"), !!placed.outside, (on) => set({ outside: on || undefined }), { title: t("device_outside_hint") })}
       ${markerField(host, placed.marker ?? null, (v) => set({ marker: v }))}

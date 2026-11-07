@@ -326,6 +326,8 @@ export interface Placement extends LightEffectConfig {
   tilt?: number | null;
   /** Ask before switching this device (3D tap, quick menu, room panel). */
   confirm?: boolean;
+  /** Lights: only the switch in the room panel, without brightness, colour temperature and colours. */
+  simple?: boolean;
   /** Its marker in 3D: automatic (null), always shown, shown without watts, or hidden. */
   marker?: MarkerShow | null;
   /** An own symbol for the marker: a Material Design icon name without "mdi:" (null = by kind). */
@@ -605,6 +607,8 @@ export interface BuildingSettings {
   media_presets?: MediaPreset[];
   /** Favourites of the house: scenes, scripts, automations, buttons and switches in the central menu of the 3D view (#145). */
   favorites?: string[];
+  /** Facts the room panel leaves out of its header: sun hours, comfort, airing, fuse-box circuits. */
+  room_facts_off?: ("sun" | "comfort" | "air" | "circuits")[];
   /** A favourite that shows on one floor only (entity id → floor id); the others show everywhere. */
   favorite_floors?: Record<string, string>;
   /** Own buttons in the central menu (D143). */

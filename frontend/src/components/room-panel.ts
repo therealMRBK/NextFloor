@@ -395,8 +395,14 @@ export class NfRoomPanel extends LitElement {
     return this.room?.area_id ? this.hass.areas?.[this.room.area_id]?.name : undefined;
   }
 
+  /** The device as placed in the plan: it can carry an own name and a "switch only" flag. */
+  private placedAs(id: string) {
+    for (const f of this.building?.floors ?? []) for (const p of f.placements) if (p.entity_id === id) return p;
+    return undefined;
+  }
+
   private name(id: string): string {
-    return entityName(this.hass, id, this.areaName);
+    return this.placedAs(id)?.name?.trim() || entityName(this.hass, id, this.areaName);
   }
 
   private nameButton(id: string) {
@@ -587,10 +593,11 @@ export class NfRoomPanel extends LitElement {
     if (low.length) out.push(`🪫 ${this.t("battery_low_n", { n: low.length, names: low.map((b) => `${this.name(b.entity)} ${Math.round(b.level)} %`).join(", ") })}`);
     // the circuits of the fuse box that feed it
     const circuits = (this.building?.settings.circuits ?? []).filter((c) => c.rooms.includes(room.id)).map((c) => c.name);
-    if (circuits.length) out.push(`🔌 ${circuits.join(", ")}`);
+    const off = this.building?.settings.room_facts_off ?? [];
+    if (circuits.length && !off.includes("circuits")) out.push(`🔌 ${circuits.join(", ")}`);
     // hours of sun through its outside windows today
     const { latitude, longitude, time_zone } = this.hass.config ?? {};
-    if (this.floor && latitude !== undefined && longitude !== undefined && this.building) {
+    if (this.floor && latitude !== undefined && longitude !== undefined && this.building && !off.includes("sun")) {
       const sun = roomSun(this.building, this.floor, room, { latitude, longitude, zone: time_zone });
       if (sun.facing.length) out.push(`☀ ${this.t("room_sun_hours", { h: formatNumber(this.hass, sun.hours, 1), facing: sun.facing.join(", ") })}`);
     }
@@ -598,10 +605,10 @@ export class NfRoomPanel extends LitElement {
     const t = roomClimateValue(this.hass, this.floor, room, "temperature");
     const h = roomClimateValue(this.hass, this.floor, room, "humidity");
     const need = airingNeed(roomClimateValue(this.hass, this.floor, room, "co2"), h, mouldRisk(t, h));
-    if (need) out.push(`💨 ${this.t(`air_${need}`)}`);
+    if (need && !off.includes("air")) out.push(`💨 ${this.t(`air_${need}`)}`);
     // how comfortable it is (0 … 100)
     const comfort = comfortScore(t, h, roomClimateValue(this.hass, this.floor, room, "co2"), isSummer(new Date(), this.hass.config?.latitude));
-    if (comfort !== null && (t !== null || h !== null)) out.push(`😊 ${this.t("comfort_n", { n: comfort })}`);
+    if (comfort !== null && (t !== null || h !== null) && !off.includes("comfort")) out.push(`😊 ${this.t("comfort_n", { n: comfort })}`);
     return out;
   }
 
@@ -663,12 +670,13 @@ export class NfRoomPanel extends LitElement {
     const kMin = (a.min_color_temp_kelvin as number | undefined) ?? 2200;
     const kMax = (a.max_color_temp_kelvin as number | undefined) ?? 6500;
     const id = st.entity_id;
+    const simple = !!this.placedAs(id)?.simple;
     return html`<div class="nf-rp-row">
       <span class="nf-rp-icon ${on ? "nf-rp-on" : ""}">${icon("light")}</span>
       ${this.nameButton(id)}
       <span class="nf-rp-state">${this.stateOf(st)}</span>
       ${this.toggle(st, on, () => this.call("light", "toggle", { entity_id: id }))}
-      ${on && dimmable
+      ${on && dimmable && !simple
         ? html`<label class="nf-rp-slider"
             ><span>${this.t("brightness")}</span>
             <input
@@ -679,7 +687,7 @@ export class NfRoomPanel extends LitElement {
               @change=${(e: Event) => this.call("light", "turn_on", { entity_id: id, brightness_pct: Number((e.target as HTMLInputElement).value) })}
           /></label>`
         : nothing}
-      ${on && temp
+      ${on && temp && !simple
         ? html`<label class="nf-rp-slider nf-rp-ct"
             ><span>${this.t("color_temp")}</span>
             <input
@@ -691,7 +699,7 @@ export class NfRoomPanel extends LitElement {
               @change=${(e: Event) => this.call("light", "turn_on", { entity_id: id, color_temp_kelvin: Number((e.target as HTMLInputElement).value) })}
           /></label>`
         : nothing}
-      ${on && color
+      ${on && color && !simple
         ? html`<div class="nf-rp-swatches" role="group" aria-label=${this.t("color")}>
             ${SWATCHES.map(
               (c) => html`<button

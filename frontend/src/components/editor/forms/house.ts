@@ -172,9 +172,18 @@ function ownButtons(host: EditorHost): TemplateResult {
       : nothing}`;
 }
 
+/** Which facts the room panel shows in its header. */
+function roomFacts(host: EditorHost): TemplateResult {
+  const off = host.doc.settings.room_facts_off ?? [];
+  const facts = (["sun", "comfort", "air", "circuits"] as const).map((k) =>
+    checkField(host, host.t(`room_fact_${k}` as I18nKey), !off.includes(k), (on) => host.change((d) => (d.settings.room_facts_off = orUndefined(on ? off.filter((x) => x !== k) : [...off, k])))),
+  );
+  return html`<h4>${host.t("room_facts")}</h4><div class="nf-form">${facts}</div>`;
+}
+
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
 export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)}</details>`;
+  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */
