@@ -396,6 +396,8 @@
   "plain_hint": "Visar bara väggar, dörrar, fönster och trappor, utan möbler. Enheter och deras markörer finns kvar.",
   "right_back": "Högerklick = tillbaka",
   "right_back_hint": "Ett kort högerklick i 3D-vyn går ett steg tillbaka: från rummet till våningen, från våningen till huset (som ett dubbeltryck på tom yta). Att dra med höger knapp flyttar fortfarande vyn.",
+  "stl": "3D-utskrift (STL)",
+  "stl_hint": "Sparar huset som STL-fil (väggar, golv, möbler och utomhusytor på alla våningar) för 3D-utskrift i skala 1:100 (en meter blir 10 mm). Fönster, ljus och tak ingår inte; en slicer lagar filen vid behov.",
   "card_plain": "Bara planlösning",
   "card_rooms": "Bara dessa rum",
   "card_rooms_hint": "Kortet visar bara de ibockade rummen med möbler, enheter, dörrar och fönster (till exempel för en surfplatta i köket). Inget ibockat: hela planen.",

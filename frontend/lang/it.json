@@ -396,6 +396,8 @@
   "plain_hint": "Mostra solo pareti, porte, finestre e scale, senza mobili. Dispositivi e relativi pin restano.",
   "right_back": "Clic destro = indietro",
   "right_back_hint": "Un breve clic destro nella vista 3D torna indietro di un passo: dalla stanza al piano, dal piano alla casa (come un doppio tocco su uno spazio vuoto). Trascinare con il tasto destro sposta ancora la vista.",
+  "stl": "Stampa 3D (STL)",
+  "stl_hint": "Salva la casa come file STL (pareti, pavimenti, mobili e aree esterne di tutti i piani) per la stampa 3D, in scala 1:100 (un metro diventa 10 mm). Finestre, luci e tetto non sono inclusi; uno slicer ripara il file se serve.",
   "card_plain": "Solo pianta",
   "card_rooms": "Solo queste stanze",
   "card_rooms_hint": "La scheda mostra solo le stanze selezionate con mobili, dispositivi, porte e finestre (ad esempio per un tablet in cucina). Nulla selezionato: tutta la pianta.",

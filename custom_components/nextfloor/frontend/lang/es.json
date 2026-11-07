@@ -396,6 +396,8 @@
   "plain_hint": "Muestra solo paredes, puertas, ventanas y escaleras, sin muebles. Los dispositivos y sus marcadores se mantienen.",
   "right_back": "Clic derecho = atrás",
   "right_back_hint": "Un clic derecho corto en la vista 3D retrocede un paso: de la habitación a la planta, de la planta a la casa (como un doble toque en un espacio vacío). Arrastrar con el botón derecho sigue desplazando la vista.",
+  "stl": "Impresión 3D (STL)",
+  "stl_hint": "Guarda la casa como archivo STL (paredes, suelos, muebles y exteriores de todas las plantas) para impresión 3D, a escala 1:100 (un metro son 10 mm). No incluye ventanas, luces ni tejado; un slicer repara el archivo si hace falta.",
   "card_plain": "Solo plano",
   "card_rooms": "Solo estas habitaciones",
   "card_rooms_hint": "La tarjeta muestra solo las habitaciones marcadas con sus muebles, dispositivos, puertas y ventanas (por ejemplo para una tableta en la cocina). Sin marcar: todo el plano.",

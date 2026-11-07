@@ -382,6 +382,8 @@
  "plain_hint": "Affiche seulement murs, portes, fenêtres et escaliers, sans meubles. Les appareils et leurs repères restent.",
  "right_back": "Clic droit = retour",
  "right_back_hint": "Un court clic droit dans la vue 3D revient d’un pas : de la pièce à l’étage, de l’étage à la maison (comme un double appui sur une zone vide). Glisser avec le bouton droit déplace toujours la vue.",
+ "stl": "Impression 3D (STL)",
+ "stl_hint": "Enregistre la maison en fichier STL (murs, sols, meubles et extérieurs de tous les étages) pour l’impression 3D, à l’échelle 1:100 (un mètre devient 10 mm). Fenêtres, lumières et toit en sont absents ; un slicer répare le fichier si besoin.",
  "card_plain": "Plan seul",
  "card_rooms": "Seulement ces pièces",
  "card_rooms_hint": "La carte n’affiche que les pièces cochées avec leurs meubles, appareils, portes et fenêtres (par exemple pour une tablette dans la cuisine). Rien de coché : tout le plan.",

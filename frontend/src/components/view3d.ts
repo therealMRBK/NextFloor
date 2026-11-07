@@ -1644,6 +1644,18 @@ export class NfView3d extends LitElement {
   }
 
   /** The second blind of an opening whose tap opens its first one: the right half of the opening is tapped for it. */
+  /** Saves the house as an STL file for 3D printing (1:100, millimetres). */
+  downloadStl(): void {
+    const bytes = this.viewer?.exportStl(10);
+    if (!bytes) return;
+    const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "model/stl" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `nextfloor-${new Date().toISOString().slice(0, 10)}.stl`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
   private secondBlinds(): Map<string, string> {
     const out = new Map<string, string>();
     for (const [id, e] of this.openingLinks ?? []) if (e.cover2 && !e.lock && e.cover) out.set(id, e.cover2);

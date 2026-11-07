@@ -396,6 +396,8 @@
   "plain_hint": "Pokazuje tylko ściany, drzwi, okna i schody, bez mebli. Urządzenia i ich piny zostają.",
   "right_back": "Prawy klik = wstecz",
   "right_back_hint": "Krótkie kliknięcie prawym przyciskiem w widoku 3D cofa o krok: z pomieszczenia na piętro, z piętra do domu (jak dwukrotne dotknięcie pustego miejsca). Przeciąganie prawym przyciskiem nadal przesuwa widok.",
+  "stl": "Druk 3D (STL)",
+  "stl_hint": "Zapisuje dom jako plik STL (ściany, podłogi, meble i tereny zewnętrzne wszystkich pięter) do druku 3D w skali 1:100 (metr to 10 mm). Nie ma w nim okien, świateł ani dachu; slicer w razie potrzeby naprawi plik.",
   "card_plain": "Tylko plan",
   "card_rooms": "Tylko te pomieszczenia",
   "card_rooms_hint": "Karta pokazuje tylko zaznaczone pomieszczenia z meblami, urządzeniami, drzwiami i oknami (na przykład dla tabletu w kuchni). Nic nie zaznaczono: cały plan.",

@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **3D print export:** a *3D print (STL)* button in the 3D view's settings saves the house as an STL file (walls, floors, furniture and outdoor areas of every floor) at 1:100, one metre becoming 10 mm. Windows, lights and the roof are not in it.
 - **Right click goes one step back** (the view's settings, or the card option `right_back: true`, off by default): a short right click in the 3D view closes the room or goes from the floor back to the house, like a double tap on empty space; dragging with the right button still pans.
 - **Two decoration packs, free:** *Winter & Christmas* (Christmas tree, Advent wreath, window star, candle arch, light-up reindeer, snowman, fairy lights) and *Halloween* (pumpkin, ghost, gravestone, witch's cauldron). The glowing parts follow a light or switch you link; to show a decoration only in its season, set *Only show while …* on the piece. That makes 43 furniture packs.
 - **Tilt furniture:** a piece of furniture has *Tilt front/back* and *Tilt sideways* (degrees) in its form, for a leaning ladder, a tilted picture or a roof-sloped shelf. (Owned 3D models are not tilted.)

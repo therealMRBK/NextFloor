@@ -60,6 +60,7 @@ import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
+import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
@@ -683,6 +684,18 @@ export class NextFloorViewer {
       this.rebuild();
       this.invalidate();
     }
+  }
+
+  /** The house as a binary STL (walls, floors, furniture and outdoor areas of every floor), for printing; `scale` 10 is 1:100 in millimetres. */
+  exportStl(scale = 10): Uint8Array {
+    const parts: StlPart[] = [];
+    for (const fv of this.floors) {
+      for (const mesh of [fv.wallMesh, fv.floorMesh]) {
+        const position = mesh.geometry.getAttribute("position");
+        if (position) parts.push({ positions: position.array, lift: fv.floor.elevation });
+      }
+    }
+    return buildStl(parts, scale);
   }
 
   /** Which gates of the fences are open (gate id → open); a change rebuilds the floors. */

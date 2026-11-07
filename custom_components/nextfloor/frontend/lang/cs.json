@@ -396,6 +396,8 @@
   "plain_hint": "Zobrazí jen zdi, dveře, okna a schody, bez nábytku. Zařízení a jejich značky zůstanou.",
   "right_back": "Pravý klik = zpět",
   "right_back_hint": "Krátké kliknutí pravým tlačítkem v 3D pohledu vrátí o krok zpět: z místnosti na patro, z patra k domu (jako dvojité klepnutí na prázdné místo). Tažení pravým tlačítkem stále posouvá pohled.",
+  "stl": "3D tisk (STL)",
+  "stl_hint": "Uloží dům jako soubor STL (zdi, podlahy, nábytek a venkovní plochy všech pater) pro 3D tisk v měřítku 1:100 (metr je 10 mm). Okna, světla a střecha v něm nejsou; slicer soubor v případě potřeby opraví.",
   "card_plain": "Jen půdorys",
   "card_rooms": "Jen tyto místnosti",
   "card_rooms_hint": "Karta zobrazí jen zaškrtnuté místnosti s nábytkem, zařízeními, dveřmi a okny (například pro tablet v kuchyni). Nic zaškrtnuto: celý plán.",
