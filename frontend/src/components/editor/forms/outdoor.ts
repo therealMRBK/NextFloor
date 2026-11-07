@@ -2,7 +2,7 @@
 
 import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
-import { bounds, cutsOut, isAxisRect, type FreeWall, OUTDOOR_TOP, OUTDOOR_TYPES, outdoorStanding, SLOPE_DIRS, type Direction, type OutdoorArea, type OutdoorType, type SlopeDir, type Vec2 } from "../../../model.ts";
+import { bounds, cutsOut, isAxisRect, uid, type FenceGate, type FreeWall, OUTDOOR_TOP, OUTDOOR_TYPES, outdoorStanding, SLOPE_DIRS, type Direction, type OutdoorArea, type OutdoorType, type SlopeDir, type Vec2 } from "../../../model.ts";
 import { checkField, entityField, hint, numberField, selectField, toThousandths } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
 import type { EditorHost } from "../host.ts";
@@ -50,6 +50,7 @@ export function renderOutdoorForm(host: EditorHost, area: OutdoorArea, actions: 
       ${area.type === "pergola" ? checkField(host, t("outdoor_bracing"), !!area.bracing, (on) => set({ bracing: on || undefined })) : nothing}
       ${checkField(host, t("outdoor_cut"), cutsOut(area), (on) => set({ cut: on === (area.type === "pool") ? undefined : on }), { title: t("outdoor_cut_hint") })}
     </div>
+    ${area.type === "fence" ? fenceGates(host, area, set) : nothing}
     ${host.admin
       ? html`<div class="nf-actions">
             ${area.points.map((_, i) => html`<button class="nf-chip" title=${t("delete_point")} ?disabled=${area.points.length <= 3} @click=${() => actions.removeCorner(i)}>${i + 1} ×</button>`)}
@@ -61,6 +62,41 @@ export function renderOutdoorForm(host: EditorHost, area: OutdoorArea, actions: 
       ? html`<div class="nf-actions"><button class="nf-btn" @click=${() => actions.duplicate()}>${t("duplicate")}</button><button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>`
       : nothing}
   </section>`;
+}
+
+/** The gates of a fence: each a gap in one edge with a leaf (or two) that follows an entity or a contact. */
+function fenceGates(host: EditorHost, area: OutdoorArea, set: (patch: Partial<OutdoorArea>) => void): TemplateResult {
+  const t = host.t;
+  const gates = area.gates ?? [];
+  const store = (next: FenceGate[]) => set({ gates: next.length ? next : undefined });
+  const edges = area.points.map((_, i): [string, string] => [String(i), `${i + 1} → ${((i + 1) % area.points.length) + 1}`]);
+  const edgeLength = (i: number) => {
+    const [a, b] = [area.points[i], area.points[(i + 1) % area.points.length]];
+    return a && b ? Math.hypot(b[0] - a[0], b[1] - a[1]) : 0;
+  };
+  const patch = (i: number, change: Partial<FenceGate>) => store(gates.map((g, k) => (k === i ? { ...g, ...change } : g)));
+  const drivers = entityOptions(host.hass, (id) => /^(cover|switch|input_boolean|lock)\./.test(id));
+  const contacts = entityOptions(host.hass, (id) => id.startsWith("binary_sensor."));
+  const kinds: [string, string][] = [["single", t("gate_single")], ["double", t("gate_double")], ["sliding", t("gate_sliding")]];
+  const add = () => {
+    const edge = 0;
+    const length = edgeLength(edge);
+    store([...gates, { id: uid("gate"), edge, offset: toThousandths(length / 2), width: Math.min(1.2, Math.max(0.5, toThousandths(length * 0.4))), kind: "single" }]);
+  };
+  return html`<h4 class="nf-lib-head">${t("fence_gates")}</h4>
+    ${gates.map(
+      (g, i) => html`<div class="nf-form">
+        ${selectField(host, t("gate_edge"), String(g.edge), edges, (v) => patch(i, { edge: Number(v) }))}
+        ${selectField(host, t("gate_kind"), g.kind, kinds, (kind) => patch(i, { kind: kind as FenceGate["kind"], width: kind === "single" && g.width > 1.6 ? 1 : g.width }))}
+        ${numberField(host, t("gate_offset"), g.offset, (v) => patch(i, { offset: Math.max(0, Math.min(edgeLength(g.edge), toThousandths(v))) }), 0.05, 0)}
+        ${numberField(host, t("gate_width"), g.width, (v) => patch(i, { width: Math.max(0.3, Math.min(12, toThousandths(v))) }), 0.05, 0.3)}
+        ${entityField(host, t("gate_entity"), g.entity ?? null, undefined, drivers, (v) => patch(i, { entity: v && v !== "none" ? v : null }))}
+        ${entityField(host, t("gate_contact"), g.contact ?? null, undefined, contacts, (v) => patch(i, { contact: v && v !== "none" ? v : null }))}
+        ${host.admin ? html`<button class="nf-btn nf-danger nf-wide" @click=${() => store(gates.filter((_, k) => k !== i))}>${t("delete")}</button>` : nothing}
+      </div>`,
+    )}
+    ${host.admin && gates.length < 20 ? html`<button class="nf-btn" @click=${add}>${t("gate_add")}</button>` : nothing}
+    ${hint(t("fence_gates_hint"))}`;
 }
 
 export interface MeasureState {

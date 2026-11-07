@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Gates in fences:** a fence's form has *+ Gate in the fence*: a gap in one side with gate posts and a garden gate, a double gate or a sliding gate. With a motor or switch (cover, switch, input_boolean, lock) and/or a contact the gate opens in 3D: garden and double gates swing inwards, a sliding gate runs along the fence. (Tapping the gate in 3D to switch it is not there yet.)
 - **Sun arc and compass:** the editor's settings have *Sun arc and compass*: today's path of the sun as an arc over the plot, with a ring on the ground, the compass points (north in red) and a bead where the sun stands now. It uses your home's location in Home Assistant and follows the time-of-day slider.
 - **Sloping free-standing walls:** a wall drawn with the wall tool can fall from one end to the other (*◢ Sloping* in its form, with a height at each end).
 - **Overhang per roof side:** a roof section's form has *Overhang per side*: the eaves and both ends of the ridge each get their own overhang; unset sides stay automatic (none where the roof meets the house).

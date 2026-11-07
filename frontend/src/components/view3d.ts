@@ -26,6 +26,7 @@ import { furnitureName } from "../furniture-names.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import { getPacks, hasMovingParts, householdKind, mountBase, packItem, packsVersion } from "../packs.ts";
 import { parkedVehicle, parkedVehicles, vehicleFurniture } from "../parking.ts";
+import { gateStates } from "../entities/gates.ts";
 import { weatherEntity } from "../weather.ts";
 import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.ts";
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
@@ -879,6 +880,7 @@ export class NfView3d extends LitElement {
     // roof windows: sash and blind follow their contact and cover like windows do
     v.setRoofWindows(roofWindowStates(hass, b));
     v.setParked(parkedVehicles(hass, b));
+    v.setGateStates(gateStates(hass, b));
     const types = new Map(b.floors.flatMap((f) => f.openings.map((o) => [o.id, o.type] as const)));
     const openingStates = new Map([...this.openingLinks!].map(([id, e]) => [id, openingState(hass, e, types.get(id))]));
     v.setOpeningStates(openingStates);

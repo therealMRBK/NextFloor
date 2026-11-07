@@ -509,6 +509,9 @@ export class NextFloorViewer {
   private parkedSig = "";
   /** Only the floor plan: the furniture is left out of the build (stairs and the like stay). */
   private plain = false;
+  /** Gate id → open (from the entities that drive the gates); a change rebuilds the floors. */
+  private gateOpen = new Map<string, boolean>();
+  private gateSig = "";
   /** Slow automatic turn of the view (kiosk screensaver), in radians per second. */
   private orbitSpeed = 0;
   private orbitLast = 0;
@@ -650,6 +653,21 @@ export class NextFloorViewer {
   setPlain(on: boolean): void {
     if (on === this.plain) return;
     this.plain = on;
+    if (this.building) {
+      this.rebuild();
+      this.invalidate();
+    }
+  }
+
+  /** Which gates of the fences are open (gate id → open); a change rebuilds the floors. */
+  setGateStates(states: Map<string, boolean>): void {
+    const sig = [...states]
+      .map(([id, v]) => `${id}=${v ? 1 : 0}`)
+      .sort()
+      .join("|");
+    if (sig === this.gateSig) return;
+    this.gateSig = sig;
+    this.gateOpen = states;
     if (this.building) {
       this.rebuild();
       this.invalidate();
@@ -1659,6 +1677,10 @@ export class NextFloorViewer {
 
   /** The floor without its furniture in the plain view; what builds the floor itself (stairs, stairwells, hole makers) stays. */
   private withoutFurniture(floor: Floor): Floor {
+    if (this.gateOpen.size && (floor.outdoor ?? []).some((a) => a.gates?.length)) {
+      // the gates' states go into the build as a copy; the plan itself never holds them
+      floor = { ...floor, outdoor: floor.outdoor.map((a) => (a.gates?.length ? { ...a, gates: a.gates.map((g) => ({ ...g, open: this.gateOpen.get(g.id) ?? false })) } : a)) };
+    }
     if (!this.plain) return floor;
     const keep = (f: Floor["furniture"][number]) => f.type === "stairs" || f.type === "stairwell" || !!packItem(f.type)?.hole;
     return { ...floor, furniture: floor.furniture.filter(keep) };

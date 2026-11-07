@@ -478,6 +478,19 @@ BACKGROUND_SCHEMA = vol.Schema(
 
 OUTDOOR_TYPES = ["lawn", "terrace", "path", "driveway", "pool", "bed", "wild", "hedge", "fence", "pergola"]
 
+FENCE_GATE_SCHEMA = vol.Schema(
+    {
+        vol.Required("id"): _ID,
+        vol.Required("edge"): vol.All(int, vol.Range(min=0, max=MAX_POINTS)),
+        vol.Required("offset"): vol.All(vol.Coerce(float), vol.Range(min=0, max=1000)),
+        vol.Required("width"): vol.All(vol.Coerce(float), vol.Range(min=0.3, max=12)),
+        vol.Required("kind"): vol.In(["single", "double", "sliding"]),
+        vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("contact", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
 OUTDOOR_SCHEMA = vol.Schema(
     {
         vol.Required("id"): _ID,
@@ -486,6 +499,8 @@ OUTDOOR_SCHEMA = vol.Schema(
         # hedges and fences: their height (None = default); outline False hides the neon line
         vol.Optional("height", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=6))),
         vol.Optional("outline", default=True): bool,
+        # gates in a fence
+        vol.Optional("gates"): vol.All([FENCE_GATE_SCHEMA], vol.Length(max=20)),
         # height offset in m (a driveway down to a lower garage, a raised terrace)
         # (None = 0: the editor clears the field when it is set back to 0, #242)
         vol.Optional("offset", default=0.0): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=-10, max=10))),

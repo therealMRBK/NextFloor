@@ -8,6 +8,7 @@ import { Color } from "three";
 import { bounds, cutsOut, groundLevel, isAxisRect, OUTDOOR_TOP, outdoorDrop, outdoorStanding, pointInPolygon, type Floor, type OutdoorArea, type Vec2 } from "../../model.ts";
 import { ALWAYS, pushPrism, shade, triangulate, type GeoBuffer, type LineBuffer } from "../geo.ts";
 import { counterClockwise, pushBeam, pushPost } from "./beams.ts";
+import { gateLayout, gatesOnEdge } from "./gates.ts";
 import { LOOKS } from "./looks.ts";
 
 /** The height of the visible surface of an area (for the lighting layer), at its high edge. */
@@ -68,20 +69,66 @@ function buildPool(c: Context): void {
 }
 
 function buildFence(c: Context): void {
-  const { buf, lines, poly, top, look, groundAt, edge, openEdge } = c;
+  const { buf, lines, poly, area, top, look, groundAt, edge, openEdge } = c;
   // posts about every 2 m and two rails along the outline, following the ground
   for (const [i, p, q] of edgesOf(poly, openEdge)) {
-    const sections = Math.max(1, Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 2));
+    const length = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const sections = Math.max(1, Math.round(length / 2));
+    // gates cut gaps into the edge: no posts and no rails there, a gate post at each end and the leaves in between
+    const gates = gatesOnEdge(area, p, q)
+      .map(({ gate, offset }) => ({ gate, layout: gateLayout(p, q, gate, offset, !!gate.open) }))
+      .filter((g): g is { gate: typeof g.gate; layout: NonNullable<typeof g.layout> } => !!g.layout);
+    const inGap = (t: number) => gates.some((g) => t > g.layout.from - 0.15 && t < g.layout.to + 0.15);
     // an open fence also gets the post at its far end
     const lastPost = openEdge >= 0 && i === openEdge - 1 ? sections : sections - 1;
     for (let k = 0; k <= lastPost; k++) {
+      if (inGap((length * k) / sections)) continue;
       const x = p[0] + ((q[0] - p[0]) * k) / sections;
       const z = p[1] + ((q[1] - p[1]) * k) / sections;
       const ground = groundAt(x, z);
       pushPost(buf, [x, z], 0.04, ground, ground + top, look.side, look.color);
     }
-    for (const rail of [0.35, 0.85]) lines.seg([p[0], groundAt(p[0], p[1]) + rail * top, p[1]], [q[0], groundAt(q[0], q[1]) + rail * top, q[1]], edge, ALWAYS);
+    // the rails run between the gaps
+    const cuts: [number, number][] = [];
+    let at = 0;
+    for (const g of gates) {
+      cuts.push([at, g.layout.from]);
+      at = g.layout.to;
+    }
+    cuts.push([at, length]);
+    const along = (t: number): Vec2 => [p[0] + ((q[0] - p[0]) * t) / length, p[1] + ((q[1] - p[1]) * t) / length];
+    for (const [t0, t1] of cuts) {
+      if (t1 - t0 < 0.02) continue;
+      const [a, b] = [along(t0), along(t1)];
+      for (const rail of [0.35, 0.85]) lines.seg([a[0], groundAt(a[0], a[1]) + rail * top, a[1]], [b[0], groundAt(b[0], b[1]) + rail * top, b[1]], edge, ALWAYS);
+    }
+    for (const { layout } of gates) {
+      for (const post of layout.posts) {
+        const ground = groundAt(post[0], post[1]);
+        pushPost(buf, post, 0.07, ground, ground + top * 1.05, look.side, look.color);
+      }
+      for (const leaf of layout.leaves) pushGateLeaf(c, leaf.a, leaf.b);
+    }
   }
+}
+
+/** One gate leaf: two rails, pickets and a diagonal brace between a (the hinge) and b. */
+function pushGateLeaf(c: Context, a: Vec2, b: Vec2): void {
+  const { buf, lines, top, look, groundAt, edge } = c;
+  const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  if (length < 0.05) return;
+  const [ga, gb] = [groundAt(a[0], a[1]), groundAt(b[0], b[1])];
+  const rise = gb - ga;
+  for (const [lo, hi] of [[0.12, 0.2], [0.78, 0.86]]) pushBeam(buf, a, b, 0.05, ga + lo * top, ga + hi * top, look.side, look.color, rise);
+  const pickets = Math.max(2, Math.round(length / 0.18));
+  for (let k = 0; k <= pickets; k++) {
+    const t = k / pickets;
+    const x = a[0] + (b[0] - a[0]) * t;
+    const z = a[1] + (b[1] - a[1]) * t;
+    const ground = ga + rise * t;
+    pushPost(buf, [x, z], k === 0 || k === pickets ? 0.03 : 0.012, ground + 0.1 * top, ground + 0.9 * top, look.side, look.color);
+  }
+  lines.seg([a[0], ga + 0.2 * top, a[1]], [b[0], gb + 0.78 * top, b[1]], edge, ALWAYS);
 }
 
 function buildPergola(c: Context): void {

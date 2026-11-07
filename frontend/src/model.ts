@@ -881,6 +881,23 @@ export interface OutdoorArea {
   bracing?: boolean;
   /** This area is cut out of every other area that contains it whole (a wild patch or pond inside a lawn). A pool does this by itself unless this is false. */
   cut?: boolean;
+  /** Fences: gates in the fence (gaps with a leaf that follows an entity). */
+  gates?: FenceGate[];
+}
+
+/** A gate in a fence: a gap in one edge of its outline with a garden gate (one leaf), a double gate or a sliding gate. */
+export interface FenceGate {
+  id: string;
+  /** The edge of the area's outline (points[edge] → points[edge + 1]) and the gate's middle along it (m from the first point). */
+  edge: number;
+  offset: number;
+  width: number;
+  kind: "single" | "double" | "sliding";
+  /** What opens it: a cover, switch, input_boolean or lock (open / on / unlocked), and/or a contact (binary_sensor, on = open). */
+  entity?: string | null;
+  contact?: string | null;
+  /** Set while building the 3D view from the entities' states; never stored. */
+  open?: boolean;
 }
 
 /** Whether an area leaves a hole in the areas around it: set by hand, and on by default for a pool. */

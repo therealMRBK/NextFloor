@@ -124,3 +124,15 @@ test("an area with fewer than three corners is skipped", () => {
   const { buf, lines } = build(area("lawn", [[0, 0], [1, 1]]));
   assert.equal(buf.count + lines.p.length, 0);
 });
+
+test("a gate cuts a gap into a fence: no rail across it, gate posts at its ends, and a leaf that moves when it opens", () => {
+  const plain = build(area("fence", square(0, 0, 8, 4)));
+  const gate = (open: boolean) => build(area("fence", square(0, 0, 8, 4), { gates: [{ id: "g", edge: 0, offset: 4, width: 1.2, kind: "single", open }] }));
+  const closed = gate(false);
+  assert.ok(closed.lines.p.length / 6 >= plain.lines.p.length / 6 + 2, "the long edge's two rails now come in two parts, plus the leaf's brace");
+  assert.ok(closed.buf.count > plain.buf.count, "gate posts and leaf geometry");
+  const open = gate(true);
+  assert.notDeepEqual(open.buf.p, closed.buf.p, "an open leaf stands somewhere else");
+  const zs = open.buf.p.filter((_, i) => i % 3 === 2);
+  assert.ok(Math.max(...zs) > 1.0, "it swings into the plot");
+});
