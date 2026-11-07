@@ -164,6 +164,7 @@ export function coverLink(host: EditorHost, item: Furniture, actions: FurnitureL
   const t = host.t;
   return html`<div class="nf-form nf-links">
     ${entityField(host, t("furn_cover_entity"), item.cover_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("cover.")), (v) => actions.update({ cover_entity: noneAsNull(v) }))}
+    ${checkField(host, t("furn_cover_inverted"), !!item.cover_inverted, (on) => actions.update({ cover_inverted: on || undefined }), { title: t("furn_cover_inverted_hint") })}
     ${hint(t("furn_cover_hint"), "nf-wide")}
   </div>`;
 }

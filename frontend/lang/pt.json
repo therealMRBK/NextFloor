@@ -268,6 +268,8 @@
   "gang_switch_one": "Interruptores",
   "furn_cover_entity": "Move-se com",
   "furn_cover_hint": "A cortina, tela, toldo ou portão segue esta entidade de cobertura (estore, cortina, toldo, portão) e move-se com ela. Um toque abre o menu (subir, parar, descer).",
+  "furn_cover_inverted": "Inverter o sentido",
+  "furn_cover_inverted_hint": "Para um toldo ou cortina que se move ao contrário no plano: aberto aparece fechado e vice-versa.",
   "gang_switch": "O botão {n} comuta",
   "gang_socket_one": "Tomada alimentada por",
   "gang_socket": "Tomada {n} alimentada por",

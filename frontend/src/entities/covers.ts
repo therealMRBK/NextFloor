@@ -22,7 +22,8 @@ export function coverReaches(hass: HomeAssistant, b: Building): Map<string, numb
   for (const f of b.floors.flatMap((floor) => floor.furniture)) {
     const item = packItem(f.type);
     if (!item || !hasMovingParts(item)) continue;
-    out.set(f.id, coverReach(item, f.cover_entity ? coverPosition(hass, f.cover_entity) : null));
+    const position = f.cover_entity ? coverPosition(hass, f.cover_entity) : null;
+    out.set(f.id, coverReach(item, position !== null && f.cover_inverted ? 100 - position : position));
   }
   return out;
 }

@@ -265,6 +265,8 @@ export interface Furniture extends LightEffectConfig {
   /** Light switches and sockets: the entity of each button or socket, in order (null = none). */
   /** Items with moving parts (curtain, roller screen, awning, gate): the cover entity they follow (null = none, they rest). */
   cover_entity?: string | null;
+  /** The cover reports its position the other way round (0 = open): an awning that runs the opposite way – #100. */
+  cover_inverted?: boolean;
   gang_entities?: (string | null)[];
   /** Lamps: a second entity whose colour and brightness the lamp shows while the linked switch is on (a relay switches the light, the bulb itself knows its colour). */
   color_entity?: EntityRef;

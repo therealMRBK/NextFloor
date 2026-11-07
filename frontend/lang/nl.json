@@ -268,6 +268,8 @@
   "gang_switch_one": "Schakelaars",
   "furn_cover_entity": "Beweegt mee met",
   "furn_cover_hint": "Het gordijn, scherm, zonnescherm of de poort volgt deze cover-entiteit (rolluik, gordijn, zonnescherm, poort) en beweegt mee. Een tik opent het menu (omhoog, stop, omlaag).",
+  "furn_cover_inverted": "Looprichting omkeren",
+  "furn_cover_inverted_hint": "Voor een zonwering of gordijn die op het plan precies andersom beweegt: uitgerold toont ingerold en omgekeerd.",
   "gang_switch": "Knop {n} schakelt",
   "gang_socket_one": "Stopcontact gevoed door",
   "gang_socket": "Stopcontact {n} gevoed door",

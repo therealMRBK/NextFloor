@@ -258,6 +258,8 @@
  "gang_switch_one": "Commande",
  "furn_cover_entity": "Suit",
  "furn_cover_hint": "Le rideau, le store, l'auvent ou le portail suit cette entité de type volet (volet roulant, rideau, store banne, portail) et se déplace avec elle. Un appui ouvre son menu (ouvrir, stop, fermer).",
+ "furn_cover_inverted": "Inverser le sens",
+ "furn_cover_inverted_hint": "Pour un store ou un rideau qui bouge à l’envers sur le plan : sorti s’affiche rentré, et inversement.",
  "gang_switch": "Le bouton {n} commande",
  "gang_socket_one": "Prise alimentée par",
  "gang_socket": "Prise {n} alimentée par",

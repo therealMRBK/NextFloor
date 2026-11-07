@@ -268,6 +268,8 @@
   "gang_switch_one": "Strömbrytare",
   "furn_cover_entity": "Rör sig med",
   "furn_cover_hint": "Gardinen, duken, markisen eller grinden följer den här cover-entiteten (persienn, gardin, markis, grind) och rör sig med den. Ett tryck öppnar dess meny (upp, stopp, ner).",
+  "furn_cover_inverted": "Vänd riktningen",
+  "furn_cover_inverted_hint": "För ett markis eller gardin som rör sig åt motsatt håll på planen: utfälld visas som infälld och tvärtom.",
   "gang_switch": "Knapp {n} styr",
   "gang_socket_one": "Uttag matat av",
   "gang_socket": "Uttag {n} matat av",

@@ -268,6 +268,8 @@
   "gang_switch_one": "Vypínače",
   "furn_cover_entity": "Pohybuje se s",
   "furn_cover_hint": "Závěs, zástěna, markýza nebo brána sleduje tuto entitu stínění (roleta, závěs, markýza, brána) a pohybuje se s ní. Klepnutí otevře její nabídku (nahoru, stop, dolů).",
+  "furn_cover_inverted": "Obrátit směr",
+  "furn_cover_inverted_hint": "Pro markýzu nebo závěs, který se v plánu pohybuje opačně než ve skutečnosti: vysunutý se zobrazí jako zasunutý a naopak.",
   "gang_switch": "Tlačítko {n} přepíná",
   "gang_socket_one": "Zásuvka napájena přes",
   "gang_socket": "Zásuvka {n} napájena přes",

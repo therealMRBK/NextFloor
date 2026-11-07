@@ -268,6 +268,8 @@
   "gang_switch_one": "Interruttori",
   "furn_cover_entity": "Si muove con",
   "furn_cover_hint": "La tenda, lo schermo, la tenda da sole o il cancello segue questa entità di copertura (tapparella, tenda, tenda da sole, cancello) e si muove con essa. Un tocco apre il suo menu (su, stop, giù).",
+  "furn_cover_inverted": "Inverti la direzione",
+  "furn_cover_inverted_hint": "Per una tenda da sole o una tenda che nel piano si muove al contrario: aperta appare chiusa e viceversa.",
   "gang_switch": "Il tasto {n} commuta",
   "gang_socket_one": "Presa alimentata da",
   "gang_socket": "Presa {n} alimentata da",

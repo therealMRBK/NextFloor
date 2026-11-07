@@ -268,6 +268,8 @@
   "gang_switch_one": "Przełączniki",
   "furn_cover_entity": "Porusza się z",
   "furn_cover_hint": "Zasłona, ekran, markiza lub brama podąża za tą encją osłony (roleta, zasłona, markiza, brama) i porusza się razem z nią. Dotknięcie otwiera jej menu (w górę, stop, w dół).",
+  "furn_cover_inverted": "Odwróć kierunek",
+  "furn_cover_inverted_hint": "Dla markizy lub zasłony, która na planie rusza się odwrotnie niż w rzeczywistości: wysunięta pokazuje się jako zwinięta i odwrotnie.",
   "gang_switch": "Przycisk {n} przełącza",
   "gang_socket_one": "Gniazdo zasilane przez",
   "gang_socket": "Gniazdo {n} zasilane przez",

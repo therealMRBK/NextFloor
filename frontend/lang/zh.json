@@ -1254,6 +1254,8 @@
  "furn_ceiling_fan": "吊扇",
  "furn_cover_entity": "跟随",
  "furn_cover_hint": "窗帘、幕布、遮阳篷或大门跟随这个 cover 实体（卷帘、窗帘、遮阳篷、大门）一起动作。点一下打开它的菜单（上升、停止、下降）。",
+ "furn_cover_inverted": "反转方向",
+ "furn_cover_inverted_hint": "适用于在平面图中运动方向与实际相反的遮阳篷或窗帘：展开显示为收起，反之亦然。",
  "furn_entity_mower": "割草机器人",
  "furn_entity_water": "阀门或开关",
  "furn_fan_entity": "风扇",
