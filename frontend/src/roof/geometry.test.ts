@@ -106,3 +106,13 @@ test("a section can have a hip at one end and an upright gable at the other", ()
   assert.ok(g.endProfiles?.[1] && g.endProfiles[1].length === 3);
   assert.equal(g.ridges.length, 3, "the ridge and the two hip lines");
 });
+
+test("an overhang set by hand for one side replaces the automatic value of that side only", () => {
+  const b = emptyBuilding();
+  b.floors = [newFloor("g", "G", 0)];
+  const s = { id: "s", x0: 0, z0: 0, x1: 6, z1: 4, shape: "gable", axis: "x", eave_a: 2.5, eave_b: 2.5, pitch_a: 35, pitch_b: 35, base: 2.5, overhang: null } as RoofSection;
+  const auto = sectionOverhang(b, s, 0.4);
+  assert.deepEqual(auto, { a: 0.4, b: 0.4, u0: 0.4, u1: 0.4 });
+  const own = sectionOverhang(b, { ...s, overhang_sides: { u1: 1.2, a: 0 } }, 0.4);
+  assert.deepEqual(own, { a: 0, b: 0.4, u0: 0.4, u1: 1.2 });
+});

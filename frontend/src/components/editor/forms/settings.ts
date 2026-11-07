@@ -112,6 +112,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       </label>
       ${hint(t("announce_phrases_hint"), "nf-wide")}
       ${checkField(host, t("sun_patches"), s.sun_patches !== false, (on) => set({ sun_patches: on }), { title: t("sun_patches_hint") })}
+      ${checkField(host, t("sun_arc"), s.sun_arc === true, (on) => set({ sun_arc: on }), { title: t("sun_arc_hint") })}
       ${backdropFields(host, s.backdrop ?? null, (backdrop) => set({ backdrop }))}
     </div>
     ${hint(`${t("north_hint")} ${t("weather_entity_hint")}`)}

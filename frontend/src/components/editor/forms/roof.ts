@@ -4,6 +4,7 @@ import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { ROOF_SHAPES, type RoofEnd, type RoofSection, type RoofShape, type RoofWindow } from "../../../model.ts";
 import { ridgeHeight, sectionFloor } from "../../../roof-sections.ts";
+import { sectionOverhang } from "../../../roof/geometry.ts";
 import { proposeWindow, roofFaces } from "../../../solar.ts";
 import { entityOptions, isBinary, isNumeric } from "../entities.ts";
 import { actions, checkField, entityField, hint, numberField, selectField, textField, toThousandths } from "../fields.ts";
@@ -64,6 +65,16 @@ function sectionForm(deps: RoofPanelDeps, section: RoofSection): TemplateResult 
         ${hint(t("roof_base_hint"), "nf-wide")}
         ${metres(t("roof_overhang"), section.overhang ?? host.doc.settings.roof.overhang, (v) => set({ overhang: Math.min(2, v) }))}
       </div>
+      <details class="nf-section" ?open=${!!section.overhang_sides}>
+        <summary>${t("roof_overhang_sides")}</summary>
+        <div class="nf-form">
+          ${(["a", "b", "u0", "u1"] as const).map((side) =>
+            metres(t(`roof_overhang_${side}` as I18nKey), sectionOverhang(host.doc, section, section.overhang ?? host.doc.settings.roof.overhang)[side], (v) => set({ overhang_sides: { ...(section.overhang_sides ?? {}), [side]: Math.min(2, Math.max(0, v)) } })),
+          )}
+          ${host.admin && section.overhang_sides ? html`<button class="nf-btn" @click=${() => set({ overhang_sides: null })}>${t("roof_overhang_auto")}</button>` : nothing}
+        </div>
+        ${hint(t("roof_overhang_sides_hint"))}
+      </details>
       ${flat && host.admin
         ? html`${actions(
             html`<button class="nf-btn" title=${t("roof_outline_hint")} @click=${() => roof.takeOutline()}>${t("roof_outline")}</button>`,

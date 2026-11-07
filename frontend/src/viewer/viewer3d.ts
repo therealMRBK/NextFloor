@@ -60,6 +60,7 @@ import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
 import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
+import { SunArc } from "./scene/sun-arc.ts";
 import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
@@ -556,6 +557,8 @@ export class NextFloorViewer {
   private readonly weatherLayer: WeatherLayer;
   /** The house's shadow on the ground, and what it was last built from. */
   private readonly houseShadow = new HouseShadow();
+  private readonly sunArc = new SunArc();
+  private sunArcLocation: { latitude: number; longitude: number; zone?: string | null } | null = null;
   private shadowKey = "";
   /** The merged footprint of the floors above ground, kept until the rooms change (merging is the costly part). */
   private footprint: { key: string; rings: Vec2[][] } = { key: "", rings: [] };
@@ -604,6 +607,7 @@ export class NextFloorViewer {
     this.scene.add(this.ground, this.root);
     this.weatherLayer = new WeatherLayer(this.scene);
     this.scene.add(this.houseShadow.mesh);
+    this.scene.add(this.sunArc.group);
     this.mapLayer = new MapLayer(this.scene);
     this.mapLayer.onChange = () => this.invalidate();
     this.energyLayer = new EnergyLayer(this.scene, this.liftOf);
@@ -1071,7 +1075,29 @@ export class NextFloorViewer {
     this.sun = sun;
     for (const fv of this.floors) this.buildSun(fv);
     this.buildHouseShadow();
+    this.buildSunArc();
     this.invalidate();
+  }
+
+  /** Where the home is on the globe (for the sun's arc); null while it is not known. */
+  setLocation(location: { latitude: number; longitude: number; zone?: string | null } | null): void {
+    this.sunArcLocation = location;
+    this.buildSunArc();
+    this.invalidate();
+  }
+
+  /** The ring, compass letters and today's arc of the sun round the plot (building setting `sun_arc`, default off). */
+  private buildSunArc(): void {
+    const b = this.building;
+    const loc = this.sunArcLocation;
+    const rooms = (b?.floors ?? []).flatMap((f) => [...f.rooms.flatMap((r) => r.points), ...(f.outdoor ?? []).flatMap((o) => o.points)]);
+    if (!b || !b.settings.sun_arc || !loc || !rooms.length) return void this.sunArc.update(null, null, 0);
+    const xs = rooms.map((p) => p[0]);
+    const zs = rooms.map((p) => p[1]);
+    const centre: [number, number] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2];
+    const radius = Math.max(6, Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) / 2 + 3);
+    const ground = Math.min(0, ...b.floors.map((f) => f.elevation));
+    this.sunArc.update({ centre, radius, north: b.settings.north ?? 0, ...loc }, this.sun, ground);
   }
 
   /**
@@ -1384,6 +1410,7 @@ export class NextFloorViewer {
     clearTimeout(this.orbitTimer);
     clearTimeout(this.weatherTimer);
     this.weatherLayer.dispose();
+    this.sunArc?.dispose();
     this.houseShadow?.dispose();
     this.mapLayer.dispose();
     this.energyLayer.dispose();

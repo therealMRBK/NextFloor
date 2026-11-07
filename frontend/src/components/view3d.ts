@@ -942,6 +942,7 @@ export class NfView3d extends LitElement {
     const config = hass.config;
     const sunNow = this.timeOfDay != null && config?.latitude !== undefined && config.longitude !== undefined ? sunPosition(todayAt(this.timeOfDay, config.time_zone), config.latitude, config.longitude) : readSun(hass);
     v.setSun(sunNow);
+    v.setLocation(config?.latitude !== undefined && config.longitude !== undefined ? { latitude: config.latitude, longitude: config.longitude, zone: config.time_zone } : null);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
     const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;
     const weather = raw ? withDensity(chosenEffects(raw, b.settings.weather_effects), this.weatherDensity) : null;

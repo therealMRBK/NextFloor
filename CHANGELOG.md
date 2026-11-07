@@ -6,6 +6,9 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Sun arc and compass:** the editor's settings have *Sun arc and compass*: today's path of the sun as an arc over the plot, with a ring on the ground, the compass points (north in red) and a bead where the sun stands now. It uses your home's location in Home Assistant and follows the time-of-day slider.
+- **Sloping free-standing walls:** a wall drawn with the wall tool can fall from one end to the other (*◢ Sloping* in its form, with a height at each end).
+- **Overhang per roof side:** a roof section's form has *Overhang per side*: the eaves and both ends of the ridge each get their own overhang; unset sides stay automatic (none where the roof meets the house).
 - **Floor plan only:** a *Floor plan only* button in the view's settings (and a card option `plain: true`) leaves the furniture out of the 3D view and draws walls, doors, windows and stairs; devices and their pins stay.
 - **Import of an Apple room scan** (an iPhone or iPad with LiDAR, scanned with an app that exports the RoomPlan JSON): walls become the room, doors and windows sit on their walls with width and sill, and sofa, bed, table, chair and a few more objects become furniture. Choose the file under *Backup → Import*; the plan format page now also describes furniture, free walls, outdoor areas and devices for AI drawn plans.
 - **A default room for people** (thanks @ToniB1984, #71): in the *Presence* section every person has a *Default room*. While they are home and no room sensor names a room, they stand there; it also works without any room sensor. Besides persons, any other entity that is on or home (an input_boolean helper, a device tracker, a binary sensor) can be added there for the same.

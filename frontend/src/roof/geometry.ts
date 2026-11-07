@@ -217,10 +217,14 @@ export function sectionOverhang(building: Building, s: RoofSection, overhang: nu
   const alongRidge = [0.15, 0.5, 0.85].map((t) => frame.u0 + (frame.u1 - frame.u0) * t);
   const acrossRidge = [0.15, 0.5, 0.85].map((t) => frame.w * t);
   const free = (blocked: boolean) => (blocked ? 0 : overhang);
+  const own = (side: "u0" | "u1" | "a" | "b", automatic: number): number => {
+    const v = s.overhang_sides?.[side];
+    return typeof v === "number" && Number.isFinite(v) ? Math.min(2, Math.max(0, v)) : automatic;
+  };
   return {
-    a: free(blockedAt(alongRidge.map((u) => frame.at(u, -probe)))),
-    b: free(blockedAt(alongRidge.map((u) => frame.at(u, frame.w + probe)))),
-    u0: free(blockedAt(acrossRidge.map((v) => frame.at(frame.u0 - probe, v)))),
-    u1: free(blockedAt(acrossRidge.map((v) => frame.at(frame.u1 + probe, v)))),
+    a: own("a", free(blockedAt(alongRidge.map((u) => frame.at(u, -probe))))),
+    b: own("b", free(blockedAt(alongRidge.map((u) => frame.at(u, frame.w + probe))))),
+    u0: own("u0", free(blockedAt(acrossRidge.map((v) => frame.at(frame.u0 - probe, v))))),
+    u1: own("u1", free(blockedAt(acrossRidge.map((v) => frame.at(frame.u1 + probe, v))))),
   };
 }

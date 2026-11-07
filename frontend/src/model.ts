@@ -419,6 +419,8 @@ export interface FreeWall {
   thickness?: number | null;
   /** Height in metres (null = full floor height), e.g. a half-height wall or a counter. */
   height?: number | null;
+  /** A sloping wall: the height at the end b (the height at a stays `height`); null = the same height all along. */
+  height_end?: number | null;
 }
 
 /** "custom": the roof is made of sections (wings of an L- or T-shaped house, a barn, a lean-to …). */
@@ -452,6 +454,11 @@ export interface RoofSection {
   base: number;
   /** Overhang beyond the walls (null = the roof setting). */
   overhang?: number | null;
+  /**
+   * Overhang of single sides by hand (m): the ends of the ridge (`u0`, `u1`) and the eaves (`a`, `b`); a side that is not listed
+   * keeps the automatic value (none where the section meets the house).
+   */
+  overhang_sides?: Partial<Record<"u0" | "u1" | "a" | "b", number | null>> | null;
   /** Sides a and b swapped: side a is the high coordinate (a pent roof then rises the other way). */
   flip?: boolean;
   /**
@@ -638,6 +645,8 @@ export interface BuildingSettings {
   rain_warning?: boolean;
   /** Sunlight falls through the windows as patches on the floor (default on, #266). */
   sun_patches?: boolean;
+  /** The sun's path of today as an arc over the plot, with a compass ring (default off). */
+  sun_arc?: boolean;
   /** Plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident. */
   lock_plan?: boolean;
   /** The camera the house view opens with (3D view, card, kiosk); null = fitted from the front left. */

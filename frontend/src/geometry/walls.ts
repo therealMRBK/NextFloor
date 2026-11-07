@@ -328,7 +328,7 @@ export function generateWalls(rooms: readonly Room[], options: WallOptions, free
     const middle: Vec2 = [(w.a[0] + w.b[0]) / 2, (w.a[1] + w.b[1]) / 2];
     const room = rooms.find((r) => r.points.length >= 3 && pointInPolygon(middle, r.points))?.id ?? null;
     const half = (w.thickness ?? options.interior) / 2;
-    drafts.push({ free: w.id, a: ia, b: ib, left: half, right: half, exterior: false, roomLeft: room, roomRight: room, sources: [], height: typeof w.height === "number" && w.height > 0 ? w.height : undefined });
+    drafts.push({ free: w.id, a: ia, b: ib, left: half, right: half, exterior: false, roomLeft: room, roomRight: room, sources: [], height: typeof w.height === "number" && w.height > 0 ? w.height : undefined, ...(typeof w.height === "number" && w.height > 0 && typeof w.height_end === "number" && w.height_end > 0 && Math.abs(w.height_end - w.height) > 1e-6 ? { heightEnd: w.height_end } : {}) });
   });
 
   const merged = mergeCollinear(drafts, vertices.points, handSplits);

@@ -143,6 +143,8 @@ export function renderFreeWallForm(host: EditorHost, wall: FreeWall, actions: Fr
       ${numberField(host, t("wall_length"), length, (v) => actions.update({ b: wallEndForLength(wall, v) }), 0.01, 0.1)}
       ${numberField(host, t("wall_thickness"), wall.thickness ?? host.doc.settings.wall_interior, (v) => actions.update({ thickness: between(0.02, 1, v) }), 0.01, 0.02)}
       ${numberField(host, t("wall_height"), wall.height ?? floorHeight, (v) => actions.update(wallHeightPatch(v, floorHeight)), 0.05, 0.05)}
+      ${checkField(host, t("free_wall_slope"), wall.height_end != null, (on) => actions.update(on ? { height: wall.height ?? floorHeight, height_end: Math.max(0.2, (wall.height ?? floorHeight) / 2) } : { height_end: null }), { title: t("free_wall_slope_hint") })}
+      ${wall.height_end != null ? numberField(host, t("free_wall_height_end"), wall.height_end, (v) => actions.update({ height_end: Math.max(0.05, v) }), 0.05, 0.05) : nothing}
     </div>
     ${host.admin ? html`<div class="nf-actions">${arcButton(host, `wall:${wall.id}`, actions.arc)}<button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
     <div class="nf-form">${arcRow(host, `wall:${wall.id}`, actions.arc)}</div>

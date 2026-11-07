@@ -526,6 +526,13 @@ ROOF_SECTION_SCHEMA = vol.Schema(
         vol.Optional("pitch_b", default=35): vol.All(vol.Coerce(float), vol.Range(min=0, max=80)),
         vol.Required("base"): _HEIGHT,
         vol.Optional("overhang", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=2))),
+        # overhang of single sides by hand (m): u0/u1 the ridge ends, a/b the eaves; unlisted sides stay automatic
+        vol.Optional("overhang_sides", default=None): vol.Any(
+            None,
+            vol.Schema(
+                {vol.In(["u0", "u1", "a", "b"]): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=2)))}
+            ),
+        ),
         vol.Optional("flip", default=False): bool,
         # a flat roof as a free shape: its footprint polygon (x0 … z1 hold the bounding box)
         vol.Optional("points", default=None): vol.Any(None, vol.All([_POINT], vol.Length(min=3, max=MAX_POINTS))),
@@ -634,6 +641,9 @@ FREE_WALL_SCHEMA = vol.Schema(
         vol.Required("b"): _POINT,
         vol.Optional("thickness", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1))),
         vol.Optional("height", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.05, max=20))),
+        vol.Optional("height_end", default=None): vol.Any(
+            None, vol.All(vol.Coerce(float), vol.Range(min=0.05, max=20))
+        ),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -858,6 +868,8 @@ SETTINGS_SCHEMA = vol.Schema(
         ),
         # sunlight through the windows as patches on the floor
         vol.Optional("sun_patches", default=True): bool,
+        # the sun's arc and a compass ring around the plot
+        vol.Optional("sun_arc", default=False): bool,
         vol.Optional("weather_effects", default=None): vol.Any(
             None, [vol.In(["rain", "snow", "fog", "clouds", "lightning", "sky"])]
         ),

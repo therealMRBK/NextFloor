@@ -233,3 +233,12 @@ test("one straight interior wall through several rooms keeps straight faces, eve
   assert.equal(line.length, 2);
   for (const w of line) near(w.left, w.right);
 });
+
+test("a free wall with an end height slopes from its height at a to the one at b (#sloping free walls)", () => {
+  const { walls } = generateWalls([room("a", 0, 0, 6, 4)], opts, [{ id: "f", a: [1, 2], b: [5, 2], height: 2.4, height_end: 1 }]);
+  const w = walls.find((x) => x.free === "f")!;
+  assert.equal(w.height, 2.4);
+  assert.equal(w.heightEnd, 1);
+  const flat = generateWalls([room("a", 0, 0, 6, 4)], opts, [{ id: "g", a: [1, 2], b: [5, 2], height: 2.4, height_end: 2.4 }]).walls.find((x) => x.free === "g")!;
+  assert.equal(flat.heightEnd, undefined, "the same height at both ends is a plain wall");
+});
