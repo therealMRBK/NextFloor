@@ -102,7 +102,8 @@ export function buildOpeningParts(infos: readonly OpeningInfo[], states: Readonl
     else window(ctx);
     // a cellar window below the ground gets its light well
     if (needsLightWell(ctx, ground)) lightWell(ctx, ground);
-    blind(ctx);
+    // a garage door's cover moves the door itself; it has no blind in front of it (#85)
+    if (type !== "garage") blind(ctx);
     // picking returns the id the model knows, not a piece id
     const id = paneOf(info);
     frameTris.push({ id, start: starts.frames, end: frames.count });

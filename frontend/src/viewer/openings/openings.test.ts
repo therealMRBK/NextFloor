@@ -290,3 +290,12 @@ test("the order the plan lists the pieces in does not decide where the jambs go"
   assert.equal(infos.length, 6);
   assertOneSheet(infos);
 });
+
+test("a garage door with a cover gets no roller blind in front of it (#85)", () => {
+  const door = build({ type: "garage", width: 2.5, sill: 0, height: 2.1 }, { cover: 1 });
+  const panelOnly = build({ type: "garage", width: 2.5, sill: 0, height: 2.1 }, { cover: 1, cover2: null });
+  assert.equal(triangles(door.blinds), triangles(panelOnly.blinds));
+  // the outside blind box (cassette above the opening) is not drawn: no frame part reaches 0.2 m above the top
+  const ys = positions(door.frames).filter((_, i) => i % 3 === 1);
+  assert.ok(Math.max(...ys) < 2.1 + 0.15, "no blind cassette above a garage door");
+});

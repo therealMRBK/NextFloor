@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.25.1]
+
 ### Added
 
 - **Czech** (thanks @MiraK-2000, #76): the whole interface, the setup and the announcement action in Czech. That makes eleven languages.
@@ -13,10 +15,11 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - The house settings choose which facts the room panel shows in its header: sun hours, comfort, airing hint, fuse-box circuits (#73).
 
 ### Fixed
-- **A plan with floors but no room** no longer says "no floor plan yet": the 3D page now tells you that walls alone are not enough and to draw a room with Rectangle or Free form (seen in a forum thread).
 
+- **A blind in front of the garage door** (thanks @eskahone, #85): a garage door linked to a cover drew a roller blind with its box in front of it, and the blind moved with the door. The cover now moves only the garage door itself.
 - A wide window or sliding door with two blinds: a tap on its right half now opens the second blind; before, every tap went to the first one (#79).
 - The plan check no longer offers devices as missing that a window, door or piece of furniture already picks up automatically through its area (a KNX blind, say) (#81).
+- A plan with floors but no room no longer says "no floor plan yet": the 3D page now says that walls alone are not enough and that a room is drawn with *Rectangle* or *Free form*.
 
 ## [0.25.0]
 
@@ -478,7 +481,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...main
+[0.25.1]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...v0.25.1
 [0.25.0]: https://github.com/therealMRBK/NextFloor/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/therealMRBK/NextFloor/compare/v0.23.1...v0.24.0
 [0.23.1]: https://github.com/therealMRBK/NextFloor/compare/v0.23.0...v0.23.1
