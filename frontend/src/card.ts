@@ -323,6 +323,7 @@ export class NextFloorCard extends LitElement {
       .keepCamera=${c?.keep_camera === true}
       .readable=${c?.readable === true}
       .plain=${c?.plain === true}
+      .rightBack=${c?.right_back === true}
       .today=${c?.today !== false}
       .zoom=${typeof c?.zoom === "number" ? c.zoom : 1}
       .buttons=${c?.buttons?.map((button, i) => ({ id: `card_${i}`, ...button })) ?? null}

@@ -174,6 +174,7 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
       ${switchOption(f, "readable", "card_readable", "readable_hint")}
       ${switchOption(f, "plain", "card_plain", "plain_hint")}
+      ${switchOption(f, "right_back", "right_back", "right_back_hint")}
       ${this.roomsChoice()}
       ${switchOption(f, "today", "card_today", "card_today_hint")}
       <label class="field"

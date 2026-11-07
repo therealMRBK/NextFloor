@@ -394,6 +394,8 @@
   "readable_hint": "Mais contraste e texto maior – para tablets de parede e quem lê melhor assim.",
   "plain": "Só planta",
   "plain_hint": "Mostra só paredes, portas, janelas e escadas, sem móveis. Os dispositivos e os seus pinos ficam.",
+  "right_back": "Clique direito = voltar",
+  "right_back_hint": "Um clique curto com o botão direito na vista 3D recua um passo: da divisão para o andar, do andar para a casa (como um toque duplo num espaço vazio). Arrastar com o botão direito continua a mover a vista.",
   "card_plain": "Só planta",
   "card_rooms": "Só estas divisões",
   "card_rooms_hint": "O cartão mostra só as divisões marcadas com os seus móveis, dispositivos, portas e janelas (por exemplo para um tablet na cozinha). Nada marcado: a planta toda.",

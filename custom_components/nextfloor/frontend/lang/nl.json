@@ -394,6 +394,8 @@
   "readable_hint": "Sterker contrast en grotere tekst – voor wandtablets en iedereen die zo beter leest.",
   "plain": "Alleen plattegrond",
   "plain_hint": "Toont alleen muren, deuren, ramen en trappen, zonder meubels. Apparaten en hun pins blijven.",
+  "right_back": "Rechtsklik = terug",
+  "right_back_hint": "Een korte rechtsklik in de 3D-weergave gaat een stap terug: van de kamer naar de verdieping, van de verdieping naar het huis (zoals een dubbele tik op lege ruimte). Slepen met de rechterknop verschuift de weergave nog steeds.",
   "card_plain": "Alleen plattegrond",
   "card_rooms": "Alleen deze kamers",
   "card_rooms_hint": "De kaart toont alleen de aangevinkte kamers met hun meubels, apparaten, deuren en ramen (bijvoorbeeld voor een tablet in de keuken). Niets aangevinkt: het hele plan.",

@@ -394,6 +394,8 @@
   "readable_hint": "Starkare kontrast och större text – för väggplattor och alla som läser bättre så.",
   "plain": "Bara planlösning",
   "plain_hint": "Visar bara väggar, dörrar, fönster och trappor, utan möbler. Enheter och deras markörer finns kvar.",
+  "right_back": "Högerklick = tillbaka",
+  "right_back_hint": "Ett kort högerklick i 3D-vyn går ett steg tillbaka: från rummet till våningen, från våningen till huset (som ett dubbeltryck på tom yta). Att dra med höger knapp flyttar fortfarande vyn.",
   "card_plain": "Bara planlösning",
   "card_rooms": "Bara dessa rum",
   "card_rooms_hint": "Kortet visar bara de ibockade rummen med möbler, enheter, dörrar och fönster (till exempel för en surfplatta i köket). Inget ibockat: hela planen.",

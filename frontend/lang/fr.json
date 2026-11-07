@@ -380,6 +380,8 @@
  "readable_hint": "Contrastes plus forts et texte plus grand – pour les tablettes murales et tous ceux qui lisent mieux ainsi.",
  "plain": "Plan seul",
  "plain_hint": "Affiche seulement murs, portes, fenêtres et escaliers, sans meubles. Les appareils et leurs repères restent.",
+ "right_back": "Clic droit = retour",
+ "right_back_hint": "Un court clic droit dans la vue 3D revient d’un pas : de la pièce à l’étage, de l’étage à la maison (comme un double appui sur une zone vide). Glisser avec le bouton droit déplace toujours la vue.",
  "card_plain": "Plan seul",
  "card_rooms": "Seulement ces pièces",
  "card_rooms_hint": "La carte n’affiche que les pièces cochées avec leurs meubles, appareils, portes et fenêtres (par exemple pour une tablette dans la cuisine). Rien de coché : tout le plan.",

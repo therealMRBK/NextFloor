@@ -97,6 +97,8 @@ export interface CardConfig {
   readable?: boolean;
   /** Only the floor plan: no furniture (devices and their pins stay). */
   plain?: boolean;
+  /** A short right click goes one step back (off by default). */
+  right_back?: boolean;
   /** Only these rooms (their ids) with what stands in them; the card cannot leave them. */
   rooms?: string[];
   /** The "Today" card with the day's appointments and bins (default true). */

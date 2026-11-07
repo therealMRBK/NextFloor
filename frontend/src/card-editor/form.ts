@@ -42,13 +42,14 @@ export const DEFAULTS: Partial<CardConfig> = {
   keep_camera: false,
   readable: false,
   plain: false,
+  right_back: false,
   today: true,
   night: "off",
   idle_orbit: false,
 };
 
 /** The yes/no options that get a plain checkbox. */
-export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room" | "central_open" | "keep_camera" | "today" | "readable" | "plain";
+export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room" | "central_open" | "keep_camera" | "today" | "readable" | "plain" | "right_back";
 
 export type Choice = [value: string, label: I18nKey];
 

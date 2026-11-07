@@ -394,6 +394,8 @@
   "readable_hint": "Contrasti più forti e testo più grande – per tablet a parete e chi legge meglio così.",
   "plain": "Solo pianta",
   "plain_hint": "Mostra solo pareti, porte, finestre e scale, senza mobili. Dispositivi e relativi pin restano.",
+  "right_back": "Clic destro = indietro",
+  "right_back_hint": "Un breve clic destro nella vista 3D torna indietro di un passo: dalla stanza al piano, dal piano alla casa (come un doppio tocco su uno spazio vuoto). Trascinare con il tasto destro sposta ancora la vista.",
   "card_plain": "Solo pianta",
   "card_rooms": "Solo queste stanze",
   "card_rooms_hint": "La scheda mostra solo le stanze selezionate con mobili, dispositivi, porte e finestre (ad esempio per un tablet in cucina). Nulla selezionato: tutta la pianta.",

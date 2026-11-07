@@ -509,6 +509,9 @@ export class NextFloorViewer {
   private parkedSig = "";
   /** Only the floor plan: the furniture is left out of the build (stairs and the like stay). */
   private plain = false;
+  /** A short right click goes back one step. */
+  private rightBack = false;
+  private rightDown: { x: number; y: number; at: number } | null = null;
   /** Gate id → open (from the entities that drive the gates); a change rebuilds the floors. */
   private gateOpen = new Map<string, boolean>();
   private gateSig = "";
@@ -627,6 +630,9 @@ export class NextFloorViewer {
     document.addEventListener("visibilitychange", this.onVisibility);
     // any touch on the view (canvas, pins, labels) wakes resting decorations
     this.host.addEventListener("pointerdown", this.onTouch, { passive: true });
+    this.renderer.domElement.addEventListener("pointerdown", this.onRightDown);
+    this.renderer.domElement.addEventListener("pointerup", this.onRightUp);
+    this.renderer.domElement.addEventListener("contextmenu", this.onContext);
     this.awakeUntil = performance.now() + REST_AFTER_MS;
     if (typeof IntersectionObserver === "function") {
       this.intersection = new IntersectionObserver((entries) => {
@@ -648,6 +654,26 @@ export class NextFloorViewer {
   get low(): boolean {
     return this.lowQuality;
   }
+
+  /** A short right click (no drag) goes back one step, like a double tap on empty space; off by default. */
+  setRightBack(on: boolean): void {
+    this.rightBack = on;
+  }
+
+  private readonly onRightDown = (e: PointerEvent) => {
+    this.rightDown = this.rightBack && e.button === 2 ? { x: e.clientX, y: e.clientY, at: performance.now() } : null;
+  };
+
+  private readonly onRightUp = (e: PointerEvent) => {
+    const down = this.rightDown;
+    this.rightDown = null;
+    if (!this.rightBack || !down || e.button !== 2) return;
+    if (Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.at < 400) this.options.onBack?.();
+  };
+
+  private readonly onContext = (e: Event) => {
+    if (this.rightBack) e.preventDefault();
+  };
 
   /** Only the floor plan: no furniture in 3D (stairs, stairwells and pieces that cut holes stay); a change rebuilds the floors. */
   setPlain(on: boolean): void {
@@ -1440,6 +1466,9 @@ export class NextFloorViewer {
     this.intersection?.disconnect();
     document.removeEventListener("visibilitychange", this.onVisibility);
     this.host?.removeEventListener("pointerdown", this.onTouch);
+    this.renderer?.domElement?.removeEventListener?.("pointerdown", this.onRightDown);
+    this.renderer?.domElement?.removeEventListener?.("pointerup", this.onRightUp);
+    this.renderer?.domElement?.removeEventListener?.("contextmenu", this.onContext);
     clearTimeout(this.petTimer);
     this.controls.dispose();
     this.clear();

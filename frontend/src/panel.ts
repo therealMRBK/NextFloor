@@ -331,6 +331,7 @@ export class NextFloorPanel extends LitElement {
           <button aria-pressed=${p.timeSlider} title=${this.t("time_of_day_hint")} @click=${() => this.toggleTimeSlider(!p.timeSlider)}>☀ ${this.t("time_of_day")}</button>
           <button aria-pressed=${p.menuOpen} title=${this.t("menu_open_hint")} @click=${() => this.setPref("menuOpen", !p.menuOpen)}>★ ${this.t("menu_open")}</button>
           <button aria-pressed=${p.keepCamera} title=${this.t("keep_camera_hint")} @click=${() => this.setPref("keepCamera", !p.keepCamera)}>🎥 ${this.t("keep_camera")}</button>
+          <button aria-pressed=${p.rightBack} title=${this.t("right_back_hint")} @click=${() => this.setPref("rightBack", !p.rightBack)}>${this.t("right_back")}</button>
           <button aria-pressed=${p.plain} title=${this.t("plain_hint")} @click=${() => this.setPref("plain", !p.plain)}>▭ ${this.t("plain")}</button>
           <button aria-pressed=${p.readable} title=${this.t("readable_hint")} @click=${() => this.setPref("readable", !p.readable)}>Aa ${this.t("readable")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
@@ -576,6 +577,7 @@ export class NextFloorPanel extends LitElement {
           .centralOpen=${p.menuOpen}
           .keepCamera=${p.keepCamera}
           .plain=${p.plain}
+          .rightBack=${p.rightBack}
           .readable=${p.readable}
           .zoom=${p.zoom / 100}
           ?furnish=${this._furnish}
