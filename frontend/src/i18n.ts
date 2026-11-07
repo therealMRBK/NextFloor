@@ -2,7 +2,7 @@
 
 import type { HomeAssistant } from "./types.ts";
 
-const de = {
+const DE = {
   view: "3D",
   editor: "Editor",
   all_floors: "Alle Etagen",
@@ -1884,9 +1884,9 @@ const de = {
   no_persons: "In Home Assistant gibt es keine Personen.",
 };
 
-type Key = keyof typeof de;
+type Key = keyof typeof DE;
 
-const en: Record<Key, string> = {
+const EN: Record<Key, string> = {
   view: "3D",
   editor: "Editor",
   all_floors: "All floors",
@@ -3769,6 +3769,17 @@ const en: Record<Key, string> = {
 };
 
 export type I18nKey = Key;
+
+// The editor and the card editor are only ever loaded by the main bundle, so they take its German and English texts
+// instead of carrying a copy of their own (about 200 KB each); the build replaces globalThis.__NF_SHARED_TEXTS__ by true for them, and the
+// unused copy is dropped.
+type Builtin = { de: typeof DE; en: Record<Key, string> };
+const builtin = globalThis as { __nextfloorBuiltin?: Builtin };
+// written out in place (not through a constant), so the build can drop the branch it does not take; an old main bundle
+// still open in the browser after an update has no texts to share, and the editor then shows keys until the page reloads
+const de: typeof DE = (globalThis as { __NF_SHARED_TEXTS__?: boolean }).__NF_SHARED_TEXTS__ ? (builtin.__nextfloorBuiltin?.de ?? ({} as typeof DE)) : DE;
+const en: Record<Key, string> = (globalThis as { __NF_SHARED_TEXTS__?: boolean }).__NF_SHARED_TEXTS__ ? (builtin.__nextfloorBuiltin?.en ?? ({} as Record<Key, string>)) : EN;
+builtin.__nextfloorBuiltin ??= { de, en };
 
 // Further languages come as lang/<code>.json beside the bundles. Only a Home Assistant running in such a
 // language fetches its file; a key the file lacks stays English. The build tells the bundles which files

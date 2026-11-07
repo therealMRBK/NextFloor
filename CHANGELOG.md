@@ -10,6 +10,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Zigzag in a straight interior wall** (thanks @Dragi2k, #65): one straight wall that runs past several rooms (bathroom, store room and hall along the bedroom, say) was drawn in pieces, and a piece next to an outer wall sat flush on one side while its neighbours sat centred, so the top of the wall jumped back and forth. The whole straight wall is now aligned as one.
 
+### Changed
+
+- **The editor and the card's settings load faster**: they now use the texts the main bundle already has instead of bringing their own copy, so the editor download is about 200 KB smaller and the card's settings shrink from 236 KB to 31 KB.
+
 ## [0.25.3]
 
 ### Fixed

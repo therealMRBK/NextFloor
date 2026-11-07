@@ -29,14 +29,14 @@ const langs = JSON.stringify(Object.fromEntries(langFiles.map((f) => [f.slice(0,
 
 const viewerConfig = { ...common, entryPoints: ["src/viewer/viewer3d.ts"], outfile: `${out}/nextfloor-3d.js` };
 // the card's visual editor only loads in the dashboard's card dialog
-const cardEditorConfig = { ...common, entryPoints: ["src/card-editor.ts"], outfile: `${out}/nextfloor-card-editor.js`, define: { __NF_LANGS__: langs } };
+const cardEditorConfig = { ...common, entryPoints: ["src/card-editor.ts"], outfile: `${out}/nextfloor-card-editor.js`, define: { __NF_LANGS__: langs, "globalThis.__NF_SHARED_TEXTS__": "true" } };
 // the editor is only needed by admins who open it, so it is a bundle of its own as well
 // (it draws furniture previews with the 3D bundle, so it knows that bundle's hash too)
 const editorConfig = (viewerHash) => ({
   ...common,
   entryPoints: ["src/components/editor.ts"],
   outfile: `${out}/nextfloor-editor.js`,
-  define: { __NF_VIEWER_HASH__: JSON.stringify(viewerHash), __NF_LANGS__: langs },
+  define: { __NF_VIEWER_HASH__: JSON.stringify(viewerHash), __NF_LANGS__: langs, "globalThis.__NF_SHARED_TEXTS__": "true" },
 });
 // The main bundle loads the 3D bundle with a hash of its content in the URL, so a new 3D bundle is
 // never taken from the browser cache (the integration version only changes after a restart).
