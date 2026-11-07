@@ -420,6 +420,8 @@
   "favorites": "Favoritos",
   "favorites_hint": "Cenas, scripts, automatizações, botões e interruptores para o menu central (estrela) da vista 3D: festa, simulação de presença, sombreamento, rega.",
   "favorites_add": "Adicionar um favorito",
+  "favorite_floor": "Em que piso este favorito aparece",
+  "favorite_all_floors": "Todos os pisos",
   "background_handles_hint": "A imagem tem agora pegas como um móvel: arrastar move-a, o canto inferior direito escala-a, a pega redonda em cima roda-a (Shift para passos de 15°). Quando encaixar, toque em \"Concluído\" e fica fixa.",
   "background_fixed_hint": "A imagem fica fixa, pode desenhar por cima. Para a ajustar, toque em \"Mover, escalar e rodar\".",
   "bg_level": "Endireitar",

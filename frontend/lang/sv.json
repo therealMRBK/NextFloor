@@ -420,6 +420,8 @@
   "favorites": "Favoriter",
   "favorites_hint": "Scener, skript, automationer, knappar och strömbrytare för centralmenyn (stjärnan) i 3D-vyn – fest, närvarosimulering, solskydd, bevattning.",
   "favorites_add": "Lägg till en favorit",
+  "favorite_floor": "På vilken våning favoriten visas",
+  "favorite_all_floors": "Alla våningar",
   "background_handles_hint": "Bilden har nu handtag som en möbel: dra för att flytta, nedre högra hörnet skalar, det runda handtaget överst vrider (Shift för steg om 15°). När den passar, tryck på \"Klar\" – då ligger den still.",
   "background_fixed_hint": "Bilden ligger still, du kan rita ovanpå. För att justera den, tryck på \"Flytta, skala och vrid\".",
   "bg_level": "Räta upp",

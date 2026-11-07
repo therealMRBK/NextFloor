@@ -25,9 +25,23 @@ const iconButton = (title: string, label: string, onClick: () => void, disabled 
 function favorites(host: EditorHost): TemplateResult {
   const list = host.doc.settings.favorites ?? [];
   const store = (next: string[]) => host.change((d) => (d.settings.favorites = orUndefined(next)));
+  const floors = host.doc.floors;
+  const only = host.doc.settings.favorite_floors ?? {};
   const options = entityOptions(host.hass, (id) => FAVORITE_DOMAINS.includes(id.split(".")[0]) && !list.includes(id));
   const row = (id: string, i: number) => html`<div class="nf-row nf-dev-row">
     <span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>
+    ${floors.length > 1
+      ? html`<select title=${host.t("favorite_floor")} .value=${only[id] ?? ""} @change=${(e: Event) => {
+          const v = (e.target as HTMLSelectElement).value;
+          const next = { ...only };
+          if (v) next[id] = v;
+          else delete next[id];
+          host.change((d) => (d.settings.favorite_floors = Object.keys(next).length ? next : undefined));
+        }}>
+          <option value="">${host.t("favorite_all_floors")}</option>
+          ${floors.map((f) => html`<option value=${f.id} ?selected=${only[id] === f.id}>${f.name}</option>`)}
+        </select>`
+      : nothing}
     ${iconButton(host.t("move_up"), "↑", () => store(moveWithin(list, i, -1)), i === 0)}
     ${iconButton(host.t("move_down"), "↓", () => store(moveWithin(list, i, 1)), i === list.length - 1)}
     ${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}

@@ -605,6 +605,8 @@ export interface BuildingSettings {
   media_presets?: MediaPreset[];
   /** Favourites of the house: scenes, scripts, automations, buttons and switches in the central menu of the 3D view (#145). */
   favorites?: string[];
+  /** A favourite that shows on one floor only (entity id → floor id); the others show everywhere. */
+  favorite_floors?: Record<string, string>;
   /** Own buttons in the central menu (D143). */
   buttons?: CustomButton[];
   wall_exterior: number;

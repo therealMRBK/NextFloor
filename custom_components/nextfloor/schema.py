@@ -815,6 +815,10 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
         vol.Optional("favorites", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=40)),
+        # a favourite shown on one floor only: entity id -> floor id
+        vol.Optional("favorite_floors"): vol.Any(
+            None, {vol.All(str, vol.Length(max=255)): vol.All(str, vol.Length(max=64))}
+        ),
         # the camera the house view opens with (None = fitted from the front left)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         vol.Optional("roof", default=lambda: {"type": "none", "pitch": 35, "overhang": 0.4}): ROOF_SCHEMA,

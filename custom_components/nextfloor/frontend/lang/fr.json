@@ -406,6 +406,8 @@
  "favorites": "Favoris",
  "favorites_hint": "Scènes, scripts, automatisations, boutons et interrupteurs pour le menu central (étoile) de la vue 3D – fête, simulation de présence, ombrage, arrosage.",
  "favorites_add": "Ajouter un favori",
+ "favorite_floor": "Étage où ce favori apparaît",
+ "favorite_all_floors": "Tous les étages",
  "background_handles_hint": "L'image a maintenant des poignées comme un meuble : glisser la déplace, le coin inférieur droit la met à l'échelle, la poignée ronde en haut la fait pivoter (Maj pour des pas de 15°). Quand elle est bien placée, touchez « Terminé » – elle ne bouge plus ensuite.",
  "background_fixed_hint": "L'image reste fixe, vous pouvez dessiner par-dessus. Pour l'ajuster, touchez « Déplacer, mettre à l'échelle et pivoter ».",
  "bg_level": "Redresser",

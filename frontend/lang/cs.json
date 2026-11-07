@@ -420,6 +420,8 @@
   "favorites": "Oblíbené",
   "favorites_hint": "Scény, skripty, automatizace, tlačítka a vypínače pro centrální nabídku (hvězdička) 3D zobrazení – párty, simulace přítomnosti, stínění, zalévání.",
   "favorites_add": "Přidat oblíbené",
+  "favorite_floor": "Na kterém podlaží se tento oblíbený prvek zobrazí",
+  "favorite_all_floors": "Všechna podlaží",
   "background_handles_hint": "Obrázek má nyní úchyty jako nábytek: přetažení jej posouvá, pravý dolní roh mění měřítko, kulatý úchyt nahoře otáčí (Shift pro kroky po 15°). Když vyhovuje, klepněte na \"Hotovo\" – pak zůstane na místě.",
   "background_fixed_hint": "Obrázek zůstane na místě, můžete na něm kreslit. Chcete-li jej upravit, klepněte na \"Posunout, změnit měřítko a otočit\".",
   "bg_level": "Vyrovnat",

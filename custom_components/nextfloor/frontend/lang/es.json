@@ -420,6 +420,8 @@
   "favorites": "Favoritos",
   "favorites_hint": "Escenas, scripts, automatizaciones, botones e interruptores para el menú central (estrella) de la vista 3D: fiesta, simulación de presencia, sombreado, riego.",
   "favorites_add": "Añadir un favorito",
+  "favorite_floor": "En qué planta aparece este favorito",
+  "favorite_all_floors": "Todas las plantas",
   "background_handles_hint": "La imagen tiene ahora tiradores como un mueble: arrastrar la mueve, la esquina inferior derecha la escala, el tirador redondo de arriba la gira (Mayús para pasos de 15°). Cuando encaje, toca \"Hecho\" y se quedará fija.",
   "background_fixed_hint": "La imagen se queda fija, puedes dibujar encima. Para ajustarla, toca \"Mover, escalar y girar\".",
   "bg_level": "Enderezar",

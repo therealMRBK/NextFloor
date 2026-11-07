@@ -420,6 +420,8 @@
   "favorites": "Preferiti",
   "favorites_hint": "Scene, script, automazioni, pulsanti e interruttori per il menu centrale (stella) della vista 3D: festa, simulazione di presenza, ombreggiatura, irrigazione.",
   "favorites_add": "Aggiungi un preferito",
+  "favorite_floor": "In quale piano compare questo preferito",
+  "favorite_all_floors": "Tutti i piani",
   "background_handles_hint": "L'immagine ora ha maniglie come un arredo: trascinarla la sposta, l'angolo in basso a destra la scala, la maniglia rotonda in alto la ruota (Maiusc per passi di 15°). Quando è a posto, tocca \"Fatto\" e resterà ferma.",
   "background_fixed_hint": "L'immagine resta ferma, puoi disegnarci sopra. Per regolarla tocca \"Sposta, scala e ruota\".",
   "bg_level": "Raddrizza",

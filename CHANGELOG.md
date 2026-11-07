@@ -8,6 +8,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Czech** (thanks @MiraK-2000, #76): the whole interface, the setup and the announcement action in Czech. That makes eleven languages.
 - A room's temperature, humidity or CO₂ can be read from several sensors that are averaged: pick one in the room's climate settings, then add another one below it (#80).
+- A favourite in the star menu can be limited to one floor (dropdown beside it in the house settings); it then shows only while that floor is open (#73).
 
 ## 0.25.0
 

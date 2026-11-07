@@ -1914,7 +1914,8 @@ export class NfView3d extends LitElement {
       html`<button class="nf-btn ${this._armed === key ? "nf-central-armed" : ""}" ?disabled=${!ids.length} @click=${() => act(key, domain, service, ids)}>
         ${this._armed === key ? t("central_sure") : t(label)}
       </button>`;
-    const favorites = (b.settings.favorites ?? []).filter((id) => hass.states[id]);
+    const onFloor = b.settings.favorite_floors ?? {};
+    const favorites = (b.settings.favorites ?? []).filter((id) => hass.states[id] && (!onFloor[id] || !floor || onFloor[id] === floor.id));
     const own = this.buttons ?? b.settings.buttons ?? [];
     return html`${star}
       <div class="nf-central ${this.centralOpen ? "nf-central-big" : ""}" role="dialog" aria-label=${t("central")}>

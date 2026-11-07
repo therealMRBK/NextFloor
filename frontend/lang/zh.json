@@ -255,6 +255,8 @@
  "favorites": "收藏",
  "favorites_hint": "3D 视图中控菜单（星标）的场景、脚本、自动化、按钮和开关——派对、模拟有人在家、遮阳、浇水。",
  "favorites_add": "添加收藏",
+ "favorite_floor": "此收藏项显示在哪一层",
+ "favorite_all_floors": "所有楼层",
  "background_handles_hint": "图片现在像家具一样带有手柄：拖动可移动，右下角可缩放，顶部的圆形手柄可旋转（按住 Shift 以 15° 步进）。调整好后点击“完成”——之后它就固定不动了。",
  "background_fixed_hint": "图片已固定，您可以在其上绘制。如需调整，请点击“移动、缩放和旋转”。",
  "bg_level": "校正水平",

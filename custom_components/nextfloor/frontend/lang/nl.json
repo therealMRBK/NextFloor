@@ -420,6 +420,8 @@
   "favorites": "Favorieten",
   "favorites_hint": "Scènes, scripts, automatiseringen, knoppen en schakelaars voor het centrale menu (ster) van de 3D-weergave: feest, aanwezigheidssimulatie, zonwering, besproeiing.",
   "favorites_add": "Favoriet toevoegen",
+  "favorite_floor": "Op welke verdieping deze favoriet verschijnt",
+  "favorite_all_floors": "Alle verdiepingen",
   "background_handles_hint": "De afbeelding heeft nu grepen zoals een meubel: slepen verplaatst haar, de hoek rechtsonder schaalt haar, de ronde greep bovenaan draait haar (Shift voor stappen van 15°). Past het, tik dan op \"Klaar\"; daarna blijft ze staan.",
   "background_fixed_hint": "De afbeelding blijft staan, je kunt erover tekenen. Om haar aan te passen, tik op \"Verplaatsen, schalen en draaien\".",
   "bg_level": "Rechtzetten",
