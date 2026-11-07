@@ -33,6 +33,8 @@ export interface DevicePrefs {
   keepCamera: boolean;
   /** Easy to read: stronger contrast and larger text for wall tablets. */
   readable: boolean;
+  /** Only the floor plan: walls, doors, windows and stairs without furniture (devices and pins stay). */
+  plain: boolean;
   /** How much closer the fitted views come, in % (100 = fitted). */
   zoom: number;
   /** A clock in a corner of the 3D view, or none. */
@@ -90,6 +92,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   menuOpen: flag("menu_open", false),
   keepCamera: flag("keep_camera", false),
   readable: flag("readable", false),
+  plain: flag("plain", false),
   zoom: {
     name: "zoom",
     fallback: 100,

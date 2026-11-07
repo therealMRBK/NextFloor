@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Floor plan only:** a *Floor plan only* button in the view's settings (and a card option `plain: true`) leaves the furniture out of the 3D view and draws walls, doors, windows and stairs; devices and their pins stay.
 - **Import of an Apple room scan** (an iPhone or iPad with LiDAR, scanned with an app that exports the RoomPlan JSON): walls become the room, doors and windows sit on their walls with width and sill, and sofa, bed, table, chair and a few more objects become furniture. Choose the file under *Backup → Import*; the plan format page now also describes furniture, free walls, outdoor areas and devices for AI drawn plans.
 - **A default room for people** (thanks @ToniB1984, #71): in the *Presence* section every person has a *Default room*. While they are home and no room sensor names a room, they stand there; it also works without any room sensor. Besides persons, any other entity that is on or home (an input_boolean helper, a device tracker, a binary sensor) can be added there for the same.
 - **Hide devices in Outside** (thanks @eskahone, #83): the house settings have an *Outside: hide devices* list; the devices on it stay in the plan but no longer show in the Outside panel.

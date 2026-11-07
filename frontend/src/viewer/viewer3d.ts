@@ -506,6 +506,8 @@ export class NextFloorViewer {
   /** Vehicles standing in parking spots (spot id -> pack item type); they join the floor geometry. */
   private parked = new Map<string, string>();
   private parkedSig = "";
+  /** Only the floor plan: the furniture is left out of the build (stairs and the like stay). */
+  private plain = false;
   /** Slow automatic turn of the view (kiosk screensaver), in radians per second. */
   private orbitSpeed = 0;
   private orbitLast = 0;
@@ -638,6 +640,16 @@ export class NextFloorViewer {
   /** Whether the tablet level is active (hosts lighten their own work with it). */
   get low(): boolean {
     return this.lowQuality;
+  }
+
+  /** Only the floor plan: no furniture in 3D (stairs, stairwells and pieces that cut holes stay); a change rebuilds the floors. */
+  setPlain(on: boolean): void {
+    if (on === this.plain) return;
+    this.plain = on;
+    if (this.building) {
+      this.rebuild();
+      this.invalidate();
+    }
   }
 
   /** Vehicles in the parking spots (spot id -> pack item type); a change rebuilds the floors. */
@@ -1618,6 +1630,13 @@ export class NextFloorViewer {
     fv.glowMesh.visible = n > 0;
   }
 
+  /** The floor without its furniture in the plain view; what builds the floor itself (stairs, stairwells, hole makers) stays. */
+  private withoutFurniture(floor: Floor): Floor {
+    if (!this.plain) return floor;
+    const keep = (f: Floor["furniture"][number]) => f.type === "stairs" || f.type === "stairwell" || !!packItem(f.type)?.hole;
+    return { ...floor, furniture: floor.furniture.filter(keep) };
+  }
+
   private rebuild(): void {
     const previous = new Map(this.floors.map((f) => [f.floor.id, { y: f.y, o: f.o }]));
     const previousOpenings = new Map(this.floors.map((f) => [f.floor.id, f.openings]));
@@ -1647,7 +1666,7 @@ export class NextFloorViewer {
             return y === null ? null : y - floor.elevation;
           }
         : undefined;
-      const geo = buildFloorGeometry(withVehicles(floor, this.parked), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint());
+      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint());
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();

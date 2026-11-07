@@ -125,6 +125,7 @@ export class NfView3d extends LitElement {
     central: { attribute: false },
     centralOpen: { attribute: false },
     keepCamera: { attribute: false },
+    plain: { attribute: false },
     readable: { type: Boolean, reflect: true },
     today: { attribute: false },
     _todayOpen: { state: true },
@@ -348,6 +349,8 @@ export class NfView3d extends LitElement {
   declare centralOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   declare keepCamera: boolean;
+  /** Only the floor plan: no furniture in 3D. */
+  declare plain: boolean;
   /** Easy to read: the pins and labels in the 3D view a size larger. */
   declare readable: boolean;
   /** The "Today" card top right: appointments of the plan's calendars and the bins due (default on). */
@@ -589,6 +592,7 @@ export class NfView3d extends LitElement {
       this.viewer.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
       this.viewer.setKeepRoof(this.keepRoof);
       this.viewer.setKeepCamera(!!this.keepCamera);
+      this.viewer.setPlain(!!this.plain);
       this.viewer.setZoom(this.zoom ?? 1);
       this._low = this.viewer.low;
       // owned 3D models (cars and the like) come from the user's Home Assistant, with the user's login
@@ -670,6 +674,7 @@ export class NfView3d extends LitElement {
     if (changed.has("explode")) v.setExplode(this.explode);
     if (changed.has("keepRoof")) v.setKeepRoof(this.keepRoof);
     if (changed.has("keepCamera")) v.setKeepCamera(!!this.keepCamera);
+    if (changed.has("plain")) v.setPlain(!!this.plain);
     if (changed.has("zoom")) v.setZoom(this.zoom ?? 1);
     if (changed.has("floorStack")) v.setFloorStack(this.floorStack);
     if (changed.has("theme")) v.setTheme(this.theme);
