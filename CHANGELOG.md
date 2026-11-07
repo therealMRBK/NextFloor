@@ -8,6 +8,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **People in their rooms** (tested thoroughly by @thelichtler-cloud, #71): the house settings have a *Presence* section again. Per `person`, pick a room sensor (ESPresense, Bermuda, a template sensor …) whose state names the room or its area; while the person is home and the sensor names a room, their picture (or initials) stands in that room, two people side by side, and moves along when they change rooms. The house view counts the people per floor. The feature existed but was switched off until it had been tested.
 - **Size of the sound rings per speaker** (thanks @thelichtler-cloud, #94): a speaker or TV linked to a media player, and a media player marker, have a *Sound rings (%)* field. A small speaker such as an Echo Dot can get small rings, and 0 switches them off while the cover picture and the glow stay.
 
 ### Fixed
