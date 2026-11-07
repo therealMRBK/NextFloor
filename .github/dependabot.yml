@@ -3,11 +3,15 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     target-branch: dev
+    commit-message:
+      prefix: build
     schedule:
       interval: monthly
   - package-ecosystem: npm
     directory: /frontend
     target-branch: dev
+    commit-message:
+      prefix: build
     schedule:
       interval: monthly
     open-pull-requests-limit: 5
