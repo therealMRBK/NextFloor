@@ -8,6 +8,7 @@
   "device_outside_hint": "Il dispositivo non conta per la stanza sottostante (una stazione meteo sul tetto) ed è elencato nel pannello Esterno.",
   "no_building": "Ancora nessuna planimetria.",
   "no_building_admin": "Ancora nessuna planimetria. Disegna il tuo primo piano nell'editor.",
+  "no_rooms_admin": "I piani esistono, ma non c’è ancora nessuna stanza. Le sole pareti non bastano: disegna almeno una stanza nell’editor con «Rettangolo» o «Forma libera».",
   "open_editor": "Apri l'editor",
   "loading": "Caricamento …",
   "load_error": "Caricamento non riuscito",

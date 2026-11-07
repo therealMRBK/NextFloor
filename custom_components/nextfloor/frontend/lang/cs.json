@@ -8,6 +8,7 @@
   "device_outside_hint": "Zařízení se nepočítá do místnosti pod ním (meteostanice na střeše) a je uvedeno v seznamu v panelu Venku.",
   "no_building": "Chybí plán.",
   "no_building_admin": "Chybí plán. Nakreslete první podlaží v editoru.",
+  "no_rooms_admin": "Podlaží existují, ale zatím tu není žádná místnost. Samotné zdi nestačí: v editoru nakreslete alespoň jednu místnost nástrojem „Obdélník“ nebo „Volný tvar“.",
   "open_editor": "Otevřít editor",
   "loading": "Načítání …",
   "load_error": "Načítání selhalo",

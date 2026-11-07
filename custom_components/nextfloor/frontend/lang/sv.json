@@ -8,6 +8,7 @@
   "device_outside_hint": "Enheten räknas inte till rummet under den (en väderstation på taket) och visas i panelen Ute.",
   "no_building": "Ingen planritning ännu.",
   "no_building_admin": "Ingen planritning ännu. Rita din första våning i redigeraren.",
+  "no_rooms_admin": "Våningarna finns, men det finns inget rum än. Enbart väggar räcker inte: rita minst ett rum i redigeraren med ”Rektangel” eller ”Fri form”.",
   "open_editor": "Öppna redigeraren",
   "loading": "Laddar …",
   "load_error": "Laddningen misslyckades",

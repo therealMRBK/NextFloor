@@ -8,6 +8,7 @@
   "device_outside_hint": "Het apparaat telt niet mee voor de kamer eronder (een weerstation op het dak) en staat in het paneel Buiten.",
   "no_building": "Nog geen plattegrond.",
   "no_building_admin": "Nog geen plattegrond. Teken je eerste verdieping in de editor.",
+  "no_rooms_admin": "De verdiepingen bestaan, maar er is nog geen kamer. Alleen muren zijn niet genoeg: teken in de editor minstens één kamer met ‘Rechthoek’ of ‘Vrije vorm’.",
   "open_editor": "Editor openen",
   "loading": "Laden …",
   "load_error": "Laden mislukt",

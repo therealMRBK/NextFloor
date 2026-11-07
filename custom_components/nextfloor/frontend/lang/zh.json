@@ -4,6 +4,7 @@
  "all_floors": "所有楼层",
  "no_building": "还没有平面图。",
  "no_building_admin": "还没有平面图。请在编辑器中绘制第一个楼层。",
+ "no_rooms_admin": "楼层已创建，但还没有房间。只有墙是不够的：请在编辑器中用“矩形”或“自由形状”至少绘制一个房间。",
  "open_editor": "打开编辑器",
  "loading": "正在加载…",
  "load_error": "加载失败",

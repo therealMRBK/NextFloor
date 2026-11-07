@@ -531,7 +531,7 @@ export class NextFloorPanel extends LitElement {
   private renderView(building: Building) {
     if (!building.floors.some((f) => f.rooms.length)) {
       return html`<div class="nf-empty">
-        <p>${this.t(this.isAdmin ? "no_building_admin" : "no_building")}</p>
+        <p>${this.t(this.isAdmin ? (building.floors.length ? "no_rooms_admin" : "no_building_admin") : "no_building")}</p>
         ${this.isAdmin ? html`<button class="nf-btn nf-primary" @click=${() => this.setMode("editor")}>${this.t("open_editor")}</button>` : nothing}
       </div>`;
     }

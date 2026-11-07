@@ -8,6 +8,7 @@
   "device_outside_hint": "O dispositivo não conta para a divisão por baixo (uma estação meteorológica no telhado) e aparece no painel Exterior.",
   "no_building": "Ainda não há planta.",
   "no_building_admin": "Ainda não há planta. Desenhe o seu primeiro piso no editor.",
+  "no_rooms_admin": "Os andares existem, mas ainda não há nenhuma divisão. Só paredes não chegam: desenhe pelo menos uma divisão no editor com «Retângulo» ou «Forma livre».",
   "open_editor": "Abrir editor",
   "loading": "A carregar …",
   "load_error": "Falha ao carregar",

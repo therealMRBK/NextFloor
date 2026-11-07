@@ -8,6 +8,7 @@
   "device_outside_hint": "Urządzenie nie liczy się do pomieszczenia pod nim (stacja pogodowa na dachu) i jest na liście w panelu Na zewnątrz.",
   "no_building": "Brak planu.",
   "no_building_admin": "Brak planu. Narysuj pierwsze piętro w edytorze.",
+  "no_rooms_admin": "Piętra istnieją, ale nie ma jeszcze żadnego pomieszczenia. Same ściany nie wystarczą: narysuj w edytorze co najmniej jedno pomieszczenie narzędziem „Prostokąt” lub „Dowolny kształt”.",
   "open_editor": "Otwórz edytor",
   "loading": "Wczytywanie …",
   "load_error": "Wczytywanie nie powiodło się",

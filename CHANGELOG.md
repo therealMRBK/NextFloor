@@ -13,6 +13,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - The house settings choose which facts the room panel shows in its header: sun hours, comfort, airing hint, fuse-box circuits (#73).
 
 ### Fixed
+- **A plan with floors but no room** no longer says "no floor plan yet": the 3D page now tells you that walls alone are not enough and to draw a room with Rectangle or Free form (seen in a forum thread).
 
 - A wide window or sliding door with two blinds: a tap on its right half now opens the second blind; before, every tap went to the first one (#79).
 - The plan check no longer offers devices as missing that a window, door or piece of furniture already picks up automatically through its area (a KNX blind, say) (#81).

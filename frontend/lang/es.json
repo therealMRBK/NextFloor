@@ -8,6 +8,7 @@
   "device_outside_hint": "El dispositivo no cuenta para la estancia de debajo (una estación meteorológica en el tejado) y aparece en el panel Exterior.",
   "no_building": "Todavía no hay plano.",
   "no_building_admin": "Todavía no hay plano. Dibuja tu primera planta en el editor.",
+  "no_rooms_admin": "Las plantas existen, pero aún no hay ninguna habitación. Las paredes solas no bastan: dibuja al menos una habitación en el editor con «Rectángulo» o «Forma libre».",
   "open_editor": "Abrir editor",
   "loading": "Cargando …",
   "load_error": "Error al cargar",

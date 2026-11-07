@@ -8,6 +8,7 @@
  "device_outside_hint": "L'appareil ne compte pas pour la pièce en dessous (une station météo sur le toit) et figure dans le panneau Extérieur.",
  "no_building": "Aucun plan pour le moment.",
  "no_building_admin": "Aucun plan pour le moment. Dessinez votre premier étage dans l'éditeur.",
+ "no_rooms_admin": "Les étages existent, mais il n’y a pas encore de pièce. Les murs seuls ne suffisent pas : dessinez au moins une pièce dans l’éditeur avec « Rectangle » ou « Forme libre ».",
  "open_editor": "Ouvrir l'éditeur",
  "loading": "Chargement …",
  "load_error": "Échec du chargement",
