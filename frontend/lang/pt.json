@@ -686,6 +686,8 @@
   "import_sh3d_found": "Sweet Home 3D: {floors} pisos, {rooms} divisões, {openings} portas e janelas, {walls} paredes livres ({furniture} móveis não são importados).",
   "import_dxf_found": "DXF: {rooms} divisões (polilinhas fechadas) e {walls} paredes livres (linhas) num piso.",
   "import_ifc_found": "No ficheiro IFC: {floors} pisos e {rooms} divisões (o NextFloor desenha as paredes a partir das divisões).",
+  "import_roomplan_found": "Digitalização da divisão (RoomPlan): {rooms} divisões, {openings} portas e janelas; {skipped} objetos não foram importados (os móveis colocas tu).",
+  "import_error_roomplan_empty": "A digitalização não tem paredes.",
   "import_error_ifc_empty": "O ficheiro IFC não tem espaços (IfcSpace) com planta.",
   "import_error_dxf_empty": "O ficheiro DXF não tem linhas nem polilinhas.",
   "import_error_sh3d": "Isto não é um ficheiro Sweet Home 3D legível (requer Sweet Home 3D 5.3 ou mais recente).",

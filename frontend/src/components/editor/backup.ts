@@ -7,6 +7,7 @@ import type { I18nKey } from "../../i18n.ts";
 import { normalizeBuilding, type Building } from "../../model.ts";
 import { importSweetHome } from "../../import/sweethome.ts";
 import { importDxf } from "../../import/dxf.ts";
+import { importRoomPlan, isRoomPlan } from "../../import/roomplan.ts";
 import { importIfc } from "../../import/ifc.ts";
 import { download, exportFile, parseExport, shareViewHtml, storedImageIds } from "../../transfer.ts";
 import { getPacks } from "../../packs.ts";
@@ -159,10 +160,24 @@ export class BackupService {
         const result = importDxf(await file.text());
         building = result.building;
         question = `${t("import_dxf_found", { rooms: result.report.rooms, walls: result.report.walls })}\n\n${question}`;
-      } else building = parseExport(await file.text());
+      } else {
+        const text = await file.text();
+        let json: unknown = null;
+        try {
+          json = JSON.parse(text);
+        } catch {
+          /* parseExport reports it */
+        }
+        if (isRoomPlan(json)) {
+          // an Apple RoomPlan scan (iPhone or iPad with LiDAR): walls, doors, windows and a few objects
+          const result = importRoomPlan(json);
+          building = result.building;
+          question = `${t("import_roomplan_found", { rooms: result.report.rooms, openings: result.report.openings, skipped: result.report.furniture })}\n\n${question}`;
+        } else building = parseExport(text);
+      }
     } catch (err) {
       const code = (err as Error).message;
-      const known: Record<string, string> = { not_json: "import_error_not_json", not_plan: "import_error_not_plan", not_zip: "import_error_sh3d", sh3d_no_xml: "import_error_sh3d", sh3d_empty: "import_error_sh3d_empty", dxf_empty: "import_error_dxf_empty", ifc_empty: "import_error_ifc_empty" };
+      const known: Record<string, string> = { not_json: "import_error_not_json", not_plan: "import_error_not_plan", not_zip: "import_error_sh3d", sh3d_no_xml: "import_error_sh3d", sh3d_empty: "import_error_sh3d_empty", dxf_empty: "import_error_dxf_empty", ifc_empty: "import_error_ifc_empty", roomplan_empty: "import_error_roomplan_empty" };
       this.deps.alert(known[code] ? t(known[code] as I18nKey) : t("backup_import_error", { error: code }));
       return;
     }

@@ -686,6 +686,8 @@
   "import_sh3d_found": "Sweet Home 3D: {floors} podlaží, {rooms} místností, {openings} dveří a oken, {walls} volných zdí ({furniture} kusů nábytku nepřenášeno).",
   "import_dxf_found": "DXF: {rooms} místností (uzavřené křivky) a {walls} volných zdí (čáry) na jednom podlaží.",
   "import_ifc_found": "V souboru IFC: {floors} podlaží a {rooms} místností (zdi NextFloor kreslí z místností).",
+  "import_roomplan_found": "Sken místnosti (RoomPlan): {rooms} místností, {openings} dveří a oken; {skipped} objektů nebylo převzato (nábytek umístíte sami).",
+  "import_error_roomplan_empty": "Sken neobsahuje žádné zdi.",
   "import_error_ifc_empty": "Soubor IFC neobsahuje prostory (IfcSpace) s obrysem.",
   "import_error_dxf_empty": "Soubor DXF neobsahuje čáry ani křivky.",
   "import_error_sh3d": "Toto není čitelný soubor Sweet Home 3D (vyžaduje Sweet Home 3D 5.3 nebo novější).",

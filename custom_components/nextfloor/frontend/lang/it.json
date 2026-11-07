@@ -686,6 +686,8 @@
   "import_sh3d_found": "Sweet Home 3D: {floors} piani, {rooms} stanze, {openings} porte e finestre, {walls} pareti libere ({furniture} arredi non vengono importati).",
   "import_dxf_found": "DXF: {rooms} stanze (polilinee chiuse) e {walls} pareti libere (linee) su un piano.",
   "import_ifc_found": "Nel file IFC: {floors} piani e {rooms} stanze (NextFloor disegna le pareti dalle stanze).",
+  "import_roomplan_found": "Scansione della stanza (RoomPlan): {rooms} stanze, {openings} porte e finestre; {skipped} oggetti non importati (i mobili li posizioni tu).",
+  "import_error_roomplan_empty": "La scansione non contiene pareti.",
   "import_error_ifc_empty": "Il file IFC non contiene spazi (IfcSpace) con una pianta.",
   "import_error_dxf_empty": "Il file DXF non contiene linee né polilinee.",
   "import_error_sh3d": "Questo non è un file Sweet Home 3D leggibile (serve Sweet Home 3D 5.3 o successivo).",

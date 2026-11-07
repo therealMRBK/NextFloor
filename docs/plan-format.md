@@ -66,6 +66,34 @@ An opening sits on one edge of a room: edge `0` runs from the first corner to th
 
 Everything else (hinge side, swing, contacts, blinds) is easiest to set afterwards in the editor: select the door or window and pick its kind at the top of its form.
 
+## Furniture, free walls, outdoor areas and devices
+
+All of these are optional lists on a floor.
+
+**`furniture`**: a piece of the library or a pack.
+
+| Field | Meaning |
+|---|---|
+| `id` | Short unique id |
+| `type` | A built-in type such as `sofa`, `bed`, `table`, `chair`, `desk`, `wardrobe`, `kitchen`, `fridge`, `bathtub`, `wc`, `washbasin`, `plant`, `rug`, `tv_board`, or `pack:<pack id>:<item id>` |
+| `x`, `z` | Centre in m, in the same plan coordinates as the rooms |
+| `w`, `d`, `h` | Width, depth and height in m |
+| `rotation` | Degrees around the vertical axis (0 = the front looks along +z) |
+| `variant` | `null` |
+| `entity` | Linked Home Assistant entity, or `null` (automatic) |
+
+**`walls`** (free-standing walls, for a partition inside a room): `{ "id": "w1", "a": [x, z], "b": [x, z], "thickness": 0.1, "height": null }`. Room walls come from the room edges, so do not draw those again.
+
+**`outdoor`** (lawn, terrace, path, driveway, pool, bed, hedge, fence, pergola): `{ "id": "o1", "type": "terrace", "points": [[x, z], …] }`, outside the rooms.
+
+**`placements`** (a Home Assistant device on the plan): `{ "entity_id": "light.kitchen", "x": 2.0, "z": 3.0, "y": null }`.
+
+Coordinates are metres, x to the right and z **down** the plan (the top left corner of the house is about `[0, 0]`). Anything the AI leaves out can be added in the editor; anything unknown is ignored when the plan is read.
+
+## Other ways in
+
+Besides a NextFloor plan, the import takes Sweet Home 3D (`.sh3d`), DXF, IFC and the JSON of an Apple **RoomPlan** scan (an iPhone or iPad with LiDAR, scanned with an app that exports the RoomPlan JSON): walls, doors and windows come over, a few objects become furniture.
+
 ## Let an AI draw it
 
 Give the AI a picture of your floor plan and this prompt:

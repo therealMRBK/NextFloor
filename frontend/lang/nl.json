@@ -686,6 +686,8 @@
   "import_sh3d_found": "Sweet Home 3D: {floors} verdiepingen, {rooms} ruimtes, {openings} deuren en ramen, {walls} losse muren ({furniture} meubels worden niet overgenomen).",
   "import_dxf_found": "DXF: {rooms} kamers (gesloten polylijnen) en {walls} vrije wanden (lijnen) op één verdieping.",
   "import_ifc_found": "In het IFC-bestand: {floors} verdiepingen en {rooms} kamers (NextFloor tekent de muren uit de kamers).",
+  "import_roomplan_found": "Ruimtescan (RoomPlan): {rooms} kamers, {openings} deuren en ramen; {skipped} objecten zijn niet overgenomen (meubels plaats je zelf).",
+  "import_error_roomplan_empty": "De ruimtescan bevat geen muren.",
   "import_error_ifc_empty": "Het IFC-bestand bevat geen ruimtes (IfcSpace) met een plattegrond.",
   "import_error_dxf_empty": "Het DXF-bestand bevat geen lijnen of polylijnen.",
   "import_error_sh3d": "Dit is geen leesbaar Sweet Home 3D-bestand (Sweet Home 3D 5.3 of nieuwer nodig).",

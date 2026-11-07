@@ -686,6 +686,8 @@
   "import_sh3d_found": "Sweet Home 3D: {floors} pięter, {rooms} pomieszczeń, {openings} drzwi i okien, {walls} wolnych ścian ({furniture} mebli nie przeniesiono).",
   "import_dxf_found": "DXF: {rooms} pomieszczeń (zamknięte polilinie) i {walls} wolnych ścian (linie) na jednym piętrze.",
   "import_ifc_found": "W pliku IFC: {floors} pięter i {rooms} pomieszczeń (ściany NextFloor rysuje z pomieszczeń).",
+  "import_roomplan_found": "Skan pomieszczenia (RoomPlan): {rooms} pomieszczeń, {openings} drzwi i okien; {skipped} obiektów nie przeniesiono (meble ustawiasz sam).",
+  "import_error_roomplan_empty": "Skan nie zawiera ścian.",
   "import_error_ifc_empty": "Plik IFC nie zawiera przestrzeni (IfcSpace) z obrysem.",
   "import_error_dxf_empty": "Plik DXF nie zawiera linii ani polilinii.",
   "import_error_sh3d": "To nie jest czytelny plik Sweet Home 3D (wymaga Sweet Home 3D 5.3 lub nowszego).",
