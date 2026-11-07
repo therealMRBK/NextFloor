@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.25.2]
+
+### Fixed
+
+- **Outside on a small tablet** (thanks @eskahone, #83): with Outside open, the Today card (calendar) lay over its panel and caught the taps, so Outside could not be closed again. The Today card now steps aside while a room or Outside is open, as it already did for rooms.
+
 ## [0.25.1]
 
 ### Added
@@ -481,7 +487,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...main
+[0.25.2]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...v0.25.2
 [0.25.1]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...v0.25.1
 [0.25.0]: https://github.com/therealMRBK/NextFloor/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/therealMRBK/NextFloor/compare/v0.23.1...v0.24.0

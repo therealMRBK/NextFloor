@@ -553,7 +553,7 @@ export class NextFloorPanel extends LitElement {
           .cleanButton=${true}
           @clean-toggle=${() => this.setPref("clean", !p.clean)}
           ?weather=${p.weather}
-          .panelOpen=${!!this._roomId}
+          .panelOpen=${!!this._roomId || this._outside}
           .floorId=${building.floors.length > 1 ? this._floorId : (building.floors[0]?.id ?? null)}
           .roomId=${this._roomId}
           .wallMode=${this._wallMode}

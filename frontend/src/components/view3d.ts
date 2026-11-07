@@ -2399,7 +2399,8 @@ export class NfView3d extends LitElement {
   private renderToday() {
     const b = this.building;
     const hass = this.hass;
-    if (!b || !hass || this.today === false || this.clean || this.roomId) return nothing;
+    // the room panel (a room, or Outside) takes the right side; the Today card would lie under it and catch its taps (#83)
+    if (!b || !hass || this.today === false || this.clean || this.roomId || this.panelOpen) return nothing;
     const bins = binsDue(hass, b, Date.now(), { today: translate(hass, "care_bin_today"), tomorrow: translate(hass, "care_bin_tomorrow") });
     const items = sortDay([...bins, ...(this._todayItems ?? [])]);
     if (!items.length && !(b.settings.calendars ?? []).length) return nothing;
