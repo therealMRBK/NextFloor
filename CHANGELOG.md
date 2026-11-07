@@ -2,7 +2,7 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
-## Unreleased
+## [Unreleased]
 
 ### Added
 
@@ -12,7 +12,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - A lamp can be set to "switch only in the room panel" (no brightness, colour temperature or colour sliders), and the name given to a placed device now also shows in the room panel (#73).
 - The house settings choose which facts the room panel shows in its header: sun hours, comfort, airing hint, fuse-box circuits (#73).
 
-## 0.25.0
+## [0.25.0]
 
 ### Fixed
 
@@ -30,7 +30,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Sanitary pack VIGOUR derby** (thanks @huepfer13, #63): a wall-hung WC, a urinal, a 60 cm washbasin, a paper towel dispenser and a soap dispenser in the sizes of the VIGOUR derby series. That makes 41 furniture packs.
 - **A robot vacuum's own trail on the plan** (thanks @Sugsss, #77): a `robot_vacuum` on the plan drove lanes the view invented inside the room it reports. When the robot's integration puts its map on a camera — `vacuum_position`, `charger` and `path` as attributes, which NarwalIntegration's map card does — the view shows the truth instead: the robot stands where it says it is, facing where it faces, and the floor keeps the pad it has really driven, while the dock is drawn where the robot reports it. The robot's grid is tied to the plan by two places known in both (`settings.vacuum_map`); `mirror` covers a map whose y axis runs along plan −z, which two places alone cannot tell apart from a turn. The camera is found by its attributes, so nothing has to be chosen; the calibration is one tap — select the robot's dock, let it drive away, tap it on the plan — and a plan without one keeps the lanes it had. Ten minutes after the robot docks the pad fades out — the timeline keeps a finished clean, the floor does not. The attribute names are the vacuum map card's, so the Xiaomi map extractors, the Roborock integration, NarwalIntegration and any other integration that publishes them fit — including units in millimetres, since the two places set the scale. The manual and the Anleitung describe the calibration.
 
-## 0.24.0
+## [0.24.0]
 
 ### Added
 
@@ -41,13 +41,13 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Shared plans and share views kept data of your home** (thanks to the HACS review): the copy for sharing removed the entity links but kept the settings as they were, so the map position of your home, favourites, own buttons and warnings, calendars, status sensors, the fuse box, announcement phrases and plugin paths travelled with the file, and so did picture rules of screens, light moods, own tap actions, room panel entity lists and Home Assistant areas. A shared copy now keeps only the look of the house (walls, roof, north, units, start view) plus its rooms, furniture and doors, and every field that names an entity, area or device of your Home Assistant is cleared on top of that, so a field added later cannot slip through. Your own plan and the normal backup are not changed. Files you shared earlier still hold the old data; share them again if that matters.
 
-## 0.23.1
+## [0.23.1]
 
 ### Fixed
 
 - **Doors in a lowered room** (thanks @ayque): the door leaf, frame, threshold and handle now start on the room's own lower floor instead of the floor level, so there is no gap under the door any more; the edge lines of the opening follow too.
 
-## 0.23.0
+## [0.23.0]
 
 ### Added
 
@@ -56,7 +56,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Someone there?** The room panel says whether its motion, occupancy or presence sensors see someone now (*🚶 someone here*), or when they last did (*🚶 last seen 12 min ago*).
 - **Power of sockets and switch plates**: a socket or switch whose button is a smart plug or a measuring switch now counts its power – in the room's power and the heat map *Power*, in the room panel, and in the power flow – from the power sensor on that button's device.
 
-## 0.22.0
+## [0.22.0]
 
 ### Added
 
@@ -96,7 +96,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Floor pictures on a low card**: on a stage lower than 520 px (a dashboard card of 420 px) the floor pictures are smaller and stop above the star, the search and the buttons at the bottom left instead of sliding under them.
 
-## 0.21.0
+## [0.21.0]
 
 ### Added
 
@@ -104,7 +104,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **DXF import**: *Backup → Import* also takes a `.dxf` drawing from a CAD program – closed polylines become rooms, lines and open polylines free walls, in the drawing's unit turned into metres.
 - **A tap on an own warning**: opens the entity's details by default, or – as chosen per warning – switches the entity or jumps to its room. Thanks to @HA-Luz ([#52](https://github.com/therealMRBK/NextFloor/discussions/52)).
 
-## 0.20.0
+## [0.20.0]
 
 ### Added
 
@@ -146,7 +146,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Scenes come first in the room panel**, above the lights.
 - **Every electric piece shows its power beside its state** on its pin.
 
-## 0.17.0
+## [0.17.0]
 
 ### Added
 
@@ -173,7 +173,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **The clock top left no longer covers the sensors at the top**: with *Top left* chosen, the clock stands above the own sensors and the energy bar, which move down below it. Thanks to @toshi24 ([#35](https://github.com/therealMRBK/NextFloor/issues/35)).
 - **Sensors a plugin handles can be placed**: the editor's device lists show every entity a plugin takes on, whatever its device class (a 3D printer's enum print-state sensor from Moonraker), and it leads its device's row. Entities no plugin handles are filtered as before. Thanks to @Luca-Bachini-Barr ([#51](https://github.com/therealMRBK/NextFloor/issues/51)).
 
-## 0.16.1
+## [0.16.1]
 
 ### Added
 
@@ -194,7 +194,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **TVs that only report "on"** (Samsung, LG on live TV, and others) show their channel, input and logo on the screen in the plan, and appear in the live media card, instead of staying blank. Thanks to @Luca-Bachini-Barr ([#31](https://github.com/therealMRBK/NextFloor/issues/31)).
 - **Heaters from furniture packs glow while they heat**, as the built-in radiator does: link a towel radiator (or any pack heater) to a thermostat and it glows orange while that thermostat heats; a thermostat or A/C unit with a display glows on its display. Thanks to @Luca-Bachini-Barr ([#32](https://github.com/therealMRBK/NextFloor/issues/32)).
 
-## 0.16.0
+## [0.16.0]
 
 ### Added
 
@@ -232,7 +232,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Plugin devices show their own icon in the editor** by @Mika2108 ([#28](https://github.com/therealMRBK/NextFloor/pull/28)): the plan, the device's form and the room's device list use the icon picked in the plan, else the plugin's Material Design icon, else the kind's symbol, as the 3D view does. Cameras no longer show as clocks.
 - **A garage remote keeps its buttons in the room panel** by @Mika2108 ([#29](https://github.com/therealMRBK/NextFloor/pull/29)): a cover that only sends commands and never reports its position is no longer greyed out there, as in the quick menu since 0.14.0. *Open all* / *Close all* now leave out covers set to ask first, so a garage door no longer moves along without the confirmation, and they are hidden when no cover is left.
 
-## 0.15.0
+## [0.15.0]
 
 ### Added
 
@@ -253,7 +253,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Editing doors and windows froze the plan** (#25): when the form of a selected item could not be drawn, the whole editor stopped updating. A new door only showed up after a second click, the door form did not open and a dragged door stayed put. The plan now keeps working, and the side bar shows what went wrong (with a way back) so it can be reported.
 - An entity whose name is a number (set in YAML) no longer breaks the entity lists in the editor.
 
-## 0.14.0
+## [0.14.0]
 
 ### Added
 
@@ -289,7 +289,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Walking keys by their place on the keyboard** by @Mika2108 (#21): W A S D walk under the same fingers on QWERTY, QWERTZ and AZERTY (Z Q S D).
 - **Doors and windows of an imported plan can be selected again**: a plan written by hand or by an AI without ids (or with repeated ones) gets an id for every room, door, window, piece of furniture and outdoor area, so they can be picked and changed (e.g. into a garage door). Missing sizes, the plan version and the settings are filled in instead of refusing the file.
 
-## 0.13.0
+## [0.13.0]
 
 ### Added
 
@@ -300,7 +300,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Wall thermostat** (#17) now links to a climate entity instead of asking for a TV. Climate items from packs are also offered under *Show as furniture* for a climate entity, next to the radiator.
 
-## 0.12.0
+## [0.12.0]
 
 ### Added
 
@@ -310,7 +310,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Solar fields on a mansard roof** (#13) now lie on the roof instead of sinking into it. Each side offers two roof faces to choose from: the steep lower slope and the flatter upper slope above the break. Fields placed on a mansard before keep their spot on the lower slope; move a field that should sit higher onto the upper face.
 
-## 0.11.0
+## [0.11.0]
 
 ### Added
 
@@ -318,7 +318,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Ceiling height at one spot** (#12): ceiling lights and other hanging items have a *Ceiling here* field for a sloping ceiling or a single high spot (a light at 4 m).
 - **Ceiling fans** (#11): a new *Ceiling fan* in the lights section. Link its light kit like any lamp and its fan entity (found on the light's device or in the room). In 3D the blades turn as fast as the fan runs; the fan's pin shows its speed, a tap switches it, swiping up or down changes the speed and a long press opens the quick menu. Its height is how far it hangs from the ceiling, so a fan on a downrod hangs lower.
 
-## 0.10.0
+## [0.10.0]
 
 ### Added
 
@@ -334,7 +334,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - Light effects are no longer all shown as a rainbow: plans without a mapping and unknown effects keep the colour and brightness from Home Assistant, pulse and flicker keep the base colour, and lights that are off or unavailable do not animate.
 
-## 0.9.1
+## [0.9.1]
 
 ### Changed
 
@@ -344,7 +344,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **A folded room panel no longer hangs in the picture:** on a wide window or in landscape the folded panel stayed at the top right and covered the view. It now drops to the bottom edge, above the switches (and to the bottom of the card), so it is out of the way. Reported in discussion #3.
 
-## 0.9.0
+## [0.9.0]
 
 ### Added
 
@@ -354,25 +354,25 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Turn a solar field on a flat roof:** the solar form has **Rotation** with quick **↺ 90°** and **↻ 90°** buttons. The field turns about its middle, its modules and frames turn with it, and it is kept on the roof. Asked for in discussion #5.
 - **Fold the room panel away:** the room panel has a new **−** button next to the ✕. It hides the devices and keeps the room in view, which is what you want on a phone; a tap on the arrow opens it again. The panel starts open for every room. Asked for in discussion #3.
 
-## 0.8.3
+## [0.8.3]
 
 ### Fixed
 
 - **Real map showed "Access blocked" (403) instead of the map:** Home Assistant asks the browser to send no Referer to other sites, and OpenStreetMap's tile servers refuse requests without one. NextFloor now loads every map tile with an explicit referrer policy (only your Home Assistant's address, not the full page address), in the plan and in 3D. The tiles are kept in the browser while the map is on.
 
-## 0.8.2
+## [0.8.2]
 
 ### Added
 
 - **Room buttons on the dashboard card:** a new switch *Room buttons* in the card editor puts a row of buttons, one per room, along the top of the card. A tap opens the room (switching to its floor first when needed), a second tap closes it. In the house view the rooms of all floors show, grouped by floor. Asked for in discussion #2.
 
-## 0.8.1
+## [0.8.1]
 
 ### Fixed
 
 - **Blue light frame around a TV that is on, even with *Glow behind the TV* at 0:** the glow frame that fades out around the screen of a TV that is on ignored the setting. With 0 it is now gone completely, and values below 100 make it weaker. (0.8.0 only removed the bright outline of the TV's body.)
 
-## 0.8.0
+## [0.8.0]
 
 ### Added
 
@@ -393,7 +393,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **Cameras are gone:** the camera wall, flying into a camera's live picture, the motion trail, detection pins, the field-of-view wedge and the camera device kind were removed. Placed `camera.*` entities are no longer shown.
 - **Extensions tab:** it now only holds the upload of your own 3D models and the project links. The feature list and the furniture pack list are gone, and so is the hint box in the furniture library.
 
-## 0.7.0
+## [0.7.0]
 
 ### Added
 
@@ -403,7 +403,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
   - **Garage & Werkstatt (9):** workbench, tool cabinet and trolley, storage rack, stack of tyres, drill press, compressor, bicycle stand and paint cabinet.
 - All three appear in the demo's model showcase.
 
-## 0.6.3
+## [0.6.3]
 
 ### Added
 
@@ -418,19 +418,19 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - The online demo no longer fails to deploy on a release (it deploys when the demo changes on `main`).
 - A formatting slip in the Python code that made the checks fail.
 
-## 0.6.2
+## [0.6.2]
 
 ### Added
 
 - **Glow behind the TV:** a TV, monitor or TV board has a new setting "Glow behind the TV (%)" in the editor. 0 switches the blue ambilight off (handy with LED strips on the TV), 100 is the usual strength, up to 150.
 
-## 0.6.1
+## [0.6.1]
 
 ### Fixed
 
 - **Camera wall:** the pictures are now tiles of a sensible size (at most 560 px wide, as many per row as fit, centred) instead of one picture stretched over the whole screen when there is a single camera. Tiles lift slightly when you point at them.
 
-## 0.6.0
+## [0.6.0]
 
 ### Added
 
@@ -441,26 +441,26 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - The editor, the side panel, the dashboard card and parts of the 3D view were reorganised internally into smaller, tested modules. Behaviour and look are unchanged.
 - The README is shorter, with a feature table and a screenshot gallery.
 
-## 0.5.0
+## [0.5.0]
 
 - **Twelve Tesla models:** Model 3 (to 2023, 2024 and Performance), Model S and S Plaid, Model X, Model Y (2020 to 2024, 2025 Standard, Premium and Performance, and Model Y L) and the Cybertruck are separate items, each ready for its own 3D model, in the paint colours Tesla offers. Without a model file on your Home Assistant they show the simple shape.
 - `tools/prepare-model.mjs` can leave out see-through fade layers and light beams (`--drop-materials`) and finds the front of the car by its charge port (`--rear`).
 
-## 0.4.0
+## [0.4.0]
 
 - **Paint colours for vehicles:** every Tesla has the paint colours Tesla offers (Pearl White, Solid Black, Deep Blue, Ultra Red, Quicksilver and more; the Cybertruck its steel and wraps). Pick the colour in the editor, also for a car in a parking spot.
 - **Your own 3D models:** put a model you own (`.glb`) on your Home Assistant and NextFloor draws it in place of the simple shape, with the paint colour you picked. The Tesla Model Y is the first item that takes one. NextFloor ships no model files; see [docs/models.md](docs/models.md) for how to prepare and add yours.
 
-## 0.3.0
+## [0.3.0]
 
 - **IKEA sizes:** a new furniture pack with 20 popular pieces in their published outer dimensions: bookcases, cube shelves, beds, chests of drawers, wardrobes, sofas, an armchair, a desk, tables and more. They are our own simple models of the sizes, not IKEA's designs or files.
 
-## 0.2.0
+## [0.2.0]
 
 - **Tesla models in 3D:** Model S, 3, X, Y, Cybertruck, Roadster and Semi in the vehicles pack, with their real outer dimensions. Put one on a parking spot and the car card follows it.
 - **Smooth bodies for packs:** a new part shape, `sweep`, stretches a rounded skin over cross sections along the length. The Teslas are built with it; the format is described in [docs/packs.md](docs/packs.md).
 
-## 0.1.0
+## [0.1.0]
 
 The first release.
 
@@ -471,3 +471,37 @@ The first release.
 - A dashboard card with a visual editor, three looks, kiosk mode for wall tablets, warnings for smoke, gas, water and open windows in the rain.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
+
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...main
+[0.25.0]: https://github.com/therealMRBK/NextFloor/compare/v0.24.0...v0.25.0
+[0.24.0]: https://github.com/therealMRBK/NextFloor/compare/v0.23.1...v0.24.0
+[0.23.1]: https://github.com/therealMRBK/NextFloor/compare/v0.23.0...v0.23.1
+[0.23.0]: https://github.com/therealMRBK/NextFloor/compare/v0.22.0...v0.23.0
+[0.22.0]: https://github.com/therealMRBK/NextFloor/compare/v0.21.0...v0.22.0
+[0.21.0]: https://github.com/therealMRBK/NextFloor/compare/v0.20.0...v0.21.0
+[0.20.0]: https://github.com/therealMRBK/NextFloor/compare/v0.17.0...v0.20.0
+[0.17.0]: https://github.com/therealMRBK/NextFloor/compare/v0.16.1...v0.17.0
+[0.16.1]: https://github.com/therealMRBK/NextFloor/compare/v0.16.0...v0.16.1
+[0.16.0]: https://github.com/therealMRBK/NextFloor/compare/v0.15.0...v0.16.0
+[0.15.0]: https://github.com/therealMRBK/NextFloor/compare/v0.14.0...v0.15.0
+[0.14.0]: https://github.com/therealMRBK/NextFloor/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/therealMRBK/NextFloor/compare/v0.12.0...v0.13.0
+[0.12.0]: https://github.com/therealMRBK/NextFloor/compare/v0.11.0...v0.12.0
+[0.11.0]: https://github.com/therealMRBK/NextFloor/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/therealMRBK/NextFloor/compare/v0.9.1...v0.10.0
+[0.9.1]: https://github.com/therealMRBK/NextFloor/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/therealMRBK/NextFloor/compare/v0.8.3...v0.9.0
+[0.8.3]: https://github.com/therealMRBK/NextFloor/compare/v0.8.2...v0.8.3
+[0.8.2]: https://github.com/therealMRBK/NextFloor/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/therealMRBK/NextFloor/compare/v0.8.0...v0.8.1
+[0.8.0]: https://github.com/therealMRBK/NextFloor/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/therealMRBK/NextFloor/compare/v0.6.3...v0.7.0
+[0.6.3]: https://github.com/therealMRBK/NextFloor/compare/v0.6.2...v0.6.3
+[0.6.2]: https://github.com/therealMRBK/NextFloor/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/therealMRBK/NextFloor/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/therealMRBK/NextFloor/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/therealMRBK/NextFloor/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/therealMRBK/NextFloor/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/therealMRBK/NextFloor/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/therealMRBK/NextFloor/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/therealMRBK/NextFloor/releases/tag/v0.1.0

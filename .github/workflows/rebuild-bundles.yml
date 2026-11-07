@@ -1,0 +1,35 @@
+name: Rebuild bundles
+
+# The built bundles are committed. When a branch of this repository has stale ones (CI fails on "Committed bundles are
+# up to date"), run this by hand on that branch: it rebuilds and commits them. Pull requests from forks are rebuilt by the maintainer.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: github.ref_name != 'main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Commit the rebuilt bundles
+        working-directory: .
+        run: |
+          git add custom_components/nextfloor/frontend site/builder
+          if git diff --cached --quiet; then echo "Bundles are up to date."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: rebuild the bundles"
+          git push

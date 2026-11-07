@@ -20,3 +20,7 @@ preview/.tutorial-state.json
 frontend/tutorial/out/
 # tool installers do not belong here
 *.whl
+
+# knowledge-graph tooling output
+graphify-out/
+*.bak-graphify
