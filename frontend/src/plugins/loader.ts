@@ -3,7 +3,7 @@
 //  2. A dashboard resource (e.g. installed by HACS) that loads before NextFloor pushes its plugin
 //     onto `window.__nextfloorPlugins`; it is picked up when NextFloor starts.
 
-import { PLUGIN_API_VERSION, isAllowedPluginUrl, type NextFloorPlugin, type PluginRef } from "./api.ts";
+import { PLUGIN_API_VERSION, isAllowedPluginUrl, pluginFetchUrl, type NextFloorPlugin, type PluginRef } from "./api.ts";
 import { registerPlugin } from "./registry.ts";
 
 export interface LoadState {
@@ -84,7 +84,7 @@ export async function loadPlugins(
     loads.set(ref.url, entry);
     let resolved: { url: string; revoke?: () => void } | undefined;
     try {
-      resolved = await resolveModuleUrl(ref, fetcher);
+      resolved = await resolveModuleUrl({ ...ref, url: pluginFetchUrl(ref.url) }, fetcher);
       currentSource = ref.url;
       await importer(resolved.url);
       entry.state = "loaded";

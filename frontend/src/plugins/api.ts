@@ -153,4 +153,10 @@ export interface PluginRef {
 }
 
 /** Where plugin modules may be loaded from: Home Assistant's own www folder, HACS, or HTTPS. */
+/**
+ * The URL Home Assistant serves a file at: the folder config/www is served as /local/, so a path typed with the folder
+ * in it (/local/www/…) never loads; it becomes /local/… (#78).
+ */
+export const pluginFetchUrl = (url: string): string => url.trim().replace(/^\/local\/www\//i, "/local/");
+
 export const isAllowedPluginUrl = (url: string): boolean => /^(https:\/\/|\/local\/|\/hacsfiles\/)\S+\.m?js(\?\S*)?$/i.test(url.trim());

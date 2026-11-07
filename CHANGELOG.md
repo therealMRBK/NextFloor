@@ -12,6 +12,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **A plugin added as `/local/www/…` never loaded** (thanks @MarioFey1979, #78): Home Assistant serves its `www` folder as `/local/`, so a path with `www` in it pointed nowhere and the plugin's devices (cameras, say) were missing from every list. Such a path now loads from `/local/…`, and a new one is stored that way.
 - **Zigzag in a straight interior wall** (thanks @Dragi2k, #65): one straight wall that runs past several rooms (bathroom, store room and hall along the bedroom, say) was drawn in pieces, and a piece next to an outer wall sat flush on one side while its neighbours sat centred, so the top of the wall jumped back and forth. The whole straight wall is now aligned as one.
 
 ### Changed

@@ -4,7 +4,7 @@ import { animateGlow, lightAnimation } from "../light-effects.ts";
 import { buildMarkers } from "../markers.ts";
 import { emptyBuilding, newFloor } from "../model.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
-import { isAllowedPluginUrl, type NextFloorPlugin } from "./api.ts";
+import { isAllowedPluginUrl, pluginFetchUrl, type NextFloorPlugin } from "./api.ts";
 import { installPluginGlobal, loadPlugins, pluginLoadStates, resetLoads } from "./loader.ts";
 import {
   onPluginsChanged,
@@ -260,4 +260,14 @@ test("a placed camera's marker carries the plugin's wedge", () => {
   b.floors.push(f);
   const [m] = buildMarkers(hassWith(entity("camera.hall", "idle")), b);
   assert.deepEqual(m.wedge, { angle: 90, reach: 4, near: 0, color: [0, 0, 0], opacity: 0.6, through: false });
+});
+
+test("a plugin path typed with the www folder in it loads from where Home Assistant serves it (#78)", async () => {
+  assert.equal(pluginFetchUrl(" /local/www/nextfloor/nextfloor-cameras.js "), "/local/nextfloor/nextfloor-cameras.js");
+  assert.equal(pluginFetchUrl("/local/nextfloor/x.js"), "/local/nextfloor/x.js");
+  assert.equal(pluginFetchUrl("https://example.com/local/www/x.js"), "https://example.com/local/www/x.js");
+  resetLoads();
+  const asked: string[] = [];
+  await loadPlugins([{ url: "/local/www/nextfloor/nextfloor-cameras.js", enabled: true }], async (url) => void asked.push(url));
+  assert.deepEqual(asked, ["/local/nextfloor/nextfloor-cameras.js"]);
 });

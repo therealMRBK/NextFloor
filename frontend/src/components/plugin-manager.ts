@@ -4,7 +4,7 @@
 import { css, html, LitElement, nothing } from "lit";
 import { REPO_URL } from "../features.ts";
 import { translate, type I18nKey } from "../i18n.ts";
-import { isAllowedPluginUrl, type PluginRef } from "../plugins/api.ts";
+import { isAllowedPluginUrl, pluginFetchUrl, type PluginRef } from "../plugins/api.ts";
 import { pluginLoadStates } from "../plugins/loader.ts";
 import { fetchStoreIndex, STORE_REPO, storeState, withStoreEntry, type StoreEntry } from "../plugins/store.ts";
 import { onPluginsChanged, pluginStatuses } from "../plugins/registry.ts";
@@ -55,7 +55,7 @@ export class PluginManager extends LitElement {
   }
 
   private add(input: HTMLInputElement): void {
-    const url = input.value.trim();
+    const url = pluginFetchUrl(input.value);
     const list = this.plugins ?? [];
     if (!isAllowedPluginUrl(url)) return void (this._error = this.t("plugins_url_invalid"));
     if (list.some((p) => p.url === url)) return void (this._error = this.t("plugins_exists"));
