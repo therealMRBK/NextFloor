@@ -63,7 +63,7 @@ jobs:
             sed -i 's|<body>|<body><div style="position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;padding:2px 14px;border-radius:0 0 10px 10px;background:#ffb547;color:#1a1200;font:700 12px sans-serif">DEV – work in progress</div>|' "$page"
           done
           touch _site/.nojekyll
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
