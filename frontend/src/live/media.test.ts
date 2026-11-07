@@ -49,3 +49,12 @@ test("a TV that is 'on' with a channel counts as live, without one it does not",
   assert.equal(isLive({ state: "paused", attributes: { media_title: "x" } }), false);
   assert.equal(isLive({ state: "playing", attributes: {} }), true);
 });
+
+test("a player keeps the ring size its furniture or marker asks for, 1 when it sets none (#94)", () => {
+  const h = hass({ "media_player.dot": { state: "playing", attributes: {} }, "media_player.show": { state: "playing", attributes: {} } });
+  const list = mediaNow(h, [
+    { entity: "media_player.dot", name: "Dot", at, rings: 0 },
+    { entity: "media_player.show", name: "Show", at },
+  ]);
+  assert.deepEqual(list.map((m) => m.rings), [0, 1]);
+});

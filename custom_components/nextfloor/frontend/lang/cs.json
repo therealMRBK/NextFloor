@@ -453,6 +453,8 @@
   "floor_start_view_need_pane": "Nejprve zapněte \"3D vedle\" a otočte podlaží tak, jak se má otevírat.",
   "ambilight": "Záře za TV (%)",
   "ambilight_hint": "Jak silně svítí za televizorem během přehrávání. 0 ji vypne (např. máte-li LED pásky na TV), 100 je běžná intenzita.",
+  "sound_rings": "Zvukové kruhy (%)",
+  "sound_rings_hint": "Jak velké jsou kruhy kolem reproduktoru, když hraje. 0 je vypne, obraz a záře zůstanou; 100 je běžná velikost.",
   "glow_scale": "Záře v 3D (%)",
   "light_effects": "Animace efektů v 3D",
   "light_effects_hint": "Přiřazujte pouze přesné názvy efektů z HA. Nepřiřazené efekty si zachovávají statickou barvu HA. Nic nemění v Home Assistant.",

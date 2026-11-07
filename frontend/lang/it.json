@@ -453,6 +453,8 @@
   "floor_start_view_need_pane": "Attiva prima \"3D a fianco\" e ruota il piano come deve aprirsi.",
   "ambilight": "Bagliore dietro la TV (%)",
   "ambilight_hint": "Quanto brilla dietro la TV mentre è in riproduzione. 0 lo spegne (ad es. se hai strisce LED sulla TV), 100 è l'intensità normale.",
+  "sound_rings": "Onde sonore (%)",
+  "sound_rings_hint": "Quanto si allargano le onde intorno all’altoparlante durante la riproduzione. 0 le spegne, immagine e bagliore restano; 100 è la dimensione normale.",
   "glow_scale": "Bagliore in 3D (%)",
   "light_effects": "Animazioni degli effetti in 3D",
   "light_effects_hint": "Associa solo nomi di effetto esatti di HA. Gli effetti non associati mantengono il colore statico di HA. Non cambia nulla in Home Assistant.",

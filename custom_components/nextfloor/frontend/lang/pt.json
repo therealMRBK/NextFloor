@@ -453,6 +453,8 @@
   "floor_start_view_need_pane": "Ative primeiro \"3D ao lado\" e rode o piso como deve abrir.",
   "ambilight": "Brilho atrás da TV (%)",
   "ambilight_hint": "Com que intensidade brilha atrás da TV durante a reprodução. 0 desliga-o (por exemplo, se tiver fitas LED na TV), 100 é a intensidade habitual.",
+  "sound_rings": "Ondas de som (%)",
+  "sound_rings_hint": "Tamanho das ondas à volta do altifalante enquanto toca. 0 desliga-as, a imagem e o brilho mantêm-se; 100 é o tamanho habitual.",
   "glow_scale": "Brilho em 3D (%)",
   "light_effects": "Animações de efeitos em 3D",
   "light_effects_hint": "Associe apenas nomes de efeito exatos do HA. Efeitos não associados mantêm a cor estática do HA. Não altera nada no Home Assistant.",

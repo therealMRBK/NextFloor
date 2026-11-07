@@ -453,6 +453,8 @@
   "floor_start_view_need_pane": "Slå först på \"3D bredvid\" och vrid våningen som den ska öppnas.",
   "ambilight": "Sken bakom tv:n (%)",
   "ambilight_hint": "Hur starkt det lyser bakom tv:n när den spelar. 0 stänger av det (t.ex. om du har LED-slingor på tv:n), 100 är normal styrka.",
+  "sound_rings": "Ljudringar (%)",
+  "sound_rings_hint": "Hur stora ringarna runt högtalaren blir medan den spelar. 0 stänger av dem, bilden och skenet finns kvar; 100 är vanlig storlek.",
   "glow_scale": "Sken i 3D (%)",
   "light_effects": "Effektanimationer i 3D",
   "light_effects_hint": "Koppla bara exakta effektnamn från HA. Okopplade effekter behåller den statiska HA-färgen. Ändrar inget i Home Assistant.",

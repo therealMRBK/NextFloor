@@ -19,6 +19,8 @@ export interface MediaNow {
   app: string | null;
   /** Other players playing the same (multiroom), as reported by the player. */
   group: string[];
+  /** Size of its sound rings (1 = as usual, 0 = none). */
+  rings: number;
 }
 
 /** App colours: the ring around a speaker and the card's edge take the colour of what plays. */
@@ -56,7 +58,7 @@ export function showsSomething(st: { state: string; attributes: Record<string, u
 export const isLive = (st: { state: string; attributes: Record<string, unknown> }): boolean => st.state === "playing" || (st.state === "on" && showsSomething(st));
 
 /** Media players placed in the plan (as a device, or linked to furniture such as a TV or a speaker). */
-export function mediaNow(hass: HomeAssistant, spots: readonly { entity: string; name: string; at: PlanPoint }[]): MediaNow[] {
+export function mediaNow(hass: HomeAssistant, spots: readonly { entity: string; name: string; at: PlanPoint; rings?: number | null }[]): MediaNow[] {
   const out: MediaNow[] = [];
   const seen = new Set<string>();
   for (const s of spots) {
@@ -80,6 +82,7 @@ export function mediaNow(hass: HomeAssistant, spots: readonly { entity: string; 
       color: appColor(app),
       app,
       group: Array.isArray(a.group_members) ? (a.group_members as unknown[]).filter((g): g is string => typeof g === "string" && g !== s.entity) : [],
+      rings: s.rings ?? 1,
     });
   }
   return out;

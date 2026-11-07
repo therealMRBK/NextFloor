@@ -98,6 +98,7 @@ export function renderDeviceForm(host: EditorHost, placed: Placement, actions: D
     <div class="nf-form">
       ${light ? html`${selectField(host, t("lamp_mount"), mount, lampMounts, mountChange, { wide: true })}${glowField(host, placed.glow_scale, (v) => set({ glow_scale: v }))}` : nothing}
       ${light ? lightEffectFields(host, placed, host.hass?.states[placed.entity_id]?.attributes.effect_list, set) : nothing}
+      ${placed.entity_id.startsWith("media_player.") ? glowField(host, placed.sound_rings, (v) => set({ sound_rings: v }), { label: "sound_rings", hint: "sound_rings_hint", lowest: 0 }) : nothing}
       ${numberField(host, t("x"), placed.x, (v) => set({ x: v }))} ${numberField(host, t("z"), placed.z, (v) => set({ z: v }))}
       ${numberField(host, t("marker_height"), placed.y ?? automatic, (v) => set({ y: Math.max(0, v) }), 0.05, 0)}
       ${numberField(host, t("rotation"), placed.rotation ?? 0, (v) => set({ rotation: ((v % 360) + 360) % 360 }), 1)}

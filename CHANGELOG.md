@@ -6,6 +6,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [0.25.4]
 
+### Added
+
+- **Size of the sound rings per speaker** (thanks @thelichtler-cloud, #94): a speaker or TV linked to a media player, and a media player marker, have a *Sound rings (%)* field. A small speaker such as an Echo Dot can get small rings, and 0 switches them off while the cover picture and the glow stay.
+
 ### Fixed
 
 - **Zigzag in a straight interior wall** (thanks @Dragi2k, #65): one straight wall that runs past several rooms (bathroom, store room and hall along the bedroom, say) was drawn in pieces, and a piece next to an outer wall sat flush on one side while its neighbours sat centred, so the top of the wall jumped back and forth. The whole straight wall is now aligned as one.

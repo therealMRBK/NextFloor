@@ -306,6 +306,8 @@ FURNITURE_SCHEMA = vol.Schema(
         ),
         # screens: strength of the glow on the wall behind a TV that plays (None = full, 0 = off)
         vol.Optional("ambilight", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
+        # speakers: size of the sound rings while the linked media player plays (None = full, 0 = none)
+        vol.Optional("sound_rings", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
         # linked entities (e.g. the TV's media player, a power sensor): None = automatic, "none" = no entity
         vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("power", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
@@ -449,6 +451,8 @@ PLACEMENT_SCHEMA = vol.Schema(
         vol.Optional("glow_scale", default=None): vol.Any(
             None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=1.5))
         ),
+        # media players: size of the sound rings while it plays (None = full, 0 = none)
+        vol.Optional("sound_rings", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
         # cameras: show the field-of-view wedge on the floor (None = yes)
         vol.Optional("cone", default=None): vol.Any(None, bool),
         # settings plugins add to the device's form: per plugin id, the values by key

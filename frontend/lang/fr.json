@@ -439,6 +439,8 @@
  "floor_start_view_need_pane": "Activez d'abord « 3D à côté » et tournez l'étage comme il doit s'ouvrir.",
  "ambilight": "Lueur derrière la TV (%)",
  "ambilight_hint": "Intensité de la lueur derrière la TV pendant la lecture. 0 la désactive (p. ex. si la TV a des bandes LED), 100 est l'intensité habituelle.",
+ "sound_rings": "Ondes sonores (%)",
+ "sound_rings_hint": "Taille des ondes autour de l’enceinte pendant la lecture. 0 les désactive, l’image et la lueur restent ; 100 est la taille habituelle.",
  "glow_scale": "Lueur en 3D (%)",
  "light_effects": "Animations d'effets en 3D",
  "light_effects_hint": "Associez uniquement des noms d'effets HA exacts. Les effets non associés gardent la couleur HA statique. Ne change rien dans Home Assistant.",

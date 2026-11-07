@@ -13,6 +13,8 @@ export interface SoundSpot {
   color: [number, number, number];
   /** Volume 0…1. */
   level: number;
+  /** Size of the rings (1 = as usual; a small speaker can have smaller ones). */
+  size?: number;
 }
 
 const RINGS = 3;
@@ -94,7 +96,7 @@ export class SoundLayer {
         const k = (t * 0.55 + i / RINGS) % 1;
         r.visible = l.visible;
         r.position.set(v.spot.at.x, l.y + v.spot.at.y, v.spot.at.z);
-        r.scale.setScalar(0.25 + k * reach);
+        r.scale.setScalar((0.25 + k * reach) * (v.spot.size ?? 1));
         (r.material as MeshBasicMaterial).opacity = (1 - k) * (0.35 + 0.5 * v.spot.level);
       });
     }

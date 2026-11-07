@@ -214,6 +214,8 @@ export interface Furniture extends LightEffectConfig {
   glow_scale?: number | null;
   /** Screens: how strongly the glow behind a playing TV shines, 0 to 1.5 (null = 1, 0 = off). */
   ambilight?: number | null;
+  /** Speakers (a linked media player): size of the sound rings while it plays, 0 to 1.5 (null = 1, 0 = none) – #94. */
+  sound_rings?: number | null;
   /** An own symbol for the marker: a Material Design icon name without "mdi:" (null = by kind). */
   icon?: string | null;
   /** Linked entity, e.g. the TV's media player (null = automatic, "none" = none). */
@@ -338,6 +340,8 @@ export interface Placement extends LightEffectConfig {
   show_name?: boolean;
   /** Lights: how strongly the light glows in 3D, 0.1–1.5 (1 = as bright as the light reports) – #181. */
   glow_scale?: number | null;
+  /** Media players: size of the sound rings while it plays, 0 to 1.5 (null = 1, 0 = none) – #94. */
+  sound_rings?: number | null;
   /** Cameras: show the field-of-view wedge on the floor (null = yes). */
   cone?: boolean | null;
   /** Settings plugins added to the device's form: per plugin id, the values by key. */
