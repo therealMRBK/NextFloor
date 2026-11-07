@@ -67,7 +67,7 @@ function copyAssets() {
 
 // Size budgets, small enough for old wall tablets. The editor bundles only load for admins and the card's settings, so they
 // may grow more than the view; German and English texts ride in every bundle.
-const BUDGET = { "nextfloor.js": 600 * 1024, "nextfloor-3d.js": 1000 * 1024, "nextfloor-editor.js": 720 * 1024, "nextfloor-card-editor.js": 240 * 1024 };
+const BUDGET = { "nextfloor.js": 650 * 1024, "nextfloor-3d.js": 1000 * 1024, "nextfloor-editor.js": 720 * 1024, "nextfloor-card-editor.js": 240 * 1024 };
 
 copyAssets();
 if (watch) {

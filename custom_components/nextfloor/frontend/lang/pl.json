@@ -395,6 +395,8 @@
   "plain": "Tylko plan",
   "plain_hint": "Pokazuje tylko ściany, drzwi, okna i schody, bez mebli. Urządzenia i ich piny zostają.",
   "card_plain": "Tylko plan",
+  "card_rooms": "Tylko te pomieszczenia",
+  "card_rooms_hint": "Karta pokazuje tylko zaznaczone pomieszczenia z meblami, urządzeniami, drzwiami i oknami (na przykład dla tabletu w kuchni). Nic nie zaznaczono: cały plan.",
   "card_readable": "Czytelnie",
   "all_off_n": "Wyłącz wszystko ({n})",
   "all_off_hint": "Wyłącza światła, przełączniki, wentylatory i media w pomieszczeniu; przez dziesięć sekund można to cofnąć.",

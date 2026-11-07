@@ -381,6 +381,8 @@
  "plain": "Plan seul",
  "plain_hint": "Affiche seulement murs, portes, fenêtres et escaliers, sans meubles. Les appareils et leurs repères restent.",
  "card_plain": "Plan seul",
+ "card_rooms": "Seulement ces pièces",
+ "card_rooms_hint": "La carte n’affiche que les pièces cochées avec leurs meubles, appareils, portes et fenêtres (par exemple pour une tablette dans la cuisine). Rien de coché : tout le plan.",
  "card_readable": "Lisible",
  "all_off_n": "Tout éteindre ({n})",
  "all_off_hint": "Éteint lumières, interrupteurs, ventilateurs et médias de la pièce ; annulable pendant dix secondes.",

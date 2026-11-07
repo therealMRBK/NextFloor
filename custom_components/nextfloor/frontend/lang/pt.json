@@ -395,6 +395,8 @@
   "plain": "Só planta",
   "plain_hint": "Mostra só paredes, portas, janelas e escadas, sem móveis. Os dispositivos e os seus pinos ficam.",
   "card_plain": "Só planta",
+  "card_rooms": "Só estas divisões",
+  "card_rooms_hint": "O cartão mostra só as divisões marcadas com os seus móveis, dispositivos, portas e janelas (por exemplo para um tablet na cozinha). Nada marcado: a planta toda.",
   "card_readable": "Fácil de ler",
   "all_off_n": "Desligar tudo ({n})",
   "all_off_hint": "Desliga luzes, interruptores, ventoinhas e multimédia da divisão; pode ser anulado durante dez segundos.",

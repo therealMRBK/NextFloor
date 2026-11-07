@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **A card for chosen rooms:** the dashboard card's settings list the rooms (*Only these rooms*, YAML `rooms: [id, …]`); the card then shows just those rooms with their furniture, devices, doors and windows, and cannot leave them, for example for a tablet in the kitchen. Nothing ticked: the whole plan as before.
 - **Gates in fences:** a fence's form has *+ Gate in the fence*: a gap in one side with gate posts and a garden gate, a double gate or a sliding gate. With a motor or switch (cover, switch, input_boolean, lock) and/or a contact the gate opens in 3D: garden and double gates swing inwards, a sliding gate runs along the fence. (Tapping the gate in 3D to switch it is not there yet.)
 - **Sun arc and compass:** the editor's settings have *Sun arc and compass*: today's path of the sun as an arc over the plot, with a ring on the ground, the compass points (north in red) and a bead where the sun stands now. It uses your home's location in Home Assistant and follows the time-of-day slider.
 - **Sloping free-standing walls:** a wall drawn with the wall tool can fall from one end to the other (*◢ Sloping* in its form, with a height at each end).

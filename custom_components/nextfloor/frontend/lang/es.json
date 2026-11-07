@@ -395,6 +395,8 @@
   "plain": "Solo plano",
   "plain_hint": "Muestra solo paredes, puertas, ventanas y escaleras, sin muebles. Los dispositivos y sus marcadores se mantienen.",
   "card_plain": "Solo plano",
+  "card_rooms": "Solo estas habitaciones",
+  "card_rooms_hint": "La tarjeta muestra solo las habitaciones marcadas con sus muebles, dispositivos, puertas y ventanas (por ejemplo para una tableta en la cocina). Sin marcar: todo el plano.",
   "card_readable": "Fácil de leer",
   "all_off_n": "Apagar todo ({n})",
   "all_off_hint": "Apaga luces, interruptores, ventiladores y medios de la habitación; se puede deshacer durante diez segundos.",

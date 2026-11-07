@@ -13,6 +13,8 @@ import { awaitingLanguage, translate } from "./i18n.ts";
 import { nightActive } from "./kiosk.ts";
 import { screenMuted, screenName } from "./panel/prefs.ts";
 import { loadCardEditor } from "./load-card-editor.ts";
+import type { Building } from "./model.ts";
+import { roomsOnly } from "./rooms-only.ts";
 import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
@@ -184,11 +186,23 @@ export class NextFloorCard extends LitElement {
     else if (this.canSwitch) this._floorId = null;
   }
 
+  private roomsMemo: { source: Building | null; ids: string; result: Building | null } | null = null;
+
+  /** The plan this card shows: all of it, or only the rooms of `rooms:` (kept, so the same object comes back while nothing changes). */
+  private plan(): Building | null {
+    const source = this.data.building ?? null;
+    const ids = this._config?.rooms;
+    if (!source || !ids?.length) return source;
+    const key = ids.join(",");
+    if (!this.roomsMemo || this.roomsMemo.source !== source || this.roomsMemo.ids !== key) this.roomsMemo = { source, ids: key, result: roomsOnly(source, ids) };
+    return this.roomsMemo.result;
+  }
+
   private readonly t = (key: Key) => translate(this.hass, key);
 
   /** Which floor shows, the switches' current values, and whether the bar of switches and its back button are there. */
   private stage(): Stage {
-    const b = this.data.building;
+    const b = this.plan();
     const c = this._config;
     // the configured floor is where the card starts; with floor pictures the user can switch
     const chosen = this._floorId === undefined ? (c?.floor ?? null) : this._floorId;
@@ -214,7 +228,7 @@ export class NextFloorCard extends LitElement {
 
   /** The bar of switches: back, wall mode, floor stacking, heat map. */
   private renderBar(s: Stage): TemplateResult {
-    const b = this.data.building!;
+    const b = this.plan()!;
     const t = this.t;
     const heats = (["temperature", "humidity", "co2"] as const).filter((m) => this.shows(m));
     const group = (label: string | undefined, buttons: [boolean, () => void, string][]) =>
@@ -236,7 +250,7 @@ export class NextFloorCard extends LitElement {
 
   /** One chip per room above the model; a tap opens the room (its floor first, when another floor shows), a second tap closes it. */
   private renderRoomButtons(s: Stage): TemplateResult | typeof nothing {
-    const b = this.data.building;
+    const b = this.plan();
     if (!this._config?.room_buttons || !b || this._clean) return nothing;
     const groups = roomButtons(b, s.floorId);
     if (!groups.length) return nothing;
@@ -279,7 +293,7 @@ export class NextFloorCard extends LitElement {
   }
 
   private renderStage(s: Stage): TemplateResult {
-    const b = this.data.building!;
+    const b = this.plan()!;
     const c = this._config;
     const clean = () => {
       this._clean = !this._clean;
@@ -359,9 +373,9 @@ export class NextFloorCard extends LitElement {
   }
 
   private renderRoomPanel(): TemplateResult {
-    const b = this.data.building!;
+    const b = this.plan()!;
     return html`<nf-room-panel
-            .building=${this.data.building ?? null}
+            .building=${this.plan() ?? null}
       class="nf-card-panel"
       .hass=${this.hass}
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}
@@ -376,7 +390,7 @@ export class NextFloorCard extends LitElement {
   protected render() {
     // a language beyond German and English: its texts are fetched first, and then everything renders
     if (this.hass && awaitingLanguage(this.hass, this)) return nothing;
-    const b = this.data.building;
+    const b = this.plan();
     const c = this._config;
     // the configured room opens once, when the building is there; the kiosk return brings it back
     if (!this.roomApplied && b && c?.room) {

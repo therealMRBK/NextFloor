@@ -395,6 +395,8 @@
   "plain": "Jen půdorys",
   "plain_hint": "Zobrazí jen zdi, dveře, okna a schody, bez nábytku. Zařízení a jejich značky zůstanou.",
   "card_plain": "Jen půdorys",
+  "card_rooms": "Jen tyto místnosti",
+  "card_rooms_hint": "Karta zobrazí jen zaškrtnuté místnosti s nábytkem, zařízeními, dveřmi a okny (například pro tablet v kuchyni). Nic zaškrtnuto: celý plán.",
   "card_readable": "Čitelně",
   "all_off_n": "Vypnout vše ({n})",
   "all_off_hint": "Vypne světla, vypínače, ventilátory a média v místnosti; po dobu deseti sekund to lze vrátit zpět.",

@@ -15,11 +15,13 @@ export class NextFloorCardEditor extends LitElement {
     hass: { attribute: false },
     _config: { state: true },
     _floors: { state: true },
+    _rooms: { state: true },
   };
 
   declare hass: HomeAssistant | undefined;
   private declare _config: CardConfig;
   private declare _floors: { id: string; name: string }[];
+  private declare _rooms: { id: string; name: string; floor: string }[];
   private loading = false;
   /** What the form helpers use: the values with defaults, translation, and writing an option. */
   private readonly form: FormContext;
@@ -28,6 +30,7 @@ export class NextFloorCardEditor extends LitElement {
     super();
     this._config = { type: "custom:nextfloor-card" };
     this._floors = [];
+    this._rooms = [];
     const editor = this;
     this.form = {
       get value() {
@@ -48,7 +51,10 @@ export class NextFloorCardEditor extends LitElement {
     if (!this.loading && this._floors.length === 0) {
       this.loading = true;
       fetchBuilding(this.hass).then(
-        (res) => (this._floors = res.building.floors.map((f) => ({ id: f.id, name: f.name }))),
+        (res) => {
+          this._floors = res.building.floors.map((f) => ({ id: f.id, name: f.name }));
+          this._rooms = res.building.floors.flatMap((f) => f.rooms.map((r) => ({ id: r.id, name: r.name, floor: f.name })));
+        },
         () => undefined,
       );
     }
@@ -65,6 +71,21 @@ export class NextFloorCardEditor extends LitElement {
   private publish(config: CardConfig): void {
     this._config = config;
     this.dispatchEvent(new CustomEvent("config-changed", { detail: { config }, bubbles: true, composed: true }));
+  }
+
+  /** The rooms this card shows (none ticked: the whole plan); ticked rooms make the card a card for those rooms only. */
+  private roomsChoice(): TemplateResult {
+    if (this._rooms.length === 0) return html``;
+    const chosen = new Set(this._config.rooms ?? []);
+    const toggle = (id: string, on: boolean) => {
+      const next = this._rooms.map((r) => r.id).filter((rid) => (rid === id ? on : chosen.has(rid)));
+      this.form.set("rooms", next.length ? next : undefined);
+    };
+    return html`<fieldset class="rooms">
+      <legend>${this.form.t("card_rooms")}</legend>
+      <small>${this.form.t("card_rooms_hint")}</small>
+      ${this._rooms.map((r) => html`<label class="toggle"><input type="checkbox" .checked=${chosen.has(r.id)} @change=${(e: Event) => toggle(r.id, (e.target as HTMLInputElement).checked)} /><span>${this._floors.length > 1 ? `${r.floor} · ` : ""}${r.name}</span></label>`)}
+    </fieldset>`;
   }
 
   /** Floor pictures are on by default without a start floor and off with one, but can be switched on. */
@@ -153,6 +174,7 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
       ${switchOption(f, "readable", "card_readable", "readable_hint")}
       ${switchOption(f, "plain", "card_plain", "plain_hint")}
+      ${this.roomsChoice()}
       ${switchOption(f, "today", "card_today", "card_today_hint")}
       <label class="field"
         >${f.t("view_zoom")}

@@ -395,6 +395,8 @@
   "plain": "Bara planlösning",
   "plain_hint": "Visar bara väggar, dörrar, fönster och trappor, utan möbler. Enheter och deras markörer finns kvar.",
   "card_plain": "Bara planlösning",
+  "card_rooms": "Bara dessa rum",
+  "card_rooms_hint": "Kortet visar bara de ibockade rummen med möbler, enheter, dörrar och fönster (till exempel för en surfplatta i köket). Inget ibockat: hela planen.",
   "card_readable": "Lättläst",
   "all_off_n": "Stäng av allt ({n})",
   "all_off_hint": "Stänger av rummets lampor, brytare, fläktar och media; kan ångras i tio sekunder.",

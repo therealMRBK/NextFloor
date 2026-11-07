@@ -395,6 +395,8 @@
   "plain": "Solo pianta",
   "plain_hint": "Mostra solo pareti, porte, finestre e scale, senza mobili. Dispositivi e relativi pin restano.",
   "card_plain": "Solo pianta",
+  "card_rooms": "Solo queste stanze",
+  "card_rooms_hint": "La scheda mostra solo le stanze selezionate con mobili, dispositivi, porte e finestre (ad esempio per un tablet in cucina). Nulla selezionato: tutta la pianta.",
   "card_readable": "Facile da leggere",
   "all_off_n": "Spegni tutto ({n})",
   "all_off_hint": "Spegne luci, interruttori, ventilatori e media della stanza; si può annullare per dieci secondi.",
