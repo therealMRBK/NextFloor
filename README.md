@@ -57,7 +57,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 | 📢 **Announcements** | *"Dinner is ready!"* in the room that should hear it, through its speaker and on every open NextFloor screen. |
 | 🏡 **Household & garden** | Waste bins, mailbox, thirsty plants, pets that roam the room they really are in, robot vacuums and **robot mowers** on their lanes, sprinklers, pools with temperature and pump, gardens linked to their Home Assistant area, *🧹 Clean* per room, the fuse box's circuits per room. |
 | 📺 **Media** | TV screens with cover and ambilight; a quick menu for every speaker and TV with sources, volume and presets per speaker. |
-| 🛋️ **Furniture** | 40 basic models and **41 packs with almost 800 more** – season and decoration, wellness, music, loft, Japandi, workshop, vehicles, **picture frames with your own photos** – L- and U-sofas, IKEA sizes, Tesla models in their paint. Any piece can show only while a helper is on. |
+| 🛋️ **Furniture** | 40 basic models and **43 packs with about 800 more** – season and decoration, wellness, music, loft, Japandi, workshop, vehicles, **picture frames with your own photos** – L- and U-sofas, IKEA sizes, Tesla models in their paint. Any piece can show only while a helper is on. |
 | 🚶 **Walk and time travel** | Walk through the house at eye level; replay the last hours or days. |
 | 🖥️ **Wall tablet ready** | Kiosk mode with night dimming, the star menu open and large, zoom and a kept camera for small screens, **quality that steps down by itself** on slow tablets, an **easy-to-read** mode with stronger contrast and larger text. |
 | 🎨 **Fits your theme** | Colours, font and corner radius from Home Assistant; looks *Neon*, *Blueprint*, *Day*, solid painted walls. |
@@ -73,7 +73,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 NextFloor is free, and it stays free. Not "free to try", not "free with a paid Pro", not "free until the next version": **free, for everyone, forever.** Every feature, every furniture pack and every update belongs to everyone the day it comes out.
 
 - **Nothing to buy, ever.** No Pro version, no paid modules, no packs sold one by one, no supporter pass that gets features first, no licence key, no shop. Everything – the weather outside, the energy flow, TV screens and speakers, the car, announcements, household and garden, the heat pump and the 3D printer – is simply part of NextFloor.
-- **New furniture all the time, for free.** 41 packs with almost 800 models come with it, and new packs keep coming with the updates.
+- **New furniture all the time, for free.** 43 packs with about 800 models come with it, and new packs keep coming with the updates.
 - **Build your own furniture.** The [furniture builder](https://therealmrbk.github.io/NextFloor/builder/) runs in your browser: build it, see it exactly as NextFloor draws it, and share it in the community store, where everyone installs it with one tap.
 - **Extend it yourself.** A [plugin system](https://github.com/therealMRBK/NextFloor/blob/main/docs/plugins.md) with a reviewed [plugin store](https://github.com/therealMRBK/NextFloor-Plugins): new device kinds, light animations, room cards – from anyone.
 - **Your data stays home.** No account, no cloud, no usage data sent anywhere.

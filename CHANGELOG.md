@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Two decoration packs, free:** *Winter & Christmas* (Christmas tree, Advent wreath, window star, candle arch, light-up reindeer, snowman, fairy lights) and *Halloween* (pumpkin, ghost, gravestone, witch's cauldron). The glowing parts follow a light or switch you link; to show a decoration only in its season, set *Only show while …* on the piece. That makes 43 furniture packs.
 - **Tilt furniture:** a piece of furniture has *Tilt front/back* and *Tilt sideways* (degrees) in its form, for a leaning ladder, a tilted picture or a roof-sloped shelf. (Owned 3D models are not tilted.)
 - **A card for chosen rooms:** the dashboard card's settings list the rooms (*Only these rooms*, YAML `rooms: [id, …]`); the card then shows just those rooms with their furniture, devices, doors and windows, and cannot leave them, for example for a tablet in the kitchen. Nothing ticked: the whole plan as before.
 - **Gates in fences:** a fence's form has *+ Gate in the fence*: a gap in one side with gate posts and a garden gate, a double gate or a sliding gate. With a motor or switch (cover, switch, input_boolean, lock) and/or a contact the gate opens in 3D: garden and double gates swing inwards, a sliding gate runs along the fence. (Tapping the gate in 3D to switch it is not there yet.)
