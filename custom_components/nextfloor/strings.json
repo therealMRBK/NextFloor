@@ -44,6 +44,16 @@
           "description": "Instead of the one chosen in the plan, or the first one."
         }
       }
+    },
+    "reload_screens": {
+      "name": "Reload screens",
+      "description": "Makes the open NextFloor screens load their page again, a few seconds apart, for example after an update.",
+      "fields": {
+        "template": {
+          "name": "Card template",
+          "description": "Only the screens whose card uses this template. Empty: every open screen."
+        }
+      }
     }
   },
   "exceptions": {

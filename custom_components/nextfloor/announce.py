@@ -321,9 +321,19 @@ async def async_announce(hass: HomeAssistant, building: dict[str, Any], data: di
     return {"speakers": spoken, "skipped": skipped, "screens": on_screens}
 
 
+RELOAD_SCHEMA = vol.Schema({vol.Optional("template"): vol.All(cv.string, vol.Length(max=64))})
+
+
 @callback
 def async_register_announce(hass: HomeAssistant) -> None:
-    """Register the action nextfloor.announce."""
+    """Register the actions nextfloor.announce and nextfloor.reload_screens."""
+
+    async def reload_screens(call: ServiceCall) -> None:
+        # the open screens load their page again, some seconds apart; with a template only the cards that use it
+        payload = {"reload": True, "template": call.data.get("template"), "time": dt_util.utcnow().isoformat()}
+        async_dispatcher_send(hass, SIGNAL_ANNOUNCE, payload)
+
+    hass.services.async_register(DOMAIN, "reload_screens", reload_screens, schema=RELOAD_SCHEMA)
 
     async def handle(call: ServiceCall) -> dict[str, Any] | None:
         data = hass.data.get(DOMAIN)

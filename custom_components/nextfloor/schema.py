@@ -887,6 +887,21 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("sun_patches", default=True): bool,
         # the sun's arc and a compass ring around the plot
         vol.Optional("sun_arc", default=False): bool,
+        # dashboard card options set up once, by name (a card says `template: name`)
+        vol.Optional("card_templates", default=None): vol.Any(
+            None,
+            vol.All(
+                vol.Schema(
+                    {
+                        vol.All(str, vol.Length(min=1, max=40), vol.Match(r"^[a-z0-9_\-]+$")): vol.All(
+                            dict, vol.Length(max=80)
+                        )
+                    },
+                    extra=vol.PREVENT_EXTRA,
+                ),
+                vol.Length(max=20),
+            ),
+        ),
         vol.Optional("weather_effects", default=None): vol.Any(
             None, [vol.In(["rain", "snow", "fog", "clouds", "lightning", "sky"])]
         ),

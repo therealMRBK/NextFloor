@@ -650,6 +650,8 @@ export interface BuildingSettings {
   sun_patches?: boolean;
   /** The sun's path of today as an arc over the plot, with a compass ring (default off). */
   sun_arc?: boolean;
+  /** Dashboard card options set up once in the editor, by name; a card with `template: name` uses them. */
+  card_templates?: Record<string, Record<string, unknown>> | null;
   /** Plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident. */
   lock_plan?: boolean;
   /** The camera the house view opens with (3D view, card, kiosk); null = fitted from the front left. */

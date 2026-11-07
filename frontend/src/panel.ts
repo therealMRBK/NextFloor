@@ -2,6 +2,7 @@
 
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from "lit";
 import { sunPosition, todayAt } from "./sun-position.ts";
+import { loadCardEditor } from "./load-card-editor.ts";
 import { BuildingController } from "./building-controller.ts";
 import type { PluginRef } from "./plugins/api.ts";
 import type { MarkerMode } from "./components/view3d.ts";
@@ -407,6 +408,7 @@ export class NextFloorPanel extends LitElement {
         .building=${building}
         .narrow=${this.narrow}
         .packs=${this.data.packs}
+        .loadCardEditor=${loadCardEditor}
         @packs-changed=${() => void this.data.reloadPacks()}
         @building-changed=${(e: CustomEvent<{ building: Building }>) => this.data.edit(e.detail.building)}
       ></nf-editor>`,

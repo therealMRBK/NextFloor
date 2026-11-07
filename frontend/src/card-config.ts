@@ -101,6 +101,8 @@ export interface CardConfig {
   right_back?: boolean;
   /** Only these rooms (their ids) with what stands in them; the card cannot leave them. */
   rooms?: string[];
+  /** The name of a card template (Settings → Card templates) whose options this card takes, its own ones winning. */
+  template?: string;
   /** The "Today" card with the day's appointments and bins (default true). */
   today?: boolean;
   /** How much closer the fitted views come, 0.6 … 2.5 (default 1). */

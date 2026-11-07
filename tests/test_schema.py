@@ -210,3 +210,34 @@ def test_pin_offsets() -> None:
     assert FURNITURE_SCHEMA({**FURN, "pin_offset": {"z": 1}})["pin_offset"] == {"z": 1.0}
     with pytest.raises(vol.Invalid):
         PLACEMENT_SCHEMA({"entity_id": "light.a", "x": 1, "z": 1, "y": None, "pin_offset": {"x": 9}})
+
+
+def test_card_templates_accept_names_and_limit_them() -> None:
+    settings = {
+        "wall_exterior": 0.24,
+        "wall_interior": 0.12,
+        "grid": 0.05,
+        "north": 0,
+        "roof": {"type": "none", "pitch": 35, "overhang": 0.4},
+    }
+    ok = SETTINGS_SCHEMA({**settings, "card_templates": {"kitchen_tablet": {"height": 520, "readable": True}}})
+    assert ok["card_templates"] == {"kitchen_tablet": {"height": 520, "readable": True}}
+    assert SETTINGS_SCHEMA(settings)["card_templates"] is None
+    with pytest.raises(vol.Invalid):
+        SETTINGS_SCHEMA({**settings, "card_templates": {"Küche Tablet!": {}}})
+    with pytest.raises(vol.Invalid):
+        SETTINGS_SCHEMA({**settings, "card_templates": {f"t{i}": {} for i in range(21)}})
+
+
+def test_fence_gates_and_sloping_walls_and_roof_overhang_per_side() -> None:
+    from custom_components.nextfloor.schema import FENCE_GATE_SCHEMA, FREE_WALL_SCHEMA
+
+    gate = FENCE_GATE_SCHEMA(
+        {"id": "g", "edge": 1, "offset": 2.5, "width": 1.2, "kind": "sliding", "entity": "cover.tor"}
+    )
+    assert gate["contact"] is None and gate["kind"] == "sliding"
+    with pytest.raises(vol.Invalid):
+        FENCE_GATE_SCHEMA({"id": "g", "edge": 1, "offset": 2.5, "width": 1.2, "kind": "teleport"})
+    wall = FREE_WALL_SCHEMA({"id": "w", "a": [0, 0], "b": [2, 0], "height": 2.4, "height_end": 1.0})
+    assert wall["height_end"] == 1.0
+    assert FREE_WALL_SCHEMA({"id": "w", "a": [0, 0], "b": [2, 0]})["height_end"] is None

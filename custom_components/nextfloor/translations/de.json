@@ -44,6 +44,16 @@
           "description": "Statt der im Plan gewählten oder der ersten."
         }
       }
+    },
+    "reload_screens": {
+      "name": "Bildschirme neu laden",
+      "description": "Lässt die geöffneten NextFloor-Bildschirme ihre Seite neu laden, mit einigen Sekunden Abstand, zum Beispiel nach einem Update.",
+      "fields": {
+        "template": {
+          "name": "Kartenvorlage",
+          "description": "Nur die Bildschirme, deren Karte diese Vorlage nutzt. Leer: alle geöffneten Bildschirme."
+        }
+      }
     }
   },
   "exceptions": {

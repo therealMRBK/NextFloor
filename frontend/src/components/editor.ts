@@ -51,6 +51,7 @@ import {
 } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
 import { renderFavorites, renderPresence, renderStartView } from "./editor/forms/house.ts";
+import { renderCardTemplates } from "./editor/forms/templates.ts";
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
 import { renderSettings, type SettingsActions } from "./editor/forms/settings.ts";
@@ -181,6 +182,7 @@ export class NfEditor extends LitElement {
     building: { attribute: false },
     narrow: { type: Boolean },
     packs: { attribute: false },
+    loadCardEditor: { attribute: false },
     _doc: { state: true },
     _doc3d: { state: true },
     _split: { state: true },
@@ -220,6 +222,8 @@ export class NfEditor extends LitElement {
   declare narrow: boolean;
   /** Imported furniture packs (from the panel's controller). */
   declare packs: FurniturePack[] | undefined;
+  /** Loads the card's settings dialog, for the card templates (set by the panel). */
+  declare loadCardEditor: (() => Promise<unknown>) | undefined;
   private declare _doc: Building;
   /** The draft as the 3D pane shows it (follows _doc with a short delay, so drags stay smooth). */
   private declare _doc3d: Building;
@@ -724,6 +728,9 @@ export class NfEditor extends LitElement {
       change: (mutate) => editor.change(mutate),
       replace: (next) => editor.setDoc(next),
       pickPoint: (onPick) => editor.pickPoint(onPick),
+      get loadCardEditor() {
+        return editor.loadCardEditor;
+      },
     };
   }
 
@@ -3324,7 +3331,7 @@ export class NfEditor extends LitElement {
               : nothing}
       ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderFavorites(this.host) : nothing}
       ${renderHelpLinks(this.host)}
-      ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing}
+      ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
       ${floor && admin ? renderBackgroundForm(this.host, this.bg, floor) : nothing} ${admin ? renderSettings(this.host, this.settingsActions) : nothing}
       ${admin ? renderBackup(this.host, this.backup) : nothing}
     `;

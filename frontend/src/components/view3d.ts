@@ -128,6 +128,7 @@ export class NfView3d extends LitElement {
     keepCamera: { attribute: false },
     plain: { attribute: false },
     rightBack: { attribute: false },
+    templateName: { attribute: false },
     readable: { type: Boolean, reflect: true },
     today: { attribute: false },
     _todayOpen: { state: true },
@@ -355,6 +356,8 @@ export class NfView3d extends LitElement {
   declare plain: boolean;
   /** A short right click goes back one step. */
   declare rightBack: boolean;
+  /** The card template this card uses (for "reload the screens of this template"). */
+  declare templateName: string | null;
   /** Easy to read: the pins and labels in the 3D view a size larger. */
   declare readable: boolean;
   /** The "Today" card top right: appointments of the plan's calendars and the bins due (default on). */
@@ -1825,6 +1828,12 @@ export class NfView3d extends LitElement {
 
   /** An announcement arrived: show it big over the house, chime and speak it (once per page, only if meant for this screen). */
   private announce(a: Announcement): void {
+    // the action nextfloor.reload_screens: load the page again, some seconds apart so the tablets do not all fetch at once
+    const reload = a as unknown as { reload?: boolean; template?: string | null };
+    if (reload?.reload === true) {
+      if (!reload.template || reload.template === this.templateName) setTimeout(() => location.reload(), 500 + Math.random() * 6000);
+      return;
+    }
     // only a real announcement (a message to say); anything else on the subscription is ignored
     if (typeof a?.message !== "string" || !a.message.trim()) return;
     if (!forThisScreen(a, this.screenName) || !claim(a)) return;

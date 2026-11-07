@@ -13,6 +13,7 @@ import { awaitingLanguage, translate } from "./i18n.ts";
 import { nightActive } from "./kiosk.ts";
 import { screenMuted, screenName } from "./panel/prefs.ts";
 import { loadCardEditor } from "./load-card-editor.ts";
+import { withTemplate, type CardTemplates } from "./card-template.ts";
 import type { Building } from "./model.ts";
 import { roomsOnly } from "./rooms-only.ts";
 import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
@@ -52,6 +53,9 @@ export class NextFloorCard extends LitElement {
 
   declare hass: HomeAssistant;
   private declare _config: CardConfig;
+  /** The options as written on the dashboard card; `_config` is these with the card template underneath. */
+  private _own: CardConfig | null = null;
+  private templatesSeen: unknown;
   private declare _roomId: string | null;
   /** The configured start room has been opened once the building arrived. */
   private roomApplied = false;
@@ -142,7 +146,8 @@ export class NextFloorCard extends LitElement {
 
   setConfig(config: CardConfig): void {
     if (config.height !== undefined && !(config.height > 100)) throw new Error("height must be a number of pixels above 100");
-    this._config = config;
+    this._own = config;
+    this._config = withTemplate(config, this.data.building?.settings.card_templates as CardTemplates | undefined);
     this._floorId = undefined;
     this._walls = null;
     this._heat = null;
@@ -163,6 +168,12 @@ export class NextFloorCard extends LitElement {
   }
 
   protected willUpdate(changed: PropertyValues): void {
+    // a card template edited in the editor reaches the card as soon as the plan reloads
+    const templates = this.data.building?.settings.card_templates;
+    if (this._own?.template && templates !== this.templatesSeen) {
+      this.templatesSeen = templates;
+      this._config = withTemplate(this._own, templates as CardTemplates | undefined);
+    }
     this.toggleAttribute("readable", this._config?.readable === true);
     if (changed.has("hass")) this.style.colorScheme = colorSchemeOf(this.hass);
     if (!changed.has("hass") || !this.hass) return;
@@ -323,6 +334,7 @@ export class NextFloorCard extends LitElement {
       .keepCamera=${c?.keep_camera === true}
       .readable=${c?.readable === true}
       .plain=${c?.plain === true}
+      .templateName=${this._own?.template ?? null}
       .rightBack=${c?.right_back === true}
       .today=${c?.today !== false}
       .zoom=${typeof c?.zoom === "number" ? c.zoom : 1}

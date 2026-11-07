@@ -32,3 +32,10 @@ announce:
       selector:
         entity:
           domain: tts
+
+reload_screens:
+  fields:
+    template:
+      example: "kitchen_tablet"
+      selector:
+        text:

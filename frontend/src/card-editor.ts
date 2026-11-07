@@ -16,12 +16,14 @@ export class NextFloorCardEditor extends LitElement {
     _config: { state: true },
     _floors: { state: true },
     _rooms: { state: true },
+    _templates: { state: true },
   };
 
   declare hass: HomeAssistant | undefined;
   private declare _config: CardConfig;
   private declare _floors: { id: string; name: string }[];
   private declare _rooms: { id: string; name: string; floor: string }[];
+  private declare _templates: string[];
   private loading = false;
   /** What the form helpers use: the values with defaults, translation, and writing an option. */
   private readonly form: FormContext;
@@ -31,6 +33,7 @@ export class NextFloorCardEditor extends LitElement {
     this._config = { type: "custom:nextfloor-card" };
     this._floors = [];
     this._rooms = [];
+    this._templates = [];
     const editor = this;
     this.form = {
       get value() {
@@ -53,6 +56,7 @@ export class NextFloorCardEditor extends LitElement {
       fetchBuilding(this.hass).then(
         (res) => {
           this._floors = res.building.floors.map((f) => ({ id: f.id, name: f.name }));
+          this._templates = Object.keys(res.building.settings.card_templates ?? {});
           this._rooms = res.building.floors.flatMap((f) => f.rooms.map((r) => ({ id: r.id, name: r.name, floor: f.name })));
         },
         () => undefined,
@@ -213,6 +217,16 @@ export class NextFloorCardEditor extends LitElement {
     const v = f.value;
     return html`<h3>${f.t("card_section_view")}</h3>
       <div class="grid">
+        ${this._templates.length
+          ? html`<label class="field wide"
+              >${f.t("card_template")}
+              <select @change=${(e: Event) => f.set("template", (e.target as HTMLSelectElement).value || undefined)}>
+                <option value="" ?selected=${!v.template}>${f.t("card_template_none")}</option>
+                ${this._templates.map((name) => html`<option value=${name} ?selected=${name === v.template}>${name}</option>`)}
+                ${v.template && !this._templates.includes(v.template) ? html`<option value=${v.template} selected>${v.template}</option>` : nothing}
+              </select>
+            </label>`
+          : nothing}
         <label class="field wide"
           >${f.t("card_floor")}
           <select @change=${(e: Event) => f.set("floor", (e.target as HTMLSelectElement).value || undefined)}>

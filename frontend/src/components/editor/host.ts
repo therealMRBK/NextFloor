@@ -16,4 +16,6 @@ export interface EditorHost {
   replace(next: Building): void;
   /** Asks for one tap on the plan (a calibration place); the callback gets it in metres, or null if dropped. */
   pickPoint(onPick: (at: Vec2 | null) => void): void;
+  /** Loads the card's settings dialog (its own bundle), for the card templates; set by the panel. */
+  readonly loadCardEditor?: () => Promise<unknown>;
 }
