@@ -1,7 +1,7 @@
 // The house-wide settings forms: favourites, own buttons, station presets, the start camera, and who is tracked by which sensor.
 
 import { html, nothing, type TemplateResult } from "lit";
-import { entityName } from "../../../devices.ts";
+import { entityName, outsideEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
@@ -51,6 +51,17 @@ function favorites(host: EditorHost): TemplateResult {
     ${list.length < MAX_FAVORITES
       ? html`<div class="nf-form">${entityField(host, host.t("favorites_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>`
       : nothing}`;
+}
+
+/** Devices the Outside panel leaves out (they stay where they are in the plan). */
+function outsideHidden(host: EditorHost): TemplateResult {
+  const list = host.doc.settings.outside_hidden ?? [];
+  const store = (next: string[]) => host.change((d) => (d.settings.outside_hidden = orUndefined(next)));
+  const options = entityOptions(host.hass, (id) => !list.includes(id) && outsideEntities(host.hass!, host.doc.floors).includes(id));
+  return html`<summary>${host.t("outside_hidden")}${list.length > 0 ? html` <span class="nf-lib-count">${list.length}</span>` : nothing}</summary>
+    ${hint(host.t("outside_hidden_hint"))}
+    ${list.map((id, i) => html`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}</div>`)}
+    <div class="nf-form">${entityField(host, host.t("outside_hidden_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>`;
 }
 
 /** Own warnings: a text in the warning bar while an entity is in a state (the robot's water tank is empty, the dishwasher is done). */
@@ -183,7 +194,7 @@ function roomFacts(host: EditorHost): TemplateResult {
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
 export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
+  return html`<details class="nf-section">${favorites(host)} ${outsideHidden(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

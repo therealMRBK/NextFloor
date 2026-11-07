@@ -821,6 +821,10 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
         vol.Optional("favorites", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=40)),
+        # devices the Outside panel leaves out
+        vol.Optional("outside_hidden"): vol.Any(
+            None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=100))
+        ),
         # facts the room panel leaves out of its header
         vol.Optional("room_facts_off"): vol.Any(None, [vol.In(["sun", "comfort", "air", "circuits"])]),
         # a favourite shown on one floor only: entity id -> floor id

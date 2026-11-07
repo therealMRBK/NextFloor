@@ -243,7 +243,7 @@ export function roomPanelEntities(hass: HomeAssistant, floor: Floor, room: Room)
  * Outside: the devices placed outside every room outline (the garden's valves and lights, a mower, the grid connection
  * outside), and those marked as belonging to Outside wherever they stand (a weather station on the roof), on all floors.
  */
-export function outsideEntities(hass: HomeAssistant, floors: readonly Floor[]): string[] {
+export function outsideEntities(hass: HomeAssistant, floors: readonly Floor[], hidden: readonly string[] = []): string[] {
   const out: (string | null | undefined)[] = [];
   for (const floor of floors) {
     const indoors = (x: number, z: number) => floor.rooms.some((room) => room.points.length >= 3 && pointInPolygon([x, z], room.points));
@@ -256,5 +256,5 @@ export function outsideEntities(hass: HomeAssistant, floors: readonly Floor[]): 
       out.push(a.pump_entity, a.temp_entity);
     }
   }
-  return [...new Set(out.filter((id): id is string => !!id && !!hass.states[id]))];
+  return [...new Set(out.filter((id): id is string => !!id && !!hass.states[id] && !hidden.includes(id)))];
 }

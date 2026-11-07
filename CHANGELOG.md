@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Hide devices in Outside** (thanks @eskahone, #83): the house settings have an *Outside: hide devices* list; the devices on it stay in the plan but no longer show in the Outside panel.
 - **Reverse the direction of an awning or curtain** (thanks @Spawnkiller1, #100): a curtain, roller screen, awning or gate linked to a cover has a *Reverse the direction* checkbox, for the ones that move the opposite way in the plan than in reality.
 
 ## [0.25.4]

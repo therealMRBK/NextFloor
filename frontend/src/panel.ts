@@ -172,7 +172,7 @@ export class NextFloorPanel extends LitElement {
   private outsideIds(building: Building): string[] {
     const m = this.outsideMemo;
     if (m && m.building === building && m.entities === this.hass.entities) return m.ids;
-    const ids = outsideEntities(this.hass, building.floors);
+    const ids = outsideEntities(this.hass, building.floors, building.settings.outside_hidden);
     this.outsideMemo = { building, entities: this.hass.entities, ids };
     return ids;
   }

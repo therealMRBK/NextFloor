@@ -175,6 +175,7 @@ test("Outside lists what stands outside the rooms and what belongs to it; the ro
     ],
   });
   assert.deepEqual(outsideEntities(hass, [floor]).sort(), ["sensor.weather", "switch.valve"]);
+  assert.deepEqual(outsideEntities(hass, [floor], ["switch.valve"]), ["sensor.weather"], "a hidden device is left out (#83)");
   assert.deepEqual(roomPanelEntities(hass, floor, room).shown, ["light.inside"], "the weather station is not the room's");
 });
 
