@@ -858,7 +858,7 @@ export class NfView3d extends LitElement {
         return { ...marker, pin: this.showPin(marker) && !under, full: m.show === "always", caption };
       }),
     ]);
-    v.setPickTargets(furniture.targets, this.openingTargets());
+    v.setPickTargets(furniture.targets, this.openingTargets(), this.secondBlinds());
     v.setScreens(furniture.screens);
     v.setFridgeDoors(fridgeDoors(hass, b.floors));
     v.setCovers(coverReaches(hass, b));
@@ -1627,6 +1627,13 @@ export class NfView3d extends LitElement {
       const target = e.lock ?? e.cover ?? e.contact ?? e.tilt;
       if (target) out.set(id, target);
     }
+    return out;
+  }
+
+  /** The second blind of an opening whose tap opens its first one: the right half of the opening is tapped for it. */
+  private secondBlinds(): Map<string, string> {
+    const out = new Map<string, string>();
+    for (const [id, e] of this.openingLinks ?? []) if (e.cover2 && !e.lock && e.cover) out.set(id, e.cover2);
     return out;
   }
 

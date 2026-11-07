@@ -2,6 +2,8 @@
 // one is clear, the fix the editor can make in one tap.
 
 import { entityKind, entityName, groupByDevice, isPlaceable, roomEntities } from "../../../devices.ts";
+import { furnitureEntities } from "../../../entities/furniture-links.ts";
+import { openingEntities } from "../../../entities/openings.ts";
 import { powerSensorFor, readPower } from "../../../energy.ts";
 import { energyCost } from "../../../live/room-energy.ts";
 import { LOW_BATTERY, planBatteries } from "../../../live/batteries.ts";
@@ -129,12 +131,23 @@ export function checkPlan(doc: Building, hass: HomeAssistant | undefined): Check
     if (lacking.length) out.push({ kind: "areas_unplaced", floorId: floor.id, vars: { n: lacking.length, names: lacking.map((a) => a.name).join(", ") }, fix: { do: "add_area_rooms" }, changes: true });
     // devices of a room's area that are not in the plan yet (the main entity of each device, as the device list counts them)
     if (hass) {
+      // what furniture, doors and windows are linked to, explicitly or found automatically through the area (a KNX blind, a lamp)
+      const linkedFurniture = furnitureEntities(hass, [floor]);
+      const linkedOpenings = openingEntities(hass, [floor]);
       for (const room of floor.rooms) {
         if (!room.area_id) continue;
         // placed: as a pin or lamp, or linked to a piece of furniture or a door or window of the room
         const here = placedInRoom(floor, room);
         for (const m of floor.furniture) if (pointInPolygon([m.x, m.z], room.points)) for (const id of furnitureEntityFields(m)) here.add(id);
-        for (const o of floor.openings) if (o.room_id === room.id) for (const id of entityValues(o)) here.add(id);
+        for (const o of floor.openings) {
+          if (o.room_id !== room.id) continue;
+          for (const id of entityValues(o)) here.add(id);
+          for (const id of Object.values(linkedOpenings.get(o.id) ?? {})) if (typeof id === "string") here.add(id);
+        }
+        for (const m of floor.furniture) {
+          const l = linkedFurniture.get(m.id);
+          if (l && pointInPolygon([m.x, m.z], room.points)) for (const id of [l.entity, l.power]) if (typeof id === "string") here.add(id);
+        }
         const ids = roomEntities(hass, room).filter((id) => isPlaceable(entityKind(hass, id)));
         const unplaced = groupByDevice(hass, ids)
           .map((g) => g.primary)

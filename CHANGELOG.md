@@ -12,6 +12,11 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - A lamp can be set to "switch only in the room panel" (no brightness, colour temperature or colour sliders), and the name given to a placed device now also shows in the room panel (#73).
 - The house settings choose which facts the room panel shows in its header: sun hours, comfort, airing hint, fuse-box circuits (#73).
 
+### Fixed
+
+- A wide window or sliding door with two blinds: a tap on its right half now opens the second blind; before, every tap went to the first one (#79).
+- The plan check no longer offers devices as missing that a window, door or piece of furniture already picks up automatically through its area (a KNX blind, say) (#81).
+
 ## [0.25.0]
 
 ### Fixed

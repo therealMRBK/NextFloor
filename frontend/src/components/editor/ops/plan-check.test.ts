@@ -54,3 +54,13 @@ test("a device that is off but still draws power is a standby eater, with its co
   // 12 W all year: 105 kWh, 32 €
   assert.equal(found.vars.cost, "32 €");
 });
+
+test("a cover that a window picks up automatically through its area is not reported as unplaced (#81)", () => {
+  const hass = hassOf([entity("cover.wohnen_rollo", "open")], { "cover.wohnen_rollo": { area_id: "wohnen" } }, { areas: { wohnen: { area_id: "wohnen", name: "Wohnen" } } });
+  const living = { ...box("w", 0, 0, 5, 4), name: "Wohnen", area_id: "wohnen" };
+  const floor = { ...floorWith([living]), openings: [opening("o1", "w", "window")] };
+  const found = checkPlan({ ...emptyBuilding(), floors: [floor] }, hass).filter((f) => f.kind === "devices_unplaced");
+  assert.equal(found.length, 0);
+  const without = checkPlan({ ...emptyBuilding(), floors: [{ ...floor, openings: [] }] }, hass).filter((f) => f.kind === "devices_unplaced");
+  assert.equal(without.length, 1, "without the window the cover is still missing");
+});

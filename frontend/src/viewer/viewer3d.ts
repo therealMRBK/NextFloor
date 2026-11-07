@@ -408,6 +408,8 @@ export class NextFloorViewer {
   /** Entities behind furniture (TV, …) and openings (blind, contact), for tapping them in 3D. */
   private pickFurniture = new Map<string, string>();
   private pickOpenings = new Map<string, string>();
+  /** The second blind of an opening (the right half of a wide one). */
+  private pickOpenings2 = new Map<string, string>();
   /** Lamps flashing after a tap (entity id -> end time). */
   private flashes = new Map<string, number>();
   /** Editor: things on surfaces (solar fields, roof windows) are grabbed and moved with a ray from the camera. */
@@ -1003,9 +1005,10 @@ export class NextFloorViewer {
   }
 
   /** Entities opened by tapping furniture or openings in 3D (by furniture / opening id). */
-  setPickTargets(furniture: Map<string, string>, openings: Map<string, string>): void {
+  setPickTargets(furniture: Map<string, string>, openings: Map<string, string>, second = new Map<string, string>()): void {
     this.pickFurniture = furniture;
     this.pickOpenings = openings;
+    this.pickOpenings2 = second;
   }
 
   /** Look of the 3D view: neon, blueprint or day. Instant: colours are mapped in the shaders. */
@@ -2474,7 +2477,11 @@ export class NextFloorViewer {
         }
         // the whole window counts, glass included: a small blind is a poor target
         const id = inRange(hit.object === fv.framesMesh ? fv.frameTris : hit.object === fv.glassMesh ? fv.glassTris : fv.blindTris, tri);
-        const entity = id ? this.pickOpenings.get(id) : undefined;
+        let entity = id ? this.pickOpenings.get(id) : undefined;
+        // a wide opening with two blinds: the right half belongs to the second one
+        const second = id ? this.pickOpenings2.get(id) : undefined;
+        const info = second ? fv.geo.openings.find((i) => i.opening.id === id) : undefined;
+        if (second && info && (hit.point.x - info.start[0]) * info.axis[0] + (hit.point.z - info.start[1]) * info.axis[1] > info.width / 2) entity = second;
         if (entity) return { entity };
       } else if (hit.object === fv.wallMesh) {
         const id = inRange(fv.geo.furnitureTris, tri);
