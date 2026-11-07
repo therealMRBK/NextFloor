@@ -927,8 +927,11 @@ export interface Circuit {
 
 /** A person and the sensor whose state names the room they are in (ESPresense, Bermuda, …). */
 export interface PresenceLink {
+  /** A person, or any entity that is "home" / "on" while someone is in (an input_boolean, a device tracker). */
   person: string;
   sensor: string | null;
+  /** The room (its id) they stand in while they are in and no room sensor names one – #71. */
+  room?: string | null;
 }
 
 export interface Building {

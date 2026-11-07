@@ -103,3 +103,19 @@ test("the floor label shows the coolest and the warmest room", () => {
   assert.ok(text.endsWith("19–22 °C"), text);
   assert.ok(floorInfoText(hass, { rooms: 3, lightsOn: 0, open: 0, persons: 0, power: null, temps: [21.1, 21.3] }).endsWith(" 21 °C"));
 });
+
+test("a person without a room sensor, or whose sensor names no room, stands in their own room while they are home (#71)", () => {
+  const { hass, building } = home({
+    "person.ann": ["home"],
+    "sensor.ann_room": ["not_home"],
+    "input_boolean.toni": ["on"],
+    "input_boolean.gast": ["off"],
+  });
+  building.presence = [
+    { person: "person.ann", sensor: "sensor.ann_room", room: "ki" },
+    { person: "input_boolean.toni", sensor: null, room: "lr" },
+    { person: "input_boolean.gast", sensor: null, room: "lr" },
+  ];
+  const at = Object.fromEntries(personsInRooms(hass, building).map((p) => [p.id, p.roomId]));
+  assert.deepEqual(at, { "person.ann": "ki", "input_boolean.toni": "lr" }, "away (off) is nowhere");
+});

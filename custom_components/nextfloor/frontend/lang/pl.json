@@ -459,7 +459,7 @@
   "ambilight": "Poświata za TV (%)",
   "ambilight_hint": "Jak mocno świeci za telewizorem podczas odtwarzania. 0 ją wyłącza (np. gdy masz taśmy LED na TV), 100 to zwykła siła.",
   "sound_rings": "Fale dźwięku (%)",
-  "sound_rings_hint": "Jak duże są fale wokół głośnika podczas odtwarzania. 0 je wyłącza, obraz i poświata zostają; 100 to zwykły rozmiar.",
+  "sound_rings_hint": "Jak duże są fale wokół głośnika podczas odtwarzania. 0 je wyłącza, obraz i poświata zostają; 100 to zwykły rozmiar. Rozmiar zależy też od głośności głośnika: ciszej to mniejsze.",
   "glow_scale": "Poświata w 3D (%)",
   "light_effects": "Animacje efektów w 3D",
   "light_effects_hint": "Przypisuj tylko dokładne nazwy efektów z HA. Nieprzypisane efekty zachowują statyczny kolor HA. Niczego nie zmienia w Home Assistant.",

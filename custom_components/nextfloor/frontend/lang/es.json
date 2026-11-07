@@ -459,7 +459,7 @@
   "ambilight": "Brillo detrás del TV (%)",
   "ambilight_hint": "Con qué intensidad brilla detrás del TV mientras reproduce. 0 lo apaga (por ejemplo si tienes tiras LED en el TV), 100 es la intensidad habitual.",
   "sound_rings": "Ondas de sonido (%)",
-  "sound_rings_hint": "Tamaño de las ondas alrededor del altavoz mientras suena. 0 las desactiva, la imagen y el brillo se mantienen; 100 es el tamaño habitual.",
+  "sound_rings_hint": "Tamaño de las ondas alrededor del altavoz mientras suena. 0 las desactiva, la imagen y el brillo se mantienen; 100 es el tamaño habitual. El tamaño también sigue el volumen del altavoz: más bajo, más pequeño.",
   "glow_scale": "Brillo en 3D (%)",
   "light_effects": "Animaciones de efectos en 3D",
   "light_effects_hint": "Asigna solo nombres de efecto exactos de HA. Los efectos sin asignar mantienen el color estático de HA. No cambia nada en Home Assistant.",

@@ -3,10 +3,18 @@
 import type { PresenceLink, StartView } from "../../../model.ts";
 import type { EntityOption } from "../entities.ts";
 
-/** The presence links with `person` pointing at `sensor`; null or "none" removes the link. */
-export function withPresence(links: readonly PresenceLink[], person: string, sensor: string | null): PresenceLink[] {
-  const others = links.filter((link) => link.person !== person);
-  return sensor && sensor !== "none" ? [...others, { person, sensor }] : others;
+/**
+ * The presence links with `person` changed by `patch` (sensor: null or "none" clears it, room: null clears it). A link that has
+ * neither a sensor nor a room left is removed.
+ */
+export function patchPresence(links: readonly PresenceLink[], person: string, patch: { sensor?: string | null; room?: string | null }): PresenceLink[] {
+  const old = links.find((l) => l.person === person);
+  const sensor = "sensor" in patch ? (patch.sensor && patch.sensor !== "none" ? patch.sensor : null) : (old?.sensor ?? null);
+  const room = "room" in patch ? patch.room || null : (old?.room ?? null);
+  const others = links.filter((l) => l.person !== person);
+  if (!sensor && !room) return others;
+  const next: PresenceLink = room ? { person, sensor, room } : { person, sensor };
+  return old ? links.map((l) => (l.person === person ? next : l)) : [...others, next];
 }
 
 /** Room sensors that look like they belong to this person (named after them, ESPresense and Bermuda style) come first. */

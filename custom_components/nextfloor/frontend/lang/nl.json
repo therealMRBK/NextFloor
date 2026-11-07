@@ -459,7 +459,7 @@
   "ambilight": "Gloed achter de tv (%)",
   "ambilight_hint": "Hoe sterk het achter de tv gloeit tijdens het afspelen. 0 schakelt het uit (bijvoorbeeld als je ledstrips op de tv hebt), 100 is de gewone sterkte.",
   "sound_rings": "Geluidsringen (%)",
-  "sound_rings_hint": "Hoe groot de ringen rond de speaker worden zolang hij speelt. 0 zet ze uit, het beeld en de gloed blijven; 100 is de gewone grootte.",
+  "sound_rings_hint": "Hoe groot de ringen rond de speaker worden zolang hij speelt. 0 zet ze uit, het beeld en de gloed blijven; 100 is de gewone grootte. De grootte volgt ook het volume van de speaker: zachter betekent kleiner.",
   "glow_scale": "Gloed in 3D (%)",
   "light_effects": "Effectanimaties in 3D",
   "light_effects_hint": "Koppel alleen exacte effectnamen uit HA. Niet-gekoppelde effecten houden de statische HA-kleur. Verandert niets in Home Assistant.",

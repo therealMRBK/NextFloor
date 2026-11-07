@@ -7,7 +7,7 @@ import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton
 import { entityOptions, isNumeric } from "../entities.ts";
 import { actions, checkField, colorField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
-import { likelyRoomSensors, parseButtonData, startViewYaml, withPresence } from "../ops/house.ts";
+import { likelyRoomSensors, parseButtonData, patchPresence, startViewYaml } from "../ops/house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "../ops/lists.ts";
 
 /** What can be favourites: things that run or switch. */
@@ -217,22 +217,29 @@ export function renderStartView(host: EditorHost, paneView: () => StartView | nu
 
 /** Which room sensor says where each person is. */
 export function renderPresence(host: EditorHost): TemplateResult {
-  const persons = Object.keys(host.hass?.states ?? {})
-    .filter((id) => id.startsWith("person."))
-    .sort();
+  const linked = host.doc.presence.map((l) => l.person);
+  const persons = [...new Set([...Object.keys(host.hass?.states ?? {}).filter((id) => id.startsWith("person.")).sort(), ...linked])];
   const numeric = entityOptions(host.hass, isNumeric);
-  const row = (person: string) =>
-    entityField(
-      host,
-      `${entityName(host.hass, person)} · ${host.t("presence_sensor")}`,
-      host.doc.presence.find((p) => p.person === person)?.sensor ?? null,
-      undefined,
-      likelyRoomSensors(numeric, person),
-      (sensor) => host.replace({ ...structuredClone(host.doc), presence: withPresence(host.doc.presence, person, sensor) }),
-    );
+  const rooms = host.doc.floors.flatMap((f) => f.rooms.map((r) => ({ id: r.id, label: host.doc.floors.length > 1 ? `${f.name} · ${r.name}` : r.name })));
+  const change = (person: string, patch: { sensor?: string | null; room?: string | null }) =>
+    host.replace({ ...structuredClone(host.doc), presence: patchPresence(host.doc.presence, person, patch) });
+  const row = (person: string) => {
+    const link = host.doc.presence.find((p) => p.person === person);
+    const extra = !person.startsWith("person.");
+    return html`${entityField(host, `${entityName(host.hass, person)} · ${host.t("presence_sensor")}`, link?.sensor ?? null, undefined, likelyRoomSensors(numeric, person), (sensor) => change(person, { sensor }))}
+      <label class="nf-field">${host.t("presence_room")}
+        <select ?disabled=${!host.admin} .value=${link?.room ?? ""} @change=${(e: Event) => change(person, { room: (e.target as HTMLSelectElement).value || null })}>
+          <option value="">${host.t("presence_room_none")}</option>
+          ${rooms.map((r) => html`<option value=${r.id} ?selected=${link?.room === r.id}>${r.label}</option>`)}
+        </select>
+      </label>
+      ${extra ? html`<button class="nf-btn" ?disabled=${!host.admin} @click=${() => host.replace({ ...structuredClone(host.doc), presence: host.doc.presence.filter((l) => l.person !== person) })}>${host.t("delete")}</button>` : nothing}`;
+  };
+  const more = entityOptions(host.hass, (id) => /^(input_boolean|binary_sensor|device_tracker)\./.test(id) && !persons.includes(id));
   return html`<details class="nf-section">
     <summary>${host.t("presence")}</summary>
     <div class="nf-form">${persons.length > 0 ? persons.map(row) : html`<p class="nf-sub nf-wide">${host.t("no_persons")}</p>`}</div>
+    <div class="nf-form">${entityField(host, host.t("presence_add"), null, undefined, more, (v) => v && v !== "none" && host.replace({ ...structuredClone(host.doc), presence: [...host.doc.presence, { person: v, sensor: null }] }))}</div>
     ${hint(host.t("presence_hint"))}
   </details>`;
 }

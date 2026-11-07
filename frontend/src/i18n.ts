@@ -473,7 +473,7 @@ const DE = {
   ambilight: "Leuchten hinter dem Fernseher (%)",
   ambilight_hint: "Wie kräftig es hinter dem Fernseher leuchtet, solange er läuft. 0 schaltet es aus (zum Beispiel wenn du LED-Streifen am Fernseher hast), 100 ist die Standardstärke.",
   sound_rings: "Klangringe (%)",
-  sound_rings_hint: "Wie groß die Ringe um den Lautsprecher werden, solange er spielt. 0 schaltet sie aus, Bild und Leuchten bleiben; 100 ist die Standardgröße.",
+  sound_rings_hint: "Wie groß die Ringe um den Lautsprecher werden, solange er spielt. 0 schaltet sie aus, Bild und Leuchten bleiben; 100 ist die Standardgröße. Die Größe folgt außerdem der Lautstärke des Lautsprechers: leiser heißt kleiner.",
   glow_scale: "Leuchtstärke in 3D (%)",
   light_effects: "Effektanimationen in 3D",
   light_effects_hint: "Nur exakte HA-Effektnamen zuordnen. Ohne Zuordnung bleibt die HA-Farbe statisch. Ändert nichts in Home Assistant.",
@@ -1888,6 +1888,9 @@ const DE = {
   presence: "Anwesenheit",
   presence_hint: "Raumsensor je Person (z. B. ESPresense, Bermuda): sein Zustand nennt den Raum oder Bereich.",
   presence_sensor: "Raumsensor",
+  presence_room: "Standardraum",
+  presence_room_none: "– keiner –",
+  presence_add: "Weitere Entität (Hilfsschalter, Tracker)",
   no_persons: "In Home Assistant gibt es keine Personen.",
 };
 
@@ -2364,7 +2367,7 @@ const EN: Record<Key, string> = {
   ambilight: "Glow behind the TV (%)",
   ambilight_hint: "How strongly it glows behind the TV while it plays. 0 switches it off (for example if you have LED strips on the TV), 100 is the usual strength.",
   sound_rings: "Sound rings (%)",
-  sound_rings_hint: "How large the rings around the speaker grow while it plays. 0 switches them off, the picture and the glow stay; 100 is the usual size.",
+  sound_rings_hint: "How large the rings around the speaker grow while it plays. 0 switches them off, the picture and the glow stay; 100 is the usual size. The size also follows the speaker's volume: quieter means smaller.",
   glow_scale: "Glow in 3D (%)",
   light_effects: "Effect animations in 3D",
   light_effects_hint: "Map exact HA effect names only. Unmapped effects keep the static HA colour. Changes nothing in Home Assistant.",
@@ -3779,6 +3782,9 @@ const EN: Record<Key, string> = {
   presence: "Presence",
   presence_hint: "Room sensor per person (e.g. ESPresense, Bermuda): its state names the room or area.",
   presence_sensor: "Room sensor",
+  presence_room: "Default room",
+  presence_room_none: "– none –",
+  presence_add: "Another entity (helper switch, tracker)",
   no_persons: "There are no people in Home Assistant.",
 };
 

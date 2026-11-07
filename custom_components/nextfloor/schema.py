@@ -923,7 +923,11 @@ ENERGY_SCHEMA = vol.Schema(
 
 # Which sensor tells the room of a person (ESPresense, Bermuda: the state is a room or area name)
 PRESENCE_SCHEMA = vol.Schema(
-    {vol.Required("person"): vol.All(str, vol.Length(max=255)), vol.Required("sensor"): _ENTITY},
+    {
+        vol.Required("person"): vol.All(str, vol.Length(max=255)),
+        vol.Required("sensor"): vol.Any(None, _ENTITY),
+        vol.Optional("room"): vol.Any(None, vol.All(str, vol.Length(max=64))),
+    },
     extra=vol.ALLOW_EXTRA,
 )
 

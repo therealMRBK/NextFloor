@@ -38,6 +38,15 @@ export function roomForState(hass: HomeAssistant, building: Building, state: str
   return null;
 }
 
+function roomById(building: Building, id: string | null | undefined): { floorId: string; room: Room } | null {
+  if (!id) return null;
+  for (const floor of building.floors) {
+    const room = floor.rooms.find((r) => r.id === id);
+    if (room) return { floorId: floor.id, room };
+  }
+  return null;
+}
+
 /** Up to two letters for an avatar: first and last word's initials, or the first two letters of one word. */
 export function initials(name: string): string {
   const words = name.split(/\s+/).filter(Boolean);
@@ -57,12 +66,13 @@ function spotInRoom(room: Room, n: number): [number, number] {
 export function personsInRooms(hass: HomeAssistant, building: Building): PersonMarker[] {
   const markers: PersonMarker[] = [];
   const inRoom = new Map<string, number>();
-  for (const { person: personId, sensor: sensorId } of building.presence) {
+  for (const { person: personId, sensor: sensorId, room: defaultRoom } of building.presence) {
     const person = hass.states[personId];
     const sensor = sensorId ? hass.states[sensorId] : undefined;
     // someone who is away is in no room, whatever the room sensor still says
-    if (!person || !sensor || (person.state !== "home" && person.state !== "on")) continue;
-    const found = roomForState(hass, building, sensor.state);
+    if (!person || (person.state !== "home" && person.state !== "on")) continue;
+    // the room sensor names the room; without one (or when it names none) the person's own room of the plan counts
+    const found = (sensor ? roomForState(hass, building, sensor.state) : null) ?? roomById(building, defaultRoom);
     if (!found) continue;
     const n = inRoom.get(found.room.id) ?? 0;
     inRoom.set(found.room.id, n + 1);

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { likelyRoomSensors, parseButtonData, startViewYaml, withPresence } from "./house.ts";
+import { likelyRoomSensors, parseButtonData, patchPresence, startViewYaml } from "./house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "./lists.ts";
 
 test("moving within a list keeps every item and stops at the ends", () => {
@@ -20,12 +20,15 @@ test("removing and patching leave the original alone", () => {
   assert.deepEqual(orUndefined([1]), [1]);
 });
 
-test("a presence link is replaced, added or removed", () => {
+test("a presence link is replaced, added or removed; its room keeps it alive without a sensor", () => {
   const links = [{ person: "person.a", sensor: "sensor.a" }];
-  assert.deepEqual(withPresence(links, "person.a", "sensor.b"), [{ person: "person.a", sensor: "sensor.b" }]);
-  assert.deepEqual(withPresence(links, "person.b", "sensor.c"), [...links, { person: "person.b", sensor: "sensor.c" }]);
-  assert.deepEqual(withPresence(links, "person.a", null), []);
-  assert.deepEqual(withPresence(links, "person.a", "none"), []);
+  assert.deepEqual(patchPresence(links, "person.a", { sensor: "sensor.b" }), [{ person: "person.a", sensor: "sensor.b" }]);
+  assert.deepEqual(patchPresence(links, "person.b", { sensor: "sensor.c" }), [...links, { person: "person.b", sensor: "sensor.c" }]);
+  assert.deepEqual(patchPresence(links, "person.a", { sensor: null }), []);
+  assert.deepEqual(patchPresence(links, "person.a", { sensor: "none" }), []);
+  assert.deepEqual(patchPresence(links, "person.a", { room: "kitchen" }), [{ person: "person.a", sensor: "sensor.a", room: "kitchen" }]);
+  assert.deepEqual(patchPresence([{ person: "person.a", sensor: "sensor.a", room: "k" }], "person.a", { sensor: null }), [{ person: "person.a", sensor: null, room: "k" }], "the room alone is enough");
+  assert.deepEqual(patchPresence([{ person: "person.a", sensor: null, room: "k" }], "person.a", { room: null }), []);
   assert.equal(links.length, 1);
 });
 
