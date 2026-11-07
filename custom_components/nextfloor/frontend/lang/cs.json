@@ -1280,6 +1280,8 @@
   "furniture_search_none": "Nic nenalezeno. Zkuste jiné slovo – anglicky nebo německy.",
   "furniture_type": "Prvek",
   "rotation": "Otočení (°)",
+  "tilt_x": "Náklon vpřed/vzad (°)",
+  "tilt_z": "Náklon do strany (°)",
   "strip_tilt": "Naklonění podél délky (°)",
   "strip_upright": "Svisle",
   "strip_rise": "Sklon podél délky (°)",

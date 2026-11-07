@@ -1280,6 +1280,8 @@
   "furniture_search_none": "Nada encontrado. Tente outra palavra, em inglês ou alemão.",
   "furniture_type": "Elemento",
   "rotation": "Rotação (°)",
+  "tilt_x": "Inclinação frente/trás (°)",
+  "tilt_z": "Inclinação lateral (°)",
   "strip_tilt": "Inclinação sobre o comprimento (°)",
   "strip_upright": "Na vertical",
   "strip_rise": "Inclinação ao longo do comprimento (°)",

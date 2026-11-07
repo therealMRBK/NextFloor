@@ -284,6 +284,8 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Required("x"): _COORD,
         vol.Required("z"): _COORD,
         vol.Required("rotation"): vol.Coerce(float),
+        vol.Optional("tilt_x", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=-90, max=90))),
+        vol.Optional("tilt_z", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=-90, max=90))),
         vol.Required("w"): _LENGTH,
         vol.Required("d"): _LENGTH,
         vol.Required("h"): _LENGTH,

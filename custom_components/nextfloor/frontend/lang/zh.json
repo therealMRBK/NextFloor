@@ -755,6 +755,8 @@
  "furniture_search_none": "未找到。请换个词试试——英语或德语均可。",
  "furniture_type": "物品",
  "rotation": "旋转 (°)",
+ "tilt_x": "前后倾斜 (°)",
+ "tilt_z": "左右倾斜 (°)",
  "strip_tilt": "沿长度方向倾斜 (°)",
  "strip_upright": "竖立",
  "strip_rise": "上升角度（°）",

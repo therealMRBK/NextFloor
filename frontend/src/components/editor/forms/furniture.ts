@@ -106,6 +106,8 @@ function geometryFields(host: EditorHost, item: Furniture, actions: FurnitureAct
     ${numberField(host, t("width"), item.w, (v) => set({ w: Math.max(0.05, v) }), 0.01, 0.05)} ${numberField(host, t("depth"), item.d, (v) => set({ d: Math.max(0.05, v) }), 0.01, 0.05)}
     ${numberField(host, t("height_m"), item.h, (v) => set({ h: Math.max(0.005, v) }), 0.01, 0)}
     ${numberField(host, t("rotation"), item.rotation, (v) => set({ rotation: ((v % 360) + 360) % 360 }), 1)}
+    ${numberField(host, t("tilt_x"), item.tilt_x ?? 0, (v) => set({ tilt_x: Math.max(-90, Math.min(90, Math.round(v))) || null }), 1, -90)}
+    ${numberField(host, t("tilt_z"), item.tilt_z ?? 0, (v) => set({ tilt_z: Math.max(-90, Math.min(90, Math.round(v))) || null }), 1, -90)}
     ${isLamp(item.type) ? nothing : checkField(host, t("furn_mirror"), !!item.mirror, (mirror) => set({ mirror }), { wide: false, title: t("furn_mirror_hint") })}
     ${item.type === "led_strip"
       ? html`${numberField(host, t("strip_tilt"), item.tilt ?? 0, (v) => set({ tilt: Math.max(-90, Math.min(90, Math.round(v))) }), 5)}

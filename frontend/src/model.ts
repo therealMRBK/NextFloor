@@ -202,6 +202,9 @@ export interface Furniture extends LightEffectConfig {
   x: number;
   z: number;
   rotation: number;
+  /** Tilted about its own axes (degrees): `tilt_x` nose up or down (about the width axis), `tilt_z` rolled sideways (about the depth axis); null = upright. */
+  tilt_x?: number | null;
+  tilt_z?: number | null;
   w: number;
   d: number;
   h: number;

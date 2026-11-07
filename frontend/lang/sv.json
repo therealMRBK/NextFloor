@@ -1280,6 +1280,8 @@
   "furniture_search_none": "Inget hittades. Prova ett annat ord – på engelska eller tyska.",
   "furniture_type": "Sak",
   "rotation": "Rotation (°)",
+  "tilt_x": "Lutning fram/bak (°)",
+  "tilt_z": "Lutning åt sidan (°)",
   "strip_tilt": "Lutning kring längden (°)",
   "strip_upright": "Upprätt",
   "strip_rise": "Lutning längs längden (°)",

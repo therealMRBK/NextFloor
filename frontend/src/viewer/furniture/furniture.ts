@@ -214,7 +214,45 @@ function buildFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f:
  * Draws a piece of furniture. A mirrored item needs no rewinding here: boxes, lofts and upright cylinders wind themselves
  * counter-clockwise, and lying cylinders and the contact shadow rewind themselves when the transform mirrors.
  */
+/** Turns a vector about a unit axis by `angle` radians (Rodrigues). */
+function turn(v: [number, number, number], k: [number, number, number], angle: number): [number, number, number] {
+  const [c, s] = [Math.cos(angle), Math.sin(angle)];
+  const dot = k[0] * v[0] + k[1] * v[1] + k[2] * v[2];
+  const cross: [number, number, number] = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]];
+  return [v[0] * c + cross[0] * s + k[0] * dot * (1 - c), v[1] * c + cross[1] * s + k[1] * dot * (1 - c), v[2] * c + cross[2] * s + k[2] * dot * (1 - c)];
+}
+
+/**
+ * Tilts what was just built (the vertices and lines from the given starts on) about the item's own axes, round the middle of its
+ * underside: `tilt_x` about its width axis, `tilt_z` about its depth axis, both after its turn about the vertical axis.
+ */
+export function tiltBuilt(buf: GeoBuffer, lines: LineBuffer, from: { vertex: number; line: number }, f: Pick<Furniture, "x" | "z" | "rotation" | "tilt_x" | "tilt_z">, y: number): void {
+  const [px, pz] = [f.tilt_x ?? 0, f.tilt_z ?? 0];
+  if (!px && !pz) return;
+  const yaw = (f.rotation * Math.PI) / 180;
+  const widthAxis: [number, number, number] = [Math.cos(yaw), 0, Math.sin(yaw)];
+  const depthAxis: [number, number, number] = [-Math.sin(yaw), 0, Math.cos(yaw)];
+  const move = (p: number[], start: number) => {
+    for (let i = start; i + 2 < p.length; i += 3) {
+      let v: [number, number, number] = [p[i] - f.x, p[i + 1] - y, p[i + 2] - f.z];
+      if (px) v = turn(v, widthAxis, (px * Math.PI) / 180);
+      if (pz) v = turn(v, depthAxis, (pz * Math.PI) / 180);
+      p[i] = f.x + v[0];
+      p[i + 1] = y + v[1];
+      p[i + 2] = f.z + v[2];
+    }
+  };
+  move(buf.p, from.vertex);
+  move(lines.p, from.line);
+}
+
 export function pushFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {
+  const start = { vertex: buf.p.length, line: lines.p.length };
+  pushUpright(buf, lines, shadow, f, base);
+  tiltBuilt(buf, lines, start, f, base);
+}
+
+function pushUpright(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {
   // pack items place their parts at `base` themselves; built-in models are drawn on the floor and lifted as a whole (a dryer on the
   // washer, a shelf on the wall), without a shadow on the floor. The mount height is absolute: a wall cabinet drawn at 1.45 m
   // moves by the difference, up or down.

@@ -1280,6 +1280,8 @@
   "furniture_search_none": "Niets gevonden. Probeer een ander woord, in het Engels of Duits.",
   "furniture_type": "Item",
   "rotation": "Rotatie (°)",
+  "tilt_x": "Kanteling voor/achter (°)",
+  "tilt_z": "Kanteling zijwaarts (°)",
   "strip_tilt": "Kanteling om de lengteas (°)",
   "strip_upright": "Rechtop",
   "strip_rise": "Helling over de lengte (°)",

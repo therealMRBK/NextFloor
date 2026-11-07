@@ -1280,6 +1280,8 @@
   "furniture_search_none": "Nic nie znaleziono. Spróbuj innego słowa – po angielsku lub niemiecku.",
   "furniture_type": "Element",
   "rotation": "Obrót (°)",
+  "tilt_x": "Pochylenie przód/tył (°)",
+  "tilt_z": "Pochylenie na bok (°)",
   "strip_tilt": "Pochylenie wzdłuż długości (°)",
   "strip_upright": "Pionowo",
   "strip_rise": "Nachylenie wzdłuż długości (°)",
