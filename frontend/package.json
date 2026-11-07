@@ -17,7 +17,7 @@
   "devDependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@fontsource-variable/figtree": "^5.3.0",
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.6",
     "@types/three": "^0.186.0",
     "esbuild": "^0.28.2",
     "puppeteer-core": "^25.12.0",
