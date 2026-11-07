@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.25.4]
+
+### Fixed
+
+- **Zigzag in a straight interior wall** (thanks @Dragi2k, #65): one straight wall that runs past several rooms (bathroom, store room and hall along the bedroom, say) was drawn in pieces, and a piece next to an outer wall sat flush on one side while its neighbours sat centred, so the top of the wall jumped back and forth. The whole straight wall is now aligned as one.
+
 ## [0.25.3]
 
 ### Fixed
@@ -493,7 +499,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.4...main
+[0.25.4]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...v0.25.4
 [0.25.3]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...v0.25.3
 [0.25.2]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...v0.25.2
 [0.25.1]: https://github.com/therealMRBK/NextFloor/compare/v0.25.0...v0.25.1

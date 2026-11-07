@@ -225,3 +225,11 @@ test("a split edge can have a thickness per part", () => {
   const top = walls.filter((w) => Math.abs(w.a[1]) < 1e-6 && Math.abs(w.b[1]) < 1e-6).map((w) => w.left + w.right).sort();
   assert.deepEqual(top, [0.2, 0.5]);
 });
+
+test("one straight interior wall through several rooms keeps straight faces, even when outer walls at its ends disagree (#65)", () => {
+  // the line z = 3 runs between a, b above and c below; at its left end c sticks out by 1 cm, at its right end b does
+  const { walls } = generateWalls([room("a", 0.05, 0, 2, 3), room("b", 2, 0, 4.4, 3), room("c", 0.04, 3, 4, 6)], opts);
+  const line = walls.filter((w) => !w.exterior && Math.abs(w.a[1] - 3) < 1e-9 && Math.abs(w.b[1] - 3) < 1e-9);
+  assert.equal(line.length, 2);
+  for (const w of line) near(w.left, w.right);
+});

@@ -235,24 +235,55 @@ function pairPieces(pieces: Piece[], rooms: readonly Room[], options: WallOption
 
 /**
  * An interior wall that continues an exterior wall in line sits flush with the exterior wall's inner face on the shared
- * room, rather than standing half its thickness into that room.
+ * room, rather than standing half its thickness into that room. A straight run of interior walls (one line through
+ * several rooms) is aligned as a whole, so its faces stay straight: it is flush only when the exterior walls at its two
+ * ends agree on the side, otherwise it stays centred (#65).
  */
 function alignWithExterior(drafts: Draft[], verts: Vec2[]): void {
   const direction = (d: Draft) => unit(sub(verts[d.b], verts[d.a]));
-  for (const wall of drafts) {
-    if (wall.exterior || wall.free) continue;
+  const inner = drafts.filter((d) => !d.exterior && !d.free);
+  // runs of collinear interior walls joined end to end
+  const runOf = new Map<Draft, Draft[]>();
+  for (const wall of inner) {
+    if (runOf.has(wall)) continue;
+    const run = [wall];
+    runOf.set(wall, run);
+    for (let k = 0; k < run.length; k++) {
+      const cur = run[k];
+      for (const next of inner) {
+        if (runOf.has(next)) continue;
+        const touches = next.a === cur.a || next.a === cur.b || next.b === cur.a || next.b === cur.b;
+        if (touches && Math.abs(cross(direction(cur), direction(next))) < 1e-6) {
+          run.push(next);
+          runOf.set(next, run);
+        }
+      }
+    }
+  }
+  for (const run of new Set(runOf.values())) {
+    const axis = direction(run[0]);
+    const nodes = new Map<number, number>();
+    for (const w of run) for (const n of [w.a, w.b]) nodes.set(n, (nodes.get(n) ?? 0) + 1);
+    // which side of the run (seen along `axis`) the rooms of the exterior walls in line at its ends lie on
     const sides = new Set<"left" | "right">();
-    for (const node of [wall.a, wall.b]) {
+    for (const [node, count] of nodes) {
+      if (count !== 1) continue;
       for (const outer of drafts) {
         if (!outer.exterior || outer.free || (outer.a !== node && outer.b !== node)) continue;
-        if (Math.abs(cross(direction(wall), direction(outer))) > 1e-6) continue;
-        if (outer.roomLeft === wall.roomLeft) sides.add("left");
-        else if (outer.roomLeft === wall.roomRight) sides.add("right");
+        const along = direction(outer);
+        if (Math.abs(cross(axis, along)) > 1e-6) continue;
+        // an exterior wall has its room on its left
+        sides.add(dot(axis, along) > 0 ? "left" : "right");
       }
     }
     if (sides.size !== 1) continue;
-    const thickness = wall.left + wall.right;
-    [wall.left, wall.right] = sides.has("left") ? [0, thickness] : [thickness, 0];
+    const side = [...sides][0];
+    for (const wall of run) {
+      const thickness = wall.left + wall.right;
+      const same = dot(direction(wall), axis) > 0;
+      const flushLeft = (side === "left") === same;
+      [wall.left, wall.right] = flushLeft ? [0, thickness] : [thickness, 0];
+    }
   }
 }
 
