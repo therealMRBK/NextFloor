@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { freeSpot, nextTarget, seededRandom, stepPet, type PetMotion, type PetRoom } from "./pets.ts";
+import { advancePet, freeSpot, nextTarget, seededRandom, stepPet, type PetMotion, type PetRoom } from "./pets.ts";
 
 const room: PetRoom = {
   points: [[0, 0], [5, 0], [5, 4], [0, 4]],
@@ -44,4 +44,21 @@ test("the same pet walks the same way after a reload", () => {
 test("a pet placed under the table walks out of it", () => {
   const t = nextTarget(room, [2.5, 2], seededRandom("under"));
   assert.ok(t && freeSpot(room, t));
+});
+
+test("a resting pet walks on after its rest, whether frames come every 16 ms or after one long sleep (#97)", () => {
+  const random = seededRandom("cat");
+  const busy: PetMotion = { pos: [1, 1], heading: 0, target: null, rest: 3 };
+  let t = 0;
+  while (!busy.target && t < 10) {
+    advancePet(busy, room, 0.016, random);
+    t += 0.016;
+  }
+  assert.ok(busy.target, "frames of other animations count the rest down");
+  assert.ok(t > 2.9 && t < 3.1, `walked on after about 3 s, not ${t.toFixed(2)} s`);
+  const asleep: PetMotion = { pos: [1, 1], heading: 0, target: null, rest: 3 };
+  const before = [...asleep.pos];
+  advancePet(asleep, room, 3.05, random);
+  assert.ok(asleep.target, "a frame after a 3 s sleep counts the whole sleep");
+  assert.ok(Math.hypot(asleep.pos[0] - before[0], asleep.pos[1] - before[1]) <= room.speed * 0.2 + 1e-9, "but walks at most 0.2 s at once");
 });

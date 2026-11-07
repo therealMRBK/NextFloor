@@ -7,7 +7,7 @@
 
 import { packModel, placement } from "./furniture/packs.ts";
 import { Builder } from "./furniture/builder.ts";
-import { seededRandom, stepPet, type PetMotion, type PetRoom } from "./pets.ts";
+import { advancePet, seededRandom, type PetMotion, type PetRoom } from "./pets.ts";
 import { isLowEnd } from "../hardware.ts";
 import { QualityGovernor } from "./quality-governor.ts";
 import {
@@ -484,6 +484,7 @@ export class NextFloorViewer {
   private mowerMat: MeshBasicMaterial | null = null;
   private robotLedGeo: BufferGeometry | null = null;
   private robotLast = 0;
+  private petLast = 0;
   /** Owned 3D models standing in the floors (see meshes.ts), and the light they need. */
   private meshes: { group: Group; furnitureId: string }[] = [];
   private meshLight: ReturnType<typeof addMeshLighting> | null = null;
@@ -3069,11 +3070,14 @@ export class NextFloorViewer {
     // the pets roam with the robots (same frames, and they rest with them on the tablet level); while every pet sits, no frames
     // are drawn and a timer wakes the view when the first one walks on
     let nextWalk = Infinity;
+    // the pets keep their own clock: the robots' one restarts whenever nothing of theirs moves, which froze a resting pet (#97)
+    const petElapsed = this.petLast ? (now - this.petLast) / 1000 : 0;
+    this.petLast = now;
     for (const p of this.pets.values()) {
       const fv = this.floorMap.get(p.floorId);
       if (!fv) continue;
       if (p.group.parent !== fv.group) fv.group.add(p.group);
-      const walking = stepPet(p.motion, p.room, dt, p.random) || !!p.motion.target;
+      const walking = advancePet(p.motion, p.room, petElapsed, p.random) || !!p.motion.target;
       if (walking) active = true;
       else nextWalk = Math.min(nextWalk, Math.max(0, p.motion.rest));
       p.group.position.set(p.motion.pos[0], 0, p.motion.pos[1]);
@@ -3081,12 +3085,7 @@ export class NextFloorViewer {
     }
     clearTimeout(this.petTimer);
     if (!active && Number.isFinite(nextWalk)) {
-      const slept = performance.now();
-      this.petTimer = setTimeout(() => {
-        const gone = (performance.now() - slept) / 1000;
-        for (const p of this.pets.values()) if (!p.motion.target) p.motion.rest -= gone;
-        this.invalidate();
-      }, nextWalk * 1000 + 50);
+      this.petTimer = setTimeout(() => this.invalidate(), nextWalk * 1000 + 50);
     }
     for (const r of this.robots.values()) {
       const fv = this.floorMap.get(r.info.floorId);

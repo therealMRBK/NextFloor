@@ -99,3 +99,13 @@ export function stepPet(m: PetMotion, room: PetRoom, dt: number, random: () => n
   m.pos = [m.pos[0] + (dx / dist) * step, m.pos[1] + (dz / dist) * step];
   return true;
 }
+
+/**
+ * One frame of a pet with the real time since its last frame: the walk moves by at most 0.2 s at once (no jumps after
+ * a pause), but a rest counts the whole time down, so a pet walks on whether the view draws every frame or slept (#97).
+ */
+export function advancePet(m: PetMotion, room: PetRoom, elapsed: number, random: () => number): boolean {
+  const dt = Math.min(0.2, Math.max(0, elapsed));
+  if (!m.target) m.rest -= Math.max(0, elapsed) - dt;
+  return stepPet(m, room, dt, random);
+}
