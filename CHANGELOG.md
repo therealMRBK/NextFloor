@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **See-through outdoor areas** (thanks @thelichtler-cloud, #95): every outdoor area has *Opacity (%)* in its form, from 100 (solid) down to 10, saved with the plan. A driveway or lawn above the cellar no longer hides it in the stacked view; the outline stays.
+
 ### Changed
 
 - **A new README:** a shorter, picture-led front page with the three ideas in one minute, a gallery that links into the documentation, the features grouped by what you do, a two-minute install and a table of where to read what.

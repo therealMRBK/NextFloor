@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { newFloor, OUTDOOR_TOP, type Floor, type OutdoorArea, type Vec2 } from "../../model.ts";
 import { GeoBuffer, LineBuffer } from "../geo.ts";
 import { counterClockwise, pushBeam, pushPost } from "./beams.ts";
-import { outdoorHoles, outdoorSurface, pushOutdoor } from "./outdoor.ts";
+import { outdoorHoles, outdoorOpacity, outdoorSurface, pushOutdoor } from "./outdoor.ts";
 
 const square = (x0: number, z0: number, x1: number, z1: number): Vec2[] => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
 const area = (type: OutdoorArea["type"], points: Vec2[], extra: Partial<OutdoorArea> = {}): OutdoorArea => ({ id: type, type, points, ...extra }) as OutdoorArea;
@@ -135,4 +135,26 @@ test("a gate cuts a gap into a fence: no rail across it, gate posts at its ends,
   assert.notDeepEqual(open.buf.p, closed.buf.p, "an open leaf stands somewhere else");
   const zs = open.buf.p.filter((_, i) => i % 3 === 2);
   assert.ok(Math.max(...zs) > 1.0, "it swings into the plot");
+});
+
+test("a see-through area goes into a buffer of its own per opacity, the outline stays in the lines", () => {
+  const solid = new GeoBuffer();
+  const lines = new LineBuffer();
+  const ghosts = new Map<number, GeoBuffer>();
+  const floor = floorWith(area("lawn", square(0, 0, 4, 4)), area("driveway", square(5, 0, 9, 4), { opacity: 0.4 }), area("terrace", square(10, 0, 12, 2), { opacity: 0.4 }), area("bed", square(13, 0, 14, 1), { opacity: 0.12 }));
+  pushOutdoor(solid, lines, floor, ghosts, () => new GeoBuffer());
+  assert.deepEqual([...ghosts.keys()].sort(), [0.1, 0.4]);
+  assert.ok(ghosts.get(0.4)!.count > 0 && solid.count > 0);
+  // without ghost buffers everything is drawn solid, as before
+  const all = new GeoBuffer();
+  pushOutdoor(all, new LineBuffer(), floor);
+  assert.equal(all.count, solid.count + ghosts.get(0.4)!.count + ghosts.get(0.1)!.count);
+});
+
+test("opacity of 1 or none means solid; very low values stop at 10 %", () => {
+  assert.equal(outdoorOpacity(area("lawn", square(0, 0, 1, 1))), 1);
+  assert.equal(outdoorOpacity(area("lawn", square(0, 0, 1, 1), { opacity: 1 })), 1);
+  assert.equal(outdoorOpacity(area("lawn", square(0, 0, 1, 1), { opacity: null })), 1);
+  assert.equal(outdoorOpacity(area("lawn", square(0, 0, 1, 1), { opacity: 0.02 })), 0.1);
+  assert.equal(outdoorOpacity(area("lawn", square(0, 0, 1, 1), { opacity: 0.43 })), 0.45);
 });

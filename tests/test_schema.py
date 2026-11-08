@@ -241,3 +241,14 @@ def test_fence_gates_and_sloping_walls_and_roof_overhang_per_side() -> None:
     wall = FREE_WALL_SCHEMA({"id": "w", "a": [0, 0], "b": [2, 0], "height": 2.4, "height_end": 1.0})
     assert wall["height_end"] == 1.0
     assert FREE_WALL_SCHEMA({"id": "w", "a": [0, 0], "b": [2, 0]})["height_end"] is None
+
+
+def test_outdoor_area_opacity() -> None:
+    from custom_components.nextfloor.schema import OUTDOOR_SCHEMA
+
+    base = {"id": "a", "type": "driveway", "points": [[0, 0], [4, 0], [4, 3]]}
+    assert OUTDOOR_SCHEMA(base)["opacity"] is None
+    assert OUTDOOR_SCHEMA({**base, "opacity": 0.4})["opacity"] == 0.4
+    for bad in (0, 0.05, 1.5):
+        with pytest.raises(vol.Invalid):
+            OUTDOOR_SCHEMA({**base, "opacity": bad})

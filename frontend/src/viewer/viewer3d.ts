@@ -1624,7 +1624,8 @@ export class NextFloorViewer {
         const g = (o as Mesh).geometry as BufferGeometry | undefined;
         g?.dispose();
       });
-      for (const m of Object.values(fv.materials)) m.dispose();
+      for (const m of Object.values(fv.materials)) if (!Array.isArray(m)) m.dispose();
+      for (const g of fv.materials.ghosts) g.material.dispose();
       this.root.remove(fv.group);
     }
     this.floors = [];
@@ -1813,6 +1814,14 @@ export class NextFloorViewer {
         screenMesh,
         glassWalls,
       );
+      // outdoor areas drawn see-through (an opacity set on the area), each opacity with a material of its own that fades with the floor
+      for (const ghost of geo.ghosts) {
+        const material = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: ghost.opacity, depthWrite: false, side: DoubleSide }), this.themeUniform);
+        materials.ghosts.push({ material, base: ghost.opacity });
+        const mesh = new Mesh(ghost.geometry, material);
+        mesh.renderOrder = 2;
+        group.add(mesh);
+      }
       this.root.add(group);
 
       const label = document.createElement("button");

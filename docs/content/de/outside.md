@@ -22,6 +22,10 @@ Eine Fläche kann einem Home-Assistant-**Bereich** zugeordnet werden: Seine Ger�
 
 Ein Zaun kann **Tore** haben: Gartentor, Doppeltor oder Schiebetor. Jedes Tor sitzt an einer Position am Zaun und nimmt eine Entität oder einen Kontakt; in 3D öffnet es sich, wenn diese Entität offen oder an ist.
 
+### Deckkraft
+
+*Deckkraft (%)* im Formular einer Fläche macht sie durchsichtig, von 100 (undurchsichtig) bis 10. So verdeckt eine Einfahrt oder ein Rasen in der gestapelten Ansicht nicht mehr den Keller, und der Umriss lässt die Fläche erkennbar. Der Wert wird mit dem Plan gespeichert.
+
 ## Das Außen-Panel
 
 Sobald ein Gerät außerhalb der Räume steht, bekommt die Leiste über der 3D-Ansicht neben den Geschossen den Knopf **🌳 Außen**. Er öffnet die Hausansicht mit einem Panel wie bei einem Raum, das die Geräte im Garten auflistet.

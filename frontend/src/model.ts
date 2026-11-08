@@ -888,6 +888,8 @@ export interface OutdoorArea {
   cut?: boolean;
   /** Fences: gates in the fence (gaps with a leaf that follows an entity). */
   gates?: FenceGate[];
+  /** How opaque the area is drawn, 0.1 … 1 (null = fully): a driveway above a cellar can be seen through. The outline stays. */
+  opacity?: number | null;
 }
 
 /** A gate in a fence: a gap in one edge of its outline with a garden gate (one leaf), a double gate or a sliding gate. */

@@ -45,6 +45,7 @@ export function renderOutdoorForm(host: EditorHost, area: OutdoorArea, actions: 
         ? html`${numberField(host, t("outdoor_slope"), area.slope ?? 0, (v) => set({ slope: between(0, 20, v) || null }), 0.05, 0)}
           ${selectField(host, t("outdoor_slope_dir"), area.slope_dir ?? "x", slopeDirs, (slope_dir) => set({ slope_dir }))}`
         : nothing}
+      ${numberField(host, t("outdoor_opacity"), Math.round((area.opacity ?? 1) * 100), (v) => set({ opacity: v >= 100 || !(v > 0) ? null : Math.max(10, Math.min(95, v)) / 100 }), 5, 10)}
       ${checkField(host, t("outdoor_outline"), area.outline !== false, (on) => set({ outline: on ? undefined : false }), { title: t("outdoor_outline_hint") })}
       ${area.type === "fence" || area.type === "pergola" ? checkField(host, t("outdoor_open"), !!area.open, (on) => set({ open: on || undefined }), { title: t("outdoor_open_hint") }) : nothing}
       ${area.type === "pergola" ? checkField(host, t("outdoor_bracing"), !!area.bracing, (on) => set({ bracing: on || undefined })) : nothing}

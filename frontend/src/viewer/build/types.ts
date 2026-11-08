@@ -31,6 +31,8 @@ export interface FloorGeometry {
   holes: Vec2[][];
   /** Walls (with folding upper parts) and furniture. */
   walls: BufferGeometry;
+  /** Outdoor areas drawn see-through, one geometry per opacity (0.1 … 0.95). */
+  ghosts: { opacity: number; geometry: BufferGeometry }[];
   lines: BufferGeometry;
   /** A multiply layer darkening the floor along walls and under furniture (baked occlusion). */
   shadow: BufferGeometry;

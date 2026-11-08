@@ -64,6 +64,7 @@ export function fadeMaterials(materials: FloorMaterials, opacity: number): void 
     }
     material.opacity = opacity;
   }
+  for (const ghost of materials.ghosts) ghost.material.opacity = ghost.base * opacity;
   for (const material of [materials.pattern, materials.glow, materials.lines, materials.glass, materials.glassWall, materials.halos, materials.cones, materials.screens]) material.opacity = opacity;
 }
 

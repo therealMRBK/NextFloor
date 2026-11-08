@@ -180,7 +180,17 @@ function buildBlock(c: Context, areas: OutdoorArea[], index: number): void {
   }
 }
 
-export function pushOutdoor(buf: GeoBuffer, lines: LineBuffer, floor: Floor): void {
+/** The opacity an area is drawn with, in whole percent steps (100 = solid). */
+export function outdoorOpacity(area: OutdoorArea): number {
+  const o = area.opacity;
+  return o == null || !(o < 1) ? 1 : Math.max(0.1, Math.round(o * 20) / 20);
+}
+
+/**
+ * Builds the outdoor areas of a floor. Areas that are drawn see-through go into a buffer of their own per opacity (`ghosts`), the others
+ * into `buf`; the outlines always stay solid.
+ */
+export function pushOutdoor(buf: GeoBuffer, lines: LineBuffer, floor: Floor, ghosts?: Map<number, GeoBuffer>, makeBuffer?: () => GeoBuffer): void {
   const ground = groundLevel(floor);
   const areas = floor.outdoor ?? [];
   areas.forEach((area, index) => {
@@ -189,8 +199,14 @@ export function pushOutdoor(buf: GeoBuffer, lines: LineBuffer, floor: Floor): vo
     const base = ground + (area.offset ?? 0);
     const look = LOOKS[area.type];
     const poly = counterClockwise(area.points);
+    const opacity = outdoorOpacity(area);
+    let target = buf;
+    if (opacity < 1 && ghosts && makeBuffer) {
+      if (!ghosts.has(opacity)) ghosts.set(opacity, makeBuffer());
+      target = ghosts.get(opacity)!;
+    }
     const context: Context = {
-      buf,
+      buf: target,
       lines,
       area,
       poly,

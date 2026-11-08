@@ -62,7 +62,8 @@ export function buildFloorGeometry(
   pushEdgeLines(lines, floor, outline, wallBucket, spans, limits, hasRoof);
 
   const shadow = buildShadow(outline.edges, floor.rooms, spans);
-  pushOutdoor(wallBuf, lines, floor);
+  const ghosts = new Map<number, GeoBuffer>();
+  pushOutdoor(wallBuf, lines, floor, ghosts, () => new GeoBuffer());
   for (const s of solar) pushModules(wallBuf, lines, s.face, s.field, floor.elevation);
 
   // lamps are drawn live by the viewer: they glow with their light
@@ -87,6 +88,7 @@ export function buildFloorGeometry(
     roomTris: floors.roomTris,
     holes: floors.cutHoles,
     walls: wallBuf.geometry(),
+    ghosts: [...ghosts].map(([opacity, buffer]) => ({ opacity, geometry: buffer.geometry() })),
     lines: lines.geometry(),
     shadow: shadow.geometry(),
     buckets,

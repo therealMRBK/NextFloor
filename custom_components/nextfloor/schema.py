@@ -509,6 +509,8 @@ OUTDOOR_SCHEMA = vol.Schema(
         # fall in m across the area along slope_dir (the high edge sits at the offset)
         vol.Optional("slope", default=0.0): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
         vol.Optional("slope_dir", default="x"): vol.In(["x", "-x", "z", "-z"]),
+        # how opaque the area is drawn (None = fully)
+        vol.Optional("opacity", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=1))),
         # fences and pergolas: the closing edge is left out; pergola: X-bracing on the sides
         vol.Optional("open", default=False): bool,
         vol.Optional("bracing", default=False): bool,

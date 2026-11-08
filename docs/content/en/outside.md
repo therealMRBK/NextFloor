@@ -22,6 +22,10 @@ An area can be linked to a Home Assistant **Area**: its devices join Outside, an
 
 A fence can have **gates**: garden gate, double gate or sliding gate. Each gate sits at a position along the fence and takes an entity or contact; in 3D it opens when that entity is open or on.
 
+### Opacity
+
+*Opacity (%)* in an area's form makes it see-through, from 100 (solid) down to 10. That way a driveway or a lawn no longer hides the cellar in the stacked view, and the outline keeps it recognisable. The value is saved with the plan.
+
 ## The Outside panel
 
 As soon as a device stands outside the rooms, the bar above the 3D view gets a **🌳 Outside** chip next to the floors. It opens the house view with a panel like a room's that lists the garden's devices.

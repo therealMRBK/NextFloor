@@ -20,6 +20,8 @@ export interface FloorMaterials {
   halos: PointsMaterial;
   cones: MeshBasicMaterial;
   screens: MeshBasicMaterial;
+  /** See-through outdoor areas: one material per opacity, added while the floor is built; `base` is the opacity before the floor fades. */
+  ghosts: { material: MeshBasicMaterial; base: number }[];
 }
 
 export interface MaterialInputs {
@@ -75,5 +77,6 @@ export function makeFloorMaterials({ mask, look, theme, textures }: MaterialInpu
     halos: new PointsMaterial({ map: textures.halo, size: 0.9, sizeAttenuation: true, vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false }),
     cones: overlay({ side: DoubleSide }),
     screens: overlay({ side: DoubleSide }),
+    ghosts: [],
   };
 }

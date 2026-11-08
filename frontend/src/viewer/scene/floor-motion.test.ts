@@ -31,7 +31,7 @@ test("a floor eases towards its target and settles exactly", () => {
 
 test("fading switches see-through materials off again at full opacity", () => {
   const mesh = () => new MeshBasicMaterial();
-  const m = { floor: mesh(), wall: mesh(), frames: mesh(), blinds: mesh(), lamps: mesh(), pattern: mesh(), glow: mesh(), glass: mesh(), glassWall: mesh(), cones: mesh(), screens: mesh(), lines: new LineBasicMaterial(), halos: new PointsMaterial(), shadow: mesh() } as unknown as FloorMaterials;
+  const m = { floor: mesh(), wall: mesh(), frames: mesh(), blinds: mesh(), lamps: mesh(), pattern: mesh(), glow: mesh(), glass: mesh(), glassWall: mesh(), cones: mesh(), screens: mesh(), lines: new LineBasicMaterial(), halos: new PointsMaterial(), shadow: mesh(), ghosts: [] } as unknown as FloorMaterials;
   fadeMaterials(m, 0.5);
   assert.equal(m.floor.transparent, true);
   assert.equal(m.floor.depthWrite, false);
