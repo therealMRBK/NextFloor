@@ -72,6 +72,7 @@ import { buildRoof, type RoofWindowState } from "./roof.ts";
 import { GROUND, groundFace, groundFloor, wallFaces } from "../solar.ts";
 import { MapLayer } from "./live-map.ts";
 import type { MapSettings } from "../model.ts";
+import { applyFurnitureColors, type FurnitureColors } from "./furniture/palette.ts";
 import { accentOnUniform, accentUniform, parseAccent, lineBlending, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
 
 export type { Theme } from "./theme.ts";
@@ -435,6 +436,7 @@ export class NextFloorViewer {
   private readonly ground: Mesh;
   private floors: FloorView[] = [];
   private building: Building | null = null;
+  private furnitureColors: FurnitureColors | null = null;
   private floorId: string | null = null;
   private roomId: string | null = null;
   private wallMode: WallMode = "auto";
@@ -1080,6 +1082,16 @@ export class NextFloorViewer {
 
   /** Look of the 3D view: neon, blueprint or day. Instant: colours are mapped in the shaders. */
   /** An accent colour of the user's choice for the neon look ("#rrggbb"), null for the stock cyan. */
+  /** Furniture colours of this view (the card's own), on top of the house-wide ones in the settings (#82). */
+  setFurnitureColors(colors: FurnitureColors | null): void {
+    if (JSON.stringify(colors ?? {}) === JSON.stringify(this.furnitureColors ?? {})) return;
+    this.furnitureColors = colors;
+    if (this.building) {
+      this.rebuild();
+      this.invalidate();
+    }
+  }
+
   setAccent(hex: string | null): void {
     const rgb = parseAccent(hex);
     const on = rgb ? 1 : 0;
@@ -1728,6 +1740,7 @@ export class NextFloorViewer {
     this.clear();
     const b = this.building;
     if (!b) return;
+    applyFurnitureColors({ ...b.settings.furniture_colors, ...this.furnitureColors });
     const ordered = [...b.floors].sort((p, q) => p.elevation - q.elevation);
     for (const floor of b.floors) {
       // solar fields in the garden stand on the ground floor, wall fields hang on their floor's walls

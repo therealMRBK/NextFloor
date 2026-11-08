@@ -49,6 +49,8 @@ The camera is found by itself: any `camera` whose attributes carry `vacuum_posit
 
 **From the rooms (easiest):** when the robot's map names its rooms (the Dreame integration does, as `rooms`), the dock shows the button *Calibrate from the rooms*. It lays the map's rooms onto the rooms with the same names on the dock's floor. Case, spaces and hyphens do not count. At least two rooms must share a name; from three on, NextFloor also spots a mirrored map by itself. The robot does not have to move.
 
+**Fine-tune by hand:** if the map sits a little off afterwards, the arrows under the calibration move it by 10 cm, ⟲ ⟳ turn it by 1°, − + change its size by 1 %. Each click is saved at once.
+
 **From the robot's position:**
 
 1. Select the robot's **dock** in the plan.

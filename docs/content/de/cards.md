@@ -54,6 +54,7 @@ Die eigenen Optionen der Karte gewinnen. Eine Änderung im Editor erreicht jede 
 |---|---|---|
 | `theme` | `auto` | `neon`, `blueprint`, `day` |
 | `accent` | Cyan | Akzentfarbe als `#rrggbb` |
+| `furniture_colors` | die des Hauses | eigene Möbelfarben dieser Karte, z. B. `{body: "#3a2a1a", fabric: "#552233"}`; Rollen: `body`, `wood`, `fabric`, `white`, `metal`, `dark` |
 | `walls` | | Wandmodus der Ansicht |
 | `solid_walls` | `false` | blickdichte Wände in ihrer Farbe statt Glas |
 | `glass_walls` | `20` | wie blickdicht die durchsichtigen Wände sind, 0 … 100 % |

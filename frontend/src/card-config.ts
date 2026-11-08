@@ -1,3 +1,4 @@
+import type { FurnitureColors } from "./furniture-colors.ts";
 // Configuration of the dashboard card, shared by the card and its visual editor (a bundle of its own).
 
 import type { MarkerKind } from "./entities/kinds.ts";
@@ -50,6 +51,8 @@ export interface CardConfig {
   time_travel?: boolean;
   /** Accent colour for the neon look and the card's chips ("#rrggbb"); leave out for the stock cyan. */
   accent?: string;
+  /** Furniture colours of this card per role, on top of the house-wide ones (#82). */
+  furniture_colors?: FurnitureColors;
   /** Energy values at the top (default true). */
   energy?: boolean;
   /** Power flow lines always on or off; without it the card has its own switch. */

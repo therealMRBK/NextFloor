@@ -6,6 +6,7 @@ import { packItem } from "./packs.ts";
 import type { LightEffectConfig } from "./light-effects.ts";
 import type { StairConfig } from "./geometry/stairs.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
+import type { FurnitureColors } from "./furniture-colors.ts";
 import type { ShowWhen } from "./entities/visibility.ts";
 
 export type Vec2 = [number, number];
@@ -659,6 +660,8 @@ export interface BuildingSettings {
   /** Paint of the walls in the solid wall view ("#rrggbb"): outside, and inside where a room has no colour of its own (null = default). */
   wall_paint_outside?: string | null;
   wall_paint_inside?: string | null;
+  /** Furniture colours per role ("#rrggbb"; body, wood, fabric, white, metal, dark), house-wide (#82). */
+  furniture_colors?: FurnitureColors | null;
   grid: number;
   /** Direction of north in the plan, degrees clockwise from "up" (for the sun). */
   north: number;

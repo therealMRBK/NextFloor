@@ -285,3 +285,28 @@ export function calibrationFromRooms(planRooms: { name: string; points: readonly
   };
 }
 
+
+/** A hand correction of a calibration: moved in plan metres, turned in degrees, grown by a factor. */
+export interface CalibrationNudge {
+  move?: [number, number];
+  turn?: number;
+  grow?: number;
+}
+
+/**
+ * Shifts, turns or scales a calibration around the middle of its two places, for when a fitted map sits a little
+ * off: both places are moved in the plan, the robot's grid positions stay, so the whole map follows.
+ */
+export function nudgeCalibration(cal: VacuumCalibration, nudge: CalibrationNudge): VacuumCalibration {
+  const [mx, mz] = [(cal.a[0] + cal.b[0]) / 2, (cal.a[1] + cal.b[1]) / 2];
+  const rad = ((nudge.turn ?? 0) * Math.PI) / 180;
+  const [cos, sin, grow] = [Math.cos(rad), Math.sin(rad), nudge.grow ?? 1];
+  const [dx, dz] = nudge.move ?? [0, 0];
+  const at = (p: [number, number]): [number, number] => {
+    const [x, z] = [(p[0] - mx) * grow, (p[1] - mz) * grow];
+    return [round(mx + x * cos - z * sin + dx), round(mz + x * sin + z * cos + dz)];
+  };
+  return { ...cal, a: at(cal.a), b: at(cal.b) };
+}
+
+const round = (v: number): number => Math.round(v * 1000) / 1000;

@@ -36,6 +36,7 @@ import { forecastDays, loadForecast } from "../live/forecast.ts";
 import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
 import { isHeatPump, readHeatPump, type HeatPumpInfo } from "../live/heat-pump.ts";
 import { coverageColor, isAccessPoint, networkHealth, readAccessPoint } from "../live/wifi.ts";
+import type { FurnitureColors } from "../furniture-colors.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
@@ -91,6 +92,7 @@ export class NfView3d extends LitElement {
     heatMode: { attribute: false },
     theme: { attribute: false },
     accent: { attribute: false },
+    furnitureColors: { attribute: false },
     packs: { attribute: false },
     showEnergy: { attribute: false },
     flows: { attribute: false },
@@ -114,6 +116,7 @@ export class NfView3d extends LitElement {
     _liveEnergy: { state: true },
     _liveCards: { state: true },
     _liveCardOn: { state: true },
+    _houseFolded: { state: true },
     _swipe: { state: true },
     _menu: { state: true },
     _pluginWindow: { state: true },
@@ -209,6 +212,8 @@ export class NfView3d extends LitElement {
   declare theme: Theme;
   /** Accent colour for the neon look ("#rrggbb"), null for the stock cyan. */
   declare accent: string | null;
+  /** The card's own furniture colours, on top of the house-wide ones (#82). */
+  declare furnitureColors: FurnitureColors | null;
   /** Show the energy values at the top (cards can switch them off). */
   declare showEnergy: boolean;
   /** Power flow lines fixed on or off (cards); null: the viewer's own toggle decides. */
@@ -388,6 +393,8 @@ export class NfView3d extends LitElement {
   private declare _liveCards: LiveCard[];
   /** The floating cards show (the viewer's choice, kept in the browser). */
   private declare _liveCardOn: boolean;
+  /** The house card folded to its ring by the small corner button; remembered in this browser. */
+  private declare _houseFolded: boolean;
 
   private viewer: NextFloorViewer | null = null;
   private starting = false;
@@ -425,6 +432,7 @@ export class NfView3d extends LitElement {
     this.heatMode = "none";
     this.theme = "neon";
     this.accent = null;
+    this.furnitureColors = null;
     this.furnish = false;
     this.weather = true;
     this.weatherEntityId = null;
@@ -434,6 +442,7 @@ export class NfView3d extends LitElement {
     this._liveEnergy = null;
     this._liveCards = [];
     this._liveCardOn = localStorage.getItem("nextfloor.cards") !== "0";
+    this._houseFolded = localStorage.getItem("nextfloor.house_card_folded") === "1";
     this.selectedFurniture = null;
     this.selectedDevice = null;
     this._sky = 0;
@@ -599,6 +608,7 @@ export class NfView3d extends LitElement {
       this.viewer.setGlassWalls((this.glassWalls ?? 20) / 100);
       this.viewer.setTheme(this.theme);
       this.viewer.setAccent(this.accent ?? null);
+      this.viewer.setFurnitureColors(this.furnitureColors ?? null);
       this.viewer.setNavigationLocked(this._locked);
       this.viewer.setFurnishMode(this.furnish);
       this.viewer.setTapInRoom(this.tapInRoom);
@@ -704,6 +714,7 @@ export class NfView3d extends LitElement {
     if (changed.has("theme")) v.setTheme(this.theme);
     if (changed.has("_locked")) v.setNavigationLocked(this._locked);
     if (changed.has("accent")) v.setAccent(this.accent ?? null);
+    if (changed.has("furnitureColors")) v.setFurnitureColors(this.furnitureColors ?? null);
     if (changed.has("surfaceGrab")) v.setSurfaceGrab(this.surfaceGrab ?? null);
     if (changed.has("furnishTypes")) v.setFurnishTypes(this.furnishTypes ?? null);
     if (changed.has("furnish")) {
@@ -2633,6 +2644,15 @@ export class NfView3d extends LitElement {
     if (i === this._liveCards.length - 1) unstackLhCards(this.renderRoot);
   }
 
+  private toggleHouseFold(): void {
+    this._houseFolded = !this._houseFolded;
+    try {
+      localStorage.setItem("nextfloor.house_card_folded", this._houseFolded ? "1" : "0");
+    } catch {
+      // private mode: the choice lasts for this page only
+    }
+  }
+
   private toggleLhCards(): void {
     this._liveCardOn = !this._liveCardOn;
     try {
@@ -2762,7 +2782,7 @@ export class NfView3d extends LitElement {
       class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
     >
-      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }))} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
+      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats

@@ -54,6 +54,7 @@ The card's own options win. A change in the editor reaches every card that uses 
 |---|---|---|
 | `theme` | `auto` | `neon`, `blueprint`, `day` |
 | `accent` | cyan | accent colour as `#rrggbb` |
+| `furniture_colors` | the house's | this card's own furniture colours, e.g. `{body: "#3a2a1a", fabric: "#552233"}`; roles: `body`, `wood`, `fabric`, `white`, `metal`, `dark` |
 | `walls` | | wall mode of the view |
 | `solid_walls` | `false` | opaque walls in their paint instead of glass |
 | `glass_walls` | `20` | how opaque the see-through walls are, 0 … 100 % |

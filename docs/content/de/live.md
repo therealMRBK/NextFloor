@@ -49,6 +49,8 @@ Die Kamera findet sich selbst: Jede `camera`, deren Attribute `vacuum_position` 
 
 **Aus den Räumen (am einfachsten):** Nennt die Karte des Roboters ihre Räume (die Dreame-Integration tut das mit `rooms`), erscheint bei der Station der Knopf *Aus den Räumen kalibrieren*. Er legt die gleichnamigen Räume der Karte auf die Räume des Stockwerks, auf dem die Station steht. Groß- und Kleinschreibung, Leerzeichen und Bindestriche zählen nicht. Mindestens zwei Räume müssen gleich heißen, ab drei erkennt NextFloor auch eine gespiegelte Karte selbst. Der Roboter muss dafür nicht fahren.
 
+**Von Hand nachrücken:** Sitzt die Karte danach ein Stück daneben, schieben die Pfeile unter der Kalibrierung sie um 10 cm, ⟲ ⟳ drehen sie um 1°, − + ändern ihre Größe um 1 %. Jeder Klick wird sofort gespeichert.
+
 **Über die Position des Roboters:**
 
 1. Im Plan die **Station** des Roboters wählen.

@@ -37,6 +37,7 @@ description: Bewegen, Geräte schalten, das Raum-Fenster und das Zentralmenü be
 |---|---|
 | Qualität | *Auto*, *Tablet*, *Hoch* |
 | Thema | *Neon*, *Blueprint*, *Tag*, mit einer Akzentfarbe |
+| Möbelfarben | im Editor unter *Einstellungen*: eine Farbe je Material (Korpus, Holz, Stoff, Weiß, Metall, Dunkel) für das ganze Haus, auch für Möbel aus dem Möbelbauer und den Paketen. Am stärksten im Look Neon |
 | Symbole | *Keine*, *Wichtige*, *Alle* |
 | Look *Auto* | tagsüber der Tag-Look, nach Sonnenuntergang Neon |
 

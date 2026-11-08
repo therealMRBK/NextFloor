@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { entity, hassOf } from "../entities/fixtures.ts";
-import { calibrationFrom, calibrationFromRooms, gridMapper, gridPlaces, gridRooms, gridTurn, mapCamera, readVacuum, type VacuumCalibration } from "./vacuum-map.ts";
+import { calibrationFrom, calibrationFromRooms, gridMapper, gridPlaces, gridRooms, gridTurn, mapCamera, nudgeCalibration, readVacuum, type VacuumCalibration } from "./vacuum-map.ts";
 
 /** Two decimals, so a test can compare pairs without float noise. */
 const r2 = (v: number) => Math.round(v * 100) / 100;
@@ -226,4 +226,16 @@ test("rooms that do not match, or match the wrong way round, give no calibration
   // the plan's office and bedroom swapped: no fit puts every room where the plan has it
   const swapped = planOf(DREAME_ROOMS, (n) => (n === "Büro" ? "Wohnzimmer" : n === "Wohnzimmer" ? "Büro" : n === "Bad" ? "Flur" : n === "Flur" ? "Bad" : n));
   assert.equal(calibrationFromRooms(swapped, robot).cal, null);
+});
+
+test("a nudge moves, turns and scales the whole map by hand", () => {
+  const cal: VacuumCalibration = { a: [0, 0], ga: [0, 0], b: [4, 0], gb: [4000, 0] };
+  const moved = gridMapper(nudgeCalibration(cal, { move: [0.1, -0.2] }))!;
+  assert.deepEqual(moved([2000, 0]).map((v) => Math.round(v * 1000) / 1000), [2.1, -0.2]);
+  const turned = nudgeCalibration(cal, { turn: 90 });
+  assert.deepEqual(turned.a, [2, -2]);
+  assert.deepEqual(turned.b, [2, 2]);
+  const grown = nudgeCalibration(cal, { grow: 1.5 });
+  assert.deepEqual([grown.a, grown.b], [[-1, 0], [5, 0]]);
+  assert.deepEqual(grown.ga, cal.ga);
 });

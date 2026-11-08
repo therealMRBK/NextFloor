@@ -80,9 +80,29 @@ function ring(share: number, color: string): TemplateResult {
   </svg>`;
 }
 
-function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number): TemplateResult {
+/** The house card's fold: a small corner button shrinks it to its ring and the sun's power, on desktop and phones. */
+export interface LiveCardFold {
+  folded: boolean;
+  toggle: () => void;
+}
+
+function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number, fold?: LiveCardFold): TemplateResult {
   const s = c.summary;
   const t = (k: Parameters<typeof translate>[1]) => translate(hass, k);
+  const own = c.autarky;
+  const foldBtn = fold
+    ? html`<button class="live-fold" title=${t(fold.folded ? "live_unfold" : "live_fold")} aria-label=${t(fold.folded ? "live_unfold" : "live_fold")} aria-expanded=${!fold.folded} @click=${fold.toggle}>${fold.folded ? "+" : "−"}</button>`
+    : nothing;
+  if (fold?.folded) {
+    const sun = s.solar !== null ? `☀ ${watts(hass, s.solar)}` : s.consumption !== null ? `⌂ ${watts(hass, s.consumption)}` : null;
+    return html`<div class="live-card live-card-house live-folded" data-i=${i}>
+      ${own !== null
+        ? html`<div class="live-own">${ring(own, own > 0.95 ? "#4ade80" : own > 0.6 ? "#facc15" : "#f87171")}<div class="live-own-text"><b>${Math.round(own * 100)}%</b></div></div>`
+        : nothing}
+      ${sun ? html`<b>${sun}</b>` : own === null ? html`<b>⌂</b>` : nothing}
+      ${foldBtn}
+    </div>`;
+  }
   const rows: TemplateResult[] = [];
   if (s.solar !== null) rows.push(html`<div class="live-row live-solar"><span>☀ ${t("energy_solar")}</span><b>${watts(hass, s.solar)}</b></div>`);
   if (s.consumption !== null) rows.push(html`<div class="live-row live-house"><span>⌂ ${t("energy_consumption")}</span><b>${watts(hass, s.consumption)}</b></div>`);
@@ -98,8 +118,8 @@ function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number): Te
     rows.push(html`<div class="live-row ${exporting ? "live-export" : "live-import"}"><span>⇄ ${t(exporting ? "energy_grid_export" : "energy_grid_import")}</span><b>${watts(hass, s.grid)}</b></div>`);
   }
   for (const m of c.meters ?? []) rows.push(html`<div class="live-row live-meter"><span>${m.icon} ${m.label}</span><b>${m.value}</b></div>`);
-  const own = c.autarky;
   return html`<div class="live-card live-card-house" data-i=${i}>
+    ${foldBtn}
     ${own !== null
       ? html`<div class="live-own">${ring(own, own > 0.95 ? "#4ade80" : own > 0.6 ? "#facc15" : "#f87171")}<div class="live-own-text"><b>${Math.round(own * 100)} %</b><span>${t("live_autarky")}</span></div></div>`
       : nothing}
@@ -221,8 +241,15 @@ function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act
 export function unstackLhCards(root: ParentNode): void {
   const cards = [...root.querySelectorAll<HTMLElement>(".live-card")].filter((el) => el.style.visibility !== "hidden");
   const placed: { x0: number; x1: number; y0: number; y1: number }[] = [];
+  // a card near the edge slides back into the view (on a phone it was cut off); its thread still points home
+  const width = cards[0]?.parentElement?.clientWidth ?? 0;
   const items = cards
-    .map((el) => ({ el, x: Number(el.dataset.x), y: Number(el.dataset.y), w: el.offsetWidth, h: el.offsetHeight }))
+    .map((el) => {
+      const [anchor, w] = [Number(el.dataset.x), el.offsetWidth];
+      const x = !width ? anchor : width > w + 16 ? Math.min(Math.max(anchor, w / 2 + 8), width - w / 2 - 8) : width / 2;
+      el.style.setProperty("--live-dx", `${Math.round(anchor - x)}px`);
+      return { el, x, y: Number(el.dataset.y), w, h: el.offsetHeight };
+    })
     .sort((a, b) => b.y - a.y);
   for (const it of items) {
     let bottom = it.y;
@@ -285,10 +312,10 @@ function heatPumpCard(hass: HomeAssistant | undefined, c: HeatPumpCard, i: numbe
   </div>`;
 }
 
-export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction): TemplateResult | typeof nothing {
+export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction, fold?: LiveCardFold): TemplateResult | typeof nothing {
   if (!cards.length) return nothing;
   return html`<div class="live-cards">
-    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : c.kind === "heatpump" ? heatPumpCard(hass, c, i) : mediaCard(hass, c, i, act)))}
+    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i, fold) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : c.kind === "heatpump" ? heatPumpCard(hass, c, i) : mediaCard(hass, c, i, act)))}
   </div>`;
 }
 
@@ -299,6 +326,24 @@ export const liveCardStyles = css`
     pointer-events: none;
     overflow: hidden;
     z-index: 2;
+    container-type: size;
+  }
+  /* a phone: the cards keep to the screen, the house card leaves its week out */
+  @container (max-width: 480px) {
+    .live-card {
+      gap: 8px;
+      padding: 8px 10px;
+      font-size: 11.5px;
+    }
+    .live-card-house:not(.live-folded) {
+      padding-right: 28px;
+    }
+    .live-card-house .live-week {
+      display: none;
+    }
+    .live-rows {
+      min-width: 0;
+    }
   }
   .live-card {
     position: absolute;
@@ -325,11 +370,48 @@ export const liveCardStyles = css`
     /* a thin glowing thread down to the point the card belongs to */
     content: "";
     position: absolute;
-    left: 50%;
+    left: clamp(12px, calc(50% + var(--live-dx, 0px)), calc(100% - 12px));
     bottom: calc(-1 * var(--live-thread, 18px));
     width: 1px;
     height: var(--live-thread, 18px);
     background: linear-gradient(color-mix(in srgb, var(--nf-text) 45%, transparent), transparent);
+  }
+  .live-fold {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--nf-text) 10%, transparent);
+    color: var(--nf-text);
+    font: inherit;
+    font-size: 13px;
+    line-height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  .live-fold:hover,
+  .live-fold:focus-visible {
+    opacity: 1;
+    background: color-mix(in srgb, var(--nf-text) 20%, transparent);
+  }
+  .live-card-house:not(.live-folded) {
+    padding-right: 30px;
+  }
+  .live-folded {
+    padding: 6px 30px 6px 8px;
+    gap: 8px;
+  }
+  .live-folded .live-own,
+  .live-folded .live-ring {
+    width: 38px;
+    height: 38px;
+  }
+  .live-folded .live-own-text b {
+    font-size: 11px;
   }
   .live-rows {
     display: grid;

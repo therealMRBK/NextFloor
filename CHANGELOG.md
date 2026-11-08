@@ -6,6 +6,9 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Furniture colours per material** (thanks @eskahone, #82): in the editor under *Settings*, each material furniture is built from (body, wood, fabric, white, metal, dark) gets a colour for the whole house, pieces from the furniture builder and the packs included. A card can set its own with `furniture_colors`, or in the card editor under *Furniture colours of this card*.
+- **Fold the energy card:** a small button in the corner of the glass energy card folds it down to its ring and the solar power, on phones and desktops; the browser remembers it.
+- **Fine-tune a robot map by hand** (#109): after calibrating, arrows move the map by 10 cm, ⟲ ⟳ turn it by 1° and − + change its size by 1 %.
 - **Weather forecast card** (thanks @eskahone, #84): in the house settings under *Weather forecast*, choose 3, 5 or 7 days and a top corner. A small card shows the weather of each day with its high and low and the rain.
 - **More days on the "Today" card** (#84): *Days on the "Today" card* lists the appointments of up to seven days, each later day under its own heading.
 
@@ -21,6 +24,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **Live cards cut off on phones:** a card near the edge of the view now slides back in, its thread still pointing to where it belongs.
 - **Room colours on other floors** (thanks @LDSign, #110): a room with its own wall colour no longer paints the walls of the floors above or below that lie in the same spot of the plan.
 
 - **Dreame robot maps** (thanks @lina-alexrt, #109): the map camera of the Dreame integration names the dock `charger_position` instead of `charger`. NextFloor now reads both, so the robot's real position can be calibrated and shown on the plan. Without a `path` on the camera no trail is drawn.

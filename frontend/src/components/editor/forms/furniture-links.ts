@@ -4,14 +4,14 @@ import { html, nothing, type TemplateResult } from "lit";
 import { canHangOff, deviceMeter, meterParent, subMeterIds } from "../../../energy.ts";
 import { furnitureEntities, hasScreen, isCooling, isMediaFurniture, isSpeakerFurniture, isStatusSensor, robotRoomSensor } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { ENERGY_DEVICES, isLamp, type Furniture } from "../../../model.ts";
+import { ENERGY_DEVICES, isLamp, type Furniture, type VacuumCalibration } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
 import { entityOptions, isBinary, isNumeric, isPowerSensor } from "../entities.ts";
 import { checkField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
-import { calibrationFrom, calibrationFromRooms, gridPlaces, gridRooms, mapCamera, type Place } from "../../../live/vacuum-map.ts";
+import { calibrationFrom, calibrationFromRooms, gridPlaces, gridRooms, mapCamera, nudgeCalibration, type CalibrationNudge, type Place } from "../../../live/vacuum-map.ts";
 
 /** What the forms of a piece of furniture make the editor do. */
 export interface FurnitureLinkActions {
@@ -88,6 +88,20 @@ async function currentPlaces(host: EditorHost): Promise<{ at: [number, number] |
   return gridPlaces(host.hass, camera);
 }
 
+/** Buttons that shift, turn and scale a calibration by hand, for a fitted map that sits a little off (#109). */
+function nudgeRow(host: EditorHost, cal: VacuumCalibration): TemplateResult {
+  const t = host.t;
+  const step = (nudge: CalibrationNudge) => host.change((doc) => void (doc.settings.vacuum_map = nudgeCalibration(cal, nudge)));
+  const btn = (label: string, title: string, nudge: CalibrationNudge) =>
+    html`<button class="nf-btn" title=${title} aria-label=${title} ?disabled=${!host.admin} @click=${() => step(nudge)}>${label}</button>`;
+  const [move, turn, grow] = [t("robot_cal_nudge_move"), t("robot_cal_nudge_turn"), t("robot_cal_nudge_grow")];
+  return html`${hint(t("robot_cal_nudge"), "nf-wide")}
+    <div class="nf-wide" style="display:flex;flex-wrap:wrap;gap:6px">
+      ${btn("←", move, { move: [-0.1, 0] })}${btn("→", move, { move: [0.1, 0] })}${btn("↑", move, { move: [0, -0.1] })}${btn("↓", move, { move: [0, 0.1] })}
+      ${btn("⟲", turn, { turn: -1 })}${btn("⟳", turn, { turn: 1 })}${btn("−", grow, { grow: 0.99 })}${btn("+", grow, { grow: 1.01 })}
+    </div>`;
+}
+
 function robotMapBlock(host: EditorHost, item: Furniture): TemplateResult {
   const t = host.t;
   const cal = host.doc.settings.vacuum_map ?? null;
@@ -128,6 +142,7 @@ function robotMapBlock(host: EditorHost, item: Furniture): TemplateResult {
     cal
       ? checkField(host, t("robot_cal_mirror"), !!cal.mirror, (on) => host.change((doc) => void (doc.settings.vacuum_map = { ...cal, mirror: on })))
       : nothing,
+    cal ? nudgeRow(host, cal) : nothing,
     cal ? html`<button class="nf-btn nf-wide" ?disabled=${!host.admin} @click=${() => host.change((doc) => void (doc.settings.vacuum_map = null))}>${t("robot_cal_forget")}</button>` : nothing,
     hint(t("robot_cal_hint"), "nf-wide"),
   );

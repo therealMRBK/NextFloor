@@ -3,6 +3,7 @@ import { weatherEntity } from "../../../weather.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, DEFAULT_WEATHER_EFFECTS, WEATHER_EFFECTS, type Building, type RoofType } from "../../../model.ts";
 import { entityName } from "../../../devices.ts";
+import { FURNITURE_ROLES, STOCK_ROLE_HEX } from "../../../furniture-colors.ts";
 import { entityOptions } from "../entities.ts";
 import { renderCompass } from "./compass.ts";
 import { renderMapSettings } from "./map.ts";
@@ -72,6 +73,14 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${colorField(host, t("wall_paint_outside"), s.wall_paint_outside, DEFAULT_PAINT_OUTSIDE, (v) => set({ wall_paint_outside: v }))}
       ${colorField(host, t("wall_paint_inside"), s.wall_paint_inside, DEFAULT_PAINT_INSIDE, (v) => set({ wall_paint_inside: v }))}
       ${hint(t("wall_paint_hint"), "nf-wide")}
+      ${FURNITURE_ROLES.map((role) =>
+        colorField(host, t(`furn_color_${role}`), s.furniture_colors?.[role], STOCK_ROLE_HEX[role], (v) => {
+          const colors = { ...s.furniture_colors, [role]: v };
+          if (!v) delete colors[role];
+          set({ furniture_colors: Object.keys(colors).length ? colors : null });
+        }),
+      )}
+      ${hint(t("furn_color_hint"), "nf-wide")}
       ${numberField(host, t("grid"), s.grid, (v) => set({ grid: clamp(v, 0.01, 1) }), 0.01, 0.01)}
       ${selectField(host, t("units"), s.units === "imperial" ? "imperial" : "metric", [["metric", t("units_metric")], ["imperial", t("units_imperial")]] as const, (v) => set({ units: v === "imperial" ? "imperial" : null }), { title: t("units_hint") })}
       ${renderCompass(host, s.north, (north) => set({ north }))}

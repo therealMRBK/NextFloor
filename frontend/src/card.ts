@@ -347,6 +347,7 @@ export class NextFloorCard extends LitElement {
       .walkButton=${c?.walk_button !== false}
       .travelButton=${c?.time_travel !== false}
       .accent=${c?.accent ?? null}
+      .furnitureColors=${c?.furniture_colors ?? null}
       .showEnergy=${c?.energy ?? true}
       .flows=${c?.flows ?? null}
       .holograms=${c?.holograms ?? null}

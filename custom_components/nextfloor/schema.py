@@ -820,6 +820,14 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("map", default=None): vol.Any(None, MAP_SCHEMA),
         # a robot vacuum's own map on the plan (live/vacuum-map.ts)
         vol.Optional("vacuum_map", default=None): vol.Any(None, VACUUM_MAP_SCHEMA),
+        # furniture colours per role, house-wide (#82); a card can set its own on top
+        vol.Optional("furniture_colors", default=None): vol.Any(
+            None,
+            {
+                vol.Optional(role): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$"))
+                for role in ("body", "wood", "fabric", "white", "metal", "dark")
+            },
+        ),
         # plugin modules the panel and the card import (docs/plugins.md); no default, so plans stay as stored
         vol.Optional("plugins"): vol.All([PLUGIN_SCHEMA], vol.Length(max=20)),
         # plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident

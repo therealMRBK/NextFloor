@@ -4,6 +4,7 @@
 import { html, LitElement, nothing, type TemplateResult } from "lit";
 import { fetchBuilding } from "./api.ts";
 import { MARKER_KINDS, type MarkerKind } from "./entities/kinds.ts";
+import { FURNITURE_ROLES, STOCK_ROLE_HEX, type FurnitureColors, type FurnitureRole } from "./furniture-colors.ts";
 import { CARD_CONTROLS, type CardConfig, type CardControl } from "./card-config.ts";
 import { checkbox, choice, DEFAULTS, flagOption, followOrForce, numberChoice, switchOption, textField, type FormContext } from "./card-editor/form.ts";
 import { editorStyles } from "./card-editor/styles.ts";
@@ -211,6 +212,26 @@ export class NextFloorCardEditor extends LitElement {
       <p class="hint">${f.t("card_pro_hint")}</p>`;
   }
 
+  /** The card's own furniture colours per role, on top of the house-wide ones (#82). */
+  private furnitureColors(f: FormContext): TemplateResult {
+    const own = this._config.furniture_colors ?? {};
+    const put = (role: FurnitureRole, v: string | null) => {
+      const next: FurnitureColors = { ...own, [role]: v };
+      if (!v) delete next[role];
+      f.set("furniture_colors", Object.keys(next).length ? next : undefined);
+    };
+    return html`<details class="field">
+      <summary>${f.t("furn_colors_card")}${Object.keys(own).length ? ` (${Object.keys(own).length})` : ""}</summary>
+      ${FURNITURE_ROLES.map(
+        (role) => html`<label class="field"
+          >${f.t(`furn_color_${role}`)}
+          <input type="color" .value=${own[role] ?? STOCK_ROLE_HEX[role]} @input=${(e: Event) => put(role, (e.target as HTMLInputElement).value)} />
+          ${own[role] ? html`<button type="button" class="link" @click=${() => put(role, null)}>${f.t("furn_color_house")}</button>` : nothing}
+        </label>`,
+      )}
+    </details>`;
+  }
+
   /** The view: start floor, size, theme, accent colour, walls, quality and floor stacking. */
   private viewSection(): TemplateResult {
     const f = this.form;
@@ -263,6 +284,7 @@ export class NextFloorCardEditor extends LitElement {
           <input type="color" .value=${this._config.accent ?? "#37e0ff"} @input=${(e: Event) => f.set("accent", (e.target as HTMLInputElement).value)} />
           ${this._config.accent ? html`<button type="button" class="link" @click=${() => f.set("accent", undefined)}>${f.t("accent_reset")}</button>` : nothing}
         </label>
+        ${this.furnitureColors(f)}
         ${choice(f, "walls", "card_walls", [["auto", "walls_auto"], ["cut", "walls_cut"], ["slope", "walls_slope"]], v.walls)}
         ${switchOption(f, "solid_walls", "card_solid_walls")}
         <label class="field" title=${f.t("glass_walls_hint")}

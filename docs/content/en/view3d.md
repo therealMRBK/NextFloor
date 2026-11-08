@@ -37,6 +37,7 @@ Open a room to get its panel:
 |---|---|
 | Quality | *Auto*, *Tablet*, *High* |
 | Theme | *Neon*, *Blueprint*, *Day*, with an accent colour |
+| Furniture colours | in the editor under *Settings*: one colour per material (body, wood, fabric, white, metal, dark) for the whole house, pieces from the furniture builder and the packs included. Shows most in the Neon look |
 | Markers | *None*, *Important*, *All* |
 | Look *Auto* | the day look while the sun is up, neon after sunset |
 

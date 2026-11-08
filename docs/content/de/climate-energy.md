@@ -34,7 +34,7 @@ Die Temperatur-Skala ist von Mai bis September eine Sommer-Skala, sonst eine Win
 
 Die Energiefunktionen brauchen ein **Solarfeld**, einen **Zähler** und einen **Wechselrichter**. Batterie und Netzanschluss sind optional. Die Einrichtung steht unter [Außen, Dach und Energie](outside.md#energie).
 
-- **Stromfluss:** Teilchen laufen von den Solarmodulen zu Wechselrichter, Haus, Akku und Netz, entlang der echten [Kabelwege](outside.md#energie), die du gezeichnet hast. Eine Glaskarte zeigt Bilanz und Autarkie.
+- **Stromfluss:** Teilchen laufen von den Solarmodulen zu Wechselrichter, Haus, Akku und Netz, entlang der echten [Kabelwege](outside.md#energie), die du gezeichnet hast. Eine Glaskarte zeigt Bilanz und Autarkie; der kleine Knopf in ihrer Ecke klappt sie auf Ring und Sonnenleistung zusammen (am Handy wie am Rechner, der Browser merkt es sich).
 - **Akku:** Ein Hausspeicher zeigt seinen Ladestand an der Front.
 - **Zähler:** Gas- und Wasserzähler stellen ihre Werte zur Bilanz.
 - **Etagen-Zähler:** Ein Leistungssensor je Etage zeigt seinen Wert auf dem Etagen-Schild und seinen Anteil am Haus.

@@ -34,7 +34,7 @@ The temperature scale is a summer scale from May to September and a winter scale
 
 The energy features need a **solar field**, a **meter** and an **inverter**. Battery and grid connection are optional. Setup is in [Outside, roof and energy](outside.md#energy).
 
-- **Power flow:** particles run from the solar modules to the inverter, the house, the battery and the grid, along the real [cable routes](outside.md#energy) you drew. A glass card shows the balance and your self-sufficiency.
+- **Power flow:** particles run from the solar modules to the inverter, the house, the battery and the grid, along the real [cable routes](outside.md#energy) you drew. A glass card shows the balance and your self-sufficiency; the small button in its corner folds it down to the ring and the solar power (on phones and desktops alike, the browser remembers it).
 - **Battery:** a home battery shows its charge on its front.
 - **Meters:** gas and water meters add their readings to the balance.
 - **Floor meter:** a power sensor per floor shows its value on the floor label and its share of the house.
