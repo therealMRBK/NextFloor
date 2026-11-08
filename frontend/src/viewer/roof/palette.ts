@@ -28,3 +28,12 @@ export const WINDOW_FRAME = shade(0xc9d3e6, 0.85);
 export const WINDOW_WARM = shade(0xffb347, 0.95);
 export const WINDOW_GLASS = new Color(0x2b6b8f);
 export const WINDOW_BLIND = new Color(0x3a4258);
+
+/** Chimneys: brick or render, a darker cap, the black flue, and steel for a flue pipe. */
+export const CHIMNEY = 0x3a2b30;
+export const CHIMNEY_TOP = 0x4a3840;
+export const CHIMNEY_CAP = 0x2a3448;
+export const CHIMNEY_FLUE = 0x05070b;
+export const CHIMNEY_STEEL = 0x8b97ad;
+export const CHIMNEY_STEEL_TOP = 0xb4c0d4;
+export const CHIMNEY_EDGE = shade(0x5b7cff, 0.4);

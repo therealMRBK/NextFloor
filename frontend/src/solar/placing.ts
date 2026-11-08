@@ -1,8 +1,8 @@
 // Proposals for new fields and windows, moving a field to another face, and turning a garden field.
 
-import type { Building, RoofWindow, SolarField } from "../model.ts";
+import type { Building, RoofChimney, RoofWindow, SolarField } from "../model.ts";
 import { GROUND, groundFace, wallFaces, type RoofFace } from "./faces.ts";
-import { clampField, fieldModules, fieldSize, MODULE_GAP, MODULE_H, MODULE_W, moduleSize, ROOF_WINDOW_H, ROOF_WINDOW_W, rowPitch } from "./fields.ts";
+import { CHIMNEY_SIZE, chimneyAsField, clampField, fieldModules, fieldSize, MODULE_GAP, MODULE_H, MODULE_W, moduleSize, ROOF_WINDOW_H, ROOF_WINDOW_W, rowPitch } from "./fields.ts";
 import { bearingOf, cm, DEG } from "./vec.ts";
 
 /** The u that centres a field of its column count along the eave of a face. */
@@ -88,4 +88,12 @@ export function proposeWindow(face: RoofFace, id: string): RoofWindow {
     contact: null,
     tilt: null,
   };
+}
+
+/** A new chimney: a brick one near the ridge, in the middle of the face. */
+export function proposeChimney(face: RoofFace, id: string): RoofChimney {
+  const size = CHIMNEY_SIZE.brick;
+  const [from, to] = face.span(face.ls * 0.8);
+  const depth = chimneyAsField({ id, face: face.key, u: 0, v: 0 }, face).module_h!;
+  return { id, face: face.key, u: cm((from + to - size.w) / 2), v: cm(Math.max(0, Math.min(face.ls - depth, face.ls * 0.8 - depth / 2))), shape: "brick", w: null, d: null, h: null };
 }

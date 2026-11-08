@@ -2,7 +2,7 @@
 // house view only; the viewer lifts it and fades it out when the camera zooms in.
 
 import type { Building } from "../../model.ts";
-import { pushRoofWindows, pushSolar, type RoofWindowState } from "./fittings.ts";
+import { pushChimneys, pushRoofWindows, pushSolar, type RoofWindowState } from "./fittings.ts";
 import { buildSections } from "./sections.ts";
 import { buildSingleRoof } from "./single.ts";
 import type { RoofGeometry } from "./types.ts";
@@ -14,5 +14,6 @@ export function buildRoof(b: Building, windows: ReadonlyMap<string, RoofWindowSt
   const parts = roof?.type === "custom" ? buildSections(b, roof.sections ?? [], roof.overhang) : single ? [single] : [];
   pushSolar(b, parts);
   pushRoofWindows(b, parts, windows);
+  pushChimneys(b, parts);
   return parts;
 }

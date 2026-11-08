@@ -39,6 +39,7 @@ Damit Geräte nicht im Außen-Panel erscheinen, gibt es *Einstellungen → Drau�
 Das Werkzeug *Dach* baut Dachflächen aus den Räumen: Form, Firstrichtung, Traufe, Neigung. Ziehen verschiebt, Ecken ändern die Größe. Die einfache Dachform steht in den Einstellungen.
 
 - **Dachfenster** sitzen auf einer Fläche und bekommen Rollladen und Kontakte.
+- **Schornsteine** (*+ Schornstein* im Dach-Werkzeug) gibt es gemauert, rund, breit mit zwei Zügen oder als Edelstahlrohr mit Regenhut. Breite, Tiefe (oder Durchmesser) und die Höhe über dem Dach sind einstellbar; verschieben lässt er sich im Grundriss und in der 3D-Ansicht, auch auf eine andere Dachfläche.
 - **Sattel-, Walm- und Krüppelwalmflächen** können an jedem Firstende anders enden. Ein Flügel, der an ein größeres Dach stößt, läuft mit Kehlen in dessen Fläche.
 - Ein Abschnitt dreht sich mit *Drehung (°)* um seine Mitte, für einen Flügel im Winkel.
 - Ein Krüppelwalm hat einen Regler, wie hoch sein Walm beginnt.

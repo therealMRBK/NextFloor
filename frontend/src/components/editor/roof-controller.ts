@@ -1,9 +1,9 @@
 // The roof tool's state and actions: which section, roof window or solar field is selected, and everything that adds, changes or
 // removes them. The forms and the plan canvas read its selection; the pointer code of the editor sets it.
 
-import { clampField, bestFace, fieldFace, proposeField, proposeGroundField, proposeWallField, proposeWindow, roofFaces, windowAsField } from "../../solar.ts";
+import { chimneyAsField, clampField, bestFace, fieldFace, proposeChimney, proposeField, proposeGroundField, proposeWallField, proposeWindow, roofFaces, windowAsField } from "../../solar.ts";
 import { floorOutline, polygonBox, proposeDormer, roofSectionsFromRooms } from "../../roof-sections.ts";
-import { uid, type Building, type Floor, type RoofSection, type RoofWindow, type SolarField, type SolarString, type Vec2 } from "../../model.ts";
+import { uid, type Building, type Floor, type RoofChimney, type RoofSection, type RoofWindow, type SolarField, type SolarString, type Vec2 } from "../../model.ts";
 import type { EditorHost } from "./host.ts";
 import { copyOfSection, removeRoofCorner, sectionFromRectangle } from "./ops/roof.ts";
 import { assignString, pruneStrings, toggledSkip } from "./ops/solar.ts";
@@ -24,6 +24,7 @@ export class RoofController {
   private readonly ctx: RoofContext;
   private sectionSel: string | null = null;
   private windowSel: string | null = null;
+  private chimneySel: string | null = null;
   private fieldSel: string | null = null;
   private pickMode = false;
 
@@ -46,6 +47,15 @@ export class RoofController {
   }
   set windowId(id: string | null) {
     this.windowSel = id;
+    this.ctx.refresh();
+  }
+
+  get chimneyId(): string | null {
+    return this.chimneySel;
+  }
+  set chimneyId(id: string | null) {
+    this.chimneySel = id;
+    if (id) this.windowSel = null;
     this.ctx.refresh();
   }
 
@@ -81,6 +91,9 @@ export class RoofController {
   }
   get window(): RoofWindow | undefined {
     return this.windowSel ? this.settings.windows?.find((w) => w.id === this.windowSel) : undefined;
+  }
+  get chimney(): RoofChimney | undefined {
+    return this.chimneySel ? this.settings.chimneys?.find((c) => c.id === this.chimneySel) : undefined;
   }
   get field(): SolarField | undefined {
     return this.fieldSel ? this.settings.solar?.find((f) => f.id === this.fieldSel) : undefined;
@@ -202,6 +215,41 @@ export class RoofController {
     if (!id || !this.admin) return;
     this.ctx.host.change((doc) => (doc.settings.roof.windows = (doc.settings.roof.windows ?? []).filter((w) => w.id !== id)));
     this.windowId = null;
+  }
+
+  // chimneys
+
+  /** Adds a brick chimney near the ridge of the first pitched face (else the first face). */
+  addChimney(): void {
+    if (!this.admin) return;
+    const faces = roofFaces(this.doc);
+    const face = faces.find((f) => !f.flat) ?? faces[0];
+    if (!face) return;
+    const created = proposeChimney(face, uid("chim"));
+    this.ctx.host.change((doc) => (doc.settings.roof.chimneys = [...(doc.settings.roof.chimneys ?? []), created]));
+    this.chimneySel = created.id;
+    this.windowSel = null;
+    this.sectionId = null;
+  }
+
+  /** Changes the selected chimney; it is moved back onto its face when the change made it overhang. */
+  patchChimney(patch: Partial<RoofChimney>): void {
+    const id = this.chimneySel;
+    if (!id || !this.admin) return;
+    this.ctx.host.change((doc) => {
+      const target = doc.settings.roof.chimneys?.find((c) => c.id === id);
+      if (!target) return;
+      Object.assign(target, patch);
+      const face = roofFaces(doc).find((f) => f.key === target.face);
+      if (face) Object.assign(target, clampField(face, chimneyAsField(target, face)));
+    });
+  }
+
+  removeChimney(): void {
+    const id = this.chimneySel;
+    if (!id || !this.admin) return;
+    this.ctx.host.change((doc) => (doc.settings.roof.chimneys = (doc.settings.roof.chimneys ?? []).filter((c) => c.id !== id)));
+    this.chimneyId = null;
   }
 
   // solar fields

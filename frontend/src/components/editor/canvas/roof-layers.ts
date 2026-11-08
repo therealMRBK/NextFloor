@@ -6,7 +6,7 @@ import { nothing, svg, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, type EnergyRoute, type Floor, type RoofSection, type RoutePoint, type Vec2 } from "../../../model.ts";
 import { dormerParent, effectiveDormer, headroomLines, ridgeHeight, sectionCutsBelow, sectionFrame, sectionGeometry } from "../../../roof-sections.ts";
-import { fieldCenter, fieldFace, fieldModules, roofFaces, windowCorners } from "../../../solar.ts";
+import { chimneyPlace, chimneySize, fieldCenter, fieldFace, fieldModules, roofFaces, windowCorners } from "../../../solar.ts";
 import type { RoofController } from "../roof-controller.ts";
 import { edgePlus, pointsAttribute, type CanvasContext } from "./context.ts";
 
@@ -189,4 +189,23 @@ export function energyRoutesLayer(ctx: CanvasContext, floor: Floor | undefined, 
     return svg`<g class=${`nf-route${drawing ? " nf-route-drawing" : ""}`}>${parts}</g>`;
   };
   return svg`<g class="nf-routes">${routes.filter((r) => r.key !== draft?.key).map((r) => one(r.points, false))}${draft ? one(draft.points, true) : nothing}</g>`;
+}
+
+/** Chimneys over the plan as their footprint (square or round), the selected one highlighted. */
+export function chimneysLayer(ctx: CanvasContext, roof: RoofController): Layer {
+  const chimneys = ctx.host.doc.settings.roof.chimneys ?? [];
+  if (chimneys.length === 0) return nothing;
+  const faces = new Map(roofFaces(ctx.host.doc).map((f) => [f.key, f]));
+  const one = (c: (typeof chimneys)[number]) => {
+    const face = faces.get(c.face);
+    if (!face) return nothing;
+    const { shape, w, d } = chimneySize(c);
+    const { center: m, along: a, across: x } = chimneyPlace(face, c);
+    const ring: Vec2[] =
+      shape === "round" || shape === "steel"
+        ? Array.from({ length: 16 }, (_, i) => [m[0] + (Math.cos((i / 16) * 2 * Math.PI) * Math.min(w, d)) / 2, m[1] + (Math.sin((i / 16) * 2 * Math.PI) * Math.min(w, d)) / 2] as Vec2)
+        : [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([su, sd]) => [m[0] + (a[0] * w * su) / 2 + (x[0] * d * sd) / 2, m[1] + (a[1] * w * su) / 2 + (x[1] * d * sd) / 2] as Vec2);
+    return svg`<g data-chimney=${c.id} class=${`nf-chimney${c.id === roof.chimneyId ? " nf-roofwin-sel" : ""}`}><polygon points=${pointsAttribute(ctx, ring)} /></g>`;
+  };
+  return svg`<g class="nf-roofwin-layer">${chimneys.map(one)}</g>`;
 }

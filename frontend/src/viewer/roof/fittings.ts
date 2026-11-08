@@ -1,9 +1,10 @@
 // What sits in a roof: solar modules and roof windows.
 
 import type { Building, SolarField } from "../../model.ts";
-import { fieldModules, roofFaces, windowCorners, type RoofFace } from "../../solar.ts";
-import { DEG, type GeoBuffer, type LineBuffer } from "../geo.ts";
-import { PANEL_LOOKS, PANEL_POST, WINDOW_BLIND, WINDOW_FRAME, WINDOW_GLASS, WINDOW_WARM } from "./palette.ts";
+import { chimneyPlace, chimneySize, fieldModules, roofFaces, windowCorners, type RoofFace } from "../../solar.ts";
+import { DEG, pushPrism, type GeoBuffer, type LineBuffer } from "../geo.ts";
+import type { Vec2 } from "../../model.ts";
+import { CHIMNEY, CHIMNEY_CAP, CHIMNEY_EDGE, CHIMNEY_FLUE, CHIMNEY_STEEL, CHIMNEY_STEEL_TOP, CHIMNEY_TOP, PANEL_LOOKS, PANEL_POST, WINDOW_BLIND, WINDOW_FRAME, WINDOW_GLASS, WINDOW_WARM } from "./palette.ts";
 import type { RoofGeometry } from "./types.ts";
 
 /** How far a roof window's sash is open (1 = open, a tilt counts less) and how far its blind is down. */
@@ -91,4 +92,74 @@ export function pushSolar(b: Building, parts: RoofGeometry[]): void {
     // faces have heights above the ground; parts count from their floor's level plus their base
     if (face && part) pushModules(part.solid, part.lines, face, field, part.floor.elevation + part.base);
   }
+}
+
+/**
+ * Chimneys: upright from inside the roof to `h` above its upper side. Brick and wide ones get a cap and their black flues on
+ * top, a round one a flue in its middle, a steel pipe a rain cap held a little above it.
+ */
+export function pushChimneys(b: Building, parts: RoofGeometry[]): void {
+  const chimneys = b.settings.roof?.chimneys ?? [];
+  if (chimneys.length === 0 || parts.length === 0) return;
+  const faces = new Map(roofFaces(b).map((f) => [f.key, f]));
+  for (const c of chimneys) {
+    const face = faces.get(c.face);
+    const part = face ? partOf(parts, face) : undefined;
+    if (!face || !part) continue;
+    const shift = part.floor.elevation + part.base;
+    const { shape, w, d, h } = chimneySize(c);
+    const place = chimneyPlace(face, c);
+    const [y0, y1] = [place.low - shift - 0.1, place.high - shift + h];
+    const rect = (hw: number, hd: number): Vec2[] => {
+      const { center: m, along: a, across: x } = place;
+      const p = (su: number, sd: number): Vec2 => [m[0] + a[0] * hw * su + x[0] * hd * sd, m[1] + a[1] * hw * su + x[1] * hd * sd];
+      return [p(-1, -1), p(1, -1), p(1, 1), p(-1, 1)];
+    };
+    const circle = (r: number, n = 16): Vec2[] => Array.from({ length: n }, (_, i) => [place.center[0] + Math.cos((i / n) * 2 * Math.PI) * r, place.center[1] + Math.sin((i / n) * 2 * Math.PI) * r] as Vec2);
+    const outline = (poly: Vec2[], y: number) => poly.forEach((p, i) => part.lines.seg([p[0], y, p[1]], [poly[(i + 1) % poly.length][0], y, poly[(i + 1) % poly.length][1]], CHIMNEY_EDGE));
+    const prism = (poly: Vec2[], from: number, to: number, side: number, top: number) => pushPrism(part.solid, ensureCcw(poly), from, to, side, top);
+    if (shape === "steel") {
+      const r = Math.min(w, d) / 2;
+      prism(circle(r, 12), y0, y1, CHIMNEY_STEEL, CHIMNEY_STEEL_TOP);
+      prism(circle(r * 0.75, 12), y1, y1 + 0.001, CHIMNEY_FLUE, CHIMNEY_FLUE);
+      // the rain cap on its little stand
+      prism(circle(r * 0.25, 6), y1, y1 + 0.1, CHIMNEY_STEEL, CHIMNEY_STEEL_TOP);
+      const hat = circle(r * 1.9, 12);
+      prism(hat, y1 + 0.1, y1 + 0.13, CHIMNEY_STEEL, CHIMNEY_STEEL_TOP);
+      outline(hat, y1 + 0.13);
+      continue;
+    }
+    if (shape === "round") {
+      const r = Math.min(w, d) / 2;
+      const body = circle(r);
+      prism(body, y0, y1, CHIMNEY, CHIMNEY_TOP);
+      prism(circle(r * 0.55), y1, y1 + 0.002, CHIMNEY_FLUE, CHIMNEY_FLUE);
+      outline(body, y1);
+      continue;
+    }
+    // brick and wide: the shaft, a cap a little wider, and the flues on top
+    const body = rect(w / 2, d / 2);
+    prism(body, y0, y1, CHIMNEY, CHIMNEY_TOP);
+    const cap = rect(w / 2 + 0.04, d / 2 + 0.04);
+    prism(cap, y1, y1 + 0.06, CHIMNEY_CAP, CHIMNEY_CAP);
+    outline(cap, y1 + 0.06);
+    outline(body, y1 - 0.25);
+    const flue = Math.min(w, d) * 0.25;
+    const flues = shape === "wide" ? [-w / 4, w / 4] : [0];
+    for (const off of flues) {
+      const m: Vec2 = [place.center[0] + place.along[0] * off, place.center[1] + place.along[1] * off];
+      const pipe: Vec2[] = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([su, sd]) => [m[0] + place.along[0] * flue * su + place.across[0] * flue * sd, m[1] + place.along[1] * flue * su + place.across[1] * flue * sd]);
+      prism(pipe, y1 + 0.06, y1 + 0.16, CHIMNEY_CAP, CHIMNEY_FLUE);
+    }
+  }
+}
+
+/** pushPrism wants its ring counter-clockwise in the plan (seen from above). */
+function ensureCcw(poly: Vec2[]): Vec2[] {
+  let area = 0;
+  for (let i = 0; i < poly.length; i++) {
+    const [p, q] = [poly[i], poly[(i + 1) % poly.length]];
+    area += p[0] * q[1] - q[0] * p[1];
+  }
+  return area < 0 ? [...poly].reverse() : poly;
 }

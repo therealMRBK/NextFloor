@@ -2,10 +2,10 @@
 
 import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
-import { ROOF_SHAPES, type RoofEnd, type RoofSection, type RoofShape, type RoofWindow } from "../../../model.ts";
+import { CHIMNEY_SHAPES, ROOF_SHAPES, type ChimneyShape, type RoofChimney, type RoofEnd, type RoofSection, type RoofShape, type RoofWindow } from "../../../model.ts";
 import { ridgeHeight, sectionFloor } from "../../../roof-sections.ts";
 import { sectionOverhang } from "../../../roof/geometry.ts";
-import { proposeWindow, roofFaces } from "../../../solar.ts";
+import { chimneySize, proposeChimney, proposeWindow, roofFaces } from "../../../solar.ts";
 import { entityOptions, isBinary, isNumeric } from "../entities.ts";
 import { actions, checkField, entityField, hint, numberField, selectField, textField, toThousandths } from "../fields.ts";
 import { sectionNumber } from "../ops/roof.ts";
@@ -153,6 +153,61 @@ function windowList(deps: RoofPanelDeps): TemplateResult {
   </section>`;
 }
 
+/** One chimney: its face, shape, size and place, and its name. */
+function chimneyForm(deps: RoofPanelDeps, c: RoofChimney): TemplateResult {
+  const { host, roof } = deps;
+  const t = host.t;
+  const faces = roofFaces(host.doc);
+  const set = (patch: Partial<RoofChimney>) => roof.patchChimney(patch);
+  const size = chimneySize(c);
+  const moveToFace = (key: string) => {
+    const next = faces.find((f) => f.key === key);
+    if (next) set({ ...proposeChimney(next, c.id), shape: c.shape, w: c.w, d: c.d, h: c.h, name: c.name });
+  };
+  const round = size.shape === "round" || size.shape === "steel";
+  const index = (host.doc.settings.roof.chimneys ?? []).findIndex((x) => x.id === c.id) + 1;
+  return html`${backButton(t("roof_sections"), () => (roof.chimneyId = null))}
+    <section>
+      ${heading(`🧱 ${t("chimney")} ${index}`, lockButton(host, !!c.locked, () => set({ locked: !c.locked })))}
+      <div class="nf-form">
+        ${selectField(host, t("chimney_shape"), size.shape, CHIMNEY_SHAPES.map((s): [ChimneyShape, string] => [s, t(`chimney_${s}` as I18nKey)]), (shape) => set({ shape, w: null, d: null, h: null }), { wide: true })}
+        ${selectField(host, t("solar_face"), c.face, faces.map((f): [string, string] => [f.key, faceLabel(host, f)]), moveToFace, { wide: true })}
+        ${round
+          ? numberField(host, t("chimney_diameter"), size.w, (v) => set({ w: clamped(0.1, 3)(v), d: clamped(0.1, 3)(v) }), 0.01, 0.1)
+          : html`${numberField(host, t("width"), size.w, (v) => set({ w: clamped(0.1, 3)(v) }), 0.01, 0.1)} ${numberField(host, t("chimney_depth"), size.d, (v) => set({ d: clamped(0.1, 3)(v) }), 0.01, 0.1)}`}
+        ${numberField(host, t("chimney_height"), size.h, (v) => set({ h: clamped(0.2, 5)(v) }), 0.05, 0.2)}
+        ${numberField(host, t("solar_u"), c.u, (v) => set({ u: toThousandths(v) }), 0.05)} ${numberField(host, t("solar_v"), c.v, (v) => set({ v: toThousandths(v) }), 0.05)}
+        ${textField(host, t("roof_window_name"), c.name ?? "", (v) => set({ name: v || null }), { wide: true, maxlength: 64 })}
+      </div>
+      ${hint(t("chimney_hint"))}
+      ${host.admin ? actions(html`<button class="nf-btn nf-danger" @click=${() => roof.removeChimney()}>${t("delete")}</button>`) : nothing}
+    </section>`;
+}
+
+/** The chimneys of the house, with a button that adds one. */
+function chimneyList(deps: RoofPanelDeps): TemplateResult {
+  const { host, roof } = deps;
+  const chimneys = host.doc.settings.roof.chimneys ?? [];
+  const faces = new Map(roofFaces(host.doc).map((f) => [f.key, f]));
+  const open = (id: string) => {
+    roof.chimneyId = id;
+    roof.sectionId = null;
+  };
+  return html`<section>
+    <h3>🧱 ${host.t("chimneys")}</h3>
+    ${faces.size > 0 ? nothing : hint(host.t("solar_no_roof"))}
+    ${chimneys.length > 0
+      ? html`<div class="nf-room-list">
+          ${chimneys.map((c, i) => {
+            const face = faces.get(c.face);
+            return html`<div class="nf-row"><button class="nf-dev-name" @click=${() => open(c.id)}><span>${host.t("chimney")} ${i + 1} · ${host.t(`chimney_${chimneySize(c).shape}` as I18nKey)} · ${face ? faceLabel(host, face) : host.t("solar_face_gone")}</span></button></div>`;
+          })}
+        </div>`
+      : nothing}
+    ${actions(html`<button class="nf-btn" ?disabled=${!host.admin || faces.size === 0} @click=${() => roof.addChimney()}>+ ${host.t("chimney")}</button>`)}
+  </section>`;
+}
+
 /** The roof tool's panel: a window's form, a section's form, or the overview of all sections and windows. */
 /** A gable, hip or half-hip section with its own shape at each end of the ridge. */
 function endFields(host: EditorHost, section: RoofSection, set: (patch: Partial<RoofSection>) => void): TemplateResult {
@@ -179,6 +234,7 @@ export function renderRoofPanel(deps: RoofPanelDeps): TemplateResult {
   const settings = host.doc.settings.roof;
   const custom = settings.type === "custom";
   if (roof.window) return windowForm(deps, roof.window);
+  if (roof.chimney) return chimneyForm(deps, roof.chimney);
   if (custom && roof.section) return sectionForm(deps, roof.section);
   const sections = custom ? (settings.sections ?? []) : [];
   const t = host.t;
@@ -196,5 +252,5 @@ export function renderRoofPanel(deps: RoofPanelDeps): TemplateResult {
           )}`
         : actions(html`<button class="nf-btn nf-primary" ?disabled=${!host.admin} @click=${() => roof.useSections()}>${t("roof_sections_start")}</button>`)}
     </section>
-    ${windowList(deps)}`;
+    ${windowList(deps)} ${chimneyList(deps)}`;
 }

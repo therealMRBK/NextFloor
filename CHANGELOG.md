@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Chimneys on the roof:** the roof tool places chimneys in four shapes (brick, round, wide with two flues, steel flue pipe with a rain cap), with their own width, depth and height above the roof. Drag them in the plan or in the 3D view.
 - **Furniture colours per material** (thanks @eskahone, #82): in the editor under *Settings*, each material furniture is built from (body, wood, fabric, white, metal, dark) gets a colour for the whole house, pieces from the furniture builder and the packs included. A card can set its own with `furniture_colors`, or in the card editor under *Furniture colours of this card*.
 - **Fold the energy card:** a small button in the corner of the glass energy card folds it down to its ring and the solar power, on phones and desktops; the browser remembers it.
 - **Fine-tune a robot map by hand** (#109): after calibrating, arrows move the map by 10 cm, ⟲ ⟳ turn it by 1° and − + change its size by 1 %.

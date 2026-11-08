@@ -58,6 +58,14 @@ const params = new URLSearchParams(location.search);
         building = structuredClone(building);
         building.settings.forecast = { days: 5, corner: params.get("forecast") === "left" ? "top_left" : "top_right" };
       }
+      // ?chimney: one chimney of each shape on the first roof face, for a look
+      if (params.has("chimney")) {
+        building = structuredClone(building);
+        const roof = building.settings.roof;
+        const side = params.get("chimney") === "b" ? "b" : "a";
+        const face = roof.type === "custom" ? `${roof.sections[0].id}:${side}` : `main:${side}`;
+        roof.chimneys = ["brick", "round", "wide", "steel"].map((shape, i) => ({ id: `c${i}`, face, u: 1 + i * 2, v: 2.5, shape }));
+      }
       if (params.has("map") || params.has("north")) {
         building = structuredClone(building);
         if (params.has("north")) building.settings.north = Number(params.get("north")) || 0;

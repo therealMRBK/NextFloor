@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { emptyBuilding, newFloor, type Building, type RoofSection, type Room } from "../../model.ts";
-import { proposeField } from "../../solar/placing.ts";
-import { roofFaces } from "../../solar.ts";
+import { proposeChimney, proposeField } from "../../solar/placing.ts";
+import { chimneyPlace, roofFaces } from "../../solar.ts";
 import { buildRoof, pushModules, roofFloor, pushSection } from "../roof.ts";
 import { GeoBuffer, LineBuffer } from "../geo.ts";
 
@@ -119,4 +119,21 @@ test("a section's attic leaves the walls under the roof to the floor", () => {
   pushSection(solid, new LineBuffer(), section({ base: 1.0, eave_a: 3, eave_b: 3 }), 0.4, 0);
   pushSection(solidAttic, new LineBuffer(), section({ base: 1.0, eave_a: 3, eave_b: 3 }), 0.4, 0, undefined, true);
   assert.ok(solid.count > solidAttic.count, "gable ends are drawn without an attic");
+});
+
+test("a chimney stands on the roof near the ridge and rises above it, in every shape", () => {
+  const plain = house({ type: "gable", pitch: 35, overhang: 0.4 });
+  const before = buildRoof(plain)[0];
+  const b = house({ type: "gable", pitch: 35, overhang: 0.4 });
+  const face = roofFaces(b)[0];
+  const chimney = proposeChimney(face, "c");
+  const place = chimneyPlace(face, chimney);
+  assert.ok(place.high > place.low, "the roof slopes under it");
+  assert.ok(place.high > 2.6 + 1.5, "near the ridge, well above the eave");
+  for (const shape of ["brick", "round", "wide", "steel"] as const) {
+    b.settings.roof.chimneys = [{ ...chimney, shape }];
+    const part = buildRoof(b)[0];
+    assert.ok(part.solid.count > before.solid.count, shape);
+    assert.ok(topOf(part.solid) > topOf(before.solid), `${shape} rises above the ridge`);
+  }
 });

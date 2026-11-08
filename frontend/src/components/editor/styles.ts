@@ -1148,6 +1148,12 @@ export const editorStyles = css`
     stroke-width: 2;
     cursor: move;
   }
+  .nf-chimney polygon {
+    fill: color-mix(in srgb, #7a4a4a 75%, transparent);
+    stroke: #e3e9f5;
+    stroke-width: 2;
+    cursor: move;
+  }
   .nf-roofwin-sel polygon {
     stroke: #ffd75a;
   }

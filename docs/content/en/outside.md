@@ -39,6 +39,7 @@ To keep devices out of the Outside panel, use *Settings → Outside: hide device
 The *Roof* tool builds roof sections from the rooms: shape, ridge direction, eaves, pitch. Drag to move, drag corners to resize. The simple roof shape lives in Settings.
 
 - **Roof windows** sit on a section and take a blind and contacts.
+- **Chimneys** (*+ Chimney* in the roof tool) come in brick, round, wide with two flues, or as a steel flue pipe with a rain cap. Width, depth (or diameter) and the height above the roof can be set; drag one in the plan or in the 3D view, also onto another roof face.
 - **Gable, hip and half-hip** sections can end differently at each end of the ridge. A wing that butts against a bigger roof runs into it with valleys.
 - A section turns about its middle with *Turn (°)*, for a wing at an angle.
 - A half-hip end has a slider for how high its hip starts.

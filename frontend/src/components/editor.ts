@@ -7,7 +7,7 @@ import { closeGaps, suggestedThickness } from "../geometry/gaps.ts";
 import { keepInRoom, snapToWall } from "../geometry/snap.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { polygonBox } from "../roof-sections.ts";
-import { clampField, faceAt, fieldFace, pointOnFace, roofFaces, turnGroundField, fieldCenter, wallFaces, windowAsField, onFace, onField, rayOnFace, type RoofFace } from "../solar.ts";
+import { chimneyAsField, clampField, faceAt, fieldFace, pointOnFace, roofFaces, turnGroundField, fieldCenter, wallFaces, windowAsField, onFace, onField, rayOnFace, type RoofFace } from "../solar.ts";
 import type { SurfaceGrab, SurfaceRay } from "../viewer/viewer3d.ts";
 import {
   type FreeWall,
@@ -56,7 +56,7 @@ import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
 import { renderSettings, type SettingsActions } from "./editor/forms/settings.ts";
 import { renderEnergyBalance, renderEnergyChecklist, renderEnergyDevices, renderEnergyRoutes, renderEnergyTeaser, renderHelpLinks, type EnergyActions, type RouteActions, type RouteDraft } from "./editor/forms/energy.ts";
-import { energyMarkersLayer, energyRoutesLayer, headroomLayer, roofSectionsLayer, roofWindowsLayer, solarLayer } from "./editor/canvas/roof-layers.ts";
+import { energyMarkersLayer, energyRoutesLayer, headroomLayer, chimneysLayer, roofSectionsLayer, roofWindowsLayer, solarLayer } from "./editor/canvas/roof-layers.ts";
 import type { CanvasContext } from "./editor/canvas/context.ts";
 import { backgroundLayer } from "./editor/canvas/background.ts";
 import { mapLayer } from "./editor/canvas/map.ts";
@@ -150,7 +150,7 @@ type Drag =
   | { kind: "rect"; start: Vec2; end: Vec2; outdoor?: boolean; hole?: boolean; stairs?: boolean; roof?: boolean }
   | { kind: "roofmove"; id: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean }
   | { kind: "solarturn"; id: string; base: Building; moved: boolean }
-  | { kind: "solarmove"; id: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean; grab: { du: number; ds: number } | null; win?: boolean }
+  | { kind: "solarmove"; id: string; start: Vec2; startScreen: [number, number]; base: Building; moved: boolean; grab: { du: number; ds: number } | null; win?: boolean; chimney?: boolean }
   | { kind: "outvertex"; id: string; index: number; base: Building; moved: boolean }
   | { kind: "roofcorner"; id: string; corner: [0 | 1, 0 | 1]; base: Building; moved: boolean }
   | { kind: "roofvertex"; id: string; index: number; base: Building; moved: boolean }
@@ -324,6 +324,7 @@ export class NfEditor extends LitElement {
     this.roof.solarId = null;
     this.roof.picking = false;
     this.roof.windowId = null;
+    this.roof.chimneyId = null;
     this._energyNote = null;
     this._openingPreset = "door";
     let split = false;
@@ -940,7 +941,7 @@ export class NfEditor extends LitElement {
   }
 
   /** A solar field or roof window grabbed in the 3D pane: its grab point on its face, and the plan before. */
-  private grab3d: { id: string; win: boolean; du: number; ds: number; base: Building; moved: boolean } | null = null;
+  private grab3d: { id: string; win: boolean; chimney?: boolean; du: number; ds: number; base: Building; moved: boolean } | null = null;
 
   /** Moves solar fields (energy tool) and roof windows (roof tool) in the 3D pane, along the faces under the pointer. */
   private surfaceGrabber: SurfaceGrab = {
@@ -953,22 +954,39 @@ export class NfEditor extends LitElement {
     },
   };
 
+  /** A solar field, or a roof window or chimney as a field of one module, for moving it along the roof faces. */
+  private fittingField(doc: Building, id: string, kind: "field" | "win" | "chimney"): SolarField | undefined {
+    if (kind === "field") return doc.settings.roof.solar?.find((x) => x.id === id);
+    if (kind === "win") {
+      const w = doc.settings.roof.windows?.find((x) => x.id === id);
+      return w ? windowAsField(w) : undefined;
+    }
+    const c = doc.settings.roof.chimneys?.find((x) => x.id === id);
+    return c ? chimneyAsField(c, roofFaces(doc).find((f) => f.key === c.face)) : undefined;
+  }
+
   private grab3dStart(ray: SurfaceRay): boolean {
     const doc = this._doc;
     const roof = roofFaces(doc);
-    let best: { id: string; win: boolean; t: number; du: number; ds: number } | null = null;
-    const consider = (id: string, win: boolean, face: RoofFace | null, field: SolarField, locked = false) => {
+    let best: { id: string; win: boolean; chimney?: boolean; t: number; du: number; ds: number } | null = null;
+    const consider = (id: string, win: boolean, face: RoofFace | null, field: SolarField, locked = false, chimney = false) => {
       if (!face || locked) return;
       const hit = rayOnFace(face, ray.o, ray.d);
       if (!hit || !onField(face, field, hit.u, hit.s) || (best && best.t <= hit.t)) return;
-      best = { id, win, t: hit.t, du: hit.u - field.u, ds: hit.s - field.v };
+      best = { id, win, chimney, t: hit.t, du: hit.u - field.u, ds: hit.s - field.v };
     };
     if (this._tool === "energy") for (const f of doc.settings.roof.solar ?? []) consider(f.id, false, fieldFace(doc, f, roof), f, !!f.locked);
     if (this._tool === "roof") for (const w of doc.settings.roof.windows ?? []) consider(w.id, true, roof.find((x) => x.key === w.face) ?? null, windowAsField(w), !!w.locked);
+    if (this._tool === "roof")
+      for (const c of doc.settings.roof.chimneys ?? []) {
+        const face = roof.find((x) => x.key === c.face) ?? null;
+        consider(c.id, false, face, chimneyAsField(c, face), !!c.locked, true);
+      }
     if (!best) return false;
-    const b = best as { id: string; win: boolean; du: number; ds: number };
-    this.grab3d = { id: b.id, win: b.win, du: b.du, ds: b.ds, base: doc, moved: false };
-    if (b.win) this.roof.windowId = b.id;
+    const b = best as { id: string; win: boolean; chimney?: boolean; du: number; ds: number };
+    this.grab3d = { id: b.id, win: b.win, chimney: b.chimney, du: b.du, ds: b.ds, base: doc, moved: false };
+    if (b.chimney) this.roof.chimneyId = b.id;
+    else if (b.win) this.roof.windowId = b.id;
     else this.roof.selectField(b.id);
     return true;
   }
@@ -977,12 +995,11 @@ export class NfEditor extends LitElement {
     const g = this.grab3d;
     if (!g) return;
     const doc = g.base;
-    const winSrc = g.win ? doc.settings.roof.windows?.find((x) => x.id === g.id) : undefined;
-    const src = g.win ? (winSrc ? windowAsField(winSrc) : undefined) : doc.settings.roof.solar?.find((x) => x.id === g.id);
+    const src = this.fittingField(doc, g.id, g.win ? "win" : g.chimney ? "chimney" : "field");
     if (!src) return;
     const own = fieldFace(doc, src);
     // free-standing fields stay on their own level; the others go to the face nearest under the pointer
-    const faces = own?.unbounded ? [own] : g.win ? roofFaces(doc) : [...roofFaces(doc), ...wallFaces(doc)];
+    const faces = own?.unbounded ? [own] : g.win || g.chimney ? roofFaces(doc) : [...roofFaces(doc), ...wallFaces(doc)];
     let best: { face: RoofFace; t: number; u: number; s: number } | null = null;
     for (const face of faces) {
       const hit = rayOnFace(face, ray.o, ray.d);
@@ -996,8 +1013,8 @@ export class NfEditor extends LitElement {
     g.moved = true;
     this.change(
       (d) => {
-        if (g.win) {
-          const w = d.settings.roof.windows?.find((x) => x.id === g.id);
+        if (g.win || g.chimney) {
+          const w = g.win ? d.settings.roof.windows?.find((x) => x.id === g.id) : d.settings.roof.chimneys?.find((x) => x.id === g.id);
           if (w) Object.assign(w, { face: face.key, ...kept });
           return;
         }
@@ -1367,7 +1384,12 @@ export class NfEditor extends LitElement {
     if (solar) return this.pressSolarField(press, solar);
     const roofWindow = this._tool === "roof" ? attribute("[data-roofwin]", "data-roofwin") : null;
     if (roofWindow) return this.pressRoofWindow(press, roofWindow);
-    if (this._tool === "roof") this.roof.windowId = null;
+    const chimney = this._tool === "roof" ? attribute("[data-chimney]", "data-chimney") : null;
+    if (chimney) return this.pressChimney(press, chimney);
+    if (this._tool === "roof") {
+      this.roof.windowId = null;
+      this.roof.chimneyId = null;
+    }
     const device = energy ? attribute(".nf-energy-item", "data-furniture") : null;
     if (device) return this.pressEnergyDevice(press, device);
     if (energy) {
@@ -1435,6 +1457,16 @@ export class NfEditor extends LitElement {
     const hit = face ? pointOnFace(face, press.world) : null;
     const grab = w && hit ? { du: hit.u - w.u, ds: hit.s - w.v } : null;
     return this.isAdmin && !w?.locked ? { kind: "solarmove", id, start: press.world, startScreen: press.local, base: this._doc, moved: false, grab, win: true } : this.pan(press);
+  }
+
+  private pressChimney(press: Press, id: string): Drag {
+    this.roof.chimneyId = id;
+    this.roof.sectionId = null;
+    const c = this._doc.settings.roof.chimneys?.find((x) => x.id === id);
+    const face = c ? roofFaces(this._doc).find((f) => f.key === c.face) : undefined;
+    const hit = face ? pointOnFace(face, press.world) : null;
+    const grab = c && hit ? { du: hit.u - c.u, ds: hit.s - c.v } : null;
+    return this.isAdmin && !c?.locked ? { kind: "solarmove", id, start: press.world, startScreen: press.local, base: this._doc, moved: false, grab, chimney: true } : this.pan(press);
   }
 
   /** The tools that draw: rectangles, outdoor areas, floor openings, outlines, measuring, and placing doors and windows. */
@@ -1862,10 +1894,9 @@ export class NfEditor extends LitElement {
     const { local, world, fine } = at;
     if (!drag.moved && !hasLeftStart(local, drag.startScreen)) return;
     drag.moved = true;
-    const windowBefore = drag.win ? drag.base.settings.roof.windows?.find((w) => w.id === drag.id) : undefined;
-    const before = drag.win ? (windowBefore ? windowAsField(windowBefore) : undefined) : drag.base.settings.roof.solar?.find((f) => f.id === drag.id);
+    const before = this.fittingField(drag.base, drag.id, drag.win ? "win" : drag.chimney ? "chimney" : "field");
     // roof faces, and for fields also the walls of the floor the plan shows
-    const faces = drag.win ? roofFaces(drag.base) : [...roofFaces(drag.base), ...(this._floorId ? wallFaces(drag.base, this._floorId) : [])];
+    const faces = drag.win || drag.chimney ? roofFaces(drag.base) : [...roofFaces(drag.base), ...(this._floorId ? wallFaces(drag.base, this._floorId) : [])];
     const own = before ? fieldFace(drag.base, before, faces) : null;
     if (!before || !own) return;
     const step = fine ? 0.01 : 0.05;
@@ -1889,8 +1920,8 @@ export class NfEditor extends LitElement {
     }
     const kept = clampField(face, { ...before, face: face.key, u, v, tilt: face.flat ? (before.tilt ?? 15) : before.tilt });
     this.live(drag, (doc) => {
-      if (drag.win) {
-        const w = doc.settings.roof.windows?.find((x) => x.id === drag.id);
+      if (drag.win || drag.chimney) {
+        const w = drag.win ? doc.settings.roof.windows?.find((x) => x.id === drag.id) : doc.settings.roof.chimneys?.find((x) => x.id === drag.id);
         if (w) Object.assign(w, { face: face.key, ...kept });
         return;
       }
@@ -2213,7 +2244,7 @@ export class NfEditor extends LitElement {
         ${room && this._tool === "select" ? cutMarksLayer(ctx, room) : nothing}
         ${headroomLayer(ctx, floor)}`
       : nothing}
-      ${this._tool === "roof" ? svg`${roofSectionsLayer(ctx, this.roof)}${roofWindowsLayer(ctx, this.roof)}` : this._tool === "energy" ? svg`${roofSectionsLayer(ctx, this.roof)}${solarLayer(ctx, this.roof)}${energyRoutesLayer(ctx, this.floor, this._doc.energy.routes ?? [], this._routeDraft)}${energyMarkersLayer(ctx, this.floor, this.sel.furniture)}` : nothing}
+      ${this._tool === "roof" ? svg`${roofSectionsLayer(ctx, this.roof)}${roofWindowsLayer(ctx, this.roof)}${chimneysLayer(ctx, this.roof)}` : this._tool === "energy" ? svg`${roofSectionsLayer(ctx, this.roof)}${solarLayer(ctx, this.roof)}${energyRoutesLayer(ctx, this.floor, this._doc.energy.routes ?? [], this._routeDraft)}${energyMarkersLayer(ctx, this.floor, this.sel.furniture)}` : nothing}
       ${draftLayer(ctx, sketch, this._tool, this._draft, this._cursor)} ${guidesLayer(ctx, this._guides, this._size)}`;
   }
 

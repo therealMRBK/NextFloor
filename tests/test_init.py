@@ -340,6 +340,7 @@ async def test_outdoor_roof_and_north_get_defaults(hass: HomeAssistant, hass_ws_
         "solar": [],
         "strings": [],
         "windows": [],
+        "chimneys": [],
     }
     assert got["floors"][0]["outdoor"][0]["type"] == "lawn"
     assert got["floors"][0]["outdoor"][0]["slope"] == 0

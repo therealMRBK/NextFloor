@@ -1,6 +1,6 @@
 // The modules of a solar field on its face: size, layout, tilt, and the 3D corners of every module.
 
-import type { RoofWindow, SolarField, Vec2 } from "../model.ts";
+import type { ChimneyShape, RoofChimney, RoofWindow, SolarField, Vec2 } from "../model.ts";
 import type { RoofFace } from "./faces.ts";
 import { DEG, type V3 } from "./vec.ts";
 
@@ -187,4 +187,45 @@ export function windowCorners(face: RoofFace, w: RoofWindow): [V3, V3, V3, V3] |
   // modules ride 7 cm above the roof on rails; a roof window sits nearly flush
   const sink = (p: V3): V3 => [p[0] - face.n[0] * 0.05, p[1] - face.n[1] * 0.05, p[2] - face.n[2] * 0.05];
   return module.corners.map(sink) as [V3, V3, V3, V3];
+}
+
+// ---------------------------------------------------------------- chimneys
+
+/** The usual size of each chimney shape: width along the eave, depth in the plan, height above the roof (m). */
+export const CHIMNEY_SIZE: Record<ChimneyShape, { w: number; d: number; h: number }> = {
+  brick: { w: 0.5, d: 0.5, h: 1 },
+  round: { w: 0.4, d: 0.4, h: 1 },
+  wide: { w: 1, d: 0.5, h: 1 },
+  steel: { w: 0.2, d: 0.2, h: 1.2 },
+};
+
+/** A chimney's shape and size, the shape's usual size where none is set. */
+export function chimneySize(c: RoofChimney): { shape: ChimneyShape; w: number; d: number; h: number } {
+  const shape = c.shape ?? "brick";
+  const usual = CHIMNEY_SIZE[shape] ?? CHIMNEY_SIZE.brick;
+  return { shape, w: c.w || usual.w, d: c.d || usual.d, h: c.h || usual.h };
+}
+
+/** A chimney as a field of one module the size of its footprint on the slope, so placing and moving work like a roof window's. */
+export function chimneyAsField(c: RoofChimney, face: RoofFace | null | undefined): SolarField {
+  const { w, d } = chimneySize(c);
+  const slope = face && !face.flat ? Math.cos(face.pitch * DEG) : 1;
+  return { id: c.id, face: c.face, u: c.u, v: c.v, rows: 1, cols: 1, portrait: true, module_w: w, module_h: d / Math.max(0.2, slope), tilt: 0 };
+}
+
+/**
+ * Where a chimney stands: the middle of its footprint in the plan, the plan directions along the eave and across it,
+ * and the roof's lowest and highest point under it (heights above the ground).
+ */
+export function chimneyPlace(face: RoofFace, c: RoofChimney): { center: Vec2; along: Vec2; across: Vec2; low: number; high: number } {
+  const f = chimneyAsField(c, face);
+  const [w, slope] = [f.module_w!, f.module_h!];
+  const at = (u: number, s: number): V3 => [face.o[0] + face.eu[0] * u + face.es[0] * s, face.o[1] + face.eu[1] * u + face.es[1] * s, face.o[2] + face.eu[2] * u + face.es[2] * s];
+  const [p0, p1] = [at(c.u + w / 2, c.v), at(c.u + w / 2, c.v + slope)];
+  const mid = at(c.u + w / 2, c.v + slope / 2);
+  const flat = (v: readonly number[]): Vec2 => {
+    const n = Math.hypot(v[0], v[2]) || 1;
+    return [v[0] / n, v[2] / n];
+  };
+  return { center: [mid[0], mid[2]], along: flat(face.eu), across: flat(face.es), low: Math.min(p0[1], p1[1]), high: Math.max(p0[1], p1[1]) };
 }

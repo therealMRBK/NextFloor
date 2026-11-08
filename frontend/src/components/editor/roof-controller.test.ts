@@ -133,6 +133,20 @@ test("roof windows are added on a sloped face, kept on it when changed, and remo
   assert.deepEqual(s.doc().settings.roof.windows, []);
 });
 
+test("chimneys are added near the ridge, kept on their face when changed, and removed", () => {
+  const s = setup();
+  s.controller.addChimney();
+  const c = s.controller.chimney!;
+  assert.equal(c.shape, "brick");
+  assert.ok(c.face.startsWith("main:"));
+  s.controller.patchChimney({ v: 999, shape: "wide" });
+  assert.ok(s.controller.chimney!.v < 999);
+  assert.equal(s.controller.chimney!.shape, "wide");
+  s.controller.removeChimney();
+  assert.equal(s.controller.chimneyId, null);
+  assert.deepEqual(s.doc().settings.roof.chimneys, []);
+});
+
 test("selecting a wall field brings up its floor, and the selection changes ask for a redraw", () => {
   const s = setup();
   s.controller.addWallField();

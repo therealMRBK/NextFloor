@@ -686,6 +686,23 @@ ROOF_WINDOW_SCHEMA = vol.Schema(
     extra=vol.ALLOW_EXTRA,
 )
 
+# a chimney on a roof face, placed like a roof window
+ROOF_CHIMNEY_SCHEMA = vol.Schema(
+    {
+        vol.Required("id"): _ID,
+        vol.Required("face"): vol.All(str, vol.Length(max=80)),
+        vol.Required("u"): vol.All(vol.Coerce(float), vol.Range(min=-50, max=200)),
+        vol.Required("v"): vol.All(vol.Coerce(float), vol.Range(min=-50, max=200)),
+        vol.Optional("shape", default=None): vol.Any(None, vol.In(["brick", "round", "wide", "steel"])),
+        vol.Optional("w", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=3))),
+        vol.Optional("d", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.1, max=3))),
+        vol.Optional("h", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.2, max=5))),
+        vol.Optional("name", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("locked", default=False): bool,
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
 ROOF_SCHEMA = vol.Schema(
     {
         vol.Optional("type", default="none"): vol.In(["none", "flat", "gable", "custom"]),
@@ -695,6 +712,7 @@ ROOF_SCHEMA = vol.Schema(
         vol.Optional("solar", default=list): vol.All([SOLAR_FIELD_SCHEMA], vol.Length(max=32)),
         vol.Optional("strings", default=list): vol.All([SOLAR_STRING_SCHEMA], vol.Length(max=16)),
         vol.Optional("windows", default=list): vol.All([ROOF_WINDOW_SCHEMA], vol.Length(max=32)),
+        vol.Optional("chimneys", default=list): vol.All([ROOF_CHIMNEY_SCHEMA], vol.Length(max=16)),
         vol.Optional("pitch", default=35): vol.All(vol.Coerce(float), vol.Range(min=5, max=60)),
         vol.Optional("overhang", default=0.4): vol.All(vol.Coerce(float), vol.Range(min=0, max=2)),
         # gable roof: ridge along the long side (None) or along the short side (terraced houses)

@@ -505,6 +505,31 @@ export interface RoofSettings {
   strings?: SolarString[];
   /** Roof windows on the roof faces. */
   windows?: RoofWindow[];
+  /** Chimneys on the roof faces. */
+  chimneys?: RoofChimney[];
+}
+
+/** Shapes of a chimney: brick (square), round, wide with two flues, or a thin steel flue pipe with a rain cap. */
+export const CHIMNEY_SHAPES = ["brick", "round", "wide", "steel"] as const;
+export type ChimneyShape = (typeof CHIMNEY_SHAPES)[number];
+
+/**
+ * A chimney on a roof face: placed like a roof window (u along the eave, v up the slope, in metres, at its lower
+ * left corner), `w` wide along the eave and `d` deep in the plan; it rises `h` above the roof at its upper side.
+ */
+export interface RoofChimney {
+  id: string;
+  face: string;
+  u: number;
+  v: number;
+  shape?: ChimneyShape | null;
+  /** Size in metres (null = the shape's usual size). */
+  w?: number | null;
+  d?: number | null;
+  h?: number | null;
+  name?: string | null;
+  /** Fixed: cannot be moved by accident. */
+  locked?: boolean;
 }
 
 /**
