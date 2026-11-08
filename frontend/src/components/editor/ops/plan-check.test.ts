@@ -64,3 +64,15 @@ test("a cover that a window picks up automatically through its area is not repor
   const without = checkPlan({ ...emptyBuilding(), floors: [{ ...floor, openings: [] }] }, hass).filter((f) => f.kind === "devices_unplaced");
   assert.equal(without.length, 1, "without the window the cover is still missing");
 });
+
+test("devices on the ignore list are not reported as missing from the plan (#103)", () => {
+  const hass = hassOf([entity("light.wohnen", "on"), entity("switch.knx_intern", "off")], { "light.wohnen": { area_id: "wohnen" }, "switch.knx_intern": { area_id: "wohnen" } }, { areas: { wohnen: { area_id: "wohnen", name: "Wohnen" } } });
+  const living = { ...box("w", 0, 0, 5, 4), name: "Wohnen", area_id: "wohnen" };
+  const doc = { ...emptyBuilding(), floors: [floorWith([living])] };
+  const first = checkPlan(doc, hass).find((f) => f.kind === "devices_unplaced");
+  assert.deepEqual([...(first?.entityIds ?? [])].sort(), ["light.wohnen", "switch.knx_intern"]);
+  doc.settings.check_ignore = ["switch.knx_intern"];
+  assert.deepEqual(checkPlan(doc, hass).find((f) => f.kind === "devices_unplaced")?.entityIds, ["light.wohnen"]);
+  doc.settings.check_ignore = ["switch.knx_intern", "light.wohnen"];
+  assert.equal(checkPlan(doc, hass).filter((f) => f.kind === "devices_unplaced").length, 0);
+});

@@ -650,6 +650,32 @@ export const editorStyles = css`
     border-radius: 8px;
     background: color-mix(in srgb, var(--nf-soft, #8a9bb8) 10%, transparent);
   }
+  .nf-check-names {
+    grid-column: 1 / -1;
+    font-size: 0.85em;
+  }
+  .nf-check-names ul {
+    list-style: none;
+    margin: 6px 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .nf-check-names li {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 0;
+    background: none;
+  }
+  .nf-check-names li small {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--nf-muted, #8d9bbd);
+  }
   .nf-check-text {
     font-size: 0.9em;
     line-height: 1.3;

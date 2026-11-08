@@ -22,6 +22,7 @@ export type CheckFix =
   | { do: "set_area"; roomId: string; areaId: string }
   | { do: "add_area_rooms" }
   | { do: "place_devices"; roomId: string; entityIds: string[] }
+  | { do: "ignore_devices"; entityIds: string[] }
   | { do: "show_opening"; openingId: string }
   | { do: "remove_placements"; entityIds: string[] }
   | { do: "show_furniture"; furnitureId: string };
@@ -32,6 +33,8 @@ export interface CheckFinding {
   /** Values for the text: a room name, a count, an entity. */
   vars: Record<string, string | number>;
   fix: CheckFix;
+  /** The entities a finding is about, when it is about a list of them (the devices not in the plan yet, #103). */
+  entityIds?: string[];
   /** Fixes that change the plan (all others only show the place). */
   changes: boolean;
 }
@@ -118,6 +121,8 @@ function standbyFindings(hass: HomeAssistant, doc: Building, floor: Floor, out: 
 export function checkPlan(doc: Building, hass: HomeAssistant | undefined): CheckFinding[] {
   const out: CheckFinding[] = [];
   const areas = hass?.areas;
+  // devices the user said they do not want in the plan (internal KNX devices, say)
+  const ignored = new Set(doc.settings.check_ignore ?? []);
   const usedAreas = new Set(doc.floors.flatMap((f) => f.rooms.map((r) => r.area_id)).filter((a): a is string => !!a));
   for (const floor of doc.floors) {
     if (floor.layer) continue;
@@ -151,8 +156,8 @@ export function checkPlan(doc: Building, hass: HomeAssistant | undefined): Check
         const ids = roomEntities(hass, room).filter((id) => isPlaceable(entityKind(hass, id)));
         const unplaced = groupByDevice(hass, ids)
           .map((g) => g.primary)
-          .filter((id) => !here.has(id));
-        if (unplaced.length) out.push({ kind: "devices_unplaced", floorId: floor.id, vars: { room: room.name, n: unplaced.length }, fix: { do: "place_devices", roomId: room.id, entityIds: unplaced }, changes: true });
+          .filter((id) => !here.has(id) && !ignored.has(id));
+        if (unplaced.length) out.push({ kind: "devices_unplaced", floorId: floor.id, vars: { room: room.name, n: unplaced.length }, fix: { do: "place_devices", roomId: room.id, entityIds: unplaced }, entityIds: unplaced, changes: true });
       }
     }
     for (let i = 0; i < floor.rooms.length; i++) {

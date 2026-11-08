@@ -8,6 +8,7 @@ import { iconPath } from "../../../icons.ts";
 import { deviceIcon } from "../fields.ts";
 import { ENERGY_DEVICES, isLamp, noteDue, type Floor, type Furniture, type Placement } from "../../../model.ts";
 import { furnitureSymbol } from "../../furniture2d.ts";
+import { drawOrder } from "../ops/items.ts";
 import type { CanvasContext } from "./context.ts";
 import { formatLength } from "../../../units.ts";
 
@@ -62,7 +63,7 @@ export function furnitureLayer(ctx: CanvasContext, floor: Floor, selectedId: str
       ${selected && item.locked ? svg`<text class="nf-lock" x=${handleAt[0]} y=${handleAt[1] + 5}>🔒</text>` : nothing}
       ${movable ? turnHandle("data-rotate", item.id, stemFrom, handleAt) : nothing}`;
   };
-  return svg`<g>${floor.furniture.map(one)}</g>`;
+  return svg`<g>${drawOrder(floor).map(one)}</g>`;
 }
 
 /** The device pins of the floor. */

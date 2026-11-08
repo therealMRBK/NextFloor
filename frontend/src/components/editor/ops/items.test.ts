@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, floorWith, opening } from "../../../entities/fixtures.ts";
 import type { Building, Furniture, Placement } from "../../../model.ts";
-import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, insertOutdoorCorner, removeOutdoorCorner, edgeOf, furnitureForDevice, newFloorOpening, newFreeWall, newFurniture, newOpening, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, wallEndForLength, wallHeightPatch } from "./items.ts";
+import { drawOrder, copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, insertOutdoorCorner, removeOutdoorCorner, edgeOf, furnitureForDevice, newFloorOpening, newFreeWall, newFurniture, newOpening, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, wallEndForLength, wallHeightPatch } from "./items.ts";
 import { NO_CHANGE, NOTHING_TO_MOVE, nudge, type Nudge } from "./nudge.ts";
 
 const sofa = (extra: Partial<Furniture> = {}): Furniture => ({ id: "s", type: "sofa", x: 1, z: 1, rotation: 0, w: 2, d: 0.9, h: 0.8, variant: null, ...extra });
@@ -186,4 +186,13 @@ test("an outdoor area gets a corner in the middle of an edge and gives one back,
   assert.equal(removeOutdoorCorner(pool, 2), true);
   assert.equal(pool.points.length, 3);
   assert.equal(removeOutdoorCorner(pool, 0), false);
+});
+
+test("what stands higher is drawn on top, so a click hits the speaker on the desk (#105)", () => {
+  const desk = { ...sofa({ id: "desk", type: "desk", w: 1.6, d: 0.8, h: 0.75 }), x: 2, z: 2 };
+  const speaker = { ...sofa({ id: "speaker", type: "sofa", w: 0.1, d: 0.1, h: 0.2, mount_y: 0.75 }), x: 2, z: 2 };
+  const floor = floorWith([], { furniture: [speaker, desk] });
+  assert.deepEqual(drawOrder(floor).map((f) => f.id), ["desk", "speaker"]);
+  const same = floorWith([], { furniture: [sofa({ id: "a", x: 1 }), sofa({ id: "b", x: 3 })] });
+  assert.deepEqual(drawOrder(same).map((f) => f.id), ["a", "b"], "equal heights keep their order");
 });

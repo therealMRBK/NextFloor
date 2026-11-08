@@ -687,6 +687,10 @@ export interface BuildingSettings {
   units?: "metric" | "imperial" | null;
   /** The rain warning asks this sensor (a weather station: on, or a rain rate above 0) instead of the weather entity. */
   rain_sensor?: string | null;
+  /** Devices the plan check no longer lists as "not in the plan yet" (entity ids). */
+  check_ignore?: string[] | null;
+  /** The rain sensor reads the other way round: on (or above zero) means dry. */
+  rain_sensor_inverted?: boolean;
   /** A sensor that tells a power outage: a warning for the whole house while the grid is gone. */
   outage_sensor?: string | null;
   /** Warn when a door or window contact has been unavailable for 10 minutes (empty battery, out of reach); default off. */

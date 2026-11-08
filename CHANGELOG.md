@@ -2,6 +2,18 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Added
+
+- **Invert the rain sensor** (thanks @tfischer84, #107): a checkbox under the rain sensor in the settings for sensors that read off (or 0) when it rains.
+- **Plan check: look first, ignore what you do not want** (#103): the line "devices not in the plan yet" opens a list of the devices behind it, with *Ignore* for each one (internal KNX devices, say) or for all. Ignored devices are no longer listed; one button brings them back.
+- **Smart speakers link to a media player** (#104): a smart speaker, multiroom or hi-fi speaker picks the only free media player of its room by itself, so the quick menu offers volume, play and pause. Linking it by hand in the furniture form works as before.
+
+### Fixed
+
+- **Pieces lying on others can be selected** (thanks @tfischer84, #105): in the plan, what stands higher (a speaker on a desk, a lamp on a shelf) is drawn on top and is the one a click hits.
+
 ## [0.26.3]
 
 ### Fixed

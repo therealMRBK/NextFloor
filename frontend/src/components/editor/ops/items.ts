@@ -1,6 +1,7 @@
 // Making and changing the things on a floor: furniture, devices, outdoor areas, free walls, floor openings and doors and windows.
 
 import { autoPlace } from "../../../devices.ts";
+import { mountBase } from "../../../packs.ts";
 import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 import { openingHost } from "../../../geometry/walls.ts";
 import {
@@ -206,4 +207,15 @@ export function outdoorRectangleAfter(area: OutdoorArea, field: "x" | "z" | "w" 
   else if (field === "w") x1 = x0 + Math.max(0.1, value);
   else z1 = z0 + Math.max(0.1, value);
   return [[x0, z0], [x1, z0], [x1, z1], [x0, z1]].map(([x, z]) => [thousandths(x), thousandths(z)] as Vec2);
+}
+
+/**
+ * The furniture of a floor in the order the plan draws it: what stands higher is drawn later, so it lies on top and is the one a click
+ * hits (a speaker on a desk, a lamp on a shelf – #105). Pieces at the same height keep their order.
+ */
+export function drawOrder(floor: Floor): Furniture[] {
+  return floor.furniture
+    .map((item, index) => ({ item, index, base: mountBase(floor, item) }))
+    .sort((a, b) => a.base - b.base || a.index - b.index)
+    .map((e) => e.item);
 }

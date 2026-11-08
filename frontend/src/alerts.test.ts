@@ -133,6 +133,20 @@ test("an own rain sensor decides instead of the weather, and a window can be lef
   assert.equal(findAlerts(hass, building, sources, links).length, 0, "a window under the awning stays quiet");
 });
 
+test("an inverted rain sensor reads on / above zero as dry (#107)", () => {
+  const { hass, building, links } = house();
+  hass.states["binary_sensor.dry"] = { entity_id: "binary_sensor.dry", state: "on", attributes: {} };
+  building.settings.rain_sensor = "binary_sensor.dry";
+  building.settings.rain_sensor_inverted = true;
+  set(hass, "binary_sensor.casement", "on");
+  const sources = alertSources(hass, building);
+  assert.equal(findAlerts(hass, building, sources, links).length, 0, "on means dry");
+  set(hass, "binary_sensor.dry", "off");
+  assert.equal(findAlerts(hass, building, sources, links)[0]?.kind, "window_rain");
+  set(hass, "binary_sensor.dry", "unavailable");
+  assert.equal(findAlerts(hass, building, sources, links).length, 0, "unknown stays quiet, inverted or not");
+});
+
 test("a power outage warns for the whole house, whatever kind of sensor tells it", () => {
   const { hass, building, links } = house();
   const cases: [string, string, Record<string, unknown>, boolean][] = [

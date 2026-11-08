@@ -555,7 +555,16 @@ export class NfEditor extends LitElement {
           const floor = onFloor(doc);
           if (floor) floor.placements = floor.placements.filter((p) => !fix.entityIds.includes(p.entity_id));
         });
+      case "ignore_devices":
+        return this.ignoreDevices(fix.entityIds);
     }
+  }
+
+  /** The plan check stops listing these devices as missing (internal KNX devices, say). */
+  private ignoreDevices(ids: string[]): void {
+    this.change((doc) => {
+      doc.settings.check_ignore = [...new Set([...(doc.settings.check_ignore ?? []), ...ids])];
+    });
   }
 
   private setDims(on: boolean): void {
@@ -3308,7 +3317,7 @@ export class NfEditor extends LitElement {
     return html`
       ${admin ? nothing : html`<p class="nf-note">${this.t("read_only")}</p>`}
       ${this._check
-        ? renderPlanCheck(this.host, checkPlan(this._doc, this.hass), { fix: (f) => this.fixFinding(f), close: () => (this._check = false) })
+        ? renderPlanCheck(this.host, checkPlan(this._doc, this.hass), { fix: (f) => this.fixFinding(f), ignore: (ids) => this.ignoreDevices(ids), resetIgnored: () => this.change((doc) => (doc.settings.check_ignore = null)), close: () => (this._check = false) })
         : admin
           ? planCheckButton(this.host, () => (this._check = true))
           : nothing}

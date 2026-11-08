@@ -189,3 +189,13 @@ test("Outside lists the devices of the areas linked to gardens and pools, and a 
   });
   assert.deepEqual(outsideEntities(hass, [floor]).sort(), ["light.terrace", "sensor.pool_water", "switch.pool_pump"]);
 });
+
+test("a smart speaker takes the only free media player of its room, not a TV (#104)", () => {
+  setPacks([{ id: "test.hifi", name: "Hifi", publisher: "Test", items: [{ id: "smart_speaker_ball", name: { en: "Smart speaker" }, size: [0.12, 0.12, 0.12], electric: true, parts: [{ shape: "box", x: 0, z: 0, w: 1, d: 1, y: 0, h: 1, color: "body" }] }] }]);
+  const speaker = piece("sp", "pack:test.hifi:smart_speaker_ball");
+  const only = hassOf([entity("media_player.echo", "idle")], inRoom("media_player.echo"));
+  assert.equal(furnitureEntities(only, [floorWith([room], { furniture: [speaker] })]).get("sp")?.entity, "media_player.echo");
+  const two = hassOf([entity("media_player.echo", "idle"), entity("media_player.other", "idle")], inRoom("media_player.echo", "media_player.other"));
+  assert.equal(furnitureEntities(two, [floorWith([room], { furniture: [speaker] })]).get("sp")?.entity ?? null, null, "two players: no guess");
+  setPacks([]);
+});

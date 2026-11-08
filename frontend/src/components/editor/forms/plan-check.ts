@@ -4,10 +4,15 @@ import { html, nothing, type TemplateResult } from "lit";
 import type { I18nKey } from "../../../i18n.ts";
 import type { EditorHost } from "../host.ts";
 import { hint } from "../fields.ts";
+import { entityName } from "../../../devices.ts";
 import type { CheckFinding } from "../ops/plan-check.ts";
 
 export interface PlanCheckActions {
   fix(finding: CheckFinding): void;
+  /** Stops listing these devices as missing. */
+  ignore(entityIds: string[]): void;
+  /** Lists every ignored device again. */
+  resetIgnored(): void;
   close(): void;
 }
 
@@ -38,6 +43,8 @@ function fixLabel(host: EditorHost, f: CheckFinding): string {
       return t("check_fix_add_rooms");
     case "place_devices":
       return t("check_fix_place", { n: f.fix.entityIds.length });
+    case "ignore_devices":
+      return t("check_fix_ignore");
     case "remove_placements":
       return t("check_fix_remove", { n: f.fix.entityIds.length });
     default:
@@ -62,11 +69,28 @@ export function renderPlanCheck(host: EditorHost, findings: readonly CheckFindin
                   (f) => html`<li>
                     <span class="nf-check-icon" aria-hidden="true">${ICON[f.kind]}</span><span class="nf-check-text">${textOf(host, f)}</span>
                     <button class="nf-btn ${f.changes ? "nf-primary" : ""}" ?disabled=${f.changes && !host.admin} @click=${() => act.fix(f)}>${fixLabel(host, f)}</button>
+                    ${f.entityIds ? names(host, f.entityIds, act) : nothing}
                   </li>`,
                 )}
             </ul>`,
         )}`}
+    ${(host.doc.settings.check_ignore ?? []).length > 0
+      ? html`<p class="nf-sub"><button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.resetIgnored()}>${t("check_reset_ignored", { n: host.doc.settings.check_ignore!.length })}</button></p>`
+      : nothing}
   </section>`;
+}
+
+/** The devices behind a finding, one by one, each with "Ignore" (look first, then place or leave out – #103). */
+function names(host: EditorHost, ids: string[], act: PlanCheckActions): TemplateResult {
+  const t = host.t;
+  return html`<details class="nf-check-names">
+    <summary>${t("check_show_devices", { n: ids.length })}</summary>
+    <ul>
+      ${ids.map((id) => html`<li><span title=${id}>${host.hass ? entityName(host.hass, id) : id}</span> <small>${id}</small>
+        <button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.ignore([id])}>${t("check_fix_ignore")}</button></li>`)}
+    </ul>
+    <button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.ignore(ids)}>${t("check_ignore_all", { n: ids.length })}</button>
+  </details>`;
 }
 
 /** The button that opens the check, with the number of findings when it was last run. */

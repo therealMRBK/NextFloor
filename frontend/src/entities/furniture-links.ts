@@ -2,7 +2,7 @@
 // hand; otherwise they are found among the entities of the room the piece stands in, by their names.
 
 import { pointInPolygon, type EntityRef, type Floor, type Room } from "../model.ts";
-import { isClimateFurniture, packScreen } from "../packs.ts";
+import { isClimateFurniture, packItem, packScreen } from "../packs.ts";
 import type { HomeAssistant } from "../types.ts";
 import { entityName, kindOf } from "./kinds.ts";
 import { openingEntities } from "./openings.ts";
@@ -72,6 +72,9 @@ export function pictureRuleMatches(hass: HomeAssistant, rule: { entity: string; 
 /** Furniture that shows a media player on a screen: the built-in TVs and pack items with a screen part. */
 export const isMediaFurniture = (type: string): boolean => TV_FURNITURE.has(type) || !!packScreen(type);
 
+/** Speakers without a screen (smart speakers, hi-fi, multiroom): they link to a media player for volume and playback. */
+export const isSpeakerFurniture = (type: string): boolean => !!packItem(type)?.electric && /speaker|multiroom|soundbar/.test(type.split(":").pop() ?? type);
+
 /** Furniture whose screen can show a media player or a picture rule: media furniture, a desk's monitor, a smart fridge's display. */
 export const hasScreen = (type: string): boolean => isMediaFurniture(type) || type === "desk" || type === "fridge_smart";
 
@@ -107,7 +110,7 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
       const isLamp = piece.type in LAMP_NAMES;
       const isClimate = isClimateFurniture(piece.type);
       const pattern = isLamp ? LAMP_NAMES[piece.type] : FURNITURE_NAMES[piece.type];
-      if (!pattern && !isClimate && piece.entity == null && piece.power == null) continue;
+      if (!pattern && !isClimate && !isSpeakerFurniture(piece.type) && piece.entity == null && piece.power == null) continue;
       const room = roomOf(floor, piece.x, piece.z);
       const free = (room ? primaryEntities(hass, roomEntities(hass, room)) : []).filter((id) => !used.has(id));
       const describe = (id: string) => `${id} ${entityName(hass, id)}`;
@@ -130,6 +133,10 @@ export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[])
           const players = ofKind("media");
           // a TV takes the TV (or any player of the room); a monitor or smart speaker only a player whose name fits
           entity = players.find((id) => hass.states[id]?.attributes.device_class === "tv") ?? pickByName(players, pattern, describe, TV_FURNITURE.has(piece.type));
+        } else if (isSpeakerFurniture(piece.type)) {
+          // a speaker takes a player whose name fits, else the only free player of its room (#104)
+          const players = ofKind("media").filter((id) => hass.states[id]?.attributes.device_class !== "tv");
+          entity = pickByName(players, pattern, describe, false) ?? (players.length === 1 ? players[0] : null);
         } else if (pattern) entity = free.find((id) => ["switch", "media", "fan"].includes(kindOf(id) ?? "") && pattern.test(describe(id))) ?? null;
         if (entity) used.add(entity);
       }

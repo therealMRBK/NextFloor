@@ -916,6 +916,8 @@ SETTINGS_SCHEMA = vol.Schema(
         # which weather effects the 3D view shows (None = all but fog)
         # warning for a window open while it rains
         vol.Optional("rain_warning", default=True): bool,
+        # devices the plan check no longer lists as missing from the plan (entity ids)
+        vol.Optional("check_ignore"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=2000))),
         # warning for a door or window contact that has been unavailable for 10 minutes (off unless set)
         vol.Optional("contact_warning"): bool,
         # a note at night (22:00 to 6:00) for the plan's door locks that stand unlocked

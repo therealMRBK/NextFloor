@@ -32,6 +32,8 @@ export interface AlertSources {
   weather: string | null;
   /** An own rain sensor (a weather station): it decides instead of the weather entity's condition. */
   rain: string | null;
+  /** The rain sensor says "dry" where it reads on / above zero (some stations and KNX sensors work that way). */
+  rainInverted?: boolean;
   /** A sensor that tells a power outage (grid gone). */
   outage: string | null;
   /** The contacts of doors and windows, watched for going unavailable (empty unless that warning is on). */
@@ -114,6 +116,7 @@ export function alertSources(hass: HomeAssistant, building: Building, weatherId?
     alarms: Object.keys(hass.states).filter((id) => id.startsWith("alarm_control_panel.")),
     weather: rainWarningOn ? weatherEntity(hass, weatherId ?? building.settings.weather_entity) : null,
     rain: rainWarningOn && rain && rain !== "none" ? rain : null,
+    rainInverted: !!building.settings.rain_sensor_inverted,
     outage: building.settings.outage_sensor && building.settings.outage_sensor !== "none" ? building.settings.outage_sensor : null,
     contacts: building.settings.contact_warning && links ? openingContacts(building, links) : [],
     own: (building.settings.own_alerts ?? []).filter((r) => r.entity),
@@ -150,12 +153,13 @@ const isAjar = (hass: HomeAssistant, link: OpeningEntities): boolean => {
 };
 
 /** Whether it rains: an own rain sensor (on, or a rain rate above zero) wins over the weather entity's condition. */
-export function isRaining(hass: HomeAssistant, sources: Pick<AlertSources, "weather" | "rain">): boolean {
+export function isRaining(hass: HomeAssistant, sources: Pick<AlertSources, "weather" | "rain" | "rainInverted">): boolean {
   if (sources.rain) {
     const st = hass.states[sources.rain];
     if (!st || st.state === "unavailable" || st.state === "unknown") return false;
     const rate = Number(st.state);
-    return Number.isFinite(rate) ? rate > 0 : st.state === "on" || /rain|regen|wet|nass/i.test(st.state);
+    const wet = Number.isFinite(rate) ? rate > 0 : st.state === "on" || /rain|regen|wet|nass/i.test(st.state);
+    return sources.rainInverted ? !wet : wet;
   }
   const weather = sources.weather ? hass.states[sources.weather]?.state : undefined;
   return !!weather && RAIN_STATES.has(weather);
