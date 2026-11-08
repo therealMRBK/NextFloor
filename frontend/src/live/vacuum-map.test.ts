@@ -177,3 +177,12 @@ test("the grid places come from the camera, and are null without one", () => {
   assert.deepEqual(gridPlaces(hass, null), { at: null, dock: null });
   assert.deepEqual(gridPlaces(hass, "camera.gone"), { at: null, dock: null });
 });
+
+test("Dreame's map camera names the dock charger_position and may have no trail (#109)", () => {
+  const hass = hassOf([entity("camera.dreame_map", "idle", { vacuum_position: { x: 100, y: 50, a: 0 }, charger_position: { x: 20, y: 10 } })]);
+  assert.equal(mapCamera(hassOf([entity("camera.dreame_map", "idle", { charger_position: { x: 20, y: 10 } })])), "camera.dreame_map", "found by the dock alone");
+  assert.deepEqual(gridPlaces(hass, "camera.dreame_map"), { at: [100, 50], dock: [20, 10] });
+  const live = readVacuum(hass, "camera.dreame_map", CAL)!;
+  assert.deepEqual(pair2(live.charger!), [2, 1]);
+  assert.deepEqual(live.path, [], "no path attribute: no invented trail");
+});

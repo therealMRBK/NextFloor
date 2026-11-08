@@ -8,6 +8,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **A view of its own for Outside** (thanks @eskahone, #83): under *Settings → Outside: hide devices* the button *Use this view for Outside* stores the camera of the editor's 3D preview. Opening Outside then flies to the garden instead of staying on the house view; closing it goes back.
 
+### Fixed
+
+- **Dreame robot maps** (thanks @lina-alexrt, #109): the map camera of the Dreame integration names the dock `charger_position` instead of `charger`. NextFloor now reads both, so the robot's real position can be calibrated and shown on the plan. Without a `path` on the camera no trail is drawn.
+
 ## [0.26.4]
 
 ### Added

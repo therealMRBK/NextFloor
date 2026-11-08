@@ -3,7 +3,7 @@
  *
  * A robot reports where it is and where it has been in its map's grid, which has nothing to do with the
  * plan's metres: the integration hands that out on the map camera's attributes (`vacuum_position`,
- * `charger`, `path` — the vacuum map card's names, shared by NarwalIntegration and the Xiaomi/Roborock map
+ * `charger` or Dreame's `charger_position`, `path` — the vacuum map card's names, shared by NarwalIntegration and the Xiaomi/Roborock map
  * extractors). Two places known in both frames are enough to tie the two together, as a similarity transform:
  * scale, rotation and shift. Everything else — the pose, the trail, the dock — follows from those two pairs.
  *
@@ -44,6 +44,11 @@ function pair(v: unknown): [number, number] | null {
   return Number.isFinite(px) && Number.isFinite(py) ? [px, py] : null;
 }
 
+/** Where the dock is in the map's grid: `charger` (the map card's name), or `charger_position` (Dreame's map camera, #109). */
+function dockOf(attributes: Record<string, unknown> | undefined): [number, number] | null {
+  return attributes ? (pair(attributes.charger) ?? pair(attributes.charger_position)) : null;
+}
+
 /**
  * The camera whose attributes describe a robot map: it reports where the robot is or where it docks, so it can
  * be found without being configured.
@@ -52,7 +57,7 @@ export function mapCamera(hass: HomeAssistant): string | null {
   for (const [id, st] of Object.entries(hass.states)) {
     if (!id.startsWith("camera.")) continue;
     // where the robot is, or where it docks: either says this camera carries a robot's map
-    if (pair(st.attributes?.vacuum_position) ?? pair(st.attributes?.charger)) return id;
+    if (pair(st.attributes?.vacuum_position) ?? dockOf(st.attributes)) return id;
   }
   return null;
 }
@@ -123,7 +128,7 @@ export function readVacuum(hass: HomeAssistant, camera: string | null, cal: Vacu
       })()
     : null;
 
-  const dock = pair(attributes.charger);
+  const dock = dockOf(attributes);
   // `path` is one run of points in the map card's format, and a list of runs in NarwalIntegration's, where a
   // gap is a new run; take both, or a robot's whole trail would count as a single point and vanish
   const rawPath: unknown[] = Array.isArray(attributes.path) ? attributes.path : [];
@@ -162,7 +167,7 @@ export function gridPlaces(hass: HomeAssistant, camera: string | null): { at: [n
   const attributes = camera ? hass.states[camera]?.attributes : undefined;
   return {
     at: attributes ? pair(attributes.vacuum_position) : null,
-    dock: attributes ? pair(attributes.charger) : null,
+    dock: dockOf(attributes),
   };
 }
 
