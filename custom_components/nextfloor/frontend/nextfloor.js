@@ -2057,7 +2057,8 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         max-height: calc(100% - 140px);
         overflow-y: auto;
         scrollbar-width: none;
-        z-index: 2;
+        /* level with the top-left stack and after it in the page, so on a small screen the floors lie over a weather card or clock there (#84) */
+        z-index: 3;
       }
       .nf-thumb {
         position: relative;
