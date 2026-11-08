@@ -1,0 +1,37 @@
+{
+  "pageTitle": "NextFloor-Dokumentation · NextFloor",
+  "desc": "Alles über NextFloor, den kostenlosen 3D-Grundriss für Home Assistant: installieren, Zuhause zeichnen, Geräte verbinden, Karten bauen, Plugins schreiben.",
+  "title": "Einmal zeichnen. Dein Zuhause <em>live</em> in 3D.",
+  "sub": "NextFloor macht aus Home Assistant ein lebendiges 3D-Modell deines Hauses: Lampen leuchten in ihrem Raum, Rollläden fahren, Türen öffnen sich, der Fernseher zeigt, was läuft. Kostenlos, lokal, ohne Konto.",
+  "cta": [["In 15 Minuten loslegen", "quickstart"], ["Live-Demo ausprobieren", "https://therealmrbk.github.io/NextFloor/"]],
+  "shot": "view-house.jpg",
+  "shotAlt": "Ein Haus in der 3D-Ansicht von NextFloor mit beleuchteten Räumen und auseinandergezogenen Etagen",
+  "pathsTitle": "Starte da, wo du stehst",
+  "pathsLead": "Die Dokumentation folgt dem Weg, den du wirklich gehst. Wähle die Tür, die heute passt.",
+  "paths": [
+    { "title": "Ich bin neu hier", "text": "NextFloor installieren, den ersten Raum zeichnen, eine Lampe setzen und sie in der 3D-Ansicht schalten. Etwa fünfzehn Minuten, ohne Vorbereitung.", "href": "quickstart", "go": "Zum Schnellstart" },
+    { "title": "Ich will meine Geräte darin", "text": "Lichter, Rollläden, Sensoren, den Fernseher, das Auto und den Garten mit dem Plan verbinden.", "href": "devices", "go": "Geräte verbinden" },
+    { "title": "Ich will darauf aufbauen", "text": "Dashboard-Karte, Automationen, Plugins und eigene Möbel.", "href": "cards", "go": "Verbinden und erweitern" }
+  ],
+  "tourTitle": "Was du bekommst",
+  "tourLead": "Alles hier ist eingebaut, kostenlos und läuft mit den Geräten, die du schon hast.",
+  "tour": [
+    { "title": "Ein Plan-Editor, der sich wie ein Spiel anfühlt", "text": "Etagen, Räume, gebogene Wände, Türen, Fenster, Treppen, Dächer und Gärten. Das 3D-Modell wächst neben dem Plan mit. Statt bei null anzufangen, importierst du einen Scan, eine CAD-Zeichnung oder einen Sweet-Home-3D-Plan.", "links": [["Haus zeichnen", "draw"], ["Import und Sicherung", "plan-tools"]], "img": "editor.jpg", "alt": "Der Plan-Editor mit der 3D-Ansicht daneben" },
+    { "title": "800 Möbelmodelle, oder baue deine eigenen", "text": "Vierzig Grundmodelle und dreiundvierzig kostenlose Packs, vom IKEA-Sofa bis zum Bilderrahmen mit eigenen Fotos. Die Möbel-Werkstatt und der Browser-Baukasten bauen alles, was fehlt.", "links": [["Einrichten", "furnish"], ["Möbel-Packs", "packs"]], "img": "new-furniture.jpg", "alt": "Möbel aus mehreren Packs in einem Raum" },
+    { "title": "Lampe antippen, der Raum antwortet", "text": "Lichter leuchten in ihrer echten Farbe, Rollläden fahren, Fenster und Türen öffnen sich, der Fernseher zeigt, was läuft, draußen regnet es. Das Raum-Fenster bündelt jedes Gerät eines Raums.", "links": [["Die 3D-Ansicht", "view3d"], ["Live-Funktionen", "live"]], "img": "view-room.jpg", "alt": "Ein Raum in 3D mit Lampen und dem Raum-Fenster" },
+    { "title": "Klima, Sonne und Energie, pro Raum", "text": "Heatmaps für Temperatur, Feuchte, CO₂ und Schimmelrisiko, die Sonnenstunden je Raum und der Stromfluss entlang der echten Kabelwege deines Hauses.", "links": [["Klima und Energie", "climate-energy"], ["Außen und Dach", "outside"]], "img": "view-energy.jpg", "alt": "Das Haus mit dem Energiefluss vom Solarfeld" },
+    { "title": "Gemacht fürs Wandtablet", "text": "Eine Dashboard-Karte mit visuellem Editor, ein Kiosk-Modus, der nachts dimmt, Durchsagen auf jedem Bildschirm und eine Qualität, die auf langsamer Hardware von selbst herunterschaltet.", "links": [["Die Karte", "cards"], ["Wandtablet", "tablet"]], "img": "tablet.jpg", "alt": "NextFloor auf einem Wandtablet" }
+  ],
+  "refsTitle": "Etwas nachschlagen",
+  "refs": [
+    { "title": "Referenz", "links": [["Karten-Optionen", "cards"], ["Dienste und Sensoren", "automations"], ["Plan-Format (JSON)", "plan-format"], ["Tasten und Gesten", "shortcuts"]] },
+    { "title": "Erweitern", "links": [["Ein Plugin schreiben", "plugins"], ["Format der Möbel-Packs", "packs"], ["Eigene 3D-Modelle", "models"]] },
+    { "title": "Weiterkommen", "links": [["FAQ und Fehlersuche", "faq"], ["Änderungsprotokoll", "changelog"], ["Mitmachen", "contributing"]] }
+  ],
+  "promiseTitle": "Für immer kostenlos, und die Lizenz sagt es auch",
+  "promise": [
+    "Jede Funktion, jedes Möbel-Pack und jedes Update ist für alle kostenlos. Es gibt keine Pro-Version, keine bezahlten Erweiterungen, keinen Unterstützer-Pass und keinen Lizenzschlüssel.",
+    "Deine Daten bleiben in deinem Home Assistant. Kein Konto, keine Cloud, keine Nutzungsdaten. NextFloor steht unter der MIT-Lizenz, also kann es dir niemand wegnehmen, nicht einmal der Autor."
+  ],
+  "stats": [["43", "Möbel-Packs"], ["~800", "Modelle"], ["19", "Sprachen"], ["0", "Euro, für immer"]]
+}

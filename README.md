@@ -11,6 +11,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 
 <p align="center">
 <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=therealMRBK&repository=NextFloor&category=integration"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open in HACS"></a>
+<a href="https://therealmrbk.github.io/NextFloor/docs/en/"><img src="https://img.shields.io/badge/%F0%9F%93%9A-Documentation-1f6feb?style=for-the-badge" alt="Documentation"></a>
 <a href="https://therealmrbk.github.io/NextFloor/"><img src="https://img.shields.io/badge/%E2%96%B6-Online%20demo-00b4d8?style=for-the-badge" alt="Online demo"></a>
 <a href="https://therealmrbk.github.io/NextFloor/preview/index.html?showcase&lang=en"><img src="https://img.shields.io/badge/%E2%96%A6-All%20models-8a63d2?style=for-the-badge" alt="All models"></a>
 <a href="https://therealmrbk.github.io/NextFloor/dev/"><img src="https://img.shields.io/badge/%E2%9A%99-Dev%20demo-ffb547?style=for-the-badge" alt="Demo of the development version"></a>
@@ -31,7 +32,7 @@ No Pro version, no paid add-ons, no supporter pass, no licence key, no shop.</p>
 
 <p align="center">📖 <b>English</b> · <a href="https://github.com/therealMRBK/NextFloor/blob/main/README.zh-CN.md">简体中文</a></p>
 
-<p align="center">📖 <a href="https://github.com/therealMRBK/NextFloor/blob/main/docs/manual.md">Manual</a> · <a href="https://github.com/therealMRBK/NextFloor/blob/main/docs/anleitung.md">Anleitung (Deutsch)</a> · 🗺️ <a href="https://github.com/therealMRBK/NextFloor/blob/main/ROADMAP.md">Roadmap</a> · 📝 <a href="https://github.com/therealMRBK/NextFloor/blob/main/CHANGELOG.md">Changelog</a></p>
+<p align="center"><a href="https://therealmrbk.github.io/NextFloor/docs/en/"><b>📚 Documentation</b></a> · <a href="https://therealmrbk.github.io/NextFloor/docs/en/quickstart/">Quick start</a> · <a href="https://therealmrbk.github.io/NextFloor/docs/en/cards/">Card options</a> · <a href="https://therealmrbk.github.io/NextFloor/docs/en/plugins/">Plugins</a> · <a href="https://therealmrbk.github.io/NextFloor/docs/en/faq/">FAQ</a> · <a href="https://therealmrbk.github.io/NextFloor/docs/de/">Deutsch</a> · <a href="https://github.com/therealMRBK/NextFloor/blob/main/ROADMAP.md">Roadmap</a> · <a href="https://therealmrbk.github.io/NextFloor/docs/en/changelog/">Changelog</a></p>
 
 ---
 
@@ -154,6 +155,21 @@ sensor_bar: true        # optional: your own sensors at the top
 ```
 
 </details>
+
+## 📚 Documentation
+
+The full documentation lives at **[therealmrbk.github.io/NextFloor/docs](https://therealmrbk.github.io/NextFloor/docs/en/)**, with search, a dark and a light look, and every page in English and German.
+
+| I want to … | Read |
+|---|---|
+| install and draw my first room | [Install](https://therealmrbk.github.io/NextFloor/docs/en/install/) · [Quick start](https://therealmrbk.github.io/NextFloor/docs/en/quickstart/) |
+| draw the house, furnish it, connect devices | [Draw](https://therealmrbk.github.io/NextFloor/docs/en/draw/) · [Furnish](https://therealmrbk.github.io/NextFloor/docs/en/furnish/) · [Connect devices](https://therealmrbk.github.io/NextFloor/docs/en/devices/) |
+| use the 3D view, weather, energy and climate | [The 3D view](https://therealmrbk.github.io/NextFloor/docs/en/view3d/) · [Live features](https://therealmrbk.github.io/NextFloor/docs/en/live/) · [Climate and energy](https://therealmrbk.github.io/NextFloor/docs/en/climate-energy/) |
+| put it on a dashboard or a wall tablet | [The dashboard card](https://therealmrbk.github.io/NextFloor/docs/en/cards/) · [Wall tablet](https://therealmrbk.github.io/NextFloor/docs/en/tablet/) |
+| automate, extend, build my own | [Services and sensors](https://therealmrbk.github.io/NextFloor/docs/en/automations/) · [Plugins](https://therealmrbk.github.io/NextFloor/docs/en/plugins/) · [Furniture packs](https://therealmrbk.github.io/NextFloor/docs/en/packs/) · [Plan format](https://therealmrbk.github.io/NextFloor/docs/en/plan-format/) |
+| fix something | [FAQ and troubleshooting](https://therealmrbk.github.io/NextFloor/docs/en/faq/) |
+
+The Markdown sources are in [`docs/content`](https://github.com/therealMRBK/NextFloor/tree/main/docs/content); a pull request that improves a page is welcome.
 
 ## 📦 Your own 3D models
 

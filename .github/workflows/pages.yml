@@ -9,6 +9,9 @@ on:
     branches: [main, dev]
     paths:
       - "site/**"
+      - "docs/**"
+      - "tools/docs/**"
+      - "CHANGELOG.md"
       - "preview/**"
       - "tools/make_showcase_types.mjs"
       - "custom_components/nextfloor/frontend/**"
@@ -40,6 +43,9 @@ jobs:
         with:
           ref: dev
           path: src-dev
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
       - name: Assemble the site
         run: |
           assemble() {
@@ -62,6 +68,15 @@ jobs:
           for page in _site/dev/index.html _site/dev/preview/index.html $( [ -f _site/dev/builder/index.html ] && echo _site/dev/builder/index.html ); do
             sed -i 's|<body>|<body><div style="position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99;padding:2px 14px;border-radius:0 0 10px 10px;background:#ffb547;color:#1a1200;font:700 12px sans-serif">DEV – work in progress</div>|' "$page"
           done
+          # the documentation site (a branch that does not have it yet is skipped)
+          build_docs() {
+            src="$1"; out="$2"
+            if [ -d "$src/tools/docs" ]; then
+              (cd "$src/tools/docs" && npm ci --no-audit --no-fund && node build.mjs --check --out="$out")
+            fi
+          }
+          build_docs "$PWD/src-main" "$PWD/_site/docs"
+          build_docs "$PWD/src-dev" "$PWD/_site/dev/docs"
           touch _site/.nojekyll
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5

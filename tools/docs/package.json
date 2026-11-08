@@ -1,0 +1,13 @@
+{
+  "name": "nextfloor-docs",
+  "private": true,
+  "type": "module",
+  "description": "Builds the NextFloor documentation site from docs/content",
+  "scripts": { "build": "node build.mjs", "check": "node build.mjs --check" },
+  "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/figtree": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "marked": "18.1.3"
+  }
+}

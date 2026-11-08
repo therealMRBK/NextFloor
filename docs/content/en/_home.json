@@ -1,0 +1,37 @@
+{
+  "pageTitle": "NextFloor documentation · NextFloor",
+  "desc": "Everything about NextFloor, the free 3D floor plan for Home Assistant: install, draw your home, connect devices, build cards, write plugins.",
+  "title": "Draw your home once. <em>Watch it live</em> in 3D.",
+  "sub": "NextFloor turns Home Assistant into a living 3D model of your house: lamps light their room, blinds move, doors open, the TV shows what plays. Free, local, no account.",
+  "cta": [["Start in 15 minutes", "quickstart"], ["Try the live demo", "https://therealmrbk.github.io/NextFloor/"]],
+  "shot": "view-house.jpg",
+  "shotAlt": "A house in NextFloor's 3D view with lit rooms and the floors apart",
+  "pathsTitle": "Start where you are",
+  "pathsLead": "The documentation follows the way you actually work. Pick the door that fits today.",
+  "paths": [
+    { "title": "I am new here", "text": "Install NextFloor, draw the first room, place a lamp and switch it from the 3D view. About fifteen minutes, nothing to prepare.", "href": "quickstart", "go": "Start the quick start" },
+    { "title": "I want my devices in it", "text": "Link lights, blinds, sensors, the TV, the car and the garden to the plan.", "href": "devices", "go": "Connect devices" },
+    { "title": "I want to build on it", "text": "Dashboard card, automations, plugins and your own furniture.", "href": "cards", "go": "Connect and extend" }
+  ],
+  "tourTitle": "What you get",
+  "tourLead": "Everything below is built in and free, and works with the devices you already have.",
+  "tour": [
+    { "title": "A plan editor that feels like a game", "text": "Floors, rooms, curved walls, doors, windows, stairs, roofs and gardens, with the 3D model growing beside the plan while you draw. Import a scan, a CAD drawing or a Sweet Home 3D plan instead of starting from zero.", "links": [["Draw the house", "draw"], ["Import and backup", "plan-tools"]], "img": "editor.jpg", "alt": "The plan editor with the 3D view beside it" },
+    { "title": "Furnish it with 800 models, or build your own", "text": "Forty basic models and forty-three free packs, from IKEA-style sofas to picture frames with your own photos. The furniture studio and the browser builder make anything that is missing.", "links": [["Furnish", "furnish"], ["Furniture packs", "packs"]], "img": "new-furniture.jpg", "alt": "Furniture from several packs in a room" },
+    { "title": "Tap a lamp, watch the room answer", "text": "Lights glow in their real colour, blinds travel, windows and doors open, the TV shows what plays, rain falls outside. The room panel puts every device of a room in one place.", "links": [["The 3D view", "view3d"], ["Live features", "live"]], "img": "view-room.jpg", "alt": "A room in 3D with its lamps and the room panel" },
+    { "title": "Climate, sun and energy, by room", "text": "Heat maps for temperature, humidity, CO₂ and mould risk, the hours of sun per room, and the power flow along the real cable routes of your house.", "links": [["Climate and energy", "climate-energy"], ["Outside and roof", "outside"]], "img": "view-energy.jpg", "alt": "The house with the energy flow from the solar field" },
+    { "title": "Made for the wall tablet", "text": "A dashboard card with a visual editor, kiosk mode that dims at night, announcements on every screen, and quality that steps down by itself on slow hardware.", "links": [["The card", "cards"], ["Wall tablet", "tablet"]], "img": "tablet.jpg", "alt": "NextFloor on a wall tablet" }
+  ],
+  "refsTitle": "Look something up",
+  "refs": [
+    { "title": "Reference", "links": [["Card options", "cards"], ["Services and sensors", "automations"], ["Plan format (JSON)", "plan-format"], ["Keyboard and gestures", "shortcuts"]] },
+    { "title": "Extend", "links": [["Write a plugin", "plugins"], ["Furniture pack format", "packs"], ["Own 3D models", "models"]] },
+    { "title": "Get unstuck", "links": [["FAQ and troubleshooting", "faq"], ["Changelog", "changelog"], ["Contributing", "contributing"]] }
+  ],
+  "promiseTitle": "Free forever, and the licence says so",
+  "promise": [
+    "Every feature, every furniture pack and every update is free for everyone. There is no Pro version, no paid add-on, no supporter pass and no licence key.",
+    "Your data stays in your Home Assistant. No account, no cloud, no usage data. NextFloor is MIT licensed, so nobody can take it away, not even its author."
+  ],
+  "stats": [["43", "furniture packs"], ["~800", "models"], ["19", "languages"], ["0", "euros, ever"]]
+}

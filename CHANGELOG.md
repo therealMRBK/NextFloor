@@ -2,6 +2,13 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Added
+
+- **A documentation site**, in English and German, at [therealmrbk.github.io/NextFloor/docs](https://therealmrbk.github.io/NextFloor/docs/en/): 26 pages from the quick start to the full list of card options, with search (Ctrl+K), a dark and a light look, a table of contents, copyable code and a full-size view of every picture. The sources are Markdown in `docs/content`, built by `tools/docs`, and CI checks every link and anchor.
+- The README points into the documentation and lists where to read what.
+
 ## [0.26.0]
 
 ### Added

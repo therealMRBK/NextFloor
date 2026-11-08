@@ -24,3 +24,4 @@ frontend/tutorial/out/
 # knowledge-graph tooling output
 graphify-out/
 *.bak-graphify
+tools/docs/dist/
