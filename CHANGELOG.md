@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.26.5]
+
 ### Added
 
 - **Chimneys on the roof:** the roof tool places chimneys in four shapes (brick, round, wide with two flues, steel flue pipe with a rain cap), with their own width, depth and height above the roof. Drag them in the plan or in the 3D view.
@@ -594,7 +596,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.25.4...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...main
+[0.26.5]: https://github.com/therealMRBK/NextFloor/compare/v0.26.4...v0.26.5
 [0.25.4]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...v0.25.4
 [0.25.3]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...v0.25.3
 [0.25.2]: https://github.com/therealMRBK/NextFloor/compare/v0.25.1...v0.25.2
