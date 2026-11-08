@@ -19,3 +19,24 @@ test("the day's events as lines: times, all-day ones first, past ones marked", (
   );
   assert.deepEqual(items.map((i) => [i.time, i.title, !!i.past]), [["", "Geburtstag Oma", false], ["08:00", "Frühstück", true], ["15:30", "Zahnarzt", false]]);
 });
+
+test("over several days each line knows its day, and the days come in order (#84)", () => {
+  const now = new Date(2026, 10, 8, 10, 0).getTime();
+  const iso = (d: number, h: number) => new Date(2026, 10, d, h).toISOString();
+  const items = sortDay(
+    agenda(
+      [
+        { summary: "Dentist", start: iso(9, 9), end: iso(9, 10) },
+        { summary: "Holiday", start: { date: "2026-11-10" } },
+        { summary: "Lunch", start: iso(8, 12), end: iso(8, 13) },
+        { summary: "Market", start: { date: "2026-11-08" } },
+      ],
+      "Family",
+      now,
+    ),
+  );
+  assert.deepEqual(
+    items.map((i) => [i.day, i.title]),
+    [[0, "Market"], [0, "Lunch"], [1, "Dentist"], [2, "Holiday"]],
+  );
+});

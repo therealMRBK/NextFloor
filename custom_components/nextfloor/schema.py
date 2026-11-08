@@ -900,6 +900,18 @@ SETTINGS_SCHEMA = vol.Schema(
         ),
         # calendars whose appointments of the day show on the "Today" card
         vol.Optional("calendars"): vol.Any(None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))),
+        # how many days the "Today" card lists (None = today only)
+        vol.Optional("today_days"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=1, max=7))),
+        # the weather forecast card: days and top corner (None = none)
+        vol.Optional("forecast"): vol.Any(
+            None,
+            vol.Schema(
+                {
+                    vol.Required("days"): vol.All(vol.Coerce(int), vol.Range(min=1, max=7)),
+                    vol.Required("corner"): vol.In(["top_left", "top_right"]),
+                }
+            ),
+        ),
         # favourites of the house in the central menu of the 3D view (scenes, scripts, switches …)
         vol.Optional("favorites", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=40)),
         # devices the Outside panel leaves out

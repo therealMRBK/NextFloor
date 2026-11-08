@@ -712,6 +712,10 @@ export interface BuildingSettings {
   own_alerts?: OwnAlert[] | null;
   /** Calendars whose appointments of the day show on the "Today" card of the 3D view. */
   calendars?: string[] | null;
+  /** How many days the "Today" card lists, from today on (null = today only). */
+  today_days?: number | null;
+  /** The weather forecast card in a top corner of the 3D view (null = none, #84). */
+  forecast?: ForecastCard | null;
   /** The fuse box: its circuits with the rooms on them ("F12 kitchen"); the room panel names them and the search finds them. */
   circuits?: Circuit[] | null;
   /** Own sensors shown at the top of the 3D view (outside temperature, the alarm…), at most 12. */
@@ -723,6 +727,12 @@ export interface BuildingSettings {
 }
 
 /** Two places, each known in the plan (m) and in a robot's map grid. */
+/** The weather forecast card: how many days, and which top corner it sits in. The weather entity is `weather_entity`. */
+export interface ForecastCard {
+  days: number;
+  corner: "top_left" | "top_right";
+}
+
 export interface VacuumCalibration {
   /** Plan position of the first place. */
   a: [number, number];

@@ -32,6 +32,7 @@ import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
+import { forecastDays, loadForecast } from "../live/forecast.ts";
 import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
 import { isHeatPump, readHeatPump, type HeatPumpInfo } from "../live/heat-pump.ts";
 import { coverageColor, isAccessPoint, networkHealth, readAccessPoint } from "../live/wifi.ts";
@@ -133,6 +134,7 @@ export class NfView3d extends LitElement {
     today: { attribute: false },
     _todayOpen: { state: true },
     _todayItems: { state: true },
+    _forecast: { state: true },
     zoom: { attribute: false },
     buttons: { attribute: false },
     _thumbs: { state: true },
@@ -367,6 +369,10 @@ export class NfView3d extends LitElement {
   declare today: boolean;
   private declare _todayOpen: boolean;
   private declare _todayItems: TodayItem[];
+  /** The weather entity's daily forecast as Home Assistant answered it (see live/forecast.ts). */
+  private declare _forecast: unknown;
+  private forecastAt = 0;
+  private forecastKey = "";
   private todayAt = 0;
   private todayDay = "";
   /** How much closer the fitted views come (1 = fitted). */
@@ -821,6 +827,7 @@ export class NfView3d extends LitElement {
     if (hiddenFurniture(hass, b).join(",") !== this.shownFor?.key) v.setBuilding(this.shownBuilding(hass));
     this.shownStates = new Map(this.watched.map((id) => [id, hass.states[id]]));
     this.refreshToday(b);
+    this.refreshForecast(b);
 
     const consumers = findConsumers(hass, b);
     // hidden layers bring no pins either
@@ -2432,31 +2439,94 @@ export class NfView3d extends LitElement {
   private refreshToday(b: Building): void {
     const hass = this.hass;
     const calendars = b.settings.calendars ?? [];
-    const day = new Date().toDateString();
+    const days = Math.max(1, Math.min(7, b.settings.today_days ?? 1));
+    // a new day or a new number of days loads again at once
+    const day = `${new Date().toDateString()}|${days}`;
     if (!hass || !calendars.length || (Date.now() - this.todayAt < 900_000 && day === this.todayDay)) return;
     this.todayAt = Date.now();
     this.todayDay = day;
-    void loadToday(hass, calendars).then((items) => (this._todayItems = items));
+    void loadToday(hass, calendars, days).then((items) => (this._todayItems = items));
+  }
+
+  /** The forecast, asked for at most every 30 minutes, and at once when the entity or the day changes. */
+  private refreshForecast(b: Building): void {
+    const hass = this.hass;
+    const entity = b.settings.forecast && hass ? weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity) : null;
+    if (!hass || !entity) return;
+    const key = `${entity}|${new Date().toDateString()}`;
+    if (Date.now() - this.forecastAt < 1_800_000 && key === this.forecastKey) return;
+    this.forecastAt = Date.now();
+    this.forecastKey = key;
+    void loadForecast(hass, entity).then((raw) => (this._forecast = raw));
+  }
+
+  /** The weather forecast card (#84): a row per day with the weather, high and low, and the rain. */
+  private renderForecast(corner: "top_left" | "top_right") {
+    const b = this.building;
+    const hass = this.hass;
+    const card = b?.settings.forecast;
+    if (!b || !hass || !card || card.corner !== corner || this.clean) return nothing;
+    if (corner === "top_right" && (this.roomId || this.panelOpen)) return nothing;
+    const days = forecastDays(this._forecast, Math.max(1, Math.min(7, card.days)));
+    if (!days.length) return nothing;
+    const entity = weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity);
+    const attrs = entity ? hass.states[entity]?.attributes : undefined;
+    const unit = String(attrs?.temperature_unit ?? "°");
+    const rainUnit = String(attrs?.precipitation_unit ?? "mm");
+    const lang = hass.language ?? navigator.language;
+    const name = new Intl.DateTimeFormat(lang, { weekday: "short" });
+    const deg = (v: number | null) => (v === null ? "–" : `${Math.round(v)}°`);
+    return html`<section class="nf-forecast" aria-label=${translate(hass, "forecast")}>
+      <ul>
+        ${days.map(
+          (d, i) => html`<li>
+            <span class="nf-fc-day">${i === 0 ? translate(hass, "today") : name.format(new Date(d.day))}</span>
+            <span class="nf-fc-icon" aria-hidden="true">${d.icon}</span>
+            <span class="nf-fc-temp" title=${unit}><b>${deg(d.high)}</b> <small>${deg(d.low)}</small></span>
+            <span class="nf-fc-rain">${d.rain !== null && d.rain > 0 ? `💧${d.rain.toLocaleString(lang, { maximumFractionDigits: 1 })} ${rainUnit}` : d.chance !== null && d.chance > 0 ? `💧${Math.round(d.chance)} %` : ""}</span>
+          </li>`,
+        )}
+      </ul>
+    </section>`;
   }
 
   private renderToday() {
     const b = this.building;
     const hass = this.hass;
     // the room panel (a room, or Outside) takes the right side; the Today card would lie under it and catch its taps (#83)
-    if (!b || !hass || this.today === false || this.clean || this.roomId || this.panelOpen) return nothing;
+    if (!b || !hass || this.clean || this.roomId || this.panelOpen) return nothing;
+    const forecast = this.renderForecast("top_right");
+    const today = this.today === false ? nothing : this.renderTodayCard(b, hass);
+    if (today === nothing && forecast === nothing) return nothing;
+    return html`<div class="nf-right-col" style=${this.clock === "top_right" ? "top: 78px" : ""}>${today}${forecast}</div>`;
+  }
+
+  private renderTodayCard(b: Building, hass: HomeAssistant) {
     const bins = binsDue(hass, b, Date.now(), { today: translate(hass, "care_bin_today"), tomorrow: translate(hass, "care_bin_tomorrow") });
     const items = sortDay([...bins, ...(this._todayItems ?? [])]);
     if (!items.length && !(b.settings.calendars ?? []).length) return nothing;
     const open = this._todayOpen !== false;
     const date = new Intl.DateTimeFormat(hass.language ?? navigator.language, { weekday: "long", day: "numeric", month: "long" }).format(new Date());
-    return html`<section class="nf-today ${open ? "" : "nf-today-folded"}" style=${this.clock === "top_right" ? "top: 78px" : ""} aria-label=${translate(hass, "today")}>
+    const lang = hass.language ?? navigator.language;
+    const dayName = (n: number) => {
+      if (n === 1) return translate(hass, "tomorrow");
+      const d = new Date();
+      d.setDate(d.getDate() + n);
+      return new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "numeric" }).format(d);
+    };
+    // over several days a heading before the first line of each later day
+    const lines = items.flatMap((i, k) => [
+      (i.day ?? 0) > 0 && (items[k - 1]?.day ?? 0) !== i.day ? html`<li class="nf-today-day">${dayName(i.day ?? 0)}</li>` : nothing,
+      html`<li class=${i.past ? "nf-today-past" : ""}><time>${i.kind === "bin" ? "🗑" : i.time || "●"}</time><span>${i.title}<small>${i.source}</small></span></li>`,
+    ]);
+    return html`<section class="nf-today ${open ? "" : "nf-today-folded"}" aria-label=${translate(hass, "today")}>
       <button class="nf-today-head" aria-expanded=${open} @click=${() => (this._todayOpen = !open)}>
         <b>📅 ${translate(hass, "today")}</b><span>${date}</span>
       </button>
       ${open
         ? items.length
           ? html`<ul>
-              ${items.map((i) => html`<li class=${i.past ? "nf-today-past" : ""}><time>${i.kind === "bin" ? "🗑" : i.time || "●"}</time><span>${i.title}<small>${i.source}</small></span></li>`)}
+              ${lines}
             </ul>`
           : html`<p class="nf-today-none">${translate(hass, "today_none")}</p>`
         : nothing}
@@ -2576,8 +2646,9 @@ export class NfView3d extends LitElement {
   /** Top left: the clock there, with the own sensors and the energy bar below it instead of under it. */
   private renderTopLeft() {
     const bar = this.clean ? nothing : this.renderLhEnergy();
-    if (this.clock !== "top_left" || !this.hass) return bar;
-    return html`<div class="nf-topleft">${this.renderClock(true)}${bar}</div>`;
+    const forecast = this.renderForecast("top_left");
+    if ((this.clock !== "top_left" && forecast === nothing) || !this.hass) return bar;
+    return html`<div class="nf-topleft">${this.clock === "top_left" ? this.renderClock(true) : nothing}${bar}${forecast}</div>`;
   }
 
   /** NextFloor's energy bar: what the house makes, uses, stores and trades, and the switches for flows and cards. */
@@ -3250,13 +3321,30 @@ export class NfView3d extends LitElement {
       .nf-has-alerts .nf-layers {
         top: 58px;
       }
-      /* "Today": the day's appointments and bins, top right, folds to its title */
-      .nf-today {
+      /* top right: "Today" and the forecast below it, one column */
+      .nf-right-col {
         position: absolute;
         top: 12px;
         right: 12px;
         width: min(280px, calc(100% - 24px));
         max-height: calc(100% - 140px);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        z-index: 3;
+        pointer-events: none;
+      }
+      .nf-right-col > * {
+        pointer-events: auto;
+      }
+      .nf-has-alerts .nf-right-col {
+        top: 58px;
+      }
+      /* "Today": the day's appointments and bins, folds to its title */
+      .nf-today {
+        width: 100%;
+        min-height: 0;
         overflow-y: auto;
         box-sizing: border-box;
         padding: 8px 12px 10px;
@@ -3268,14 +3356,61 @@ export class NfView3d extends LitElement {
         color: var(--nf-text);
         z-index: 3;
       }
-      .nf-has-alerts .nf-today {
-        top: 58px;
-      }
-      .nf-low .nf-today {
+      .nf-low :is(.nf-today, .nf-forecast) {
         backdrop-filter: none;
+      }
+      .nf-today-day {
+        display: block !important;
+        margin-top: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--nf-muted);
+      }
+      /* the forecast: a row per day */
+      .nf-forecast {
+        box-sizing: border-box;
+        flex: none;
+        padding: 6px 12px;
+        border-radius: 16px;
+        border: 1px solid var(--nf-line);
+        background: var(--nf-chrome);
+        box-shadow: var(--nf-shadow);
+        backdrop-filter: blur(10px);
+        color: var(--nf-text);
+        pointer-events: auto;
+      }
+      .nf-forecast ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        column-gap: 10px;
+        row-gap: 2px;
+        align-items: baseline;
+        font-size: 13px;
+      }
+      .nf-forecast li {
+        display: contents;
+      }
+      .nf-fc-day {
+        color: var(--nf-muted);
+      }
+      .nf-fc-temp {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .nf-fc-temp small {
+        color: var(--nf-muted);
+      }
+      .nf-fc-rain {
+        font-size: 12px;
+        color: var(--nf-soft);
+        white-space: nowrap;
       }
       .nf-today-folded {
         width: auto;
+        align-self: flex-end;
         padding-bottom: 8px;
       }
       .nf-today-head {

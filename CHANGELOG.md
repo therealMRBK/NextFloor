@@ -6,6 +6,9 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Weather forecast card** (thanks @eskahone, #84): in the house settings under *Weather forecast*, choose 3, 5 or 7 days and a top corner. A small card shows the weather of each day with its high and low and the rain.
+- **More days on the "Today" card** (#84): *Days on the "Today" card* lists the appointments of up to seven days, each later day under its own heading.
+
 - **Outside wall colour per floor** (thanks @LDSign, #110): in the solid wall view a floor can have an outside colour of its own (*Wall colour outside (this floor)* in the floor's settings), for a plinth or a garage that is not the colour of the storeys above.
 
 - **Calibrate a robot map from its rooms** (#109): when the robot's map names its rooms, as the Dreame integration does, the dock has a button *Calibrate from the rooms*. It matches them to the rooms with the same names on the plan, so the robot no longer has to be parked 1.5 m from its dock and tapped. With three or more matching rooms a mirrored map is recognised by itself.

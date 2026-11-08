@@ -54,6 +54,10 @@ const params = new URLSearchParams(location.search);
       }
       window.nfDemoState = () => structuredClone(building);
       // ?map and ?north=180 switch the real map and the compass on for a look (the demo ships with both off)
+      if (params.has("forecast")) {
+        building = structuredClone(building);
+        building.settings.forecast = { days: 5, corner: params.get("forecast") === "left" ? "top_left" : "top_right" };
+      }
       if (params.has("map") || params.has("north")) {
         building = structuredClone(building);
         if (params.has("north")) building.settings.north = Number(params.get("north")) || 0;
@@ -252,6 +256,14 @@ const params = new URLSearchParams(location.search);
         },
         async callWS(msg) {
           switch (msg.type) {
+            case "call_service": {
+              // the weather forecast card (?forecast): five invented days
+              if (msg.domain !== "weather" || msg.service !== "get_forecasts") return { response: {} };
+              const id = msg.target.entity_id;
+              const kinds = ["sunny", "partlycloudy", "rainy", "cloudy", "snowy"];
+              const forecast = kinds.map((condition, i) => ({ datetime: new Date(Date.now() + i * 86400000).toISOString(), condition, temperature: 12 - i * 2, templow: 4 - i, precipitation: condition === "rainy" ? 4.5 : 0, precipitation_probability: condition === "snowy" ? 60 : 0 }));
+              return { response: { [id]: { forecast } } };
+            }
             case "nextfloor/building/get": {
               // the online demo has no private packs: their items would stand as grey boxes, so leave them out
               const packs = await previewPacks();

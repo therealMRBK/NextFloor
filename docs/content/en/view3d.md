@@ -64,7 +64,8 @@ Smoke, gas, CO, water, the alarm panel and windows left open in the rain appear 
 - **3D lock (🔒):** turning, zooming and panning are off on this device; taps on devices still work.
 - **Clock:** 🕒 in the header puts a large clock in a corner of the view.
 - **Small screens:** 🔍 in ⚙ brings the fitted views closer. *🎥 Keep camera* keeps side, height and distance when switching floors.
-- **Today:** with calendars chosen, a card top right lists today's appointments and the bins due today or tomorrow.
+- **Today:** with calendars chosen, a card top right lists today's appointments and the bins due today or tomorrow. *Days on the "Today" card* (house settings, with the calendars) shows up to seven days, each later day under its own heading.
+- **Weather forecast:** in the house settings under *Weather forecast*, pick 3, 5 or 7 days and a corner (top left, or top right below *Today*). The card shows the weather of each day, its high and low and the rain (amount or chance). It reads the weather entity of the settings through `weather.get_forecasts`; an entity without a daily forecast shows no card.
 
 ## Next
 

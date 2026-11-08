@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName, outsideEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
+import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
 import { actions, checkField, colorField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
@@ -128,9 +128,34 @@ function calendars(host: EditorHost): TemplateResult {
     <span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>
     ${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}
   </div>`;
-  return html`<h4>📅 ${host.t("today_calendars")}</h4>
-    ${hint(host.t("today_calendars_hint"))} ${list.map(row)}
-    ${list.length < 12 ? html`<div class="nf-form">${entityField(host, host.t("favorites_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>` : nothing}`;
+  const t = host.t;
+  const days = host.doc.settings.today_days ?? 1;
+  return html`<h4>📅 ${t("today_calendars")}</h4>
+    ${hint(t("today_calendars_hint"))} ${list.map(row)}
+    ${list.length < 12 ? html`<div class="nf-form">${entityField(host, t("favorites_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>` : nothing}
+    ${list.length
+      ? html`<div class="nf-form">
+          ${selectField(host, t("today_days"), String(days), [1, 2, 3, 5, 7].map((n): [string, string] => [String(n), t(n === 1 ? "today_days_one" : "today_days_n", { n })]), (v) => host.change((d) => (d.settings.today_days = Number(v) > 1 ? Number(v) : undefined)))}
+        </div>`
+      : nothing}
+    ${forecastCard(host)}`;
+}
+
+/** The weather forecast card (#84): off, or a number of days in a top corner; the weather entity is the one of the settings. */
+function forecastCard(host: EditorHost): TemplateResult {
+  const t = host.t;
+  const card = host.doc.settings.forecast ?? null;
+  const set = (next: ForecastCard | null) => host.change((d) => (d.settings.forecast = next ?? undefined));
+  return html`<h4>🌦 ${t("forecast")}</h4>
+    ${hint(t("forecast_hint"))}
+    <div class="nf-form">
+      ${selectField(host, t("forecast_days"), card ? String(card.days) : "0", [0, 3, 5, 7].map((n): [string, string] => [String(n), n ? t("today_days_n", { n }) : t("forecast_off")]), (v) =>
+        set(Number(v) > 0 ? { days: Number(v), corner: card?.corner ?? "top_right" } : null),
+      )}
+      ${card
+        ? selectField(host, t("forecast_corner"), card.corner, [["top_right", t("clock_top_right")], ["top_left", t("clock_top_left")]], (v) => set({ ...card, corner: v === "top_left" ? "top_left" : "top_right" }))
+        : nothing}
+    </div>`;
 }
 
 /** Stations and playlists that start on a speaker from its quick menu. */

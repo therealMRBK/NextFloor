@@ -15,6 +15,8 @@ export interface TodayItem {
   /** Sorts the day: minutes after midnight (-1 for all-day events and bins). */
   at: number;
   kind: "event" | "bin";
+  /** Which day it is on: 0 today, 1 tomorrow … (the card can show several days). */
+  day?: number;
   /** Already over (it stays listed, dimmed). */
   past?: boolean;
 }
@@ -28,6 +30,15 @@ interface RawEvent {
 const time = (d: Date) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 const when = (v: RawEvent["start"]) => (typeof v === "string" ? { dateTime: v } : (v ?? {}));
 
+const midnight = (t: number): number => {
+  const d = new Date(t);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+};
+
+/** Days from today to the day of `t` (0 = today), across a clock change too. */
+const dayOf = (t: number, now: number): number => Math.max(0, Math.round((midnight(t) - midnight(now)) / 86_400_000));
+
 /** The events of one calendar as lines of the day, all-day events first. */
 export function agenda(raw: RawEvent[], source: string, now: number): TodayItem[] {
   return raw
@@ -39,9 +50,12 @@ export function agenda(raw: RawEvent[], source: string, now: number): TodayItem[
       if (s.dateTime) {
         const d = new Date(s.dateTime);
         const until = end.dateTime ? new Date(end.dateTime).getTime() : d.getTime();
-        return { time: time(d), title, source, at: d.getHours() * 60 + d.getMinutes(), kind: "event", past: until < now };
+        return { time: time(d), title, source, at: d.getHours() * 60 + d.getMinutes(), kind: "event", past: until < now, day: dayOf(d.getTime(), now) };
       }
-      return { time: "", title, source, at: -1, kind: "event" };
+      // an all-day event is dated "YYYY-MM-DD": that is local midnight, not UTC
+      const date = s.date ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.date) : null;
+      const day = date ? dayOf(new Date(Number(date[1]), Number(date[2]) - 1, Number(date[3])).getTime(), now) : 0;
+      return { time: "", title, source, at: -1, kind: "event", day };
     })
     .filter((x): x is TodayItem => !!x);
 }
@@ -63,17 +77,19 @@ export function binsDue(hass: HomeAssistant, b: Building, now: number, labels: {
   return out;
 }
 
-/** All lines of the day, sorted: all-day things and bins first, then by time. */
+/** All lines, sorted: day by day, and in a day all-day things and bins first, then by time. */
 export function sortDay(items: TodayItem[]): TodayItem[] {
-  return [...items].sort((a, b) => a.at - b.at || a.title.localeCompare(b.title));
+  return [...items].sort((a, b) => (a.day ?? 0) - (b.day ?? 0) || a.at - b.at || a.title.localeCompare(b.title));
 }
 
-/** Loads today's events of the chosen calendars (midnight to midnight); a calendar that fails is left out. */
-export async function loadToday(hass: HomeAssistant, calendars: string[], now = Date.now()): Promise<TodayItem[]> {
+/** Loads the events of the chosen calendars from today's midnight over `days` days; a calendar that fails is left out. */
+export async function loadToday(hass: HomeAssistant, calendars: string[], days = 1, now = Date.now()): Promise<TodayItem[]> {
   if (!hass.fetchWithAuth || !calendars.length) return [];
   const start = new Date(now);
   start.setHours(0, 0, 0, 0);
-  const end = new Date(start.getTime() + 86_400_000);
+  const end = new Date(start);
+  // whole days by the calendar, so a clock change does not cut the last day short
+  end.setDate(end.getDate() + Math.max(1, days));
   const lists = await Promise.all(
     calendars.map(async (id) => {
       try {

@@ -64,7 +64,8 @@ Rauch, Gas, CO, Wasser, Alarmanlage und offene Fenster bei Regen erscheinen als 
 - **3D-Sperre (🔒):** Drehen, Zoomen und Verschieben sind auf diesem Gerät aus, Tippen auf Geräte geht weiter.
 - **Uhr:** 🕒 in der Kopfzeile stellt eine große Uhr in eine Ecke der Ansicht.
 - **Kleine Bildschirme:** 🔍 in ⚙ holt die eingepassten Ansichten näher. *🎥 Kamera behalten* behält Seite, Höhe und Abstand beim Etagenwechsel.
-- **Heute:** Mit gewählten Kalendern listet eine Karte oben rechts die Termine des Tages und die Mülltonnen, die heute oder morgen abgeholt werden.
+- **Heute:** Mit gewählten Kalendern listet eine Karte oben rechts die Termine des Tages und die Mülltonnen, die heute oder morgen abgeholt werden. *Tage auf der Karte „Heute“* (Haus-Einstellungen, bei den Kalendern) zeigt bis zu sieben Tage, jeder spätere Tag mit eigener Überschrift.
+- **Wettervorhersage:** In den Haus-Einstellungen unter *Wettervorhersage* 3, 5 oder 7 Tage wählen und eine Ecke (oben links oder oben rechts, dort unter *Heute*). Die Karte zeigt pro Tag das Wetter, Höchst- und Tiefstwert und den Regen (Menge oder Wahrscheinlichkeit). Sie liest die Wetter-Entität aus den Einstellungen über `weather.get_forecasts`; eine Entität ohne Tagesvorhersage zeigt keine Karte.
 
 ## Weiter
 
