@@ -12,6 +12,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **A view of its own for Outside** (thanks @eskahone, #83): under *Settings → Outside: hide devices* the button *Use this view for Outside* stores the camera of the editor's 3D preview. Opening Outside then flies to the garden instead of staying on the house view; closing it goes back.
 
+### Changed
+
+- **A tidier 3D view on phones:** the switches under the 3D view (walls, floors, roof, heat map, room names, weather) now sit behind one *☰ Switches* button that opens them as a menu above the bar. The house stays in view instead of a row of buttons across the bottom; a tap beside the menu closes it again.
+
 ### Fixed
 
 - **Room colours on other floors** (thanks @LDSign, #110): a room with its own wall colour no longer paints the walls of the floors above or below that lie in the same spot of the plan.

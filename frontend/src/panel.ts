@@ -43,6 +43,7 @@ export class NextFloorPanel extends LitElement {
     _selFurniture: { state: true },
     _selDevice: { state: true },
     _optsOpen: { state: true },
+    _switchesOpen: { state: true },
     _timeOfDay: { state: true },
     _outside: { state: true },
     _timeDrag: { state: true },
@@ -66,6 +67,8 @@ export class NextFloorPanel extends LitElement {
   private declare _selDevice: string | null;
   /** Phones fold the view options behind a gear button. */
   private declare _optsOpen: boolean;
+  /** The menu of view switches above the stage is open. */
+  private declare _switchesOpen: boolean;
   /** The time-of-day slider: hours shown instead of now (null: the slider is closed and the view shows the real sun). */
   private declare _timeOfDay: number | null;
   /** The Outside panel is open (the house view with the garden's and the roof's devices). */
@@ -93,6 +96,7 @@ export class NextFloorPanel extends LitElement {
     this._selFurniture = null;
     this._selDevice = null;
     this._optsOpen = false;
+    this._switchesOpen = false;
     this._timeOfDay = null;
     this._outside = false;
     this._timeDrag = null;
@@ -499,14 +503,13 @@ export class NextFloorPanel extends LitElement {
     const heats: HeatMode[] = ["none", "temperature", "humidity", "co2", "mould", "comfort", "power", "sun", "values", "wifi"];
     const stacks: FloorStack[] = ["dim", "stacked", "single"];
     const several = building.floors.length > 1;
-    // folded: one button stands for all switches, so a small screen keeps the house in view
-    if (p.barsFolded)
-      return html`<div class="nf-overlay">
-        <button class="nf-chip" title=${t("bars_unfold")} @click=${() => this.setPref("barsFolded", false)}>☰ ${t("bars_unfold")}</button>
-        ${this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing}
-      </div>`;
+    const back = this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing;
+    // one button for all switches, opening a menu upwards: the stage keeps the house in view, on a phone above all
+    const toggle = html`<button class="nf-chip" aria-haspopup="true" aria-expanded=${this._switchesOpen} @click=${() => (this._switchesOpen = !this._switchesOpen)}>☰ ${t("bars_unfold")} <span class="nf-caret">${this._switchesOpen ? "▾" : "▴"}</span></button>`;
+    if (!this._switchesOpen) return html`<div class="nf-overlay">${toggle}${back}</div>`;
     return html`<div class="nf-overlay">
-      <button class="nf-chip" title=${t("bars_fold")} aria-label=${t("bars_fold")} @click=${() => this.setPref("barsFolded", true)}>▾</button>
+      <div class="nf-switches-veil" @click=${() => (this._switchesOpen = false)}></div>
+      <div class="nf-switches" role="group" aria-label=${t("bars_unfold")} @keydown=${(e: KeyboardEvent) => e.key === "Escape" && (this._switchesOpen = false)}>
       <div class="nf-seg">
         ${(["auto", "cut", "slope"] as const).map(
           (m) => html`<button aria-pressed=${this._wallMode === m} title=${m === "slope" ? t("walls_slope_hint") : nothing} @click=${() => (this._wallMode = m)}>${t(`walls_${m}`)}</button>`,
@@ -529,7 +532,8 @@ export class NextFloorPanel extends LitElement {
      
       ${this.toggleChip("weather", "weather_short", "weather_hint")}
       ${p.timeSlider ? this.renderTimeOfDay() : nothing}
-      ${this._roomId || (this._floorId && several) ? html`<button class="nf-chip" @click=${() => this.back()}>${t("back")}</button>` : nothing}
+      </div>
+      ${toggle}${back}
     </div>`;
   }
 

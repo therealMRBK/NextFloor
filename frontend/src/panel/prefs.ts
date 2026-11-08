@@ -22,8 +22,6 @@ export interface DevicePrefs {
   roomNames: boolean;
   clean: boolean;
   navWrap: boolean;
-  /** The switches at the bottom of the 3D view folded into one button. */
-  barsFolded: boolean;
   weather: boolean;
   /** The ☀ time-of-day switch under the 3D view (off: the view always shows the real sun). */
   timeSlider: boolean;
@@ -88,7 +86,6 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   roomNames: flag("room_names", true),
   clean: flag("clean", false),
   navWrap: flag("nav_wrap", false),
-  barsFolded: flag("bars_folded", false),
   weather: flag("weather", true),
   timeSlider: flag("time_slider", false),
   menuOpen: flag("menu_open", false),

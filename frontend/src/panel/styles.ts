@@ -416,7 +416,7 @@ export const panelStyles = css`
     left: 236px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 8px;
     align-items: center;
     pointer-events: none;
@@ -424,23 +424,50 @@ export const panelStyles = css`
   .nf-overlay > * {
     pointer-events: auto;
   }
-  /* phones: one row along the bottom that scrolls sideways (a fade shows there is more), instead of a narrow column that spills over the picture (#70) */
+  /* phones: the bar only holds the switches button and "back", so it can span the bottom; the buttons of the view sit above it */
   @container nf (max-width: 700px) {
     .nf-overlay {
       left: 12px;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      overflow-x: auto;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-      padding-right: 28px;
-      pointer-events: auto;
-      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
     }
-    .nf-overlay > * {
-      flex: none;
+    .nf-switches {
+      left: 0;
+      width: auto;
     }
+  }
+  /* the switches: a menu that opens upwards from the bar, over the stage, closed by a tap beside it or Escape */
+  .nf-switches-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+  }
+  .nf-switches {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    width: min(520px, calc(100cqw - 24px));
+    max-height: min(60vh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px;
+    border: 1px solid var(--nf-line);
+    border-radius: 14px;
+    background: var(--nf-chrome-solid);
+    box-shadow: var(--nf-shadow);
+  }
+  .nf-switches .nf-seg {
+    flex-wrap: wrap;
+  }
+  .nf-switches .nf-chip {
+    box-shadow: none;
+  }
+  .nf-caret {
+    font-size: 0.75em;
+    opacity: 0.7;
   }
   .nf-quality button {
     padding: 5px 11px;
