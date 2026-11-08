@@ -374,10 +374,10 @@ var S={cs:"4be67fcd522e",da:"0fe66a82bf2a",es:"bd89dffd1355",fi:"9a17bc084f56",f
     ${Or(t.t("delete"),"\u2715",()=>n(Tt(e,a)))}
   </div>`;return m`<summary>${t.t("favorites")}${e.length>0?m` <span class="nf-lib-count">${e.length}</span>`:g}</summary>
     ${M(t.t("favorites_hint"))} ${e.map(s)}
-    ${e.length<L_?m`<div class="nf-form">${P(t,t.t("favorites_add"),null,void 0,i,l=>l&&l!=="none"&&!e.includes(l)&&n([...e,l]))}</div>`:g}`}function W_(t){let e=t.doc.settings.outside_hidden??[],n=o=>t.change(i=>i.settings.outside_hidden=at(o)),r=C(t.hass,o=>!e.includes(o)&&Qc(t.hass,t.doc.floors).includes(o));return m`<summary>${t.t("outside_hidden")}${e.length>0?m` <span class="nf-lib-count">${e.length}</span>`:g}</summary>
+    ${e.length<L_?m`<div class="nf-form">${P(t,t.t("favorites_add"),null,void 0,i,l=>l&&l!=="none"&&!e.includes(l)&&n([...e,l]))}</div>`:g}`}function W_(t){let e=t.doc.settings.outside_hidden??[],n=i=>t.change(s=>s.settings.outside_hidden=at(i)),r=new Set(t.hass?Qc(t.hass,t.doc.floors):[]),o=C(t.hass,i=>!e.includes(i)&&r.has(i));return m`<summary>${t.t("outside_hidden")}${e.length>0?m` <span class="nf-lib-count">${e.length}</span>`:g}</summary>
     ${M(t.t("outside_hidden_hint"))}
-    ${e.map((o,i)=>m`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${W(t.hass,o)}</span></span>${Or(t.t("delete"),"\u2715",()=>n(Tt(e,i)))}</div>`)}
-    <div class="nf-form">${P(t,t.t("outside_hidden_add"),null,void 0,r,o=>o&&o!=="none"&&!e.includes(o)&&n([...e,o]))}</div>`}function V_(t){let e=t.doc.settings.own_alerts??[],n=s=>t.change(l=>l.settings.own_alerts=at(s)),r=(s,l)=>n(Ir(e,s,l)),o=[["",t.t("own_alert_house")],...t.doc.floors.flatMap(s=>s.rooms.map(l=>[l.id,`${l.name} \xB7 ${s.name}`]))],i=(s,l)=>m`<div class="nf-form nf-own-button">
+    ${e.map((i,s)=>m`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${W(t.hass,i)}</span></span>${Or(t.t("delete"),"\u2715",()=>n(Tt(e,s)))}</div>`)}
+    <div class="nf-form">${P(t,t.t("outside_hidden_add"),null,void 0,o,i=>i&&i!=="none"&&!e.includes(i)&&n([...e,i]))}</div>`}function V_(t){let e=t.doc.settings.own_alerts??[],n=s=>t.change(l=>l.settings.own_alerts=at(s)),r=(s,l)=>n(Ir(e,s,l)),o=[["",t.t("own_alert_house")],...t.doc.floors.flatMap(s=>s.rooms.map(l=>[l.id,`${l.name} \xB7 ${s.name}`]))],i=(s,l)=>m`<div class="nf-form nf-own-button">
     ${P(t,t.t("own_alert_entity"),s.entity||null,void 0,C(t.hass,()=>!0),a=>r(l,{entity:a&&a!=="none"?a:""}))}
     ${q(t,t.t("own_alert_state"),s.state??"",a=>r(l,{state:a||null}),{placeholder:t.hass?.states[s.entity]?.state??"on \xB7 <20 \xB7 >80"})}
     ${q(t,t.t("own_alert_text"),s.text,a=>r(l,{text:a||t.t("own_alert_new")}),{wide:!0,maxlength:120})}

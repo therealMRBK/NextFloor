@@ -57,7 +57,9 @@ function favorites(host: EditorHost): TemplateResult {
 function outsideHidden(host: EditorHost): TemplateResult {
   const list = host.doc.settings.outside_hidden ?? [];
   const store = (next: string[]) => host.change((d) => (d.settings.outside_hidden = orUndefined(next)));
-  const options = entityOptions(host.hass, (id) => !list.includes(id) && outsideEntities(host.hass!, host.doc.floors).includes(id));
+  // worked out once: asking for every entity would run the whole search once per entity of Home Assistant (#101)
+  const outside = new Set(host.hass ? outsideEntities(host.hass, host.doc.floors) : []);
+  const options = entityOptions(host.hass, (id) => !list.includes(id) && outside.has(id));
   return html`<summary>${host.t("outside_hidden")}${list.length > 0 ? html` <span class="nf-lib-count">${list.length}</span>` : nothing}</summary>
     ${hint(host.t("outside_hidden_hint"))}
     ${list.map((id, i) => html`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}</div>`)}

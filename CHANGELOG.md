@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Fixed
+
+- **The editor is fast again with many entities** (thanks @alex1255, #101): the list *Outside: hide devices* in the editor's settings worked out the devices of the Outside panel once for every entity of Home Assistant, on every update. With a few thousand entities that kept the browser busy and made clicks and turning the view sluggish. It is now worked out once.
+
 ## [0.26.2]
 
 ### Added
