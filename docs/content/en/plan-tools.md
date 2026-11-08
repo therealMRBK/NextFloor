@@ -32,6 +32,8 @@ Garages, cellars and utility rooms are left out by their name; *Counts as living
 
 Right-click (or long-press) a spot in the plan and choose *✎ Note here*. Type the text and, if you like, the day it is due. Notes stand as yellow pins in their floor's 3D view (orange once due). A tap shows the whole text, and the search finds them.
 
+A note can also show *exactly where* something is: its **height above the floor** puts the pin, say, under the basement ceiling at the shutoff valve. A **photo** (uploaded or as a URL) shows when the note is tapped, so someone who has never done it sees what the valve looks like.
+
 ## Versions
 
 *📌 Save this state …* keeps the plan under a name, for example "before the renovation". It stays when the automatic restore points go. *Compare* on a version lists, floor by floor, what differs from the plan now.

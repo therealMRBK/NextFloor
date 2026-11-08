@@ -411,7 +411,14 @@ export interface PlanNote {
   text: string;
   /** When it is due ("YYYY-MM-DD"): from that day on its pin turns orange. */
   due?: string | null;
+  /** Height of its pin above the floor in metres (null = 1.3, eye level): a valve under the ceiling, a fuse box (#113). */
+  y?: number | null;
+  /** A photo shown when the note is opened: a picture stored with the plan ("image:<id>") or a URL (#113). */
+  photo?: string | null;
 }
+
+/** The height of a note's pin above its floor when none is set (eye level). */
+export const NOTE_Y = 1.3;
 
 /** Whether a note is due on a day ("YYYY-MM-DD", today by default). */
 export const noteDue = (note: Pick<PlanNote, "due">, today = new Date().toISOString().slice(0, 10)): boolean => !!note.due && note.due <= today;

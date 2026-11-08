@@ -45,7 +45,7 @@ import {
 } from "three";
 import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
-import { CEILING_TYPES, ceilingOf, centroid, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
+import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
@@ -437,6 +437,8 @@ export class NextFloorViewer {
   private floors: FloorView[] = [];
   private building: Building | null = null;
   private furnitureColors: FurnitureColors | null = null;
+  /** Turns a note's photo ("image:<id>" or a URL) into what an <img> shows; null while a stored picture is still loading. */
+  private notePhoto: ((photo: string) => string | null) | null = null;
   private floorId: string | null = null;
   private roomId: string | null = null;
   private wallMode: WallMode = "auto";
@@ -1082,6 +1084,10 @@ export class NextFloorViewer {
 
   /** Look of the 3D view: neon, blueprint or day. Instant: colours are mapped in the shaders. */
   /** An accent colour of the user's choice for the neon look ("#rrggbb"), null for the stock cyan. */
+  setNotePhotos(resolve: ((photo: string) => string | null) | null): void {
+    this.notePhoto = resolve;
+  }
+
   /** Furniture colours of this view (the card's own), on top of the house-wide ones in the settings (#82). */
   setFurnitureColors(colors: FurnitureColors | null): void {
     if (JSON.stringify(colors ?? {}) === JSON.stringify(this.furnitureColors ?? {})) return;
@@ -1869,10 +1875,23 @@ export class NextFloorViewer {
         pin.className = `nf-pin nf-note-pin${noteDue(note) ? " nf-note-due" : ""}`;
         pin.title = note.text;
         const short = note.text.length > 28 ? `${note.text.slice(0, 27)}…` : note.text;
-        pin.textContent = `✎ ${short}`;
+        pin.textContent = `${note.photo ? "📷 " : "✎ "}${short}`;
         pin.addEventListener("click", () => {
           const open = pin.classList.toggle("nf-note-open");
-          pin.textContent = `✎ ${open ? note.text : short}`;
+          pin.textContent = `${note.photo ? "📷 " : "✎ "}${open ? note.text : short}`;
+          // opened, a note shows its photo under the text (#113)
+          const photo = open && note.photo ? this.notePhoto?.(note.photo) : null;
+          if (photo) {
+            const img = document.createElement("img");
+            img.className = "nf-note-photo";
+            img.alt = "";
+            img.src = photo;
+            img.addEventListener("load", () => {
+              this.labelsDirty = true;
+              this.invalidate();
+            });
+            pin.append(img);
+          }
           this.labelsDirty = true;
           this.invalidate();
         });
@@ -3454,7 +3473,7 @@ export class NextFloorViewer {
       // notes stand on their floor's views (and in a room), not in the house view
       const noNotes = house || fv.o < 0.9 || this.otherFloor(fv);
       for (const { pin, note } of fv.notePins) {
-        const spot = noNotes ? null : this.screenPoint([note.x, fv.floor.elevation + fv.y + 1.3, note.z]);
+        const spot = noNotes ? null : this.screenPoint([note.x, fv.floor.elevation + fv.y + (note.y ?? NOTE_Y), note.z]);
         this.labelPlacer.place(pin, spot && !spot.off ? centredAt(spot) : null);
       }
     }

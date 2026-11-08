@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Notes with a height and a photo** (#113): a note in the plan gets its own height above the floor (a pin under the ceiling, at the shutoff valve) and a photo, uploaded or as a URL, that shows when the note is tapped in the 3D view.
 - **Temperature of technical devices** (thanks @tfischer84, #112): an inverter, a battery, a PC or any other electric device takes a temperature sensor under *Device temperature*. Its value shows on the device's pin in the 3D view; from 60 °C the pin is highlighted.
 
 ## [0.26.5]

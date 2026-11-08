@@ -759,6 +759,9 @@ FLOOR_SCHEMA = vol.Schema(
                         vol.Required("z"): vol.Coerce(float),
                         vol.Required("text"): vol.All(str, vol.Length(max=500)),
                         vol.Optional("due", default=None): vol.Any(None, vol.Match(r"^\d{4}-\d{2}-\d{2}$")),
+                        # pin height above the floor (a valve under the ceiling); a photo (stored picture or URL)
+                        vol.Optional("y"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
+                        vol.Optional("photo"): vol.Any(None, vol.All(str, vol.Length(max=500))),
                     }
                 )
             ],

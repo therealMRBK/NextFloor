@@ -609,6 +609,7 @@ export class NfView3d extends LitElement {
       this.viewer.setTheme(this.theme);
       this.viewer.setAccent(this.accent ?? null);
       this.viewer.setFurnitureColors(this.furnitureColors ?? null);
+      this.viewer.setNotePhotos((photo) => (this.hass ? pictureUrl(this.hass, photo, (id) => this.storedPicture(this.hass!, id)) : null));
       this.viewer.setNavigationLocked(this._locked);
       this.viewer.setFurnishMode(this.furnish);
       this.viewer.setTapInRoom(this.tapInRoom);
@@ -744,6 +745,8 @@ export class NfView3d extends LitElement {
   /** The photos of picture frames: stored pictures (loaded once), URLs, and the picture of an image or camera entity. */
   private framePictures(hass: HomeAssistant, b: Building): LivePictureInput[] {
     const out: LivePictureInput[] = [];
+    // the notes' stored photos are loaded ahead, so one shows at once when its note is opened
+    for (const floor of b.floors) for (const note of floor.notes ?? []) if (note.photo?.startsWith("image:")) this.storedPicture(hass, note.photo.slice(6));
     for (const floor of b.floors)
       for (const f of floor.furniture) {
         if (!f.picture || !furnitureShown(hass, f)) continue;
@@ -2997,6 +3000,14 @@ export class NfView3d extends LitElement {
       .nf-note-pin.nf-note-open {
         white-space: normal;
         text-align: left;
+      }
+      .nf-note-photo {
+        display: block;
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        margin-top: 6px;
+        border-radius: 6px;
       }
       .nf-labels {
         position: absolute;

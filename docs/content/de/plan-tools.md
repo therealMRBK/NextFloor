@@ -32,6 +32,8 @@ Garagen, Keller und Technikräume bleiben nach ihrem Namen draußen; *Zählt zur
 
 Rechtsklick (oder langes Tippen) auf eine Stelle im Plan und *✎ Notiz hier* wählen. Text eintippen und, wenn du magst, den Tag, an dem sie fällig ist. Notizen stehen als gelbe Pins in der 3D-Ansicht ihrer Etage (orange, sobald fällig). Ein Tipp zeigt den ganzen Text, und die Suche findet sie.
 
+Eine Notiz kann auch zeigen, *wo genau* etwas ist: Ihre **Höhe über dem Boden** setzt den Pin zum Beispiel unter die Kellerdecke, an das Absperrventil. Ein **Foto** (hochgeladen oder als URL) erscheint, wenn man die Notiz antippt; so sieht auch jemand, der es nie gemacht hat, wie das Ventil aussieht.
+
 ## Versionen
 
 *📌 Stand speichern …* hält den Plan unter einem Namen fest, zum Beispiel „vor dem Umbau“. Er bleibt, wenn die automatischen Wiederherstellungspunkte gehen. *Vergleichen* an einer Version listet Etage für Etage, was sich gegenüber dem Plan jetzt unterscheidet.
