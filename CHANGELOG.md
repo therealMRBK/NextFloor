@@ -13,6 +13,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Outside has its own section in the editor** (thanks @eskahone, #83): the view for Outside and the devices its panel hides moved from the favourites into *🌳 Outside*, right below *Start view*.
 
+### Fixed
+
+- **Lamps light up in the editor plan as in 3D** (thanks @tfischer84, #111): a lamp whose light was found in its room by itself (not picked by hand), or that glows with one of its further lights, now lights up in the editor's floor plan too.
+
 ## [0.26.5]
 
 ### Added

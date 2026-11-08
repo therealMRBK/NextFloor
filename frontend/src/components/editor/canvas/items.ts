@@ -11,6 +11,9 @@ import { furnitureSymbol } from "../../furniture2d.ts";
 import { drawOrder } from "../ops/items.ts";
 import type { CanvasContext } from "./context.ts";
 import { formatLength } from "../../../units.ts";
+import { furnitureEntities } from "../../../entities/furniture-links.ts";
+import { fixtureGlow } from "../../../entities/kinds.ts";
+import type { HomeAssistant } from "../../../types.ts";
 
 type Layer = TemplateResult | typeof nothing;
 
@@ -33,6 +36,23 @@ function resizeHandles(ctx: CanvasContext, item: Furniture): TemplateResult[] {
   });
 }
 
+/** Auto-linked entities per floor, worked out again only when the floor or the states change (a drag redraws often). */
+const linkCache = new WeakMap<Floor, { states: unknown; links: ReturnType<typeof furnitureEntities> }>();
+function floorLinks(hass: HomeAssistant, floor: Floor): ReturnType<typeof furnitureEntities> {
+  const hit = linkCache.get(floor);
+  if (hit && hit.states === hass.states) return hit.links;
+  const links = furnitureEntities(hass, [floor]);
+  linkCache.set(floor, { states: hass.states, links });
+  return links;
+}
+
+/** A lamp lights up in the plan as in 3D: with its light set by hand or found in the room, or with one of its further lights (#111). */
+export function lampLit(hass: HomeAssistant | undefined, floor: Floor, item: Furniture): boolean {
+  if (!hass || !isLamp(item.type)) return false;
+  const main = floorLinks(hass, floor).get(item.id)?.entity;
+  return !!fixtureGlow(main ? hass.states[main] : undefined, (item.extra_lights ?? []).map((id) => hass.states[id]));
+}
+
 export function furnitureLayer(ctx: CanvasContext, floor: Floor, selectedId: string | null): Layer {
   const { host, scale } = ctx;
   const one = (item: Furniture) => {
@@ -41,7 +61,7 @@ export function furnitureLayer(ctx: CanvasContext, floor: Floor, selectedId: str
     const [cx, cy] = ctx.toScreen([item.x, item.z]);
     const a = item.rotation * RAD;
     const labelled = Math.min(item.w, item.d) * scale > 44;
-    const lit = isLamp(item.type) && !!item.entity && item.entity !== "none" && host.hass?.states[item.entity]?.state === "on";
+    const lit = lampLit(host.hass, floor, item);
     const energy = (ENERGY_DEVICES as readonly string[]).includes(item.type);
     const klass = `nf-furn${selected ? " nf-furn-sel" : ""}${lit ? " nf-furn-lit" : ""}${energy ? " nf-energy-item" : ""}`;
     // the handle sits in front of the piece, and dragging it turns the piece
