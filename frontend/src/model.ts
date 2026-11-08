@@ -644,6 +644,8 @@ export interface BuildingSettings {
   favorites?: string[];
   /** Devices Outside leaves out of its panel (they stay in the plan) – #83. */
   outside_hidden?: string[];
+  /** The camera Outside opens with (the garden behind the house, #83); null = the house view. The point it looks at is counted from the ground. */
+  outside_view?: StartView | null;
   /** Facts the room panel leaves out of its header: sun hours, comfort, airing, fuse-box circuits. */
   room_facts_off?: ("sun" | "comfort" | "air" | "circuits")[];
   /** A favourite that shows on one floor only (entity id → floor id); the others show everywhere. */

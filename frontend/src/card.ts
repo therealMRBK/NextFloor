@@ -318,6 +318,7 @@ export class NextFloorCard extends LitElement {
       .packs=${this.data.packs}
       .floorId=${s.floorId}
       .roomId=${this._roomId === OUTSIDE ? null : this._roomId}
+      .outsideOpen=${this._roomId === OUTSIDE}
       .wallMode=${s.walls}
       .solidWalls=${c?.solid_walls === true}
       .explode=${s.explode}

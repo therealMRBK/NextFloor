@@ -3226,6 +3226,13 @@ export class NextFloorViewer {
     return { ...this.controls.view, target: this.controls.view.target.clone() };
   }
 
+  /** Flies to a stored view whose target counts from the ground (Outside's own camera, #83). */
+  showView(view: StartView, duration = 900): void {
+    const t = view.target ?? { x: 0, y: 0, z: 0 };
+    this.controls.maxRadius = Math.max(this.controls.maxRadius, view.radius * 1.5);
+    this.controls.flyTo({ target: new Vector3(t.x, t.y, t.z), radius: view.radius, phi: view.phi, theta: view.theta }, duration);
+  }
+
   flyTo(view: OrbitView, duration = 900): void {
     this.controls.flyTo(view, duration);
   }

@@ -161,6 +161,7 @@ export class NfView3d extends LitElement {
     dimmed: { attribute: false },
     autoOrbit: { attribute: false },
     startView: { attribute: false },
+    outsideOpen: { attribute: false },
     _low: { state: true },
     _narrowStage: { state: true },
     _shortStage: { state: true },
@@ -329,6 +330,8 @@ export class NfView3d extends LitElement {
   declare autoOrbit: boolean;
   /** A start view of the card's own (YAML `start_view`); else the one remembered in the editor. */
   declare startView: StartView | null;
+  /** Outside is open: the camera flies to Outside's own view, if the plan has one (#83). */
+  declare outsideOpen: boolean;
   /** Search index (rooms and devices), built when the search opens and reused while it is open. */
   private findIndex: SearchItem[] | null = null;
   /** Room colours (heatmap) as last sent to the viewer. */
@@ -487,6 +490,7 @@ export class NfView3d extends LitElement {
     this.dimmed = false;
     this.autoOrbit = false;
     this.startView = null;
+    this.outsideOpen = false;
     this.holograms = null;
     try {
       this._flows = localStorage.getItem("nextfloor.flows") === "1";
@@ -675,6 +679,11 @@ export class NfView3d extends LitElement {
     if (changed.has("_thumbs") || changed.has("_narrowStage") || changed.has("_phoneStage")) v.setLabelInset(this._thumbs.length && !this._phoneStage ? (this.narrowThumbs ? 136 : 184) : 0);
     if (changed.has("floorId")) v.setFloor(this.floorId);
     if (changed.has("roomId") && (this.roomId || changed.get("roomId"))) v.selectRoom(this.roomId);
+    if (changed.has("outsideOpen") && changed.get("outsideOpen") !== undefined) {
+      const view = this.building?.settings.outside_view;
+      if (this.outsideOpen && view) v.showView(view);
+      else if (!this.outsideOpen && view && this.floorId === null && !this.roomId) v.resetView();
+    }
     if (changed.has("tapInRoom")) v.setTapInRoom(this.tapInRoom);
     if (changed.has("wallMode")) v.setWallMode(this.wallMode);
     if (changed.has("solidWalls")) v.setPaintedWalls(this.solidWalls);

@@ -32,7 +32,7 @@ Sobald ein Gerät außerhalb der Räume steht, bekommt die Leiste über der 3D-A
 
 Ein Gerät, das auf dem Dach oder über einem Raum steht, aber nach draußen gehört (eine Wetterstation), bekommt in seinem Formular *Gehört zu Außen*. Es zählt dann nicht mehr zum Raum darunter und steht im Außen-Panel. Die Dashboard-Karte zeigt den Knopf bei ihren Raum-Knöpfen.
 
-Damit Geräte nicht im Außen-Panel erscheinen, gibt es *Einstellungen → Draußen: Geräte ausblenden*.
+Damit Geräte nicht im Außen-Panel erscheinen, gibt es *Einstellungen → Draußen: Geräte ausblenden*. An derselben Stelle speichert *Diese Ansicht für Draußen* die Kamera der 3D-Vorschau im Editor: erst auf den Garten drehen, dann fliegt das Öffnen von „Draußen“ dorthin.
 
 ## Dach
 

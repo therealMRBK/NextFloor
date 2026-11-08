@@ -561,6 +561,7 @@ export class NextFloorPanel extends LitElement {
           .panelOpen=${!!this._roomId || this._outside}
           .floorId=${building.floors.length > 1 ? this._floorId : (building.floors[0]?.id ?? null)}
           .roomId=${this._roomId}
+          .outsideOpen=${this._outside}
           .wallMode=${this._wallMode}
           .solidWalls=${p.solidWalls}
           .explode=${p.explode}

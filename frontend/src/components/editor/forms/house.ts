@@ -54,7 +54,7 @@ function favorites(host: EditorHost): TemplateResult {
 }
 
 /** Devices the Outside panel leaves out (they stay where they are in the plan). */
-function outsideHidden(host: EditorHost): TemplateResult {
+function outsideHidden(host: EditorHost, paneView?: () => StartView | null): TemplateResult {
   const list = host.doc.settings.outside_hidden ?? [];
   const store = (next: string[]) => host.change((d) => (d.settings.outside_hidden = orUndefined(next)));
   // worked out once: asking for every entity would run the whole search once per entity of Home Assistant (#101)
@@ -63,7 +63,22 @@ function outsideHidden(host: EditorHost): TemplateResult {
   return html`<summary>${host.t("outside_hidden")}${list.length > 0 ? html` <span class="nf-lib-count">${list.length}</span>` : nothing}</summary>
     ${hint(host.t("outside_hidden_hint"))}
     ${list.map((id, i) => html`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}</div>`)}
-    <div class="nf-form">${entityField(host, host.t("outside_hidden_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>`;
+    <div class="nf-form">${entityField(host, host.t("outside_hidden_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>
+    ${paneView ? outsideView(host, paneView) : nothing}`;
+}
+
+/** The camera Outside opens with: the editor's 3D pane as it stands now (#83). */
+function outsideView(host: EditorHost, paneView: () => StartView | null): TemplateResult {
+  const saved = host.doc.settings.outside_view ?? null;
+  const remember = () => {
+    const view = paneView();
+    if (view) host.change((d) => (d.settings.outside_view = view));
+  };
+  return html`${hint(host.t("outside_view_hint"))}
+    ${actions(
+      html`<button class="nf-btn" @click=${remember}>${host.t("outside_view_set")}</button>`,
+      saved ? html`<button class="nf-btn" @click=${() => host.change((d) => (d.settings.outside_view = null))}>${host.t("outside_view_reset")}</button>` : nothing,
+    )}`;
 }
 
 /** Own warnings: a text in the warning bar while an entity is in a state (the robot's water tank is empty, the dishwasher is done). */
@@ -195,8 +210,8 @@ function roomFacts(host: EditorHost): TemplateResult {
 }
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
-export function renderFavorites(host: EditorHost): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${outsideHidden(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
+export function renderFavorites(host: EditorHost, outsidePaneView?: () => StartView | null): TemplateResult {
+  return html`<details class="nf-section">${favorites(host)} ${outsideHidden(host, outsidePaneView)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

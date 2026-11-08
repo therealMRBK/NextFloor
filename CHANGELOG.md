@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Added
+
+- **A view of its own for Outside** (thanks @eskahone, #83): under *Settings → Outside: hide devices* the button *Use this view for Outside* stores the camera of the editor's 3D preview. Opening Outside then flies to the garden instead of staying on the house view; closing it goes back.
+
 ## [0.26.4]
 
 ### Added

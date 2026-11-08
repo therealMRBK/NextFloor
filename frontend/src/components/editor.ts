@@ -3339,7 +3339,7 @@ export class NfEditor extends LitElement {
             : floor
               ? renderRoomList(this.host, floor, { select: (id) => this.selectItem("room", id) })
               : nothing}
-      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderFavorites(this.host) : nothing}
+      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderFavorites(this.host, () => this.groundView()) : nothing}
       ${renderHelpLinks(this.host)}
       ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderBleLocate(this.host, this._doc) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
       ${floor && admin ? renderBackgroundForm(this.host, this.bg, floor) : nothing} ${admin ? renderSettings(this.host, this.settingsActions) : nothing}
@@ -3354,6 +3354,17 @@ export class NfEditor extends LitElement {
     if (!floor || !host) return false;
     const walls = generateWalls(floor.rooms, { exterior: this._doc.settings.wall_exterior, interior: this._doc.settings.wall_interior }, floor.walls ?? []);
     return locateOpening(walls.walls, o, host)?.wall.exterior ?? false;
+  }
+
+  /** The pane's camera with the point it looks at counted from the ground, not from the open floor (Outside's view, #83). */
+  private groundView(): StartView | null {
+    const v = this.paneView();
+    if (!v) {
+      alert(this.t("floor_start_view_need_pane"));
+      return null;
+    }
+    const base = this.floor?.elevation ?? 0;
+    return v.target ? { ...v, target: { ...v.target, y: round(v.target.y + base) } } : v;
   }
 
   /** The camera of the editor's 3D pane as it stands right now, rounded for the plan (null: no pane). */

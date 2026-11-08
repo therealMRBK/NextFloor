@@ -76,6 +76,8 @@ ROOM_SCHEMA = vol.Schema(
         vol.Required("floor_material"): vol.All(str, vol.Length(max=32)),
         # the camera this room opens with when it is tapped (None = framed from above)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
+        # the camera Outside opens with (None = the house view)
+        vol.Optional("outside_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         # entities shown in the room's panel although they are not in the plan
         vol.Optional("panel", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=100)),
         # entities of the area kept out of the room panel
