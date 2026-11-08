@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.26.6]
+
 ### Added
 
 - **Notes with a height and a photo** (#113): a note in the plan gets its own height above the floor (a pin under the ceiling, at the shutoff valve) and a photo, uploaded or as a URL, that shows when the note is tapped in the 3D view.
@@ -609,7 +611,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...main
+[0.26.6]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...v0.26.6
 [0.26.5]: https://github.com/therealMRBK/NextFloor/compare/v0.26.4...v0.26.5
 [0.25.4]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...v0.25.4
 [0.25.3]: https://github.com/therealMRBK/NextFloor/compare/v0.25.2...v0.25.3
