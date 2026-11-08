@@ -2284,7 +2284,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         color: var(--nf-text);
         z-index: 3;
       }
-      .nf-low :is(.nf-today, .nf-forecast) {
+      .nf-low :is(.nf-today, .nf-forecast, .nf-clock) {
         backdrop-filter: none;
       }
       .nf-today-day {
@@ -2620,7 +2620,11 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         flex-direction: column;
         padding: 8px 14px;
         border-radius: 16px;
-        background: rgba(8, 16, 34, 0.55);
+        /* the same glass as the Today and forecast cards, so it follows the HA theme like them (#68) */
+        border: 1px solid var(--nf-line);
+        background: var(--nf-chrome);
+        box-shadow: var(--nf-shadow);
+        backdrop-filter: blur(10px);
         color: var(--nf-text);
         pointer-events: none;
         line-height: 1.1;

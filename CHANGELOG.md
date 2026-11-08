@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **The clock matches the other cards** (thanks @HA-Luz, #68): it now has the same glass as the *Today* and weather cards and follows the Home Assistant theme with them, light in a light theme, in every look. Before it always had a dark background, which made it hard to read in a light theme.
+
 ## [0.26.6]
 
 ### Added
