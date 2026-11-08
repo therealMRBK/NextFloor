@@ -50,7 +50,7 @@ import {
   type Vec2,
 } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
-import { renderBleLocate, renderFavorites, renderPresence, renderStartView } from "./editor/forms/house.ts";
+import { renderBleLocate, renderFavorites, renderOutside, renderPresence, renderStartView } from "./editor/forms/house.ts";
 import { renderCardTemplates } from "./editor/forms/templates.ts";
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
@@ -3370,7 +3370,7 @@ export class NfEditor extends LitElement {
             : floor
               ? renderRoomList(this.host, floor, { select: (id) => this.selectItem("room", id) })
               : nothing}
-      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderFavorites(this.host, () => this.groundView()) : nothing}
+      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderOutside(this.host, () => this.groundView()) : nothing} ${admin ? renderFavorites(this.host) : nothing}
       ${renderHelpLinks(this.host)}
       ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderBleLocate(this.host, this._doc) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
       ${floor && admin ? renderBackgroundForm(this.host, this.bg, floor) : nothing} ${admin ? renderSettings(this.host, this.settingsActions) : nothing}

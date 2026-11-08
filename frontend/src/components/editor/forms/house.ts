@@ -60,11 +60,11 @@ function outsideHidden(host: EditorHost, paneView?: () => StartView | null): Tem
   // worked out once: asking for every entity would run the whole search once per entity of Home Assistant (#101)
   const outside = new Set(host.hass ? outsideEntities(host.hass, host.doc.floors) : []);
   const options = entityOptions(host.hass, (id) => !list.includes(id) && outside.has(id));
-  return html`<summary>${host.t("outside_hidden")}${list.length > 0 ? html` <span class="nf-lib-count">${list.length}</span>` : nothing}</summary>
+  return html`${paneView ? outsideView(host, paneView) : nothing}
+    <h4>${host.t("outside_hidden")}${list.length > 0 ? html` <span class="nf-lib-count">${list.length}</span>` : nothing}</h4>
     ${hint(host.t("outside_hidden_hint"))}
     ${list.map((id, i) => html`<div class="nf-row nf-dev-row"><span class="nf-dev-name"><span>${entityName(host.hass, id)}</span></span>${iconButton(host.t("delete"), "✕", () => store(removeAt(list, i)))}</div>`)}
-    <div class="nf-form">${entityField(host, host.t("outside_hidden_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>
-    ${paneView ? outsideView(host, paneView) : nothing}`;
+    <div class="nf-form">${entityField(host, host.t("outside_hidden_add"), null, undefined, options, (v) => v && v !== "none" && !list.includes(v) && store([...list, v]))}</div>`;
 }
 
 /** The camera Outside opens with: the editor's 3D pane as it stands now (#83). */
@@ -235,8 +235,16 @@ function roomFacts(host: EditorHost): TemplateResult {
 }
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */
-export function renderFavorites(host: EditorHost, outsidePaneView?: () => StartView | null): TemplateResult {
-  return html`<details class="nf-section">${favorites(host)} ${outsideHidden(host, outsidePaneView)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
+export function renderFavorites(host: EditorHost): TemplateResult {
+  return html`<details class="nf-section">${favorites(host)} ${ownButtons(host)} ${ownAlerts(host)} ${circuits(host)} ${calendars(host)} ${mediaPresets(host)} ${roomFacts(host)}</details>`;
+}
+
+/** Outside as a section of its own (#83): the camera it opens with first, then the devices its panel leaves out. */
+export function renderOutside(host: EditorHost, paneView: () => StartView | null): TemplateResult {
+  return html`<details class="nf-section">
+    <summary>🌳 ${host.t("outside_area")}</summary>
+    ${outsideHidden(host, paneView)}
+  </details>`;
 }
 
 /** The camera the house opens with: the editor's 3D pane as it stands now, or the default. */

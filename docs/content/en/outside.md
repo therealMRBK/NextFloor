@@ -32,7 +32,7 @@ As soon as a device stands outside the rooms, the bar above the 3D view gets a *
 
 A device that stands on the roof or over a room but belongs outside (a weather station) gets *Belongs to Outside* in its form. It then no longer counts for the room below and shows in the Outside panel. The dashboard card shows the chip with its room buttons.
 
-To keep devices out of the Outside panel, use *Settings → Outside: hide devices*. In the same place, *Use this view for Outside* stores the camera of the editor's 3D preview: turn it to the garden first, and opening Outside flies there.
+In the editor, Outside has a section of its own, *🌳 Outside* (below *Start view*). There *Outside: hide devices* keeps devices out of the Outside panel, and *Use this view for Outside* stores the camera of the editor's 3D preview: turn it to the garden first, and opening Outside flies there.
 
 ## Roof
 
