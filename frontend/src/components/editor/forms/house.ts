@@ -243,3 +243,12 @@ export function renderPresence(host: EditorHost): TemplateResult {
     ${hint(host.t("presence_hint"))}
   </details>`;
 }
+
+/** Locating Bluetooth tags by room: pick a tag, walk through the rooms, record them (the element does the work). */
+export function renderBleLocate(host: EditorHost, doc: unknown): TemplateResult {
+  return html`<details class="nf-section">
+    <summary>${host.t("ble")}</summary>
+    ${hint(host.t("ble_hint"))}
+    <nf-ble-locate .host=${host} .doc=${doc}></nf-ble-locate>
+  </details>`;
+}

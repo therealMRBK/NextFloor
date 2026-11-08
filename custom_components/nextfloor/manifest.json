@@ -2,6 +2,7 @@
   "domain": "nextfloor",
   "name": "NextFloor",
   "after_dependencies": [
+    "bluetooth",
     "media_source",
     "tts"
   ],

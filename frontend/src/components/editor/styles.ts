@@ -978,6 +978,52 @@ export const editorStyles = css`
     flex: 1 1 84px;
     min-width: 84px;
   }
+  .nf-ble-bars {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0;
+  }
+  .nf-ble-row {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) 2fr 36px;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .nf-ble-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--nf-text);
+  }
+  .nf-ble-track {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(127, 127, 127, 0.25);
+    overflow: hidden;
+  }
+  .nf-ble-fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--nf-accent, #00e5ff);
+    transition: width 0.4s ease-out;
+  }
+  .nf-ble-db {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--nf-muted);
+  }
+  .nf-ble-now {
+    margin: 4px 0 10px;
+    color: var(--nf-text);
+  }
+  .nf-ble-learn {
+    margin: 8px 0 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--nf-border, rgba(127, 127, 127, 0.3));
+    border-radius: 10px;
+  }
   .nf-chips {
     display: flex;
     flex-wrap: wrap;

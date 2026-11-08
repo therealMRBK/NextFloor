@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Bluetooth locating (new, experimental):** find out which room a Bluetooth tag, watch or phone is in, learned by walking. Under *Settings → Bluetooth locating* in the editor you pick a tag, walk through each room with it for 30 seconds and record the room. NextFloor compares how strongly the Bluetooth scanners Home Assistant already has (ESPHome Bluetooth proxies, Shelly devices with Bluetooth scanning on, the server's adapter) hear the tag with those recordings. Every tag gets a sensor whose state is the room name, usable in automations and as a person's room sensor under *Presence*. Phones and watches work through Home Assistant's *Private BLE Device*. It needs at least two scanners, more is better. The recordings stay in the plan and are left out of shared plans.
 - **See-through outdoor areas** (thanks @thelichtler-cloud, #95): every outdoor area has *Opacity (%)* in its form, from 100 (solid) down to 10, saved with the plan. A driveway or lawn above the cellar no longer hides it in the stacked view; the outline stays.
 
 ### Changed

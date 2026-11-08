@@ -1,9 +1,70 @@
 {
   "sections": [
-    { "title": { "en": "Get started", "de": "Loslegen" }, "pages": ["index", "install", "quickstart", "concepts"] },
-    { "title": { "en": "Build your home", "de": "Dein Zuhause bauen" }, "pages": ["draw", "furnish", "devices", "outside", "plan-tools"] },
-    { "title": { "en": "Use it", "de": "Benutzen" }, "pages": ["view3d", "live", "climate-energy", "household", "announcements", "tablet"] },
-    { "title": { "en": "Connect and extend", "de": "Verbinden und erweitern" }, "pages": ["cards", "automations", "plugins", "packs", "models", "plan-format"] },
-    { "title": { "en": "Help", "de": "Hilfe" }, "pages": ["shortcuts", "faq", "changelog", "contributing"] }
+    {
+      "title": {
+        "en": "Get started",
+        "de": "Loslegen"
+      },
+      "pages": [
+        "index",
+        "install",
+        "quickstart",
+        "concepts"
+      ]
+    },
+    {
+      "title": {
+        "en": "Build your home",
+        "de": "Dein Zuhause bauen"
+      },
+      "pages": [
+        "draw",
+        "furnish",
+        "devices",
+        "outside",
+        "plan-tools"
+      ]
+    },
+    {
+      "title": {
+        "en": "Use it",
+        "de": "Benutzen"
+      },
+      "pages": [
+        "view3d",
+        "live",
+        "climate-energy",
+        "household",
+        "bluetooth",
+        "announcements",
+        "tablet"
+      ]
+    },
+    {
+      "title": {
+        "en": "Connect and extend",
+        "de": "Verbinden und erweitern"
+      },
+      "pages": [
+        "cards",
+        "automations",
+        "plugins",
+        "packs",
+        "models",
+        "plan-format"
+      ]
+    },
+    {
+      "title": {
+        "en": "Help",
+        "de": "Hilfe"
+      },
+      "pages": [
+        "shortcuts",
+        "faq",
+        "changelog",
+        "contributing"
+      ]
+    }
   ]
 }

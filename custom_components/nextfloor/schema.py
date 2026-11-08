@@ -223,6 +223,54 @@ _SCREEN_PICTURE_SCHEMA = vol.Schema(
     }
 )
 
+
+def _tag_has_source(tag: dict) -> dict:
+    if not tag.get("address") and not tag.get("entity"):
+        raise vol.Invalid("a Bluetooth tag needs an address or a Private BLE Device tracker")
+    return tag
+
+
+# Bluetooth tags located by room (see ble.py): a tag's address and the signal patterns recorded while walking
+_BLE_TAG_FIELDS = vol.Schema(
+    {
+        vol.Required("id"): _ID,
+        vol.Required("name"): vol.All(str, vol.Length(min=1, max=60)),
+        # a fixed Bluetooth address, or a device tracker of Home Assistant's "Private BLE Device" (phones and watches
+        # change their address all the time; that integration knows the current one)
+        vol.Optional("address", default=None): vol.Any(
+            None, vol.All(str, vol.Match(r"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$"), lambda v: v.upper())
+        ),
+        vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Match(r"^device_tracker\.[a-z0-9_]+$"))),
+        vol.Optional("prints", default=list): vol.All(
+            [
+                vol.Schema(
+                    {
+                        vol.Required("room"): _ID,
+                        vol.Required("rssi"): vol.All(
+                            vol.Schema(
+                                {
+                                    vol.All(str, vol.Length(min=1, max=64)): vol.All(
+                                        vol.Coerce(float), vol.Range(min=-127, max=0)
+                                    )
+                                }
+                            ),
+                            vol.Length(min=1, max=16),
+                        ),
+                    },
+                    extra=vol.PREVENT_EXTRA,
+                )
+            ],
+            vol.Length(max=60),
+        ),
+        # the scanners' names, for showing the signals
+        vol.Optional("scanners", default=dict): vol.All(
+            vol.Schema({vol.All(str, vol.Length(min=1, max=64)): vol.All(str, vol.Length(max=80))}), vol.Length(max=16)
+        ),
+    },
+    extra=vol.PREVENT_EXTRA,
+)
+BLE_TAG_SCHEMA = vol.All(_BLE_TAG_FIELDS, _tag_has_source)
+
 # Auto: the car's entities on a parking spot (None = found on the car's device)
 _CAR_ENTITY = vol.Any(None, vol.All(str, vol.Length(max=255)))
 CAR_SCHEMA = vol.Schema(
@@ -902,6 +950,14 @@ SETTINGS_SCHEMA = vol.Schema(
                     extra=vol.PREVENT_EXTRA,
                 ),
                 vol.Length(max=20),
+            ),
+        ),
+        # Bluetooth tags located by room
+        vol.Optional("ble", default=None): vol.Any(
+            None,
+            vol.Schema(
+                {vol.Optional("tags", default=list): vol.All([BLE_TAG_SCHEMA], vol.Length(max=10))},
+                extra=vol.PREVENT_EXTRA,
             ),
         ),
         vol.Optional("weather_effects", default=None): vol.Any(

@@ -618,7 +618,26 @@ export interface MediaPreset {
   speakers?: string[];
 }
 
+/** What a Bluetooth tag's signal looked like at the scanners while it was in a room (dBm per scanner source). */
+export interface BleFingerprint {
+  room: string;
+  rssi: Record<string, number>;
+}
+
+/** A Bluetooth tag located by room: a fixed address, or a Private BLE Device tracker for phones and watches (their address changes). */
+export interface BleTag {
+  id: string;
+  name: string;
+  address?: string | null;
+  entity?: string | null;
+  prints: BleFingerprint[];
+  /** Scanner source → its name, for showing the signals. */
+  scanners?: Record<string, string>;
+}
+
 export interface BuildingSettings {
+  /** Bluetooth tags located by room (the sensor and the editor's learning by walking). */
+  ble?: { tags: BleTag[] } | null;
   /** Stations and playlists for the speakers' quick menu (Klang). */
   media_presets?: MediaPreset[];
   /** Favourites of the house: scenes, scripts, automations, buttons and switches in the central menu of the 3D view (#145). */

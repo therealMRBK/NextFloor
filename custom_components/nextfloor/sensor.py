@@ -7,6 +7,7 @@ its device pins and lamps. Automations and voice can use them without listing th
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
@@ -15,8 +16,9 @@ from homeassistant.core import Event, EventStateChangedData, HomeAssistant, call
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.event import async_track_state_change_event, async_track_time_interval
 
+from . import ble
 from .const import DOMAIN, SIGNAL_BUILDING_UPDATED
 
 HOUSE = "house"
@@ -154,6 +156,97 @@ class NextFloorCountSensor(SensorEntity):
             self._unsub_states = None
 
 
+BLE_POLL = timedelta(seconds=2)
+# a tag that no scanner has heard for this long is "away"
+BLE_AWAY_AFTER = timedelta(minutes=2)
+UNKNOWN = "unknown"
+
+
+class NextFloorBleSensor(SensorEntity):
+    """The room a Bluetooth tag is in, from its signal at the scanners and the fingerprints recorded in the editor."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    _attr_icon = "mdi:bluetooth-connect"
+
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry, tag: dict[str, Any]) -> None:
+        """Locate `tag` (a dict of the plan's settings.ble.tags)."""
+        self.hass = hass
+        self.tag_id = tag["id"]
+        self._tag = tag
+        self._rooms: dict[str, dict[str, str]] = {}
+        self._smoother = ble.Smoother()
+        self._history: list[dict[str, float]] = []
+        self._last_heard: Any = None
+        self._room_id: str | None = None
+        self._detail: dict[str, Any] = {}
+        self._unsub: Callable[[], None] | None = None
+        self._attr_unique_id = f"{entry.entry_id}_ble_{tag['id']}"
+        self._attr_name = tag["name"]
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)}, name="NextFloor", entry_type=DeviceEntryType.SERVICE
+        )
+        self._attr_native_value = UNKNOWN
+
+    def take(self, building: dict[str, Any]) -> None:
+        """Follow the (new) plan: the tag's fingerprints and the room names."""
+        found = next((t for t in ble.tags_of(building) if t["id"] == self.tag_id), None)
+        self._attr_available = found is not None
+        if found is not None:
+            self._tag = found
+            self._attr_name = found["name"]
+        self._rooms = ble.rooms_of(building)
+
+    @callback
+    def poll(self, _now: Any = None) -> None:
+        """Read the scanners, compare with the fingerprints and update the room (smoothed)."""
+        from homeassistant.util import dt as dt_util
+
+        address = ble.tag_address(self.hass, self._tag)
+        readings = ble.scanner_readings(self.hass, address) if address else {}
+        now = dt_util.utcnow()
+        if readings:
+            self._last_heard = now
+            merged = ble.smooth_reading(self._history, {src: rssi for src, (_n, rssi) in readings.items()})
+            room, dist, margin = ble.locate(self._tag.get("prints") or [], merged)
+            shown = self._smoother.update(room)
+            self._detail = {
+                "room_id": shown,
+                "distance_db": None if dist == float("inf") else round(dist, 1),
+                "margin_db": round(margin, 1),
+                "scanners": {name: rssi for _src, (name, rssi) in readings.items()},
+                "address": address,
+            }
+        elif self._last_heard is None or now - self._last_heard > BLE_AWAY_AFTER:
+            self._history.clear()
+            self._smoother = ble.Smoother()
+            shown = None
+            self._detail = {"room_id": None, "scanners": {}, "address": address}
+        else:
+            shown = self._smoother.room
+        self._room_id = shown
+        info = self._rooms.get(shown) if shown else None
+        self._attr_native_value = info["name"] if info else UNKNOWN
+        self._detail["floor"] = info["floor"] if info else None
+        if self.platform is not None:
+            self.async_write_ha_state()
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """The room id and floor, how far the match is, and what each scanner hears."""
+        return dict(self._detail)
+
+    async def async_added_to_hass(self) -> None:
+        """Start reading the scanners."""
+        self._unsub = async_track_time_interval(self.hass, self.poll, BLE_POLL)
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Stop reading."""
+        if self._unsub:
+            self._unsub()
+            self._unsub = None
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     """Add the house sensors and one pair per floor; floors added later get theirs when the plan is saved."""
     data = hass.data[DOMAIN]
@@ -177,5 +270,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         if new:
             async_add_entities(new)
 
+    ble_sensors: dict[str, NextFloorBleSensor] = {}
+
+    @callback
+    def sync_ble(_revision: int | None = None) -> None:
+        building = data.building
+        new_ble: list[NextFloorBleSensor] = []
+        for tag in ble.tags_of(building):
+            sensor = ble_sensors.get(tag["id"])
+            if sensor is None:
+                sensor = ble_sensors[tag["id"]] = NextFloorBleSensor(hass, entry, tag)
+                new_ble.append(sensor)
+        for sensor in ble_sensors.values():
+            sensor.take(building)
+            if sensor not in new_ble and sensor.platform is not None:
+                sensor.async_write_ha_state()
+        if new_ble:
+            async_add_entities(new_ble)
+
     sync()
+    sync_ble()
     entry.async_on_unload(async_dispatcher_connect(hass, SIGNAL_BUILDING_UPDATED, sync))
+    entry.async_on_unload(async_dispatcher_connect(hass, SIGNAL_BUILDING_UPDATED, sync_ble))

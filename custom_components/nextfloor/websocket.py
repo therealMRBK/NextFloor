@@ -11,6 +11,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.loader import async_get_integration
 import voluptuous as vol
 
+from . import ble
 from .const import DOMAIN, SIGNAL_ANNOUNCE, SIGNAL_BUILDING_UPDATED
 from .packs import MAX_PACK_SIZE, PackError, parse_pack, validate_payload
 from .schema import BUILDING_SCHEMA, IMAGE_DATA
@@ -40,6 +41,8 @@ def async_register_commands(hass: HomeAssistant) -> None:
         ws_packs_remove,
         ws_backup_export,
         ws_backup_import,
+        ws_ble_devices,
+        ws_ble_scan,
     ):
         websocket_api.async_register_command(hass, command)
 
@@ -353,5 +356,36 @@ async def ws_backup_import(
             "building": data.building,
             "packs": len(packs),
             "skipped": skipped,
+        },
+    )
+
+
+@websocket_api.websocket_command({vol.Required("type"): "nextfloor/ble/devices"})
+@websocket_api.require_admin
+@callback
+def ws_ble_devices(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The Bluetooth scanners Home Assistant has and the devices they hear, for choosing a tag in the editor."""
+    connection.send_result(msg["id"], ble.discovered(hass))
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "nextfloor/ble/scan",
+        vol.Exclusive("address", "tag"): vol.All(str, vol.Match(r"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$")),
+        vol.Exclusive("entity", "tag"): vol.All(str, vol.Match(r"^device_tracker\.[a-z0-9_]+$")),
+    }
+)
+@websocket_api.require_admin
+@callback
+def ws_ble_scan(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """What every scanner hears of a tag right now (the editor polls this while you walk through a room)."""
+    address = ble.tag_address(hass, msg)
+    readings = ble.scanner_readings(hass, address) if address else {}
+    connection.send_result(
+        msg["id"],
+        {
+            "address": address,
+            "available": ble.available(hass),
+            "readings": {src: {"name": name, "rssi": rssi} for src, (name, rssi) in readings.items()},
         },
     )

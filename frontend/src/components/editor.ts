@@ -50,7 +50,7 @@ import {
   type Vec2,
 } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
-import { renderFavorites, renderPresence, renderStartView } from "./editor/forms/house.ts";
+import { renderBleLocate, renderFavorites, renderPresence, renderStartView } from "./editor/forms/house.ts";
 import { renderCardTemplates } from "./editor/forms/templates.ts";
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
@@ -69,6 +69,7 @@ import { insertOutdoorCorner, outdoorRectangleAfter, removeOutdoorCorner } from 
 import { renderDeviceList, renderRoomClimate, type DeviceListActions } from "./editor/forms/device-list.ts";
 import { formatArea, formatLength, setUnits } from "../units.ts";
 import "./editor/wall-view.ts";
+import "./editor/ble-locate.ts";
 import { LibraryState, renderLibrary, renderPreview, type LibraryActions } from "./editor/forms/library.ts";
 import { arcFreeWall, arcRoomEdge, insertCorner } from "./editor/ops/rooms.ts";
 import type { ArcActions, ArcEdit } from "./editor/forms/arc.ts";
@@ -3331,7 +3332,7 @@ export class NfEditor extends LitElement {
               : nothing}
       ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderFavorites(this.host) : nothing}
       ${renderHelpLinks(this.host)}
-      ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
+      ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderBleLocate(this.host, this._doc) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
       ${floor && admin ? renderBackgroundForm(this.host, this.bg, floor) : nothing} ${admin ? renderSettings(this.host, this.settingsActions) : nothing}
       ${admin ? renderBackup(this.host, this.backup) : nothing}
     `;
