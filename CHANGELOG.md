@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Changed
+
+- **A new README:** a shorter, picture-led front page with the three ideas in one minute, a gallery that links into the documentation, the features grouped by what you do, a two-minute install and a table of where to read what.
+
 ## [0.26.1]
 
 ### Added
