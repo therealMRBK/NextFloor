@@ -28,7 +28,7 @@ Eine platzierte Leuchte wird zur Lampe. Das Lampen-Formular hat diese Optionen:
 
 ## Elektrische Möbel
 
-Möbel wie Fernseher, Kühlschrank oder Waschmaschine finden ihre Entity im selben Bereich selbst (*Automatisch*).
+Möbel wie Fernseher, Kühlschrank oder Waschmaschine finden ihre Entity im selben Bereich selbst (*Automatisch*). Technische Geräte (Wechselrichter, Akku, PC …) nehmen zusätzlich einen Temperatursensor als *Gerätetemperatur*: sein Wert steht am Pin, ab 60 °C ist der Pin hervorgehoben.
 
 - **Fernseher** zeigen Farbe und Titel der laufenden App. *Leuchten hinter dem TV* stellt das Ambilight ein oder aus.
 - Ein **Leistungssensor** zeigt die Watt. Jedes elektrische Stück zeigt seine Leistung neben dem Zustand, und seine Statuslichter leuchten, solange es läuft.

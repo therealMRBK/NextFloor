@@ -28,7 +28,7 @@ Placing a light turns it into a lamp. The lamp's form has these options:
 
 ## Electric furniture
 
-Furniture such as a TV, a fridge or a washer finds its entity in the same area by itself (*Automatic*).
+Furniture such as a TV, a fridge or a washer finds its entity in the same area by itself (*Automatic*). Technical devices (inverter, battery, PC …) also take a temperature sensor as *Device temperature*: its value shows on the pin, from 60 °C the pin is highlighted.
 
 - **TVs** show the colour and title of the running app. *Glow behind the TV* sets or switches off the ambilight.
 - A **power sensor** shows the watts. Every electric piece shows its draw beside its state, and its status lights glow while it runs.

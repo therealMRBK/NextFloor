@@ -231,6 +231,19 @@ function coolingLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkA
   );
 }
 
+/** Any other electric device: its own thermometer (an inverter, a battery, a PC), shown on its pin (#112). */
+function deviceTempLink(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
+  const t = host.t;
+  const temps = entityOptions(host.hass, (id) => {
+    const a = host.hass?.states[id]?.attributes;
+    return id.startsWith("sensor.") && (a?.device_class === "temperature" || a?.unit_of_measurement === "°C" || a?.unit_of_measurement === "°F");
+  });
+  return linkBlock(
+    entityField(host, t("device_temp"), item.temp_entity ?? null, undefined, temps, (v) => actions.update({ temp_entity: noneAsNull(v) })),
+    hint(t("device_temp_hint"), "nf-wide"),
+  );
+}
+
 /** Further bulbs of a lamp (night light, ambient ring): up to four lights of the same fixture, one more field than are set. */
 function extraLightFields(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
   const t = host.t;
@@ -275,7 +288,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
       (isMediaFurniture(item.type) || isSpeakerFurniture(item.type)) ? glowField(host, item.sound_rings, (v) => actions.update({ sound_rings: v }), { label: "sound_rings", hint: "sound_rings_hint", lowest: 0 }) : nothing,
       item.type === "grid_point" ? nothing : entityField(host, t(meterParent(host.doc, item) ? "meter_sub_power" : powerLabel(item.type)), item.power ?? null, automaticLink(host, item, "power"), power, (v) => actions.update({ power: v })),
     )}
-    ${isCooling(item.type) ? coolingLinks(host, item, actions) : nothing}
+    ${isCooling(item.type) ? coolingLinks(host, item, actions) : lamp || item.type === "grid_point" ? nothing : deviceTempLink(host, item, actions)}
     ${item.type === "meter" ? subMeterLinks(host, item, actions) : nothing}
     ${item.type === "inverter" || item.type === "home_battery" ? deviceMeterLink(host, item, actions) : nothing}
     ${item.type === "meter" && !meterParent(host.doc, item) ? linkBlock(entityField(host, t("furn_export"), item.export ?? null, undefined, power, set("export")), hint(t("furn_export_hint"), "nf-wide")) : nothing}

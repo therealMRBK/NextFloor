@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { setPacks } from "../packs.ts";
 import type { Furniture } from "../model.ts";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
-import { confirmEntities, coolingTemps, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, outsideEntities, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
+import { confirmEntities, coolingTemps, deviceTempOf, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, outsideEntities, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
 
 const piece = (id: string, type: string, extra: Partial<Furniture> = {}): Furniture => ({ id, type, x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 1, variant: null, entity: null, power: null, ...extra });
 const room = box("r", 0, 0, 4, 3, "area");
@@ -198,4 +198,13 @@ test("a smart speaker takes the only free media player of its room, not a TV (#1
   const two = hassOf([entity("media_player.echo", "idle"), entity("media_player.other", "idle")], inRoom("media_player.echo", "media_player.other"));
   assert.equal(furnitureEntities(two, [floorWith([room], { furniture: [speaker] })]).get("sp")?.entity ?? null, null, "two players: no guess");
   setPacks([]);
+});
+
+test("a device's own thermometer reads in Celsius, Fahrenheit turned over, nothing without a number (#112)", () => {
+  const hass = hassOf([entity("sensor.inverter_temp", "41.5", { unit_of_measurement: "°C" }), entity("sensor.pc_temp", "122", { unit_of_measurement: "°F" }), entity("sensor.gone", "unavailable")]);
+  assert.equal(deviceTempOf(hass, "sensor.inverter_temp"), 41.5);
+  assert.equal(deviceTempOf(hass, "sensor.pc_temp"), 50);
+  assert.equal(deviceTempOf(hass, "sensor.gone"), null);
+  assert.equal(deviceTempOf(hass, "none"), null);
+  assert.equal(deviceTempOf(hass, null), null);
 });

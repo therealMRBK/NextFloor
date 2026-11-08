@@ -211,6 +211,18 @@ export function coolingTemps(hass: HomeAssistant, piece: { temp_entity?: string 
   return { text: parts.join(" · "), warm: (fridge !== null && fridge > FRIDGE_WARM) || (freezer !== null && freezer > FREEZER_WARM) };
 }
 
+/** A device runs hot from this temperature (°C): its pin is marked like a running one (#112). */
+export const DEVICE_HOT = 60;
+
+/** A device's own thermometer in °C (a sensor in Fahrenheit is turned into Celsius); null when none is set or it tells no number. */
+export function deviceTempOf(hass: HomeAssistant, id: string | null | undefined): number | null {
+  if (!isSet(id)) return null;
+  const st = hass.states[id];
+  const value = st ? Number(st.state) : NaN;
+  if (!Number.isFinite(value)) return null;
+  return st!.attributes.unit_of_measurement === "°F" ? ((value - 32) * 5) / 9 : value;
+}
+
 /** Which doors of each smart fridge stand open now (a door sensor that says "on" or "open"). */
 export function fridgeDoors(hass: HomeAssistant, floors: readonly Floor[]): Map<string, { left: boolean; right: boolean }> {
   const isOpen = (sensor: EntityRef | undefined) => isSet(sensor) && ["on", "open"].includes(hass.states[sensor]?.state ?? "");

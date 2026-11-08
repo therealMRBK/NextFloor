@@ -226,7 +226,7 @@ export interface Furniture extends LightEffectConfig {
   entity?: EntityRef;
   /** Power sensor (null = automatic: the linked entity's device or a matching name). */
   power?: EntityRef;
-  /** Fridges and freezers: a temperature sensor of the fridge and one of the freezer compartment; the marker shows them and warns when too warm. */
+  /** Fridges and freezers: a temperature sensor of the fridge (temp_entity) and one of the freezer compartment; the marker shows them and warns when too warm. Any other device: its own thermometer, shown on its pin (#112). */
   temp_entity?: string | null;
   temp_entity2?: string | null;
   /** Smart fridge: door sensors of the left (freezer) and right (fridge) door; the doors open in 3D while they report open. */

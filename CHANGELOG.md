@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Temperature of technical devices** (thanks @tfischer84, #112): an inverter, a battery, a PC or any other electric device takes a temperature sensor under *Device temperature*. Its value shows on the device's pin in the 3D view; from 60 °C the pin is highlighted.
+
 ## [0.26.5]
 
 ### Added
