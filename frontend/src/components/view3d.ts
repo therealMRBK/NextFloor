@@ -142,6 +142,7 @@ export class NfView3d extends LitElement {
     buttons: { attribute: false },
     _thumbs: { state: true },
     floorThumbs: { attribute: false },
+    thumbsFolded: { attribute: false },
     clean: { attribute: false },
     cleanButton: { attribute: false },
     clock: { attribute: false },
@@ -273,6 +274,8 @@ export class NfView3d extends LitElement {
   private declare _blend: number;
   /** Floor switcher with small pictures of the floors (panel and card; off with a fixed floor). */
   declare floorThumbs: boolean;
+  /** The card asks for the floor pictures folded to small buttons at the start (a wall tablet); the arrow still opens them for now. */
+  declare thumbsFolded: boolean;
   /** Clean view: only the stage – no energy values, thumbnails, legend, scene chips or search (the host hides its own bars). */
   declare clean: boolean;
   /** Show the eye button that toggles the clean view (the host listens for "clean-toggle"). */
@@ -469,6 +472,7 @@ export class NfView3d extends LitElement {
     this.buttons = null;
     this._thumbs = [];
     this.floorThumbs = true;
+    this.thumbsFolded = false;
     this.clean = false;
     this.cleanButton = false;
     this.clock = null;
@@ -645,6 +649,11 @@ export class NfView3d extends LitElement {
     } finally {
       this.starting = false;
     }
+  }
+
+  protected willUpdate(changed: PropertyValues): void {
+    // the card's choice wins over the one this browser remembered (#84)
+    if (changed.has("thumbsFolded") && this.thumbsFolded) this._thumbsCompact = true;
   }
 
   protected updated(changed: PropertyValues): void {
@@ -1740,6 +1749,8 @@ export class NfView3d extends LitElement {
     const compact = this._thumbsCompact;
     const fold = () => {
       this._thumbsCompact = !compact;
+      // a card that starts folded keeps its choice: the arrow opens the pictures for this visit only
+      if (this.thumbsFolded) return;
       try {
         localStorage.setItem("nextfloor.thumbs_compact", this._thumbsCompact ? "1" : "0");
       } catch {

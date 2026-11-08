@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Våningar som miniatyrer",
   "card_floor_thumbs_hint": "Små bilder av våningarna vid sidan – tryck på en för att byta",
   "card_floor_thumbs_hint_start": "Den valda våningen är då där kortet startar – bilderna vid sidan byter till de andra",
+  "card_floor_thumbs_folded": "Starta med miniatyrerna hopfällda",
+  "card_floor_thumbs_folded_hint": "Bara små våningsknappar vid kanten – pilen öppnar ändå bilderna",
   "card_room_names": "Visa rumsnamn",
   "card_section_kiosk": "Väggplatta (kiosk)",
   "card_section_features": "Funktioner",

@@ -364,6 +364,8 @@
  "card_floor_thumbs": "楼层缩略图",
  "card_floor_thumbs_hint": "在侧边显示楼层的小图——点击切换",
  "card_floor_thumbs_hint_start": "所选楼层即为卡片的起始楼层——侧边的图片用于切换到其他楼层",
+ "card_floor_thumbs_folded": "启动时折叠楼层缩略图",
+ "card_floor_thumbs_folded_hint": "边上只显示小的楼层按钮——箭头仍可展开图片",
  "card_room_names": "显示房间名称",
  "card_section_kiosk": "墙面平板（Kiosk）",
  "card_section_features": "功能",

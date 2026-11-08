@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Plantas en miniatura",
   "card_floor_thumbs_hint": "Pequeñas imágenes de las plantas al lado; toca una para cambiar",
   "card_floor_thumbs_hint_start": "La planta elegida es entonces donde empieza la tarjeta; las imágenes del lado cambian a las demás",
+  "card_floor_thumbs_folded": "Empezar con las miniaturas plegadas",
+  "card_floor_thumbs_folded_hint": "Solo pequeños botones de planta al lado – la flecha sigue abriendo las imágenes",
   "card_room_names": "Mostrar nombres de estancias",
   "card_section_kiosk": "Tablet de pared (kiosco)",
   "card_section_features": "Funciones",

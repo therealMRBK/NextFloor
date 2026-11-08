@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Podlaží jako náhledy",
   "card_floor_thumbs_hint": "Malé obrázky podlaží na straně – klepněte na jeden pro přepnutí",
   "card_floor_thumbs_hint_start": "Vybrané podlaží je pak tím, od kterého karta začíná – obrázky na straně přepínají na ostatní",
+  "card_floor_thumbs_folded": "Začít se sbalenými miniaturami",
+  "card_floor_thumbs_folded_hint": "Jen malá tlačítka podlaží u okraje – šipka obrázky stále rozbalí",
   "card_room_names": "Zobrazit názvy místností",
   "card_section_kiosk": "Nástěnný tablet (kiosk)",
   "card_section_features": "Funkce",

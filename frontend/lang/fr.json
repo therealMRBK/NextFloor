@@ -584,6 +584,8 @@
  "card_floor_thumbs": "Étages en miniatures",
  "card_floor_thumbs_hint": "De petites images des étages sur le côté – touchez-en une pour changer",
  "card_floor_thumbs_hint_start": "L'étage choisi est alors celui où la carte démarre – les images sur le côté permettent de passer aux autres",
+ "card_floor_thumbs_folded": "Démarrer avec les miniatures repliées",
+ "card_floor_thumbs_folded_hint": "Seulement de petits boutons d’étage sur le côté – la flèche ouvre toujours les images",
  "card_room_names": "Afficher les noms des pièces",
  "card_section_kiosk": "Tablette murale (mode kiosque)",
  "card_section_features": "Fonctionnalités",

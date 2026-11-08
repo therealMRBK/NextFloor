@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Piani in miniatura",
   "card_floor_thumbs_hint": "Piccole immagini dei piani a lato: toccane una per cambiare",
   "card_floor_thumbs_hint_start": "Il piano scelto è quello da cui parte la card; le immagini a lato passano agli altri",
+  "card_floor_thumbs_folded": "Avvia con le miniature chiuse",
+  "card_floor_thumbs_folded_hint": "Solo piccoli pulsanti dei piani a lato – la freccia apre comunque le immagini",
   "card_room_names": "Mostra i nomi delle stanze",
   "card_section_kiosk": "Tablet a parete (kiosk)",
   "card_section_features": "Funzioni",

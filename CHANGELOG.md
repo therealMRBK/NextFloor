@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Floor miniatures folded from the start** (thanks @eskahone, #84): a card can start with the floor miniatures folded to small floor buttons, for a wall tablet say: *Start with the miniatures folded* in the card editor, or `floor_thumbs_folded: true`. The arrow still opens them for the visit.
+
 ### Fixed
 
 - **The clock matches the other cards** (thanks @HA-Luz, #68): it now has the same glass as the *Today* and weather cards and follows the Home Assistant theme with them, light in a light theme, in every look. Before it always had a dark background, which made it hard to read in a light theme.

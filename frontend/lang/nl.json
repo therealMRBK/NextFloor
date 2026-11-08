@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Verdiepingen als miniaturen",
   "card_floor_thumbs_hint": "Kleine afbeeldingen van de verdiepingen aan de zijkant; tik er een aan om te wisselen",
   "card_floor_thumbs_hint_start": "De gekozen verdieping is dan waar de kaart start; de afbeeldingen aan de zijkant wisselen naar de andere",
+  "card_floor_thumbs_folded": "Starten met ingeklapte miniaturen",
+  "card_floor_thumbs_folded_hint": "Alleen kleine verdiepingsknoppen aan de zijkant – de pijl klapt de afbeeldingen nog steeds open",
   "card_room_names": "Ruimtenamen tonen",
   "card_section_kiosk": "Wandtablet (kiosk)",
   "card_section_features": "Functies",

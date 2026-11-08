@@ -97,12 +97,20 @@ export class NextFloorCardEditor extends LitElement {
   private floorThumbsToggle(): TemplateResult {
     const byDefault = !this._config.floor;
     const hint: I18nKey = this._config.floor ? "card_floor_thumbs_hint_start" : "card_floor_thumbs_hint";
-    return checkbox(this.form, this._config.floor_thumbs ?? byDefault, "card_floor_thumbs", hint, (checked) => {
+    const toggle = checkbox(this.form, this._config.floor_thumbs ?? byDefault, "card_floor_thumbs", hint, (checked) => {
       const next: CardConfig = { ...this._config };
       if (checked === byDefault) delete next.floor_thumbs;
       else next.floor_thumbs = checked;
       this.publish(next);
     });
+    if (!(this._config.floor_thumbs ?? byDefault)) return toggle;
+    const folded = checkbox(this.form, this._config.floor_thumbs_folded === true, "card_floor_thumbs_folded", "card_floor_thumbs_folded_hint", (checked) => {
+      const next: CardConfig = { ...this._config };
+      if (checked) next.floor_thumbs_folded = true;
+      else delete next.floor_thumbs_folded;
+      this.publish(next);
+    });
+    return html`${toggle} ${folded}`;
   }
 
   /** The switches in the card: on or off, and which of them. */

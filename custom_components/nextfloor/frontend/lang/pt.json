@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Pisos em miniatura",
   "card_floor_thumbs_hint": "Pequenas imagens dos pisos ao lado; toque numa para mudar",
   "card_floor_thumbs_hint_start": "O piso escolhido é então onde o cartão começa; as imagens ao lado mudam para os outros",
+  "card_floor_thumbs_folded": "Começar com as miniaturas recolhidas",
+  "card_floor_thumbs_folded_hint": "Apenas pequenos botões de piso ao lado – a seta continua a abrir as imagens",
   "card_room_names": "Mostrar nomes das divisões",
   "card_section_kiosk": "Tablet de parede (quiosque)",
   "card_section_features": "Funções",

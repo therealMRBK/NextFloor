@@ -352,6 +352,7 @@ export class NextFloorCard extends LitElement {
       .flows=${c?.flows ?? null}
       .holograms=${c?.holograms ?? null}
       .floorThumbs=${this.thumbs}
+      .thumbsFolded=${this.thumbs && c?.floor_thumbs_folded === true}
       .roomLabels=${c?.room_names !== false}
       .floorStack=${c?.floor_stack ?? "dim"}
       .panelOpen=${!!this._roomId && c?.room_panel !== false}

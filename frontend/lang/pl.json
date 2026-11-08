@@ -598,6 +598,8 @@
   "card_floor_thumbs": "Piętra jako miniatury",
   "card_floor_thumbs_hint": "Małe obrazy pięter z boku – dotknij jednego, by przełączyć",
   "card_floor_thumbs_hint_start": "Wybrane piętro jest wtedy tym, od którego karta startuje – obrazy z boku przełączają na pozostałe",
+  "card_floor_thumbs_folded": "Zacznij ze zwiniętymi miniaturami",
+  "card_floor_thumbs_folded_hint": "Tylko małe przyciski pięter z boku – strzałka nadal rozwija obrazy",
   "card_room_names": "Pokaż nazwy pomieszczeń",
   "card_section_kiosk": "Tablet ścienny (kiosk)",
   "card_section_features": "Funkcje",
