@@ -47,7 +47,7 @@ description: Bewegen, Geräte schalten, das Raum-Fenster und das Zentralmenü be
 - **Schräg** schneidet die Wände schräg ab, vorne halbhoch und hinten voll hoch, wie ein Puppenhaus. Die Schräge dreht mit der Kamera.
 - **Massiv** zeigt blickdichte Wände in ihren Farben statt Glas. Im geöffneten Raum werden die Wände vor der Kamera abgesenkt.
 - *Massiv* und *Schräg* lassen sich kombinieren.
-- Die Farben stellst du im Editor ein: *Einstellungen → Wandfarbe außen / innen*, und pro Raum *Wandfarbe innen (dieser Raum)*.
+- Die Farben stellst du im Editor ein: *Einstellungen → Wandfarbe außen / innen*, pro Etage *Wandfarbe außen (diese Etage)* (ein Sockel, eine Garage) und pro Raum *Wandfarbe innen (dieser Raum)*.
 
 ## Karten
 

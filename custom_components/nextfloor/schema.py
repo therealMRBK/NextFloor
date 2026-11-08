@@ -755,6 +755,8 @@ FLOOR_SCHEMA = vol.Schema(
         vol.Optional("ha_floor", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # the camera this floor opens with (None = the house view's side)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
+        # paint of this floor's outer walls in the solid view (None = the building's outside colour)
+        vol.Optional("wall_paint_outside", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
     },
     extra=vol.ALLOW_EXTRA,
 )

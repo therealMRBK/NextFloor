@@ -398,6 +398,8 @@ export interface Floor {
   power_entity?: string | null;
   /** Notes pinned to a spot of the floor ("filter due in March", "fuse 12"), shown in 3D and found by the search. */
   notes?: PlanNote[];
+  /** Paint of this floor's outer walls in the solid wall view ("#rrggbb"; null = the building's outside colour): a plinth, a garage (#110). */
+  wall_paint_outside?: string | null;
 }
 
 /** A note pinned to a spot of a floor. */

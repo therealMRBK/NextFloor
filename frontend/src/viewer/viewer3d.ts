@@ -45,7 +45,7 @@ import {
 } from "three";
 import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
-import { CEILING_TYPES, ceilingOf, centroid, noteDue, DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
+import { CEILING_TYPES, ceilingOf, centroid, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
@@ -62,7 +62,7 @@ import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
-import { buildFloorGeometry, SLAB, stairHoles, type FloorGeometry, type WallPaint } from "./build.ts";
+import { buildFloorGeometry, SLAB, stairHoles, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
 import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
@@ -931,16 +931,9 @@ export class NextFloorViewer {
     this.invalidate();
   }
 
-  /** The paint the walls get in the solid view. */
-  private wallPaint(): WallPaint | undefined {
-    const b = this.building;
-    if (!this.painted || !b) return undefined;
-    const hex = (v: string | null | undefined, fallback: string) => Number.parseInt((/^#?([0-9a-f]{6})$/i.exec(v?.trim() ?? "")?.[1] ?? fallback.slice(1)), 16);
-    return {
-      outside: hex(b.settings.wall_paint_outside, DEFAULT_PAINT_OUTSIDE),
-      inside: hex(b.settings.wall_paint_inside, DEFAULT_PAINT_INSIDE),
-      rooms: b.floors.flatMap((f) => f.rooms).filter((r) => r.wall_paint && r.points.length >= 3).map((r) => ({ points: r.points, color: hex(r.wall_paint, DEFAULT_PAINT_INSIDE) })),
-    };
+  /** The paint one floor's walls get in the solid view (see `wallPaintOf`). */
+  private wallPaint(floor: Floor): WallPaint | undefined {
+    return this.painted && this.building ? wallPaintOf(this.building.settings, floor) : undefined;
   }
 
   setWallMode(mode: WallMode): void {
@@ -1758,7 +1751,7 @@ export class NextFloorViewer {
             return y === null ? null : y - floor.elevation;
           }
         : undefined;
-      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint());
+      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor));
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();

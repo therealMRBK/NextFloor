@@ -6,4 +6,5 @@ export { clipAlong, outlineOf } from "./build/outline.ts";
 export { wallHeight } from "./build/placement.ts";
 export type { FloorGeometry, OpeningInfo } from "./build/types.ts";
 export type { WallPaint } from "./build/build.ts";
+export { wallPaintOf } from "./build/solids.ts";
 export { ALWAYS, CUT_OFFSET, GeoBuffer, LineBuffer, pushPrism, shade } from "./geo.ts";

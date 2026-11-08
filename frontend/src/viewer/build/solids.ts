@@ -1,7 +1,7 @@
 // The wall solids: every wall cut into pieces at its openings, built as prisms that fold away above the cut height.
 
 import type { Wall } from "../../geometry/walls.ts";
-import { pointInPolygon, roomOffset, type Floor, type Vec2 } from "../../model.ts";
+import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, pointInPolygon, roomOffset, type BuildingSettings, type Floor, type Vec2 } from "../../model.ts";
 import { CAP_OFFSET, LOWER_OFFSET, PAINT_OFFSET, pushPrism, type GeoBuffer } from "../geo.ts";
 import { NEON, SLAB } from "./look.ts";
 import { clipAlong, unit } from "./outline.ts";
@@ -21,6 +21,22 @@ export interface WallPaint {
   outside: number;
   inside: number;
   rooms: { points: Vec2[]; color: number }[];
+}
+
+/** A "#rrggbb" paint as a number, or the fallback when it is missing or not a colour. */
+const paintHex = (v: string | null | undefined, fallback: string): number => Number.parseInt(/^#?([0-9a-f]{6})$/i.exec(v?.trim() ?? "")?.[1] ?? fallback.slice(1), 16);
+const isPaint = (v: string | null | undefined): v is string => /^#?[0-9a-f]{6}$/i.test(v?.trim() ?? "");
+
+/**
+ * The paint of one floor's walls: the floor's own outside colour if it has one (a plinth, a garage, #110), else the
+ * building's; and only this floor's rooms, so a room upstairs does not paint the wall below it in the same spot.
+ */
+export function wallPaintOf(settings: Pick<BuildingSettings, "wall_paint_outside" | "wall_paint_inside">, floor: { rooms: readonly { points: Vec2[]; wall_paint?: string | null }[]; wall_paint_outside?: string | null }): WallPaint {
+  return {
+    outside: paintHex(isPaint(floor.wall_paint_outside) ? floor.wall_paint_outside : settings.wall_paint_outside, DEFAULT_PAINT_OUTSIDE),
+    inside: paintHex(settings.wall_paint_inside, DEFAULT_PAINT_INSIDE),
+    rooms: floor.rooms.filter((r) => r.wall_paint && r.points.length >= 3).map((r) => ({ points: r.points, color: paintHex(r.wall_paint, DEFAULT_PAINT_INSIDE) })),
+  };
 }
 
 /** The top of a painted wall, where it is cut or ends: a plain light grey, like plaster seen in section. */

@@ -6,11 +6,15 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Outside wall colour per floor** (thanks @LDSign, #110): in the solid wall view a floor can have an outside colour of its own (*Wall colour outside (this floor)* in the floor's settings), for a plinth or a garage that is not the colour of the storeys above.
+
 - **Calibrate a robot map from its rooms** (#109): when the robot's map names its rooms, as the Dreame integration does, the dock has a button *Calibrate from the rooms*. It matches them to the rooms with the same names on the plan, so the robot no longer has to be parked 1.5 m from its dock and tapped. With three or more matching rooms a mirrored map is recognised by itself.
 
 - **A view of its own for Outside** (thanks @eskahone, #83): under *Settings → Outside: hide devices* the button *Use this view for Outside* stores the camera of the editor's 3D preview. Opening Outside then flies to the garden instead of staying on the house view; closing it goes back.
 
 ### Fixed
+
+- **Room colours on other floors** (thanks @LDSign, #110): a room with its own wall colour no longer paints the walls of the floors above or below that lie in the same spot of the plan.
 
 - **Dreame robot maps** (thanks @lina-alexrt, #109): the map camera of the Dreame integration names the dock `charger_position` instead of `charger`. NextFloor now reads both, so the robot's real position can be calibrated and shown on the plan. Without a `path` on the camera no trail is drawn.
 

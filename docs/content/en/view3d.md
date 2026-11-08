@@ -47,7 +47,7 @@ Open a room to get its panel:
 - **Sloped** cuts the walls on a slope, half height in front and full height at the back, like a doll's house. The slope turns with the camera.
 - **Solid** shows opaque walls in their colours instead of glass. In an open room the walls in front of the camera are lowered.
 - *Solid* and *Sloped* can be combined.
-- Set the colours in the editor: *Settings → Wall colour outside / inside*, and per room *Wall colour inside (this room)*.
+- Set the colours in the editor: *Settings → Wall colour outside / inside*, per floor *Wall colour outside (this floor)* (a plinth, a garage) and per room *Wall colour inside (this room)*.
 
 ## Maps
 
