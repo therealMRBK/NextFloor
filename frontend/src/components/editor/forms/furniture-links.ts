@@ -11,7 +11,7 @@ import { checkField, entityField, glowField, hint, iconField, markerField, pinSh
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
-import { calibrationFrom, gridPlaces, mapCamera, type Place } from "../../../live/vacuum-map.ts";
+import { calibrationFrom, calibrationFromRooms, gridPlaces, gridRooms, mapCamera, type Place } from "../../../live/vacuum-map.ts";
 
 /** What the forms of a piece of furniture make the editor do. */
 export interface FurnitureLinkActions {
@@ -107,8 +107,23 @@ function robotMapBlock(host: EditorHost, item: Furniture): TemplateResult {
       });
     });
   };
+  // the robot's named rooms against the rooms of the floor it stands on: no driving, no tapping (#109)
+  const camera = host.hass ? mapCamera(host.hass) : null;
+  const robotRooms = host.hass ? gridRooms(host.hass, camera) : [];
+  const floor = host.doc.floors.find((f) => f.furniture.some((f2) => f2.id === item.id));
+  const fromRooms = () => {
+    if (!floor) return;
+    const res = calibrationFromRooms(floor.rooms, robotRooms, cal?.mirror ?? false);
+    if (res.cal) {
+      const fitted = res.cal;
+      host.change((doc) => void (doc.settings.vacuum_map = fitted));
+    } else alert(t(res.reason === "rooms" ? "robot_cal_rooms_none" : "robot_cal_rooms_bad", { n: res.matched.length }));
+  };
   return linkBlock(
     hint(places.at && places.dock ? (cal ? t("robot_cal_done", { m: metres.toFixed(2) }) : t("robot_cal_none")) : t("robot_cal_need"), "nf-wide"),
+    robotRooms.length >= 2
+      ? html`<button class="nf-btn nf-wide" ?disabled=${!host.admin || !floor} @click=${fromRooms}>${t("robot_cal_rooms", { n: robotRooms.length })}</button>`
+      : nothing,
     html`<button class="nf-btn nf-wide" ?disabled=${!host.admin || !places.at || !places.dock} @click=${pick}>${t("robot_cal_do")}</button>`,
     cal
       ? checkField(host, t("robot_cal_mirror"), !!cal.mirror, (on) => host.change((doc) => void (doc.settings.vacuum_map = { ...cal, mirror: on })))

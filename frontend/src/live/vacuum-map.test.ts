@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { entity, hassOf } from "../entities/fixtures.ts";
-import { calibrationFrom, gridMapper, gridPlaces, gridTurn, mapCamera, readVacuum, type VacuumCalibration } from "./vacuum-map.ts";
+import { calibrationFrom, calibrationFromRooms, gridMapper, gridPlaces, gridRooms, gridTurn, mapCamera, readVacuum, type VacuumCalibration } from "./vacuum-map.ts";
 
 /** Two decimals, so a test can compare pairs without float noise. */
 const r2 = (v: number) => Math.round(v * 100) / 100;
@@ -185,4 +185,45 @@ test("Dreame's map camera names the dock charger_position and may have no trail 
   const live = readVacuum(hass, "camera.dreame_map", CAL)!;
   assert.deepEqual(pair2(live.charger!), [2, 1]);
   assert.deepEqual(live.path, [], "no path attribute: no invented trail");
+});
+
+/** The rooms of a real Dreame X50 Ultra map camera (#109), boxes in millimetres; the dock sits in the kitchen. */
+const DREAME_ROOMS = {
+  "2": { x0: 800, y0: 1150, x1: 5700, y1: 4450, name: "Wohnzimmer" },
+  "3": { x0: 1950, y0: -1750, x1: 5750, y1: 1150, name: "Flur" },
+  "4": { x0: -2000, y0: -1050, x1: 1950, y1: 3900, name: "Küche" },
+  "5": { x0: -1850, y0: -2650, x1: 50, y1: -1050, name: "Bad" },
+  "6": { x0: 50, y0: -2700, x1: 1200, y1: -1050, name: "Flur 2" },
+  "7": { x0: 2000, y0: -9600, x1: 6000, y1: -1750, name: "Büro" },
+  "8": { x0: -1900, y0: -5600, x1: 1150, y1: -2700, name: "Schlafzimmer" },
+};
+const DREAME_DOCK = { x: -1752, y: 1556, a: 268 };
+
+/** A plan drawn from the robot's boxes: millimetres to metres, y running against plan z, a quarter turn, shifted. */
+function planOf(rooms: typeof DREAME_ROOMS, rename: (n: string) => string = (n) => n) {
+  const put = (x: number, y: number): [number, number] => [12 + (-y / 1000), 5 + (-x / 1000)];
+  return Object.values(rooms).map((r) => ({ name: rename(r.name), points: [put(r.x0, r.y0), put(r.x1, r.y0), put(r.x1, r.y1), put(r.x0, r.y1)] }));
+}
+
+test("a Dreame map is calibrated from the rooms both sides name, mirror and all, without the robot moving", () => {
+  const hass = hassOf([entity("camera.x50_map", "idle", { rooms: DREAME_ROOMS, vacuum_position: DREAME_DOCK, charger_position: DREAME_DOCK })]);
+  const robot = gridRooms(hass, "camera.x50_map");
+  assert.equal(robot.length, 7);
+  const res = calibrationFromRooms(planOf(DREAME_ROOMS, (n) => n.toUpperCase().replace(" ", "-")), robot);
+  assert.ok(res.cal, "matched by name, whatever the case and spacing");
+  assert.equal(res.matched.length, 7);
+  assert.equal(res.cal.mirror, true, "three rooms or more tell a mirrored map from a turned one");
+  // the docked robot lands where the plan puts the dock: the kitchen, 12 + -1.556, 5 + 1.752
+  const live = readVacuum(hass, "camera.x50_map", res.cal)!;
+  assert.deepEqual(pair2(live.charger!), [10.44, 6.75]);
+  assert.deepEqual([r2(live.pose!.x), r2(live.pose!.z)], [10.44, 6.75]);
+});
+
+test("rooms that do not match, or match the wrong way round, give no calibration", () => {
+  const hass = hassOf([entity("camera.x50_map", "idle", { rooms: DREAME_ROOMS })]);
+  const robot = gridRooms(hass, "camera.x50_map");
+  assert.deepEqual(calibrationFromRooms(planOf(DREAME_ROOMS, (n) => `${n} OG`), robot), { cal: null, reason: "rooms", matched: [] });
+  // the plan's office and bedroom swapped: no fit puts every room where the plan has it
+  const swapped = planOf(DREAME_ROOMS, (n) => (n === "Büro" ? "Wohnzimmer" : n === "Wohnzimmer" ? "Büro" : n === "Bad" ? "Flur" : n === "Flur" ? "Bad" : n));
+  assert.equal(calibrationFromRooms(swapped, robot).cal, null);
 });

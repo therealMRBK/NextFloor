@@ -184,3 +184,104 @@ export function calibrationFrom(dock: Place, here: Place, mirror = false): Calib
   if (!(scale >= MIN_SCALE && scale <= MAX_SCALE)) return { cal: null, reason: "scale" };
   return { cal: { a: dock.plan, ga: dock.grid, b: here.plan, gb: here.grid, mirror } };
 }
+
+/** A room on the robot's map: its name and the middle of its box, in the map's grid. */
+export interface GridRoom {
+  name: string;
+  center: [number, number];
+}
+
+/**
+ * The rooms the robot knows, from the map camera's `rooms`: Dreame writes a box (`x0..y1`) and a name per room;
+ * a room without a name cannot be matched to the plan, so it is left out.
+ */
+export function gridRooms(hass: HomeAssistant, camera: string | null): GridRoom[] {
+  const raw = camera ? hass.states[camera]?.attributes?.rooms : undefined;
+  if (!raw || typeof raw !== "object") return [];
+  const out: GridRoom[] = [];
+  for (const r of Object.values(raw as Record<string, unknown>)) {
+    if (!r || typeof r !== "object") continue;
+    const room = r as Record<string, unknown>;
+    const name = typeof room.name === "string" ? room.name.trim() : "";
+    const box = [room.x0, room.y0, room.x1, room.y1].map(num);
+    if (!name || !box.every(Number.isFinite)) continue;
+    out.push({ name, center: [(box[0] + box[2]) / 2, (box[1] + box[3]) / 2] });
+  }
+  return out;
+}
+
+/** A room name as both sides are compared: case, spaces and punctuation do not count. */
+const roomKey = (name: string): string => name.toLocaleLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
+
+/** The least-squares similarity from grid points (already mirrored when the map runs backwards) onto the plan, and how far it misses on average. */
+function fitSimilarity(pairs: { plan: [number, number]; seen: [number, number] }[]): { map: (g: [number, number]) => [number, number]; scale: number; rms: number } | null {
+  const n = pairs.length;
+  const [gx, gy] = pairs.reduce((s, p) => [s[0] + p.seen[0] / n, s[1] + p.seen[1] / n], [0, 0]);
+  const [px, pz] = pairs.reduce((s, p) => [s[0] + p.plan[0] / n, s[1] + p.plan[1] / n], [0, 0]);
+  // the plan point is (a + ib)(grid point) in complex numbers, around both centroids: a and b by least squares
+  let [sa, sb, sg] = [0, 0, 0];
+  for (const p of pairs) {
+    const [u, v] = [p.seen[0] - gx, p.seen[1] - gy];
+    const [x, z] = [p.plan[0] - px, p.plan[1] - pz];
+    sa += u * x + v * z;
+    sb += u * z - v * x;
+    sg += u * u + v * v;
+  }
+  if (!(sg > 1e-9)) return null;
+  const [a, b] = [sa / sg, sb / sg];
+  const map = (g: [number, number]): [number, number] => {
+    const [u, v] = [g[0] - gx, g[1] - gy];
+    return [px + a * u - b * v, pz + b * u + a * v];
+  };
+  const rms = Math.sqrt(pairs.reduce((s, p) => s + Math.hypot(map(p.seen)[0] - p.plan[0], map(p.seen)[1] - p.plan[1]) ** 2, 0) / n);
+  return { map, scale: Math.hypot(a, b), rms };
+}
+
+export type RoomCalibrationResult = { cal: VacuumCalibration; matched: string[]; rms: number } | { cal: null; reason: "rooms" | "scale" | "fit"; matched: string[] };
+
+/**
+ * The calibration from rooms both sides know by name: the robot's map names its rooms like the plan does, and
+ * the middles of matching rooms tie the grid to the plan without the robot moving at all. Two rooms fix scale and
+ * turn (with `mirror` as given); three or more also tell a mirrored map from a turned one, so the better fit wins.
+ */
+export function calibrationFromRooms(planRooms: { name: string; points: readonly [number, number][] }[], robotRooms: GridRoom[], mirror = false): RoomCalibrationResult {
+  const byKey = new Map(robotRooms.map((r) => [roomKey(r.name), r] as const));
+  const pairs: { name: string; plan: [number, number]; grid: [number, number] }[] = [];
+  const used = new Set<string>();
+  for (const room of planRooms) {
+    const key = roomKey(room.name);
+    const robot = byKey.get(key);
+    if (!robot || used.has(key) || room.points.length < 3) continue;
+    used.add(key);
+    const xs = room.points.map((p) => p[0]);
+    const zs = room.points.map((p) => p[1]);
+    // the middle of the room's box, as the robot measures its rooms
+    pairs.push({ name: room.name, plan: [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2], grid: robot.center });
+  }
+  const matched = pairs.map((p) => p.name);
+  if (pairs.length < 2) return { cal: null, reason: "rooms", matched };
+  const fits = (pairs.length >= 3 ? [false, true] : [mirror]).flatMap((m) => {
+    const fit = fitSimilarity(pairs.map((p) => ({ plan: p.plan, seen: asSeen(p.grid, m) })));
+    return fit ? [{ mirror: m, ...fit }] : [];
+  });
+  const best = fits.sort((x, y) => x.rms - y.rms)[0];
+  if (!best) return { cal: null, reason: "rooms", matched };
+  if (!(best.scale >= MIN_SCALE && best.scale <= MAX_SCALE)) return { cal: null, reason: "scale", matched };
+  // the plan spread of the rooms: a fit that misses by more than a quarter of it has matched the wrong rooms
+  const spread = Math.max(...pairs.map((p) => Math.hypot(p.plan[0] - pairs[0].plan[0], p.plan[1] - pairs[0].plan[1])));
+  if (!(best.rms <= Math.max(1, spread / 4))) return { cal: null, reason: "fit", matched };
+  // stored as two places like a tapped calibration: the two rooms furthest apart, put where the fit puts them
+  let [i, j, far] = [0, 1, -1];
+  for (let p = 0; p < pairs.length; p++)
+    for (let q = p + 1; q < pairs.length; q++) {
+      const d = Math.hypot(pairs[p].grid[0] - pairs[q].grid[0], pairs[p].grid[1] - pairs[q].grid[1]);
+      if (d > far) [i, j, far] = [p, q, d];
+    }
+  const [ga, gb] = [pairs[i].grid, pairs[j].grid];
+  return {
+    cal: { a: best.map(asSeen(ga, best.mirror)), ga, b: best.map(asSeen(gb, best.mirror)), gb, mirror: best.mirror },
+    matched,
+    rms: best.rms,
+  };
+}
+

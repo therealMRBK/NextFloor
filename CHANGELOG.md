@@ -6,6 +6,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Calibrate a robot map from its rooms** (#109): when the robot's map names its rooms, as the Dreame integration does, the dock has a button *Calibrate from the rooms*. It matches them to the rooms with the same names on the plan, so the robot no longer has to be parked 1.5 m from its dock and tapped. With three or more matching rooms a mirrored map is recognised by itself.
+
 - **A view of its own for Outside** (thanks @eskahone, #83): under *Settings → Outside: hide devices* the button *Use this view for Outside* stores the camera of the editor's 3D preview. Opening Outside then flies to the garden instead of staying on the house view; closing it goes back.
 
 ### Fixed
