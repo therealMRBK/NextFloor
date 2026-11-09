@@ -18,6 +18,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **"Keep camera" survives the house view** (thanks @lennart-bader, #119): with *Keep camera* on, *All floors* now keeps the side and height you looked from, and opening a floor again brings back the view that floor was left with. Before *All floors* turned back to the start view and the next floor opened from there.
 - **Stairs under a room boundary open the floor above** (thanks @Gifford47, #116): a staircase whose opening upstairs reaches over the line between two rooms (a hall and a room, say) now cuts the floor in both of them. Before the opening was left out, so the floor above stayed closed and the stairs ran into it. A floor opening drawn over two rooms is now cut the same way.
 - **Bay windows show their roller shutter** (thanks @Gifford47, #115): a window that runs over several walls of a bay now gets its shutter box and blind in the 3D view, and tapping it moves the blind. Before it showed neither, as if no blind were linked.
 - **The second blind of a split window moves in 3D** (thanks @spacemessage, #106): on a window with two blinds, the right-hand blind now moves in the 3D view when its cover moves. Before it stayed where it was when the view opened.

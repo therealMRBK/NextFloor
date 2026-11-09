@@ -853,7 +853,15 @@ export class NextFloorViewer {
   /** Show one floor (null = the whole house). */
   setFloor(floorId: string | null, animate = true): void {
     // from one floor to another the camera may keep its side, height and distance (a tablet set up to look one way)
-    const keep = this.keepCamera && this.floorId !== null && floorId !== null && floorId !== this.floorId ? { theta: this.controls.view.theta, phi: this.controls.view.phi, radius: this.controls.view.radius } : null;
+    const v = this.controls.view;
+    const now = { theta: v.theta, phi: v.phi, radius: v.radius };
+    let keep: { theta: number; phi: number; radius?: number } | null = null;
+    if (this.keepCamera && floorId !== this.floorId) {
+      // the house view keeps the side and height but fits its own distance; coming back from it, a floor opens as the
+      // last floor was left (#119)
+      if (this.floorId !== null) this.lastFloorCamera = now;
+      keep = floorId === null ? { theta: now.theta, phi: now.phi } : this.floorId !== null ? now : this.lastFloorCamera;
+    }
     this.floorId = floorId;
     this.roomId = null;
     this.labelsDirty = true;
@@ -865,6 +873,7 @@ export class NextFloorViewer {
   /** Switching floors keeps the camera's side, height and distance instead of fitting the new floor from the start view's side. */
   setKeepCamera(on: boolean): void {
     this.keepCamera = on;
+    if (!on) this.lastFloorCamera = null;
   }
 
   /** How much closer the fitted views come (1 = fitted, 2 = twice as close): small tablets see the house larger. */
@@ -2486,9 +2495,11 @@ export class NextFloorViewer {
   }
 
   private keepCamera = false;
+  /** The camera of the floor last left while the camera is kept: a floor opened from the house view takes it again (#119). */
+  private lastFloorCamera: { theta: number; phi: number; radius: number } | null = null;
   private zoom = 1;
 
-  private fit(duration: number, keep: { theta: number; phi: number; radius: number } | null = null): void {
+  private fit(duration: number, keep: { theta: number; phi: number; radius?: number } | null = null): void {
     const box = new Box3();
     for (const fv of this.activeFloors()) {
       const y0 = fv.floor.elevation + fv.ty;
@@ -2523,7 +2534,7 @@ export class NextFloorViewer {
     const at = useRadius ? start!.target : null;
     if (at) center.set(at.x, at.y + (own ? this.floorBase(this.floorId) : 0), at.z);
     if (keep) {
-      this.controls.flyTo({ target: center, radius: keep.radius, phi: keep.phi, theta: keep.theta }, duration);
+      this.controls.flyTo({ target: center, radius: keep.radius ?? (useRadius ? start!.radius : radius) / this.zoom, phi: keep.phi, theta: keep.theta }, duration);
       return;
     }
     this.controls.flyTo({ target: center, radius: (useRadius ? start!.radius : radius) / this.zoom, phi: start ? start.phi : 0.85, theta: start ? start.theta : -0.6 }, duration);
