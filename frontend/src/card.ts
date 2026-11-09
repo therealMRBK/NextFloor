@@ -375,6 +375,12 @@ export class NextFloorCard extends LitElement {
       .startView=${c?.start_view ?? null}
       style=${s.showBar ? "--nf-bottom-inset: 52px" : ""}
       @room-tap=${(e: CustomEvent<{ floorId: string; roomId: string | null }>) => {
+        // an outdoor area's pin opens Outside over the house view (or closes it again), as in the panel (D#83)
+        if (e.detail.roomId === OUTSIDE) {
+          if (this.canSwitch) this._floorId = null;
+          this._roomId = this._roomId === OUTSIDE ? null : OUTSIDE;
+          return;
+        }
         // in the house view (or on another floor) a tap first opens the whole floor
         if (this.canSwitch && b.floors.length > 1 && e.detail.floorId && s.floorId !== e.detail.floorId) {
           this._floorId = e.detail.floorId;

@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.29.0.2]
+
+### Fixed
+
+- **A tap on an outdoor area opens Outside in the dashboard card** (thanks @eskahone, D#83): in the card on a dashboard, the small outdoor symbol did nothing, because the tap was treated like a room tap on another floor. It now opens *Outside* over the house view and closes it again, as in the panel, and closing the Outside panel flies back as with a room.
+
 ## [0.29.0.1]
 
 ### Fixed
@@ -663,7 +669,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.1...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.2...main
+[0.29.0.2]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.1...v0.29.0.2
 [0.29.0.1]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0...v0.29.0.1
 [0.29.0]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.28.0
