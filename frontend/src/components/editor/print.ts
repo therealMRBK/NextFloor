@@ -2,7 +2,7 @@
 // the outer measurements), one page each, and a table of the areas at the end. Opened in a window of its own and printed from there,
 // so the browser's print dialog can also save it as PDF.
 
-import { centroid, type Building, type Floor, type Vec2 } from "../../model.ts";
+import { centroid, furnitureFootprint, type Building, type Floor, type Vec2 } from "../../model.ts";
 import { floorAreas, totalOf, type RoomArea } from "../../geometry/living-area.ts";
 import { generateWalls, locateOpening, openingHost } from "../../geometry/walls.ts";
 
@@ -21,8 +21,20 @@ export interface PrintTexts {
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 const pts = (ring: readonly Vec2[]) => ring.map(([x, z]) => `${x.toFixed(3)},${z.toFixed(3)}`).join(" ");
 
+/** What the plan drawing shows; the printout takes the defaults, the image export lets the user choose (#122). */
+export interface FloorDrawing {
+  /** Outlines of the furniture (default false). */
+  furniture?: boolean;
+  /** The outer measurements and the scale bar (default true). */
+  dimensions?: boolean;
+  /** Room names with their area (default true). */
+  names?: boolean;
+  /** An image: its width in pixels (the SVG gets width and height in px and a white background instead of a width in mm). */
+  px?: number;
+}
+
 /** One floor as SVG in metres (1 unit = 1 m), with room for the measurements around it. */
-export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], texts: PrintTexts): string {
+export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], texts: PrintTexts, draw: FloorDrawing = {}): string {
   const walls = generateWalls(floor.rooms, { exterior: b.settings.wall_exterior, interior: b.settings.wall_interior }, floor.walls ?? []).walls;
   const all = [...floor.rooms.flatMap((r) => r.points), ...walls.flatMap((w) => w.footprint)];
   if (!all.length) return "";
@@ -62,8 +74,14 @@ export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], 
       parts.push(`<path d="M ${hinge[0]} ${hinge[1]} L ${tip[0]} ${tip[1]} A ${o.width} ${o.width} 0 0 ${side > 0 ? 1 : 0} ${end[0]} ${end[1]}" fill="none" stroke="#555" stroke-width="0.015"/>`);
     }
   }
+  if (draw.furniture) {
+    for (const f of floor.furniture) {
+      if (f.w <= 0 || f.d <= 0) continue;
+      parts.push(`<polygon points="${pts(furnitureFootprint(f))}" fill="#e6e6e6" stroke="#8a8a8a" stroke-width="0.02"/>`);
+    }
+  }
   const byRoom = new Map(areas.map((a) => [a.roomId, a]));
-  for (const r of floor.rooms) {
+  for (const r of draw.names === false ? [] : floor.rooms) {
     if (r.points.length < 3) continue;
     const [cx, cz] = centroid(r.points);
     const a = byRoom.get(r.id);
@@ -81,12 +99,21 @@ export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], 
       : `<text x="${mx}" y="${mz + 0.4}" font-size="0.26" text-anchor="middle">${esc(label)}</text>`;
     return `<path d="M ${ax} ${az} L ${bx} ${bz} ${ticks}" stroke="#222" stroke-width="0.015" fill="none"/>${text}`;
   };
-  parts.push(dim(x0, z1 + 0.5, x1, z1 + 0.5, texts.length(x1 - x0), false));
-  parts.push(dim(x0 - 0.5, z0, x0 - 0.5, z1, texts.length(z1 - z0), true));
+  if (draw.dimensions !== false) {
+    parts.push(dim(x0, z1 + 0.5, x1, z1 + 0.5, texts.length(x1 - x0), false));
+    parts.push(dim(x0 - 0.5, z0, x0 - 0.5, z1, texts.length(z1 - z0), true));
+  }
   // a metre bar for the scale (the drawing is 1:100 while it fits the page, smaller beyond)
-  parts.push(`<path d="M ${x1 - 1} ${z0 - 0.7} L ${x1} ${z0 - 0.7}" stroke="#222" stroke-width="0.06"/><text x="${x1 - 0.5}" y="${z0 - 0.85}" font-size="0.22" text-anchor="middle">${esc(texts.length(1))}</text>`);
-  const [w, h] = [x1 - x0 + 2 * pad, z1 - z0 + 2 * pad];
-  const vb = `${x0 - pad} ${z0 - pad} ${w} ${h}`;
+  if (draw.dimensions !== false) {
+    parts.push(`<path d="M ${x1 - 1} ${z0 - 0.7} L ${x1} ${z0 - 0.7}" stroke="#222" stroke-width="0.06"/><text x="${x1 - 0.5}" y="${z0 - 0.85}" font-size="0.22" text-anchor="middle">${esc(texts.length(1))}</text>`);
+  }
+  const margin = draw.dimensions === false ? 0.4 : pad;
+  const [w, h] = [x1 - x0 + 2 * margin, z1 - z0 + 2 * margin];
+  const vb = `${x0 - margin} ${z0 - margin} ${w} ${h}`;
+  if (draw.px) {
+    const [pw, ph] = [Math.round(draw.px), Math.round((draw.px * h) / w)];
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${pw}" height="${ph}" font-family="system-ui, sans-serif"><rect x="${x0 - margin}" y="${z0 - margin}" width="${w}" height="${h}" fill="#fff"/>${parts.join("")}</svg>`;
+  }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" style="width:${(w * 10).toFixed(1)}mm" font-family="system-ui, sans-serif">${parts.join("")}</svg>`;
 }
 

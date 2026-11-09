@@ -115,7 +115,8 @@ import { buildItem, newRecipe, STUDIO_PACK, studioId } from "../studio/recipes.t
 import { renderStudio, type StudioDraft } from "./editor/forms/studio.ts";
 import { planCheckButton, renderPlanCheck } from "./editor/forms/plan-check.ts";
 import { checkPlan, type CheckFinding } from "./editor/ops/plan-check.ts";
-import { printHtml } from "./editor/print.ts";
+import { printHtml, type PrintTexts } from "./editor/print.ts";
+import { floorImageSvg, imageFileName, saveBlob, svgToPng, type ImageChoice } from "./editor/image-export.ts";
 import { renderKeySheet, renderTour, tourDone, tourDue } from "./editor/first-steps.ts";
 
 /** Items that can be fixed against moving. */
@@ -501,10 +502,9 @@ export class NfEditor extends LitElement {
     } else this.addFurniture(type);
   }
 
-  /** The plan on paper in a window of its own; the browser's print dialog opens there (and can save a PDF). */
-  private printPlan(): void {
+  private printTexts(): PrintTexts {
     const t = (key: I18nKey) => this.t(key);
-    const html = printHtml(this._doc, {
+    return {
       title: this.t("print_title"),
       room: t("print_room"),
       floorArea: t("print_floor_area"),
@@ -514,7 +514,24 @@ export class NfEditor extends LitElement {
       note: t("living_area_hint"),
       area: (m2) => formatArea(this.hass, m2),
       length: (m) => formatLength(this.hass, m),
-    });
+    };
+  }
+
+  /** The plan as PNG pictures seen from above, one per floor, for tools that want a plain 2D plan (#122). */
+  private async exportPlanImages(choice: ImageChoice, all: boolean): Promise<void> {
+    const floors = (all ? this._doc.floors : this.floor ? [this.floor] : []).filter((f) => !f.layer && f.rooms.length);
+    if (!floors.length) return void (this.side.notice = this.t("image_export_empty"));
+    try {
+      for (const floor of floors) saveBlob(await svgToPng(floorImageSvg(this._doc, floor, this.printTexts(), choice)), imageFileName(floor.name));
+      this.side.notice = this.t("image_export_done", { n: floors.length });
+    } catch {
+      this.side.notice = this.t("image_export_failed");
+    }
+  }
+
+  /** The plan on paper in a window of its own; the browser's print dialog opens there (and can save a PDF). */
+  private printPlan(): void {
+    const html = printHtml(this._doc, this.printTexts());
     const win = window.open("", "_blank");
     if (!win) return void alert(this.t("print_blocked"));
     win.document.open();
@@ -2366,6 +2383,7 @@ export class NfEditor extends LitElement {
         this.fit();
       },
       print: () => this.printPlan(),
+      exportImage: (choice, all) => void this.exportPlanImages(choice, all),
       addFloor: (from) => this.addFloor(from),
       moveFloor: (direction) => this.moveFloor(direction),
       deleteFloor: () => this.deleteFloor(),

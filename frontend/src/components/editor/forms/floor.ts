@@ -28,10 +28,12 @@ export interface FloorActions {
   rememberView(): void;
   /** Opens the plan on paper (every floor, with the areas) to print or save as PDF. */
   print(): void;
+  /** Saves the open floor (or every floor) as PNG picture(s) seen from above (#122). */
+  exportImage(choice: { furniture: boolean; dimensions: boolean; names: boolean }, all: boolean): void;
 }
 
 /** The living area of the floor and the house, and the button for the plan on paper. */
-function areaRow(host: EditorHost, floor: Floor, floorActions: FloorActions): TemplateResult | typeof nothing {
+function areaRow(host: EditorHost, floor: Floor, floorActions: FloorActions, state: SideState): TemplateResult | typeof nothing {
   if (floor.layer || !floor.rooms.length) return nothing;
   const t = host.t;
   const here = totalOf(floorAreas(host.doc, floor)).living;
@@ -39,7 +41,22 @@ function areaRow(host: EditorHost, floor: Floor, floorActions: FloorActions): Te
   return html`<p class="nf-sub nf-wide" title=${t("living_area_hint")}>
       ${t(host.doc.floors.length > 1 ? "living_area_floor_house" : "living_area_floor", { floor: formatArea(host.hass, here), house: formatArea(host.hass, house) })}
     </p>
-    <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("print_plan_hint")} @click=${() => floorActions.print()}>🖨️ ${t("print_plan")}</button></div>`;
+    <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("print_plan_hint")} @click=${() => floorActions.print()}>🖨️ ${t("print_plan")}</button></div>
+    ${imageExport(host, floorActions, state)}`;
+}
+
+/** The plan as a picture: what it shows, and the buttons for this floor and for every floor (#122). */
+function imageExport(host: EditorHost, floorActions: FloorActions, state: SideState): TemplateResult {
+  const t = host.t;
+  const choice = state.imageChoice;
+  const set = (patch: Partial<typeof choice>) => (state.imageChoice = { ...choice, ...patch });
+  return html`${checkField(host, t("image_furniture"), choice.furniture, (on) => set({ furniture: on }))}
+    ${checkField(host, t("image_dimensions"), choice.dimensions, (on) => set({ dimensions: on }))}
+    ${checkField(host, t("image_names"), choice.names, (on) => set({ names: on }))}
+    <div class="nf-actions nf-wide">
+      <button class="nf-btn" title=${t("image_export_hint")} @click=${() => floorActions.exportImage(choice, false)}>🖼 ${t("image_export")}</button>
+      ${host.doc.floors.length > 1 ? html`<button class="nf-btn" @click=${() => floorActions.exportImage(choice, true)}>🖼 ${t("image_export_all")}</button>` : nothing}
+    </div>`;
 }
 
 /** The chips of the floors, top floor first, and the button that adds one: straight away, or after choosing a floor of Home Assistant. */
@@ -109,7 +126,7 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
     ${entityField(host, t("floor_power"), floor.power_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.") && host.hass?.states[id]?.attributes.device_class === "power"), (v) => update({ power_entity: v && v !== "none" ? v : null }))}
     ${floor.power_entity ? hint(t("floor_power_hint"), "nf-wide") : nothing}
     ${floor.layer ? nothing : colorField(host, t("wall_paint_floor"), floor.wall_paint_outside, host.doc.settings.wall_paint_outside ?? DEFAULT_PAINT_OUTSIDE, (v) => update({ wall_paint_outside: v }))}
-    ${areaRow(host, floor, floorActions)}
+    ${areaRow(host, floor, floorActions, state)}
     ${host.admin && lacking.length > 0
       ? html`<div class="nf-actions nf-wide"><button class="nf-btn nf-primary" title=${t("area_rooms_hint")} @click=${() => floorActions.addAreaRooms(floor)}>${t("area_rooms", { n: lacking.length })}</button></div>`
       : nothing}

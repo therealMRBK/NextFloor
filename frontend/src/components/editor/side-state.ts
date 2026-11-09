@@ -48,6 +48,17 @@ export class SideState {
     this.onChange();
   }
 
+  private imageChoiceNow = { furniture: true, dimensions: true, names: true };
+
+  /** What the image export of the plan shows (#122). */
+  get imageChoice(): { furniture: boolean; dimensions: boolean; names: boolean } {
+    return this.imageChoiceNow;
+  }
+  set imageChoice(choice: { furniture: boolean; dimensions: boolean; names: boolean }) {
+    this.imageChoiceNow = choice;
+    this.onChange();
+  }
+
   /** The list of room packages is open. */
   get packages(): boolean {
     return this.packagesOpen;

@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Save the plan as a picture** (thanks @CeuseFoneb, #122): in the floor's settings, *Save as picture (PNG)* writes a clean 2D plan seen from above (white background, 2400 px) of this floor, and *All floors as pictures* one file per floor. Choose whether it shows furniture outlines, the measurements and the room names with their area. Handy for Bluetooth tracker maps or documents that want a plain plan.
 - **Heating and water pipes** (thanks @LFrank2021, D#118): in the energy tool, *Heating and water pipes* lets you draw pipes through the plan, red for the supply, blue for the return, orange for hot and light blue for cold water. Link a pipe to a pump, heating circuit or valve and particles flow through it in the 3D view while that device runs (the flow shows when the energy animation is on). Without a link the pipe is drawn without flow.
 
 ### Changed
