@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.29.0.1]
+
+### Fixed
+
+- **Door handles follow the own look** (thanks @eskahone, D#82): the handles stayed bright blue in the own look, Blueprint and Day because their blue counted as a signal colour. They are now a softer blue that the looks repaint with the rest.
+
 ## [0.29.0]
 
 ### Added
@@ -657,7 +663,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.1...main
+[0.29.0.1]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0...v0.29.0.1
 [0.29.0]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...v0.27.0

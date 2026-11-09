@@ -15,8 +15,9 @@ export const LEAF_FRONT = 0x111a30;
 export const LEAF_FRONT_TOP = 0x1c2a47;
 /** The free edge of a door whose smart lock is unlocked: the stock cyan, which the neon look turns into the user's accent. */
 export const UNLOCKED = 0x37e0ff;
-export const HANDLE = 0x5b7cff;
-export const HANDLE_TOP = 0x8aa2ff;
+/** Handles stay below the saturation of the looks' signal colours, so Blueprint, Day and the own look repaint them (#82). */
+export const HANDLE = 0x7f93c9;
+export const HANDLE_TOP = 0xa3b3dc;
 export const GLASS = shade(0x37e0ff, 0.08);
 
 /** How far a window sash swings open, how far a door leaf, and how far a tilted sash leans (radians). */
