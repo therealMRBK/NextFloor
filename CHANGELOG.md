@@ -4,13 +4,13 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.28.0]
+
 ### Added
 
 - **Plugin settings with an entity picker** (thanks @toshi24, D#50): a plugin can offer *entity* as a device setting, limited to some domains, and its marker and watch functions get the settings. The Cameras plugin uses it for the next step (own detection sensors per camera).
 - **Several named temperatures on one device** (thanks @LFrank2021, D#118): besides *Device temperature*, any device except fridges takes up to six more temperatures with their own name (a boiler's *Kessel*, *Vorlauf*, *Rücklauf*, or a tank's target and actual). They show on its pin in the 3D view, and the pin is highlighted from 60 °C as before.
 - **Recurring notes with a "Done" button** (thanks @ShaneCurcuru, D#113): a note can repeat every N months (*Repeat every … months* in the note's form), for tasks like changing a filter or cleaning the fridge. Opened in the 3D view, a note with a due day or a repeat shows a *Done* button and when it was last done. Pressing it sets the next due day N months ahead, or clears the due day of a one-off note. Anyone who can open the view may press it, it changes nothing but that note. Any piece of furniture has a *Task* button that puts such a note on its spot and height (repeating yearly).
-
-## [0.27.0.1]
 
 ### Fixed
 
@@ -646,8 +646,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0.1...main
-[0.27.0.1]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.27.0.1
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...main
+[0.28.0]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...v0.27.0
 [0.26.6]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...v0.26.6
 [0.26.5]: https://github.com/therealMRBK/NextFloor/compare/v0.26.4...v0.26.5
