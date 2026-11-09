@@ -26,12 +26,16 @@ interface Side {
   /** The covered range along the direction. */
   from: number;
   to: number;
+  /** How far the room reaches along the normal: its lowest and highest coordinate. */
+  reach: [number, number];
 }
 
 const PARALLEL_TOLERANCE = 0.05;
 const MIN_SHARED_LENGTH = 0.2;
 /** Rooms that overlap by up to this much are moved apart onto one line as well (a room pushed between two others rarely lands exactly, #121). */
 const MAX_OVERLAP = 0.6;
+/** In an overlap each room must reach this far past the other one's wall, else it is a niche or closet lying inside the other room. */
+const OVERLAP_MARGIN = 0.05;
 
 function sidesOf(rooms: readonly Room[]): Side[] {
   const sides: Side[] = [];
@@ -49,10 +53,16 @@ function sidesOf(rooms: readonly Room[]): Side[] {
       if (dir[1] < -1e-9 || (Math.abs(dir[1]) <= 1e-9 && dir[0] < 0)) dir = [-dir[0], -dir[1]];
       const normal: Vec2 = [-dir[1], dir[0]];
       const [ta, tb] = [dot(a, dir), dot(b, dir)];
-      sides.push({ room: r, index: i, dir, normal, offset: dot(a, normal), outside: dot(outward, normal) > 0 ? 1 : -1, from: Math.min(ta, tb), to: Math.max(ta, tb) });
+      const across = pts.map((p) => dot(p, normal));
+      sides.push({ room: r, index: i, dir, normal, offset: dot(a, normal), outside: dot(outward, normal) > 0 ? 1 : -1, from: Math.min(ta, tb), to: Math.max(ta, tb), reach: [Math.min(...across), Math.max(...across)] });
     });
   });
   return sides;
+}
+
+/** Whether the room of `s` reaches past `line` (a coordinate along its normal) on its inner side, by a clear margin. */
+function reachesPast(s: Side, line: number): boolean {
+  return s.outside === 1 ? s.reach[0] < line - OVERLAP_MARGIN : s.reach[1] > line + OVERLAP_MARGIN;
 }
 
 /** The gap between two sides that face each other across it, or null when they do not form one. */
@@ -62,6 +72,8 @@ function gapBetween(e: Side, f: Side, maxGap: number, maxOverlap: number): numbe
   if (e.outside === f.outside) return null; // facing each other means their outsides point at each other
   const gap = (f.offset - e.offset) * e.outside;
   if (gap > maxGap || gap < -maxOverlap || Math.abs(gap) < 1e-4) return null;
+  // a room lying inside the other one (a niche, a wardrobe) must not pull the outer wall inwards
+  if (gap < 0 && (!reachesPast(e, f.offset) || !reachesPast(f, e.offset))) return null;
   return Math.min(e.to, f.to) - Math.max(e.from, f.from) < MIN_SHARED_LENGTH ? null : gap;
 }
 

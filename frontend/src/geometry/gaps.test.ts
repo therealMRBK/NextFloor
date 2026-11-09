@@ -129,3 +129,12 @@ test("a nested closet, whose walls do not face an outer wall, is not pulled onto
   assert.deepEqual(gaps, []);
   assert.deepEqual(rooms[1].points, room("closet", 0.4, 0.4, 1.6, 1.6).points);
 });
+
+test("a niche or wardrobe drawn as a thin room against a wall does not pull that wall inwards", () => {
+  const bed = room("bed", 0, 0, 6, 4);
+  for (const niche of [room("niche", 0, 0.5, 0.5, 3), room("niche", 0, 0.5, 0.58, 3), room("niche", 5.5, 1, 6, 3)]) {
+    const { rooms, gaps } = closeGaps([bed, niche]);
+    assert.deepEqual(gaps, [], "nothing is closed");
+    assert.deepEqual(rooms[0].points, bed.points, "the outer wall stays");
+  }
+});
