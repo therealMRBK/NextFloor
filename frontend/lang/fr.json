@@ -511,7 +511,7 @@
  "own_alerts_hint": "Une ligne dans la barre d'alertes de la vue 3D tant qu'une entité est dans un état – « Réservoir vide » du robot, « Lave-vaisselle terminé ». Plusieurs états séparés par des virgules ; pour les nombres <20 ou >80.",
  "alerts_max": "Alertes simultanées",
  "alerts_rows": "Lignes de la barre d'alertes",
- "alerts_bar_hint": "S'applique à toutes les alertes de la vue 3D. Les alertes en plus s'affichent en « +N » ; avec deux lignes, elles passent à la ligne.",
+ "alerts_bar_hint": "S'applique à toutes les alertes de la vue 3D. Les alertes en plus s'affichent en « +N », un appui dessus les déplie toutes ; avec deux lignes, elles passent à la ligne.",
  "own_alert_entity": "Quand …",
  "own_alert_state": "… est dans l'état (vide = activé)",
  "own_alert_text": "… alors cette alerte",

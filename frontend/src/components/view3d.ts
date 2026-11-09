@@ -174,6 +174,7 @@ export class NfView3d extends LitElement {
     _shortStage: { state: true },
     _phoneStage: { state: true },
     _alerts: { state: true },
+    _alertsAll: { state: true },
     _sceneFired: { state: true },
   };
 
@@ -327,6 +328,8 @@ export class NfView3d extends LitElement {
   declare alerts: boolean;
   declare alertJump: boolean;
   private declare _alerts: Alert[];
+  /** The warning bar unfolded by a tap on "+N": every warning, in as many rows as needed (D#52). */
+  private declare _alertsAll: boolean;
   private alertSrc: AlertSources | null = null;
   private alertTimer: ReturnType<typeof setInterval> | undefined;
   /** Looks again at contacts that went unavailable, until their grace time has passed. */
@@ -508,6 +511,7 @@ export class NfView3d extends LitElement {
     this.screenName = null;
     this._announcement = null;
     this._alerts = [];
+    this._alertsAll = false;
     this.scenes = true;
     this._sceneFired = null;
     this.dimmed = false;
@@ -1917,10 +1921,15 @@ export class NfView3d extends LitElement {
     if (!this._alerts.length || !b) return nothing;
     // how many at once and in how many rows is set under House → Own warnings (D#52)
     const max = Math.max(1, Math.min(12, b.settings.alerts_max ?? 3));
-    const shown = this._alerts.slice(0, max);
-    return html`<div class="nf-alert-banner${b.settings.alerts_rows === 2 ? " nf-alert-rows2" : ""}" role="alert">
+    const all = this._alertsAll && this._alerts.length > max;
+    const shown = all ? this._alerts : this._alerts.slice(0, max);
+    return html`<div class="nf-alert-banner${all ? " nf-alert-all" : b.settings.alerts_rows === 2 ? " nf-alert-rows2" : ""}" role="alert">
       ${shown.map((a) => html`<button class="nf-alert nf-alert-${a.kind}" style=${a.color ? `border-left-color:${a.color}` : ""} title=${alertText(this.hass, b, a)} @click=${() => this.jumpTo(a)}>${alertText(this.hass, b, a)}</button>`)}
-      ${this._alerts.length > max ? html`<span class="nf-alert-more">+${this._alerts.length - max}</span>` : nothing}
+      ${all
+        ? html`<button class="nf-alert-more" title=${translate(this.hass, "close")} @click=${() => (this._alertsAll = false)}>−</button>`
+        : this._alerts.length > max
+          ? html`<button class="nf-alert-more" @click=${() => (this._alertsAll = true)}>+${this._alerts.length - max}</button>`
+          : nothing}
     </div>`;
   }
 
@@ -2926,10 +2935,20 @@ export class NfView3d extends LitElement {
         box-shadow: none;
         animation: none;
       }
+      .nf-alert-banner.nf-alert-all {
+        flex-wrap: wrap;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
       .nf-alert-more {
         align-self: center;
+        padding: 6px 10px;
+        border: 0;
+        border-radius: 12px;
+        background: var(--nf-chrome-solid);
         color: var(--nf-muted);
-        font-size: 13px;
+        font: 600 13px var(--nf-font);
+        cursor: pointer;
       }
       @keyframes nf-alert-pulse {
         50% {

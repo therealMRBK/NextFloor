@@ -525,7 +525,7 @@
   "own_alerts_hint": "Een regel in de waarschuwingsbalk van de 3D-weergave zolang een entiteit in een status is – „Watertank leeg” van de robot, „Vaatwasser klaar”. Meerdere statussen met komma's; voor getallen <20 of >80.",
   "alerts_max": "Waarschuwingen tegelijk",
   "alerts_rows": "Regels van de waarschuwingsbalk",
-  "alerts_bar_hint": "Geldt voor alle waarschuwingen van de 3D-weergave. Meer waarschuwingen verschijnen als „+N”; met twee regels lopen ze door op een tweede regel.",
+  "alerts_bar_hint": "Geldt voor alle waarschuwingen van de 3D-weergave. Meer waarschuwingen verschijnen als „+N”, een tik erop klapt ze allemaal uit; met twee regels lopen ze door op een tweede regel.",
   "own_alert_entity": "Als …",
   "own_alert_state": "… in de status is (leeg = aan)",
   "own_alert_text": "… dan deze waarschuwing",

@@ -525,7 +525,7 @@
   "own_alerts_hint": "Una línea en la barra de avisos de la vista 3D mientras una entidad está en un estado – «Depósito vacío» del robot, «Lavavajillas terminado». Varios estados con comas; para números <20 o >80.",
   "alerts_max": "Avisos a la vez",
   "alerts_rows": "Filas de la barra de avisos",
-  "alerts_bar_hint": "Se aplica a todos los avisos de la vista 3D. Los avisos de más se muestran como «+N»; con dos filas pasan a una segunda fila.",
+  "alerts_bar_hint": "Se aplica a todos los avisos de la vista 3D. Los avisos de más se muestran como «+N», al tocarlo se despliegan todos; con dos filas pasan a una segunda fila.",
   "own_alert_entity": "Cuando …",
   "own_alert_state": "… está en el estado (vacío = encendido)",
   "own_alert_text": "… entonces este aviso",
