@@ -266,3 +266,22 @@ def test_a_device_takes_up_to_six_named_temperatures() -> None:
         FURNITURE_SCHEMA({**base, "temps": too_many})
     with pytest.raises(vol.Invalid):
         FURNITURE_SCHEMA({**base, "temps": [{"label": "x", "entity": ""}]})
+
+
+def test_energy_pipes_have_a_kind_and_an_optional_entity() -> None:
+    """Heating and water pipes (#118): a route under `pipe:<id>` plus the pipe itself."""
+    from custom_components.nextfloor.schema import ENERGY_SCHEMA
+
+    base = {"grid": None, "battery": None, "solar": None, "consumption": None, "tariff": None}
+    ok = ENERGY_SCHEMA(
+        {
+            **base,
+            "pipes": [
+                {"id": "a", "name": "Vorlauf", "kind": "supply", "entity": "switch.pump"},
+                {"id": "b", "name": "R", "kind": "return"},
+            ],
+        }
+    )
+    assert [p["kind"] for p in ok["pipes"]] == ["supply", "return"]
+    with pytest.raises(vol.Invalid):
+        ENERGY_SCHEMA({**base, "pipes": [{"id": "a", "name": "x", "kind": "steam"}]})

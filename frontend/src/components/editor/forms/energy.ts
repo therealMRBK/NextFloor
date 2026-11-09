@@ -4,9 +4,9 @@ import { html, nothing, type TemplateResult } from "lit";
 import { deviceSensors, energySummary } from "../../../energy.ts";
 import { furnitureEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { ENERGY_DEVICES, type Building, type Floor, type Furniture, type RoutePoint } from "../../../model.ts";
+import { ENERGY_DEVICES, MAX_PIPES, PIPE_KINDS, pipeRouteKey, type Building, type Floor, type Furniture, type Pipe, type RoutePoint } from "../../../model.ts";
 import { entityOptions, isNumeric, isPowerSensor, powerSensorOf } from "../entities.ts";
-import { checkField, entityField, hint } from "../fields.ts";
+import { checkField, entityField, hint, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { energyChecklist, type ChecklistTarget } from "../ops/energy-checklist.ts";
 import { energyConnections, routeOf, type EnergyConnection } from "../../../live/energy-flow.ts";
@@ -204,5 +204,49 @@ export function renderEnergyRoutes(host: EditorHost, actions: RouteActions): Tem
         </div>`;
       })}
     </div>
+  </section>`;
+}
+
+export interface PipeActions {
+  add(): void;
+  update(id: string, patch: Partial<Pipe>): void;
+  remove(id: string): void;
+}
+
+/** Heating and water pipes: a name, what they carry (the colour), the entity that makes them flow, and their route on the plan (#118). */
+export function renderPipes(host: EditorHost, actions: PipeActions, routes: RouteActions): TemplateResult {
+  const t = host.t;
+  const pipes = host.doc.energy.pipes ?? [];
+  const draft = routes.draft;
+  const options = entityOptions(host.hass, (id) => /^(switch|climate|valve|binary_sensor|sensor|input_boolean|number)\./.test(id));
+  const kinds = PIPE_KINDS.map((k): [string, string] => [k, t(`pipe_kind_${k}`)]);
+  return html`<section>
+    <h3>🔥 ${t("pipes_title")}</h3>
+    ${hint(t("pipes_hint"))}
+    <div class="nf-room-list">
+      ${pipes.map((p) => {
+        const key = pipeRouteKey(p.id);
+        const route = routeOf(host.doc, key);
+        const drawing = draft?.key === key;
+        return html`<div class="nf-form nf-route-row">
+          ${textField(host, t("pipe_name"), p.name, (v) => actions.update(p.id, { name: v }), { maxlength: 60 })}
+          ${selectField(host, t("pipe_kind"), p.kind, kinds, (v) => actions.update(p.id, { kind: v as Pipe["kind"] }))}
+          ${entityField(host, t("pipe_entity"), p.entity ?? null, undefined, options, (v) => actions.update(p.id, { entity: v && v !== "none" ? v : null }))}
+          ${drawing
+            ? html`<p class="nf-sub nf-wide">${t("route_drawing", { n: draft.points.length })}</p>
+                <div class="nf-actions nf-wide">
+                  <button class="nf-btn" ?disabled=${!draft.points.length} @click=${() => routes.undoPoint()}>↶ ${t("route_undo")}</button>
+                  <button class="nf-btn nf-primary" @click=${() => routes.finish()}>${t("route_done")}</button>
+                  <button class="nf-btn" @click=${() => routes.cancel()}>${t("cancel")}</button>
+                </div>`
+            : html`<div class="nf-actions nf-wide">
+                <span class="nf-sub">${route ? t("route_points", { n: route.points.length }) : t("route_none")}</span>
+                <button class="nf-btn" ?disabled=${!host.admin || !!draft} @click=${() => routes.start(key)}>✎ ${t(route ? "route_redraw" : "route_draw")}</button>
+                <button class="nf-btn nf-danger" ?disabled=${!host.admin || !!draft} @click=${() => actions.remove(p.id)}>${t("delete")}</button>
+              </div>`}
+        </div>`;
+      })}
+    </div>
+    <div class="nf-actions"><button class="nf-btn" ?disabled=${!host.admin || pipes.length >= MAX_PIPES || !!draft} @click=${() => actions.add()}>+ ${t("pipe_add")}</button></div>
   </section>`;
 }

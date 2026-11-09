@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Heating and water pipes** (thanks @LFrank2021, D#118): in the energy tool, *Heating and water pipes* lets you draw pipes through the plan, red for the supply, blue for the return, orange for hot and light blue for cold water. Link a pipe to a pump, heating circuit or valve and particles flow through it in the 3D view while that device runs (the flow shows when the energy animation is on). Without a link the pipe is drawn without flow.
+
 ### Changed
 
 - **The device list of the plan check is easier to use** (thanks @tfischer84, #103): *Ignore all* now stands above the list instead of below it, and the *Ignore* buttons keep their place at the right edge, so nothing needs scrolling to be found.

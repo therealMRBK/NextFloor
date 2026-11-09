@@ -1035,6 +1035,8 @@ export interface EnergySettings {
   show_unmetered?: boolean;
   /** Where the cable of an energy connection really runs (the flow follows it instead of an arc). */
   routes?: EnergyRoute[];
+  /** Heating and water pipes with their own colour and flow (#118). */
+  pipes?: Pipe[];
   /** Gas and water meters shown with the house's balance: a sensor with the flow now (m³/h, l/min) or today's reading. */
   gas?: string | null;
   water?: string | null;
@@ -1054,6 +1056,25 @@ export interface EnergyRoute {
   /** Draw the route as a visible cable, not just the faint line the flow follows. */
   cable?: boolean;
 }
+
+/** What a pipe carries: its colour in the 3D view (#118). */
+export const PIPE_KINDS = ["supply", "return", "hot", "cold"] as const;
+export type PipeKind = (typeof PIPE_KINDS)[number];
+
+/** A heating or water pipe drawn in the plan (its route is stored like a cable route under the key `pipe:<id>`); particles flow along it while its entity is active. */
+export interface Pipe {
+  id: string;
+  name: string;
+  kind: PipeKind;
+  /** A pump, a heating circuit (climate), a valve or a switch: while it is active the pipe flows. Empty: the pipe is drawn without flow. */
+  entity?: string | null;
+}
+
+/** The most pipes a plan can have. */
+export const MAX_PIPES = 24;
+
+/** The route key of a pipe. */
+export const pipeRouteKey = (id: string): string => `pipe:${id}`;
 
 /** The most points a cable route can have. */
 export const MAX_ROUTE_POINTS = 30;

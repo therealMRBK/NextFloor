@@ -1105,6 +1105,21 @@ ENERGY_SCHEMA = vol.Schema(
         vol.Optional("show_unmetered"): bool,
         # where the cable of an energy connection runs (the flow follows it instead of an arc)
         vol.Optional("routes"): vol.All([ROUTE_SCHEMA], vol.Length(max=100)),
+        # heating and water pipes: their route is stored under the key "pipe:<id>" in `routes`
+        vol.Optional("pipes"): vol.All(
+            [
+                vol.Schema(
+                    {
+                        vol.Required("id"): vol.All(str, vol.Length(min=1, max=64)),
+                        vol.Required("name"): vol.All(str, vol.Length(max=60)),
+                        vol.Required("kind"): vol.In(("supply", "return", "hot", "cold")),
+                        vol.Optional("entity"): vol.Any(None, _ENTITY),
+                    },
+                    extra=vol.ALLOW_EXTRA,
+                )
+            ],
+            vol.Length(max=24),
+        ),
     },
     extra=vol.ALLOW_EXTRA,
 )

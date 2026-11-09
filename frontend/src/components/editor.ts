@@ -35,6 +35,7 @@ import {
   roomTiles,
   pointInPolygon,
   polygonArea,
+  pipeRouteKey,
   uid,
   type Background,
   type Building,
@@ -55,7 +56,7 @@ import { renderCardTemplates } from "./editor/forms/templates.ts";
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
 import { renderSettings, type SettingsActions } from "./editor/forms/settings.ts";
-import { renderEnergyBalance, renderEnergyChecklist, renderEnergyDevices, renderEnergyRoutes, renderEnergyTeaser, renderHelpLinks, type EnergyActions, type RouteActions, type RouteDraft } from "./editor/forms/energy.ts";
+import { renderEnergyBalance, renderEnergyChecklist, renderEnergyDevices, renderEnergyRoutes, renderEnergyTeaser, renderHelpLinks, renderPipes, type EnergyActions, type PipeActions, type RouteActions, type RouteDraft } from "./editor/forms/energy.ts";
 import { energyMarkersLayer, energyRoutesLayer, headroomLayer, chimneysLayer, roofSectionsLayer, roofWindowsLayer, solarLayer } from "./editor/canvas/roof-layers.ts";
 import type { CanvasContext } from "./editor/canvas/context.ts";
 import { backgroundLayer } from "./editor/canvas/background.ts";
@@ -2706,6 +2707,31 @@ export class NfEditor extends LitElement {
     };
   }
 
+  private pipeActions(): PipeActions {
+    return {
+      add: () =>
+        this.isAdmin &&
+        this.change((doc) => {
+          const pipes = doc.energy.pipes ?? [];
+          doc.energy.pipes = [...pipes, { id: uid("pipe"), name: `${this.t("pipe")} ${pipes.length + 1}`, kind: pipes.length % 2 ? "return" : "supply", entity: null }];
+        }),
+      update: (id, patch) =>
+        this.isAdmin &&
+        this.change((doc) => {
+          const pipe = doc.energy.pipes?.find((p) => p.id === id);
+          if (pipe) Object.assign(pipe, patch);
+        }),
+      remove: (id) =>
+        this.isAdmin &&
+        this.change((doc) => {
+          doc.energy.pipes = (doc.energy.pipes ?? []).filter((p) => p.id !== id);
+          if (!doc.energy.pipes.length) delete doc.energy.pipes;
+          doc.energy.routes = (doc.energy.routes ?? []).filter((r) => r.key !== pipeRouteKey(id));
+          if (!doc.energy.routes.length) delete doc.energy.routes;
+        }),
+    };
+  }
+
   private energyActions(): EnergyActions {
     return {
       follow: (target) => {
@@ -2776,7 +2802,7 @@ export class NfEditor extends LitElement {
       return html`<button class="nf-btn nf-back" @click=${() => this.selectItem("furniture", null)}>‹ ${this.t("tool_energy")}</button>
         ${renderFurnitureForm(this.host, device, this.furnitureActions())}`;
     const actions = this.energyActions();
-    return html`${renderEnergyChecklist(this.host, actions)}${renderSolarList(this.roofDeps())}${renderEnergyDevices(this.host, actions)}${renderEnergyRoutes(this.host, this.routeActions())}${renderEnergyBalance(this.host, actions)}${renderEnergyTeaser(this.host)}`;
+    return html`${renderEnergyChecklist(this.host, actions)}${renderSolarList(this.roofDeps())}${renderEnergyDevices(this.host, actions)}${renderEnergyRoutes(this.host, this.routeActions())}${renderPipes(this.host, this.pipeActions(), this.routeActions())}${renderEnergyBalance(this.host, actions)}${renderEnergyTeaser(this.host)}`;
   }
 
   /** The item of a fixable kind on a floor. */

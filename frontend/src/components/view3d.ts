@@ -30,6 +30,7 @@ import { gateStates } from "../entities/gates.ts";
 import { weatherEntity } from "../weather.ts";
 import { chosenEffects, readSkyWeather, withDensity } from "../live/sky-weather.ts";
 import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow.ts";
+import { pipeArcs } from "../live/pipes.ts";
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
 import { forecastDays, loadForecast } from "../live/forecast.ts";
@@ -982,6 +983,8 @@ export class NfView3d extends LitElement {
       const heat = p.pump.heat ?? (p.pump.mode === "heating" || p.pump.mode === "water" ? (p.pump.power ?? 0) * (p.pump.cop ?? 3) : 0);
       if (hub && heat > 100 && p.pump.mode !== "cooling") livePic.arcs.push({ key: `heat:${p.id}`, from: { floorId: p.floorId, x: p.x, z: p.z, y: 0.8 }, to: hub, power: heat, color: [255, 120, 40] });
     }
+    // heating and water pipes flow with their entity (#118)
+    livePic.arcs.push(...pipeArcs(b, hass.states));
     const liveFlows = (this.flows ?? this._flows) && !this.dimmed;
     v.setLiveEnergy(liveFlows ? livePic.arcs : [], liveFlows ? livePic.sparks : []);
     if (JSON.stringify(livePic) !== JSON.stringify(this._liveEnergy)) this._liveEnergy = livePic;
