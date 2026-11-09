@@ -150,9 +150,11 @@ export interface PrismOptions {
  * vary slightly with the direction the face points to. The top can follow a height function (a wall ending under a roof
  * slope), which stays flat for a wall piece inside one roof plane.
  */
-export function pushPrism(buf: GeoBuffer, poly: Vec2[], y0: number, y1: number | ((x: number, z: number) => number), side: number, top: number, opts: PrismOptions = {}): void {
-  const topAt = typeof y1 === "number" ? () => y1 : (p: Vec2) => Math.max(y0 + 0.002, y1(p[0], p[1]));
-  const aoFrom = opts.aoFrom ?? y0;
+export function pushPrism(buf: GeoBuffer, poly: Vec2[], y0: number | ((x: number, z: number) => number), y1: number | ((x: number, z: number) => number), side: number, top: number, opts: PrismOptions = {}): void {
+  // the bottom may vary too (a hanging wall whose lower edge follows a roof slope, #114)
+  const bottomAt = typeof y0 === "number" ? () => y0 : (p: Vec2) => y0(p[0], p[1]);
+  const topAt = typeof y1 === "number" ? (p: Vec2) => (typeof y0 === "number" ? y1 : Math.max(bottomAt(p) + 0.002, y1)) : (p: Vec2) => Math.max(bottomAt(p) + 0.002, y1(p[0], p[1]));
+  const aoFrom = opts.aoFrom ?? (typeof y0 === "number" ? y0 : 0);
   const fold = opts.fold ?? ALWAYS;
   const occlusion = (y: number) => heightShade(y - aoFrom);
   const holes = (opts.holes ?? []).map((h) => (ringArea(h) > 0 ? [...h].reverse() : h));
@@ -172,7 +174,7 @@ export function pushPrism(buf: GeoBuffer, poly: Vec2[], y0: number, y1: number |
     const color = shade(side, 0.55);
     for (const [i, j, k] of triangles) {
       const [a, b, c] = [corners[i], corners[j], corners[k]];
-      buf.tri([a[0], y0, a[1]], [b[0], y0, b[1]], [c[0], y0, c[1]], color, color, color, undefined, fold);
+      buf.tri([a[0], bottomAt(a), a[1]], [b[0], bottomAt(b), b[1]], [c[0], bottomAt(c), c[1]], color, color, color, undefined, fold);
     }
   }
   for (const ring of [poly, ...holes]) {
@@ -181,12 +183,14 @@ export function pushPrism(buf: GeoBuffer, poly: Vec2[], y0: number, y1: number |
       if (Math.hypot(b[0] - a[0], b[1] - a[1]) < 1e-6 || opts.skipSide?.(a, b)) return;
       const light = sideLight(b[0] - a[0], b[1] - a[1]);
       const [ya, yb] = [topAt(a), topAt(b)];
+      const [fa, fb] = [bottomAt(a), bottomAt(b)];
       const own = opts.sideColor ? opts.sideColor(a, b) : side;
-      const foot = shade(own, occlusion(y0) * light);
+      const footA = shade(own, occlusion(fa) * light);
+      const footB = shade(own, occlusion(fb) * light);
       const headA = shade(own, occlusion(ya) * light);
       const headB = shade(own, occlusion(yb) * light);
-      buf.tri([a[0], y0, a[1]], [a[0], ya, a[1]], [b[0], yb, b[1]], foot, headA, headB, undefined, fold);
-      buf.tri([a[0], y0, a[1]], [b[0], yb, b[1]], [b[0], y0, b[1]], foot, headB, foot, undefined, fold);
+      buf.tri([a[0], fa, a[1]], [a[0], ya, a[1]], [b[0], yb, b[1]], footA, headA, headB, undefined, fold);
+      buf.tri([a[0], fa, a[1]], [b[0], yb, b[1]], [b[0], fb, b[1]], footA, headB, footB, undefined, fold);
     });
   }
 }

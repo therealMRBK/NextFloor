@@ -731,6 +731,9 @@ FREE_WALL_SCHEMA = vol.Schema(
         vol.Optional("height_end", default=None): vol.Any(
             None, vol.All(vol.Coerce(float), vol.Range(min=0.05, max=20))
         ),
+        # a wall hanging in the air (#114): bottom edge above the floor at a, and at b when it follows a roof slope
+        vol.Optional("bottom", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
+        vol.Optional("bottom_end", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
     },
     extra=vol.ALLOW_EXTRA,
 )

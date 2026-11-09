@@ -7,7 +7,7 @@ import { ALWAYS, CUT_OFFSET, EDGE_BASE, EDGE_CUT, EDGE_SOFT, EDGE_TOP, LOWER_OFF
 import type { Outline } from "./outline.ts";
 import { subtractSpans } from "./outline.ts";
 import { alongWall, glassJoins, joinPositions, spanEnds } from "./glass-joins.ts";
-import { wallTops, type roofLimits } from "./placement.ts";
+import { wallBottomAt, wallTops, type roofLimits } from "./placement.ts";
 import type { Span } from "./types.ts";
 
 /** A 2 cm grid, so an outline corner and a glass join meet at the same key despite rounding. */
@@ -52,10 +52,19 @@ export function pushEdgeLines(
   const spansOf = (wall: Wall, keep: (sp: Span) => boolean) => (spans.get(wall) ?? []).filter(keep);
   for (const edge of outline.edges) {
     const bucket = wallBucket.get(edge.wall)!;
-    // the base line along the floor: not across doorways
-    for (const [p, q] of subtractSpans(edge, spansOf(edge.wall, (sp) => sp.sill <= 0.005))) lines.seg([p[0], 0.004, p[1]], [q[0], 0.004, q[1]], EDGE_BASE);
-    // the cut line: not where an opening crosses the cut height
-    for (const [p, q] of subtractSpans(edge, spansOf(edge.wall, (sp) => sp.sill < cut && sp.top > cut))) lines.seg([p[0], cut, p[1]], [q[0], cut, q[1]], EDGE_CUT, CUT_OFFSET + bucket);
+    const hangAt = wallBottomAt(edge.wall);
+    if (hangAt) {
+      // a hanging wall (#114): its base line is the bottom edge in the air, and the cut line only where it reaches below the cut
+      const [p, q] = [edge.a, edge.b];
+      const [yp, yq] = [hangAt(p[0], p[1]), hangAt(q[0], q[1])];
+      lines.seg([p[0], yp, p[1]], [q[0], yq, q[1]], EDGE_BASE, Math.max(yp, yq) <= cut + 1e-6 ? LOWER_OFFSET + bucket : bucket);
+      if (Math.max(yp, yq) < cut - 1e-6) lines.seg([p[0], cut, p[1]], [q[0], cut, q[1]], EDGE_CUT, CUT_OFFSET + bucket);
+    } else {
+      // the base line along the floor: not across doorways
+      for (const [p, q] of subtractSpans(edge, spansOf(edge.wall, (sp) => sp.sill <= 0.005))) lines.seg([p[0], 0.004, p[1]], [q[0], 0.004, q[1]], EDGE_BASE);
+      // the cut line: not where an opening crosses the cut height
+      for (const [p, q] of subtractSpans(edge, spansOf(edge.wall, (sp) => sp.sill < cut && sp.top > cut))) lines.seg([p[0], cut, p[1]], [q[0], cut, q[1]], EDGE_CUT, CUT_OFFSET + bucket);
+    }
     // the top line: not where an opening reaches the top; a wall below the cut height keeps its top line; under a roof it follows the slope in short steps
     const tops = wallTops(edge.wall, floor.height, limits);
     const { H, topAt } = tops;
@@ -88,7 +97,10 @@ export function pushEdgeLines(
     const atJoin = (joinAt.get(corner.wall) ?? []).some((j) => Math.abs(j - s) < 0.06);
     if (inPane || atJoin || insidePane.has(pointKey(corner.p))) continue;
     const height = wallTops(corner.wall, floor.height, limits).topAt(corner.p[0], corner.p[1]);
-    lines.segSplit([corner.p[0], 0.004, corner.p[1]], [corner.p[0], height, corner.p[1]], EDGE_SOFT, Math.min(cut, height), wallBucket.get(corner.wall)!);
+    // a hanging wall's corner starts at its bottom edge, not on the floor
+    const foot = wallBottomAt(corner.wall)?.(corner.p[0], corner.p[1]) ?? 0.004;
+    if (height - foot < 0.01) continue;
+    lines.segSplit([corner.p[0], foot, corner.p[1]], [corner.p[0], height, corner.p[1]], EDGE_SOFT, Math.max(foot, Math.min(cut, height)), wallBucket.get(corner.wall)!);
   }
   for (const list of spans.values()) {
     for (const sp of list) {

@@ -242,3 +242,17 @@ test("a free wall with an end height slopes from its height at a to the one at b
   const flat = generateWalls([room("a", 0, 0, 6, 4)], opts, [{ id: "g", a: [1, 2], b: [5, 2], height: 2.4, height_end: 2.4 }]).walls.find((x) => x.free === "g")!;
   assert.equal(flat.heightEnd, undefined, "the same height at both ends is a plain wall");
 });
+
+test("a hanging free wall keeps its bottom edge at a and b; one on the floor has none (#114)", () => {
+  const free = [
+    { id: "h", a: [1, 2] as Vec2, b: [5, 2] as Vec2, height: 2.4, bottom: 1.6, bottom_end: 0.8 },
+    { id: "l", a: [1, 1] as Vec2, b: [5, 1] as Vec2, bottom: 2 },
+    { id: "f", a: [1, 3] as Vec2, b: [5, 3] as Vec2, bottom: 0 },
+  ];
+  const walls = generateWalls([room("a", 0, 0, 6, 4)], opts, free).walls;
+  const w = walls.find((x) => x.free === "h")!;
+  const [atA, atB] = w.a[0] < w.b[0] ? w.bottom! : [w.bottom![1], w.bottom![0]];
+  assert.deepEqual([atA, atB], [1.6, 0.8]);
+  assert.deepEqual(walls.find((x) => x.free === "l")!.bottom, [2, 2]);
+  assert.equal(walls.find((x) => x.free === "f")!.bottom, undefined);
+});

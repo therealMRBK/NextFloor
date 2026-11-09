@@ -182,6 +182,12 @@ export function renderFreeWallForm(host: EditorHost, wall: FreeWall, actions: Fr
       ${numberField(host, t("wall_height"), wall.height ?? floorHeight, (v) => actions.update(wallHeightPatch(v, floorHeight)), 0.05, 0.05)}
       ${checkField(host, t("free_wall_slope"), wall.height_end != null, (on) => actions.update(on ? { height: wall.height ?? floorHeight, height_end: Math.max(0.2, (wall.height ?? floorHeight) / 2) } : { height_end: null }), { title: t("free_wall_slope_hint") })}
       ${wall.height_end != null ? numberField(host, t("free_wall_height_end"), wall.height_end, (v) => actions.update({ height_end: Math.max(0.05, v) }), 0.05, 0.05) : nothing}
+      ${checkField(host, t("free_wall_hang"), wall.bottom != null, (on) => actions.update(on ? { bottom: Math.round((wall.height ?? floorHeight) * 0.6 * 20) / 20, bottom_end: null } : { bottom: null, bottom_end: null }), { title: t("free_wall_hang_hint") })}
+      ${wall.bottom != null
+        ? html`${numberField(host, t("free_wall_bottom"), wall.bottom, (v) => actions.update({ bottom: Math.max(0, v) }), 0.05, 0.05)}
+          ${checkField(host, t("free_wall_bottom_slope"), wall.bottom_end != null, (on) => actions.update({ bottom_end: on ? Math.max(0, (wall.bottom ?? 0) - 0.5) : null }))}
+          ${wall.bottom_end != null ? numberField(host, t("free_wall_bottom_end"), wall.bottom_end, (v) => actions.update({ bottom_end: Math.max(0, v) }), 0.05, 0.05) : nothing}`
+        : nothing}
     </div>
     ${host.admin ? html`<div class="nf-actions">${arcButton(host, `wall:${wall.id}`, actions.arc)}<button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
     <div class="nf-form">${arcRow(host, `wall:${wall.id}`, actions.arc)}</div>

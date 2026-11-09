@@ -32,6 +32,8 @@ export interface Wall {
   height?: number;
   /** A sloping wall: the height at `b` (the top runs straight from `height` at a to this one at b; it may rise above the floor height). */
   heightEnd?: number;
+  /** A hanging free wall (#114): its bottom edge at `a` and at `b` (equal for a level one). */
+  bottom?: [number, number];
 }
 
 export interface WallOptions {
@@ -198,6 +200,13 @@ function edgeSettings(rooms: readonly Room[], pieces: Piece[]) {
 }
 
 /** Walls between pieces: two rooms in opposite directions make an interior wall, one room an exterior wall. */
+/** The bottom edge of a hanging free wall (#114) at a and b; nothing for a wall that stands on the floor. */
+export function freeBottom(w: Pick<FreeWall, "bottom" | "bottom_end">): { bottom?: [number, number] } {
+  const b0 = typeof w.bottom === "number" && w.bottom > 0 ? w.bottom : 0;
+  const b1 = typeof w.bottom_end === "number" && w.bottom_end >= 0 ? w.bottom_end : b0;
+  return b0 > 0 || b1 > 0 ? { bottom: [b0, b1] } : {};
+}
+
 /** The draft fields for a wall's heights: a level wall has one, a sloping one its start and end. */
 function heightFields(h: { a?: number; b?: number }): { height?: number; heightEnd?: number } {
   const round = (v: number) => Math.round(v * 1e6) / 1e6;
@@ -328,7 +337,7 @@ export function generateWalls(rooms: readonly Room[], options: WallOptions, free
     const middle: Vec2 = [(w.a[0] + w.b[0]) / 2, (w.a[1] + w.b[1]) / 2];
     const room = rooms.find((r) => r.points.length >= 3 && pointInPolygon(middle, r.points))?.id ?? null;
     const half = (w.thickness ?? options.interior) / 2;
-    drafts.push({ free: w.id, a: ia, b: ib, left: half, right: half, exterior: false, roomLeft: room, roomRight: room, sources: [], height: typeof w.height === "number" && w.height > 0 ? w.height : undefined, ...(typeof w.height === "number" && w.height > 0 && typeof w.height_end === "number" && w.height_end > 0 && Math.abs(w.height_end - w.height) > 1e-6 ? { heightEnd: w.height_end } : {}) });
+    drafts.push({ free: w.id, a: ia, b: ib, left: half, right: half, exterior: false, roomLeft: room, roomRight: room, sources: [], height: typeof w.height === "number" && w.height > 0 ? w.height : undefined, ...(typeof w.height === "number" && w.height > 0 && typeof w.height_end === "number" && w.height_end > 0 && Math.abs(w.height_end - w.height) > 1e-6 ? { heightEnd: w.height_end } : {}), ...freeBottom(w) });
   });
 
   const merged = mergeCollinear(drafts, vertices.points, handSplits);
@@ -352,6 +361,7 @@ export function generateWalls(rooms: readonly Room[], options: WallOptions, free
       ...(w.free ? { free: w.free } : {}),
       ...(w.height !== undefined ? { height: w.height } : {}),
       ...(w.heightEnd !== undefined ? { heightEnd: w.heightEnd } : {}),
+      ...(w.bottom ? { bottom: w.bottom } : {}),
     };
   });
   return { walls, warnings: [...new Set(warnings)], open };

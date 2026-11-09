@@ -6,7 +6,7 @@ import { CAP_OFFSET, LOWER_OFFSET, PAINT_OFFSET, pushPrism, type GeoBuffer } fro
 import { NEON, SLAB } from "./look.ts";
 import { clipAlong, unit } from "./outline.ts";
 import { glassJoins } from "./glass-joins.ts";
-import { wallTops, type roofLimits } from "./placement.ts";
+import { wallBottomAt, wallTops, type roofLimits } from "./placement.ts";
 import type { Span } from "./types.ts";
 
 interface Piece {
@@ -145,6 +145,8 @@ export function buildWallSolids(
       : pieces.map((piece) => ({ ...piece, inner0: false, inner1: false }));
 
     const along = (p: Vec2) => (p[0] - wall.a[0]) * axis[0] + (p[1] - wall.a[1]) * axis[1];
+    // a hanging free wall (#114): its bottom edge runs straight from bottom[0] at a to bottom[1] at b
+    const hangAt = wallBottomAt(wall);
     // the overflow before the start of the wall, and beyond its end, only where the pane runs on
     const bandStart = nearJoin(wall.a) ? bandOf(list[0]) : null;
     const bandEnd = nearJoin(wall.b) ? bandOf(list[list.length - 1]) : null;
@@ -167,18 +169,22 @@ export function buildWallSolids(
       const roofTop = underRoof ? Math.min(...poly.map(([x, z]) => topAt(x, z))) : H;
       for (const [y0, y1raw] of ranges) {
         const y1 = Math.min(y1raw, underRoof ? Math.max(...poly.map(([x, z]) => topAt(x, z))) : y1raw);
-        if (y1 - y0 < 1e-4 || roofTop - y0 < 0.01) continue;
-        const lintel = y0 > 0.01;
+        // the lowest point of the bottom over this step (the floor, a lintel, or the edge of a hanging wall)
+        const low = hangAt ? Math.max(y0, Math.min(...poly.map(([x, z]) => hangAt(x, z)))) : y0;
+        if (y1 - low < 1e-4 || roofTop - low < 0.01) continue;
+        const lintel = low > 0.01;
         const sloped = underRoof && y1raw > roofTop;
         const topOf = (x: number, z: number) => Math.min(y1raw, topAt(x, z));
-        if (y0 < cut - 1e-6) {
+        const foot = hangAt ? (x: number, z: number) => Math.max(y0, hangAt(x, z)) : y0;
+        const footAbove = (h: number) => (hangAt ? (x: number, z: number) => Math.max(h, y0, hangAt(x, z)) : Math.max(y0, h));
+        if (low < cut - 1e-6) {
           // the top face at the cut height is only seen while the wall is cut
           const topFold = y1 > cut + 1e-6 ? CAP_OFFSET + bucket : LOWER_OFFSET + bucket;
           const capped = sloped && roofTop < cut ? (x: number, z: number) => Math.min(cut, topOf(x, z)) : Math.min(y1, cut);
-          pushPrism(buf, poly, y0, capped, NEON.wall, top, { aoFrom: 0, bottom: lintel, fold: offset + LOWER_OFFSET + bucket, topFold: offset + topFold, skipSide, sideColor: sideColor?.(poly) });
+          pushPrism(buf, poly, foot, capped, NEON.wall, top, { aoFrom: 0, bottom: lintel, fold: offset + LOWER_OFFSET + bucket, topFold: offset + topFold, skipSide, sideColor: sideColor?.(poly) });
         }
         if (y1 > cut + 1e-6 && roofTop > cut + 1e-6) {
-          pushPrism(buf, poly, Math.max(y0, cut), sloped ? topOf : y1, NEON.wall, top, { aoFrom: 0, fold: offset + bucket, bottom: lintel && y0 >= cut, skipSide, sideColor: sideColor?.(poly) });
+          pushPrism(buf, poly, footAbove(cut), sloped ? topOf : y1, NEON.wall, top, { aoFrom: 0, fold: offset + bucket, bottom: lintel && low >= cut, skipSide, sideColor: sideColor?.(poly) });
         }
       }
     }

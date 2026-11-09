@@ -63,6 +63,18 @@ export function roofLimits(roofUnder?: (x: number, z: number) => number | null) 
   return { topAt, lowestTop };
 }
 
+/** The bottom edge of a hanging free wall (#114) above a point: straight from bottom[0] at a to bottom[1] at b; null for a wall on the floor. */
+export function wallBottomAt(wall: Wall): ((x: number, z: number) => number) | null {
+  const hang = wall.bottom;
+  if (!hang) return null;
+  const length = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
+  const axis = unit([wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]]);
+  return (x, z) => {
+    const t = length > 1e-9 ? ((x - wall.a[0]) * axis[0] + (z - wall.a[1]) * axis[1]) / length : 0;
+    return hang[0] + (hang[1] - hang[0]) * Math.max(0, Math.min(1, t));
+  };
+}
+
 /** The tops of one wall: its highest point, the top at a point, and the lowest top along a stretch, with a sloping wall's slope and the roof above both counted. */
 export function wallTops(wall: Wall, floorHeight: number, limits: ReturnType<typeof roofLimits>) {
   const H = wallHeight(wall, floorHeight);

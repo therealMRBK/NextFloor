@@ -435,6 +435,10 @@ export interface FreeWall {
   height?: number | null;
   /** A sloping wall: the height at the end b (the height at a stays `height`); null = the same height all along. */
   height_end?: number | null;
+  /** A wall that hangs in the air (#114): its bottom edge above the floor at a in metres; null = it stands on the floor. */
+  bottom?: number | null;
+  /** The bottom edge at the end b, for a bottom that follows a roof slope; null = the same as `bottom`. */
+  bottom_end?: number | null;
 }
 
 /** "custom": the roof is made of sections (wings of an L- or T-shaped house, a barn, a lean-to …). */

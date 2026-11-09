@@ -18,6 +18,8 @@ export interface Draft {
   /** The height at a; with `heightEnd` the top slopes from this height to that one at b. */
   height?: number;
   heightEnd?: number;
+  /** A hanging free wall: its bottom edge at a and at b. */
+  bottom?: [number, number];
   a: number;
   b: number;
   left: number;
@@ -31,7 +33,7 @@ export interface Draft {
 /** The same wall seen from the other end. */
 function reversed(w: Draft): Draft {
   const sloped = w.heightEnd !== undefined;
-  return { ...w, a: w.b, b: w.a, left: w.right, right: w.left, roomLeft: w.roomRight, roomRight: w.roomLeft, height: sloped ? w.heightEnd : w.height, heightEnd: sloped ? w.height : undefined };
+  return { ...w, a: w.b, b: w.a, left: w.right, right: w.left, roomLeft: w.roomRight, roomRight: w.roomLeft, height: sloped ? w.heightEnd : w.height, heightEnd: sloped ? w.height : undefined, ...(w.bottom ? { bottom: [w.bottom[1], w.bottom[0]] as [number, number] } : {}) };
 }
 
 /** Joins source ranges, merging consecutive pieces of the same room edge. */
