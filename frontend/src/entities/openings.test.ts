@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
-import { DOOR_DEFAULT_OPEN, isUnlocked, openingEntities, openingState, windowPosition } from "./openings.ts";
+import { DOOR_DEFAULT_OPEN, isUnlocked, openingEntities, openingState, windowPosition, withFrontIds } from "./openings.ts";
 
 const sensors = [
   entity("cover.blind", "open", { device_class: "shutter" }),
@@ -183,4 +183,20 @@ test("a wide window's second blind and a venetian blind's slats", () => {
   assert.equal(state.cover2, 1);
   assert.equal(state.slats, 0.3);
   assert.equal(openingState(hass, { cover: "cover.right", contact: null, tilt: null }).cover2, undefined, "no second blind");
+});
+
+test("a pane over several edges (bay window) gets the blind and state of its first piece under its front id (#115)", () => {
+  const hass = hassOf(sensors, registry);
+  const pieces = [
+    opening("p1", "r", "window", { edge: 0, front: "front-p1", cover: "cover.blind" }),
+    opening("p2", "r", "window", { edge: 1, offset: 0, front: "front-p1", cover: "cover.blind" }),
+  ];
+  const floor = floorWith([box("r", 0, 0, 5, 4, "a")], { openings: pieces });
+  const links = withFrontIds(openingEntities(hass, [floor]), [floor]);
+  assert.equal(links.get("front-p1")?.cover, "cover.blind");
+  assert.equal(links.get("p1")?.cover, "cover.blind");
+  const states = withFrontIds(new Map([["p1", openingState(hass, links.get("p1")!)]]), [floor]);
+  assert.equal(states.get("front-p1")?.cover, 0);
+  // a single-edge window is left as it is
+  assert.equal(withFrontIds(new Map([["w", 1]]), [floorWith([], { openings: [opening("w", "r", "window")] })]).size, 1);
 });

@@ -299,3 +299,17 @@ test("a garage door with a cover gets no roller blind in front of it (#85)", () 
   const ys = positions(door.frames).filter((_, i) => i % 3 === 1);
   assert.ok(Math.max(...ys) < 2.1 + 0.15, "no blind cassette above a garage door");
 });
+
+test("a bay window over two edges gets its shutter box once its state is known under the front id (#115)", async () => {
+  const { withFrontIds } = await import("../../entities/openings.ts");
+  const base = { room_id: "a", type: "window", sill: 0.9, height: 1.3, hinge: "left", leaves: 1, swing: "in", cover: "cover.x", contact: null, contact2: null, tilt: null, front: "front-p1" } as const;
+  const pieces = [
+    { ...base, id: "p1", edge: 0, offset: 4.8, width: 1.2 },
+    { ...base, id: "p2", edge: 1, offset: 0, width: 1.2 },
+  ] as unknown as Opening[];
+  const floor = { ...newFloor("f", "F", 0), rooms: [room], openings: pieces };
+  const infos = buildFloorGeometry(floor, 0.3, 0.1).openings;
+  const byPiece = new Map([["p1", { ...CLOSED, cover: 0.5 }], ["p2", { ...CLOSED, cover: 0.5 }]]);
+  assert.equal(triangles(buildOpeningParts(infos, byPiece, 1.2).blinds), 0, "states only per piece: the pane finds none");
+  assert.ok(triangles(buildOpeningParts(infos, withFrontIds(byPiece, [floor]), 1.2).blinds) > 0);
+});

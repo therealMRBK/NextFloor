@@ -5,7 +5,7 @@ import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
-import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
+import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { roomToggleLights, roomToggleMode, type RoomToggle } from "./view3d/room-toggle.ts";
@@ -935,7 +935,7 @@ export class NfView3d extends LitElement {
     v.setParked(parkedVehicles(hass, b));
     v.setGateStates(gateStates(hass, b));
     const types = new Map(b.floors.flatMap((f) => f.openings.map((o) => [o.id, o.type] as const)));
-    const openingStates = new Map([...this.openingLinks!].map(([id, e]) => [id, openingState(hass, e, types.get(id))]));
+    const openingStates = withFrontIds(new Map([...this.openingLinks!].map(([id, e]) => [id, openingState(hass, e, types.get(id))])), b.floors);
     v.setOpeningStates(openingStates);
     this.setAlerts(this.alertSrc ? findAlerts(hass, b, this.alertSrc, this.openingLinks!) : []);
     this.watchLostContacts(hass);
@@ -1696,7 +1696,7 @@ export class NfView3d extends LitElement {
       const target = e.lock ?? e.cover ?? e.contact ?? e.tilt;
       if (target) out.set(id, target);
     }
-    return out;
+    return withFrontIds(out, this.building?.floors ?? []);
   }
 
   /** The second blind of an opening whose tap opens its first one: the right half of the opening is tapped for it. */
@@ -1715,7 +1715,7 @@ export class NfView3d extends LitElement {
   private secondBlinds(): Map<string, string> {
     const out = new Map<string, string>();
     for (const [id, e] of this.openingLinks ?? []) if (e.cover2 && !e.lock && e.cover) out.set(id, e.cover2);
-    return out;
+    return withFrontIds(out, this.building?.floors ?? []);
   }
 
   /** Pictures of the floors, drawn a moment after the plan or the look changed (once, not per frame). */

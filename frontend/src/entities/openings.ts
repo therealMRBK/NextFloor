@@ -111,6 +111,22 @@ const POSITION_WORDS: [RegExp, SashPosition][] = [
  * handle sensors with three states (also in German), and contacts that report it in a `window_state` attribute.
  * Null when the sensor says nothing usable.
  */
+/**
+ * The 3D view draws the pieces of a pane that runs over several edges (a bay window) as one pane and knows it by its `front`
+ * id; its links and states are kept per piece. This adds an entry for every front id, taken from its first piece that has one,
+ * so the pane gets its blind, its state and its tap target (#115).
+ */
+export function withFrontIds<T>(byOpening: ReadonlyMap<string, T>, floors: readonly Floor[]): Map<string, T> {
+  const out = new Map(byOpening);
+  for (const floor of floors)
+    for (const o of floor.openings) {
+      if (!o.front || out.has(o.front)) continue;
+      const value = byOpening.get(o.id);
+      if (value !== undefined) out.set(o.front, value);
+    }
+  return out;
+}
+
 export function windowPosition(st: HassEntity | undefined): SashPosition | null {
   if (!st || isUnavailable(st)) return null;
   const fromAttribute = st.attributes.window_state;
