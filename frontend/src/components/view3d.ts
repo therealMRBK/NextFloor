@@ -940,7 +940,7 @@ export class NfView3d extends LitElement {
     this.setAlerts(this.alertSrc ? findAlerts(hass, b, this.alertSrc, this.openingLinks!) : []);
     this.watchLostContacts(hass);
     // the floor pictures follow lamps and blinds (not sensors), at most every few seconds
-    const lampSig = [...deviceMarkers, ...furniture.markers].map((m) => `${m.id}:${m.glow ? `${m.glow.level.toFixed(1)}/${m.glow.color.map((c) => c.toFixed(1)).join("/")}` : 0}`).join(";") + "|" + [...openingStates].map(([id, o]) => `${id}:${o.open}:${o.cover === null ? "-" : o.cover.toFixed(1)}`).join(";");
+    const lampSig = [...deviceMarkers, ...furniture.markers].map((m) => `${m.id}:${m.glow ? `${m.glow.level.toFixed(1)}/${m.glow.color.map((c) => c.toFixed(1)).join("/")}` : 0}`).join(";") + "|" + [...openingStates].map(([id, o]) => `${id}:${o.open}:${o.cover === null ? "-" : o.cover.toFixed(1)}:${o.cover2 == null ? "-" : o.cover2.toFixed(1)}`).join(";");
     if (lampSig !== this.thumbSig) {
       const first = this.thumbSig === "";
       this.thumbSig = lampSig;

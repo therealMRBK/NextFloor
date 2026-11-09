@@ -48,3 +48,15 @@ test("a door leaf no sensor reports keeps that mark while it moves, and losing i
   assert.equal(step.state.assumed, true);
   assert.equal(atTarget({ ...closed, assumed: true }, closed), false);
 });
+
+test("the second blind of a split window counts and moves on its own (#106)", () => {
+  const both: OpeningState = { ...closed, cover: 0, cover2: 0 };
+  const rightDown: OpeningState = { ...closed, cover: 0, cover2: 1 };
+  assert.equal(atTarget(both, rightDown), false);
+  const step = stepOpening(both, rightDown, 0.25);
+  assert.equal(step.moving, true);
+  assert.equal(step.state.cover, 0);
+  assert.ok(Math.abs(step.state.cover2! - 0.25) < 1e-9);
+  assert.equal(stepOpening({ ...rightDown, cover2: 0.999 }, rightDown, 0.5).state.cover2, 1);
+  assert.equal("cover2" in stepOpening({ ...closed, cover: 0 }, { ...closed, cover: 0 }, 0.5).state, false);
+});

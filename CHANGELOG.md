@@ -11,6 +11,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
+- **The second blind of a split window moves in 3D** (thanks @spacemessage, #106): on a window with two blinds, the right-hand blind now moves in the 3D view when its cover moves. Before it stayed where it was when the view opened.
 - **The clock matches the other cards** (thanks @HA-Luz, #68): it now has the same glass as the *Today* and weather cards and follows the Home Assistant theme with them, light in a light theme, in every look. Before it always had a dark background, which made it hard to read in a light theme.
 - **Floor thumbnails stay on top** (thanks @eskahone, #84): on a small screen the floor thumbnails on the left now lie over a weather card or clock in the top-left corner instead of under it, so they can still be tapped.
 

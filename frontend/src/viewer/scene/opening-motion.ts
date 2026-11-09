@@ -16,7 +16,7 @@ const sameNumber = (a: number | null | undefined, b: number | null | undefined):
 
 /** Whether the opening already shows what it should: nothing to do for it (the usual case). */
 export function atTarget(now: OpeningState, target: OpeningState): boolean {
-  return PARTS.every((part) => sameNumber(target[part] ?? 0, now[part] ?? 0)) && sameNumber(target.cover, now.cover) && !!target.sensed === !!now.sensed && !!target.unlocked === !!now.unlocked && !!target.assumed === !!now.assumed;
+  return PARTS.every((part) => sameNumber(target[part] ?? 0, now[part] ?? 0)) && sameNumber(target.cover, now.cover) && sameNumber(target.cover2, now.cover2) && !!target.sensed === !!now.sensed && !!target.unlocked === !!now.unlocked && !!target.assumed === !!now.assumed;
 }
 
 export interface Step {
@@ -36,5 +36,9 @@ export function stepOpening(now: OpeningState, target: OpeningState, share: numb
   };
   for (const part of PARTS) state[part] = approach(now[part] ?? 0, target[part] ?? 0);
   state.cover = target.cover === null || now.cover === null ? target.cover : approach(now.cover, target.cover);
+  // the second blind of a split window (#106) moves the same way
+  const cover2 = target.cover2 == null || now.cover2 == null ? target.cover2 : approach(now.cover2, target.cover2);
+  if (cover2 === undefined) delete state.cover2;
+  else state.cover2 = cover2;
   return { state, moving };
 }
