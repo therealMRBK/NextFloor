@@ -593,7 +593,7 @@ ${i}`}else o=Fd(s)}}catch(s){let l=s.message,a={not_json:"import_error_not_json"
           ${j(t,r("backdrop_image"),e?.image??"",s=>i({image:s||null}),{wide:!0,placeholder:"/local/hintergrund.jpg"})}
           ${M(r("backdrop_hint"),"nf-wide")}`:_}`}function My(t,e,n,r){let o=t.t,i=(l,a=n)=>Object.fromEntries(Object.entries(a).filter(([c,u])=>l.includes(c)&&u)),s=H(t.hass,l=>!e.includes(l)&&/^(sensor|binary_sensor|alarm_control_panel|weather|input_|counter|lock|climate|person|sun)\b/.test(l));return m`<div class="nf-sub nf-wide">${o("status_entities")}</div>
     ${e.length?e.map(l=>m`${j(t,`${o("status_name")} \xB7 ${W(t.hass,l)}`,n[l]??"",a=>r(e,i(e,{...n,[l]:a.slice(0,60)})),{placeholder:W(t.hass,l),maxlength:60})}
-            ${t.admin?m`<div class="nf-actions"><button class="nf-btn nf-field-btn" title=${o("delete")} aria-label=${`${o("delete")}: ${W(t.hass,l)}`} @click=${()=>r(e.filter(a=>a!==l),i(e.filter(a=>a!==l)))}>×</button></div>`:_}`):_}
+            ${t.admin?m`<div class="nf-actions" style="align-self:end"><button class="nf-btn nf-field-btn" title=${o("delete")} aria-label=${`${o("delete")}: ${W(t.hass,l)}`} @click=${()=>r(e.filter(a=>a!==l),i(e.filter(a=>a!==l)))}>×</button></div>`:_}`):_}
     ${e.length<12?P(t,o("status_add"),null,void 0,s,l=>l&&l!=="none"&&r([...e,l],n)):_}
     ${M(o("status_entities_hint"),"nf-wide")}`}function Xd(t,e){let n=t.t,r=t.doc.settings,o=c=>t.replace({...structuredClone(t.doc),settings:{...structuredClone(t.doc.settings),...c}}),i=c=>o({roof:{...r.roof,...c}}),s=$y.map(c=>[c,n(`roof_${c}`)]),l=r.weather_effects??Ec,a=r.roof.type==="gable";return m`<details class="nf-section">
     <summary>${n("settings")}</summary>

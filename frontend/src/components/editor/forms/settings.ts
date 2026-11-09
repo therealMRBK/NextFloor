@@ -50,7 +50,7 @@ function statusFields(host: EditorHost, ids: string[], names: Record<string, str
     ${ids.length
       ? ids.map(
           (id) => html`${textField(host, `${t("status_name")} · ${entityName(host.hass, id)}`, names[id] ?? "", (v) => set(ids, keep(ids, { ...names, [id]: v.slice(0, 60) })), { placeholder: entityName(host.hass, id), maxlength: 60 })}
-            ${host.admin ? html`<div class="nf-actions"><button class="nf-btn nf-field-btn" title=${t("delete")} aria-label=${`${t("delete")}: ${entityName(host.hass, id)}`} @click=${() => set(ids.filter((x) => x !== id), keep(ids.filter((x) => x !== id)))}>×</button></div>` : nothing}`,
+            ${host.admin ? html`<div class="nf-actions" style="align-self:end"><button class="nf-btn nf-field-btn" title=${t("delete")} aria-label=${`${t("delete")}: ${entityName(host.hass, id)}`} @click=${() => set(ids.filter((x) => x !== id), keep(ids.filter((x) => x !== id)))}>×</button></div>` : nothing}`,
         )
       : nothing}
     ${ids.length < 12 ? entityField(host, t("status_add"), null, undefined, options, (v) => v && v !== "none" && set([...ids, v], names)) : nothing}
