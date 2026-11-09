@@ -69,7 +69,7 @@ export function registerPlugin(plugin: NextFloorPlugin, source = ""): void {
     for (const key of ["floorWedge", "tap", "watch"] as const) if (device[key] !== undefined && typeof device[key] !== "function") throw new Error(`plugin "${plugin.id}": ${key} must be a function`);
     for (const s of device.settings ?? []) {
       if (!s || typeof s.key !== "string" || !/^\w{1,32}$/.test(s.key)) throw new Error(`plugin "${plugin.id}": a setting needs a key of 1–32 letters, digits or "_"`);
-      if (!["number", "select", "boolean"].includes(s.type)) throw new Error(`plugin "${plugin.id}": setting "${s.key}" has an unknown type`);
+      if (!["number", "select", "boolean", "entity"].includes(s.type)) throw new Error(`plugin "${plugin.id}": setting "${s.key}" has an unknown type`);
     }
   }
   for (const section of plugin.roomSections ?? []) if (typeof section?.render !== "function" || typeof section.id !== "string") throw new Error(`plugin "${plugin.id}": every room section needs id and render()`);
@@ -148,12 +148,12 @@ export function pluginMdiIcon(hass: HomeAssistant, entityId: string): string | n
 }
 
 /** Collected marker changes of every matching plugin; later plugins win on the same field. */
-export function pluginMarkerPatch(ctx: MarkerContext): MarkerPatch | null {
+export function pluginMarkerPatch(ctx: MarkerContext, data?: PluginData): MarkerPatch | null {
   let patch: MarkerPatch | null = null;
   for (const { device, status } of matchingDevices(ctx.entityId, ctx.state)) {
     if (!device.marker) continue;
     try {
-      const p = device.marker(ctx);
+      const p = device.marker({ ...ctx, settings: settingsWithDefaults(device.settings, data?.[status.id]) });
       if (!p) continue;
       patch = { ...(patch ?? {}) };
       if (typeof p.icon === "string" && p.icon) patch.icon = p.icon;
@@ -167,12 +167,12 @@ export function pluginMarkerPatch(ctx: MarkerContext): MarkerPatch | null {
 }
 
 /** The further entities plugins want watched for a placed device. */
-export function pluginWatched(ctx: MarkerContext): string[] {
+export function pluginWatched(ctx: MarkerContext, data?: PluginData): string[] {
   const out: string[] = [];
   for (const { device, status } of matchingDevices(ctx.entityId, ctx.state)) {
     if (!device.watch) continue;
     try {
-      const ids = device.watch(ctx);
+      const ids = device.watch({ ...ctx, settings: settingsWithDefaults(device.settings, data?.[status.id]) });
       if (Array.isArray(ids)) out.push(...ids.filter((id): id is string => typeof id === "string").slice(0, 20));
     } catch (err) {
       note(status, err);
@@ -203,7 +203,14 @@ export function settingsWithDefaults(settings: readonly DeviceSetting[] | undefi
   const out: Record<string, SettingValue> = {};
   for (const s of settings ?? []) {
     const v = stored?.[s.key];
-    const fits = s.type === "number" ? typeof v === "number" && Number.isFinite(v) : s.type === "boolean" ? typeof v === "boolean" : typeof v === "string" && (s.options ?? []).some(([o]) => o === v);
+    const fits =
+      s.type === "number"
+        ? typeof v === "number" && Number.isFinite(v)
+        : s.type === "boolean"
+          ? typeof v === "boolean"
+          : s.type === "entity"
+            ? typeof v === "string" && /^([a-z_]+\.\w+)?$/.test(v) && (!s.domains?.length || v === "" || s.domains.includes(v.split(".")[0]))
+            : typeof v === "string" && (s.options ?? []).some(([o]) => o === v);
     out[s.key] = fits ? v! : s.default;
   }
   return out;

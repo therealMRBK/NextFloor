@@ -7,7 +7,8 @@ import { iconPath } from "../../../icons.ts";
 import { ceilingAt, FURNITURE_TYPES, isLamp, type LampMount, type Placement } from "../../../model.ts";
 import { packItemLabel, packLabel } from "../../../furniture-names.ts";
 import { isClimateFurniture, isElectric, isPackType, packType, type FurniturePack } from "../../../packs.ts";
-import { checkField, deviceIcon, glowField, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, deviceIcon, entityField, glowField, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
+import { entityOptions } from "../entities.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { pluginDeviceSettings, pluginText, settingsWithDefaults } from "../../../plugins/registry.ts";
@@ -68,6 +69,10 @@ function pluginFields(host: EditorHost, placed: Placement, set: (patch: Partial<
       if (s.type === "select") {
         const choices = (s.options ?? []).map(([v, l]): [string, string] => [v, pluginText(l, language)]);
         return selectField(host, label, String(values[s.key]), choices, (v) => store(s.key, v), { wide: true, title });
+      }
+      if (s.type === "entity") {
+        const options = entityOptions(host.hass, (id) => !s.domains?.length || s.domains.includes(id.split(".")[0]));
+        return entityField(host, label, String(values[s.key]) || null, undefined, options, (v) => store(s.key, v && v !== "none" ? v : ""));
       }
       const clamp = (v: number) => Math.min(s.max ?? Infinity, Math.max(s.min ?? -Infinity, v));
       return numberField(host, label, Number(values[s.key]), (v) => store(s.key, clamp(v)), s.step ?? 1, s.min);

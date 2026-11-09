@@ -8,7 +8,7 @@ import { ceilingAt, offsetAt, pointInPolygon, type Building, type Floor, type Pl
 import type { HassEntity, HomeAssistant } from "./types.ts";
 import type { DeviceMarker } from "./viewer/viewer3d.ts";
 import { lightAnimation } from "./light-effects.ts";
-import { pluginFloorWedge, pluginKind, pluginMarkerPatch } from "./plugins/registry.ts";
+import { pluginFloorWedge, pluginKind, pluginMarkerPatch, type PluginData } from "./plugins/registry.ts";
 
 type Hass = HomeAssistant | undefined;
 
@@ -145,12 +145,12 @@ function markerFor(hass: HomeAssistant, floor: Floor, placed: Placement): Device
   };
   // a plugin may draw a shape on the floor from the device (a camera's field of view)
   marker.wedge = pluginFloorWedge({ hass, entityId: placed.entity_id, state: st }, { floorId: floor.id, roomId: marker.roomId, x: marker.x, z: marker.z, y: marker.y, rotation: marker.rotation ?? 0 }, placed.plugin ?? undefined);
-  return withPluginPatch(hass, marker, st, !!placed.icon);
+  return withPluginPatch(hass, marker, st, !!placed.icon, placed.plugin ?? undefined);
 }
 
 /** Applies what plugins change on a marker; an icon the user picked in the plan stays. */
-export function withPluginPatch<M extends Pick<DeviceMarker, "id" | "icon" | "text" | "active">>(hass: HomeAssistant, marker: M, st: HassEntity, ownIcon: boolean): M {
-  const patch = pluginMarkerPatch({ hass, entityId: marker.id, state: st });
+export function withPluginPatch<M extends Pick<DeviceMarker, "id" | "icon" | "text" | "active">>(hass: HomeAssistant, marker: M, st: HassEntity, ownIcon: boolean, data?: PluginData): M {
+  const patch = pluginMarkerPatch({ hass, entityId: marker.id, state: st }, data);
   if (!patch) return marker;
   const icon = patch.icon && !ownIcon ? (patch.icon.trimStart().startsWith("<svg") ? patch.icon : mdiIcon(patch.icon)) : marker.icon;
   return { ...marker, icon, text: patch.text ?? marker.text, active: patch.active ?? marker.active };

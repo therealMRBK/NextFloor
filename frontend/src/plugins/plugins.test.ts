@@ -271,3 +271,15 @@ test("a plugin path typed with the www folder in it loads from where Home Assist
   await loadPlugins([{ url: "/local/www/nextfloor/nextfloor-cameras.js", enabled: true }], async (url) => void asked.push(url));
   assert.deepEqual(asked, ["/local/nextfloor/nextfloor-cameras.js"]);
 });
+
+test("an entity setting takes an entity id of the allowed domains, else its default (empty); marker and watch get the settings", () => {
+  const settings = [{ key: "sensor", label: "Sensor", type: "entity" as const, default: "", domains: ["binary_sensor"] }];
+  assert.deepEqual(settingsWithDefaults(settings, { sensor: "binary_sensor.door" }), { sensor: "binary_sensor.door" });
+  assert.deepEqual(settingsWithDefaults(settings, { sensor: "light.kitchen" }), { sensor: "" });
+  assert.deepEqual(settingsWithDefaults(settings, { sensor: "not an id" }), { sensor: "" });
+  assert.deepEqual(settingsWithDefaults(settings, {}), { sensor: "" });
+  registerPlugin(cameraPlugin({ settings, watch: ({ settings: s }) => [String(s?.sensor)], marker: ({ settings: s }) => ({ text: String(s?.sensor) }) }));
+  const ctx = { hass: hassWith(entity("camera.hall", "idle")), entityId: "camera.hall", state: entity("camera.hall", "idle") };
+  assert.deepEqual(pluginWatched(ctx, { cams: { sensor: "binary_sensor.door" } }), ["binary_sensor.door"]);
+  assert.equal(pluginMarkerPatch(ctx, { cams: { sensor: "binary_sensor.door" } })?.text, "binary_sensor.door");
+});

@@ -106,7 +106,7 @@ settings: [
 ],
 ```
 
-`key` is 1–32 letters, digits or `_`; `type` is `number`, `select` or `boolean`. Labels, hints and option labels are
+`key` is 1–32 letters, digits or `_`; `type` is `number`, `select`, `boolean` or `entity` (an entity picker; `domains: ["binary_sensor"]` limits the choice, the value is an entity id, `""` for none). `marker` and `watch` get the settings too (`ctx.settings`). Labels, hints and option labels are
 plain text or texts by language code (English is the fallback). Your functions get `settings` with every key filled
 in: the stored value when it fits the field, the default otherwise.
 

@@ -20,6 +20,8 @@ export interface MarkerContext {
   hass: HomeAssistant;
   entityId: string;
   state: HassEntity;
+  /** The device's settings from the editor, every key filled in (marker and watch; floorWedge and tap always get them). */
+  settings?: Record<string, SettingValue>;
 }
 
 /** What a plugin may change on a device's marker; leave a field out to keep NextFloor's own value. */
@@ -43,7 +45,7 @@ export interface DeviceSetting {
   /** 1–32 letters, digits or "_". */
   key: string;
   label: PluginText;
-  type: "number" | "select" | "boolean";
+  type: "number" | "select" | "boolean" | "entity";
   default: SettingValue;
   /** Numbers: limits and step. */
   min?: number;
@@ -51,6 +53,8 @@ export interface DeviceSetting {
   step?: number;
   /** Selects: the choices as [value, label]. */
   options?: [string, PluginText][];
+  /** Entities: the entity picker offers only these domains (e.g. ["binary_sensor"]); the value is an entity id, "" for none (the default). */
+  domains?: string[];
   hint?: PluginText;
 }
 

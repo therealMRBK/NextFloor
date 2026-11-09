@@ -60,12 +60,13 @@ export function watchedEntities(inputs: WatchInputs): string[] {
   const energy = b.energy;
   const lightsOfRooms = roomsOf(b).flatMap((r) => roomEntities(hass, r).filter((id) => kindOf(id) === "light"));
   const sensorsOfRooms = inputs.needsRoomSensors ? roomsOf(b).flatMap((r) => roomEntities(hass, r).filter((id) => id.startsWith("sensor.") || id.startsWith("climate."))) : [];
+  const pluginData = new Map(b.floors.flatMap((f) => f.placements.map((p) => [p.entity_id, p.plugin] as const)));
   const ids: MaybeId[] = [
     ...placed,
     ...openingIds(inputs.openingLinks),
     ...placed.map((id) => powerSensorFor(hass, id)),
     // what plugins draw for a device may follow further entities (a camera's motion sensor)
-    ...placed.flatMap((id) => (hass.states[id] ? pluginWatched({ hass, entityId: id, state: hass.states[id] }) : [])),
+    ...placed.flatMap((id) => (hass.states[id] ? pluginWatched({ hass, entityId: id, state: hass.states[id] }, pluginData.get(id) ?? undefined) : [])),
     ...furnitureIds(inputs),
     ...roofIds(b),
     energy.grid,
