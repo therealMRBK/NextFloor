@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Bordo inferiore dal pavimento (m)",
   "free_wall_bottom_slope": "Bordo inferiore inclinato",
   "free_wall_bottom_end": "Bordo inferiore alla fine (m)",
-  "stairwell_outside": "Questa apertura attraversa il confine di una stanza e per questo non viene ritagliata. Spostala del tutto in una stanza o rimpiccioliscila.",
+  "stairwell_outside": "Questa apertura non si trova in nessuna stanza e per questo non viene ritagliata. Spostala in una stanza.",
   "hint_hole": "Trascina per disegnare un'apertura nel solaio (vano scala, soppalco)",
   "hint_roof": "Trascina per disegnare una falda · tocca seleziona · trascina sposta · gli angoli ridimensionano",
   "hint_energy": "Tocca un campo solare per selezionarlo · trascina per spostarlo, anche su un'altra falda · nuovi campi con + Campo solare a destra",

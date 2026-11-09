@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Onderrand boven de vloer (m)",
   "free_wall_bottom_slope": "Schuine onderrand",
   "free_wall_bottom_end": "Onderrand aan het eind (m)",
-  "stairwell_outside": "Deze opening loopt over een ruimtegrens en wordt daarom niet uitgesneden. Verplaats haar volledig in één ruimte of maak haar kleiner.",
+  "stairwell_outside": "Deze opening ligt in geen enkele ruimte en wordt daarom niet uitgesneden. Verplaats haar naar een ruimte.",
   "hint_hole": "Sleep om een vloeropening te tekenen (trapgat, vide)",
   "hint_roof": "Sleep om een dakvlak te tekenen · tikken selecteert · slepen verplaatst · hoeken wijzigen de grootte",
   "hint_energy": "Tik op een zonneveld om het te selecteren · sleep om het te verplaatsen, ook naar een ander dakvlak · nieuwe velden met + Zonneveld rechts",

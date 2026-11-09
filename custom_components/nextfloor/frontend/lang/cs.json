@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Spodní hrana nad podlahou (m)",
   "free_wall_bottom_slope": "Šikmá spodní hrana",
   "free_wall_bottom_end": "Spodní hrana na konci (m)",
-  "stairwell_outside": "Tento otvor protíná hranici místnosti, a proto se nevyřezává. Posuňte jej zcela do jedné místnosti nebo jej zmenšete.",
+  "stairwell_outside": "Tento otvor neleží v žádné místnosti, a proto se nevyřezává. Posuňte jej do místnosti.",
   "hint_hole": "Přetáhněte pro nakreslení otvoru ve stropu (schodiště, mezipatro)",
   "hint_roof": "Přetáhněte pro nakreslení střešní roviny · klepnutím vyberete · přetažením posunete · rohy mění velikost",
   "hint_energy": "Klepněte na solární pole pro jeho výběr · přetáhněte pro posun, i na jinou rovinu · nová pole přes + Solární pole vpravo",

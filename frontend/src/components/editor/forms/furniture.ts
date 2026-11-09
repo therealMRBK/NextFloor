@@ -2,7 +2,7 @@
 
 import { html, nothing, type TemplateResult } from "lit";
 import { colourLabel, furnitureName, packItemLabel, packLabel } from "../../../furniture-names.ts";
-import { holeInRoom } from "../../../geometry/holes.ts";
+import { holePartInRoom } from "../../../geometry/holes.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, canLift, uid, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
 import { hasMovingParts, hasPicture, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
@@ -147,7 +147,7 @@ function typeNotes(host: EditorHost, item: Furniture, actions: FurnitureActions)
   if (item.type === "stairs")
     return html`${hint(host.t("stairs_hint"))}${host.admin ? html`<div class="nf-actions"><button class="nf-btn nf-primary" title=${host.t("stair_upgrade_hint")} @click=${() => actions.update({ stair: { ...DEFAULT_STAIR } })}>${host.t("stair_upgrade")}</button></div>` : nothing}`;
   if (item.type !== "stairwell") return nothing;
-  const outside = host.floor && !host.floor.rooms.some((r) => r.points.length >= 3 && holeInRoom(furnitureFootprint(item), r.points));
+  const outside = host.floor && !host.floor.rooms.some((r) => r.points.length >= 3 && holePartInRoom(furnitureFootprint(item), r.points));
   return html`${hint(host.t("stairwell_hint"))}${outside ? html`<p class="nf-sub nf-pack-error">${host.t("stairwell_outside")}</p>` : nothing}`;
 }
 

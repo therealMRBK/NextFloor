@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Underkant över golvet (m)",
   "free_wall_bottom_slope": "Sluttande underkant",
   "free_wall_bottom_end": "Underkant vid slutet (m)",
-  "stairwell_outside": "Den här öppningen sträcker sig över en rumsgräns och skärs därför inte ut. Flytta den helt in i ett rum eller gör den mindre.",
+  "stairwell_outside": "Den här öppningen ligger inte i något rum och skärs därför inte ut. Flytta den in i ett rum.",
   "hint_hole": "Dra för att rita en bjälklagsöppning (trapphål, galleri)",
   "hint_roof": "Dra för att rita ett takfall · tryck markerar · dra flyttar · hörnen ändrar storlek",
   "hint_energy": "Tryck på ett solcellsfält för att markera det · dra för att flytta det, även till ett annat takfall · nya fält med + Solcellsfält till höger",

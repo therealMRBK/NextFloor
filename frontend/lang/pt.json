@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Bordo inferior acima do chão (m)",
   "free_wall_bottom_slope": "Bordo inferior inclinado",
   "free_wall_bottom_end": "Bordo inferior no fim (m)",
-  "stairwell_outside": "Esta abertura atravessa o limite de uma divisão e por isso não é recortada. Mova-a totalmente para uma divisão ou torne-a mais pequena.",
+  "stairwell_outside": "Esta abertura não está em nenhuma divisão e por isso não é recortada. Mova-a para uma divisão.",
   "hint_hole": "Arraste para desenhar uma abertura no piso (vão de escada, mezanino)",
   "hint_roof": "Arraste para desenhar uma água do telhado · tocar seleciona · arrastar move · os cantos redimensionam",
   "hint_energy": "Toque num campo solar para o selecionar · arraste para o mover, também para outra água · novos campos com + Campo solar à direita",

@@ -1323,7 +1323,7 @@
  "free_wall_bottom": "Bord inférieur au-dessus du sol (m)",
  "free_wall_bottom_slope": "Bord inférieur incliné",
  "free_wall_bottom_end": "Bord inférieur à la fin (m)",
- "stairwell_outside": "Cette trémie dépasse la limite d'une pièce et n'est donc pas découpée. Placez-la entièrement dans une pièce ou réduisez-la.",
+ "stairwell_outside": "Cette trémie ne se trouve dans aucune pièce et n'est donc pas découpée. Placez-la dans une pièce.",
  "hint_hole": "Glissez pour tracer une trémie (escalier, galerie)",
  "hint_roof": "Glissez pour tracer un pan de toit · toucher sélectionne · glisser déplace · les coins redimensionnent",
  "hint_energy": "Touchez un champ solaire pour le sélectionner · glissez pour le déplacer, y compris sur un autre pan de toit · nouveaux champs avec + Champ solaire à droite",

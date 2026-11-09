@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Vec2 } from "../model.ts";
-import { holeInRoom, insetHole, mergeHoles } from "./holes.ts";
+import { holeInRoom, holePartInRoom, insetHole, isConvex, mergeHoles } from "./holes.ts";
 
 const box = (x0: number, z0: number, x1: number, z1: number): Vec2[] => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
 const areaOf = (ring: Vec2[]) => Math.abs(ring.reduce((sum, p, i) => sum + p[0] * ring[(i + 1) % ring.length][1] - ring[(i + 1) % ring.length][0] * p[1], 0)) / 2;
@@ -70,4 +70,19 @@ test("an opening is moved inwards by d on every side, whichever way it is wound"
     near(areaOf(inset), 0.8 * 1.8);
   }
   assert.deepEqual(insetHole(box(0, 0, 1, 1), 0).map((p) => p.map((v) => Math.round(v * 1e6) / 1e6)), box(0, 0, 1, 1));
+});
+
+test("the part of an opening in a room: whole, clipped at the room's edge, or none (#116)", () => {
+  const area = (r: Vec2[]) => Math.abs(r.reduce((s, p, i) => s + p[0] * r[(i + 1) % r.length][1] - r[(i + 1) % r.length][0] * p[1], 0) / 2);
+  const left = box(0, 0, 2.5, 4);
+  assert.equal(area(holePartInRoom(box(1, 1, 2, 2), left)!), 1, "fits: whole");
+  assert.ok(Math.abs(area(holePartInRoom(box(2, 1, 4, 3), left)!) - 1) < 1e-9, "half of a 2 x 2 opening");
+  assert.equal(holePartInRoom(box(5, 1, 6, 2), left), null, "outside");
+  // an L-shaped room (concave) with a rectangular opening over its inner corner
+  const ell: Vec2[] = [[0, 0], [4, 0], [4, 2], [2, 2], [2, 4], [0, 4]];
+  assert.equal(isConvex(ell), false);
+  assert.ok(Math.abs(area(holePartInRoom(box(1, 1, 3, 3), ell)!) - 3) < 1e-9);
+  // an L-shaped opening (two merged stairs) over the edge of a rectangular room
+  const ellHole: Vec2[] = [[1, 1], [3, 1], [3, 2], [2, 2], [2, 3], [1, 3]];
+  assert.ok(Math.abs(area(holePartInRoom(ellHole, box(0, 0, 2.5, 4))!) - 2.5) < 1e-9);
 });

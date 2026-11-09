@@ -269,3 +269,16 @@ test("the floor of a room on its own level is drawn at its level, with the step 
   const living = g.roomTris.find((r) => r.roomId === "l")!;
   assert.ok(Math.abs(pos.getY(living.start * 3)) < 1e-6);
 });
+
+test("a stair under the line between two rooms upstairs opens both of them (#116)", () => {
+  const stairs: Furniture = { id: "st", type: "stairs", x: 3, z: 2, rotation: 0, w: 2, d: 2.6, h: 2.8, variant: null, entity: null, power: null };
+  const lower = { ...floorOf([room("a", 0, 0, 6, 4)], [], [stairs]), id: "g", elevation: 0 };
+  const upper = { ...floorOf([room("b", 0, 0, 2.5, 4), room("c", 2.5, 0, 6, 4)]), id: "u", elevation: 2.6 };
+  const holes = stairHoles([lower, upper], upper);
+  assert.equal(holes.length, 1);
+  const cut = buildFloorGeometry(upper, OUTER, INNER, holes).holes;
+  assert.equal(cut.length, 2, "one part in each room");
+  // the parts together cover the stair (2 x 2.6 m), less the few millimetres each is moved in from its edges
+  const area = (r: [number, number][]) => Math.abs(r.reduce((s, p, i) => s + p[0] * r[(i + 1) % r.length][1] - r[(i + 1) % r.length][0] * p[1], 0) / 2);
+  assert.ok(Math.abs(cut.reduce((s, r) => s + area(r as [number, number][]), 0) - 5.2) < 0.05);
+});

@@ -1,7 +1,7 @@
 // Room floors with their material pattern, the slab below them, and the rims of openings cut into the floor (stairwells).
 
 import { Color } from "three";
-import { holeInRoom, insetHole } from "../../geometry/holes.ts";
+import { holePartInRoom, insetHole } from "../../geometry/holes.ts";
 import { roomOffset, type Floor, type Vec2 } from "../../model.ts";
 import { ALWAYS, EDGE_SOFT, EDGE_TOP, GeoBuffer, LineBuffer, triangulate } from "../geo.ts";
 import { counterClockwise } from "./outline.ts";
@@ -39,7 +39,11 @@ export function buildFloors(floor: Floor, holes: Vec2[][]): FloorParts {
     const look = FLOOR_LOOK[room.floor_material] ?? FLOOR_LOOK.wood;
     const top = new Color(look.color);
     // an opening snapped to the room's edge is still cut, a few millimetres in from it
-    const inside = holes.filter((h) => holeInRoom(h, outline)).map((h) => insetHole(h, 0.003));
+    // one that runs over the room's edge (a stair under the line between two rooms) is cut where it lies in the room (#116)
+    const inside = holes.flatMap((h) => {
+      const part = holePartInRoom(h, outline);
+      return part ? [insetHole(part, 0.003)] : [];
+    });
     cutHoles.push(...inside);
     const corners = [...outline, ...inside.flat()];
     const start = buffer.count;

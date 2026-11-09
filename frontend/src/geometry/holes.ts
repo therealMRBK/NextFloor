@@ -142,3 +142,44 @@ export function insetHole(hole: readonly Vec2[], d: number): Vec2[] {
   });
 }
 
+
+/** Whether a ring is convex (no reflex corner; straight corners are allowed). */
+export function isConvex(ring: readonly Vec2[]): boolean {
+  const r = counterClockwise(ring);
+  return r.every((p, i) => cross2(sub(p, r[(i - 1 + r.length) % r.length]), sub(r[(i + 1) % r.length], p)) >= -EPS);
+}
+
+/** Sutherland–Hodgman: the part of `subject` inside the convex ring `clip`. */
+function clipToConvex(subject: readonly Vec2[], clip: readonly Vec2[]): Vec2[] {
+  let out: Vec2[] = [...subject];
+  const c = counterClockwise(clip);
+  for (let i = 0; i < c.length && out.length; i++) {
+    const a = c[i];
+    const b = c[(i + 1) % c.length];
+    const side = (p: Vec2) => cross2(sub(b, a), sub(p, a));
+    const input = out;
+    out = [];
+    input.forEach((p, k) => {
+      const q = input[(k + 1) % input.length];
+      const [sp, sq] = [side(p), side(q)];
+      if (sp >= 0) out.push(p);
+      if ((sp >= 0) !== (sq >= 0)) {
+        const t = sp / (sp - sq);
+        out.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
+      }
+    });
+  }
+  // drop points that repeat (a corner on the clip line)
+  return out.filter((p, k) => !closeTo(p, out[(k + 1) % out.length]));
+}
+
+/**
+ * The part of a floor opening that lies in a room: the whole opening when it fits, else its overlap with the room, so a
+ * stair under the line between two rooms upstairs opens both of them (#116). Needs the opening or the room to be convex
+ * (a stair's rectangle is); an overlap of less than 1 dm² is left out.
+ */
+export function holePartInRoom(hole: readonly Vec2[], room: readonly Vec2[]): Vec2[] | null {
+  if (holeInRoom(hole, room)) return [...hole];
+  const part = isConvex(hole) ? clipToConvex(room, hole) : isConvex(room) ? clipToConvex(hole, room) : null;
+  return part && part.length >= 3 && Math.abs(ringArea(part)) >= 0.01 ? part : null;
+}

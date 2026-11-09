@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Borde inferior sobre el suelo (m)",
   "free_wall_bottom_slope": "Borde inferior inclinado",
   "free_wall_bottom_end": "Borde inferior al final (m)",
-  "stairwell_outside": "Esta abertura atraviesa el límite de una estancia y por eso no se recorta. Muévela por completo a una estancia o hazla más pequeña.",
+  "stairwell_outside": "Esta abertura no está en ninguna estancia y por eso no se recorta. Muévela dentro de una estancia.",
   "hint_hole": "Arrastra para dibujar una abertura en el suelo (hueco de escalera, galería)",
   "hint_roof": "Arrastra para dibujar una sección de tejado · tocar selecciona · arrastrar mueve · las esquinas cambian el tamaño",
   "hint_energy": "Toca un campo solar para seleccionarlo · arrastra para moverlo, también a otro faldón · campos nuevos con + Campo solar a la derecha",

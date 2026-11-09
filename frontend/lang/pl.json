@@ -1375,7 +1375,7 @@
   "free_wall_bottom": "Dolna krawędź nad podłogą (m)",
   "free_wall_bottom_slope": "Skośna dolna krawędź",
   "free_wall_bottom_end": "Dolna krawędź na końcu (m)",
-  "stairwell_outside": "Ten otwór przecina granicę pomieszczenia i dlatego nie jest wycinany. Przesuń go całkowicie do jednego pomieszczenia lub zmniejsz.",
+  "stairwell_outside": "Ten otwór nie leży w żadnym pomieszczeniu i dlatego nie jest wycinany. Przesuń go do pomieszczenia.",
   "hint_hole": "Przeciągnij, by narysować otwór w stropie (klatka schodowa, antresola)",
   "hint_roof": "Przeciągnij, by narysować połać dachu · dotknięcie zaznacza · przeciąganie przesuwa · narożniki zmieniają rozmiar",
   "hint_energy": "Dotknij pola solarnego, by je zaznaczyć · przeciągnij, by przesunąć, także na inną połać · nowe pola przez + Pole solarne po prawej",

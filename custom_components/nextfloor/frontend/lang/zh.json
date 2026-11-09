@@ -833,7 +833,7 @@
  "free_wall_bottom": "下边缘离地高度（米）",
  "free_wall_bottom_slope": "倾斜的下边缘",
  "free_wall_bottom_end": "末端下边缘（米）",
- "stairwell_outside": "此开口不在任何房间内，因此不会切开。请将其移入房间。",
+ "stairwell_outside": "此开口不在任何房间内，因此不会被切出。请把它移到某个房间里。",
  "hint_hole": "拖动以绘制楼板开口（楼梯井、挑空）",
  "hint_roof": "拖动以绘制屋顶分段 · 点击选中 · 拖动移动 · 拖动角点调整大小",
  "hint_energy": "点击太阳能阵列以选中 · 拖动移动，也可移到另一屋面 · 在右侧用“+ 太阳能阵列”添加新阵列",
