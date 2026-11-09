@@ -673,6 +673,7 @@
  "card_room_double_tap_auto": "Comme réglé dans le plan",
  "status_entities": "Capteurs à afficher en haut de la vue 3D",
  "status_add": "Ajouter un capteur",
+ "status_name": "Nom affiché",
  "status_entities_hint": "Par exemple la température extérieure, l'alarme ou la qualité de l'air : ils s'affichent en haut à gauche avec nom et valeur, aussi dans une pièce ouverte. Un appui ouvre les détails. Jusqu'à 12.",
  "announce_tts": "Synthèse vocale des annonces",
  "announce_phrases": "Phrases pour les annonces (une par ligne)",

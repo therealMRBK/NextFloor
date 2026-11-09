@@ -765,6 +765,8 @@ export interface BuildingSettings {
   circuits?: Circuit[] | null;
   /** Own sensors shown at the top of the 3D view (outside temperature, the alarm…), at most 12. */
   status_entities?: string[] | null;
+  /** Own names for those sensors, by entity id ("Outside temperature"); none = the Home Assistant name (D#117). */
+  status_names?: Record<string, string> | null;
   /** An own background behind the house instead of the look's sky: a colour and/or a picture (/local/… or https), dimmed. */
   backdrop?: { color?: string | null; image?: string | null; dim?: number | null } | null;
   /** Plugin modules to load (Extensions page); see docs/plugins.md. */

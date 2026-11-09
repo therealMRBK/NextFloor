@@ -41,20 +41,19 @@ function backdropFields(host: EditorHost, b: Backdrop | null, onChange: (b: Back
 
 /** Wall thickness, grid, north, roof shape, the weather source and its effects. */
 /** The plan's own sensors at the top of the 3D view: the chosen ones as chips to remove, and a picker to add one. */
-function statusFields(host: EditorHost, ids: string[], set: (ids: string[]) => void): TemplateResult {
+function statusFields(host: EditorHost, ids: string[], names: Record<string, string>, set: (ids: string[], names: Record<string, string>) => void): TemplateResult {
   const t = host.t;
+  // a removed sensor takes its own name with it
+  const keep = (next: string[], n = names) => Object.fromEntries(Object.entries(n).filter(([id, v]) => next.includes(id) && v));
   const options = entityOptions(host.hass, (id) => !ids.includes(id) && /^(sensor|binary_sensor|alarm_control_panel|weather|input_|counter|lock|climate|person|sun)\b/.test(id));
   return html`<div class="nf-sub nf-wide">${t("status_entities")}</div>
     ${ids.length
-      ? html`<div class="nf-chips nf-wide">
-          ${ids.map(
-            (id) => html`<span class="nf-chip">${entityName(host.hass, id)}
-              ${host.admin ? html`<button class="nf-chip-x" title=${t("delete")} aria-label=${`${t("delete")}: ${entityName(host.hass, id)}`} @click=${() => set(ids.filter((x) => x !== id))}>×</button>` : nothing}</span
-            >`,
-          )}
-        </div>`
+      ? ids.map(
+          (id) => html`${textField(host, `${t("status_name")} · ${entityName(host.hass, id)}`, names[id] ?? "", (v) => set(ids, keep(ids, { ...names, [id]: v.slice(0, 60) })), { placeholder: entityName(host.hass, id), maxlength: 60 })}
+            ${host.admin ? html`<div class="nf-actions"><button class="nf-btn nf-field-btn" title=${t("delete")} aria-label=${`${t("delete")}: ${entityName(host.hass, id)}`} @click=${() => set(ids.filter((x) => x !== id), keep(ids.filter((x) => x !== id)))}>×</button></div>` : nothing}`,
+        )
       : nothing}
-    ${ids.length < 12 ? entityField(host, t("status_add"), null, undefined, options, (v) => v && v !== "none" && set([...ids, v])) : nothing}
+    ${ids.length < 12 ? entityField(host, t("status_add"), null, undefined, options, (v) => v && v !== "none" && set([...ids, v], names)) : nothing}
     ${hint(t("status_entities_hint"), "nf-wide")}`;
 }
 
@@ -114,7 +113,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${checkField(host, t("night_lock_warning"), !!s.night_lock_warning, (on) => set({ night_lock_warning: on || undefined }), { title: t("night_lock_warning_hint") })}
       ${selectField(host, t("room_double_tap"), s.room_double_tap ?? "area", [["area", t("room_double_tap_area")], ["plan", t("room_double_tap_plan")], ["off", t("room_double_tap_off")]] as const, (v) => set({ room_double_tap: v === "plan" || v === "off" ? v : null }), { title: t("room_double_tap_hint") })}
       ${checkField(host, t("motion_markers_active"), !!s.motion_markers_active, (on) => set({ motion_markers_active: on || undefined }), { title: t("motion_markers_active_hint") })}
-      ${host.hass ? statusFields(host, s.status_entities ?? [], (status_entities) => set({ status_entities: status_entities.length ? status_entities : null })) : nothing}
+      ${host.hass ? statusFields(host, s.status_entities ?? [], s.status_names ?? {}, (status_entities, status_names) => set({ status_entities: status_entities.length ? status_entities : null, status_names: Object.keys(status_names).length ? status_names : null })) : nothing}
       ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
       <label class="nf-field nf-wide"
         >${t("announce_phrases")}

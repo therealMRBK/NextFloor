@@ -989,6 +989,14 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("status_entities"): vol.Any(
             None, vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=12))
         ),
+        # own names for those sensors, by entity id
+        vol.Optional("status_names"): vol.Any(
+            None,
+            vol.All(
+                {vol.All(str, vol.Length(max=255)): vol.All(str, vol.Length(max=60))},
+                vol.Length(max=12),
+            ),
+        ),
         # announcements: the text-to-speech entity and the sentences offered in a room (None = the default ones)
         vol.Optional("announce_tts"): _ENTITY_REF,
         vol.Optional("announce_phrases"): vol.Any(

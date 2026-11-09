@@ -687,6 +687,7 @@
   "card_room_double_tap_auto": "Jak je nastaveno v plánu",
   "status_entities": "Vlastní snímače nahoře v 3D zobrazení",
   "status_add": "Přidat snímač",
+  "status_name": "Zobrazený název",
   "status_entities_hint": "Například venkovní teplota, alarm nebo kvalita vzduchu: zobrazují se v levém horním rohu s názvem a hodnotou, a to i v otevřené místnosti. Klepnutí otevře podrobnosti. Až 12.",
   "announce_tts": "Převod textu na řeč pro oznámení",
   "announce_phrases": "Věty oznámení (jedna na řádek)",

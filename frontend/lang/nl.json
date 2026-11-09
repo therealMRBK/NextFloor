@@ -687,6 +687,7 @@
   "card_room_double_tap_auto": "Zoals ingesteld in het plan",
   "status_entities": "Eigen sensoren bovenaan in de 3D-weergave",
   "status_add": "Sensor toevoegen",
+  "status_name": "Weergavenaam",
   "status_entities_hint": "Bijvoorbeeld buitentemperatuur, alarm of luchtkwaliteit: ze staan linksboven met naam en waarde, ook in een geopende kamer. Tikken opent de details. Tot 12.",
   "announce_tts": "Tekst-naar-spraak voor omroepen",
   "announce_phrases": "Zinnen voor omroepen (één per regel)",

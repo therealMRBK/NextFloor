@@ -687,6 +687,7 @@
   "card_room_double_tap_auto": "Som inställt i planen",
   "status_entities": "Egna sensorer överst i 3D-vyn",
   "status_add": "Lägg till en sensor",
+  "status_name": "Visat namn",
   "status_entities_hint": "Till exempel utetemperatur, larm eller luftkvalitet: de visas uppe till vänster med namn och värde, även i ett öppnat rum. Ett tryck öppnar detaljerna. Upp till 12.",
   "announce_tts": "Text till tal för utrop",
   "announce_phrases": "Meningar för utrop (en per rad)",

@@ -2746,11 +2746,13 @@ export class NfView3d extends LitElement {
   /** The plan's own sensors at the top (outside temperature, the alarm…): their name and state; a tap opens their details. */
   private ownSensors() {
     const ids = this.sensorBar && this.hass ? (this.building?.settings.status_entities ?? []) : [];
+    // an own name set in the editor wins over Home Assistant's (D#117)
+    const names = this.building?.settings.status_names ?? {};
     return ids
       .filter((id) => this.hass.states[id])
       .map(
-        (id) => html`<button class="nf-energy-item nf-own-sensor" title=${entityName(this.hass, id)} @click=${() => openMoreInfo(this, id)}>
-          <span>${entityName(this.hass, id)}</span><b>${stateText(this.hass, this.hass.states[id])}</b>
+        (id) => html`<button class="nf-energy-item nf-own-sensor" title=${names[id] || entityName(this.hass, id)} @click=${() => openMoreInfo(this, id)}>
+          <span>${names[id] || entityName(this.hass, id)}</span><b>${stateText(this.hass, this.hass.states[id])}</b>
         </button>`,
       );
   }

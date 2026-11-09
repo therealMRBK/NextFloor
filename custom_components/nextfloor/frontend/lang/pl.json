@@ -687,6 +687,7 @@
   "card_room_double_tap_auto": "Jak ustawiono w planie",
   "status_entities": "Własne czujniki u góry widoku 3D",
   "status_add": "Dodaj czujnik",
+  "status_name": "Wyświetlana nazwa",
   "status_entities_hint": "Na przykład temperatura zewnętrzna, alarm lub jakość powietrza: pokazują się w lewym górnym rogu z nazwą i wartością, także w otwartym pomieszczeniu. Dotknięcie otwiera szczegóły. Do 12.",
   "announce_tts": "Zamiana tekstu na mowę dla komunikatów",
   "announce_phrases": "Zdania komunikatów (jedno w wierszu)",

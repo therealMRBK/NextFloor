@@ -687,6 +687,7 @@
   "card_room_double_tap_auto": "Como definido na planta",
   "status_entities": "Sensores próprios no topo da vista 3D",
   "status_add": "Adicionar um sensor",
+  "status_name": "Nome mostrado",
   "status_entities_hint": "Por exemplo a temperatura exterior, o alarme ou a qualidade do ar: aparecem em cima à esquerda com nome e valor, também numa divisão aberta. Tocar abre os detalhes. Até 12.",
   "announce_tts": "Texto para voz dos anúncios",
   "announce_phrases": "Frases para anúncios (uma por linha)",
