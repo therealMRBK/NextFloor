@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { setPacks } from "../packs.ts";
 import type { Furniture } from "../model.ts";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
-import { confirmEntities, coolingTemps, deviceTempOf, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, outsideEntities, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
+import { confirmEntities, coolingTemps, deviceTempOf, namedTemps, fridgeDoors, furnitureEntities, hasScreen, isCooling, isMediaFurniture, outsideEntities, pictureRuleMatches, roomPanelEntities } from "./furniture-links.ts";
 
 const piece = (id: string, type: string, extra: Partial<Furniture> = {}): Furniture => ({ id, type, x: 1, z: 1, rotation: 0, w: 1, d: 1, h: 1, variant: null, entity: null, power: null, ...extra });
 const room = box("r", 0, 0, 4, 3, "area");
@@ -207,4 +207,11 @@ test("a device's own thermometer reads in Celsius, Fahrenheit turned over, nothi
   assert.equal(deviceTempOf(hass, "sensor.gone"), null);
   assert.equal(deviceTempOf(hass, "none"), null);
   assert.equal(deviceTempOf(hass, null), null);
+});
+
+test("a device's named temperatures: label, value in Celsius, in the order set; sensors without a number are left out (#118)", () => {
+  const hass = { states: { "sensor.flow": { state: "62.5", attributes: { unit_of_measurement: "°C" } }, "sensor.ret": { state: "113", attributes: { unit_of_measurement: "°F" } }, "sensor.gone": { state: "unavailable", attributes: {} } } } as never;
+  const out = namedTemps(hass, { temps: [{ label: " Vorlauf ", entity: "sensor.flow" }, { label: "Weg", entity: "sensor.gone" }, { label: "Rücklauf", entity: "sensor.ret" }] });
+  assert.deepEqual(out.map((x) => [x.label, Math.round(x.celsius * 10) / 10]), [["Vorlauf", 62.5], ["Rücklauf", 45]]);
+  assert.deepEqual(namedTemps(hass, {}), []);
 });

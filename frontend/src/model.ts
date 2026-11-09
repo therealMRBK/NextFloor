@@ -230,6 +230,8 @@ export interface Furniture extends LightEffectConfig {
   /** Fridges and freezers: a temperature sensor of the fridge (temp_entity) and one of the freezer compartment; the marker shows them and warns when too warm. Any other device: its own thermometer, shown on its pin (#112). */
   temp_entity?: string | null;
   temp_entity2?: string | null;
+  /** Any device except fridges: further named temperatures on its pin (a boiler's flow and return, a tank's target and actual), up to six (#118). */
+  temps?: { label: string; entity: string }[];
   /** Smart fridge: door sensors of the left (freezer) and right (fridge) door; the doors open in 3D while they report open. */
   door_left?: EntityRef;
   door_right?: EntityRef;
@@ -1759,3 +1761,6 @@ export const LAMP_MODEL: Record<string, LampModel> = {
   lamp_wall: "wall",
   led_strip: "strip",
 };
+
+/** The most named temperatures one device can show on its pin (#118). */
+export const MAX_DEVICE_TEMPS = 6;

@@ -223,6 +223,14 @@ export function deviceTempOf(hass: HomeAssistant, id: string | null | undefined)
   return st!.attributes.unit_of_measurement === "°F" ? ((value - 32) * 5) / 9 : value;
 }
 
+/** The named temperatures of a device (#118): label and value in °C for every sensor that tells a number, in the order set. */
+export function namedTemps(hass: HomeAssistant, piece: { temps?: { label: string; entity: string }[] }): { label: string; celsius: number; entity: string }[] {
+  return (piece.temps ?? []).flatMap((x) => {
+    const celsius = deviceTempOf(hass, x.entity);
+    return celsius === null ? [] : [{ label: x.label.trim(), celsius, entity: x.entity }];
+  });
+}
+
 /** Which doors of each smart fridge stand open now (a door sensor that says "on" or "open"). */
 export function fridgeDoors(hass: HomeAssistant, floors: readonly Floor[]): Map<string, { left: boolean; right: boolean }> {
   const isOpen = (sensor: EntityRef | undefined) => isSet(sensor) && ["on", "open"].includes(hass.states[sensor]?.state ?? "");

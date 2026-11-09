@@ -4,10 +4,10 @@ import { html, nothing, type TemplateResult } from "lit";
 import { canHangOff, deviceMeter, meterParent, subMeterIds } from "../../../energy.ts";
 import { furnitureEntities, hasScreen, isCooling, isMediaFurniture, isSpeakerFurniture, isStatusSensor, robotRoomSensor } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { ENERGY_DEVICES, isLamp, type Furniture, type VacuumCalibration } from "../../../model.ts";
+import { ENERGY_DEVICES, MAX_DEVICE_TEMPS, isLamp, type Furniture, type VacuumCalibration } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
 import { entityOptions, isBinary, isNumeric, isPowerSensor } from "../entities.ts";
-import { checkField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField } from "../fields.ts";
+import { checkField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
@@ -238,9 +238,29 @@ function deviceTempLink(host: EditorHost, item: Furniture, actions: FurnitureLin
     const a = host.hass?.states[id]?.attributes;
     return id.startsWith("sensor.") && (a?.device_class === "temperature" || a?.unit_of_measurement === "°C" || a?.unit_of_measurement === "°F");
   });
+  // further named temperatures (a boiler's flow and return, #118): one more empty row than are set
+  const named = item.temps ?? [];
+  const setNamed = (i: number, patch: Partial<{ label: string; entity: string }>) => {
+    const next = [...named];
+    next[i] = { label: next[i]?.label ?? "", entity: next[i]?.entity ?? "", ...patch };
+    const kept = next.filter((x) => x.entity && x.entity !== "none");
+    // a row with a label but no sensor yet stays while it is being filled in
+    actions.update({ temps: next.some((x) => x.entity === "" && x.label) ? next : kept.length ? kept : undefined });
+  };
+  const removeNamed = (i: number) => {
+    const next = named.filter((_, k) => k !== i);
+    actions.update({ temps: next.length ? next : undefined });
+  };
+  const rows = Math.min(MAX_DEVICE_TEMPS, named.length + 1);
+  const namedRows = Array.from(
+    { length: rows },
+    (_, i) => html`${textField(host, t("temp_label", { n: i + 1 }), named[i]?.label ?? "", (v) => setNamed(i, { label: v }), { maxlength: 40, placeholder: t("temp_label_example") })}
+      ${entityField(host, t("temp_sensor", { n: i + 1 }), named[i]?.entity ?? null, undefined, temps, (v) => (noneAsNull(v) ? setNamed(i, { entity: v as string }) : removeNamed(i)))}`,
+  );
   return linkBlock(
     entityField(host, t("device_temp"), item.temp_entity ?? null, undefined, temps, (v) => actions.update({ temp_entity: noneAsNull(v) })),
     hint(t("device_temp_hint"), "nf-wide"),
+    html`${namedRows}${hint(t("device_temps_hint"), "nf-wide")}`,
   );
 }
 

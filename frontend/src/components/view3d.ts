@@ -5,7 +5,7 @@ import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
-import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
+import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { roomToggleLights, roomToggleMode, type RoomToggle } from "./view3d/room-toggle.ts";
@@ -1255,8 +1255,12 @@ export class NfView3d extends LitElement {
         // a home battery with only its charge, a wallbox with only its status, a fridge with only its thermometer still gets its marker
         // any other device: its own thermometer (an inverter, a battery, a PC; #112) beside what it shows
         const deviceTemp = !isCooling(f.type) ? deviceTempOf(hass, f.temp_entity) : null;
-        const deviceTempText = deviceTemp === null ? "" : `🌡 ${formatNumber(hass, fromCelsius(hass, deviceTemp), 1)} ${tempUnit(hass)}`;
-        const extraRef = f.type === "home_battery" ? f.soc : f.type === "wallbox" ? f.status : temps ? (f.temp_entity && f.temp_entity !== "none" ? f.temp_entity : f.temp_entity2) : deviceTemp !== null ? f.temp_entity : null;
+        // further named temperatures (a boiler's flow and return, #118)
+        const named = !isCooling(f.type) ? namedTemps(hass, f) : [];
+        const tempFmt = (c: number) => `${formatNumber(hass, fromCelsius(hass, c), 1)} ${tempUnit(hass)}`;
+        const deviceTempText = [deviceTemp === null ? "" : `🌡 ${tempFmt(deviceTemp)}`, ...named.map((n) => `${n.label ? `${n.label} ` : "🌡 "}${tempFmt(n.celsius)}`)].filter(Boolean).join(" · ");
+        const hottest = Math.max(deviceTemp ?? -Infinity, ...named.map((n) => n.celsius));
+        const extraRef = f.type === "home_battery" ? f.soc : f.type === "wallbox" ? f.status : temps ? (f.temp_entity && f.temp_entity !== "none" ? f.temp_entity : f.temp_entity2) : deviceTemp !== null ? f.temp_entity : named.length ? named[0].entity : null;
         const extra = extraRef && extraRef !== "none" ? extraRef : null;
         const link = linked ?? (extra ? { entity: null, power: null } : undefined);
         if (!link) continue;
@@ -1354,7 +1358,7 @@ export class NfView3d extends LitElement {
           ]
             .filter(Boolean)
             .join(" · "),
-          active: temps?.warm || (deviceTemp !== null && deviceTemp >= DEVICE_HOT) || (st ? isActive(st) : (power ?? 0) > 5),
+          active: temps?.warm || hottest >= DEVICE_HOT || (st ? isActive(st) : (power ?? 0) > 5),
           unavailable: st ? isUnavailable(st) : false,
           glow: null,
           // its pin grabs the item when furnishing

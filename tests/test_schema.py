@@ -252,3 +252,17 @@ def test_outdoor_area_opacity() -> None:
     for bad in (0, 0.05, 1.5):
         with pytest.raises(vol.Invalid):
             OUTDOOR_SCHEMA({**base, "opacity": bad})
+
+
+def test_a_device_takes_up_to_six_named_temperatures() -> None:
+    """A boiler's flow and return on its pin (#118)."""
+    base = {"id": "k", "type": "inverter", "x": 1, "z": 1, "rotation": 0, "w": 0.5, "d": 0.2, "h": 0.8, "variant": None}
+    ok = FURNITURE_SCHEMA(
+        {**base, "temps": [{"label": "Vorlauf", "entity": "sensor.flow"}, {"label": "", "entity": "sensor.ret"}]}
+    )
+    assert [x["label"] for x in ok["temps"]] == ["Vorlauf", ""]
+    too_many = [{"label": str(i), "entity": f"sensor.t{i}"} for i in range(7)]
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**base, "temps": too_many})
+    with pytest.raises(vol.Invalid):
+        FURNITURE_SCHEMA({**base, "temps": [{"label": "x", "entity": ""}]})

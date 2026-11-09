@@ -42,7 +42,7 @@ function furnitureIds(inputs: WatchInputs): MaybeId[] {
     ...pieces.flatMap((m) => [m.state_entity, m.state_entity2, m.color_entity, ...(m.gang_entities ?? []), ...(m.extra_lights ?? []), m.cover_entity, m.care_entity, m.room_sensor, m.show_when?.entity, m.picture && /^[a-z_]+\.[a-z0-9_]+$/.test(m.picture) ? m.picture : null]),
     // a washer's, dryer's or dishwasher's time left comes from a sensor next to its switch
     ...pieces.filter((m) => m.type === "washer" || m.type === "dryer" || m.type === "dishwasher").flatMap((m) => deviceSiblings(hass, furnitureLinks.get(m.id)?.entity ?? furnitureLinks.get(m.id)?.power).filter((id) => id.startsWith("sensor."))),
-    ...pieces.flatMap((m) => [m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2]),
+    ...pieces.flatMap((m) => [m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2, ...(m.temps ?? []).map((x) => x.entity)]),
     ...pieces.filter((m) => m.type === "robot_vacuum").map((m) => robotRoomSensor(hass, furnitureLinks.get(m.id)?.entity ?? null, m.room_sensor)),
     ...pieces.flatMap((m) => (m.pictures ?? []).flatMap((rule) => [rule.entity, ...(rule.image.startsWith("camera:") ? [rule.image.slice("camera:".length)] : [])])),
   ];

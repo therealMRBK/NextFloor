@@ -410,6 +410,18 @@ FURNITURE_SCHEMA = vol.Schema(
         # fridges: thermometers of the fridge and the freezer compartment
         vol.Optional("temp_entity"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("temp_entity2"): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        # any other device: further named temperatures on its pin (a boiler's flow and return)
+        vol.Optional("temps"): vol.All(
+            [
+                vol.Schema(
+                    {
+                        vol.Required("label"): vol.All(str, vol.Length(max=40)),
+                        vol.Required("entity"): vol.All(str, vol.Length(min=1, max=255)),
+                    }
+                )
+            ],
+            vol.Length(max=6),
+        ),
         # lawn sprinkler: how far its water reaches (m)
         vol.Optional("spray"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0.5, max=15))),
         # LED strip: tilt about its length (degrees) and standing upright
