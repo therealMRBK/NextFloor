@@ -285,3 +285,12 @@ def test_energy_pipes_have_a_kind_and_an_optional_entity() -> None:
     assert [p["kind"] for p in ok["pipes"]] == ["supply", "return"]
     with pytest.raises(vol.Invalid):
         ENERGY_SCHEMA({**base, "pipes": [{"id": "a", "name": "x", "kind": "steam"}]})
+
+
+def test_a_roof_on_floors_at_altitude_is_accepted() -> None:
+    """Floor elevations up to 500 m make roof heights above 200 m (#123)."""
+    from custom_components.nextfloor.schema import _HEIGHT
+
+    assert _HEIGHT(502.4) == 502.4
+    with pytest.raises(vol.Invalid):
+        _HEIGHT(601)

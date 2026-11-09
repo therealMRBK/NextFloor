@@ -587,7 +587,7 @@ OUTDOOR_SCHEMA = vol.Schema(
 )
 
 _COORD = vol.All(vol.Coerce(float), vol.Range(min=-1000, max=1000))
-_HEIGHT = vol.All(vol.Coerce(float), vol.Range(min=-50, max=200))
+_HEIGHT = vol.All(vol.Coerce(float), vol.Range(min=-50, max=600))
 
 # one roof section of a "custom" roof: a rectangle with its own shape, ridge direction, eaves and pitches
 ROOF_SECTION_SCHEMA = vol.Schema(

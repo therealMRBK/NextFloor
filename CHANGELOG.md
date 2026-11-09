@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.29.0.4]
+
+### Fixed
+
+- **Roofs on a house with a high floor elevation can be saved again** (thanks @Theowilmans, #123): a house whose floors start at its altitude above sea level (e.g. 500 m) got a roof at 502 m, and saving was refused with "value must be at most 200". Roof base and eaves now take up to 600 m.
+
 ## [0.29.0.3]
 
 ### Fixed
