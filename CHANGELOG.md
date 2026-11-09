@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.29.0]
+
 ### Added
 
 - **Save the plan as a picture** (thanks @CeuseFoneb, #122): in the floor's settings, *Save as picture (PNG)* writes a clean 2D plan seen from above (white background, 2400 px) of this floor, and *All floors as pictures* one file per floor. Choose whether it shows furniture outlines, the measurements and the room names with their area. Handy for Bluetooth tracker maps or documents that want a plain plan.
@@ -655,7 +657,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0...main
+[0.29.0]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...v0.27.0
 [0.26.6]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...v0.26.6
