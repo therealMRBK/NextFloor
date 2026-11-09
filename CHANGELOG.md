@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.27.0.1]
+
 ### Fixed
 
 - **"Close gaps" now also pulls rooms apart that overlap by up to 60 cm** (thanks @alexhass, #121): a room pushed between two others rarely lands exactly. Before, overlaps above 12 cm were ignored, so every room kept its own exterior walls and the walls doubled up or got odd thicknesses. Now such rooms meet on one common line with one interior wall. The hint on the button and the overlap warning say so, and a room nested inside another is still left alone.
@@ -638,7 +640,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0.1...main
+[0.27.0.1]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...v0.27.0.1
 [0.27.0]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...v0.27.0
 [0.26.6]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...v0.26.6
 [0.26.5]: https://github.com/therealMRBK/NextFloor/compare/v0.26.4...v0.26.5
