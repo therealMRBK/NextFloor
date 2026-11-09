@@ -668,6 +668,20 @@ export const editorStyles = css`
     padding: 2px 0;
     background: none;
   }
+  .nf-check-all {
+    margin: 6px 0 2px;
+  }
+  .nf-check-names .nf-check-name {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nf-check-names .nf-check-ignore {
+    flex: none;
+    margin-left: auto;
+  }
   .nf-check-names li small {
     flex: 1;
     min-width: 0;

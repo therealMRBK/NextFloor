@@ -85,11 +85,11 @@ function names(host: EditorHost, ids: string[], act: PlanCheckActions): Template
   const t = host.t;
   return html`<details class="nf-check-names">
     <summary>${t("check_show_devices", { n: ids.length })}</summary>
+    <p class="nf-check-all"><button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.ignore(ids)}>${t("check_ignore_all", { n: ids.length })}</button></p>
     <ul>
-      ${ids.map((id) => html`<li><span title=${id}>${host.hass ? entityName(host.hass, id) : id}</span> <small>${id}</small>
-        <button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.ignore([id])}>${t("check_fix_ignore")}</button></li>`)}
+      ${ids.map((id) => html`<li><span class="nf-check-name" title=${id}>${host.hass ? entityName(host.hass, id) : id}</span> <small>${id}</small>
+        <button class="nf-btn nf-check-ignore" ?disabled=${!host.admin} @click=${() => act.ignore([id])}>${t("check_fix_ignore")}</button></li>`)}
     </ul>
-    <button class="nf-btn" ?disabled=${!host.admin} @click=${() => act.ignore(ids)}>${t("check_ignore_all", { n: ids.length })}</button>
   </details>`;
 }
 

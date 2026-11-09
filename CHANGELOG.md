@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Changed
+
+- **The device list of the plan check is easier to use** (thanks @tfischer84, #103): *Ignore all* now stands above the list instead of below it, and the *Ignore* buttons keep their place at the right edge, so nothing needs scrolling to be found.
+
 ## [0.28.0]
 
 ### Added
