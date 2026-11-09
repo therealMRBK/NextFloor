@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.27.0]
+
 ### Added
 
 - **Own names for your own sensors** (thanks @HA-Luz, D#117): each sensor under *Own sensors at the top of the 3D view* gets a *Shown name* field, e.g. "Outside temperature". Left empty, the Home Assistant name stays.
@@ -632,7 +634,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.27.0...main
+[0.27.0]: https://github.com/therealMRBK/NextFloor/compare/v0.26.6...v0.27.0
 [0.26.6]: https://github.com/therealMRBK/NextFloor/compare/v0.26.5...v0.26.6
 [0.26.5]: https://github.com/therealMRBK/NextFloor/compare/v0.26.4...v0.26.5
 [0.25.4]: https://github.com/therealMRBK/NextFloor/compare/v0.25.3...v0.25.4
