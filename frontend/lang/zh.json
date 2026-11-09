@@ -65,6 +65,8 @@
  "points": "角点",
  "delete_point": "删除角点",
  "duplicate": "复制",
+ "furn_task": "任务",
+ "furn_task_hint": "在此物品上添加一条重复便签（换滤芯、清洁、检查）：在 3D 视图中带有“已完成”按钮。",
  "delete": "删除",
  "new_room": "房间 {n}",
  "settings": "设置",

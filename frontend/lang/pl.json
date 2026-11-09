@@ -161,6 +161,8 @@
   "points": "Narożniki",
   "delete_point": "Usuń narożnik",
   "duplicate": "Duplikuj",
+  "furn_task": "Zadanie",
+  "furn_task_hint": "Dodaje cykliczną notatkę przy tym obiekcie (wymiana filtra, czyszczenie, kontrola): w widoku 3D z przyciskiem „Zrobione”.",
   "delete": "Usuń",
   "new_room": "Pomieszczenie {n}",
   "settings": "Ustawienia",

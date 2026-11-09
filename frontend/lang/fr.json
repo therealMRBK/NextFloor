@@ -151,6 +151,8 @@
  "points": "Coins",
  "delete_point": "Supprimer le coin",
  "duplicate": "Dupliquer",
+ "furn_task": "Tâche",
+ "furn_task_hint": "Ajoute une note récurrente sur cet objet (changer un filtre, nettoyer, contrôler) : dans la vue 3D avec un bouton « Fait ».",
  "delete": "Supprimer",
  "new_room": "Pièce {n}",
  "settings": "Paramètres",

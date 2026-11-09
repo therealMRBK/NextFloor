@@ -161,6 +161,8 @@
   "points": "Hörn",
   "delete_point": "Ta bort hörn",
   "duplicate": "Duplicera",
+  "furn_task": "Uppgift",
+  "furn_task_hint": "Lägger till en återkommande anteckning vid objektet (byta filter, rengöra, kontrollera): i 3D-vyn med knappen «Klart».",
   "delete": "Ta bort",
   "new_room": "Rum {n}",
   "settings": "Inställningar",

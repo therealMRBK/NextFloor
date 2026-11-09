@@ -161,6 +161,8 @@
   "points": "Cantos",
   "delete_point": "Eliminar canto",
   "duplicate": "Duplicar",
+  "furn_task": "Tarefa",
+  "furn_task_hint": "Adiciona uma nota recorrente neste objeto (trocar um filtro, limpar, verificar): na vista 3D com o botão «Feito».",
   "delete": "Eliminar",
   "new_room": "Divisão {n}",
   "settings": "Definições",

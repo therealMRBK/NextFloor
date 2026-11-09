@@ -161,6 +161,8 @@
   "points": "Angoli",
   "delete_point": "Elimina angolo",
   "duplicate": "Duplica",
+  "furn_task": "Attività",
+  "furn_task_hint": "Aggiunge una nota ricorrente su questo oggetto (cambiare un filtro, pulire, controllare): nella vista 3D con il pulsante «Fatto».",
   "delete": "Elimina",
   "new_room": "Stanza {n}",
   "settings": "Impostazioni",

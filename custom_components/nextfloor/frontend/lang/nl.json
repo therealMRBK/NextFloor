@@ -161,6 +161,8 @@
   "points": "Hoeken",
   "delete_point": "Hoek verwijderen",
   "duplicate": "Dupliceren",
+  "furn_task": "Taak",
+  "furn_task_hint": "Voegt een terugkerende notitie toe aan dit object (filter vervangen, schoonmaken, controleren): in de 3D-weergave met een knop «Gedaan».",
   "delete": "Verwijderen",
   "new_room": "Ruimte {n}",
   "settings": "Instellingen",

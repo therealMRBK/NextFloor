@@ -21,6 +21,8 @@ import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 export interface FurnitureActions extends FurnitureLinkActions {
   rotate(delta: number): void;
   duplicate(): void;
+  /** A note (task) at this piece: a yearly check, a cleaning, a filter change (#113). */
+  addTask(): void;
   remove(): void;
   /** Turns the item back into a plain device pin. */
   toDevice(item: Furniture): void;
@@ -162,6 +164,7 @@ function buttons(host: EditorHost, item: Furniture, actions: FurnitureActions): 
     <button class="nf-btn" @click=${() => actions.rotate(90)}>${t("rotate_right")}</button>
     ${linked ? html`<button class="nf-btn" title=${t("as_device_hint")} @click=${() => actions.toDevice(item)}>${t("as_device")}</button>` : nothing}
     <button class="nf-btn" @click=${() => actions.duplicate()}>${t("duplicate")}</button>
+    <button class="nf-btn" title=${t("furn_task_hint")} @click=${() => actions.addTask()}>✎ ${t("furn_task")}</button>
     <button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button>
   </div>
   ${others.length ? html`<div class="nf-form">${selectField(host, t("furn_to_floor"), "", [["", "–"], ...others.map((f): [string, string] => [f.id, f.name])], (id) => id && actions.toFloor(id), { wide: true, title: t("furn_to_floor_hint") })}</div>` : nothing}`;

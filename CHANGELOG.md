@@ -7,7 +7,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 ### Added
 
 - **Several named temperatures on one device** (thanks @LFrank2021, D#118): besides *Device temperature*, any device except fridges takes up to six more temperatures with their own name (a boiler's *Kessel*, *Vorlauf*, *Rücklauf*, or a tank's target and actual). They show on its pin in the 3D view, and the pin is highlighted from 60 °C as before.
-- **Recurring notes with a "Done" button** (thanks @ShaneCurcuru, D#113): a note can repeat every N months (*Repeat every … months* in the note's form), for tasks like changing a filter or cleaning the fridge. Opened in the 3D view, a note with a due day or a repeat shows a *Done* button and when it was last done. Pressing it sets the next due day N months ahead, or clears the due day of a one-off note. Anyone who can open the view may press it, it changes nothing but that note.
+- **Recurring notes with a "Done" button** (thanks @ShaneCurcuru, D#113): a note can repeat every N months (*Repeat every … months* in the note's form), for tasks like changing a filter or cleaning the fridge. Opened in the 3D view, a note with a due day or a repeat shows a *Done* button and when it was last done. Pressing it sets the next due day N months ahead, or clears the due day of a one-off note. Anyone who can open the view may press it, it changes nothing but that note. Any piece of furniture has a *Task* button that puts such a note on its spot and height (repeating yearly).
 
 ## [0.27.0.1]
 

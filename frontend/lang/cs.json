@@ -161,6 +161,8 @@
   "points": "Rohy",
   "delete_point": "Smazat roh",
   "duplicate": "Duplikovat",
+  "furn_task": "Úkol",
+  "furn_task_hint": "Přidá k tomuto kusu opakovanou poznámku (výměna filtru, čištění, kontrola): ve 3D zobrazení s tlačítkem „Hotovo“.",
   "delete": "Smazat",
   "new_room": "Místnost {n}",
   "settings": "Nastavení",

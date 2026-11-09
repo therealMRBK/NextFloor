@@ -634,6 +634,7 @@ export class NfEditor extends LitElement {
       update: (patch) => this.updateFurniture(patch),
       rotate: (delta) => this.rotateFurniture(delta),
       duplicate: () => this.duplicateFurniture(),
+      addTask: () => this.addTaskToFurniture(),
       remove: () => this.deleteFurniture(),
       toDevice: (item) => this.furnitureToDevice(item),
       toSpot: (item) => this.vehicleToSpot(item),
@@ -2533,6 +2534,19 @@ export class NfEditor extends LitElement {
   private rotateFurniture(delta: number): void {
     const item = this.furnitureItem;
     if (item && this.isAdmin) this.updateFurniture({ rotation: turnedBy(item.rotation, delta) });
+  }
+
+  /** A task for the selected piece: a note on its spot and height, repeating yearly, ready for its text (#113). */
+  private addTaskToFurniture(): void {
+    const item = this.furnitureItem;
+    if (!item || !this.isAdmin) return;
+    const id = uid("note");
+    const y = Math.max(0.3, Math.min(20, Math.round((item.h ?? 1) * 100) / 100));
+    const text = (item.name ?? "").trim();
+    this.change((_, floor) => (floor.notes = [...(floor.notes ?? []), { id, x: Math.round(item.x * 100) / 100, z: Math.round(item.z * 100) / 100, y, text: text ? `${text}: ` : "", repeat_months: 12 }]));
+    this.selectItem("furniture", null);
+    this._note = id;
+    this._sideOpen = true;
   }
 
   private duplicateFurniture(): void {

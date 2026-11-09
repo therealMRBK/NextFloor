@@ -161,6 +161,8 @@
   "points": "Esquinas",
   "delete_point": "Eliminar esquina",
   "duplicate": "Duplicar",
+  "furn_task": "Tarea",
+  "furn_task_hint": "Añade una nota recurrente en este objeto (cambiar un filtro, limpiar, revisar): en la vista 3D con botón «Hecho».",
   "delete": "Eliminar",
   "new_room": "Estancia {n}",
   "settings": "Ajustes",
