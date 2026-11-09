@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import time
 from typing import Any
 
@@ -9,10 +10,12 @@ from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.loader import async_get_integration
+from homeassistant.util import dt as dt_util
 import voluptuous as vol
 
 from . import ble
 from .const import DOMAIN, SIGNAL_ANNOUNCE, SIGNAL_BUILDING_UPDATED
+from .notes import mark_note_done
 from .packs import MAX_PACK_SIZE, PackError, parse_pack, validate_payload
 from .schema import BUILDING_SCHEMA, IMAGE_DATA
 from .storage import NextFloorData, complete
@@ -26,6 +29,7 @@ def async_register_commands(hass: HomeAssistant) -> None:
     for command in (
         ws_get_building,
         ws_save_building,
+        ws_note_done,
         ws_subscribe_building,
         ws_subscribe_announcements,
         ws_get_image,
@@ -86,6 +90,23 @@ async def ws_save_building(
         return
     revision = await data.async_save_building(msg["building"])
     connection.send_result(msg["id"], {"revision": revision})
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "nextfloor/note/done", vol.Required("note_id"): vol.All(str, vol.Length(min=1, max=64))}
+)
+@websocket_api.async_response
+async def ws_note_done(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Mark a note as done; any user may, it changes nothing but the note's own due day (#113)."""
+    if (data := _data(hass, connection, msg)) is None:
+        return
+    building = copy.deepcopy(data.building)
+    result = mark_note_done(building, msg["note_id"], dt_util.now().date())
+    if result is None:
+        connection.send_error(msg["id"], "not_found", "No such note")
+        return
+    await data.async_save_building(building)
+    connection.send_result(msg["id"], result)
 
 
 @websocket_api.websocket_command({vol.Required("type"): "nextfloor/building/subscribe"})

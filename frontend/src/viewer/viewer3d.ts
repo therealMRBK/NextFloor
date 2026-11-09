@@ -45,7 +45,7 @@ import {
 } from "three";
 import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
-import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
+import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
@@ -109,6 +109,10 @@ export interface ViewerOptions {
   /** Pull floors apart in the house view (default true). */
   explode?: boolean;
   onRoomTap?: (floorId: string, roomId: string | null) => void;
+  /** A note was marked as done (its button, shown when it has a due day or repeats). */
+  onNoteDone?: (noteId: string) => void;
+  /** Text of the "done" button of a note and the line with the day it was last done. */
+  noteDoneLabels?: { done: string; last: (day: string) => string };
   onFloorTap?: (floorId: string) => void;
   onBack?: () => void;
   /** Short tap on a device marker. */
@@ -1917,6 +1921,35 @@ export class NextFloorViewer {
               this.invalidate();
             });
             pin.append(img);
+          }
+          // a task: when it was last done, and a button to mark it done (#113)
+          if (open && noteDoable(note) && this.options.onNoteDone && this.options.noteDoneLabels) {
+            const labels = this.options.noteDoneLabels;
+            const row = document.createElement("span");
+            row.className = "nf-note-task";
+            if (note.last_done) {
+              const last = document.createElement("span");
+              last.className = "nf-note-last";
+              last.textContent = labels.last(note.last_done);
+              row.append(last);
+            }
+            const done = document.createElement("span");
+            done.className = "nf-note-done";
+            done.setAttribute("role", "button");
+            done.tabIndex = 0;
+            done.textContent = `✓ ${labels.done}`;
+            const finish = (e: Event) => {
+              e.stopPropagation();
+              this.options.onNoteDone?.(note.id);
+              pin.classList.remove("nf-note-open", "nf-note-due");
+              pin.textContent = `${note.photo ? "📷 " : "✎ "}${short}`;
+              this.labelsDirty = true;
+              this.invalidate();
+            };
+            done.addEventListener("click", finish);
+            done.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && finish(e));
+            row.append(done);
+            pin.append(row);
           }
           this.labelsDirty = true;
           this.invalidate();

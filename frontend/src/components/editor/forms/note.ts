@@ -26,6 +26,9 @@ export function renderNoteForm(host: EditorHost, note: PlanNote, act: NoteAction
         <input type="date" .value=${note.due ?? ""} ?disabled=${!host.admin} @change=${(e: Event) => act.patch({ due: (e.target as HTMLInputElement).value || null })} />
       </label>
       ${noteDue(note) ? html`<p class="nf-sub nf-warn nf-wide">${t("note_is_due")}</p>` : hint(t("note_due_hint"), "nf-wide")}
+      ${numberField(host, t("note_repeat"), note.repeat_months ?? 0, (v) => act.patch({ repeat_months: v >= 1 ? Math.min(120, Math.round(v)) : null }), 1, 0)}
+      ${note.last_done ? html`<p class="nf-sub nf-wide">${t("note_last_done", { d: note.last_done })}</p>` : nothing}
+      ${hint(t("note_repeat_hint"), "nf-wide")}
       ${numberField(host, t("x"), note.x, (v) => act.patch({ x: v }))} ${numberField(host, t("z"), note.z, (v) => act.patch({ z: v }))}
       ${numberField(host, t("note_height"), note.y ?? NOTE_Y, (v) => act.patch({ y: Math.max(0, Math.min(20, Math.round(v * 100) / 100)) }), 0.1, 0)}
       ${hint(t("note_height_hint"), "nf-wide")}

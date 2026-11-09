@@ -416,6 +416,10 @@ export interface PlanNote {
   y?: number | null;
   /** A photo shown when the note is opened: a picture stored with the plan ("image:<id>") or a URL (#113). */
   photo?: string | null;
+  /** A recurring task (#113): after "Done" the note is due again after this many months. Absent or null = one-off. */
+  repeat_months?: number | null;
+  /** The day it was last marked as done ("YYYY-MM-DD"). */
+  last_done?: string | null;
 }
 
 /** The height of a note's pin above its floor when none is set (eye level). */
@@ -423,6 +427,23 @@ export const NOTE_Y = 1.3;
 
 /** Whether a note is due on a day ("YYYY-MM-DD", today by default). */
 export const noteDue = (note: Pick<PlanNote, "due">, today = new Date().toISOString().slice(0, 10)): boolean => !!note.due && note.due <= today;
+
+/** `day` ("YYYY-MM-DD") plus whole months; the day of the month is kept, or cut to the last day of a shorter month. */
+export function addMonths(day: string, months: number): string {
+  const [y, m, d] = day.split("-").map(Number);
+  const index = y * 12 + (m - 1) + months;
+  const [year, month] = [Math.floor(index / 12), (index % 12) + 1];
+  const last = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(Math.min(d, last)).padStart(2, "0")}`;
+}
+
+/** What marking a note as done changes: a recurring one is due again after its months, a one-off one is finished (#113). */
+export function noteDonePatch(note: Pick<PlanNote, "repeat_months">, today = new Date().toISOString().slice(0, 10)): Pick<PlanNote, "due" | "last_done"> {
+  return { due: note.repeat_months && note.repeat_months > 0 ? addMonths(today, note.repeat_months) : null, last_done: today };
+}
+
+/** Whether a note can be marked as done: it has a due day or repeats. */
+export const noteDoable = (note: Pick<PlanNote, "due" | "repeat_months">): boolean => !!note.due || !!note.repeat_months;
 
 /** A wall drawn on its own, from a to b along its centre line. */
 export interface FreeWall {

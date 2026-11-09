@@ -765,6 +765,11 @@ FLOOR_SCHEMA = vol.Schema(
                         # pin height above the floor (a valve under the ceiling); a photo (stored picture or URL)
                         vol.Optional("y"): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
                         vol.Optional("photo"): vol.Any(None, vol.All(str, vol.Length(max=500))),
+                        # a recurring task: due again this many months after "done"; the day it was last done
+                        vol.Optional("repeat_months"): vol.Any(
+                            None, vol.All(vol.Coerce(int), vol.Range(min=1, max=120))
+                        ),
+                        vol.Optional("last_done"): vol.Any(None, vol.Match(r"^\d{4}-\d{2}-\d{2}$")),
                     }
                 )
             ],

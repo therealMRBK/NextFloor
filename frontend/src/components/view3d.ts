@@ -50,7 +50,7 @@ import { fanSpin } from "../entities/fans.ts";
 import { fixtureGlow } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
-import { fetchImage } from "../api.ts";
+import { fetchImage, markNoteDone } from "../api.ts";
 import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms, powerText } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
@@ -598,6 +598,10 @@ export class NfView3d extends LitElement {
         quality: this.quality,
         explode: this.explode,
         onRoomTap: (floorId, roomId) => this.fire("room-tap", { floorId, roomId }),
+        onNoteDone: (noteId) => {
+          if (this.hass) void markNoteDone(this.hass, noteId).catch(() => undefined);
+        },
+        noteDoneLabels: { done: translate(this.hass, "note_done"), last: (day) => translate(this.hass, "note_last_done", { d: day }) },
         onFloorTap: (floorId) => this.fire("floor-tap", { floorId }),
         floorInfo: (floor) =>
           floor.rooms.length === 1 ? translate(this.hass, "floor_rooms_one") : translate(this.hass, "floor_rooms", { n: floor.rooms.length }),
@@ -3050,6 +3054,27 @@ export class NfView3d extends LitElement {
       .nf-note-pin.nf-note-open {
         white-space: normal;
         text-align: left;
+      }
+      .nf-note-task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .nf-note-last {
+        font-size: 0.8em;
+        opacity: 0.7;
+      }
+      .nf-note-done {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--primary-color, #03a9f4);
+        color: var(--text-primary-color, #fff);
+        font-weight: 600;
+        cursor: pointer;
+        pointer-events: auto;
       }
       .nf-note-photo {
         display: block;

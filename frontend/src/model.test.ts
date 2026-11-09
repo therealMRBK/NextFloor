@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { emptyBuilding, floorElevation, newFloor, openingPreset, openingStyle, normalizeBuilding, outdoorDrop, outdoorGround, resizeFurniture, roomTiles, sidelightLayout, spotGrid, surfaceHeight, type Furniture } from "./model.ts";
+import { addMonths, emptyBuilding, floorElevation, noteDoable, noteDonePatch, newFloor, openingPreset, openingStyle, normalizeBuilding, outdoorDrop, outdoorGround, resizeFurniture, roomTiles, sidelightLayout, spotGrid, surfaceHeight, type Furniture } from "./model.ts";
 
 test("a sidelight sits opposite the hinge, on the hinge side when asked, and keeps the leaf at least half a metre", () => {
   const none = {};
@@ -169,4 +169,23 @@ test("a sliding window down to the floor is a lift-and-slide door; with a sill i
   assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0, style: null, opens: "slide" }), "lift_slide");
   assert.equal(openingPreset({ type: "window", leaves: 2, sill: 0.02, style: null, opens: "slide" }), "lift_slide");
   assert.equal(openingPreset({ type: "window", leaves: 1, sill: 0.9, style: null, opens: "slide" }), "window");
+});
+
+test("a note done: a one-off is finished, a recurring one is due again after its months from the day it was done (#113)", () => {
+  assert.deepEqual(noteDonePatch({ repeat_months: null }, "2026-11-09"), { due: null, last_done: "2026-11-09" });
+  assert.deepEqual(noteDonePatch({}, "2026-11-09"), { due: null, last_done: "2026-11-09" });
+  assert.deepEqual(noteDonePatch({ repeat_months: 3 }, "2026-11-09"), { due: "2027-02-09", last_done: "2026-11-09" });
+  assert.deepEqual(noteDonePatch({ repeat_months: 12 }, "2026-11-09"), { due: "2027-11-09", last_done: "2026-11-09" });
+});
+
+test("adding months keeps the day, or cuts it to the last day of a shorter month", () => {
+  assert.equal(addMonths("2026-01-31", 1), "2026-02-28");
+  assert.equal(addMonths("2027-12-31", 2), "2028-02-29");
+  assert.equal(addMonths("2026-11-15", 14), "2028-01-15");
+});
+
+test("a note can be marked done when it has a due day or repeats", () => {
+  assert.equal(noteDoable({ due: "2026-12-01" }), true);
+  assert.equal(noteDoable({ repeat_months: 6 }), true);
+  assert.equal(noteDoable({ due: null, repeat_months: null }), false);
 });

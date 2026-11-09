@@ -29,6 +29,11 @@ export async function storeImage(hass: HomeAssistant, imageId: string, data: str
   await call(hass, "image/set", { image_id: imageId, data });
 }
 
+/** Marks a note of the plan as done (any user may, #113). */
+export async function markNoteDone(hass: HomeAssistant, noteId: string): Promise<void> {
+  await call(hass, "note/done", { note_id: noteId });
+}
+
 /** An automatic copy of the plan the user can go back to. */
 export interface Snapshot {
   id: string;
