@@ -30,8 +30,8 @@ interface Side {
 
 const PARALLEL_TOLERANCE = 0.05;
 const MIN_SHARED_LENGTH = 0.2;
-/** Rooms that overlap by up to this much are moved apart onto one line as well. */
-const MAX_OVERLAP = 0.12;
+/** Rooms that overlap by up to this much are moved apart onto one line as well (a room pushed between two others rarely lands exactly, #121). */
+const MAX_OVERLAP = 0.6;
 
 function sidesOf(rooms: readonly Room[]): Side[] {
   const sides: Side[] = [];
@@ -56,18 +56,18 @@ function sidesOf(rooms: readonly Room[]): Side[] {
 }
 
 /** The gap between two sides that face each other across it, or null when they do not form one. */
-function gapBetween(e: Side, f: Side, maxGap: number): number | null {
+function gapBetween(e: Side, f: Side, maxGap: number, maxOverlap: number): number | null {
   if (e.room === f.room) return null;
   if (Math.abs(cross(e.dir, f.dir)) > PARALLEL_TOLERANCE) return null;
   if (e.outside === f.outside) return null; // facing each other means their outsides point at each other
   const gap = (f.offset - e.offset) * e.outside;
-  if (gap > maxGap || gap < -MAX_OVERLAP || Math.abs(gap) < 1e-4) return null;
+  if (gap > maxGap || gap < -maxOverlap || Math.abs(gap) < 1e-4) return null;
   return Math.min(e.to, f.to) - Math.max(e.from, f.from) < MIN_SHARED_LENGTH ? null : gap;
 }
 
 const thousandths = (v: number) => Math.round(v * 1000) / 1000;
 
-export function closeGaps(rooms: readonly Room[], maxGap = 0.6): GapResult {
+export function closeGaps(rooms: readonly Room[], maxGap = 0.6, maxOverlap = MAX_OVERLAP): GapResult {
   const sides = sidesOf(rooms);
   const leader = sides.map((_, i) => i);
   const root = (i: number): number => (leader[i] === i ? i : (leader[i] = root(leader[i])));
@@ -76,7 +76,7 @@ export function closeGaps(rooms: readonly Room[], maxGap = 0.6): GapResult {
   const candidates: [number, number, number][] = [];
   for (let i = 0; i < sides.length; i++) {
     for (let j = i + 1; j < sides.length; j++) {
-      const gap = gapBetween(sides[i], sides[j], maxGap);
+      const gap = gapBetween(sides[i], sides[j], maxGap, maxOverlap);
       if (gap !== null) candidates.push([i, j, gap]);
     }
   }

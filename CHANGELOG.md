@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **"Close gaps" now also pulls rooms apart that overlap by up to 60 cm** (thanks @alexhass, #121): a room pushed between two others rarely lands exactly. Before, overlaps above 12 cm were ignored, so every room kept its own exterior walls and the walls doubled up or got odd thicknesses. Now such rooms meet on one common line with one interior wall. The hint on the button and the overlap warning say so, and a room nested inside another is still left alone.
+
 ## [0.27.0]
 
 ### Added

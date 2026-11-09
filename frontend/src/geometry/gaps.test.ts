@@ -102,3 +102,30 @@ test("a wall that changes its thickness keeps its step: one room's two walls are
   assert.equal(box(rooms[0]).x1, 3.895, "the bedroom meets the near part of the kitchen wall in the middle");
   assert.ok(rooms[1].points.some((p) => p[0] === 3.895));
 });
+
+test("a room pushed between two others, overlapping both by tens of centimetres, ends up with one interior wall on each side (#121)", () => {
+  for (const overlap of [0.2, 0.35, 0.5]) {
+    const hall = room("hall", 4 - overlap, 0, 6 + overlap, 6);
+    const { rooms, gaps } = closeGaps([room("left", 0, 0, 4, 6), hall, room("right", 6, 0, 10, 6)]);
+    assert.equal(gaps.length, 2, `overlap ${overlap}`);
+    assert.ok(gaps.every((g) => Math.abs(g + overlap) < 1e-9));
+    const { walls, warnings } = generateWalls(rooms, { exterior: 0.3, interior: 0.2 });
+    assert.equal(walls.filter((w) => !w.exterior).length, 2, "one interior wall each side");
+    assert.equal(walls.length, 10, "no doubled walls are left");
+    assert.deepEqual(warnings, [], "the rooms no longer lie on top of each other");
+    assert.equal(box(rooms[0]).x1, box(rooms[1]).x0);
+    assert.equal(box(rooms[2]).x0, box(rooms[1]).x1);
+  }
+});
+
+test("rooms overlapping by more than the maximum are left alone", () => {
+  const rooms = [room("a", 0, 0, 4, 3), room("b", 3.2, 0, 8, 3)];
+  assert.deepEqual(closeGaps(rooms).gaps, []);
+  assert.deepEqual(closeGaps(rooms, 0.6, 1).gaps, [-0.8]);
+});
+
+test("a nested closet, whose walls do not face an outer wall, is not pulled onto it", () => {
+  const { rooms, gaps } = closeGaps([room("big", 0, 0, 6, 4), room("closet", 0.4, 0.4, 1.6, 1.6)]);
+  assert.deepEqual(gaps, []);
+  assert.deepEqual(rooms[1].points, room("closet", 0.4, 0.4, 1.6, 1.6).points);
+});
