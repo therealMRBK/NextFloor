@@ -752,6 +752,9 @@ export interface BuildingSettings {
   announce_phrases?: string[] | null;
   /** Own warnings: a line in the warning bar while an entity is in a state ("Water tank empty", "Dishwasher done"). */
   own_alerts?: OwnAlert[] | null;
+  /** How many warnings the warning bar shows at once (null = 3) and in how many rows (null = 1, D#52). */
+  alerts_max?: number | null;
+  alerts_rows?: 1 | 2 | null;
   /** Calendars whose appointments of the day show on the "Today" card of the 3D view. */
   calendars?: string[] | null;
   /** How many days the "Today" card lists, from today on (null = today only). */

@@ -96,8 +96,15 @@ function ownAlerts(host: EditorHost): TemplateResult {
     ${selectField(host, host.t("own_alert_tap"), a.tap ?? "", [["", host.t("own_alert_tap_info")], ["toggle", host.t("own_alert_tap_toggle")], ["room", host.t("own_alert_tap_room")]], (v) => edit(i, { tap: (v || null) as OwnAlert["tap"] }))}
     <div class="nf-actions nf-wide"><button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button></div>
   </div>`;
+  const s = host.doc.settings;
+  const counts: [string, string][] = [1, 2, 3, 4, 5, 6, 8, 10, 12].map((n) => [String(n), String(n)]);
+  const bar = html`<div class="nf-form">
+    ${selectField(host, host.t("alerts_max"), String(s.alerts_max ?? 3), counts, (v) => host.change((d) => (d.settings.alerts_max = Number(v) === 3 ? undefined : Number(v))))}
+    ${selectField(host, host.t("alerts_rows"), String(s.alerts_rows ?? 1), [["1", "1"], ["2", "2"]], (v) => host.change((d) => (d.settings.alerts_rows = v === "2" ? 2 : undefined)))}
+    ${hint(host.t("alerts_bar_hint"), "nf-wide")}
+  </div>`;
   return html`<h4>⚠ ${host.t("own_alerts")}</h4>
-    ${hint(host.t("own_alerts_hint"))} ${list.map(card)}
+    ${bar} ${hint(host.t("own_alerts_hint"))} ${list.map(card)}
     ${list.length < 40 ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("alert"), entity: "", state: null, text: host.t("own_alert_new") }])}>+ ${host.t("own_alert_add")}</button>`) : nothing}`;
 }
 

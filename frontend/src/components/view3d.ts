@@ -1915,10 +1915,12 @@ export class NfView3d extends LitElement {
   private renderAlerts() {
     const b = this.building;
     if (!this._alerts.length || !b) return nothing;
-    const shown = this._alerts.slice(0, 3);
-    return html`<div class="nf-alert-banner" role="alert">
+    // how many at once and in how many rows is set under House → Own warnings (D#52)
+    const max = Math.max(1, Math.min(12, b.settings.alerts_max ?? 3));
+    const shown = this._alerts.slice(0, max);
+    return html`<div class="nf-alert-banner${b.settings.alerts_rows === 2 ? " nf-alert-rows2" : ""}" role="alert">
       ${shown.map((a) => html`<button class="nf-alert nf-alert-${a.kind}" style=${a.color ? `border-left-color:${a.color}` : ""} title=${alertText(this.hass, b, a)} @click=${() => this.jumpTo(a)}>${alertText(this.hass, b, a)}</button>`)}
-      ${this._alerts.length > 3 ? html`<span class="nf-alert-more">+${this._alerts.length - 3}</span>` : nothing}
+      ${this._alerts.length > max ? html`<span class="nf-alert-more">+${this._alerts.length - max}</span>` : nothing}
     </div>`;
   }
 
@@ -2849,6 +2851,11 @@ export class NfView3d extends LitElement {
         gap: 6px;
         max-width: calc(100% - 24px);
         z-index: 4;
+      }
+      .nf-alert-banner.nf-alert-rows2 {
+        flex-wrap: wrap;
+        max-height: 76px;
+        overflow: hidden;
       }
       .nf-alert {
         flex: 0 1 auto;

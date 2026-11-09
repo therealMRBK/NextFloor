@@ -920,6 +920,9 @@ SETTINGS_SCHEMA = vol.Schema(
                 vol.Length(max=40),
             ),
         ),
+        # the warning bar: how many warnings at once and in how many rows
+        vol.Optional("alerts_max"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=1, max=12))),
+        vol.Optional("alerts_rows"): vol.Any(None, vol.In([1, 2])),
         # the fuse box: circuits with the rooms they feed
         vol.Optional("circuits"): vol.Any(
             None,
