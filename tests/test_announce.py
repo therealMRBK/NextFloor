@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import copy
-from datetime import time
+from datetime import time, timedelta
 from typing import Any
 from unittest.mock import patch
 
@@ -12,6 +12,7 @@ from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_mock_service
 
@@ -214,7 +215,10 @@ async def test_quiet_rooms_are_left_out_unless_named_alone(hass: HomeAssistant, 
     _speaker(hass, "media_player.kitchen_radio", areas["kitchen"])
     _speaker(hass, "media_player.nursery_box", areas["nursery"])
     building = _building(areas)
-    building["floors"][0]["rooms"][2]["announce_quiet"] = {"from": "00:00", "to": "23:59"}
+    # a quiet window around now (wrapping past midnight works too), so the test does not depend on the clock
+    now = dt_util.now()
+    window = {"from": (now - timedelta(hours=1)).strftime("%H:%M"), "to": (now + timedelta(hours=1)).strftime("%H:%M")}
+    building["floors"][0]["rooms"][2]["announce_quiet"] = window
     await _setup(hass, building)
 
     result = await _announce(hass, message="Hi", on_screens=False)
