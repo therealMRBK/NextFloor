@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.29.0.3]
+
+### Fixed
+
+- **Window glass and robot vacuums follow the look** (thanks @eskahone, D#82): in the own look, Blueprint and Day the glass of the windows stayed teal and the robots' bodies stayed slate blue. Both now take the colours of the look, like walls and frames. The robot's status light keeps its signal colour.
+
 ## [0.29.0.2]
 
 ### Fixed
@@ -669,7 +675,8 @@ The first release.
 - English and German in the box, fourteen more languages fetched on demand.
 - Free and open source, no account, no cloud: NextFloor does not talk to the internet.
 
-[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.2...main
+[Unreleased]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.3...main
+[0.29.0.3]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.2...v0.29.0.3
 [0.29.0.2]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0.1...v0.29.0.2
 [0.29.0.1]: https://github.com/therealMRBK/NextFloor/compare/v0.29.0...v0.29.0.1
 [0.29.0]: https://github.com/therealMRBK/NextFloor/compare/v0.28.0...v0.29.0

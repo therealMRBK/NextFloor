@@ -74,7 +74,8 @@ export function makeFloorMaterials({ mask, look, theme, own, textures }: Materia
     // light on floors and walls follows the cut and the glass walls like the walls themselves
     glow: foldable(overlay({ side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -3 }), "solid"),
     frames: themed(foldable(solid({ side: DoubleSide })), look),
-    glass: foldable(overlay({ side: DoubleSide })),
+    // window glass follows the look like the other surfaces (D#82)
+    glass: themed(foldable(overlay({ side: DoubleSide })), look),
     blinds: themed(foldable(solid({ map: textures.blinds, side: DoubleSide })), look),
     lamps: themed(solid(), look),
     halos: new PointsMaterial({ map: textures.halo, size: 0.9, sizeAttenuation: true, vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false }),

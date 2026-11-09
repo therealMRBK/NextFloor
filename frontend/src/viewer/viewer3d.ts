@@ -3208,7 +3208,7 @@ export class NextFloorViewer {
       disc(0.17, 0.012, 0.08, 0x243049, 0x34425f);
       disc(0.055, 0.08, 0.1, 0x3a4a6a, 0x4d5f86);
       this.robotGeo = buf.geometry();
-      this.robotMat = new MeshBasicMaterial({ vertexColors: true });
+      this.robotMat = themed(new MeshBasicMaterial({ vertexColors: true }), this.themeUniform);
       const led = new GeoBuffer();
       pushPrism(led, [[-0.05, 0.1], [0.05, 0.1], [0.05, 0.14], [-0.05, 0.14]], 0.08, 0.085, 0xffffff, 0xffffff, { aoFrom: 0, bottom: false });
       this.robotLedGeo = led.geometry();
