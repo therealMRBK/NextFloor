@@ -6,6 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
+- **Own look** (thanks @eskahone, D#82): a fourth look next to Neon, Blueprint and Day with your own colours. It works like Blueprint and Day, so walls, floors and furniture share one colour scheme: they run from *Own look: surfaces dark* to *Own look: surfaces light*, edges take *Own look: lines*, and the stage gets *Own look: background*. Set the colours house-wide in the editor's *Settings*. A card can override them in the card editor (with the look *Own*) or in YAML with `theme: own` and `own_look: {dark, light, lines, background}`. Signal colours (lamps, alerts, heat map) keep their colour. On a light background the lines are drawn without glow, like in Day.
 - **Floor miniatures folded from the start** (thanks @eskahone, #84): a card can start with the floor miniatures folded to small floor buttons, for a wall tablet say: *Start with the miniatures folded* in the card editor, or `floor_thumbs_folded: true`. The arrow still opens them for the visit.
 
 ### Fixed

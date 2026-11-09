@@ -5,6 +5,7 @@ import { html, LitElement, nothing, type TemplateResult } from "lit";
 import { fetchBuilding } from "./api.ts";
 import { MARKER_KINDS, type MarkerKind } from "./entities/kinds.ts";
 import { FURNITURE_ROLES, STOCK_ROLE_HEX, type FurnitureColors, type FurnitureRole } from "./furniture-colors.ts";
+import { OWN_LOOK_DEFAULT, OWN_LOOK_KEYS, type OwnLook } from "./themes.ts";
 import { CARD_CONTROLS, type CardConfig, type CardControl } from "./card-config.ts";
 import { checkbox, choice, DEFAULTS, flagOption, followOrForce, numberChoice, switchOption, textField, type FormContext } from "./card-editor/form.ts";
 import { editorStyles } from "./card-editor/styles.ts";
@@ -240,6 +241,26 @@ export class NextFloorCardEditor extends LitElement {
     </details>`;
   }
 
+  /** The card's own colours for the own look, on top of the house's in the editor settings (#82). */
+  private ownLookColors(f: FormContext): TemplateResult {
+    const own = this._config.own_look ?? {};
+    const put = (key: (typeof OWN_LOOK_KEYS)[number], v: string | null) => {
+      const next: OwnLook = { ...own, [key]: v ?? undefined };
+      if (!v) delete next[key];
+      f.set("own_look", Object.keys(next).length ? next : undefined);
+    };
+    return html`<details class="field wide">
+      <summary>${f.t("own_look_card")}${Object.keys(own).length ? ` (${Object.keys(own).length})` : ""}</summary>
+      ${OWN_LOOK_KEYS.map(
+        (key) => html`<label class="field"
+          >${f.t(`own_look_${key}`)}
+          <input type="color" .value=${own[key] ?? OWN_LOOK_DEFAULT[key]} @input=${(e: Event) => put(key, (e.target as HTMLInputElement).value)} />
+          ${own[key] ? html`<button type="button" class="link" @click=${() => put(key, null)}>${f.t("furn_color_house")}</button>` : nothing}
+        </label>`,
+      )}
+    </details>`;
+  }
+
   /** The view: start floor, size, theme, accent colour, walls, quality and floor stacking. */
   private viewSection(): TemplateResult {
     const f = this.form;
@@ -285,13 +306,14 @@ export class NextFloorCardEditor extends LitElement {
             }}
           />
         </label>
-        ${choice(f, "theme", "theme", [["auto", "theme_auto"], ["neon", "theme_neon"], ["blueprint", "theme_blueprint"], ["day", "theme_day"]], v.theme)}
+        ${choice(f, "theme", "theme", [["auto", "theme_auto"], ["neon", "theme_neon"], ["blueprint", "theme_blueprint"], ["day", "theme_day"], ["own", "theme_own"]], v.theme)}
         ${choice(f, "clock", "clock", [["none", "clock_none"], ["top_left", "clock_top_left"], ["top_right", "clock_top_right"], ["bottom_left", "clock_bottom_left"], ["bottom_right", "clock_bottom_right"]], v.clock ?? "none")}
         <label class="field"
           >${f.t("accent")}
           <input type="color" .value=${this._config.accent ?? "#37e0ff"} @input=${(e: Event) => f.set("accent", (e.target as HTMLInputElement).value)} />
           ${this._config.accent ? html`<button type="button" class="link" @click=${() => f.set("accent", undefined)}>${f.t("accent_reset")}</button>` : nothing}
         </label>
+        ${v.theme === "own" ? this.ownLookColors(f) : nothing}
         ${this.furnitureColors(f)}
         ${choice(f, "walls", "card_walls", [["auto", "walls_auto"], ["cut", "walls_cut"], ["slope", "walls_slope"]], v.walls)}
         ${switchOption(f, "solid_walls", "card_solid_walls")}

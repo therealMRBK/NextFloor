@@ -4,6 +4,7 @@
 import { AdditiveBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
 import { makeFoldable, type FoldMasks } from "../fold.ts";
 import { lineBlending, themed, type Theme, type ThemeUniform } from "../theme.ts";
+import type { OwnLook } from "../../themes.ts";
 
 export interface FloorMaterials {
   floor: MeshBasicMaterial;
@@ -28,6 +29,8 @@ export interface MaterialInputs {
   mask: FoldMasks;
   look: ThemeUniform;
   theme: Theme;
+  /** the own look's colours (a light background turns the line glow off) */
+  own?: OwnLook;
   textures: { pattern: CanvasTexture; blinds: CanvasTexture; halo: CanvasTexture };
 }
 
@@ -57,7 +60,7 @@ export function patternMaterial(texture: CanvasTexture): MeshBasicMaterial {
 const overlay = (extra: ConstructorParameters<typeof MeshBasicMaterial>[0] = {}) =>
   new MeshBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false, ...extra });
 
-export function makeFloorMaterials({ mask, look, theme, textures }: MaterialInputs): FloorMaterials {
+export function makeFloorMaterials({ mask, look, theme, own, textures }: MaterialInputs): FloorMaterials {
   const solid = (extra: ConstructorParameters<typeof MeshBasicMaterial>[0] = {}) => new MeshBasicMaterial({ vertexColors: true, ...extra });
   const foldable = <T extends Material>(m: T, glass?: "solid" | "glass") => makeFoldable(m as never, mask, glass) as unknown as T;
   return {
@@ -67,7 +70,7 @@ export function makeFloorMaterials({ mask, look, theme, textures }: MaterialInpu
     glassWall: foldable(solid({ transparent: true, depthWrite: false }), "glass"),
     // the result is the floor colour times the vertex colour: white leaves the floor as it is
     shadow: solid({ blending: MultiplyBlending, premultipliedAlpha: true, transparent: true, depthWrite: false, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }),
-    lines: themed(foldable(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(theme), depthWrite: false })), look, true),
+    lines: themed(foldable(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(theme, own), depthWrite: false })), look, true),
     // light on floors and walls follows the cut and the glass walls like the walls themselves
     glow: foldable(overlay({ side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -3 }), "solid"),
     frames: themed(foldable(solid({ side: DoubleSide })), look),

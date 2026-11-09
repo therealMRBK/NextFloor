@@ -19,7 +19,7 @@ import { deviceSensors, energySummary, findConsumers, powerSensorFor, readPower,
 import { mapCredit, mapShown } from "../map-geo.ts";
 import { type CustomButton, type EntityRef } from "../model.ts";
 
-import { STAGE, type Theme } from "../themes.ts";
+import { ownLook, stageFor, type OwnLook, type Theme } from "../themes.ts";
 import { heatColor, heatGradient, roomValues, scaleOf, type HeatMode } from "../heatmap.ts";
 import { airingNeed, isSummer, mouldRisk } from "../live/room-climate.ts";
 import { furnitureName } from "../furniture-names.ts";
@@ -92,6 +92,7 @@ export class NfView3d extends LitElement {
     heatMode: { attribute: false },
     theme: { attribute: false },
     accent: { attribute: false },
+    ownLook: { attribute: false },
     furnitureColors: { attribute: false },
     packs: { attribute: false },
     showEnergy: { attribute: false },
@@ -213,6 +214,8 @@ export class NfView3d extends LitElement {
   declare theme: Theme;
   /** Accent colour for the neon look ("#rrggbb"), null for the stock cyan. */
   declare accent: string | null;
+  /** The card's own colours for the own look, on top of the house's (#82). */
+  declare ownLook: OwnLook | null;
   /** The card's own furniture colours, on top of the house-wide ones (#82). */
   declare furnitureColors: FurnitureColors | null;
   /** Show the energy values at the top (cards can switch them off). */
@@ -435,6 +438,7 @@ export class NfView3d extends LitElement {
     this.heatMode = "none";
     this.theme = "neon";
     this.accent = null;
+    this.ownLook = null;
     this.furnitureColors = null;
     this.furnish = false;
     this.weather = true;
@@ -612,6 +616,7 @@ export class NfView3d extends LitElement {
       this.viewer.setGlassWalls((this.glassWalls ?? 20) / 100);
       this.viewer.setTheme(this.theme);
       this.viewer.setAccent(this.accent ?? null);
+      this.viewer.setOwnLook(this.filledOwnLook);
       this.viewer.setFurnitureColors(this.furnitureColors ?? null);
       this.viewer.setNotePhotos((photo) => (this.hass ? pictureUrl(this.hass, photo, (id) => this.storedPicture(this.hass!, id)) : null));
       this.viewer.setNavigationLocked(this._locked);
@@ -695,7 +700,7 @@ export class NfView3d extends LitElement {
       v.setStartView(this.startViewOf());
       if (this.floorId === null) v.resetView();
     }
-    if (changed.has("building") || changed.has("theme") || changed.has("floorThumbs") || changed.has("packs")) this.scheduleThumbs();
+    if (changed.has("building") || changed.has("theme") || changed.has("ownLook") || changed.has("floorThumbs") || changed.has("packs")) this.scheduleThumbs();
     // markers shown by kind outside the opened room change with the room
     const byRoom = this.markersOutside ? ["markersOutside", "floorId", "roomId"] : ["markersOutside"];
     const forced = this.pluginsDirty || ["building", "markerMode", "heatMode", "flows", "alerts", "dimmed", ...byRoom].some((k) => changed.has(k));
@@ -724,6 +729,7 @@ export class NfView3d extends LitElement {
     if (changed.has("theme")) v.setTheme(this.theme);
     if (changed.has("_locked")) v.setNavigationLocked(this._locked);
     if (changed.has("accent")) v.setAccent(this.accent ?? null);
+    if (changed.has("ownLook") || changed.has("building")) v.setOwnLook(this.filledOwnLook);
     if (changed.has("furnitureColors")) v.setFurnitureColors(this.furnitureColors ?? null);
     if (changed.has("surfaceGrab")) v.setSurfaceGrab(this.surfaceGrab ?? null);
     if (changed.has("furnishTypes")) v.setFurnishTypes(this.furnishTypes ?? null);
@@ -1713,6 +1719,11 @@ export class NfView3d extends LitElement {
   }
 
   /** Pictures of the floors, drawn a moment after the plan or the look changed (once, not per frame). */
+  /** The own look's colours: the card's over the house's over the default. */
+  private get filledOwnLook() {
+    return ownLook(this.building?.settings.own_look, this.ownLook);
+  }
+
   private scheduleThumbs(delay = 600): void {
     clearTimeout(this.thumbTimer);
     const floors = this.building?.floors.filter((f) => f.rooms.length).length ?? 0;
@@ -2790,7 +2801,7 @@ export class NfView3d extends LitElement {
 
   /** The sky colour behind the house right now (night: deep blue-black, day: lighter and bluer, clouds in between). */
   private skyColor(): [number, number, number] {
-    const stage = STAGE[this.theme] ?? STAGE.neon;
+    const stage = stageFor(this.theme, this.filledOwnLook);
     const sky = this._sky;
     return stage.night[0].map((v, i) => Math.round(v + (stage.day[0][i] - v) * sky)) as [number, number, number];
   }
@@ -2798,7 +2809,7 @@ export class NfView3d extends LitElement {
   protected render() {
     const sky = this._sky;
     const mix = (a: number[], b: number[]) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * sky)).join(",")})`;
-    const stage = STAGE[this.theme] ?? STAGE.neon;
+    const stage = stageFor(this.theme, this.filledOwnLook);
     const style = `--nf-sky:${mix(stage.night[0], stage.day[0])};--nf-ground:${mix(stage.night[1], stage.day[1])}` + backdropStyle(this.building?.settings.backdrop);
     return html`<div
       class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"

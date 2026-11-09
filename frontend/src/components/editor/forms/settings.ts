@@ -4,6 +4,7 @@ import type { I18nKey } from "../../../i18n.ts";
 import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, DEFAULT_WEATHER_EFFECTS, WEATHER_EFFECTS, type Building, type RoofType } from "../../../model.ts";
 import { entityName } from "../../../devices.ts";
 import { FURNITURE_ROLES, STOCK_ROLE_HEX } from "../../../furniture-colors.ts";
+import { OWN_LOOK_DEFAULT, OWN_LOOK_KEYS } from "../../../themes.ts";
 import { entityOptions } from "../entities.ts";
 import { renderCompass } from "./compass.ts";
 import { renderMapSettings } from "./map.ts";
@@ -81,6 +82,14 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
         }),
       )}
       ${hint(t("furn_color_hint"), "nf-wide")}
+      ${OWN_LOOK_KEYS.map((key) =>
+        colorField(host, t(`own_look_${key}`), s.own_look?.[key], OWN_LOOK_DEFAULT[key], (v) => {
+          const look = { ...s.own_look, [key]: v ?? undefined };
+          if (!v) delete look[key];
+          set({ own_look: Object.keys(look).length ? look : null });
+        }),
+      )}
+      ${hint(t("own_look_hint"), "nf-wide")}
       ${numberField(host, t("grid"), s.grid, (v) => set({ grid: clamp(v, 0.01, 1) }), 0.01, 0.01)}
       ${selectField(host, t("units"), s.units === "imperial" ? "imperial" : "metric", [["metric", t("units_metric")], ["imperial", t("units_imperial")]] as const, (v) => set({ units: v === "imperial" ? "imperial" : null }), { title: t("units_hint") })}
       ${renderCompass(host, s.north, (north) => set({ north }))}

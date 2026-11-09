@@ -73,7 +73,8 @@ import { GROUND, groundFace, groundFloor, wallFaces } from "../solar.ts";
 import { MapLayer } from "./live-map.ts";
 import type { MapSettings } from "../model.ts";
 import { applyFurnitureColors, type FurnitureColors } from "./furniture/palette.ts";
-import { accentOnUniform, accentUniform, parseAccent, lineBlending, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
+import { accentOnUniform, accentUniform, parseAccent, lineBlending, setOwnLook, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
+import { lightStage, OWN_LOOK_DEFAULT, type OwnLook } from "../themes.ts";
 
 export type { Theme } from "./theme.ts";
 import { ALWAYS, DEG, GeoBuffer, LineBuffer, pushPrism } from "./geo.ts";
@@ -562,6 +563,7 @@ export class NextFloorViewer {
   private grab: { floorId: string; id: string; offset: [number, number]; x: number; z: number; moved: boolean } | null = null;
   private ghost: LineSegments | null = null;
   private theme: Theme = "neon";
+  private own: Required<OwnLook> = { ...OWN_LOOK_DEFAULT };
   private readonly themeUniform: ThemeUniform = { value: 0 };
   private sun: SunState | null = null;
   /** The sky over the plot: rain, snow, clouds, fog, lightning, sun and moon (live-weather.ts). */
@@ -1082,7 +1084,6 @@ export class NextFloorViewer {
     this.pickOpenings2 = second;
   }
 
-  /** Look of the 3D view: neon, blueprint or day. Instant: colours are mapped in the shaders. */
   /** An accent colour of the user's choice for the neon look ("#rrggbb"), null for the stock cyan. */
   setNotePhotos(resolve: ((photo: string) => string | null) | null): void {
     this.notePhoto = resolve;
@@ -1107,12 +1108,28 @@ export class NextFloorViewer {
     this.invalidate();
   }
 
+  /** Look of the 3D view: neon, blueprint, day or own. Instant: colours are mapped in the shaders. */
   setTheme(theme: Theme): void {
     if (theme === this.theme) return;
     this.theme = theme;
-    this.placeMap();
     this.themeUniform.value = themeIndex(theme);
-    const blending = lineBlending(theme);
+    this.lookChanged();
+  }
+
+  /** The colours of the own look (#82), filled; they only show while the look is "own". */
+  setOwnLook(look: Required<OwnLook>): void {
+    const changed = setOwnLook(look) || look.background !== this.own.background;
+    this.own = { ...look };
+    if (changed) this.lookChanged();
+  }
+
+  private get lightStage(): boolean {
+    return lightStage(this.theme, this.own);
+  }
+
+  private lookChanged(): void {
+    this.placeMap();
+    const blending = lineBlending(this.theme, this.own);
     const lineMats = [...this.floors.map((f) => f.materials.lines), ...(this.roof ? [this.roof.lines] : [])];
     for (const m of lineMats) {
       m.blending = blending;
@@ -1772,7 +1789,7 @@ export class NextFloorViewer {
         : undefined;
       const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor));
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
-      const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
+      const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, own: this.own, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();
       const floorMesh = new Mesh(geo.floor, materials.floor);
       const shadowMesh = new Mesh(geo.shadow, materials.shadow);
@@ -2016,7 +2033,7 @@ export class NextFloorViewer {
     if (!geos.length) return;
     const group = new Group();
     const solid = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide }), this.themeUniform);
-    const lines = themed(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(this.theme), depthWrite: false }), this.themeUniform, true);
+    const lines = themed(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(this.theme, this.own), depthWrite: false }), this.themeUniform, true);
     // canopies: faint see-through panels that do not hide what is below
     const glass = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide, depthWrite: false }), this.themeUniform);
     const parts = geos.map((geo) => {
@@ -2075,7 +2092,7 @@ export class NextFloorViewer {
    */
   private applyTierFlags(): void {
     const low = this.lowQuality;
-    this.ground.visible = !low && this.theme !== "day" && this.floors.some((f) => f.floor.rooms.length > 0);
+    this.ground.visible = !low && !this.lightStage && this.floors.some((f) => f.floor.rooms.length > 0);
     for (const fv of this.floors) {
       fv.patternMesh.visible = !low;
       fv.shadowMesh.visible = !low && fv.o > 0.98;
@@ -2521,7 +2538,7 @@ export class NextFloorViewer {
       for (const room of fv.floor.rooms) for (const [x, z] of room.points) box.expandByPoint(new Vector3(x, 0, z));
       for (const a of fv.floor.outdoor ?? []) for (const [x, z] of a.points) box.expandByPoint(new Vector3(x, 0, z));
     }
-    this.ground.visible = !box.isEmpty() && !this.lowQuality && this.theme !== "day";
+    this.ground.visible = !box.isEmpty() && !this.lowQuality && !this.lightStage;
     if (box.isEmpty()) return;
     if (this.ground.visible && !this.groundTexture) {
       this.groundTexture = makeGroundTexture();
@@ -2548,7 +2565,7 @@ export class NextFloorViewer {
   }
 
   private placeMap(): void {
-    this.mapLayer.set(this.mapSettings, this.mapNorth, this.groundY, this.theme === "day" ? 1 : 0.55);
+    this.mapLayer.set(this.mapSettings, this.mapNorth, this.groundY, this.lightStage ? 1 : 0.55);
   }
 
   /** Camera distance at which a box of this size fits the view (bounding sphere against the narrower field of view). */

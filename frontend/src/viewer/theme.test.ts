@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { AdditiveBlending, MeshBasicMaterial, NormalBlending } from "three";
-import { lineBlending, parseAccent, themed, themeIndex } from "./theme.ts";
+import { lineBlending, ownUniforms, parseAccent, setOwnLook, themed, themeIndex } from "./theme.ts";
 
 test("an accent colour is read from #rrggbb, with or without the hash, and nothing else", () => {
   assert.deepEqual(parseAccent("#ff0000"), [1, 0, 0]);
@@ -42,4 +42,20 @@ test("theming keeps an earlier patch of the same material", () => {
   themed(material, { value: 0 });
   material.onBeforeCompile({ uniforms: {}, fragmentShader: "" } as never, undefined as never);
   assert.ok(called);
+});
+
+test("the own look is index 3, puts its colours into the shader, and draws lines without glow on a light background", () => {
+  assert.equal(themeIndex("own"), 3);
+  const look = { dark: "#000000", light: "#ffffff", lines: "#ff0000", background: "#f0f0f0" };
+  setOwnLook({ ...look, lines: "#00ff00" });
+  assert.equal(setOwnLook(look), true);
+  assert.equal(setOwnLook(look), false);
+  assert.deepEqual(ownUniforms.uOwnLine.value.toArray(), [1, 0, 0]);
+  assert.deepEqual(ownUniforms.uOwnLight.value.toArray(), [1, 1, 1]);
+  assert.equal(lineBlending("own", look), NormalBlending);
+  assert.equal(lineBlending("own", { ...look, background: "#101820" }), AdditiveBlending);
+  const shader = { uniforms: {} as Record<string, unknown>, fragmentShader: "#include <common>\n#include <color_fragment>" };
+  themed(new MeshBasicMaterial(), { value: 3 }).onBeforeCompile(shader as never, undefined as never);
+  assert.equal(shader.uniforms.uOwnDark, ownUniforms.uOwnDark);
+  assert.ok(shader.fragmentShader.includes("uTheme == 3"));
 });

@@ -849,6 +849,14 @@ SETTINGS_SCHEMA = vol.Schema(
                 for role in ("body", "wood", "fabric", "white", "metal", "dark")
             },
         ),
+        # colours of the own look (#82): dark and light surfaces, lines, background; a card can set its own on top
+        vol.Optional("own_look", default=None): vol.Any(
+            None,
+            {
+                vol.Optional(key): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$"))
+                for key in ("dark", "light", "lines", "background")
+            },
+        ),
         # plugin modules the panel and the card import (docs/plugins.md); no default, so plans stay as stored
         vol.Optional("plugins"): vol.All([PLUGIN_SCHEMA], vol.Length(max=20)),
         # plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident

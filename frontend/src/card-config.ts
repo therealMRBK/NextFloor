@@ -1,4 +1,5 @@
 import type { FurnitureColors } from "./furniture-colors.ts";
+import type { OwnLook } from "./themes.ts";
 // Configuration of the dashboard card, shared by the card and its visual editor (a bundle of its own).
 
 import type { MarkerKind } from "./entities/kinds.ts";
@@ -40,7 +41,7 @@ export interface CardConfig {
   /** Heatmap of the rooms: none | temperature | humidity | co2. */
   heatmap?: "none" | "temperature" | "humidity" | "co2";
   /** Look: neon | blueprint | day. */
-  theme?: "auto" | "neon" | "blueprint" | "day";
+  theme?: "auto" | "neon" | "blueprint" | "day" | "own";
   /** A clock in a corner of the view (default none). */
   clock?: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
   /** The 🔒 button that locks the camera on this device (default shown). */
@@ -53,6 +54,8 @@ export interface CardConfig {
   accent?: string;
   /** Furniture colours of this card per role, on top of the house-wide ones (#82). */
   furniture_colors?: FurnitureColors;
+  /** The card's own colours for the own look (theme: own), on top of the house's (#82). */
+  own_look?: OwnLook;
   /** Energy values at the top (default true). */
   energy?: boolean;
   /** Power flow lines always on or off; without it the card has its own switch. */

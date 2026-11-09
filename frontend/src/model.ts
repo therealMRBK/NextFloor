@@ -7,6 +7,7 @@ import type { LightEffectConfig } from "./light-effects.ts";
 import type { StairConfig } from "./geometry/stairs.ts";
 import type { LampModel } from "./viewer/viewer3d.ts";
 import type { FurnitureColors } from "./furniture-colors.ts";
+import type { OwnLook } from "./themes.ts";
 import type { ShowWhen } from "./entities/visibility.ts";
 
 export type Vec2 = [number, number];
@@ -694,6 +695,8 @@ export interface BuildingSettings {
   wall_paint_inside?: string | null;
   /** Furniture colours per role ("#rrggbb"; body, wood, fabric, white, metal, dark), house-wide (#82). */
   furniture_colors?: FurnitureColors | null;
+  /** The colours of the own look ("#rrggbb": dark and light surfaces, lines, background), house-wide (#82). */
+  own_look?: OwnLook | null;
   grid: number;
   /** Direction of north in the plan, degrees clockwise from "up" (for the sun). */
   north: number;

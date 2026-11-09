@@ -1,8 +1,54 @@
 // Looks of the 3D view, shared by the main bundle (settings, stage background) and the 3D bundle.
 
-export type Theme = "neon" | "blueprint" | "day";
+export type Theme = "neon" | "blueprint" | "day" | "own";
 
-export const THEMES: Theme[] = ["neon", "blueprint", "day"];
+export const THEMES: Theme[] = ["neon", "blueprint", "day", "own"];
+
+/** The colours of the own look ("#rrggbb" each; missing ones take the default), house-wide in the settings or a card's own (#82). */
+export interface OwnLook {
+  /** the darkest surfaces (floors, the ground) */
+  dark?: string;
+  /** the lightest surfaces (walls, furniture tops) */
+  light?: string;
+  lines?: string;
+  background?: string;
+}
+
+export const OWN_LOOK_KEYS = ["dark", "light", "lines", "background"] as const;
+
+/** The own look before anything is picked: warm greys with copper lines on a dark slate. */
+export const OWN_LOOK_DEFAULT: Required<OwnLook> = { dark: "#2a2622", light: "#8c8378", lines: "#e0a060", background: "#1c1e22" };
+
+/** "#rrggbb" as 0..255 numbers; null for anything else. */
+export function hexRgb(hex: string | null | undefined): [number, number, number] | null {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex?.trim() ?? "");
+  if (!match) return null;
+  const value = Number.parseInt(match[1], 16);
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+}
+
+/** The own look with every colour filled: the card's own over the house's over the default. Bad values are skipped. */
+export function ownLook(...layers: (OwnLook | null | undefined)[]): Required<OwnLook> {
+  const out = { ...OWN_LOOK_DEFAULT };
+  for (const layer of layers) for (const key of OWN_LOOK_KEYS) if (hexRgb(layer?.[key])) out[key] = layer![key]!;
+  return out;
+}
+
+/** A light stage needs dark lines drawn without glow and no neon ground grid: the day look, or an own look on a light background. */
+export function lightStage(theme: Theme, own: OwnLook): boolean {
+  if (theme === "day") return true;
+  if (theme !== "own") return false;
+  const [r, g, b] = hexRgb(own.background) ?? [0, 0, 0];
+  return 0.299 * r + 0.587 * g + 0.114 * b > 140;
+}
+
+/** The stage background of a look; the own look takes its background for the sky and a darker shade of it for the edges. */
+export function stageFor(theme: Theme, own: OwnLook): { night: [number[], number[]]; day: [number[], number[]] } {
+  if (theme !== "own") return STAGE[theme] ?? STAGE.neon;
+  const sky = hexRgb(own.background) ?? hexRgb(OWN_LOOK_DEFAULT.background)!;
+  const shade = (f: number) => sky.map((v) => Math.round(v * f));
+  return { night: [shade(0.9), shade(0.62)], day: [sky, shade(0.72)] };
+}
 
 /** A look to pick: one of the looks, or "auto" – day while the sun is up, neon after sunset. */
 export type Look = Theme | "auto";
@@ -16,7 +62,7 @@ export function lookNow(look: Look | undefined, sunState: string | undefined): T
 }
 
 /** Background of the 3D stage per look (sky in the middle, ground at the edges), night and day. */
-export const STAGE: Record<Theme, { night: [number[], number[]]; day: [number[], number[]] }> = {
+export const STAGE: Record<Exclude<Theme, "own">, { night: [number[], number[]]; day: [number[], number[]] }> = {
   neon: {
     night: [
       [11, 17, 32],
