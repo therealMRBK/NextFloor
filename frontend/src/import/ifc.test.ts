@@ -44,6 +44,15 @@ DATA;
 #71=IFCAXIS2PLACEMENT3D(#10,$,#70);
 #72=IFCLOCALPLACEMENT(#12,#71);
 #73=IFCSPACE('e',$,'Schlafen',$,$,#72,#37,$,.ELEMENT.,.INTERNAL.,$);
+#90=IFCCARTESIANPOINT((2500.,-120.,0.));
+#91=IFCAXIS2PLACEMENT3D(#90,$,$);
+#92=IFCLOCALPLACEMENT(#12,#91);
+#93=IFCDOOR('h',$,'T1',$,$,#92,$,$,2010.,885.);
+#94=IFCCARTESIANPOINT((10120.,1000.,900.));
+#95=IFCAXIS2PLACEMENT3D(#94,$,#70);
+#96=IFCLOCALPLACEMENT(#12,#95);
+#97=IFCWINDOW('i',$,'F1',$,$,#96,$,$,1200.,1600.);
+#98=IFCRELCONTAINEDINSPATIALSTRUCTURE('j',$,$,$,(#93,#97),#20);
 #80=IFCRELAGGREGATES('f',$,$,$,#20,(#41,#62));
 #81=IFCRELAGGREGATES('g',$,$,$,#21,(#73));
 ENDSEC;
@@ -80,4 +89,23 @@ test("storeys become floors and spaces rooms, in metres, with their footprints",
 
 test("a file without spaces is refused", () => {
   assert.throws(() => importIfc("ISO-10303-21;\nDATA;\n#1=IFCSIUNIT(*,.LENGTHUNIT.,$,.METRE.);\nENDSEC;"), /ifc_empty/);
+});
+
+test("doors and windows land in the nearest room wall with their size and sill", () => {
+  const { building, report } = importIfc(SAMPLE);
+  assert.equal(report.openings, 2);
+  const eg = building.floors[0];
+  const [door, win] = eg.openings;
+  // the door: 12 cm outside the kitchen's south wall (y = 0), its middle at x = 2.5 + 0.4425 m
+  const kitchen = eg.rooms.find((r) => r.id === door.room_id)!;
+  assert.equal(kitchen.name, "Küche");
+  assert.deepEqual([door.type, door.width, door.height, door.sill, door.leaves], ["door", 0.885, 2.01, 0, 1]);
+  const a = kitchen.points[door.edge], b = kitchen.points[(door.edge + 1) % kitchen.points.length];
+  const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const at = [a[0] + ((b[0] - a[0]) * door.offset) / length, a[1] + ((b[1] - a[1]) * door.offset) / length];
+  // the kitchen starts at x = 1 m in the drawing: the door's middle is 1.9425 m from its left wall
+  assert.ok(Math.abs(at[0] - Math.min(...kitchen.points.map((q) => q[0])) - 1.9425) < 1e-3, String(at));
+  // the window: in the living room's east wall (x = 10 m), turned 90°, 0.9 m above the floor, two leaves
+  assert.equal(eg.rooms.find((r) => r.id === win.room_id)!.name, "Wohnzimmer");
+  assert.deepEqual([win.type, win.width, win.height, win.sill, win.leaves], ["window", 1.6, 1.2, 0.9, 2]);
 });

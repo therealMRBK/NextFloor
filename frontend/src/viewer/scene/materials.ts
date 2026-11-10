@@ -1,9 +1,9 @@
 // The materials of one floor. Every floor gets its own set so that its opacity can change without touching the others. Surfaces and
 // lines pass through the look (neon, blueprint, day), and the ones that follow the cut view are made foldable.
 
-import { AdditiveBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
+import { AdditiveBlending, NormalBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
 import { makeFoldable, type FoldMasks } from "../fold.ts";
-import { lineBlending, themed, type Theme, type ThemeUniform } from "../theme.ts";
+import { lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
 import type { OwnLook } from "../../themes.ts";
 
 export interface FloorMaterials {
@@ -56,6 +56,10 @@ export function patternMaterial(texture: CanvasTexture): MeshBasicMaterial {
   return material;
 }
 
+/** Glass in a colour of the user's own (own look, D#82): painted over what is behind it, where the stock glass adds its glow. */
+export const PAINTED_GLASS = { blending: NormalBlending, opacity: 0.55 } as const;
+export const GLOWING_GLASS = { blending: AdditiveBlending, opacity: 1 } as const;
+
 /** A glowing, see-through material drawn on top of what is under it. */
 const overlay = (extra: ConstructorParameters<typeof MeshBasicMaterial>[0] = {}) =>
   new MeshBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false, ...extra });
@@ -75,7 +79,7 @@ export function makeFloorMaterials({ mask, look, theme, own, textures }: Materia
     glow: foldable(overlay({ side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -3 }), "solid"),
     frames: themed(foldable(solid({ side: DoubleSide })), look),
     // window glass follows the look like the other surfaces (D#82)
-    glass: themed(foldable(overlay({ side: DoubleSide })), look),
+    glass: themed(foldable(overlay({ side: DoubleSide, ...(ownGlass(theme, own ?? {}) ? PAINTED_GLASS : {}) })), look, false, true),
     blinds: themed(foldable(solid({ map: textures.blinds, side: DoubleSide })), look),
     lamps: themed(solid(), look),
     halos: new PointsMaterial({ map: textures.halo, size: 0.9, sizeAttenuation: true, vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false }),

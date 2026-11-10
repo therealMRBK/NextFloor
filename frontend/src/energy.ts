@@ -287,8 +287,8 @@ function gridPower(hass: HomeAssistant, e: EnergySettings, devices: DeviceSensor
 }
 
 function solarPower(hass: HomeAssistant, e: EnergySettings, devices: DeviceSensors): number | null {
-  if (e.solar) return readPower(hass.states[e.solar]);
-  return devices.solar.length ? total(devices.solar.map((id) => readPower(hass.states[id]))) : null;
+  if (e.solar) return readPower(hass.states[e.solar], !!e.solar_invert);
+  return devices.solar.length ? total(devices.solar.map((id) => readPower(hass.states[id], !!e.solar_invert))) : null;
 }
 
 /** One battery: a signed sensor (+ discharging, flipped on request), or discharge minus a separate charge sensor. */
@@ -329,7 +329,7 @@ export function energySummary(hass: HomeAssistant, building: Building, consumers
     tariff: tariffState && Number.isFinite(tariffValue) ? { value: tariffValue, unit: String(tariffState.attributes.unit_of_measurement ?? "") } : null,
     consumption: consumption === null ? null : Math.max(0, consumption),
   };
-  return devices.subMeters ? { ...summary, ...subMeterBalance(hass, devices, summary.consumption, e.battery_invert, consumers) } : summary;
+  return devices.subMeters ? { ...summary, ...subMeterBalance(hass, devices, summary.consumption, e.battery_invert, consumers, !!e.solar_invert) } : summary;
 }
 
 /**
@@ -348,7 +348,7 @@ export function energySummary(hass: HomeAssistant, building: Building, consumers
  * The consumers on a floor belong to the first sub-meter naming it (as in the 3D flow); the energy devices' own
  * sensors (meters, inverters, batteries) are no consumers here. This is display only and goes into no total.
  */
-function subMeterBalance(hass: HomeAssistant, devices: DeviceSensors, consumption: number | null, batteryInvert: boolean, consumers: Consumer[]): Pick<EnergySummary, "subMeters" | "rest"> {
+function subMeterBalance(hass: HomeAssistant, devices: DeviceSensors, consumption: number | null, batteryInvert: boolean, consumers: Consumer[], solarInvert = false): Pick<EnergySummary, "subMeters" | "rest"> {
   const meters = devices.subMeters ?? [];
   const owner = new Map<string, string>();
   for (const m of meters) for (const floorId of m.floors) if (!owner.has(floorId)) owner.set(floorId, m.id);
@@ -357,7 +357,7 @@ function subMeterBalance(hass: HomeAssistant, devices: DeviceSensors, consumptio
   const readings = new Map(meters.map((m) => [m.id, m.power ? readPower(hass.states[m.power], m.invert) : null]));
   const subMeters = meters.map((m): SubMeterBalance => {
     const power = readings.get(m.id) ?? null;
-    const solar = m.solar.reduce((sum, id) => sum + Math.max(0, readPower(hass.states[id]) ?? 0), 0);
+    const solar = m.solar.reduce((sum, id) => sum + Math.max(0, readPower(hass.states[id], solarInvert) ?? 0), 0);
     const battery = m.batteries.reduce((sum, b) => sum + (oneBattery(hass, b, batteryInvert) ?? 0), 0);
     const children = meters.filter((c) => c.parent === m.id).reduce((sum, c) => sum + (readings.get(c.id) ?? 0), 0);
     const use = power === null ? null : Math.max(0, power + solar + battery - children);

@@ -292,3 +292,29 @@ test("the unmetered part shows on a sub-meter's label only when asked for", () =
   off.energy.show_unmetered = true;
   assert.equal(subMeterLabel(off, energySummary(plantHass(), off, pc), "og"), null);
 });
+
+test("solar sensors that count production as negative can be flipped (the balance sensor and the inverters')", () => {
+  const hass = hassOf([sensor("sensor.pv", "-2400"), sensor("sensor.grid", "-400")]);
+  const b = house();
+  b.energy = { ...b.energy, solar: "sensor.pv", grid: "sensor.grid" };
+  assert.equal(energySummary(hass, b, []).solar, 0);
+  b.energy.solar_invert = true;
+  const s = energySummary(hass, b, []);
+  assert.equal(s.solar, 2400);
+  assert.equal(s.consumption, 2000);
+  const viaDevice = house(piece("inverter", { power: "sensor.pv" }));
+  viaDevice.energy.solar_invert = true;
+  assert.equal(energySummary(hass, viaDevice, []).solar, 2400);
+});
+
+test("a charging battery lowers the house's consumption, a discharging one raises it (#135)", () => {
+  const b = house();
+  b.energy = { ...b.energy, solar: "sensor.pv", battery: "sensor.bat" };
+  const charging = hassOf([sensor("sensor.pv", "679"), sensor("sensor.bat", "-30")]);
+  assert.equal(energySummary(charging, b, []).consumption, 649);
+  // the same battery with a sensor that counts charging as positive: wrong until its sign is flipped
+  const reversed = hassOf([sensor("sensor.pv", "679"), sensor("sensor.bat", "30")]);
+  assert.equal(energySummary(reversed, b, []).consumption, 709);
+  b.energy.battery_invert = true;
+  assert.equal(energySummary(reversed, b, []).consumption, 649);
+});

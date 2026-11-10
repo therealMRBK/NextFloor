@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
 import { CHIMNEY_SHAPES, ROOF_SHAPES, type ChimneyShape, type RoofChimney, type RoofEnd, type RoofSection, type RoofShape, type RoofWindow } from "../../../model.ts";
-import { ridgeHeight, sectionFloor } from "../../../roof-sections.ts";
+import { ridgeHeight, roofSectionsFromRooms, sectionFloor } from "../../../roof-sections.ts";
 import { sectionOverhang } from "../../../roof/geometry.ts";
 import { chimneySize, proposeChimney, proposeWindow, roofFaces } from "../../../solar.ts";
 import { entityOptions, isBinary, isNumeric } from "../entities.ts";
@@ -238,6 +238,8 @@ export function renderRoofPanel(deps: RoofPanelDeps): TemplateResult {
   if (custom && roof.section) return sectionForm(deps, roof.section);
   const sections = custom ? (settings.sections ?? []) : [];
   const t = host.t;
+  // a house with an annexe, a lower part or an outbuilding: with the single roof only the top floor is covered
+  const parts = custom ? 0 : roofSectionsFromRooms(host.doc).length;
   const label = (s: RoofSection, i: number) =>
     `${i + 1} · ${s.dormer ? t("roof_dormer") : t(`roof_shape_${s.shape}` as I18nKey)} · ${formatNumber(host.hass, Math.abs(s.x1 - s.x0), 1)} × ${formatNumber(host.hass, Math.abs(s.z1 - s.z0), 1)} m · ${t("roof_ridge_height")} ${formatNumber(host.hass, ridgeHeight(s), 1)} m`;
   return html`<section>
@@ -250,7 +252,7 @@ export function renderRoofPanel(deps: RoofPanelDeps): TemplateResult {
             html`<button class="nf-btn" ?disabled=${!host.admin} @click=${() => roof.useSections(true)}>${t("roof_sections_regen")}</button>`,
             html`<button class="nf-btn" ?disabled=${!host.admin} @click=${() => host.change((doc) => (doc.settings.roof.type = "gable"))}>${t("roof_sections_off")}</button>`,
           )}`
-        : actions(html`<button class="nf-btn nf-primary" ?disabled=${!host.admin} @click=${() => roof.useSections()}>${t("roof_sections_start")}</button>`)}
+        : html`${parts > 1 ? hint(t("roof_parts_hint", { n: parts })) : nothing}${actions(html`<button class="nf-btn nf-primary" ?disabled=${!host.admin} @click=${() => roof.useSections()}>${t("roof_sections_start")}</button>`)}`}
     </section>
     ${windowList(deps)} ${chimneyList(deps)}`;
 }

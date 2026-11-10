@@ -108,9 +108,10 @@ function houseCard(hass: HomeAssistant | undefined, c: HouseCard, i: number, fol
   if (s.consumption !== null) rows.push(html`<div class="live-row live-house"><span>⌂ ${t("energy_consumption")}</span><b>${watts(hass, s.consumption)}</b></div>`);
   if (s.rest !== undefined && s.rest !== null) rows.push(html`<div class="live-row live-house"><span>⌂ ${t("energy_rest")}</span><b>${watts(hass, s.rest)}</b></div>`);
   if (s.battery !== null || s.soc !== null) {
-    const dir = s.battery === null || Math.abs(s.battery) < 15 ? "" : s.battery > 0 ? " ↓" : " ↑";
+    // said in words: an arrow was read both ways (#135), and a sign the wrong way round then went unnoticed
+    const label = s.battery === null || Math.abs(s.battery) < 15 ? "energy_battery" : s.battery > 0 ? "energy_battery_discharging" : "energy_battery_charging";
     rows.push(
-      html`<div class="live-row live-battery"><span>▮ ${t("energy_battery")}${dir}</span><b>${s.soc !== null ? `${Math.round(s.soc)} %` : ""}${s.battery !== null && Math.abs(s.battery) >= 15 ? ` · ${watts(hass, s.battery)}` : ""}</b></div>`,
+      html`<div class="live-row live-battery"><span>▮ ${t(label)}</span><b>${s.soc !== null ? `${Math.round(s.soc)} %` : ""}${s.battery !== null && Math.abs(s.battery) >= 15 ? ` · ${watts(hass, Math.abs(s.battery))}` : ""}</b></div>`,
     );
   }
   if (s.grid !== null) {

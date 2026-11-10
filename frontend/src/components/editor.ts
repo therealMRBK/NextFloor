@@ -67,6 +67,7 @@ import { renderBackgroundForm } from "./editor/forms/background.ts";
 import { dragRotation, pictureCentre, pictureLocal } from "./editor/ops/background.ts";
 import { renderFreeWallForm, renderMeasureForm, renderOutdoorForm, type FreeWallActions, type MeasureActions, type MeasureState, type OutdoorActions } from "./editor/forms/outdoor.ts";
 import { insertRoofCorner, roofOutline } from "./editor/ops/roof.ts";
+import { applyWallJoins, wallJoins } from "../geometry/wall-joins.ts";
 import { insertOutdoorCorner, outdoorRectangleAfter, removeOutdoorCorner } from "./editor/ops/items.ts";
 import { renderDeviceList, renderRoomClimate, type DeviceListActions } from "./editor/forms/device-list.ts";
 import { formatArea, formatLength, setUnits } from "../units.ts";
@@ -96,7 +97,7 @@ import { RoofController } from "./editor/roof-controller.ts";
 import { importEnergyPrefs } from "./editor/ops/energy-import.ts";
 import { newEnergyDevice } from "./editor/ops/energy-devices.ts";
 import { EditHistory } from "./editor/history.ts";
-import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, wallOnSide, type WallSide, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
+import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, wallOnSide, wallAxisLine, wallFromAxis, type WallSide, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
 import { NO_CHANGE, NOTHING_TO_MOVE, nudge, type NudgeTarget } from "./editor/ops/nudge.ts";
 import { areaChoice, copyOfRoom, cornerMoved, evenCeilingLights, newRoom, rectangleAfter, removeCorner, removeRoom, type RectField } from "./editor/ops/rooms.ts";
 import { translate as moveScope, turnQuarterClockwise, type Scope } from "./editor/ops/transform.ts";
@@ -428,6 +429,8 @@ export class NfEditor extends LitElement {
   private freeWallActions(): FreeWallActions {
     return {
       update: (patch) => this.updateFreeWall(patch),
+      join: () => this.joinFreeWalls(),
+      note: this.side.notice,
       remove: () => this.deleteFreeWall(),
       arc: this.arcActions(),
       lockButton: this.fixButton("wall", this.sel.wall ?? ""),
@@ -578,8 +581,6 @@ export class NfEditor extends LitElement {
           const floor = onFloor(doc);
           if (floor) floor.placements = floor.placements.filter((p) => !fix.entityIds.includes(p.entity_id));
         });
-      case "ignore_devices":
-        return this.ignoreDevices(fix.entityIds);
     }
   }
 
@@ -1690,8 +1691,12 @@ export class NfEditor extends LitElement {
         if (!wall) return;
         let next: Pick<FreeWall, "a" | "b">;
         if (drag.end) {
+          // the grip sits on the drawn line (the middle, or the face the wall was drawn by): that line's end follows the pointer
           const to = this.snap(world, undefined, fine);
-          next = drag.end === "a" ? { a: to, b: wall.b } : { a: wall.a, b: to };
+          const interior = this._doc.settings.wall_interior;
+          const [axisA, axisB] = wallAxisLine(wall, interior);
+          const [a, b] = drag.end === "a" ? wallFromAxis(to, axisB, wall, interior) : wallFromAxis(axisA, to, wall, interior);
+          next = { a, b };
         } else {
           const by = steppedDelta(drag.start, world, dragStep(grid, fine));
           next = { a: shifted(wall.a, by), b: shifted(wall.b, by) };
@@ -1976,6 +1981,11 @@ export class NfEditor extends LitElement {
         break;
       }
       case "wallmove":
+        // a dragged end that now meets another wall is closed onto it (not with the fine key held: that places it freely)
+        if (drag.moved && drag.end && !e.altKey) {
+          const joins = wallJoins(this.floor?.walls ?? [], this._doc.settings.wall_interior, drag.id);
+          if (joins.length) this.change((_, floor) => void applyWallJoins(floor, joins), this._doc, false);
+        }
         if (drag.moved) this.pushHistory(drag.base);
         this._guides = {};
         break;
@@ -1991,6 +2001,9 @@ export class NfEditor extends LitElement {
           else if (drag.stairs) this.addStairs(lo, hi);
           else if (drag.roof) this.roof.addSection(lo, hi);
           else this.addRoom(pts);
+        } else if (!drag.outdoor && !drag.hole && !drag.stairs && !drag.roof) {
+          // a tap instead of a drag: inside an area closed off by free walls it becomes that room (#125)
+          this.roomFromWallsAt(this.toWorld(local[0], local[1]));
         }
         this._guides = {};
         break;
@@ -2137,7 +2150,21 @@ export class NfEditor extends LitElement {
   private updateFreeWall(patch: Partial<FreeWall>): void {
     const id = this.sel.wall;
     if (!id) return;
-    this.change((_, floor) => Object.assign((floor.walls ?? []).find((w) => w.id === id)!, patch));
+    this.change((doc, floor) => {
+      const wall = (floor.walls ?? []).find((w) => w.id === id)!;
+      // a wall drawn by its face keeps that face when its thickness changes: its middle moves instead
+      const line = "thickness" in patch && wall.axis ? wallAxisLine(wall, doc.settings.wall_interior) : null;
+      Object.assign(wall, patch);
+      if (line) [wall.a, wall.b] = wallFromAxis(line[0], line[1], wall, doc.settings.wall_interior);
+    });
+  }
+
+  /** Closes the meeting ends of all free walls of the floor; says how many walls changed. */
+  private joinFreeWalls(): void {
+    const joins = wallJoins(this.floor?.walls ?? [], this._doc.settings.wall_interior);
+    if (joins.length) this.change((_, floor) => void applyWallJoins(floor, joins));
+    this.side.notice = this.t(joins.length ? "wall_joined" : "wall_join_none", { n: joins.length });
+    this.requestUpdate();
   }
 
   private deleteFreeWall(): void {
@@ -2453,8 +2480,12 @@ export class NfEditor extends LitElement {
   private addFreeWall(a: Vec2, b: Vec2): void {
     if (!this.floor) return;
     const [from, to] = wallOnSide(a, b, this._doc.settings.wall_interior, this._wallSide);
-    const wall = newFreeWall(from, to);
-    this.change((_, floor) => (floor.walls = [...(floor.walls ?? []), wall]));
+    const wall: FreeWall = { ...newFreeWall(from, to), ...(this._wallSide !== "center" ? { axis: this._wallSide } : {}) };
+    this.change((_, floor) => {
+      floor.walls = [...(floor.walls ?? []), wall];
+      // ends that were meant to meet another wall are closed: a shared corner, or the face of the wall it runs into (#125)
+      applyWallJoins(floor, wallJoins(floor.walls, this._doc.settings.wall_interior, wall.id));
+    });
     this.selectItem("wall", wall.id);
   }
 
@@ -2699,9 +2730,34 @@ export class NfEditor extends LitElement {
   private pressRoute(press: Press): Gesture | undefined {
     const draft = this._routeDraft;
     if (!draft || this._tool !== "energy" || !this._floorId || draft.points.length >= MAX_ROUTE_POINTS) return undefined;
-    const [x, z] = this.snap(press.world, undefined, press.fine).map((v) => Math.round(v * 1000) / 1000);
+    // a pipe may branch off another one (a riser with a branch to each radiator, #118): near a pipe the point lands on it
+    const onPipe = draft.key.startsWith("pipe:") && !press.fine ? this.onOtherPipe(press.world, draft.key) : null;
+    const [x, z] = (onPipe ?? this.snap(press.world, undefined, press.fine)).map((v) => Math.round(v * 1000) / 1000);
     this._routeDraft = { ...draft, points: [...draft.points, { floor_id: this._floorId, x, z }] };
     return NO_GESTURE;
+  }
+
+  /** The nearest point on another pipe of this floor within snapping reach (a corner of it before a point along it). */
+  private onOtherPipe(p: Vec2, ownKey: string): Vec2 | null {
+    const reach = SNAP_PX / this._view.scale;
+    let best: { at: Vec2; d: number } | null = null;
+    const take = (at: Vec2, bonus = 0) => {
+      const d = Math.hypot(at[0] - p[0], at[1] - p[1]) - bonus;
+      if (d <= reach && (!best || d < best.d)) best = { at, d };
+    };
+    for (const route of this._doc.energy.routes ?? []) {
+      if (route.key === ownKey || !route.key.startsWith("pipe:")) continue;
+      const pts = route.points.filter((q) => q.floor_id === this._floorId).map((q): Vec2 => [q.x, q.z]);
+      pts.forEach((q) => take(q, reach / 3));
+      for (let i = 0; i + 1 < pts.length; i++) {
+        const [a, b] = [pts[i], pts[i + 1]];
+        const len2 = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2;
+        if (len2 < 1e-9) continue;
+        const k = Math.min(1, Math.max(0, ((p[0] - a[0]) * (b[0] - a[0]) + (p[1] - a[1]) * (b[1] - a[1])) / len2));
+        take([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+      }
+    }
+    return (best as { at: Vec2; d: number } | null)?.at ?? null;
   }
 
   private routeActions(): RouteActions {
@@ -3215,6 +3271,20 @@ export class NfEditor extends LitElement {
       }
     });
     this.side.notice = this.t("rooms_from_walls_done", { n: areas.length });
+  }
+
+  /** The one room the free walls close off around a point: made and selected; nothing where no walls enclose the point. */
+  private roomFromWallsAt(p: Vec2): void {
+    const floor = this.floor;
+    if (!floor || !this.isAdmin || !floor.walls?.length) return;
+    const points = enclosedAreas(floor).find((area) => pointInPolygon(p, area));
+    if (!points) return;
+    const room = newRoom(points, this.t("new_room", { n: floor.rooms.length + 1 }));
+    room.wall_heights = points.map(() => 0);
+    this.change((_, f) => f.rooms.push(room));
+    this.sel.room = room.id;
+    this.sel.corner = null;
+    this._tool = "select";
   }
 
   private updateFloor(patch: Partial<Floor>): void {

@@ -48,6 +48,16 @@ export function wallOnSide(a: Vec2, b: Vec2, thickness: number, side: WallSide):
   return [[a[0] + n[0], a[1] + n[1]], [b[0] + n[0], b[1] + n[1]]];
 }
 
+/** The line a wall was drawn along: its middle, or the face it was drawn by (FreeWall.axis). */
+export function wallAxisLine(wall: Pick<FreeWall, "a" | "b" | "thickness" | "axis">, interior: number): [Vec2, Vec2] {
+  if (!wall.axis) return [wall.a, wall.b];
+  // the wall lies to that side of the line, so the line lies to the other side of the middle
+  return wallOnSide(wall.a, wall.b, wall.thickness ?? interior, wall.axis === "left" ? "right" : "left");
+}
+
+/** The middle of a wall whose drawn line runs from `a` to `b`: the inverse of wallAxisLine. */
+export const wallFromAxis = (a: Vec2, b: Vec2, wall: Pick<FreeWall, "thickness" | "axis">, interior: number): [Vec2, Vec2] => wallOnSide(a, b, wall.thickness ?? interior, wall.axis ?? "center");
+
 /** The far end of a free wall after its length was typed: the wall keeps its start and its direction. */
 export function wallEndForLength(wall: FreeWall, length: number): Vec2 {
   const current = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]) || 1;

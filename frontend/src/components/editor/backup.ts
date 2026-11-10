@@ -154,7 +154,7 @@ export class BackupService {
         // a BIM model: storeys as floors, spaces as rooms
         const result = importIfc(await file.text());
         building = result.building;
-        question = `${t("import_ifc_found", { floors: result.report.floors, rooms: result.report.rooms })}\n\n${question}`;
+        question = `${t("import_ifc_found", { floors: result.report.floors, rooms: result.report.rooms, openings: result.report.openings })}\n\n${question}`;
       } else if (/\.dxf$/i.test(file.name)) {
         // a CAD drawing: closed polylines become rooms, lines free walls
         const result = importDxf(await file.text());

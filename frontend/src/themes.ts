@@ -12,12 +12,17 @@ export interface OwnLook {
   light?: string;
   lines?: string;
   background?: string;
+  /** window panes and other glass (D#82); empty: the glass follows the surfaces like everything else */
+  glass?: string;
 }
 
-export const OWN_LOOK_KEYS = ["dark", "light", "lines", "background"] as const;
+export const OWN_LOOK_KEYS = ["dark", "light", "lines", "background", "glass"] as const;
 
 /** The own look before anything is picked: warm greys with copper lines on a dark slate. */
-export const OWN_LOOK_DEFAULT: Required<OwnLook> = { dark: "#2a2622", light: "#8c8378", lines: "#e0a060", background: "#1c1e22" };
+export const OWN_LOOK_DEFAULT: Required<OwnLook> = { dark: "#2a2622", light: "#8c8378", lines: "#e0a060", background: "#1c1e22", glass: "" };
+
+/** What a colour picker shows for a colour of the own look that is not set (the glass has no colour of its own until one is picked). */
+export const ownLookShown = (key: (typeof OWN_LOOK_KEYS)[number]): string => OWN_LOOK_DEFAULT[key] || "#9fc4e0";
 
 /** "#rrggbb" as 0..255 numbers; null for anything else. */
 export function hexRgb(hex: string | null | undefined): [number, number, number] | null {

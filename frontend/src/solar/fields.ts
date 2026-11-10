@@ -178,14 +178,16 @@ export const ROOF_WINDOW_W = 0.78;
 export const ROOF_WINDOW_H = 1.18;
 
 /** A roof window as a field of one module of its own size, so that placing, moving and keeping it on the face work alike. */
-export const windowAsField = (w: RoofWindow): SolarField => ({ id: w.id, face: w.face, u: w.u, v: w.v, rows: 1, cols: 1, portrait: true, module_w: w.w || ROOF_WINDOW_W, module_h: w.h || ROOF_WINDOW_H });
+export const windowAsField = (w: RoofWindow): SolarField => ({ id: w.id, face: w.face, u: w.u, v: w.v, rows: 1, cols: 1, portrait: true, module_w: w.w || ROOF_WINDOW_W, module_h: w.h || ROOF_WINDOW_H, tilt: 0 });
 
 /** The four corners of a roof window, sunk 5 cm into the roof (lower left, lower right, upper right, upper left). Null off the face. */
 export function windowCorners(face: RoofFace, w: RoofWindow): [V3, V3, V3, V3] | null {
   const module = fieldModules(face, windowAsField(w))[0];
   if (!module) return null;
-  // modules ride 7 cm above the roof on rails; a roof window sits nearly flush
-  const sink = (p: V3): V3 => [p[0] - face.n[0] * 0.05, p[1] - face.n[1] * 0.05, p[2] - face.n[2] * 0.05];
+  // modules ride 7 cm above the roof on rails; a roof window sits nearly flush. On a flat roof it lies flat (a field there
+  // stands on a frame, a window does not; D#126) on a low kerb that keeps the water out
+  const by = face.flat ? -0.03 : 0.05;
+  const sink = (p: V3): V3 => [p[0] - face.n[0] * by, p[1] - face.n[1] * by, p[2] - face.n[2] * by];
   return module.corners.map(sink) as [V3, V3, V3, V3];
 }
 

@@ -163,6 +163,10 @@ export function renderMeasureForm(host: EditorHost, state: MeasureState, actions
 
 export interface FreeWallActions {
   update(patch: Partial<FreeWall>): void;
+  /** Closes the ends of the floor's free walls that meet (corners and junctions). */
+  join(): void;
+  /** What the last join did. */
+  note?: string | null;
   remove(): void;
   /** Bending the wall into an arc (its key is `wall:<id>`). */
   arc: ArcActions;
@@ -179,6 +183,7 @@ export function renderFreeWallForm(host: EditorHost, wall: FreeWall, actions: Fr
     <div class="nf-form">
       ${numberField(host, t("wall_length"), length, (v) => actions.update({ b: wallEndForLength(wall, v) }), 0.01, 0.1)}
       ${numberField(host, t("wall_thickness"), wall.thickness ?? host.doc.settings.wall_interior, (v) => actions.update({ thickness: between(0.02, 1, v) }), 0.01, 0.02)}
+      ${selectField(host, t("wall_side"), wall.axis ?? "center", (["center", "left", "right"] as const).map((v): [typeof v, string] => [v, t(`wall_side_${v}`)]), (v) => actions.update({ axis: v === "center" ? null : v }), { title: t("wall_axis_hint") })}
       ${numberField(host, t("wall_height"), wall.height ?? floorHeight, (v) => actions.update(wallHeightPatch(v, floorHeight)), 0.05, 0.05)}
       ${checkField(host, t("free_wall_slope"), wall.height_end != null, (on) => actions.update(on ? { height: wall.height ?? floorHeight, height_end: Math.max(0.2, (wall.height ?? floorHeight) / 2) } : { height_end: null }), { title: t("free_wall_slope_hint") })}
       ${wall.height_end != null ? numberField(host, t("free_wall_height_end"), wall.height_end, (v) => actions.update({ height_end: Math.max(0.05, v) }), 0.05, 0.05) : nothing}
@@ -189,7 +194,8 @@ export function renderFreeWallForm(host: EditorHost, wall: FreeWall, actions: Fr
           ${wall.bottom_end != null ? numberField(host, t("free_wall_bottom_end"), wall.bottom_end, (v) => actions.update({ bottom_end: Math.max(0, v) }), 0.05, 0.05) : nothing}`
         : nothing}
     </div>
-    ${host.admin ? html`<div class="nf-actions">${arcButton(host, `wall:${wall.id}`, actions.arc)}<button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
+    ${host.admin ? html`<div class="nf-actions">${arcButton(host, `wall:${wall.id}`, actions.arc)}<button class="nf-btn" title=${t("wall_join_hint")} @click=${() => actions.join()}>${t("wall_join")}</button><button class="nf-btn nf-danger" @click=${() => actions.remove()}>${t("delete")}</button></div>` : nothing}
+    ${actions.note ? hint(actions.note) : nothing}
     <div class="nf-form">${arcRow(host, `wall:${wall.id}`, actions.arc)}</div>
     ${hint(t("free_wall_hint"))}
   </section>`;

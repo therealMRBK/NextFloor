@@ -269,7 +269,9 @@ export class NfView3d extends LitElement {
   /** Where each placed device stands, for plugins that handle its taps. */
   private placementInfo = new Map<string, PlacementInfo>();
   /** The buttons of a tapped switch plate or socket to pick from. */
-  private declare _plate: { ids: string[]; x: number; y: number } | null;
+  private declare _plate: { ids: string[]; labels?: string[]; x: number; y: number } | null;
+  /** Devices that only measure temperatures, by the sensor a tap on them goes to: all their readings with their names. */
+  private tempLists = new Map<string, { id: string; label: string }[]>();
   /** Looking through a camera: its live picture lies over the 3D view; `back` is the view to return to. */
   /** Camera wall: the camera shown big (null: all tiles). */
   private declare _wallBig: string | null;
@@ -1191,6 +1193,8 @@ export class NfView3d extends LitElement {
     const consumers: Consumer[] = [];
     const screens = new Map<string, ScreenState>();
     const targets = new Map<string, string>();
+    const tempLists = new Map<string, { id: string; label: string }[]>();
+    this.tempLists = tempLists;
     const subMeters = subMeterIds(b);
     for (const floor of b.floors) {
       if (floor.layer && this.hiddenLayers.has(floor.id)) continue;
@@ -1271,11 +1275,14 @@ export class NfView3d extends LitElement {
         // a battery goes by its charge first: its power sensor is often placed on its own as well
         const id = (f.type === "home_battery" ? (extra ?? link.entity ?? link.power) : (link.entity ?? link.power ?? extra))!;
         targets.set(f.id, id);
+        // a device that only measures temperatures (a boiler with flow and return): a tap lists them all instead of opening the first (#118)
+        const readings = [...(deviceTemp !== null && f.temp_entity ? [{ id: f.temp_entity, label: "" }] : []), ...named.map((n) => ({ id: n.entity, label: n.label }))];
+        if (readings.length > 1 && readings.some((r) => r.id === id)) tempLists.set(id, readings);
         const st = link.entity ? hass.states[link.entity] : undefined;
         // the meter's sensor is the grid (+ = import), the battery's can point the other way as well;
         // a sub-meter (advanced energy mode) measures its branch (+ = drawn) with its own sign
         const sub = subMeters.has(f.id);
-        const invert = sub ? !!f.meter_invert : f.type === "meter" ? b.energy.grid_invert && !f.export : f.type === "home_battery" ? b.energy.battery_invert && !f.charge : false;
+        const invert = sub ? !!f.meter_invert : f.type === "meter" ? b.energy.grid_invert && !f.export : f.type === "home_battery" ? b.energy.battery_invert && !f.charge : f.type === "inverter" ? !!b.energy.solar_invert : false;
         let power = link.power ? readPower(hass.states[link.power], invert) : null;
         // separate second sensors: a battery's charging, a meter's export (then the first one is unsigned)
         const second = (f.type === "home_battery" && f.charge && f.charge !== "none" ? f.charge : f.type === "meter" && !sub && f.export && f.export !== "none" ? f.export : null) as string | null;
@@ -2300,9 +2307,11 @@ export class NfView3d extends LitElement {
           const st = hass.states[id];
           const on = isActive(st) || st?.state === "on";
           return html`<button role="menuitem" class=${on ? "on" : ""} @click=${() => {
+            // a reading opens its history; the list is closed first, so the tap is not taken for the list again
+            if (p.labels) return void (close(), openMoreInfo(this, id));
             close();
             this.onDeviceTap(id, p.x, p.y);
-          }}><b>${i + 1}</b><span>${entityName(hass, id)}</span><i>${st ? stateText(hass, st) : "–"}</i></button>`;
+          }}><b>${p.labels ? "🌡" : i + 1}</b><span>${p.labels?.[i] || entityName(hass, id)}</span><i>${st ? stateText(hass, st) : "–"}</i></button>`;
         })}
       </div>`;
   }
@@ -2352,6 +2361,11 @@ export class NfView3d extends LitElement {
     }
     if (this.pluginTapped(entityId)) return;
     if (entityId.startsWith("gang:")) return this.tapPlate(entityId.slice(5), x, y);
+    const readings = this.tempLists.get(entityId);
+    if (readings && !this._plate) {
+      this._plate = { ids: readings.map((r) => r.id), labels: readings.map((r) => r.label), x, y };
+      return;
+    }
     // an outdoor area's pin opens Outside, with the devices of its area
     if (entityId.startsWith("outdoor:")) {
       this.fire("room-tap", { floorId: null, roomId: "nf-outside" });
@@ -2376,6 +2390,13 @@ export class NfView3d extends LitElement {
       const unlocked = isUnlocked(this.hass, entityId);
       const name = entityName(this.hass, entityId);
       if (confirm(translate(this.hass, unlocked ? "lock_confirm_lock" : "lock_confirm_unlock", { name }))) void this.hass.callService("lock", unlocked ? "lock" : "unlock", { entity_id: entityId });
+      return;
+    }
+    // a push button or a script (the pulse of a gate drive) is pressed, not opened
+    const domain = entityId.slice(0, entityId.indexOf("."));
+    if (domain === "button" || domain === "input_button" || domain === "script") {
+      if (this.confirmSet.has(entityId) && !confirm(translate(this.hass, "confirm_switch", { name: entityName(this.hass, entityId) }))) return;
+      void this.hass.callService(domain, domain === "script" ? "turn_on" : "press", { entity_id: entityId });
       return;
     }
     if (kind && TOGGLE_KINDS.has(kind)) {

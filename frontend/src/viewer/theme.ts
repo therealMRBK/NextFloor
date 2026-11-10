@@ -9,7 +9,34 @@ export type { Theme } from "../themes.ts";
 
 export interface ThemeUniform {
   value: number;
+  /**
+   * The colours of this view's look (accent, own look). Each 3D view has its own set, so two cards on one dashboard with
+   * different colours do not repaint each other; without it the shared set below is used.
+   */
+  look?: LookUniforms;
 }
+
+/** The colours a look can take from the user: the neon accent and the ramp of the own look. */
+export interface LookUniforms {
+  uAccent: { value: Vector3 };
+  uAccentOn: { value: number };
+  uOwnDark: { value: Vector3 };
+  uOwnLight: { value: Vector3 };
+  uOwnLine: { value: Vector3 };
+  uOwnGlass: { value: Vector3 };
+  uOwnGlassOn: { value: number };
+}
+
+/** A fresh set of look colours for one 3D view (the stock cyan accent, no own look yet). */
+export const lookUniforms = (): LookUniforms => ({
+  uAccent: { value: new Vector3(0.22, 0.88, 1) },
+  uAccentOn: { value: 0 },
+  uOwnDark: { value: new Vector3() },
+  uOwnLight: { value: new Vector3() },
+  uOwnLine: { value: new Vector3() },
+  uOwnGlass: { value: new Vector3() },
+  uOwnGlassOn: { value: 0 },
+});
 
 export const themeIndex = (theme: Theme): number => THEMES.indexOf(theme);
 
@@ -24,12 +51,22 @@ export function parseAccent(hex: string | null | undefined): [number, number, nu
 }
 
 /** The ramp of the own look (#82): darkest surface, lightest surface, lines. */
-export const ownUniforms = { uOwnDark: { value: new Vector3() }, uOwnLight: { value: new Vector3() }, uOwnLine: { value: new Vector3() } };
+export const ownUniforms = { uOwnDark: { value: new Vector3() }, uOwnLight: { value: new Vector3() }, uOwnLine: { value: new Vector3() }, uOwnGlass: { value: new Vector3() }, uOwnGlassOn: { value: 0 } };
+
+/** Whether the own look has a glass colour of its own (the glass is then painted in it instead of glowing). */
+export const ownGlass = (theme: Theme, own: OwnLook): boolean => theme === "own" && !!hexRgb(own.glass);
 
 /** Puts a filled own look into the shaders; true when anything changed. */
-export function setOwnLook(look: Required<OwnLook>): boolean {
+export function setOwnLook(look: Required<OwnLook>, into: Pick<LookUniforms, "uOwnDark" | "uOwnLight" | "uOwnLine" | "uOwnGlass" | "uOwnGlassOn"> = ownUniforms): boolean {
+  const ownUniforms = into;
   let changed = false;
+  const glass = parseAccent(look.glass);
+  if (ownUniforms.uOwnGlassOn.value !== (glass ? 1 : 0)) {
+    ownUniforms.uOwnGlassOn.value = glass ? 1 : 0;
+    changed = true;
+  }
   for (const [uniform, hex] of [
+    [ownUniforms.uOwnGlass, glass ? look.glass : "#000000"],
     [ownUniforms.uOwnDark, look.dark],
     [ownUniforms.uOwnLight, look.light],
     [ownUniforms.uOwnLine, look.lines],
@@ -52,7 +89,9 @@ uniform int uAccentOn;
 uniform vec3 uOwnDark;
 uniform vec3 uOwnLight;
 uniform vec3 uOwnLine;
-vec3 nfThemed(vec3 c, bool isLine) {
+uniform vec3 uOwnGlass;
+uniform int uOwnGlassOn;
+vec3 nfThemed(vec3 c, bool isLine, bool isGlass) {
   float strongest = max(c.r, max(c.g, c.b));
   float weakest = min(c.r, min(c.g, c.b));
   float saturation = strongest > 0.0 ? (strongest - weakest) / strongest : 0.0;
@@ -71,7 +110,9 @@ vec3 nfThemed(vec3 c, bool isLine) {
     return mix(vec3(0.04, 0.13, 0.3), vec3(0.2, 0.42, 0.75), clamp(luma * 5.0, 0.0, 1.0));
   }
   if (uTheme == 3) {
-    // own look: the user's lines on a ramp from their dark to their light surface colour
+    // own look: glass in its own colour when one is picked,
+    if (isGlass && uOwnGlassOn == 1) return uOwnGlass;
+    // the user's lines on a ramp from their dark to their light surface colour
     if (isLine) return uOwnLine * clamp(strongest * 1.3, 0.45, 1.0);
     return mix(uOwnDark, uOwnLight, clamp(luma * 5.0, 0.0, 1.0));
   }
@@ -86,17 +127,17 @@ vec3 nfThemed(vec3 c, bool isLine) {
  * Maps a material's colours to the look in `uniform` (0 neon, 1 blueprint, 2 day, 3 own). Composes with an existing onBeforeCompile (the
  * fold patch, say). With `line`, edges are mapped as lines.
  */
-export function themed<T extends Material>(material: T, uniform: ThemeUniform, line = false): T {
+export function themed<T extends Material>(material: T, uniform: ThemeUniform, line = false, glass = false): T {
   const previous = material.onBeforeCompile.bind(material);
   const previousKey = material.customProgramCacheKey.bind(material);
   material.onBeforeCompile = (shader, renderer) => {
     previous(shader, renderer);
-    Object.assign(shader.uniforms, { uTheme: uniform, uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms });
+    Object.assign(shader.uniforms, { uTheme: uniform, ...(uniform.look ?? { uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms }) });
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", `#include <common>\n${LOOK_FUNCTION}`)
-      .replace("#include <color_fragment>", `#include <color_fragment>\n  diffuseColor.rgb = nfThemed(diffuseColor.rgb, ${line});`);
+      .replace("#include <color_fragment>", `#include <color_fragment>\n  diffuseColor.rgb = nfThemed(diffuseColor.rgb, ${line}, ${glass});`);
   };
-  material.customProgramCacheKey = () => `${previousKey()}-themed-${line ? "l" : "s"}`;
+  material.customProgramCacheKey = () => `${previousKey()}-themed-${line ? "l" : glass ? "g" : "s"}`;
   return material;
 }
 

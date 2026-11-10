@@ -72,7 +72,7 @@ export function fieldProduction(hass: HomeAssistant, b: Building, solar: number 
   let known = 0;
   const rest: SolarField[] = [];
   for (const f of fields) {
-    const own = f.entity && f.entity !== "none" ? readPower(hass.states[f.entity]) : null;
+    const own = f.entity && f.entity !== "none" ? readPower(hass.states[f.entity], !!b.energy.solar_invert) : null;
     if (own !== null) {
       out.set(f.id, Math.max(0, own));
       known += Math.max(0, own);
@@ -129,7 +129,8 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
     const peak = modulesOf(f) * (f.wp ?? 400);
     const level = p > MIN_W ? Math.pow(Math.min(1, p / peak), 0.6) : 0;
     const floorId = fieldFloor(b, f);
-    sparks.push({ floorId, quads: modules.map((m) => m.corners), level });
+    const roof = f.face !== GROUND && !f.face.startsWith("wall:");
+    sparks.push({ floorId, quads: modules.map((m) => m.corners), level, ...(roof ? { roof } : {}) });
     if (p <= MIN_W) continue;
     // the arc starts at the middle of the field (building heights: taken off the floor it rides on)
     let x = 0, y = 0, z = 0;
@@ -139,7 +140,7 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
     // a field goes to the inverter of its string (also without the advanced energy mode; #127), the others to the first one
     const own = inverters.get(strings.get(f.string ?? "") ?? "");
     if (own) byInverter.set(own.id, (byInverter.get(own.id) ?? 0) + p);
-    arcs.push({ key: `solar:${f.id}`, from: { floorId, x: x / n, y: y / n - base + 0.1, z: z / n }, to: own ?? inverter, power: p, color: ENERGY_COLORS.solar });
+    arcs.push({ key: `solar:${f.id}`, from: { floorId, x: x / n, y: y / n - base + 0.1, z: z / n, ...(roof ? { roof } : {}) }, to: own ?? inverter, power: p, color: ENERGY_COLORS.solar });
   }
 
   // the battery (without those behind a sub-meter)
@@ -182,7 +183,7 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
       if (!at || !spot) continue;
       const sensor = sensorOf(f);
       if (f.type === "inverter") {
-        const w = Math.max(0, (sensor ? readPower(hass.states[sensor]) : null) ?? 0);
+        const w = Math.max(0, (sensor ? readPower(hass.states[sensor], !!b.energy.solar_invert) : null) ?? 0);
         if (w > MIN_W) arcs.push({ key: `inverter:${f.id}`, from: spot, to: at, power: w, color: ENERGY_COLORS.solar });
       } else if (f.type === "home_battery") {
         const charge = f.charge && f.charge !== "none" ? f.charge : null;

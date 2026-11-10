@@ -5,7 +5,7 @@ import { html, LitElement, nothing, type TemplateResult } from "lit";
 import { fetchBuilding } from "./api.ts";
 import { MARKER_KINDS, type MarkerKind } from "./entities/kinds.ts";
 import { FURNITURE_ROLES, STOCK_ROLE_HEX, type FurnitureColors, type FurnitureRole } from "./furniture-colors.ts";
-import { OWN_LOOK_DEFAULT, OWN_LOOK_KEYS, type OwnLook } from "./themes.ts";
+import { OWN_LOOK_KEYS, ownLookShown, type OwnLook } from "./themes.ts";
 import { CARD_CONTROLS, type CardConfig, type CardControl } from "./card-config.ts";
 import { checkbox, choice, DEFAULTS, flagOption, followOrForce, numberChoice, switchOption, textField, type FormContext } from "./card-editor/form.ts";
 import { editorStyles } from "./card-editor/styles.ts";
@@ -254,7 +254,7 @@ export class NextFloorCardEditor extends LitElement {
       ${OWN_LOOK_KEYS.map(
         (key) => html`<label class="field"
           >${f.t(`own_look_${key}`)}
-          <input type="color" .value=${own[key] ?? OWN_LOOK_DEFAULT[key]} @input=${(e: Event) => put(key, (e.target as HTMLInputElement).value)} />
+          <input type="color" .value=${own[key] ?? ownLookShown(key)} @input=${(e: Event) => put(key, (e.target as HTMLInputElement).value)} />
           ${own[key] ? html`<button type="button" class="link" @click=${() => put(key, null)}>${f.t("furn_color_house")}</button>` : nothing}
         </label>`,
       )}

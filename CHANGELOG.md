@@ -4,6 +4,31 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.2]
+
+### Added
+
+- **A gate or door moved by a relay** (#134): the drive of a garage door or a door can be a switch, a push button, a helper or a script, not only a cover. A tap gives the pulse; where the gate stands comes from its contact.
+- **Walls drawn by their face keep that line** (#125): the line and the grips of a free wall sit where you drew it (its middle or one of its faces), and the wall's form has the same choice. A thicker wall then grows away from that face.
+- **Walls close their corners** (#125): when you draw a wall or drag an end, an end that was meant to meet another wall is put there: two ends get a shared, mitred corner, an end at the side of another wall stops at its face. **Close corners** in a wall's form does it for every free wall of the floor. This also removes the steps and overlaps such corners had in 3D.
+- **One room from walls with a tap** (#125): with the rectangle tool, a tap inside an area closed off by free walls makes that room.
+- **All temperatures of a device at a tap** (D#118): a device that only measures temperatures (a boiler with flow and return) lists all of them when tapped, instead of opening the first sensor. Temperature sensors can now be set on any piece of furniture, not only electric ones (a hot water or buffer tank).
+- **Pipes can branch** (D#118): a point drawn close to another pipe lands on it, so a branch to a radiator starts exactly on the main run. A plan can hold 60 pipes (was 24).
+- **Own look: a colour for glass** (D#82): window panes can have their own colour instead of following the surfaces.
+- **IFC import brings doors and windows**: `IfcDoor` and `IfcWindow` become openings in the nearest room wall, with their width, height and sill.
+- **Solar sensors that count production as negative** can be flipped (*Invert sign* under the solar sensor); the editor points it out when the solar power reads negative.
+- **Outbuildings:** proposed roof sections follow each part's own ceiling height (a shed or garage lower than the house gets its roof at its height), and the roof tool says when the plan has parts the simple roof does not cover (D#72).
+
+### Changed
+
+- **The energy card says "Battery charging" / "Battery discharging"** instead of an arrow, which was read both ways (#135). The editor also warns when a battery seems to discharge into the grid while the sun shines: its sensor then has its sign reversed, and *Invert sign* fixes the consumption shown.
+
+### Fixed
+
+- **Solar sparks really lie on the panels now** (#130): they were drawn before the roof and painted over by it, so they only showed where they stuck out beyond the roof's edge (the fix in 0.31.0.1 did not address that). They also rise with the roof when the floors are pulled apart, and they and the energy lines are visible in the Day look and on a light own look.
+- **Roof windows on a flat roof lie flat** (D#126): they stood on a tilted frame like a solar module.
+- **Two cards with different colours no longer repaint each other:** the accent and the own look's colours belonged to the page, not to the card, so the card set up last decided for all of them.
+
 ## [0.31.1]
 
 A quality release: a review of the whole code found these, none of them reported yet.

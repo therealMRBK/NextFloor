@@ -167,9 +167,13 @@ function slatsOpen(hass: HomeAssistant, id: string | null | undefined): number |
   return typeof tilt === "number" ? Math.min(100, Math.max(0, tilt)) / 100 : null;
 }
 
+/** A drive that is no cover (a relay, a push button, a script giving the motor its pulse) moves the door but cannot say where it stands. */
+export const isPulseDrive = (id: string | null | undefined): boolean => !!id && !id.startsWith("cover.");
+
 function blindClosedFraction(hass: HomeAssistant, e: OpeningEntities): number | null {
   const reported = reportedPosition(hass, e.position);
   if (reported !== null) return e.positionInverted ? reported : 1 - reported;
+  if (isPulseDrive(e.cover)) return null;
   const cover = e.cover ? hass.states[e.cover] : undefined;
   if (cover && !isUnavailable(cover)) {
     const percent = cover.attributes.current_position;
@@ -223,7 +227,7 @@ export function openingState(hass: HomeAssistant, e: OpeningEntities, type: Open
     // a garage door without a cover shows its contact: open or closed; so does one whose cover cannot tell (a remote without
     // feedback stays unknown)
     const sensed = cover !== null || isKnown(e.contact);
-    const coverTells = reportedPosition(hass, e.position) !== null || isKnown(e.cover);
+    const coverTells = reportedPosition(hass, e.position) !== null || (isKnown(e.cover) && !isPulseDrive(e.cover));
     const fromContact = isKnown(e.contact) ? (isOn(e.contact) ? 0 : 1) : null;
     return { open: 0, open2: 0, tilt: 0, tilt2: 0, cover: (coverTells ? cover : (fromContact ?? cover)) ?? 1, sensed };
   }

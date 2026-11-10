@@ -22,6 +22,7 @@ export interface OpeningActions {
 }
 
 type SensorKind = NonNullable<Opening["sensor"]>;
+const DRIVE_DOMAINS = new Set(["cover", "switch", "button", "input_button", "input_boolean", "script"]);
 const CONTACT_CLASSES = ["door", "window", "opening", "garage_door"];
 const HANDLE_NAME = /griff|handle|fenster|window|drehgriff/i;
 
@@ -40,6 +41,8 @@ function choices(host: EditorHost) {
   const isContact = (id: string) => id.startsWith("binary_sensor.") && CONTACT_CLASSES.includes(deviceClass(id) ?? "");
   return {
     covers: entityOptions(hass, (id) => id.startsWith("cover.")),
+    // a door or gate drive is often no cover at all: a relay, a push button or a script that gives the motor its pulse (#134)
+    drives: entityOptions(hass, (id) => DRIVE_DOMAINS.has(id.slice(0, id.indexOf(".")))),
     // numbers that can report where a blind is
     positions: entityOptions(hass, (id) => /^(sensor|number|input_number)\./.test(id) && Number.isFinite(Number(stateOf(id)?.state))),
     // plain contacts, and handle sensors with three states (open, tilted, closed)
@@ -167,7 +170,7 @@ function blindFields(host: EditorHost, o: Opening, actions: OpeningActions, list
   const window = o.type === "window";
   const automatic = automaticLink(host, o, "cover");
   const hasBlind = o.cover !== "none" && (o.cover || automatic);
-  return html`${entityField(host, t(window ? "cover_entity" : "door_cover"), o.cover, automatic, lists.covers, (v) => actions.update({ cover: v }))}
+  return html`${entityField(host, t(window ? "cover_entity" : "door_cover"), o.cover, automatic, window ? lists.covers : lists.drives, (v) => actions.update({ cover: v }))}
     ${hasBlind
       ? html`${entityField(host, t("cover_position_entity"), o.position ?? null, undefined, lists.positions, (v) => actions.update({ position: noneAsNull(v) }))}
         ${o.position ? checkField(host, t("cover_position_invert"), !!o.position_inverted, (on) => actions.update({ position_inverted: on })) : nothing}

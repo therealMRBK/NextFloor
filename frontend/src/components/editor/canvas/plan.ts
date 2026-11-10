@@ -7,6 +7,7 @@ import { bounds, centroid, isFixed, polygonArea, roomsReachingUp, type Floor, ty
 import type { Wall } from "../../../geometry/walls.ts";
 import { edgePlus, pointsAttribute, type CanvasContext } from "./context.ts";
 import { formatArea, formatLength } from "../../../units.ts";
+import { wallAxisLine } from "../ops/items.ts";
 
 type Layer = TemplateResult | typeof nothing;
 
@@ -109,11 +110,13 @@ export function meterLayer(ctx: CanvasContext, floor: Floor): Layer {
 export function freeWallsLayer(ctx: CanvasContext, floor: Floor, selectedId: string | null): Layer {
   const { host } = ctx;
   const one = (wall: FreeWall) => {
-    const [a, b] = [ctx.toScreen(wall.a), ctx.toScreen(wall.b)];
+    // the line and its grips sit where the wall was drawn: on its middle, or on the face it was drawn by (#125)
+    const [m0, m1] = [ctx.toScreen(wall.a), ctx.toScreen(wall.b)];
+    const [a, b] = wallAxisLine(wall, host.doc.settings.wall_interior).map((p) => ctx.toScreen(p));
     const selected = wall.id === selectedId;
     const ends = selected && host.admin && !isFixed(wall, true, host.doc.settings);
     return svg`<g data-free-wall=${wall.id} class=${`nf-free-wall${selected ? " nf-free-wall-sel" : ""}`}>
-        <line class="nf-hit" x1=${a[0]} y1=${a[1]} x2=${b[0]} y2=${b[1]} />
+        <line class="nf-hit" x1=${m0[0]} y1=${m0[1]} x2=${m1[0]} y2=${m1[1]} />
         <line class="nf-free-wall-line" x1=${a[0]} y1=${a[1]} x2=${b[0]} y2=${b[1]} />
       </g>
       ${ends ? svg`<g class="nf-vertex" data-wall-end=${`${wall.id}:a`}>${gripAt(a[0], a[1])}</g><g class="nf-vertex" data-wall-end=${`${wall.id}:b`}>${gripAt(b[0], b[1])}</g>` : nothing}`;

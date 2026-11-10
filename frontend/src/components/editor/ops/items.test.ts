@@ -207,3 +207,17 @@ test("a wall drawn to the left or right of the line moves by half its thickness"
   // drawn towards +z: right on the screen is -x
   assert.ok(Math.abs(right[0][0] + 0.1) < 1e-9);
 });
+
+test("a wall drawn by its face: the drawn line is that face, and the wall is found again from it (#125)", async () => {
+  const { wallAxisLine, wallFromAxis, wallOnSide } = await import("./items.ts");
+  const [a, b] = wallOnSide([0, 0], [4, 0], 0.3, "left");
+  const wall = { a, b, thickness: 0.3, axis: "left" as const };
+  const line = wallAxisLine(wall, 0.12);
+  assert.ok(line.flat().every((v, i) => Math.abs(v - [0, 0, 4, 0][i]) < 1e-9));
+  assert.deepEqual(wallFromAxis(line[0], line[1], wall, 0.12), [a, b]);
+  // a wall drawn by its middle: the line is the middle
+  assert.deepEqual(wallAxisLine({ a: [0, 0], b: [4, 0], thickness: null }, 0.12), [[0, 0], [4, 0]]);
+  // a thicker wall grows away from the drawn face
+  const thicker = wallFromAxis(line[0], line[1], { ...wall, thickness: 0.5 }, 0.12);
+  assert.ok(Math.abs(Math.abs(thicker[0][1]) - 0.25) < 1e-9);
+});

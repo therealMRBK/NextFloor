@@ -58,7 +58,7 @@ import { mergeHoles } from "../geometry/holes.ts";
 import type { Vec2 } from "../model.ts";
 import { LAMP_SIZE, HANGING_LAMPS } from "./scene/lamp-data.ts";
 import { lightSourcesOf } from "./scene/light-sources.ts";
-import { makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
+import { GLOWING_GLASS, PAINTED_GLASS, makeFloorMaterials, type FloorMaterials } from "./scene/materials.ts";
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
@@ -73,7 +73,7 @@ import { GROUND, groundFace, groundFloor, wallFaces } from "../solar.ts";
 import { MapLayer } from "./live-map.ts";
 import type { MapSettings } from "../model.ts";
 import { applyFurnitureColors, type FurnitureColors } from "./furniture/palette.ts";
-import { accentOnUniform, accentUniform, parseAccent, lineBlending, setOwnLook, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
+import { lookUniforms, parseAccent, lineBlending, ownGlass, setOwnLook, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
 import { lightStage, OWN_LOOK_DEFAULT, type OwnLook } from "../themes.ts";
 
 export type { Theme } from "./theme.ts";
@@ -568,7 +568,8 @@ export class NextFloorViewer {
   private ghost: LineSegments | null = null;
   private theme: Theme = "neon";
   private own: Required<OwnLook> = { ...OWN_LOOK_DEFAULT };
-  private readonly themeUniform: ThemeUniform = { value: 0 };
+  private readonly look = lookUniforms();
+  private readonly themeUniform: ThemeUniform = { value: 0, look: this.look };
   private sun: SunState | null = null;
   /** The sky over the plot: rain, snow, clouds, fog, lightning, sun and moon (live-weather.ts). */
   private readonly weatherLayer: WeatherLayer;
@@ -1115,9 +1116,10 @@ export class NextFloorViewer {
   setAccent(hex: string | null): void {
     const rgb = parseAccent(hex);
     const on = rgb ? 1 : 0;
-    if (on === accentOnUniform.value && (!rgb || accentUniform.value.equals(new Vector3(...rgb)))) return;
-    accentOnUniform.value = on;
-    if (rgb) accentUniform.value.set(...rgb);
+    const { uAccent, uAccentOn } = this.look;
+    if (on === uAccentOn.value && (!rgb || uAccent.value.equals(new Vector3(...rgb)))) return;
+    uAccentOn.value = on;
+    if (rgb) uAccent.value.set(...rgb);
     this.invalidate();
   }
 
@@ -1131,7 +1133,7 @@ export class NextFloorViewer {
 
   /** The colours of the own look (#82), filled; they only show while the look is "own". */
   setOwnLook(look: Required<OwnLook>): void {
-    const changed = setOwnLook(look) || look.background !== this.own.background;
+    const changed = setOwnLook(look, this.look) || look.background !== this.own.background;
     this.own = { ...look };
     if (changed) this.lookChanged();
   }
@@ -1148,6 +1150,13 @@ export class NextFloorViewer {
       m.blending = blending;
       m.needsUpdate = true;
     }
+    // window glass in a colour of its own is painted, the stock glass glows
+    const pane = ownGlass(this.theme, this.own) ? PAINTED_GLASS : GLOWING_GLASS;
+    for (const f of this.floors) {
+      Object.assign(f.materials.glass, pane);
+      f.materials.glass.needsUpdate = true;
+    }
+    this.energyLayer.setLight(this.lightStage);
     // the neon ground grid would vanish on the light background anyway
     this.placeGround();
     this.invalidate();
@@ -1226,14 +1235,22 @@ export class NextFloorViewer {
   }
 
   /** Where a floor stands right now (for NextFloor's layers): its height, how far it is pulled apart, whether it shows. */
-  private readonly liftOf = (floorId: string | null): { y: number; dy: number; visible: boolean } => {
+  private readonly liftOf = (floorId: string | null, onRoof = false): { y: number; dy: number; visible: boolean } => {
     if (!floorId) return { y: 0, dy: 0, visible: true };
     const fv = this.floorMap.get(floorId);
+    // what lies on the roof moves with its roof part: pulled apart the roof lifts off its floor, and zoomed in it fades away (#130)
+    const part = onRoof && fv ? (this.roof?.parts.find((p) => p.floorId === floorId) ?? this.roof?.parts[0]) : undefined;
+    if (part && fv) {
+      const home = this.floorMap.get(part.floorId) ?? fv;
+      const dy = part.group.position.y - home.floor.elevation - part.base;
+      return { y: fv.floor.elevation + dy, dy, visible: !!this.roof?.group.visible };
+    }
     return fv ? { y: fv.floor.elevation + fv.y, dy: fv.y, visible: fv.group.visible } : { y: 0, dy: 0, visible: false };
   };
 
   /** Power arcs between the devices and the sparkling solar modules (empty lists: nothing). */
   setLiveEnergy(arcs: EnergyArc[], sparks: SparkField[]): void {
+    this.energyLayer.setLight(this.lightStage);
     this.energyLayer.setArcs(arcs);
     this.energyLayer.setSparks(sparks);
     this.invalidate();
@@ -2077,7 +2094,7 @@ export class NextFloorViewer {
     const solid = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide }), this.themeUniform);
     const lines = themed(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(this.theme, this.own), depthWrite: false }), this.themeUniform, true);
     // canopies: faint see-through panels that do not hide what is below
-    const glass = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide, depthWrite: false }), this.themeUniform);
+    const glass = themed(new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide, depthWrite: false }), this.themeUniform, false, true);
     const parts = geos.map((geo) => {
       const part = new Group();
       part.add(new Mesh(geo.solid.geometry(), solid), new LineSegments(geo.lines.geometry(), lines));

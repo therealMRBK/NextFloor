@@ -8,7 +8,7 @@
  * the arc itself. A connection with a cable route follows its points instead of the arc (a cable shown as such is drawn
  * stronger).
  */
-import { AdditiveBlending, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, Group, Line, LineBasicMaterial, Points, PointsMaterial, Vector3, type Scene } from "three";
+import { AdditiveBlending, NormalBlending, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, Group, Line, LineBasicMaterial, Points, PointsMaterial, Vector3, type Scene } from "three";
 
 /** A point of the plan: floor (null = the ground / the roof above the top floor), plan x/z, height above that floor. */
 export interface PlanPoint {
@@ -16,6 +16,8 @@ export interface PlanPoint {
   x: number;
   y: number;
   z: number;
+  /** The point lies on the roof and moves with it (see SparkField.roof). */
+  roof?: boolean;
 }
 
 export interface EnergyArc {
@@ -35,13 +37,15 @@ export interface EnergyArc {
 /** A solar field's modules (corners in building coordinates) and how much it produces right now (0…1). */
 export interface SparkField {
   floorId: string | null;
+  /** The field lies on the roof: it moves with the roof (which lifts off its floor when the floors are pulled apart), not with the floor alone. */
+  roof?: boolean;
   quads: [number, number, number][][];
   level: number;
 }
 
 /** Where a floor is right now: the height of its floor (elevation plus how far it is pulled apart), that pull
  *  alone (for points given in building heights), and whether it shows. */
-export type FloorLift = (floorId: string | null) => { y: number; dy: number; visible: boolean };
+export type FloorLift = (floorId: string | null, roof?: boolean) => { y: number; dy: number; visible: boolean };
 
 const MAX_PER_ARC = 46;
 /** Points of an arc's line: the arc's samples, or a route's points (at most 30 between its ends). */
@@ -89,6 +93,7 @@ export class EnergyLayer {
   private readonly sparkField = new Int16Array(SPARKS);
   private readonly sparkPhase = new Float32Array(SPARKS);
   private sparkCount = 0;
+  private light = false;
   private last = 0;
 
   constructor(scene: Scene, lift: FloorLift) {
@@ -97,13 +102,31 @@ export class EnergyLayer {
     this.group.name = "live-energy";
     const g = new BufferGeometry();
     g.setAttribute("position", new Float32BufferAttribute(new Float32Array(SPARKS * 3), 3));
-    g.setAttribute("color", new Float32BufferAttribute(new Float32Array(SPARKS * 3), 3));
+    // colour and alpha: on a dark stage the sparks add light, on a light one (Day, a light own look) they are painted on
+    g.setAttribute("color", new Float32BufferAttribute(new Float32Array(SPARKS * 4), 4));
     this.sparks = new Points(g, new PointsMaterial({ size: 0.4, map: this.tex, vertexColors: true, transparent: true, depthWrite: false, blending: AdditiveBlending }));
     this.sparks.frustumCulled = false;
-    // drawn after the transparent glass of the panels, which would otherwise paint over the additive sparks
+    // drawn after the roof and the panels on it, which are see-through and would otherwise paint over the sparks. The order
+    // has to sit on the group: three.js sorts by the nearest group's order first, and the roof's group has 8 (#130)
+    this.group.renderOrder = 10;
     this.sparks.renderOrder = 10;
     this.group.add(this.sparks);
     scene.add(this.group);
+  }
+
+  /** A light stage (Day, a light own look): adding light to a bright picture shows nothing, so everything is painted with its colour instead (#130). */
+  setLight(light: boolean): void {
+    if (light === this.light) return;
+    this.light = light;
+    const blending = light ? NormalBlending : AdditiveBlending;
+    (this.sparks.material as PointsMaterial).blending = blending;
+    (this.sparks.material as PointsMaterial).needsUpdate = true;
+    for (const v of this.arcs.values()) {
+      for (const m of [v.line.material as LineBasicMaterial, v.points.material as PointsMaterial]) {
+        m.blending = blending;
+        m.needsUpdate = true;
+      }
+    }
   }
 
   get active(): boolean {
@@ -126,10 +149,10 @@ export class EnergyLayer {
       if (!v) {
         const lg = new BufferGeometry();
         lg.setAttribute("position", new Float32BufferAttribute(new Float32Array(LINE_POINTS * 3), 3));
-        const line = new Line(lg, new LineBasicMaterial({ transparent: true, opacity: 0.4, depthWrite: false, blending: AdditiveBlending }));
+        const line = new Line(lg, new LineBasicMaterial({ transparent: true, opacity: 0.4, depthWrite: false, blending: this.light ? NormalBlending : AdditiveBlending }));
         const pg = new BufferGeometry();
         pg.setAttribute("position", new Float32BufferAttribute(new Float32Array(MAX_PER_ARC * 3), 3));
-        const points = new Points(pg, new PointsMaterial({ size: 0.55, map: this.tex, transparent: true, depthWrite: false, blending: AdditiveBlending }));
+        const points = new Points(pg, new PointsMaterial({ size: 0.55, map: this.tex, transparent: true, depthWrite: false, blending: this.light ? NormalBlending : AdditiveBlending }));
         line.frustumCulled = points.frustumCulled = false;
         const phase = new Float32Array(MAX_PER_ARC);
         for (let i = 0; i < MAX_PER_ARC; i++) phase[i] = Math.random();
@@ -164,8 +187,8 @@ export class EnergyLayer {
         for (let k = 0; k < share && n < SPARKS; k++, n++) {
           const q = f.quads[Math.floor(Math.random() * f.quads.length)];
           const u = Math.random(), w = Math.random();
-          // a point on the module: bilinear between its corners, a hand above the surface along its normal (on a sloped roof or a
-          // rack straight up is not far enough out: half the 0.4 m sprite would sink into the glass and be hidden; #130)
+          // a point on the module: bilinear between its corners, just above the surface along its normal (on a sloped roof or a
+          // rack straight up would not clear the glass)
           const e1 = [q[1][0] - q[0][0], q[1][1] - q[0][1], q[1][2] - q[0][2]];
           const e2 = [q[3][0] - q[0][0], q[3][1] - q[0][1], q[3][2] - q[0][2]];
           const nrm = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
@@ -176,7 +199,7 @@ export class EnergyLayer {
           for (let i = 0; i < 3; i++) {
             const top = q[0][i] + (q[1][i] - q[0][i]) * u;
             const bot = q[3][i] + (q[2][i] - q[3][i]) * u;
-            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (upright ? (i === 1 ? 0.12 : 0) : (nrm[i] / len) * up * 0.25);
+            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (upright ? (i === 1 ? 0.12 : 0) : (nrm[i] / len) * up * 0.1);
           }
           this.sparkField[n] = fi;
           this.sparkPhase[n] = Math.random() * Math.PI * 2;
@@ -190,7 +213,7 @@ export class EnergyLayer {
 
   /** World position of a plan point right now. */
   private world(p: PlanPoint, out: Vector3): boolean {
-    const l = this.lift(p.floorId);
+    const l = this.lift(p.floorId, p.roof);
     out.set(p.x, l.y + p.y, p.z);
     return l.visible;
   }
@@ -279,14 +302,15 @@ export class EnergyLayer {
       const t = now / 1000;
       for (let i = 0; i < this.sparkCount; i++) {
         const f = this.sparkFields[this.sparkField[i]];
-        const l = this.lift(f?.floorId ?? null);
+        const l = this.lift(f?.floorId ?? null, f?.roof);
         // sparks of a hidden floor's field are put far below the ground (dark points would still show)
         pos.setXYZ(i, this.sparkBase[i * 3], l.visible ? this.sparkBase[i * 3 + 1] + l.dy : -1000, this.sparkBase[i * 3 + 2]);
         // each spark twinkles on its own beat, brighter on a strong field
         const tw = Math.max(0, Math.sin(t * 2.4 + this.sparkPhase[i] * 3)) ** 6;
         // a field whose floor is hidden (another floor opened) goes dark
         const b = l.visible ? (0.15 + 0.85 * tw) * (0.4 + 0.6 * (f?.level ?? 0)) : 0;
-        col.setXYZ(i, b, b * 0.86, b * 0.35);
+        if (this.light) col.setXYZW(i, 1, 0.62, 0.05, Math.min(1, b * 1.6));
+        else col.setXYZW(i, b, b * 0.86, b * 0.35, 1);
       }
       pos.needsUpdate = true;
       col.needsUpdate = true;

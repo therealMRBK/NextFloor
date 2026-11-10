@@ -232,7 +232,7 @@ function coolingLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkA
 }
 
 /** Any other electric device: its own thermometer (an inverter, a battery, a PC), shown on its pin (#112). */
-function deviceTempLink(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
+export function deviceTempLink(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
   const t = host.t;
   const temps = entityOptions(host.hass, (id) => {
     const a = host.hass?.states[id]?.attributes;

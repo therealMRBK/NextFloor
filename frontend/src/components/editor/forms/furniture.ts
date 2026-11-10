@@ -12,7 +12,7 @@ import { storeImage } from "../../../api.ts";
 import { readPictureInBrowser } from "../background-tool.ts";
 import { roofUnderAt } from "../../../roof/proposal.ts";
 import type { EditorHost } from "../host.ts";
-import { careLink, coverLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
+import { careLink, coverLink, deviceTempLink, furnitureLinks, gangLinks, stateLinks, type FurnitureLinkActions } from "./furniture-links.ts";
 import { dataField, TARGET_EXAMPLES } from "./house.ts";
 import { parkingForm } from "./parking.ts";
 import { stairForm } from "./stairs.ts";
@@ -36,6 +36,8 @@ export interface FurnitureActions extends FurnitureLinkActions {
 
 /** Furniture without a top to light: no "state from" box. */
 const NO_STATE_TYPES = new Set(["parking", "stairwell", "rug", "grid_point"]);
+/** Pieces without anything to measure: openings in the floor and stairs. Everything else may carry temperature sensors (a tank that is no electric device; #118). */
+const NO_TEMP_TYPES = new Set(["floor_opening", "stairs", "chimney"]);
 
 /** The looks a type can have besides its paint, as the variants it offers and the text of each. */
 const VARIANTS: Record<string, { label: I18nKey; values: readonly string[]; text(value: string): string }> = {
@@ -237,7 +239,7 @@ function showWhenField(host: EditorHost, item: Furniture, actions: FurnitureActi
 /** The form of the selected piece of furniture. */
 export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
   const gangs = packItem(item.type)?.gangs ?? 0;
-  const links = gangs ? gangLinks(host, item, gangs, actions) : isElectric(item.type) ? furnitureLinks(host, item, actions) : !NO_STATE_TYPES.has(item.type) ? html`<div class="nf-form nf-links">${stateLinks(host, item, actions)}</div>` : nothing;
+  const links = gangs ? gangLinks(host, item, gangs, actions) : isElectric(item.type) ? furnitureLinks(host, item, actions) : !NO_STATE_TYPES.has(item.type) ? html`<div class="nf-form nf-links">${stateLinks(host, item, actions)}</div>${NO_TEMP_TYPES.has(item.type) ? nothing : deviceTempLink(host, item, actions)}` : nothing;
   return html`<section>
     <div class="nf-h3row"><h3>${item.name || host.t("furniture")}</h3>${actions.lockButton}</div>
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>

@@ -22,7 +22,6 @@ export type CheckFix =
   | { do: "set_area"; roomId: string; areaId: string }
   | { do: "add_area_rooms" }
   | { do: "place_devices"; roomId: string; entityIds: string[] }
-  | { do: "ignore_devices"; entityIds: string[] }
   | { do: "show_opening"; openingId: string }
   | { do: "remove_placements"; entityIds: string[] }
   | { do: "show_furniture"; furnitureId: string };

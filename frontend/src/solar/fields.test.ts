@@ -163,3 +163,14 @@ test("east-west racks turn every second row and stand the pairs close; a rack on
   const racked = fieldModules(slope(), field("x", { rows: 1, cols: 1, tilt: 20 }))[0];
   assert.equal(racked.posts.length, 2, "brackets under the raised edge");
 });
+
+test("a roof window on a flat roof lies flat on it, on a low kerb (D#126)", () => {
+  const face = flat();
+  const corners = windowCorners(face, { id: "w", face: face.key, u: 1, v: 1, w: 1, h: 1, cover: null, contact: null, tilt: null })!;
+  const ys = corners.map((c) => c[1]);
+  assert.ok(Math.max(...ys) - Math.min(...ys) < 1e-9, "level");
+  // a solar field on the same roof stands on a frame
+  const module = fieldModules(face, { id: "f", face: face.key, u: 1, v: 1, rows: 1, cols: 1, portrait: true })[0];
+  assert.ok(Math.max(...module.corners.map((c) => c[1])) - Math.min(...module.corners.map((c) => c[1])) > 0.1);
+  assert.ok(ys[0] > module.corners[0][1] - 0.2);
+});

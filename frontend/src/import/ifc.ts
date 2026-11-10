@@ -1,9 +1,10 @@
 // Import from IFC (the BIM exchange format of Revit, ArchiCAD, Allplan, Vectorworks …): every storey becomes a floor at its elevation,
-// every space (IfcSpace) a room with its name and footprint. Only the plain parts of IFC are read – rectangle and polyline profiles of
+// every space (IfcSpace) a room with its name and footprint, every door and window (IfcDoor, IfcWindow) an opening in the room wall
+// it stands nearest to. Only the plain parts of IFC are read – rectangle and polyline profiles of
 // an extruded solid, local placements with a turn about the vertical – which is what common exports write for spaces. Walls are not
 // taken over: NextFloor draws its own from the rooms. IFC's y points north up the drawing, NextFloor's z down the plan, so y is mirrored.
 
-import { emptyBuilding, newFloor, normalizeBuilding, uid, type Building, type Floor, type Vec2 } from "../model.ts";
+import { emptyBuilding, newFloor, normalizeBuilding, uid, type Building, type Floor, type Opening, type Vec2 } from "../model.ts";
 import type { ImportReport } from "./sweethome.ts";
 
 type Value = string | number | null | Ref | Value[];
@@ -173,6 +174,17 @@ export function importIfc(text: string): { building: Building; report: ImportRep
   }
   if (!rooms.length) throw new Error("ifc_empty");
 
+  // doors and windows: where their middle is (the placement is the lower corner, x runs along the wall), how wide and high, how far above their storey
+  const doors: { storey: number | null; window: boolean; at: Vec2; width: number; height: number; z: number }[] = [];
+  for (const [id, e] of all) {
+    if (e.type !== "IFCDOOR" && e.type !== "IFCWINDOW") continue;
+    const [height, width] = [num(e.args[8]) * unit, num(e.args[9]) * unit];
+    if (!(width > 0.2 && width < 12 && height > 0.2 && height < 8)) continue;
+    const at = placement(e.args[5]);
+    const half = width / unit / 2;
+    doors.push({ storey: storeyOf.get(id) ?? null, window: e.type === "IFCWINDOW", at: [(at.x + at.c * half) * unit, (at.y + at.s * half) * unit], width, height, z: at.z * unit });
+  }
+
   // plan coordinates: from the drawing's left, y mirrored into z
   const pts = rooms.flatMap((r) => r.ring);
   const x0 = Math.min(...pts.map((p) => p[0]));
@@ -200,7 +212,47 @@ export function importIfc(text: string): { building: Building; report: ImportRep
     const f = floorFor.get(r.storey !== null && floorFor.has(r.storey) ? r.storey : null)!;
     f.rooms.push({ id: uid("room"), name: r.name, area_id: null, points: r.ring.map(([x, y]) => [r3(x - x0), r3(y1 - y)]), floor_material: "wood", panel: [] });
   }
+  // each door and window goes into the nearest room wall of its storey (spaces end at the wall faces, so up to a wall's thickness away)
+  let openings = 0;
+  for (const d of doors) {
+    const f = floorFor.get(d.storey !== null && floorFor.has(d.storey) ? d.storey : null);
+    if (!f) continue;
+    const p: Vec2 = [d.at[0] - x0, y1 - d.at[1]];
+    let best: { room: string; edge: number; along: number; length: number; dist: number } | null = null;
+    for (const room of f.rooms) {
+      room.points.forEach((a, edge) => {
+        const b2 = room.points[(edge + 1) % room.points.length];
+        const length = Math.hypot(b2[0] - a[0], b2[1] - a[1]);
+        if (length < d.width) return;
+        const along = ((p[0] - a[0]) * (b2[0] - a[0]) + (p[1] - a[1]) * (b2[1] - a[1])) / length;
+        if (along < 0 || along > length) return;
+        const dist = Math.abs((p[0] - a[0]) * (b2[1] - a[1]) - (p[1] - a[1]) * (b2[0] - a[0])) / length;
+        if (dist <= 0.6 && (!best || dist < best.dist)) best = { room: room.id, edge, along, length, dist };
+      });
+    }
+    const host = best as { room: string; edge: number; along: number; length: number } | null;
+    if (!host) continue;
+    const sill = Math.max(0, r3(d.z - f.elevation));
+    f.openings.push({
+      id: uid("op"),
+      room_id: host.room,
+      edge: host.edge,
+      offset: r3(Math.min(host.length - d.width / 2, Math.max(d.width / 2, host.along))),
+      width: r3(d.width),
+      type: d.window ? "window" : "door",
+      sill: d.window ? sill : 0,
+      height: r3(d.height),
+      hinge: "left",
+      leaves: d.width > 1.4 ? 2 : 1,
+      swing: "in",
+      cover: null,
+      contact: null,
+      contact2: null,
+      tilt: null,
+    } as Opening);
+    openings++;
+  }
   const b = emptyBuilding();
   b.floors = floors;
-  return { building: normalizeBuilding(b), report: { floors: floors.length, rooms: rooms.length, openings: 0, walls: 0, furniture: 0 } };
+  return { building: normalizeBuilding(b), report: { floors: floors.length, rooms: rooms.length, openings, walls: 0, furniture: 0 } };
 }

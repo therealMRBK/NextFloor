@@ -283,8 +283,10 @@ if (process.env.SHOWCASE) {
   for (let n = 1; n <= Number(pages); n++) shots.push({ name: `sc-${n}`, dev: true, query: `?showcase&lang=en&set=${set}&page=${n}`, width: 1400, height: 800 });
 }
 
+// EXTRA_SHOTS=<file.json>: further scenes for a one-off look (same fields as above), taken instead of the list
+if (process.env.EXTRA_SHOTS) shots.push(...JSON.parse(readFileSync(process.env.EXTRA_SHOTS, "utf8")).map((s) => ({ ...s, dev: true })));
 const errors = [];
-const only = process.env.SHOTS?.split(",");
+const only = process.env.EXTRA_SHOTS ? shots.slice(-JSON.parse(readFileSync(process.env.EXTRA_SHOTS, "utf8")).length).map((s) => s.name) : process.env.SHOTS?.split(",");
 for (const shot of shots.filter((s) => (only ? only.includes(s.name) : !s.dev))) {
   const page = await browser.newPage();
   if (process.env.FAKE_TILES) {

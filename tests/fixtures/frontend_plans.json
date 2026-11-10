@@ -84,7 +84,14 @@
      "action": "navigate",
      "target": "/energy"
     }
-   ]
+   ],
+   "own_look": {
+    "dark": "#3b2a1e",
+    "light": "#c9b79c",
+    "lines": "#f0c080",
+    "background": "#17120e",
+    "glass": "#88bbdd"
+   }
   },
   "floors": [
    {
@@ -392,7 +399,7 @@
       "sill": 0,
       "height": 2.1,
       "hinge": "left",
-      "cover": null,
+      "cover": "switch.garage_relay",
       "contact": null,
       "tilt": null,
       "leaves": 1,
@@ -1527,6 +1534,32 @@
       ],
       "thickness": null,
       "height": null
+     },
+     {
+      "id": "wall_face_a",
+      "a": [
+       19.94,
+       0.85
+      ],
+      "b": [
+       24,
+       0.85
+      ],
+      "thickness": 0.3,
+      "axis": "left"
+     },
+     {
+      "id": "wall_face_b",
+      "a": [
+       19.94,
+       0.85
+      ],
+      "b": [
+       19.94,
+       4
+      ],
+      "thickness": null,
+      "axis": "right"
      }
     ],
     "outdoor": [
@@ -2212,7 +2245,54 @@
    "battery_invert": false,
    "battery_soc": null,
    "consumption": null,
-   "tariff": "sensor.strompreis"
+   "tariff": "sensor.strompreis",
+   "solar_invert": true,
+   "pipes": [
+    {
+     "id": "riser",
+     "name": "Strang",
+     "kind": "supply",
+     "entity": null
+    },
+    {
+     "id": "branch",
+     "name": "Abzweig",
+     "kind": "supply",
+     "entity": "climate.wohnzimmer"
+    }
+   ],
+   "routes": [
+    {
+     "key": "pipe:riser",
+     "points": [
+      {
+       "floor_id": "eg",
+       "x": 1,
+       "z": 1
+      },
+      {
+       "floor_id": "eg",
+       "x": 1,
+       "z": 5
+      }
+     ]
+    },
+    {
+     "key": "pipe:branch",
+     "points": [
+      {
+       "floor_id": "eg",
+       "x": 1,
+       "z": 3
+      },
+      {
+       "floor_id": "eg",
+       "x": 4,
+       "z": 3
+      }
+     ]
+    }
+   ]
   },
   "presence": [
    {

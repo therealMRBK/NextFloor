@@ -151,3 +151,19 @@ test("a roof section belongs to the floor whose rooms lie under it, not to a hig
   assert.equal(sectionFloor(b, { base: 4.04, x0: 0, z0: 0, x1: 10.2, z1: 7 })?.id, "eg");
   assert.equal(sectionFloor(b, { base: 2.5 })?.id, "eg", "without its rectangle: the highest floor below, as before");
 });
+
+test("an outbuilding beside the house gets its own roof at its own height (D#72)", () => {
+  const b = emptyBuilding();
+  const g = newFloor("g", "G", 0);
+  g.height = 2.6;
+  // the house, and a shed 4 m away whose ceiling is lower; a low bathroom inside the house does not pull its roof down
+  g.rooms = [rectRoom("a", 0, 0, 6, 6), { ...rectRoom("bath", 6, 0, 8, 6), ceiling: 2.2 }, { ...rectRoom("shed", 12, 0, 15, 4), ceiling: 2.1 }];
+  b.floors = [g];
+  const sections = roofSectionsFromRooms(b);
+  assert.equal(sections.length, 2);
+  const [house, shed] = [...sections].sort((p, q) => p.x0 - q.x0);
+  assert.equal(house.base, 2.6);
+  assert.equal(shed.base, 2.1);
+  assert.equal(shed.eave_a, 2.1);
+  assert.ok(shed.x0 > house.x1, "apart");
+});

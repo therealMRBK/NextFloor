@@ -125,7 +125,16 @@ export function roofSectionsFromRooms(b: Building, makeId: (i: number) => string
     }));
     const taken = open.map((row) => row.map(() => false));
     const available = (i: number, j: number) => open[j][i] && !taken[j][i];
-    const top = floor.elevation + floor.height;
+    // the walls under a rectangle end where its rooms' ceilings are: a shed or a garage with a ceiling of its own (lower or higher
+    // than the floor) gets its roof there, an outbuilding beside the house its own roof at its own height (D#72)
+    const topOf = (i0: number, i1: number, j0: number, j1: number): number => {
+      const under = rooms.filter((r) => {
+        for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (open[j][i] && pointInPolygon([(columns[i] + columns[i + 1]) / 2, (rows[j] + rows[j + 1]) / 2], r.points)) return true;
+        return false;
+      });
+      const heights = under.map((r) => (typeof r.ceiling === "number" && r.ceiling > 0 ? r.ceiling : floor.height));
+      return floor.elevation + (heights.length ? Math.max(...heights) : floor.height);
+    };
     // greedy rectangles: as wide as possible, then as deep as the whole row allows
     for (let j = 0; j < open.length; j++) {
       for (let i = 0; i < (open[j]?.length ?? 0); i++) {
@@ -138,6 +147,7 @@ export function roofSectionsFromRooms(b: Building, makeId: (i: number) => string
         const [x0, x1] = [columns[i] - wall, columns[right + 1] + wall];
         const [z0, z1] = [rows[j] - wall, rows[bottom + 1] + wall];
         if (Math.min(x1 - x0, z1 - z0) < 0.8) continue;
+        const top = topOf(i, right, j, bottom);
         sections.push({
           id: makeId(sections.length),
           x0: round3(x0),

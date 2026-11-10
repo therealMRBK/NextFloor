@@ -462,6 +462,11 @@ export interface FreeWall {
   bottom?: number | null;
   /** The bottom edge at the end b, for a bottom that follows a roof slope; null = the same as `bottom`. */
   bottom_end?: number | null;
+  /**
+   * The wall was drawn by one of its faces (#125): it lies to the left or right of the drawn line, seen from a to b. `a` and `b`
+   * stay the middle of the wall; the editor shows and drags the drawn line (that face). Null or absent: drawn by its middle.
+   */
+  axis?: "left" | "right" | null;
 }
 
 /** "custom": the roof is made of sections (wings of an L- or T-shaped house, a barn, a lean-to …). */
@@ -1025,6 +1030,8 @@ export interface EnergySettings {
   grid: string | null;
   grid_invert: boolean;
   solar: string | null;
+  /** The solar sensors count the other way round (production is negative): the balance sensor, the inverters' and the fields' own. */
+  solar_invert?: boolean;
   battery: string | null;
   battery_invert: boolean;
   battery_soc: string | null;
@@ -1073,7 +1080,7 @@ export interface Pipe {
 }
 
 /** The most pipes a plan can have. */
-export const MAX_PIPES = 24;
+export const MAX_PIPES = 60;
 
 /** The route key of a pipe. */
 export const pipeRouteKey = (id: string): string => `pipe:${id}`;

@@ -43,8 +43,6 @@ function fixLabel(host: EditorHost, f: CheckFinding): string {
       return t("check_fix_add_rooms");
     case "place_devices":
       return t("check_fix_place", { n: f.fix.entityIds.length });
-    case "ignore_devices":
-      return t("check_fix_ignore");
     case "remove_placements":
       return t("check_fix_remove", { n: f.fix.entityIds.length });
     default:

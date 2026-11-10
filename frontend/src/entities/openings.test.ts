@@ -200,3 +200,16 @@ test("a pane over several edges (bay window) gets the blind and state of its fir
   // a single-edge window is left as it is
   assert.equal(withFrontIds(new Map([["w", 1]]), [floorWith([], { openings: [opening("w", "r", "window")] })]).size, 1);
 });
+
+test("a gate moved by a relay or a push button (#134): the drive is tapped, the contact tells where the gate stands", () => {
+  const hass = hassOf([entity("switch.gate", "on"), entity("button.gate", "unknown"), entity("binary_sensor.gc", "off")]);
+  // the relay being "on" says nothing about the gate: without a contact it is drawn closed and counts as not sensed
+  const alone = openingState(hass, plain({ cover: "switch.gate" }), "garage");
+  assert.deepEqual([alone.cover, alone.sensed], [1, false]);
+  assert.equal(openingState(hass, plain({ cover: "button.gate", contact: "binary_sensor.gc" }), "garage").cover, 1);
+  const open = hassOf([entity("switch.gate", "off"), entity("binary_sensor.gc", "on")]);
+  assert.equal(openingState(open, plain({ cover: "switch.gate", contact: "binary_sensor.gc" }), "garage").cover, 0);
+  // a chosen drive is kept as the opening's link
+  const floor = floorWith([box("r", 0, 0, 5, 4, "a")], { openings: [opening("g", "r", "garage", { cover: "switch.gate" })] });
+  assert.equal(openingEntities(hass, [floor]).get("g")?.cover, "switch.gate");
+});

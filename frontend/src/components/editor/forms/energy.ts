@@ -1,7 +1,7 @@
 // The energy tool's side panel: what is still to do, the devices, and the balance sensors.
 
 import { html, nothing, type TemplateResult } from "lit";
-import { deviceSensors, energySummary } from "../../../energy.ts";
+import { deviceSensors, energySummary, readPower } from "../../../energy.ts";
 import { furnitureEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, MAX_PIPES, PIPE_KINDS, pipeRouteKey, type Building, type Floor, type Furniture, type Pipe, type RoutePoint } from "../../../model.ts";
@@ -86,6 +86,11 @@ export function renderEnergyBalance(host: EditorHost, actions: EnergyActions): T
   const night = !!sum && (sum.solar ?? 0) < 20;
   const gridWrong = night && sum.grid !== null && sum.grid < -50;
   const batteryWrong = night && sum.battery !== null && sum.battery < -50 && (sum.grid ?? 0) <= 0;
+  // ... or one that seems to give its charge away to the grid while the sun shines (#135)
+  const batteryFeeds = !!sum && !night && sum.battery !== null && sum.battery > 50 && sum.grid !== null && sum.grid < -50 && -sum.grid >= sum.battery * 0.8;
+  // ... or the sun "drawing" power: a solar sensor that counts production as negative
+  const rawSolar = host.hass ? (energy.solar ? [energy.solar] : sensors.solar).map((id) => readPower(host.hass!.states[id], !!energy.solar_invert) ?? 0).reduce((a, b) => a + b, 0) : 0;
+  const solarWrong = rawSolar < -50;
   const invert = (value: boolean, patch: (on: boolean) => Partial<Building["energy"]>) => checkField(host, host.t("energy_invert"), value, (on) => store(patch(on)));
 
   return html`<section>
@@ -93,10 +98,13 @@ export function renderEnergyBalance(host: EditorHost, actions: EnergyActions): T
     ${hint(host.t("energy_balance_hint"))}
     ${gridWrong ? signWarning(host, "energy_sign_grid", () => store({ grid_invert: !energy.grid_invert })) : nothing}
     ${batteryWrong ? signWarning(host, "energy_sign_battery", () => store({ battery_invert: !energy.battery_invert })) : nothing}
+    ${solarWrong ? signWarning(host, "energy_sign_solar", () => store({ solar_invert: !energy.solar_invert })) : nothing}
+    ${batteryFeeds ? signWarning(host, "energy_sign_battery_day", () => store({ battery_invert: !energy.battery_invert })) : nothing}
     <div class="nf-form">
       ${entityField(host, host.t("energy_grid"), energy.grid, sensors.grid, power, pick("grid"))}
       ${invert(energy.grid_invert, (on) => ({ grid_invert: on }))}
       ${entityField(host, host.t("energy_solar_sensor"), energy.solar, sensors.solar[0] ?? null, power, pick("solar"))}
+      ${invert(!!energy.solar_invert, (on) => ({ solar_invert: on }))}
       ${entityField(host, host.t("energy_battery_sensor"), energy.battery, sensors.battery[0] ?? null, power, pick("battery"))}
       ${invert(energy.battery_invert, (on) => ({ battery_invert: on }))}
       ${entityField(host, host.t("energy_battery_soc"), energy.battery_soc, sensors.soc[0] ?? null, charge, pick("battery_soc"))}
@@ -223,6 +231,7 @@ export function renderPipes(host: EditorHost, actions: PipeActions, routes: Rout
   return html`<section>
     <h3>🔥 ${t("pipes_title")}</h3>
     ${hint(t("pipes_hint"))}
+    ${hint(t("pipes_branch_hint"))}
     <div class="nf-room-list">
       ${pipes.map((p) => {
         const key = pipeRouteKey(p.id);

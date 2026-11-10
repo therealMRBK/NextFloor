@@ -747,6 +747,8 @@ FREE_WALL_SCHEMA = vol.Schema(
         # a wall hanging in the air (#114): bottom edge above the floor at a, and at b when it follows a roof slope
         vol.Optional("bottom", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
         vol.Optional("bottom_end", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=20))),
+        # drawn by one of its faces (#125): the editor shows and drags that face instead of the middle
+        vol.Optional("axis"): vol.Any(None, vol.In(["left", "right"])),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -875,7 +877,7 @@ SETTINGS_SCHEMA = vol.Schema(
             None,
             {
                 vol.Optional(key): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$"))
-                for key in ("dark", "light", "lines", "background")
+                for key in ("dark", "light", "lines", "background", "glass")
             },
         ),
         # plugin modules the panel and the card import (docs/plugins.md); no default, so plans stay as stored
@@ -1095,6 +1097,8 @@ ENERGY_SCHEMA = vol.Schema(
         vol.Optional("grid", default=None): _ENTITY,
         vol.Optional("grid_invert", default=False): bool,
         vol.Optional("solar", default=None): _ENTITY,
+        # solar sensors that count production as negative
+        vol.Optional("solar_invert"): bool,
         vol.Optional("battery", default=None): _ENTITY,
         vol.Optional("battery_invert", default=False): bool,
         vol.Optional("battery_soc", default=None): _ENTITY,
@@ -1108,7 +1112,7 @@ ENERGY_SCHEMA = vol.Schema(
         # a sub-meter's label also shows what no placed device measures
         vol.Optional("show_unmetered"): bool,
         # where the cable of an energy connection runs (the flow follows it instead of an arc)
-        vol.Optional("routes"): vol.All([ROUTE_SCHEMA], vol.Length(max=100)),
+        vol.Optional("routes"): vol.All([ROUTE_SCHEMA], vol.Length(max=200)),
         # heating and water pipes: their route is stored under the key "pipe:<id>" in `routes`
         vol.Optional("pipes"): vol.All(
             [
@@ -1122,7 +1126,7 @@ ENERGY_SCHEMA = vol.Schema(
                     extra=vol.ALLOW_EXTRA,
                 )
             ],
-            vol.Length(max=24),
+            vol.Length(max=60),
         ),
     },
     extra=vol.ALLOW_EXTRA,
