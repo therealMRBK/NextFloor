@@ -4,9 +4,11 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.0]
+
 ### Added
 
-- **Rooms as drawn** (thanks @Dragi2k, @alexhass, #65, #121): a new setting that leaves your rooms exactly where you drew them, by their inner faces. Where two rooms have a gap between them, one wall now fills the gap (its thickness is the gap) instead of each room growing its own exterior wall into it, so the two no longer overlap. Doors and windows sit in that wall and are no longer hidden behind the neighbour's wall (the black openings). Nothing moves and no room changes size, so *Close gaps* is not needed. Off by default; existing plans look the same until you switch it on in the settings.
+- **Rooms as drawn** (thanks @Dragi2k, #65): a new setting that leaves your rooms exactly where you drew them, by their inner faces. Where two rooms have a gap between them (up to 60 cm), one wall now fills the gap (its thickness is the gap) instead of each room growing its own exterior wall into it, so the two no longer overlap. Doors and windows sit in that wall and are no longer hidden behind the neighbour's wall (the black openings). Nothing moves and no room changes size, so *Close gaps* is not needed. Off by default; existing plans look the same until you switch it on in the settings. It helps where rooms have a gap; rooms that overlap are still joined with *Close gaps* (#121). A window or door in such a wall counts as one between two rooms, like in rooms that touch.
 
 ## [0.30.1]
 
