@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.30.1]
+
+### Added
+
+- **Wall tool: wall on the left, right or middle of the line** (thanks @keinenahmenfrei, #125): next to the wall tool a choice *Wall sits* places the new wall centred on the line you drag, or to its left or right, so you can follow the edge of a template or the face of a neighbouring wall without nudging it afterwards.
+
 ## [0.30.0.2]
 
 ### Fixed

@@ -35,6 +35,19 @@ export function newFreeWall(a: Vec2, b: Vec2): FreeWall {
   return { id: uid("wall"), a: [thousandths(a[0]), thousandths(a[1])], b: [thousandths(b[0]), thousandths(b[1])], thickness: null };
 }
 
+/** Where a wall lies in relation to the line drawn: centred on it, or to its left / right (the line is then the wall's right / left face). */
+export type WallSide = "center" | "left" | "right";
+
+/** The end points of a wall drawn along a→b, moved sideways by half its thickness for "left" (to the left of the direction drawn) or "right". */
+export function wallOnSide(a: Vec2, b: Vec2, thickness: number, side: WallSide): [Vec2, Vec2] {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  if (side === "center" || len < 1e-9) return [a, b];
+  // left of a→b with x right and z down the screen
+  const k = ((side === "left" ? 1 : -1) * thickness) / 2 / len;
+  const n: Vec2 = [(b[1] - a[1]) * k, -(b[0] - a[0]) * k];
+  return [[a[0] + n[0], a[1] + n[1]], [b[0] + n[0], b[1] + n[1]]];
+}
+
 /** The far end of a free wall after its length was typed: the wall keeps its start and its direction. */
 export function wallEndForLength(wall: FreeWall, length: number): Vec2 {
   const current = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]) || 1;

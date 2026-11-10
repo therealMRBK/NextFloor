@@ -196,3 +196,14 @@ test("what stands higher is drawn on top, so a click hits the speaker on the des
   const same = floorWith([], { furniture: [sofa({ id: "a", x: 1 }), sofa({ id: "b", x: 3 })] });
   assert.deepEqual(drawOrder(same).map((f) => f.id), ["a", "b"], "equal heights keep their order");
 });
+
+test("a wall drawn to the left or right of the line moves by half its thickness", async () => {
+  const { wallOnSide } = await import("./items.ts");
+  assert.deepEqual(wallOnSide([0, 0], [4, 0], 0.2, "center"), [[0, 0], [4, 0]]);
+  // drawn towards +x: left on the screen is -z
+  const left = wallOnSide([0, 0], [4, 0], 0.2, "left");
+  assert.ok(Math.abs(left[0][1] + 0.1) < 1e-9 && Math.abs(left[1][1] + 0.1) < 1e-9 && left[1][0] === 4);
+  const right = wallOnSide([0, 0], [0, 4], 0.2, "right");
+  // drawn towards +z: right on the screen is -x
+  assert.ok(Math.abs(right[0][0] + 0.1) < 1e-9);
+});

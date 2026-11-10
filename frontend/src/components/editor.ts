@@ -96,7 +96,7 @@ import { RoofController } from "./editor/roof-controller.ts";
 import { importEnergyPrefs } from "./editor/ops/energy-import.ts";
 import { newEnergyDevice } from "./editor/ops/energy-devices.ts";
 import { EditHistory } from "./editor/history.ts";
-import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
+import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, wallOnSide, type WallSide, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
 import { NO_CHANGE, NOTHING_TO_MOVE, nudge, type NudgeTarget } from "./editor/ops/nudge.ts";
 import { areaChoice, copyOfRoom, cornerMoved, evenCeilingLights, newRoom, rectangleAfter, removeCorner, removeRoom, type RectField } from "./editor/ops/rooms.ts";
 import { translate as moveScope, turnQuarterClockwise, type Scope } from "./editor/ops/transform.ts";
@@ -421,6 +421,9 @@ export class NfEditor extends LitElement {
       },
     };
   }
+
+  /** Where a new wall lies in relation to the line drawn (Q54). */
+  private _wallSide: WallSide = "center";
 
   private freeWallActions(): FreeWallActions {
     return {
@@ -2450,7 +2453,8 @@ export class NfEditor extends LitElement {
   /** Adds a free-standing wall between two plan points and selects it. */
   private addFreeWall(a: Vec2, b: Vec2): void {
     if (!this.floor) return;
-    const wall = newFreeWall(a, b);
+    const [from, to] = wallOnSide(a, b, this._doc.settings.wall_interior, this._wallSide);
+    const wall = newFreeWall(from, to);
     this.change((_, floor) => (floor.walls = [...(floor.walls ?? []), wall]));
     this.selectItem("wall", wall.id);
   }
@@ -3269,6 +3273,13 @@ export class NfEditor extends LitElement {
               ${this.isAdmin ? html`<button aria-pressed=${!!this._doc.settings.lock_plan} title=${this.t("lock_plan_hint")} @click=${() => this.toggleLockPlan()}>${this.t("lock_plan")}</button>` : nothing}
               <button aria-pressed=${this._dims} title=${this.t("plan_dims_hint")} @click=${() => this.setDims(!this._dims)}>📏 ${this.t("plan_dims")}</button>
             </div>
+            ${this._tool === "wall"
+              ? html`<label class="nf-wallside" title=${this.t("wall_side_hint")}>${this.t("wall_side")}
+                  <select @change=${(e: Event) => (this._wallSide = (e.target as HTMLSelectElement).value as WallSide)}>
+                    ${(["center", "left", "right"] as const).map((v) => html`<option value=${v} ?selected=${this._wallSide === v}>${this.t(`wall_side_${v}` as I18nKey)}</option>`)}
+                  </select>
+                </label>`
+              : nothing}
             ${walls?.warnings.length ? html`<span class="nf-warn">${this.t("overlap_warning")}</span>` : nothing}
           </div>
           <div class="nf-stage-pair ${this._split ? "nf-split" : ""}" style=${this._split && !this.narrow ? `--nf-split:${Math.round(this._splitRatio * 100)}%` : ""}>
