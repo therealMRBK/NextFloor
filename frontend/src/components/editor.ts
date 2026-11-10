@@ -4,6 +4,7 @@ import { html, LitElement, nothing, svg, type PropertyValues, type TemplateResul
 import { fetchImage, importPack, storeImage } from "../api.ts";
 import { defaultHeight, entityName, kindOf, roomEntities } from "../devices.ts";
 import { closeGaps, suggestedThickness } from "../geometry/gaps.ts";
+import { enclosedAreas } from "../geometry/enclosed.ts";
 import { keepInRoom, snapToWall } from "../geometry/snap.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { polygonBox } from "../roof-sections.ts";
@@ -2390,6 +2391,7 @@ export class NfEditor extends LitElement {
       duplicateFloor: (options) => this.duplicateFloor(options),
       addAreaRooms: (floor) => this.addAreaRooms(floor),
       closeGaps: () => this.closeFloorGaps(),
+      roomsFromWalls: () => this.roomsFromWalls(),
       shift: () => this.shiftFloor(this.side.shiftX, this.side.shiftZ),
       turn: () => this.turnFloor(),
       rememberView: () => this.rememberFloorView(),
@@ -3187,6 +3189,25 @@ export class NfEditor extends LitElement {
     this.side.notice = thickness
       ? this.t("gaps_closed_wall", { n: gaps.length, t: formatNumber(this.hass, thickness, 2) })
       : this.t("gaps_closed", { n: gaps.length });
+  }
+
+  /** A room in every area the free walls close off (#125): its outline on the wall centre lines, its own walls off (the free walls are the walls). */
+  private roomsFromWalls(): void {
+    const floor = this.floor;
+    if (!floor || !this.isAdmin) return;
+    const areas = enclosedAreas(floor);
+    if (!areas.length) {
+      this.side.notice = this.t("rooms_from_walls_none");
+      return;
+    }
+    this.change((_, f) => {
+      for (const points of areas) {
+        const room = newRoom(points, this.t("new_room", { n: f.rooms.length + 1 }));
+        room.wall_heights = points.map(() => 0);
+        f.rooms.push(room);
+      }
+    });
+    this.side.notice = this.t("rooms_from_walls_done", { n: areas.length });
   }
 
   private updateFloor(patch: Partial<Floor>): void {

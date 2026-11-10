@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.30.0]
+
+### Added
+
+- **Rooms from walls** (thanks @keinenahmenfrei, #125): after drawing the outer and inner walls with the wall tool, *Rooms from walls* in the floor settings makes a room of every area the walls close off, ready to be named (like clicking into a drawn plan in a CAD program). Areas that already are rooms stay as they are, dead-end walls and slivers under 0.6 m² are ignored. The new rooms have no walls of their own: the drawn walls are the walls.
+
 ## [0.29.0.4]
 
 ### Fixed

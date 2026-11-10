@@ -21,6 +21,8 @@ export interface FloorActions {
   duplicateFloor(options: { furniture: boolean; devices: boolean; outdoor: boolean }): void;
   addAreaRooms(floor: Floor): void;
   closeGaps(): void;
+  /** Makes a room of every area the free walls close off (#125). */
+  roomsFromWalls(): void;
   /** Moves everything on the floor (or house) by the typed distance. */
   shift(): void;
   turn(): void;
@@ -138,7 +140,8 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
             <button class="nf-btn nf-danger" @click=${() => floorActions.deleteFloor()}>${t("delete_floor")}</button>
           </div>
           ${state.floorCopy ? copyChoices(host, state, floorActions, state.floorCopy) : nothing}
-          <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("gaps_hint")} ?disabled=${floor.rooms.length < 2} @click=${() => floorActions.closeGaps()}>${t("gaps_close")}</button></div>
+          <div class="nf-actions nf-wide"><button class="nf-btn" title=${t("gaps_hint")} ?disabled=${floor.rooms.length < 2} @click=${() => floorActions.closeGaps()}>${t("gaps_close")}</button>
+            <button class="nf-btn" title=${t("rooms_from_walls_hint")} ?disabled=${!floor.walls?.length} @click=${() => floorActions.roomsFromWalls()}>${t("rooms_from_walls")}</button></div>
           ${state.notice ? html`<p class="nf-sub nf-wide nf-notice">${state.notice}</p>` : nothing}`
       : nothing}
   </div>`;
