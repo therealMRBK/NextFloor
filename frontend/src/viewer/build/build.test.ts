@@ -282,3 +282,12 @@ test("a stair under the line between two rooms upstairs opens both of them (#116
   const area = (r: [number, number][]) => Math.abs(r.reduce((s, p, i) => s + p[0] * r[(i + 1) % r.length][1] - r[(i + 1) % r.length][0] * p[1], 0) / 2);
   assert.ok(Math.abs(cut.reduce((s, r) => s + area(r as [number, number][]), 0) - 5.2) < 0.05);
 });
+
+test("the baked shadow of a raised room lies on its own floor, not under it (#131)", () => {
+  const raised = { ...room("a", 0, 0, 4, 3), floor_offset: 0.305 };
+  const g = buildFloorGeometry(floorOf([raised, room("b", 4, 0, 8, 3)]), OUTER, INNER);
+  const p = Array.from(g.shadow.getAttribute("position").array);
+  const ys = p.filter((_, i) => i % 3 === 1);
+  assert.ok(ys.some((y) => Math.abs(y - 0.307) < 1e-6), "shadow on the raised floor");
+  assert.ok(ys.some((y) => Math.abs(y - 0.002) < 1e-6), "shadow on the level floor");
+});

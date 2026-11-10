@@ -610,6 +610,8 @@ ROOF_SECTION_SCHEMA = vol.Schema(
         # overhang of single sides by hand (m): u0/u1 the ridge ends, a/b the eaves; unlisted sides stay automatic
         vol.Optional("overhang_sides", default=None): vol.Any(
             None,
+            # a list instead of an object turned up in a saved plan (#128): dropped, the overhang goes back to automatic
+            vol.All(list, vol.Coerce(lambda _v: None)),
             vol.Schema(
                 {vol.In(["u0", "u1", "a", "b"]): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=2)))}
             ),

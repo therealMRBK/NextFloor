@@ -243,6 +243,15 @@ def test_fence_gates_and_sloping_walls_and_roof_overhang_per_side() -> None:
     assert FREE_WALL_SCHEMA({"id": "w", "a": [0, 0], "b": [2, 0]})["height_end"] is None
 
 
+def test_a_roof_section_with_a_list_for_overhang_per_side_still_saves() -> None:
+    """A saved plan held a list there (#128): it is dropped instead of blocking every save."""
+    from custom_components.nextfloor.schema import ROOF_SECTION_SCHEMA
+
+    base = {"id": "r", "x0": 0, "z0": 0, "x1": 4, "z1": 3, "eave_a": 2.5, "eave_b": 2.5, "base": 2.5}
+    assert ROOF_SECTION_SCHEMA({**base, "overhang_sides": [0, 0, 0.05, 0]})["overhang_sides"] is None
+    assert ROOF_SECTION_SCHEMA({**base, "overhang_sides": {"a": 0.05}})["overhang_sides"] == {"a": 0.05}
+
+
 def test_outdoor_area_opacity() -> None:
     from custom_components.nextfloor.schema import OUTDOOR_SCHEMA
 

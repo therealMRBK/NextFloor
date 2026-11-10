@@ -97,3 +97,21 @@ test("a connection with a cable route follows it, walked from the end nearer to 
   // other connections keep their arc
   assert.equal(routed(b, { key: "grid", from: hub, to: battery, power: 1, color: ENERGY_COLORS.import }).via, undefined);
 });
+
+test("two strings on two inverters each reach their own inverter, without the advanced mode too (#127)", () => {
+  const b = flats(false);
+  const inv = (id: string, x: number): Furniture => ({ ...meter(id, x), type: "inverter" });
+  b.floors[0].furniture.push(inv("wr1", 5), inv("wr2", 4));
+  b.settings.roof.type = "custom";
+  b.settings.roof.strings = [{ id: "s1", name: "S1", inverter: "wr1" }, { id: "s2", name: "S2", inverter: "wr2" }] as never;
+  b.settings.roof.solar = [
+    { id: "f1", face: "ground", string: "s1", entity: "sensor.f1", cols: 2, rows: 1 },
+    { id: "f2", face: "ground", string: "s2", entity: "sensor.f2", cols: 2, rows: 1 },
+  ] as never;
+  const h = hassOf([sensor("sensor.main", "-1000"), sensor("sensor.f1", "600"), sensor("sensor.f2", "400"), sensor("sensor.wr1", "600"), sensor("sensor.wr2", "400")]);
+  const pic = energyPicture(h, b);
+  const arcs = pic.arcs.filter((a) => a.key.startsWith("inverter:")).map((a) => a.key).sort();
+  assert.deepEqual(arcs, ["inverter:wr1", "inverter:wr2"], "each inverter has its own line to the house");
+  assert.deepEqual([pic.arcs.find((a) => a.key === "solar:f1")?.to.x, pic.arcs.find((a) => a.key === "solar:f2")?.to.x], [5, 4], "each field ends at its string's inverter");
+  assert.ok(energyConnections(b).some((c) => c.key === "inverter:wr1") && energyConnections(b).some((c) => c.key === "inverter:wr2"));
+});

@@ -119,6 +119,7 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
   // the sun: each field to the inverter, and its modules sparkle with what it makes
   const faces = [...roofFaces(b), ...wallFaces(b)];
   const production = fieldProduction(hass, b, summary.solar);
+  const byInverter = new Map<string, number>();
   for (const f of b.settings.roof.solar ?? []) {
     const face = fieldFace(b, f, faces);
     if (!face) continue;
@@ -135,8 +136,9 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
     for (const m of modules) for (const c of m.corners) (x += c[0]), (y += c[1]), (z += c[2]);
     const n = modules.length * 4;
     const base = b.floors.find((fl) => fl.id === floorId)?.elevation ?? 0;
-    // advanced energy mode: a field goes to the inverter of its string (the balcony field to the balcony inverter)
-    const own = b.energy.advanced ? inverters.get(strings.get(f.string ?? "") ?? "") : undefined;
+    // a field goes to the inverter of its string (also without the advanced energy mode; #127), the others to the first one
+    const own = inverters.get(strings.get(f.string ?? "") ?? "");
+    if (own) byInverter.set(own.id, (byInverter.get(own.id) ?? 0) + p);
     arcs.push({ key: `solar:${f.id}`, from: { floorId, x: x / n, y: y / n - base + 0.1, z: z / n }, to: own ?? inverter, power: p, color: ENERGY_COLORS.solar });
   }
 
@@ -149,8 +151,17 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
   }
   // the inverter feeds the house (when it is not the hub itself)
   const houseSolar = (summary.solar ?? 0) - (summary.subMeters ?? []).reduce((sum, m) => sum + m.solar, 0);
-  if (inverter !== hub && houseSolar > MIN_W) {
-    arcs.push({ key: "inverter", from: inverter, to: hub, power: houseSolar, color: ENERGY_COLORS.solar });
+  if (houseSolar > MIN_W) {
+    // each inverter feeds the house with its share of what its strings make (all of it, with one inverter)
+    const named = [...byInverter].filter(([id]) => !behind.has(id));
+    const shared = named.reduce((sum, [, w]) => sum + w, 0);
+    if (named.length > 1 && shared > MIN_W) {
+      for (const [id, w] of named) {
+        const spot = inverters.get(id);
+        const power = (houseSolar * w) / shared;
+        if (spot && spot !== hub && power > MIN_W) arcs.push({ key: `inverter:${id}`, from: spot, to: hub, power, color: ENERGY_COLORS.solar });
+      }
+    } else if (inverter !== hub) arcs.push({ key: "inverter", from: inverter, to: hub, power: houseSolar, color: ENERGY_COLORS.solar });
   }
   // the grid
   const grid = gridSpot(b, hub);
@@ -224,7 +235,12 @@ export function energyConnections(b: Building): EnergyConnection[] {
   const inverter = spotsOf(b, "inverter").find((s) => !behind.has(s.id));
   for (const f of b.settings.roof.solar ?? []) out.push({ key: `solar:${f.id}`, kind: "solar", id: f.id });
   if (spotsOf(b, "home_battery").some((s) => !behind.has(s.id))) out.push({ key: "battery", kind: "battery", id: null });
-  if (inverter && (inverter.floorId !== hub.floorId || inverter.x !== hub.x || inverter.z !== hub.z)) out.push({ key: "inverter", kind: "inverter", id: null });
+  const away = (s: Spot) => s.floorId !== hub.floorId || s.x !== hub.x || s.z !== hub.z;
+  // several inverters carrying strings each have their own line to the house (#127)
+  const stringInverters = new Set((b.settings.roof.strings ?? []).filter((st) => st.inverter && (b.settings.roof.solar ?? []).some((f) => f.string === st.id)).map((st) => st.inverter as string));
+  const own = spotsOf(b, "inverter").filter((s) => !behind.has(s.id) && stringInverters.has(s.id));
+  if (own.length > 1) for (const s of own) away(s) && out.push({ key: `inverter:${s.id}`, kind: "inverter", id: s.id });
+  else if (inverter && away(inverter)) out.push({ key: "inverter", kind: "inverter", id: null });
   if (gridSpot(b, hub)) out.push({ key: "grid", kind: "grid", id: null });
   for (const f of b.floors.flatMap((fl) => fl.furniture)) {
     if (!behind.has(f.id)) continue;

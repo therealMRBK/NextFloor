@@ -1613,6 +1613,8 @@ export function normalizeBuilding(b: Building): Building {
   b.presence = b.presence ?? [];
   b.version = 1;
   b.settings = { ...DEFAULT_SETTINGS, ...b.settings, roof: { ...DEFAULT_ROOF, ...(b.settings?.roof ?? {}) } };
+  // a list where an object belongs (seen in a saved plan, #128) would block every save: the per-side overhang falls back to automatic
+  for (const section of b.settings.roof.sections ?? []) if (Array.isArray(section.overhang_sides)) section.overhang_sides = null;
   b.floors.forEach((f, index) => {
     const blank = newFloor(f.id, f.name ?? `Floor ${index + 1}`, f.elevation ?? index * 2.8);
     for (const key of Object.keys(blank) as (keyof Floor)[]) if (f[key] === undefined) (f as unknown as Record<string, unknown>)[key] = blank[key];

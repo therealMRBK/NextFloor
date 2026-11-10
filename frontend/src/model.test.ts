@@ -189,3 +189,11 @@ test("a note can be marked done when it has a due day or repeats", () => {
   assert.equal(noteDoable({ repeat_months: 6 }), true);
   assert.equal(noteDoable({ due: null, repeat_months: null }), false);
 });
+
+test("a list where the roof overhang per side belongs is dropped so the plan can save again (#128)", () => {
+  const b = emptyBuilding();
+  b.settings.roof = { type: "custom", pitch: 35, overhang: 0.4, sections: [{ id: "r", overhang_sides: [0, 0, 0.05, 0] as never } as never, { id: "s", overhang_sides: { a: 0.1 } } as never] };
+  const sections = normalizeBuilding(b).settings.roof.sections ?? [];
+  assert.equal(sections[0].overhang_sides, null);
+  assert.deepEqual(sections[1].overhang_sides, { a: 0.1 });
+});

@@ -100,6 +100,8 @@ export class EnergyLayer {
     g.setAttribute("color", new Float32BufferAttribute(new Float32Array(SPARKS * 3), 3));
     this.sparks = new Points(g, new PointsMaterial({ size: 0.4, map: this.tex, vertexColors: true, transparent: true, depthWrite: false, blending: AdditiveBlending }));
     this.sparks.frustumCulled = false;
+    // drawn after the transparent glass of the panels, which would otherwise paint over the additive sparks
+    this.sparks.renderOrder = 10;
     this.group.add(this.sparks);
     scene.add(this.group);
   }
@@ -162,11 +164,17 @@ export class EnergyLayer {
         for (let k = 0; k < share && n < SPARKS; k++, n++) {
           const q = f.quads[Math.floor(Math.random() * f.quads.length)];
           const u = Math.random(), w = Math.random();
-          // a point on the module: bilinear between its corners, a hand above the surface
+          // a point on the module: bilinear between its corners, a hand above the surface along its normal (on a sloped roof or a
+          // rack straight up is not far enough out: half the 0.4 m sprite would sink into the glass and be hidden; #130)
+          const e1 = [q[1][0] - q[0][0], q[1][1] - q[0][1], q[1][2] - q[0][2]];
+          const e2 = [q[3][0] - q[0][0], q[3][1] - q[0][1], q[3][2] - q[0][2]];
+          const nrm = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+          const len = Math.hypot(nrm[0], nrm[1], nrm[2]) || 1;
+          const up = nrm[1] < 0 ? -1 : 1;
           for (let i = 0; i < 3; i++) {
             const top = q[0][i] + (q[1][i] - q[0][i]) * u;
             const bot = q[3][i] + (q[2][i] - q[3][i]) * u;
-            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (i === 1 ? 0.12 : 0);
+            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (nrm[i] / len) * up * 0.25;
           }
           this.sparkField[n] = fi;
           this.sparkPhase[n] = Math.random() * Math.PI * 2;

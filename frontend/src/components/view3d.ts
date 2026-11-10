@@ -1513,8 +1513,8 @@ export class NfView3d extends LitElement {
   private wallboxText(hass: HomeAssistant, status: string | null, power: number | null): string {
     const st = status ? hass.states[status] : undefined;
     const raw = String(st?.state ?? "").toLowerCase();
-    const charging = (power ?? 0) > 50 || /charg|laden|lädt/.test(raw);
-    const plugged = st?.entity_id.startsWith("binary_sensor.") ? raw === "on" : /connect|plug|ready|angesteckt|verbunden|wait|paused|suspend/.test(raw);
+    const charging = (power ?? 0) > 50 || /(^|[^a-zä])(charging|charge|laden|lädt|ladend)(?![a-zä])/.test(raw);
+    const plugged = st?.entity_id.startsWith("binary_sensor.") ? raw === "on" : /connect|plug|insert|ready|angesteckt|verbunden|wait|paused|suspend/.test(raw);
     const label = charging ? translate(hass, "wallbox_charging") : plugged ? translate(hass, "wallbox_plugged") : st && !isUnavailable(st) && !st.entity_id.startsWith("binary_sensor.") ? stateText(hass, st) : "";
     const watts = power !== null && power > 50 ? formatPower(hass, power) : "";
     return [label, watts].filter(Boolean).join(" · ");

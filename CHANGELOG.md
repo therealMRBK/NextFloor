@@ -4,6 +4,16 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.0.1]
+
+### Fixed
+
+- **Saving works again with roof overhang per side** (thanks @gnom25, #128): a plan whose roof section held a list instead of the per-side overhang failed with "not a valid value at … overhang_sides". Such a value is now dropped, the overhang of that section goes back to automatic, and saving works.
+- **Several inverters in the energy flow** (thanks @gbcsysteme, #127): every PV field now ends at the inverter of its string (also without the advanced energy mode), and each inverter has its own line to the house instead of all lines ending at the first one. If the lines show grid import while you feed in, tick *Invert sign* next to the grid sensor in the energy settings.
+- **Wallbox status** (thanks @hapa-dev, #129): `charger_free` was shown as "charging" because the status text contains "charg". Only a real charging word (charging, charge, laden, lädt) counts now, and `charger_insert` shows as plugged in.
+- **Solar sparks lie on top of the panels** (thanks @hapa-dev, #130): the sparks of the energy flow float a little further out of the panel and are drawn after the glass, so they are no longer hidden behind it.
+- **Shadow in raised or sunken rooms** (thanks @tichris0, #131): the soft shadow along the walls was drawn on the level floor, so a room with its own floor level (e.g. 0.305 m) had none. It now lies on the room's own floor.
+
 ## [0.31.0]
 
 ### Added
