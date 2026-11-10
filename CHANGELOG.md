@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.30.0.1]
+
+### Fixed
+
+- **Rooms from walls copes with walls drawn by hand** (thanks @keinenahmenfrei, #125): walls that miss each other by a few centimetres (traced over a template) now still close an area. The tolerance grows from 6 cm to 30 cm until something closes.
+
 ## [0.30.0]
 
 ### Added

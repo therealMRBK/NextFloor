@@ -4,8 +4,8 @@
 import type { Floor, Vec2 } from "../model.ts";
 import { pointInPolygon } from "../model.ts";
 
-/** Corners closer than this are one corner, and a wall end this close to another wall touches it. */
-const SNAP = 0.06;
+/** Corners closer than this are one corner, and a wall end this close to another wall touches it: tried in turn until something closes. */
+const SNAPS = [0.06, 0.15, 0.3];
 /** Areas smaller than this (m²) are not rooms: gaps between walls drawn side by side. */
 const MIN_AREA = 0.6;
 /** A room keeps to the schema's limit of corners. */
@@ -24,7 +24,7 @@ function area(points: readonly Vec2[]): number {
 }
 
 /** Where along a the segment a→b is met by c→d (0 to 1), or null; ends within SNAP of the other segment count as touching. */
-function splitPoints(a: Vec2, b: Vec2, c: Vec2, d: Vec2): number[] {
+function splitPoints(a: Vec2, b: Vec2, c: Vec2, d: Vec2, SNAP: number): number[] {
   const out: number[] = [];
   const r = sub(b, a);
   const len = Math.hypot(r[0], r[1]);
@@ -55,7 +55,7 @@ interface Graph {
   next: Map<number, Set<number>>;
 }
 
-function graphOf(segments: readonly Seg[]): Graph {
+function graphOf(segments: readonly Seg[], SNAP: number): Graph {
   const points: Vec2[] = [];
   const vertex = (p: Vec2): number => {
     const found = points.findIndex((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) <= SNAP);
@@ -72,7 +72,7 @@ function graphOf(segments: readonly Seg[]): Graph {
   segments.forEach(([a, b], i) => {
     const ts = new Set<number>([0, 1]);
     segments.forEach(([c, d], j) => {
-      if (i !== j) for (const t of splitPoints(a, b, c, d)) ts.add(Math.round(t * 1e6) / 1e6);
+      if (i !== j) for (const t of splitPoints(a, b, c, d, SNAP)) ts.add(Math.round(t * 1e6) / 1e6);
     });
     const chain = [...ts].sort((p, q) => p - q).map((t): Vec2 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
     for (let k = 0; k + 1 < chain.length; k++) link(vertex(chain[k]), vertex(chain[k + 1]));
@@ -171,12 +171,20 @@ function insidePoint(poly: readonly Vec2[]): Vec2 | null {
  * 0.6 m² are left out; an area that is already (partly) a room is skipped.
  */
 export function enclosedAreas(floor: Pick<Floor, "walls" | "rooms">): Vec2[][] {
+  for (const snap of SNAPS) {
+    const found = enclosedWithin(floor, snap);
+    if (found.length) return found;
+  }
+  return [];
+}
+
+function enclosedWithin(floor: Pick<Floor, "walls" | "rooms">, snap: number): Vec2[][] {
   const segments: Seg[] = [];
   for (const w of floor.walls ?? []) segments.push([w.a, w.b]);
   for (const r of floor.rooms) r.points.forEach((p, i) => segments.push([p, r.points[(i + 1) % r.points.length]]));
   if (!floor.walls?.length) return [];
   const result: Vec2[][] = [];
-  for (const loop of faces(graphOf(segments))) {
+  for (const loop of faces(graphOf(segments, snap))) {
     if (area(loop) < MIN_AREA) continue;
     const outline = tidy(loop);
     if (outline.length < 3 || outline.length > MAX_CORNERS) continue;

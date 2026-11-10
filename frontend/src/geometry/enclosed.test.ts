@@ -48,3 +48,8 @@ test("a thin gap between two walls side by side is no room", () => {
   const areas = enclosedAreas({ walls, rooms: [] });
   assert.ok(areas.every((a) => size(a)[0] > 1));
 });
+
+test("walls drawn by hand that miss each other by a few centimetres still close", () => {
+  const walls = [wall("a", [0, 0], [4, 0]), wall("b", [4.12, 0.1], [4.1, 3]), wall("c", [4.05, 3.14], [0, 3.1]), wall("d", [-0.1, 3.0], [0.08, -0.12])];
+  assert.equal(enclosedAreas({ walls, rooms: [] }).length, 1);
+});
