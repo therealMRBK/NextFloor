@@ -3,7 +3,7 @@
 
 import { pointInPolygon, roomOffset, type Building, type Floor, type Room } from "../model.ts";
 import { roofUnderAt } from "../roof/proposal.ts";
-import { generateWalls, type Wall } from "./walls.ts";
+import { generateWalls, wallOptions, type Wall } from "./walls.ts";
 
 export interface RoomArea {
   roomId: string;
@@ -74,7 +74,7 @@ export function floorAreas(b: Building, floor: Floor): RoomArea[] {
 }
 
 function computeFloorAreas(b: Building, floor: Floor): RoomArea[] {
-  const walls = generateWalls(floor.rooms, { exterior: b.settings.wall_exterior, interior: b.settings.wall_interior }, floor.walls ?? []).walls;
+  const walls = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []).walls;
   return floor.rooms.map((r) => roomArea(b, floor, r, walls));
 }
 

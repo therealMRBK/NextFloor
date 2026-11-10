@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { polygonArea, signedArea, type FreeWall, type Room, type Vec2 } from "../model.ts";
+import { pointInPolygon, polygonArea, signedArea, type FreeWall, type Room, type Vec2 } from "../model.ts";
 import { generateWalls, innerSize, locateOnWalls, locateOpening, openingHost, pointOnRoomEdge } from "./walls.ts";
 
 const OUTER = 0.3;
@@ -255,4 +255,80 @@ test("a hanging free wall keeps its bottom edge at a and b; one on the floor has
   assert.deepEqual([atA, atB], [1.6, 0.8]);
   assert.deepEqual(walls.find((x) => x.free === "l")!.bottom, [2, 2]);
   assert.equal(walls.find((x) => x.free === "f")!.bottom, undefined);
+});
+
+// ---------------------------------------------------------------- rooms as drawn (Q49, #65, #121)
+
+/** A drawn by its inner faces; B and C face its top edge across gaps of 0.3 and 0.2 m. */
+const gapRooms = (): Room[] => [room("a", 0, 0, 4, 3), room("b", 0, 3.3, 2, 6), room("c", 2.1, 3.2, 4, 6)];
+const drawn = { ...opts, asDrawn: true };
+
+test("as drawn: the rooms are left alone and one wall fills each gap", () => {
+  const rooms = gapRooms();
+  const before = structuredClone(rooms);
+  const { walls } = generateWalls(rooms, drawn);
+  assert.deepEqual(rooms, before);
+  const between = walls.filter((w) => w.between);
+  assert.ok(between.length >= 2);
+  assert.ok(between.every((w) => !w.exterior && w.left === 0));
+  // the wall between a and b spans the whole 0.3 gap, from the face of a to the face of b
+  const ab = between.find((w) => w.roomLeft === "a" && w.roomRight === "b")!;
+  near(ab.right, 0.3);
+  const zs = ab.footprint.map((p) => p[1]);
+  near(Math.min(...zs), 3);
+  near(Math.max(...zs), 3.3);
+  const ac = between.find((w) => w.roomLeft === "a" && w.roomRight === "c")!;
+  near(ac.right, 0.2);
+});
+
+test("as drawn: no wall of another room reaches into the gap", () => {
+  const { walls } = generateWalls(gapRooms(), drawn);
+  for (const [x, z] of [[1, 3.15], [3, 3.1]] as Vec2[]) {
+    const covering = walls.filter((w) => pointInPolygon([x, z], w.footprint));
+    assert.equal(covering.length, 1, `at ${x}/${z}`);
+    assert.equal(covering[0].between, true);
+  }
+});
+
+test("as drawn: a door on the partner's edge lands in the wall between", () => {
+  const rooms = gapRooms();
+  const { walls } = generateWalls(rooms, drawn);
+  for (const [roomId, edge, offset] of [["b", 0, 1.0], ["a", 2, 1.0]] as const) {
+    const host = openingHost({ room_id: roomId, edge, wall: null }, rooms, [])!;
+    const hit = locateOpening(walls, { wall: null, offset }, host)!;
+    assert.equal(hit.wall.between, true);
+    assert.ok(hit.wall.right >= 0.2 - 1e-9);
+    assert.ok(hit.s > 0 && hit.s < Math.hypot(hit.wall.b[0] - hit.wall.a[0], hit.wall.b[1] - hit.wall.a[1]));
+  }
+});
+
+test("as drawn: the same plan without the switch keeps its old walls", () => {
+  const { walls } = generateWalls(gapRooms(), opts);
+  assert.ok(walls.every((w) => !w.between));
+  assert.ok(walls.every((w) => w.exterior));
+  // two exterior walls over the same gap, as before
+  const covering = walls.filter((w) => pointInPolygon([1, 3.15], w.footprint));
+  assert.equal(covering.length, 2);
+});
+
+test("as drawn: rooms with no gap, or an exterior side, are walled as before", () => {
+  const plain = [room("a", 0, 0, 4, 3), room("b", 0, 3, 4, 6)];
+  const [on, off] = [generateWalls(plain, drawn).walls, generateWalls(plain, opts).walls];
+  assert.equal(on.length, off.length);
+  assert.ok(on.every((w) => !w.between));
+  near(on.reduce((s, w) => s + polygonArea(w.footprint), 0), off.reduce((s, w) => s + polygonArea(w.footprint), 0));
+});
+
+test("as drawn: a gap wider than 0.6 m is not a wall, and a wall height of 0 keeps it open", () => {
+  assert.ok(generateWalls([room("a", 0, 0, 4, 3), room("b", 0, 3.8, 4, 6)], drawn).walls.every((w) => !w.between));
+  const open = generateWalls([room("a", 0, 0, 4, 3, { wall_heights: [null, null, 0, null] }), room("b", 0, 3.3, 4, 6)], drawn);
+  assert.ok(open.walls.every((w) => !w.between));
+  assert.deepEqual(open.open, [["a", "b"]]);
+});
+
+test("as drawn: innerSize ignores the wall that fills a gap (it stands into neither room)", () => {
+  const rooms = [room("a", 0, 0, 4, 3), room("b", 0, 3.3, 4, 6)];
+  const { walls } = generateWalls(rooms, drawn);
+  assert.deepEqual(innerSize(rooms[0], walls), [4, 3]);
+  assert.deepEqual(innerSize(rooms[1], walls), [4, 2.7]);
 });

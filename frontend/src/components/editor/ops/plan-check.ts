@@ -7,7 +7,7 @@ import { openingEntities } from "../../../entities/openings.ts";
 import { powerSensorFor, readPower } from "../../../energy.ts";
 import { energyCost } from "../../../live/room-energy.ts";
 import { LOW_BATTERY, planBatteries } from "../../../live/batteries.ts";
-import { locateOpening, openingHost, generateWalls } from "../../../geometry/walls.ts";
+import { locateOpening, openingHost, generateWalls, wallOptions } from "../../../geometry/walls.ts";
 import { isLamp, pointInPolygon, type Building, type Floor, type Room, type Vec2 } from "../../../model.ts";
 import type { HomeAssistant } from "../../../types.ts";
 import { placedInRoom } from "./device-list.ts";
@@ -167,7 +167,7 @@ export function checkPlan(doc: Building, hass: HomeAssistant | undefined): Check
       }
     }
     if (floor.openings.length) {
-      const walls = generateWalls(floor.rooms, { exterior: doc.settings.wall_exterior, interior: doc.settings.wall_interior }, floor.walls ?? []).walls;
+      const walls = generateWalls(floor.rooms, wallOptions(doc.settings), floor.walls ?? []).walls;
       for (const o of floor.openings) {
         const host = openingHost(o, floor.rooms, floor.walls ?? []);
         if (!host || !locateOpening(walls, o, host)) out.push({ kind: "opening_off_wall", floorId: floor.id, vars: { room: floor.rooms.find((r) => r.id === o.room_id)?.name ?? "" }, fix: { do: "show_opening", openingId: o.id }, changes: false });

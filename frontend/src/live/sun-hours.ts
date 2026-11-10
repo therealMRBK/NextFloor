@@ -1,7 +1,7 @@
 // Sun in the rooms: how many hours of a day the sun shines in through a room's outside windows, worked out from the plan, its
 // compass and the sun's path at the home's place. Neighbours, trees and the overhang of the roof are not counted.
 
-import { generateWalls, locateOpening, openingHost, type Wall } from "../geometry/walls.ts";
+import { generateWalls, locateOpening, openingHost, wallOptions, type Wall } from "../geometry/walls.ts";
 import type { Building, Floor, Opening, Room } from "../model.ts";
 import { sunPosition, todayAt } from "../sun-position.ts";
 
@@ -58,7 +58,7 @@ const wallMemo = new WeakMap<Floor, Wall[]>();
 function wallsOf(b: Building, floor: Floor): Wall[] {
   let walls = wallMemo.get(floor);
   if (!walls) {
-    walls = generateWalls(floor.rooms, { exterior: b.settings.wall_exterior, interior: b.settings.wall_interior }, floor.walls ?? []).walls;
+    walls = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []).walls;
     wallMemo.set(floor, walls);
   }
   return walls;

@@ -20,6 +20,8 @@ export interface Draft {
   heightEnd?: number;
   /** A hanging free wall: its bottom edge at a and at b. */
   bottom?: [number, number];
+  /** A wall filling the gap between two rooms drawn by their inner faces: it stands into neither room. */
+  between?: boolean;
   a: number;
   b: number;
   left: number;
@@ -61,6 +63,7 @@ function continuesInLine(w1: Draft, w2: Draft, verts: Vec2[]): boolean {
   return (
     w1.height === w2.height &&
     w1.exterior === w2.exterior &&
+    !!w1.between === !!w2.between &&
     w1.roomLeft === w2.roomLeft &&
     w1.roomRight === w2.roomRight &&
     Math.abs(w1.left - w2.left) <= 1e-9 &&

@@ -133,7 +133,7 @@ export class RoofController {
     const floor = this.ctx.host.floor;
     if (!floor || !this.sectionSel || !this.admin) return;
     const { wall_exterior, wall_interior } = this.doc.settings;
-    const outline = floorOutline(floor.rooms, floor.walls ?? [], wall_exterior, wall_interior);
+    const outline = floorOutline(floor.rooms, floor.walls ?? [], wall_exterior, wall_interior, !!this.doc.settings.rooms_as_drawn);
     if (!outline) return;
     const points = outline.map(([x, z]) => [thousandths(x), thousandths(z)] as Vec2);
     this.patchSection({ shape: "flat", points, ...polygonBox(points) });

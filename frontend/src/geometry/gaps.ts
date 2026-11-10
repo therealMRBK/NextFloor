@@ -32,6 +32,8 @@ interface Side {
 
 const PARALLEL_TOLERANCE = 0.05;
 const MIN_SHARED_LENGTH = 0.2;
+/** The widest gap between two rooms that still counts as one wall between them. */
+const MAX_GAP = 0.6;
 /** Rooms that overlap by up to this much are moved apart onto one line as well (a room pushed between two others rarely lands exactly, #121). */
 const MAX_OVERLAP = 0.6;
 /** In an overlap each room must reach this far past the other one's wall, else it is a niche or closet lying inside the other room. */
@@ -66,9 +68,9 @@ function reachesPast(s: Side, line: number): boolean {
 }
 
 /** The gap between two sides that face each other across it, or null when they do not form one. */
-function gapBetween(e: Side, f: Side, maxGap: number, maxOverlap: number): number | null {
+function gapBetween(e: Side, f: Side, maxGap: number, maxOverlap: number, tolerance = PARALLEL_TOLERANCE): number | null {
   if (e.room === f.room) return null;
-  if (Math.abs(cross(e.dir, f.dir)) > PARALLEL_TOLERANCE) return null;
+  if (Math.abs(cross(e.dir, f.dir)) > tolerance) return null;
   if (e.outside === f.outside) return null; // facing each other means their outsides point at each other
   const gap = (f.offset - e.offset) * e.outside;
   if (gap > maxGap || gap < -maxOverlap || Math.abs(gap) < 1e-4) return null;
@@ -163,4 +165,37 @@ export function suggestedThickness(gaps: readonly number[]): number | null {
   const widths = gaps.filter((g) => g > 0.04).sort((a, b) => a - b);
   if (widths.length === 0) return null;
   return Math.min(0.5, Math.max(0.08, Math.round(widths[Math.floor(widths.length / 2)] * 100) / 100));
+}
+
+/** Two room edges that face each other across a gap (rooms drawn by their inner faces), see `facingGaps`. */
+export interface FacingGap {
+  /** Index of the room (in the list given) and of its edge, for both sides. */
+  a: { room: number; edge: number };
+  b: { room: number; edge: number };
+  /** The direction both run along (canonical sign), the normal belonging to it, and a's side: the gap lies on a's outside. */
+  dir: Vec2;
+  normal: Vec2;
+  /** The line of a along the normal, and of b. */
+  offsetA: number;
+  offsetB: number;
+  /** The width of the gap (metres, positive). */
+  gap: number;
+  /** The range they share along `dir`. */
+  from: number;
+  to: number;
+}
+
+/** Edges that face each other across a gap, narrowest first: the walls between rooms that are drawn by their inner faces. */
+export function facingGaps(rooms: readonly Room[], maxGap = MAX_GAP, minGap = 0.01): FacingGap[] {
+  const sides = sidesOf(rooms);
+  const found: FacingGap[] = [];
+  for (let i = 0; i < sides.length; i++) {
+    for (let j = i + 1; j < sides.length; j++) {
+      const [e, f] = [sides[i], sides[j]];
+      const gap = gapBetween(e, f, maxGap, 0, 0.02);
+      if (gap === null || gap < minGap) continue;
+      found.push({ a: { room: e.room, edge: e.index }, b: { room: f.room, edge: f.index }, dir: e.dir, normal: e.normal, offsetA: e.offset, offsetB: f.offset, gap, from: Math.max(e.from, f.from), to: Math.min(e.to, f.to) });
+    }
+  }
+  return found.sort((x, y) => x.gap - y.gap);
 }

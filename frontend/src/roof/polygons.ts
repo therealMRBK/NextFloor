@@ -87,8 +87,8 @@ function largestLoop(segments: Segment[]): Vec2[] | null {
  * The outline of a floor's rooms at the outer faces of its walls: the exterior walls chained into a loop (the
  * largest, for a house with a courtyard), grown by the wall thickness. Null without rooms.
  */
-export function floorOutline(rooms: readonly Room[], free: readonly FreeWall[], exterior: number, interior: number): Vec2[] | null {
-  const outer = generateWalls(rooms, { exterior, interior }, free).walls.filter((w) => w.exterior && !w.free);
+export function floorOutline(rooms: readonly Room[], free: readonly FreeWall[], exterior: number, interior: number, asDrawn = false): Vec2[] | null {
+  const outer = generateWalls(rooms, { exterior, interior, ...(asDrawn ? { asDrawn } : {}) }, free).walls.filter((w) => w.exterior && !w.free);
   const loop = outer.length ? largestLoop(outer.map((w) => ({ a: w.a, b: w.b }))) : null;
   if (!loop) return null;
   // corners in a straight line (a room edge split by its neighbour) go, so the roof keeps clean corners

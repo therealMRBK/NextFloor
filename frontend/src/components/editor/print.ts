@@ -4,7 +4,7 @@
 
 import { centroid, furnitureFootprint, type Building, type Floor, type Vec2 } from "../../model.ts";
 import { floorAreas, totalOf, type RoomArea } from "../../geometry/living-area.ts";
-import { generateWalls, locateOpening, openingHost } from "../../geometry/walls.ts";
+import { generateWalls, locateOpening, openingHost, wallOptions } from "../../geometry/walls.ts";
 
 export interface PrintTexts {
   title: string;
@@ -35,7 +35,7 @@ export interface FloorDrawing {
 
 /** One floor as SVG in metres (1 unit = 1 m), with room for the measurements around it. */
 export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], texts: PrintTexts, draw: FloorDrawing = {}): string {
-  const walls = generateWalls(floor.rooms, { exterior: b.settings.wall_exterior, interior: b.settings.wall_interior }, floor.walls ?? []).walls;
+  const walls = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []).walls;
   const all = [...floor.rooms.flatMap((r) => r.points), ...walls.flatMap((w) => w.footprint)];
   if (!all.length) return "";
   const [x0, x1] = [Math.min(...all.map((p) => p[0])), Math.max(...all.map((p) => p[0]))];

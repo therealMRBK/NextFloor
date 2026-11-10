@@ -6,6 +6,7 @@
 // walls are mitred by intersecting the face lines of the neighbouring walls.
 
 import { pointInPolygon, signedArea, type FreeWall, type Opening, type Room, type Vec2 } from "../model.ts";
+import { facingGaps, type FacingGap } from "./gaps.ts";
 import { cleanPolygon, computeCorners, mergeCollinear, type Draft, type WallSource } from "./wall-corners.ts";
 import { add, cross, dot, norm, scale, sub, unit } from "./vec2.ts";
 
@@ -34,11 +35,15 @@ export interface Wall {
   heightEnd?: number;
   /** A hanging free wall (#114): its bottom edge at `a` and at `b` (equal for a level one). */
   bottom?: [number, number];
+  /** Fills the gap between two rooms drawn by their inner faces (`WallOptions.asDrawn`): `left` is 0 on the first room's face, `right` reaches the other room's face, so it stands into neither room. */
+  between?: true;
 }
 
 export interface WallOptions {
   exterior: number;
   interior: number;
+  /** Rooms stay as drawn (inner faces): where two rooms face each other across a gap, one wall fills the gap instead of an exterior wall growing out of each room. */
+  asDrawn?: boolean;
   /** Vertices closer than this are merged (metres). */
   eps?: number;
 }
@@ -199,6 +204,8 @@ function edgeSettings(rooms: readonly Room[], pieces: Piece[]) {
   };
 }
 
+type EdgeSettings = ReturnType<typeof edgeSettings>;
+
 /** Walls between pieces: two rooms in opposite directions make an interior wall, one room an exterior wall. */
 /** The bottom edge of a hanging free wall (#114) at a and b; nothing for a wall that stands on the floor. */
 export function freeBottom(w: Pick<FreeWall, "bottom" | "bottom_end">): { bottom?: [number, number] } {
@@ -214,10 +221,10 @@ function heightFields(h: { a?: number; b?: number }): { height?: number; heightE
   return Math.abs(h.a - h.b) < 1e-6 ? { height: round(h.a) } : { height: round(h.a), heightEnd: round(h.b) };
 }
 
-function pairPieces(pieces: Piece[], rooms: readonly Room[], options: WallOptions, warnings: string[]): { drafts: Draft[]; open: [string, string][] } {
-  const settings = edgeSettings(rooms, pieces);
+function pairPieces(pieces: Piece[], settings: EdgeSettings, options: WallOptions, warnings: string[], consumed: ReadonlySet<Piece>): { drafts: Draft[]; open: [string, string][] } {
   const groups = new Map<string, Piece[]>();
   for (const p of pieces) {
+    if (consumed.has(p)) continue;
     const key = p.u < p.v ? `${p.u}-${p.v}` : `${p.v}-${p.u}`;
     groups.set(key, [...(groups.get(key) ?? []), p]);
   }
@@ -302,6 +309,90 @@ const wallId = (a: Vec2, b: Vec2): string => {
   return `w_${cm(p[0])}_${cm(p[1])}_${cm(q[0])}_${cm(q[1])}`;
 };
 
+
+// ---------------------------------------------------------------- rooms as drawn: walls that fill the gaps
+
+const pointAt = (room: Room, edge: number, dir: Vec2, x: number): Vec2 => {
+  const [a, b] = [room.points[edge], room.points[(edge + 1) % room.points.length]];
+  const u = unit(sub(b, a));
+  const t = (x - dot(a, dir)) / dot(u, dir);
+  return [a[0] + u[0] * t, a[1] + u[1] * t];
+};
+
+/** The pieces of one room edge that lie within the range a gap shares (both sides are cut at its ends, see splitForGaps). */
+function piecesInRange(pieces: readonly Piece[], verts: readonly Vec2[], room: Room, edge: number, g: FacingGap, eps: number): Piece[] {
+  return pieces.filter((p) => {
+    if (p.room !== room.id || p.edge !== edge) return false;
+    const [x0, x1] = [dot(verts[p.u], g.dir), dot(verts[p.v], g.dir)];
+    return Math.min(x0, x1) >= g.from - eps && Math.max(x0, x1) <= g.to + eps;
+  });
+}
+
+/**
+ * Splits the room edges like `splitEdges`, and where two rooms face each other across a gap cuts both edges at the same places
+ * along the gap (its ends and every vertex either side has in between), so that pieces of the two sides pair up.
+ */
+function splitForGaps(edges: RoomEdge[], vertices: VertexList, eps: number, rooms: readonly Room[], gaps: readonly FacingGap[]): Piece[] {
+  for (const g of gaps) for (const x of [g.from, g.to]) for (const side of [g.a, g.b]) vertices.idOf(pointAt(rooms[side.room], side.edge, g.dir, x));
+  let pieces = splitEdges(edges, vertices.points, eps);
+  for (let round = 0; round < 6 && gaps.length; round++) {
+    const before = vertices.points.length;
+    for (const g of gaps) {
+      const [ra, rb] = [rooms[g.a.room], rooms[g.b.room]];
+      const cuts = (room: Room, edge: number) => piecesInRange(pieces, vertices.points, room, edge, g, eps).flatMap((p) => [dot(vertices.points[p.u], g.dir), dot(vertices.points[p.v], g.dir)]);
+      const [xa, xb] = [cuts(ra, g.a.edge), cuts(rb, g.b.edge)];
+      for (const x of xa) if (x > g.from + eps && x < g.to - eps) vertices.idOf(pointAt(rb, g.b.edge, g.dir, x));
+      for (const x of xb) if (x > g.from + eps && x < g.to - eps) vertices.idOf(pointAt(ra, g.a.edge, g.dir, x));
+    }
+    if (vertices.points.length === before) break;
+    pieces = splitEdges(edges, vertices.points, eps);
+  }
+  return pieces;
+}
+
+/** Distance of a point from the line through a room edge. */
+function distanceToEdge(room: Room, edge: number, p: Vec2): number {
+  const [a, b] = [room.points[edge], room.points[(edge + 1) % room.points.length]];
+  return Math.abs(cross(unit(sub(b, a)), sub(p, a)));
+}
+
+/**
+ * One wall for every stretch where two rooms face each other across a gap: it lies on the first room's face and reaches the
+ * other room's face, so neither room moves and both faces stay exactly where they were drawn. The pieces of both edges over
+ * that stretch get no wall of their own (`consumed`).
+ */
+function wallsBetween(gaps: readonly FacingGap[], rooms: readonly Room[], pieces: readonly Piece[], verts: readonly Vec2[], settings: EdgeSettings, eps: number, consumed: Set<Piece>): { drafts: Draft[]; open: [string, string][] } {
+  const drafts: Draft[] = [];
+  const open: [string, string][] = [];
+  for (const g of gaps) {
+    const [ra, rb] = [rooms[g.a.room], rooms[g.b.room]];
+    const mine = piecesInRange(pieces, verts, ra, g.a.edge, g, eps).filter((p) => !consumed.has(p));
+    const theirs = piecesInRange(pieces, verts, rb, g.b.edge, g, eps).filter((p) => !consumed.has(p));
+    for (const p of mine) {
+      const span = [dot(verts[p.u], g.dir), dot(verts[p.v], g.dir)].sort((x, y) => x - y);
+      const q = theirs.find((o) => {
+        const s = [dot(verts[o.u], g.dir), dot(verts[o.v], g.dir)].sort((x, y) => x - y);
+        return !consumed.has(o) && Math.abs(s[0] - span[0]) <= eps && Math.abs(s[1] - span[1]) <= eps;
+      });
+      if (!q) continue;
+      consumed.add(p);
+      consumed.add(q);
+      if (settings.hasNoWall([p, q])) {
+        open.push([p.room, q.room]);
+        continue;
+      }
+      const width = (distanceToEdge(rb, g.b.edge, verts[p.u]) + distanceToEdge(rb, g.b.edge, verts[p.v])) / 2;
+      drafts.push({ a: p.u, b: p.v, left: 0, right: width, exterior: false, between: true, roomLeft: p.room, roomRight: q.room, sources: [sourceOf(p), sourceOf(q)], ...heightFields(settings.heightsOf([p, q])) });
+    }
+  }
+  return { drafts, open };
+}
+
+/** The wall options a building's settings ask for (thicknesses, and whether rooms stay as drawn). */
+export function wallOptions(settings: { wall_exterior: number; wall_interior: number; rooms_as_drawn?: boolean }): WallOptions {
+  return { exterior: settings.wall_exterior, interior: settings.wall_interior, ...(settings.rooms_as_drawn ? { asDrawn: true } : {}) };
+}
+
 export function generateWalls(rooms: readonly Room[], options: WallOptions, free: readonly FreeWall[] = []): WallResult {
   const eps = options.eps ?? 0.005;
   const warnings: string[] = [];
@@ -325,9 +416,15 @@ export function generateWalls(rooms: readonly Room[], options: WallOptions, free
     });
   }
 
-  const pieces = splitEdges(edges, vertices.points, eps);
-  const { drafts: paired, open } = pairPieces(pieces, rooms, options, warnings);
+  const gaps = options.asDrawn ? facingGaps(rooms) : [];
+  const pieces = splitForGaps(edges, vertices, eps, rooms, gaps);
+  const settings = edgeSettings(rooms, pieces);
+  const consumed = new Set<Piece>();
+  const between = gaps.length ? wallsBetween(gaps, rooms, pieces, vertices.points, settings, eps, consumed) : { drafts: [], open: [] };
+  const { drafts: paired, open } = pairPieces(pieces, settings, options, warnings, consumed);
   alignWithExterior(paired, vertices.points);
+  paired.push(...between.drafts);
+  open.push(...between.open);
 
   // free walls count as interior walls of the room they stand in (the same room on both sides)
   const drafts = paired;
@@ -362,6 +459,7 @@ export function generateWalls(rooms: readonly Room[], options: WallOptions, free
       ...(w.height !== undefined ? { height: w.height } : {}),
       ...(w.heightEnd !== undefined ? { heightEnd: w.heightEnd } : {}),
       ...(w.bottom ? { bottom: w.bottom } : {}),
+      ...(w.between ? { between: true as const } : {}),
     };
   });
   return { walls, warnings: [...new Set(warnings)], open };
@@ -419,7 +517,7 @@ export function innerSize(room: Room, walls: readonly Wall[]): [number, number] 
   if (room.points.length !== 4 || new Set(xs.map((v) => v.toFixed(3))).size !== 2 || new Set(zs.map((v) => v.toFixed(3))).size !== 2) return null;
   const [x0, x1, z0, z1] = [Math.min(...xs), Math.max(...xs), Math.min(...zs), Math.max(...zs)];
   const into = (onSide: (w: Wall) => boolean) =>
-    Math.max(0, ...walls.filter((w) => (w.roomLeft === room.id || w.roomRight === room.id) && onSide(w)).map((w) => (w.roomLeft === room.id ? w.left : w.right)));
+    Math.max(0, ...walls.filter((w) => !w.between && (w.roomLeft === room.id || w.roomRight === room.id) && onSide(w)).map((w) => (w.roomLeft === room.id ? w.left : w.right)));
   const near = (a: number, b: number) => Math.abs(a - b) < 1e-3;
   const along = (w: Wall, axis: 0 | 1, v: number) => near(w.a[axis], v) && near(w.b[axis], v);
   const width = x1 - x0 - into((w) => along(w, 0, x0)) - into((w) => along(w, 0, x1));

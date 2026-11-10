@@ -1800,7 +1800,7 @@ export class NextFloorViewer {
             return y === null ? null : y - floor.elevation;
           }
         : undefined;
-      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor));
+      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor), !!b.settings.rooms_as_drawn);
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, own: this.own, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();

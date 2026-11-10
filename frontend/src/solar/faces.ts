@@ -3,7 +3,7 @@
 // A face has a local frame. u runs along the eave (0 to lu), s up the slope from the eave (0 to ls, true length); on a
 // flat roof s runs across, level. A field's u and v place its lower left corner on the face.
 
-import { generateWalls } from "../geometry/walls.ts";
+import { generateWalls, wallOptions } from "../geometry/walls.ts";
 import { outdoorGround, type Building, type Floor, type RoofSection, type SolarField } from "../model.ts";
 import { sectionFrame, sectionOverhang, sectionProfile } from "../roof-sections.ts";
 import { gradient, mansardParts } from "../roof/frame.ts";
@@ -213,7 +213,7 @@ export function roofFaces(b: Building): RoofFace[] {
 export function wallFaces(b: Building, floorId?: string): RoofFace[] {
   const faces: RoofFace[] = [];
   for (const floor of b.floors.filter((f) => !floorId || f.id === floorId)) {
-    const { walls } = generateWalls(floor.rooms, { exterior: b.settings.wall_exterior, interior: b.settings.wall_interior }, floor.walls ?? []);
+    const { walls } = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []);
     for (const wall of walls) {
       // outer walls: the outer face; free-standing walls (garden wall, fence wall): both faces
       if (!wall.exterior && !wall.free) continue;

@@ -58,6 +58,7 @@ const SHARED_SETTINGS = [
   "rain_warning",
   "sun_patches",
   "lock_plan",
+  "rooms_as_drawn",
   "start_view",
   "units",
   "motion_markers_active",

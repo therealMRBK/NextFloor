@@ -42,8 +42,10 @@ export function buildFloorGeometry(
   roofUnder?: (x: number, z: number) => number | null,
   /** Painted walls for the solid wall view (see WallPaint). */
   paint?: WallPaint,
+  /** Rooms stay as drawn: walls fill the gaps between them (see WallOptions.asDrawn). */
+  asDrawn = false,
 ): FloorGeometry {
-  const { walls, open: openRooms } = generateWalls(floor.rooms, { exterior: wallExterior, interior: wallInterior }, floor.walls ?? []);
+  const { walls, open: openRooms } = generateWalls(floor.rooms, { exterior: wallExterior, interior: wallInterior, ...(asDrawn ? { asDrawn } : {}) }, floor.walls ?? []);
   const limits = roofLimits(roofUnder);
   const hasRoof = !!roofUnder;
 

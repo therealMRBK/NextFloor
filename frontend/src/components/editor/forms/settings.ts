@@ -70,6 +70,8 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
     <div class="nf-form">
       ${numberField(host, t("wall_exterior"), s.wall_exterior, (v) => set({ wall_exterior: clamp(v, 0.02, 1) }), 0.01, 0.02)}
       ${numberField(host, t("wall_interior"), s.wall_interior, (v) => set({ wall_interior: clamp(v, 0.02, 1) }), 0.01, 0.02)}
+      ${checkField(host, t("rooms_as_drawn"), !!s.rooms_as_drawn, (on) => set({ rooms_as_drawn: on || undefined }), { title: t("rooms_as_drawn_hint") })}
+      ${hint(t("rooms_as_drawn_hint"), "nf-wide")}
       ${colorField(host, t("wall_paint_outside"), s.wall_paint_outside, DEFAULT_PAINT_OUTSIDE, (v) => set({ wall_paint_outside: v }))}
       ${colorField(host, t("wall_paint_inside"), s.wall_paint_inside, DEFAULT_PAINT_INSIDE, (v) => set({ wall_paint_inside: v }))}
       ${hint(t("wall_paint_hint"), "nf-wide")}

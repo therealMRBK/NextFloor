@@ -3,7 +3,7 @@
 // live/energy-flow.ts and viewer/live-energy.ts; this file only deals with the numbers.
 
 import { entityAreaId, isHubDevice, powerSensorsOf } from "./devices.ts";
-import { generateWalls } from "./geometry/walls.ts";
+import { generateWalls, wallOptions } from "./geometry/walls.ts";
 import type { Building, EnergySettings, Furniture } from "./model.ts";
 import type { HassEntity, HomeAssistant } from "./types.ts";
 
@@ -384,7 +384,7 @@ export function suggestGridSpot(building: Building): { floorId: string; x: numbe
   const meter = meterPosition(building);
   const floor = meter ? building.floors.find((f) => f.id === meter.floor_id) : undefined;
   if (!meter || !floor) return null;
-  const thickness = { exterior: building.settings.wall_exterior, interior: building.settings.wall_interior };
+  const thickness = wallOptions(building.settings);
   const outerWalls = generateWalls(floor.rooms, thickness, floor.walls ?? []).walls.filter((w) => w.exterior);
   const corners = floor.rooms.flatMap((room) => room.points);
   if (outerWalls.length === 0 || corners.length === 0) return null;

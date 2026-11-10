@@ -14,7 +14,7 @@ import {
   type FreeWall,
 } from "../model.ts";
 import { furnishRoom, type PackageId } from "../packages.ts";
-import { generateWalls, locateOpening, openingHost, type Wall } from "../geometry/walls.ts";
+import { generateWalls, locateOpening, openingHost, wallOptions, type Wall } from "../geometry/walls.ts";
 import { arcOfNearest, frontExtent, frontOf, frontPieces, outlineLength, withFront } from "../geometry/glass-front.ts";
 import { formatNumber, translate, type I18nKey } from "../i18n.ts";
 import {
@@ -2273,8 +2273,7 @@ export class NfEditor extends LitElement {
 
   private wallsOfFloor() {
     const floor = this.floor;
-    const { wall_exterior, wall_interior } = this._doc.settings;
-    return floor ? generateWalls(floor.rooms, { exterior: wall_exterior, interior: wall_interior }, floor.walls ?? []).walls : [];
+    return floor ? generateWalls(floor.rooms, wallOptions(this._doc.settings), floor.walls ?? []).walls : [];
   }
 
   /** Where the parts of a wall begin: another room can split it into several. */
@@ -3180,6 +3179,10 @@ export class NfEditor extends LitElement {
   private closeFloorGaps(): void {
     const floor = this.floor;
     if (!floor || !this.isAdmin) return;
+    if (this._doc.settings.rooms_as_drawn) {
+      this.side.notice = this.t("gaps_not_needed");
+      return;
+    }
     const { rooms, gaps } = closeGaps(floor.rooms);
     if (!gaps.length) {
       this.side.notice = this.t("gaps_none");
@@ -3229,7 +3232,7 @@ export class NfEditor extends LitElement {
     // lengths in the plan, the forms and the wall view in the plan's own units
     setUnits(this._doc.settings.units);
     const floor = this.floor;
-    const walls = floor ? generateWalls(floor.rooms, { exterior: this._doc.settings.wall_exterior, interior: this._doc.settings.wall_interior }, floor.walls ?? []) : null;
+    const walls = floor ? generateWalls(floor.rooms, wallOptions(this._doc.settings), floor.walls ?? []) : null;
     return html`
       ${renderPreview(this.host, this.lib.preview)}
       ${this._wallView
@@ -3473,7 +3476,7 @@ export class NfEditor extends LitElement {
     const floor = this.floor;
     const host = floor ? openingHost(o, floor.rooms, floor.walls ?? []) : null;
     if (!floor || !host) return false;
-    const walls = generateWalls(floor.rooms, { exterior: this._doc.settings.wall_exterior, interior: this._doc.settings.wall_interior }, floor.walls ?? []);
+    const walls = generateWalls(floor.rooms, wallOptions(this._doc.settings), floor.walls ?? []);
     return locateOpening(walls.walls, o, host)?.wall.exterior ?? false;
   }
 

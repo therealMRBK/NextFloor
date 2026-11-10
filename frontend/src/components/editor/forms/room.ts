@@ -11,7 +11,7 @@ import type { RectField } from "../ops/rooms.ts";
 import { SPOT_TYPES, spotCount, spotItems } from "../ops/spots.ts";
 import type { SideState } from "../side-state.ts";
 import { formatArea, formatLength } from "../../../units.ts";
-import { generateWalls, innerSize, type Wall } from "../../../geometry/walls.ts";
+import { generateWalls, innerSize, wallOptions, type Wall } from "../../../geometry/walls.ts";
 import { countsAsLiving, roomArea } from "../../../geometry/living-area.ts";
 import { roomSpeaker } from "../../../live/announce.ts";
 
@@ -150,7 +150,7 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
   const areas = Object.values(host.hass?.areas ?? {}).sort((a, b) => a.name.localeCompare(b.name));
   const areaChoices: [string, string][] = [["", t("no_area")], ...areas.map((a): [string, string] => [a.area_id, a.name])];
   // from wall face to wall face (the outline runs along the middle of inner walls)
-  const walls = host.floor ? generateWalls(host.floor.rooms, { exterior: host.doc.settings.wall_exterior, interior: host.doc.settings.wall_interior }, host.floor.walls ?? []).walls : [];
+  const walls = host.floor ? generateWalls(host.floor.rooms, wallOptions(host.doc.settings), host.floor.walls ?? []).walls : [];
   const inner = host.floor ? innerSize(room, walls) : null;
   const materials = FLOOR_MATERIALS.map((m): [string, string] => [m, t(`mat_${m}` as I18nKey)]);
   const packageButton = (pkg: PackageId) =>

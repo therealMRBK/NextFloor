@@ -742,6 +742,8 @@ export interface BuildingSettings {
   card_templates?: Record<string, Record<string, unknown>> | null;
   /** Plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident. */
   lock_plan?: boolean;
+  /** Rooms stay as drawn (by their inner faces): a wall fills the gap between two rooms instead of each growing its own exterior wall into it. */
+  rooms_as_drawn?: boolean;
   /** The camera the house view opens with (3D view, card, kiosk); null = fitted from the front left. */
   start_view?: StartView | null;
   /**

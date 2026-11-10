@@ -881,6 +881,7 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("plugins"): vol.All([PLUGIN_SCHEMA], vol.Length(max=20)),
         # plan lock: rooms, walls, doors, windows and outdoor areas cannot be moved by accident
         vol.Optional("lock_plan", default=False): bool,
+        vol.Optional("rooms_as_drawn", default=False): bool,
         # stations and playlists for the speakers' quick menu (media_player.play_media type + content id)
         vol.Optional("media_presets", default=list): vol.All(
             [
