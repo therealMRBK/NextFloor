@@ -76,8 +76,6 @@ ROOM_SCHEMA = vol.Schema(
         vol.Required("floor_material"): vol.All(str, vol.Length(max=32)),
         # the camera this room opens with when it is tapped (None = framed from above)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
-        # the camera Outside opens with (None = the house view)
-        vol.Optional("outside_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         # entities shown in the room's panel although they are not in the plan
         vol.Optional("panel", default=list): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=100)),
         # entities of the area kept out of the room panel
@@ -416,7 +414,8 @@ FURNITURE_SCHEMA = vol.Schema(
                 vol.Schema(
                     {
                         vol.Required("label"): vol.All(str, vol.Length(max=40)),
-                        vol.Required("entity"): vol.All(str, vol.Length(min=1, max=255)),
+                        # a row with a label but no sensor yet stays in the plan while it is filled in
+                        vol.Required("entity"): vol.All(str, vol.Length(max=255)),
                     }
                 )
             ],
@@ -989,6 +988,8 @@ SETTINGS_SCHEMA = vol.Schema(
         ),
         # the camera the house view opens with (None = fitted from the front left)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
+        # the camera Outside opens with (None = the house view); it is a house setting, not a room one
+        vol.Optional("outside_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         vol.Optional("roof", default=lambda: {"type": "none", "pitch": 35, "overhang": 0.4}): ROOF_SCHEMA,
         # the weather entity for the weather outside (None = the first one)
         vol.Optional("weather_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),

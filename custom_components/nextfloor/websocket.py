@@ -88,7 +88,8 @@ async def ws_save_building(
     """Replace the building."""
     if (data := _data(hass, connection, msg)) is None:
         return
-    revision = await data.async_save_building(msg["building"])
+    async with data.save_lock:
+        revision = await data.async_save_building(msg["building"])
     connection.send_result(msg["id"], {"revision": revision})
 
 
@@ -100,12 +101,14 @@ async def ws_note_done(hass: HomeAssistant, connection: websocket_api.ActiveConn
     """Mark a note as done; any user may, it changes nothing but the note's own due day (#113)."""
     if (data := _data(hass, connection, msg)) is None:
         return
-    building = copy.deepcopy(data.building)
-    result = mark_note_done(building, msg["note_id"], dt_util.now().date())
-    if result is None:
-        connection.send_error(msg["id"], "not_found", "No such note")
-        return
-    await data.async_save_building(building)
+    # the copy is taken, changed and saved under the lock, so a save of someone else in between is not overwritten
+    async with data.save_lock:
+        building = copy.deepcopy(data.building)
+        result = mark_note_done(building, msg["note_id"], dt_util.now().date())
+        if result is None:
+            connection.send_error(msg["id"], "not_found", "No such note")
+            return
+        await data.async_save_building(building)
     connection.send_result(msg["id"], result)
 
 

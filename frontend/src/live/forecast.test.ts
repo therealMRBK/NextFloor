@@ -25,3 +25,9 @@ test("an answer without a forecast gives no rows, and an unknown condition a clo
   assert.deepEqual(forecastDays([{ condition: "sunny" }], 5, NOW), [], "a day without a date is left out");
   assert.equal(conditionIcon("tornado"), "☁️");
 });
+
+test("a day given as a date only is that local day, whatever the time zone", () => {
+  const now = new Date(2026, 10, 10, 15, 0).getTime();
+  const days = forecastDays([{ datetime: "2026-11-10", condition: "sunny", temperature: 8 }, { datetime: "2026-11-11", condition: "rainy", temperature: 6 }], 5, now);
+  assert.deepEqual(days.map((d) => new Date(d.day).getDate()), [10, 11]);
+});

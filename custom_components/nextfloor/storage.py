@@ -6,6 +6,7 @@ stores so frequent saves from the editor never rewrite the large image data.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 from typing import Any
@@ -79,6 +80,8 @@ class NextFloorData:
         self._building_store, self._image_store, self._history_store, self._pack_store = _stores(hass)
         self.building: dict[str, Any] = empty_building()
         self.revision = 0
+        # held by a change that reads the building, awaits and saves it: two of them must not lose one (note done)
+        self.save_lock = asyncio.Lock()
         self._images: dict[str, str] = {}
         self._history: list[dict[str, Any]] = []
         # imported furniture packs (checked payloads, see packs.py)

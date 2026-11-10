@@ -152,15 +152,16 @@ export function energyPicture(hass: HomeAssistant, b: Building, consumers: Consu
   // the inverter feeds the house (when it is not the hub itself)
   const houseSolar = (summary.solar ?? 0) - (summary.subMeters ?? []).reduce((sum, m) => sum + m.solar, 0);
   if (houseSolar > MIN_W) {
-    // each inverter feeds the house with its share of what its strings make (all of it, with one inverter)
-    const named = [...byInverter].filter(([id]) => !behind.has(id));
-    const shared = named.reduce((sum, [, w]) => sum + w, 0);
-    if (named.length > 1 && shared > MIN_W) {
-      for (const [id, w] of named) {
-        const spot = inverters.get(id);
-        const power = (houseSolar * w) / shared;
-        if (spot && spot !== hub && power > MIN_W) arcs.push({ key: `inverter:${id}`, from: spot, to: hub, power, color: ENERGY_COLORS.solar });
-      }
+    // each inverter feeds the house with its share of what its strings make (all of it, with one inverter). Whether there are
+    // several is decided by the plan, not by the watts of the moment, so a line does not jump between two drawings (#127)
+    const named = stringInverterSpots(b, behind);
+    if (named.length > 1) {
+      const weights = named.map((spot) => byInverter.get(spot.id) ?? 0);
+      const shared = weights.reduce((sum, w) => sum + w, 0);
+      named.forEach((spot, i) => {
+        const power = shared > MIN_W ? (houseSolar * weights[i]) / shared : houseSolar / named.length;
+        if (spot !== hub && power > MIN_W) arcs.push({ key: `inverter:${spot.id}`, from: spot, to: hub, power, color: ENERGY_COLORS.solar });
+      });
     } else if (inverter !== hub) arcs.push({ key: "inverter", from: inverter, to: hub, power: houseSolar, color: ENERGY_COLORS.solar });
   }
   // the grid
@@ -227,6 +228,12 @@ export interface EnergyConnection {
  * its inverter, the battery, the inverter and the grid to the house, and in the advanced energy mode the devices behind a
  * sub-meter and the sub-meters. Consumers keep their arc.
  */
+/** The inverters (not behind a sub-meter) that carry a string with at least one field: several of them each get their own line to the house. */
+function stringInverterSpots(b: Building, behind: { has(id: string): boolean }): Spot[] {
+  const used = new Set((b.settings.roof.strings ?? []).filter((st) => st.inverter && (b.settings.roof.solar ?? []).some((f) => f.string === st.id)).map((st) => st.inverter as string));
+  return spotsOf(b, "inverter").filter((s) => !behind.has(s.id) && used.has(s.id));
+}
+
 export function energyConnections(b: Building): EnergyConnection[] {
   const out: EnergyConnection[] = [];
   const hub = houseHub(b);
@@ -237,8 +244,7 @@ export function energyConnections(b: Building): EnergyConnection[] {
   if (spotsOf(b, "home_battery").some((s) => !behind.has(s.id))) out.push({ key: "battery", kind: "battery", id: null });
   const away = (s: Spot) => s.floorId !== hub.floorId || s.x !== hub.x || s.z !== hub.z;
   // several inverters carrying strings each have their own line to the house (#127)
-  const stringInverters = new Set((b.settings.roof.strings ?? []).filter((st) => st.inverter && (b.settings.roof.solar ?? []).some((f) => f.string === st.id)).map((st) => st.inverter as string));
-  const own = spotsOf(b, "inverter").filter((s) => !behind.has(s.id) && stringInverters.has(s.id));
+  const own = stringInverterSpots(b, behind);
   if (own.length > 1) for (const s of own) away(s) && out.push({ key: `inverter:${s.id}`, kind: "inverter", id: s.id });
   else if (inverter && away(inverter)) out.push({ key: "inverter", kind: "inverter", id: null });
   if (gridSpot(b, hub)) out.push({ key: "grid", kind: "grid", id: null });

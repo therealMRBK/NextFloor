@@ -79,6 +79,8 @@ export class NfBleLocate extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     void this.loadDevices();
+    // re-attached with a tag chosen: the live bars run again
+    if (this._tag) this.restartPolling();
   }
 
   disconnectedCallback(): void {
@@ -101,6 +103,8 @@ export class NfBleLocate extends LitElement {
   private restartPolling(): void {
     window.clearInterval(this.timer);
     this._scan = null;
+    // a recording belongs to the tag it was started for: another tag must not add its readings to it
+    this._samples = null;
     if (!this._tag) return;
     const poll = () => void this.pollOnce();
     poll();
@@ -112,6 +116,8 @@ export class NfBleLocate extends LitElement {
     if (!tag || !this.host.hass) return;
     try {
       const scan = await this.host.hass.callWS<Scan>({ type: "nextfloor/ble/scan", ...(tag.entity ? { entity: tag.entity } : { address: tag.address }) });
+      // an answer for a tag that is no longer chosen is dropped
+      if (this._tag !== tag.id) return;
       this._scan = scan;
       this._error = "";
       if (this._samples) {

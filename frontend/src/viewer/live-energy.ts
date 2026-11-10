@@ -170,11 +170,13 @@ export class EnergyLayer {
           const e2 = [q[3][0] - q[0][0], q[3][1] - q[0][1], q[3][2] - q[0][2]];
           const nrm = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
           const len = Math.hypot(nrm[0], nrm[1], nrm[2]) || 1;
+          // a module standing upright (a wall field) has no "up": the side is unknown, so it keeps the small lift straight up
+          const upright = Math.abs(nrm[1]) / len < 0.5;
           const up = nrm[1] < 0 ? -1 : 1;
           for (let i = 0; i < 3; i++) {
             const top = q[0][i] + (q[1][i] - q[0][i]) * u;
             const bot = q[3][i] + (q[2][i] - q[3][i]) * u;
-            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (nrm[i] / len) * up * 0.25;
+            this.sparkBase[n * 3 + i] = top + (bot - top) * w + (upright ? (i === 1 ? 0.12 : 0) : (nrm[i] / len) * up * 0.25);
           }
           this.sparkField[n] = fi;
           this.sparkPhase[n] = Math.random() * Math.PI * 2;

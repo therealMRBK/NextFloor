@@ -33,6 +33,7 @@ import { energyPicture, houseHub, type EnergyPicture } from "../live/energy-flow
 import { pipeArcs } from "../live/pipes.ts";
 import { loadWeek, type WeekBars } from "../live/week-bars.ts";
 import { binsDue, loadToday, sortDay, type TodayItem } from "../live/today.ts";
+import { wallboxPhase } from "../entities/wallbox.ts";
 import { forecastDays, loadForecast } from "../live/forecast.ts";
 import { isPrinter3d, readPrinter, type PrinterInfo } from "../live/printer.ts";
 import { isHeatPump, readHeatPump, type HeatPumpInfo } from "../live/heat-pump.ts";
@@ -1512,10 +1513,8 @@ export class NfView3d extends LitElement {
 
   private wallboxText(hass: HomeAssistant, status: string | null, power: number | null): string {
     const st = status ? hass.states[status] : undefined;
-    const raw = String(st?.state ?? "").toLowerCase();
-    const charging = (power ?? 0) > 50 || /(^|[^a-zä])(charging|charge|laden|lädt|ladend)(?![a-zä])/.test(raw);
-    const plugged = st?.entity_id.startsWith("binary_sensor.") ? raw === "on" : /connect|plug|insert|ready|angesteckt|verbunden|wait|paused|suspend/.test(raw);
-    const label = charging ? translate(hass, "wallbox_charging") : plugged ? translate(hass, "wallbox_plugged") : st && !isUnavailable(st) && !st.entity_id.startsWith("binary_sensor.") ? stateText(hass, st) : "";
+    const phase = wallboxPhase(String(st?.state ?? ""), !!st?.entity_id.startsWith("binary_sensor."), power);
+    const label = phase === "charging" ? translate(hass, "wallbox_charging") : phase === "plugged" ? translate(hass, "wallbox_plugged") : st && !isUnavailable(st) && !st.entity_id.startsWith("binary_sensor.") ? stateText(hass, st) : "";
     const watts = power !== null && power > 50 ? formatPower(hass, power) : "";
     return [label, watts].filter(Boolean).join(" · ");
   }
@@ -2523,7 +2522,10 @@ export class NfView3d extends LitElement {
     if (Date.now() - this.forecastAt < 1_800_000 && key === this.forecastKey) return;
     this.forecastAt = Date.now();
     this.forecastKey = key;
-    void loadForecast(hass, entity).then((raw) => (this._forecast = raw));
+    void loadForecast(hass, entity).then((raw) => {
+      if (raw === null) this.forecastAt = Date.now() - 1_740_000; // failed: try again in a minute, the old days stay
+      else this._forecast = raw;
+    });
   }
 
   /** The weather forecast card (#84): a row per day with the weather, high and low, and the rain. */

@@ -13,6 +13,7 @@ from typing import Any
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -159,6 +160,8 @@ class NextFloorCountSensor(SensorEntity):
 BLE_POLL = timedelta(seconds=2)
 # a tag that no scanner has heard for this long is "away"
 BLE_AWAY_AFTER = timedelta(minutes=2)
+# the signal strengths in the attributes are refreshed at least this often while the room stays the same
+BLE_REFRESH = timedelta(seconds=30)
 UNKNOWN = "unknown"
 
 
@@ -168,6 +171,7 @@ class NextFloorBleSensor(SensorEntity):
     _attr_has_entity_name = True
     _attr_should_poll = False
     _attr_icon = "mdi:bluetooth-connect"
+    _unrecorded_attributes = frozenset({"distance_db", "margin_db", "scanners"})
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, tag: dict[str, Any]) -> None:
         """Locate `tag` (a dict of the plan's settings.ble.tags)."""
@@ -181,6 +185,8 @@ class NextFloorBleSensor(SensorEntity):
         self._room_id: str | None = None
         self._detail: dict[str, Any] = {}
         self._unsub: Callable[[], None] | None = None
+        self._written: tuple[Any, ...] | None = None
+        self._written_at: Any = None
         self._attr_unique_id = f"{entry.entry_id}_ble_{tag['id']}"
         self._attr_name = tag["name"]
         self._attr_device_info = DeviceInfo(
@@ -228,7 +234,14 @@ class NextFloorBleSensor(SensorEntity):
         info = self._rooms.get(shown) if shown else None
         self._attr_native_value = info["name"] if info else UNKNOWN
         self._detail["floor"] = info["floor"] if info else None
-        if self.platform is not None:
+        # the raw signals change with every reading: written only when the room changes, else now and then, or the
+        # recorder would get a row every two seconds per tag
+        stamp = (self._attr_native_value, shown, self._attr_available)
+        if self.platform is not None and (
+            stamp != self._written or self._written_at is None or now - self._written_at > BLE_REFRESH
+        ):
+            self._written = stamp
+            self._written_at = now
             self.async_write_ha_state()
 
     @property
@@ -281,6 +294,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             if sensor is None:
                 sensor = ble_sensors[tag["id"]] = NextFloorBleSensor(hass, entry, tag)
                 new_ble.append(sensor)
+        # a tag deleted from the plan loses its sensor (it would stay unavailable and keep polling)
+        gone = [tag_id for tag_id in ble_sensors if tag_id not in {t["id"] for t in ble.tags_of(building)}]
+        for tag_id in gone:
+            sensor = ble_sensors.pop(tag_id)
+            if sensor.platform is not None and sensor.entity_id:
+                registry = er.async_get(hass)
+                if registry.async_get(sensor.entity_id):
+                    registry.async_remove(sensor.entity_id)
         for sensor in ble_sensors.values():
             sensor.take(building)
             if sensor not in new_ble and sensor.platform is not None:

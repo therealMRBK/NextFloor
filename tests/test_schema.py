@@ -273,8 +273,9 @@ def test_a_device_takes_up_to_six_named_temperatures() -> None:
     too_many = [{"label": str(i), "entity": f"sensor.t{i}"} for i in range(7)]
     with pytest.raises(vol.Invalid):
         FURNITURE_SCHEMA({**base, "temps": too_many})
-    with pytest.raises(vol.Invalid):
-        FURNITURE_SCHEMA({**base, "temps": [{"label": "x", "entity": ""}]})
+    # a row with a label and no sensor yet stays while it is filled in; refusing it blocked every save
+    half = FURNITURE_SCHEMA({**base, "temps": [{"label": "x", "entity": ""}]})
+    assert half["temps"][0]["entity"] == ""
 
 
 def test_energy_pipes_have_a_kind_and_an_optional_entity() -> None:

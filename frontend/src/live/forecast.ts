@@ -64,7 +64,9 @@ export function forecastDays(raw: unknown, days: number, now = Date.now()): Fore
   const today = midnight(now);
   const out: ForecastDay[] = [];
   for (const f of Array.isArray(raw) ? (raw as RawForecast[]) : []) {
-    const at = f.datetime ? Date.parse(f.datetime) : Number.NaN;
+    // a date without a time ("2026-11-10") is read as UTC by Date.parse, which moves the day in time zones west of UTC: take it as local
+    const dateOnly = f.datetime && /^\d{4}-\d{2}-\d{2}$/.test(f.datetime) ? f.datetime.split("-").map(Number) : null;
+    const at = dateOnly ? new Date(dateOnly[0], dateOnly[1] - 1, dateOnly[2]).getTime() : f.datetime ? Date.parse(f.datetime) : Number.NaN;
     if (!Number.isFinite(at)) continue;
     const day = midnight(at);
     if (day < today || out.some((d) => d.day === day)) continue;
@@ -74,7 +76,7 @@ export function forecastDays(raw: unknown, days: number, now = Date.now()): Fore
   return out;
 }
 
-/** Asks Home Assistant for the daily forecast of a weather entity; an entity without one gives no days. */
+/** Asks Home Assistant for the daily forecast of a weather entity; an entity without one gives no days, a failed call gives null. */
 export async function loadForecast(hass: HomeAssistant, entity: string): Promise<unknown> {
   try {
     const answer = await hass.callWS<{ response?: Record<string, { forecast?: unknown }> }>({
@@ -87,6 +89,7 @@ export async function loadForecast(hass: HomeAssistant, entity: string): Promise
     });
     return answer?.response?.[entity]?.forecast ?? [];
   } catch {
-    return [];
+    // not an answer: the card keeps what it has and asks again soon (an entity without a forecast answers with none)
+    return null;
   }
 }

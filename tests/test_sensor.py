@@ -94,3 +94,25 @@ async def test_sensors_follow_states_and_the_plan(hass: HomeAssistant) -> None:
     await hass.async_block_till_done()
     assert value("open", "eg") == "unavailable"
     assert value("open", "house") == "0"
+
+
+async def test_a_bluetooth_tag_deleted_from_the_plan_loses_its_sensor(hass: HomeAssistant) -> None:
+    await async_setup_component(hass, "http", {})
+    entry = MockConfigEntry(domain=DOMAIN, data={})
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    def tag_sensors() -> list[str]:
+        return [
+            s.entity_id for s in hass.states.async_all("sensor") if s.attributes.get("icon") == "mdi:bluetooth-connect"
+        ]
+
+    tags = [{"id": "t1", "name": "Schluessel", "address": "AA:BB:CC:DD:EE:FF", "prints": []}]
+    building = {"version": 1, "settings": {"ble": {"tags": tags}}, "floors": []}
+    await hass.data[DOMAIN].async_save_building(building)
+    await hass.async_block_till_done()
+    assert len(tag_sensors()) == 1
+    await hass.data[DOMAIN].async_save_building({"version": 1, "settings": {}, "floors": []})
+    await hass.async_block_till_done()
+    assert tag_sensors() == []

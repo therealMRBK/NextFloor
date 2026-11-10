@@ -4,6 +4,21 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.1]
+
+A quality release: a review of the whole code found these, none of them reported yet.
+
+### Fixed
+
+- **A half-filled temperature row no longer blocks saving:** typing a label under *Further temperatures* of a device before choosing a sensor made every save of the plan fail until the sensor was chosen.
+- **Several inverters stay stable in the energy flow** (#127): whether each inverter gets its own line to the house depends on the plan, not on which string happens to produce at that moment, so the line no longer jumps between two drawings and cable routes you drew keep applying.
+- **Wallbox status** (#129): `not_charging` and `ready_to_charge` no longer show as charging, and `disconnected` / `unplugged` no longer show as plugged in.
+- **Note done** no longer overwrites a plan saved by someone else at the same moment.
+- **Weather forecast:** a forecast day given as a plain date is no longer pushed to the day before in time zones west of UTC, and one failed request no longer blanks the card for half an hour (it asks again after a minute).
+- **Bluetooth rooms:** a recording started for one tag no longer collects the readings of another tag you open meanwhile, the live bars run again when the section is shown again, and a tag deleted from the plan loses its sensor instead of staying behind as an unavailable entity.
+- **Bluetooth sensor and the recorder:** the sensor wrote a new state every two seconds because the signal strengths change constantly. It now writes when the room changes (or every 30 seconds), and the signal values are no longer stored in the history.
+- **The camera Outside opens with** is checked as a house setting (it was checked as a room setting by mistake).
+
 ## [0.31.0.1]
 
 ### Fixed
