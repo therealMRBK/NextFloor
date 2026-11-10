@@ -1157,6 +1157,7 @@
  "rooms_from_walls": "Pièces depuis les murs",
  "rooms_from_walls_hint": "Crée une pièce à nommer pour chaque zone fermée par les murs dessinés. Les pièces existantes restent.",
  "rooms_from_walls_none": "Aucune zone fermée sans pièce trouvée. Les murs doivent se toucher et se refermer complètement.",
+ "rooms_from_walls_covered": "Les murs ferment des zones, mais elles se trouvent déjà dans une pièce existante (p. ex. le contour de la maison dessiné comme pièce). Supprimez cette pièce ou dessinez le contour avec l'outil mur.",
  "rooms_from_walls_done": "{n} pièces créées depuis les murs. Il ne reste qu'à les nommer.",
  "gaps_closed": "{n} endroits comblés.",
  "gaps_closed_wall": "{n} endroits comblés, mur intérieur désormais de {t} m.",

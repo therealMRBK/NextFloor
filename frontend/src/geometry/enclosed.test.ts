@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { enclosedAreas } from "./enclosed.ts";
+import { coveredAreas, enclosedAreas } from "./enclosed.ts";
 import type { FreeWall, Room } from "../model.ts";
 
 const wall = (id: string, a: [number, number], b: [number, number]): FreeWall => ({ id, a, b });
@@ -52,4 +52,11 @@ test("a thin gap between two walls side by side is no room", () => {
 test("walls drawn by hand that miss each other by a few centimetres still close", () => {
   const walls = [wall("a", [0, 0], [4, 0]), wall("b", [4.12, 0.1], [4.1, 3]), wall("c", [4.05, 3.14], [0, 3.1]), wall("d", [-0.1, 3.0], [0.08, -0.12])];
   assert.equal(enclosedAreas({ walls, rooms: [] }).length, 1);
+});
+
+test("walls inside an outline that is a room are reported as covered", () => {
+  const outline: Room = { id: "r", name: "Haus", area_id: null, points: [[0, 0], [8, 0], [8, 4], [0, 4]], floor_material: "wood" };
+  const floor = { walls: [wall("mid", [3, 0], [3, 4])], rooms: [outline] };
+  assert.equal(enclosedAreas(floor).length, 0);
+  assert.equal(coveredAreas(floor), 2);
 });

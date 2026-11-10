@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Stanze dai muri",
   "rooms_from_walls_hint": "Crea una stanza da nominare per ogni area chiusa dai muri disegnati. Le stanze esistenti restano.",
   "rooms_from_walls_none": "Nessuna area chiusa senza stanza trovata. I muri devono toccarsi e chiudersi tutto intorno.",
+  "rooms_from_walls_covered": "I muri chiudono aree, ma si trovano già dentro una stanza esistente (ad es. il contorno della casa disegnato come stanza). Elimina quella stanza o disegna il contorno con lo strumento muro.",
   "rooms_from_walls_done": "{n} stanze create dai muri. Ora basta nominarle.",
   "gaps_closed": "{n} punti chiusi.",
   "gaps_closed_wall": "{n} punti chiusi, parete interna ora {t} m.",

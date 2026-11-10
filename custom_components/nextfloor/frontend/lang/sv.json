@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Rum från väggar",
   "rooms_from_walls_hint": "Gör ett rum att namnge av varje område de ritade väggarna sluter in. Befintliga rum finns kvar.",
   "rooms_from_walls_none": "Inga slutna områden utan rum hittades. Väggarna måste nudda varandra och sluta sig helt.",
+  "rooms_from_walls_covered": "Väggarna sluter in områden, men de ligger redan i ett befintligt rum (t.ex. husets kontur ritad som rum). Ta bort rummet eller rita konturen med väggverktyget.",
   "rooms_from_walls_done": "{n} rum skapade från väggarna. Nu återstår bara att namnge dem.",
   "gaps_closed": "{n} ställen stängda.",
   "gaps_closed_wall": "{n} ställen stängda, innervägg nu {t} m.",

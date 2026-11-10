@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Divisões a partir das paredes",
   "rooms_from_walls_hint": "Cria uma divisão para nomear em cada área fechada pelas paredes desenhadas. As existentes ficam.",
   "rooms_from_walls_none": "Nenhuma área fechada sem divisão encontrada. As paredes têm de se tocar e fechar por completo.",
+  "rooms_from_walls_covered": "As paredes fecham áreas, mas estas já estão dentro de uma divisão existente (p. ex. o contorno da casa desenhado como divisão). Elimine essa divisão ou desenhe o contorno com a ferramenta de paredes.",
   "rooms_from_walls_done": "{n} divisões criadas a partir das paredes. Agora é só nomeá-las.",
   "gaps_closed": "{n} locais fechados.",
   "gaps_closed_wall": "{n} locais fechados, parede interior agora com {t} m.",

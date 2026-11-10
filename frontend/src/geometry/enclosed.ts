@@ -172,13 +172,22 @@ function insidePoint(poly: readonly Vec2[]): Vec2 | null {
  */
 export function enclosedAreas(floor: Pick<Floor, "walls" | "rooms">): Vec2[][] {
   for (const snap of SNAPS) {
-    const found = enclosedWithin(floor, snap);
+    const found = enclosedWithin(floor, snap, false);
     if (found.length) return found;
   }
   return [];
 }
 
-function enclosedWithin(floor: Pick<Floor, "walls" | "rooms">, snap: number): Vec2[][] {
+/** How many closed areas there are that lie inside a room already (an outline drawn as a room, with walls drawn inside it). */
+export function coveredAreas(floor: Pick<Floor, "walls" | "rooms">): number {
+  for (const snap of SNAPS) {
+    const found = enclosedWithin(floor, snap, true);
+    if (found.length) return found.length;
+  }
+  return 0;
+}
+
+function enclosedWithin(floor: Pick<Floor, "walls" | "rooms">, snap: number, covered: boolean): Vec2[][] {
   const segments: Seg[] = [];
   for (const w of floor.walls ?? []) segments.push([w.a, w.b]);
   for (const r of floor.rooms) r.points.forEach((p, i) => segments.push([p, r.points[(i + 1) % r.points.length]]));
@@ -190,7 +199,8 @@ function enclosedWithin(floor: Pick<Floor, "walls" | "rooms">, snap: number): Ve
     if (outline.length < 3 || outline.length > MAX_CORNERS) continue;
     const inside = insidePoint(outline);
     if (!inside) continue;
-    if (floor.rooms.some((r) => r.points.length >= 3 && pointInPolygon(inside, r.points))) continue;
+    const taken = floor.rooms.some((r) => r.points.length >= 3 && pointInPolygon(inside, r.points));
+    if (taken !== covered) continue;
     // a room that lies inside the area (a closet in a hall) leaves the hall a room around it: keep it, the rooms take their own space
     result.push(outline);
   }

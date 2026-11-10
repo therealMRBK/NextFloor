@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Pokoje ze ścian",
   "rooms_from_walls_hint": "Tworzy pokój do nazwania z każdego obszaru zamkniętego narysowanymi ścianami. Istniejące pokoje zostają.",
   "rooms_from_walls_none": "Nie znaleziono zamkniętych obszarów bez pokoju. Ściany muszą się stykać i zamykać dookoła.",
+  "rooms_from_walls_covered": "Ściany zamykają obszary, ale leżą one już w istniejącym pokoju (np. obrys domu narysowany jako pokój). Usuń ten pokój albo narysuj obrys narzędziem ścian.",
   "rooms_from_walls_done": "Utworzono {n} pokoi ze ścian. Teraz tylko je nazwij.",
   "gaps_closed": "Zamknięto {n} miejsc.",
   "gaps_closed_wall": "Zamknięto {n} miejsc, ściana wewnętrzna ma teraz {t} m.",

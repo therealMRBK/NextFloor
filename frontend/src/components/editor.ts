@@ -4,7 +4,7 @@ import { html, LitElement, nothing, svg, type PropertyValues, type TemplateResul
 import { fetchImage, importPack, storeImage } from "../api.ts";
 import { defaultHeight, entityName, kindOf, roomEntities } from "../devices.ts";
 import { closeGaps, suggestedThickness } from "../geometry/gaps.ts";
-import { enclosedAreas } from "../geometry/enclosed.ts";
+import { coveredAreas, enclosedAreas } from "../geometry/enclosed.ts";
 import { keepInRoom, snapToWall } from "../geometry/snap.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { polygonBox } from "../roof-sections.ts";
@@ -3197,7 +3197,7 @@ export class NfEditor extends LitElement {
     if (!floor || !this.isAdmin) return;
     const areas = enclosedAreas(floor);
     if (!areas.length) {
-      this.side.notice = this.t("rooms_from_walls_none");
+      this.side.notice = this.t(coveredAreas(floor) ? "rooms_from_walls_covered" : "rooms_from_walls_none");
       return;
     }
     this.change((_, f) => {

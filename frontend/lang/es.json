@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Habitaciones desde muros",
   "rooms_from_walls_hint": "Crea una habitación para nombrar en cada zona cerrada por los muros dibujados. Las existentes se mantienen.",
   "rooms_from_walls_none": "No hay zonas cerradas sin habitación. Los muros deben tocarse y cerrar todo el contorno.",
+  "rooms_from_walls_covered": "Los muros cierran zonas, pero ya están dentro de una habitación existente (p. ej. el contorno de la casa dibujado como habitación). Elimina esa habitación o dibuja el contorno con la herramienta de muros.",
   "rooms_from_walls_done": "{n} habitaciones creadas desde los muros. Solo falta nombrarlas.",
   "gaps_closed": "{n} lugares cerrados.",
   "gaps_closed_wall": "{n} lugares cerrados, pared interior ahora {t} m.",

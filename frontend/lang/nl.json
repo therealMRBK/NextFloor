@@ -1209,6 +1209,7 @@
   "rooms_from_walls": "Kamers uit muren",
   "rooms_from_walls_hint": "Maakt van elk gebied dat de getekende muren omsluiten een kamer om te benoemen. Bestaande kamers blijven.",
   "rooms_from_walls_none": "Geen gesloten gebieden zonder kamer gevonden. De muren moeten elkaar raken en rondom sluiten.",
+  "rooms_from_walls_covered": "De muren sluiten gebieden, maar die liggen al in een bestaande kamer (bijv. de omtrek van het huis getekend als kamer). Verwijder die kamer of teken de omtrek met het muurgereedschap.",
   "rooms_from_walls_done": "{n} kamers uit de muren gemaakt. Nu alleen nog benoemen.",
   "gaps_closed": "{n} plekken gedicht.",
   "gaps_closed_wall": "{n} plekken gedicht, binnenmuur nu {t} m.",

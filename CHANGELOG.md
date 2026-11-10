@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.30.0.2]
+
+### Fixed
+
+- **Rooms from walls says why it finds nothing** (#125): when the walls close areas that already lie inside a room (the house outline drawn as a free-form room), the message now says so and what to do, instead of "nothing found".
+
 ## [0.30.0.1]
 
 ### Fixed
