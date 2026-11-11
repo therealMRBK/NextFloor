@@ -1,0 +1,86 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "NextFloor",
+        "description": "Afegeix una pàgina lateral on podeu dibuxiar la vostra casa i veure-la en 3D."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "NextFloor ja està configurat."
+    }
+  },
+  "services": {
+    "announce": {
+      "name": "Anunci",
+      "description": "Diu un missatge en habitacions del plànol, cadascuna amb el seu altaveu, i mostra i diu en cada pantalla del NextFloor oberta.",
+      "fields": {
+        "message": {
+          "name": "Missatge",
+          "description": "El que diu."
+        },
+        "rooms": {
+          "name": "Habitacions",
+          "description": "Habitacions per nom, id d'habitació o id d'àrea. Buit: cada habitació amb un altaveu (s'ometen els que són en horari de silenci)."
+        },
+        "floor": {
+          "name": "Planta",
+          "description": "Només les habitacions d'aquesta planta (nom o id)."
+        },
+        "on_speakers": {
+          "name": "En els altaveus",
+          "description": "Parla en les habitacions."
+        },
+        "on_screens": {
+          "name": "En les pantalles",
+          "description": "Mostra i parla en les pantales obertes de NextFloor."
+        },
+        "screens": {
+          "name": "Només aquestes pantalles",
+          "description": "Noms de les pantalles de NextFloor (definit en cada pantalla). Buit: totes les pantalles."
+        },
+        "tts_entity": {
+          "name": "Síntesi de veu",
+          "description": "En comptes del triat en el plànol, o el primer."
+        }
+      }
+    },
+    "reload_screens": {
+      "name": "Torna a carregar les pantalles",
+      "description": "Fa que les pantalles de NextFloor obertes tornin a carregar la pàgina, un segons després, per exemple després d'una actualització.",
+      "fields": {
+        "template": {
+          "name": "Plantilla de targeta",
+          "description": "Només les pantalles amb targetes que usin aquesta plantilla. Buit: totes les pantalles obertes."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "no_rooms": {
+      "message": "Cap habitació del plànol coincideix amb les habitacions indicades."
+    },
+    "no_tts": {
+      "message": "Cap altaveu ho pot dir: configureu una entitat de síntesi de veu al Home Assistant."
+    },
+    "not_loaded": {
+      "message": "NextFloor no està configurat."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "floor_open": {
+        "name": "{floor}: finestres i portes obertes"
+      },
+      "floor_lights_on": {
+        "name": "{floor}: llumns encesos"
+      },
+      "house_open": {
+        "name": "Finestres i portes obertes"
+      },
+      "house_lights_on": {
+        "name": "Llums encesos"
+      }
+    }
+  }
+}
