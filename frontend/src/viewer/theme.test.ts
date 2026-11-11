@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { AdditiveBlending, MeshBasicMaterial, NormalBlending } from "three";
+import { lightStage } from "../themes.ts";
 import { lineBlending, lookUniforms, ownUniforms, parseAccent, setOwnLook, themed, themeIndex } from "./theme.ts";
 
 test("an accent colour is read from #rrggbb, with or without the hash, and nothing else", () => {
@@ -77,4 +78,20 @@ test("each view has its own look colours: two cards do not repaint each other", 
   themed(new MeshBasicMaterial(), { value: 3, look: a }).onBeforeCompile(shader as never, undefined as never);
   assert.equal(shader.uniforms.uOwnLine, a.uOwnLine);
   assert.equal(shader.uniforms.uAccent, a.uAccent);
+});
+
+test("the realistic look is index 4, draws lines without glow, and only surfaces with a material of their own get its shader", () => {
+  assert.equal(themeIndex("real"), 4);
+  assert.equal(lightStage("real", {}), true);
+  assert.equal(lineBlending("real"), NormalBlending);
+  const uniform = { value: 4 };
+  const source = { uniforms: {} as Record<string, unknown>, vertexShader: "#include <common>\n#include <project_vertex>", fragmentShader: "#include <common>\nvoid main() {\n#include <color_fragment>\n}" };
+  const floor = themed(new MeshBasicMaterial(), uniform, false, false, "floor");
+  floor.onBeforeCompile(source as never, undefined as never);
+  assert.ok(source.vertexShader.includes("vNfWorld = (modelMatrix"));
+  assert.ok(source.fragmentShader.includes("if (uTheme == 4) diffuseColor.rgb = nfReal(nfRaw, 0);"));
+  const plain = { uniforms: {} as Record<string, unknown>, vertexShader: "#include <common>", fragmentShader: "#include <common>\n#include <color_fragment>" };
+  themed(new MeshBasicMaterial(), uniform).onBeforeCompile(plain as never, undefined as never);
+  assert.ok(!plain.fragmentShader.includes("nfReal(nfRaw"));
+  assert.notEqual(floor.customProgramCacheKey(), themed(new MeshBasicMaterial(), uniform, false, false, "wall").customProgramCacheKey());
 });

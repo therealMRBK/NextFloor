@@ -1,8 +1,9 @@
 // Looks of the 3D view, shared by the main bundle (settings, stage background) and the 3D bundle.
 
-export type Theme = "neon" | "blueprint" | "day" | "own";
+export type Theme = "neon" | "blueprint" | "day" | "own" | "real";
 
-export const THEMES: Theme[] = ["neon", "blueprint", "day", "own"];
+// the order is the shader's look number (neon 0 ... own 3, real 4): new looks go to the end
+export const THEMES: Theme[] = ["neon", "blueprint", "day", "own", "real"];
 
 /** The colours of the own look ("#rrggbb" each; missing ones take the default), house-wide in the settings or a card's own (#82). */
 export interface OwnLook {
@@ -41,7 +42,7 @@ export function ownLook(...layers: (OwnLook | null | undefined)[]): Required<Own
 
 /** A light stage needs dark lines drawn without glow and no neon ground grid: the day look, or an own look on a light background. */
 export function lightStage(theme: Theme, own: OwnLook): boolean {
-  if (theme === "day") return true;
+  if (theme === "day" || theme === "real") return true;
   if (theme !== "own") return false;
   const [r, g, b] = hexRgb(own.background) ?? [0, 0, 0];
   return 0.299 * r + 0.587 * g + 0.114 * b > 140;
@@ -96,6 +97,17 @@ export const STAGE: Record<Exclude<Theme, "own">, { night: [number[], number[]];
     day: [
       [242, 246, 251],
       [205, 216, 230],
+    ],
+  },
+  // the realistic look: a daylight sky that deepens towards dusk
+  real: {
+    night: [
+      [92, 110, 142],
+      [52, 64, 88],
+    ],
+    day: [
+      [150, 190, 232],
+      [214, 228, 240],
     ],
   },
 };
