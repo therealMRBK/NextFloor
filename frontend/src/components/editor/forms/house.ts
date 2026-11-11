@@ -295,6 +295,8 @@ export function renderPresence(host: EditorHost): TemplateResult {
   const more = entityOptions(host.hass, (id) => /^(input_boolean|binary_sensor|device_tracker)\./.test(id) && !persons.includes(id));
   return html`<details class="nf-section">
     <summary>${host.t("presence")}</summary>
+    <div class="nf-form">${checkField(host, host.t("presence_overview"), !!host.doc.settings.presence_overview, (on) => host.change((d) => { d.settings.presence_overview = on; }))}</div>
+    ${hint(host.t("presence_overview_hint"))}
     <div class="nf-form">${persons.length > 0 ? persons.map(row) : html`<p class="nf-sub nf-wide">${host.t("no_persons")}</p>`}</div>
     <div class="nf-form">${entityField(host, host.t("presence_add"), null, undefined, more, (v) => v && v !== "none" && host.replace({ ...structuredClone(host.doc), presence: [...host.doc.presence, { person: v, sensor: null }] }))}</div>
     ${hint(host.t("presence_hint"))}
