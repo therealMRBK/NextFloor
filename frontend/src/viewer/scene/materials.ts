@@ -3,7 +3,7 @@
 
 import { AdditiveBlending, NormalBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
 import { makeFoldable, type FoldMasks } from "../fold.ts";
-import { lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
+import { deepenedShadow, lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
 import type { OwnLook } from "../../themes.ts";
 
 export interface FloorMaterials {
@@ -73,7 +73,7 @@ export function makeFloorMaterials({ mask, look, theme, own, textures }: Materia
     wall: themed(foldable(solid(), "solid"), look, false, false, "wall"),
     glassWall: foldable(solid({ transparent: true, depthWrite: false }), "glass"),
     // the result is the floor colour times the vertex colour: white leaves the floor as it is
-    shadow: solid({ blending: MultiplyBlending, premultipliedAlpha: true, transparent: true, depthWrite: false, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }),
+    shadow: deepenedShadow(solid({ blending: MultiplyBlending, premultipliedAlpha: true, transparent: true, depthWrite: false, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }), look),
     lines: themed(foldable(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(theme, own), depthWrite: false })), look, true),
     // light on floors and walls follows the cut and the glass walls like the walls themselves
     glow: foldable(overlay({ side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -3 }), "solid"),

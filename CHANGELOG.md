@@ -6,7 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
-- **A realistic look (preview):** a fifth look, *Realistic*, in the look row and the card editor. Floors get wood planks, tiles or grass, walls plaster, roofs tiles and flat tops concrete, with relief and light from a sun and the sky. All computed in the shader from the world position: no texture files, no extra download, the other looks are untouched. First step, still plain on furniture and trees.
+- **A realistic look (preview):** a fifth look, *Realistic*, in the look row and the card editor. Floors get wood planks, tiles or grass, walls plaster, roofs tiles and flat tops concrete, with relief and light from a sun and the sky. Photo textures (CC0, Poly Haven, about 230 KB beside the bundles) for wood floors, stone tiles, plaster, roof tiles, ground and concrete, with the procedural materials as fallback when a file is missing. Walls get light tops that outline the rooms, and floor shadows are deeper and softer. Only this look changes, the others are untouched. First step, still plain on furniture and trees.
 
 ## [0.31.3]
 

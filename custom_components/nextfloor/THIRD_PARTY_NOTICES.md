@@ -74,3 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TypeScript (Apache-2.0), esbuild (MIT) and puppeteer-core (Apache-2.0) are used to build and test the project.
 They are not part of what is distributed.
+
+## Photo textures of the realistic look
+
+`frontend/textures/*.jpg` are CC0 textures from [Poly Haven](https://polyhaven.com) (laminate_floor_02, marble_01, painted_plaster_wall, roof_tiles_14, forrest_ground_01, plaster_grey_04), reduced to 512 px. CC0: no attribution required, given here as thanks.

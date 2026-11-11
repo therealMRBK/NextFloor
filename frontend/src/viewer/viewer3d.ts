@@ -73,7 +73,7 @@ import { GROUND, groundFace, groundFloor, wallFaces } from "../solar.ts";
 import { MapLayer } from "./live-map.ts";
 import type { MapSettings } from "../model.ts";
 import { applyFurnitureColors, type FurnitureColors } from "./furniture/palette.ts";
-import { lookUniforms, parseAccent, lineBlending, ownGlass, setOwnLook, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
+import { loadRealTextures, lookUniforms, parseAccent, lineBlending, ownGlass, setOwnLook, themed, themeIndex, type Theme, type ThemeUniform } from "./theme.ts";
 import { lightStage, OWN_LOOK_DEFAULT, type OwnLook } from "../themes.ts";
 
 export type { Theme } from "./theme.ts";
@@ -1143,6 +1143,7 @@ export class NextFloorViewer {
   }
 
   private lookChanged(): void {
+    if (this.theme === "real") loadRealTextures(() => this.invalidate());
     this.placeMap();
     const blending = lineBlending(this.theme, this.own);
     const lineMats = [...this.floors.map((f) => f.materials.lines), ...(this.roof ? [this.roof.lines] : [])];

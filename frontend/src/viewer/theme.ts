@@ -2,7 +2,7 @@
 // instant and nothing has to be rebuilt. Signal colours (lit lamps, open windows, glowing screens) are bright and saturated and
 // stay as they are in every look.
 
-import { AdditiveBlending, NormalBlending, Vector3, type Material } from "three";
+import { AdditiveBlending, LinearMipmapLinearFilter, NormalBlending, RepeatWrapping, SRGBColorSpace, TextureLoader, Vector3, type Material, type Texture } from "three";
 import { hexRgb, lightStage, THEMES, type OwnLook, type Theme } from "../themes.ts";
 
 export type { Theme } from "../themes.ts";
@@ -80,6 +80,51 @@ export function setOwnLook(look: Required<OwnLook>, into: Pick<LookUniforms, "uO
   return changed;
 }
 
+
+/**
+ * Photo textures of the realistic look (CC0, Poly Haven), shipped beside the bundles as textures/<name>.jpg. They load the first time
+ * the look is shown; until a file has arrived, or when it is missing, the look keeps its procedural material for that surface.
+ */
+export const REAL_TEXTURES = ["wood", "tile", "plaster", "roof", "grass", "concrete"] as const;
+export const realTextureUniforms = {
+  uTexWood: { value: null as Texture | null },
+  uTexTile: { value: null as Texture | null },
+  uTexPlaster: { value: null as Texture | null },
+  uTexRoof: { value: null as Texture | null },
+  uTexGrass: { value: null as Texture | null },
+  uTexConcrete: { value: null as Texture | null },
+  /** 1 where the texture has arrived: wood, tile, plaster */
+  uTexA: { value: new Vector3() },
+  /** roof, grass, concrete */
+  uTexB: { value: new Vector3() },
+};
+const textureSlots = { wood: ["uTexWood", "x", "A"], tile: ["uTexTile", "y", "A"], plaster: ["uTexPlaster", "z", "A"], roof: ["uTexRoof", "x", "B"], grass: ["uTexGrass", "y", "B"], concrete: ["uTexConcrete", "z", "B"] } as const;
+let texturesRequested = false;
+
+/** Starts loading the photo textures (once); `onLoad` runs after each one so the view can draw again. */
+export function loadRealTextures(onLoad: () => void, base: string | URL = import.meta.url): void {
+  if (texturesRequested) return;
+  texturesRequested = true;
+  const loader = new TextureLoader();
+  for (const name of REAL_TEXTURES) {
+    const [uniform, channel, set] = textureSlots[name];
+    loader.load(
+      new URL(`./textures/${name}.jpg`, base).href,
+      (texture) => {
+        texture.wrapS = texture.wrapT = RepeatWrapping;
+        texture.colorSpace = SRGBColorSpace;
+        texture.minFilter = LinearMipmapLinearFilter;
+        texture.anisotropy = 8;
+        realTextureUniforms[uniform].value = texture;
+        realTextureUniforms[set === "A" ? "uTexA" : "uTexB"].value[channel] = 1;
+        onLoad();
+      },
+      undefined,
+      () => undefined,
+    );
+  }
+}
+
 // The fragment shader function that turns a neon colour into the current look. Look 0 is neon itself (only an own accent
 // changes anything), 1 is blueprint, 2 is day, 3 the own look (blueprint's filter with the user's colours).
 const LOOK_FUNCTION = /* glsl */ `
@@ -137,6 +182,16 @@ vec3 nfThemed(vec3 c, bool isLine, bool isGlass) {
  */
 const REAL_FUNCTION = /* glsl */ `
 varying vec3 vNfWorld;
+uniform sampler2D uTexWood; uniform sampler2D uTexTile; uniform sampler2D uTexPlaster;
+uniform sampler2D uTexRoof; uniform sampler2D uTexGrass; uniform sampler2D uTexConcrete;
+uniform vec3 uTexA; uniform vec3 uTexB;
+// a photo texture laid on the world: p in metres, one tile is "size" metres; the height for the bump comes from its brightness
+vec4 nfPhoto(sampler2D t, vec2 p, float size, vec3 tint, float tintAmount, float contrast) {
+  vec3 col = texture2D(t, p / size).rgb;
+  float lum = dot(col, vec3(0.299, 0.587, 0.114));
+  col = mix(col, col * tint * 1.8, tintAmount);
+  return vec4(col, (lum - 0.5) * contrast);
+}
 float nfHash(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
 float nfNoise(vec2 p) {
   vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -209,26 +264,32 @@ vec3 nfReal(vec3 c, int kind) {
   float saturation = strongest > 0.0 ? (strongest - weakest) / strongest : 0.0;
   vec4 s;
   float shiny = 0.0;
-  if (kind == 2) {
-    s = vec4(c * 2.4 + 0.12, 0.0);
+  bool plant = kind == 1 && c.g > c.r * 1.08 && c.g > c.b * 1.08;
+  if (kind == 2 || plant) {
+    s = kind == 2 ? vec4(c * 2.4 + 0.12, 0.0) : vec4(tint * clamp(0.32 + strongest * 1.4, 0.0, 0.85) * (0.9 + 0.2 * nfFbm(P.xz * 6.0 + P.y * 3.0)), 0.0);
   } else if (kind == 0) {
-    if (c.g > c.r * 1.12 && c.g > c.b * 1.12) s = nfGrass(P.xz, tint);
-    else if (saturation < 0.16) s = nfTiles(P.xz, tint);
-    else { s = nfPlanks(P.xz, tint); shiny = 0.18; }
+    if (c.g > c.r * 1.12 && c.g > c.b * 1.12) s = uTexB.y > 0.5 ? nfPhoto(uTexGrass, P.xz, 2.4, tint, 0.0, 0.5) * vec4(1.15, 1.15, 1.0, 1.0) : nfGrass(P.xz, tint);
+    else if (saturation < 0.16) s = uTexA.y > 0.5 ? nfPhoto(uTexTile, P.xz, 2.4, tint, 0.1, 0.12) : nfTiles(P.xz, tint);
+    else { s = uTexA.x > 0.5 ? nfPhoto(uTexWood, P.xz, 1.3, tint, 0.25, 0.16) * vec4(1.1, 1.1, 1.1, 1.0) : nfPlanks(P.xz, tint); shiny = 0.18; }
   } else {
     vec2 q;
-    if (n.y > 0.94) { s = nfConcrete(P.xz, tint); }
+    if (n.y > 0.94) {
+      // the tops of walls and slabs: clean, light edges that outline the rooms
+      s = uTexB.z > 0.5 ? nfPhoto(uTexConcrete, P.xz, 2.4, tint, 0.0, 0.1) : nfConcrete(P.xz, tint);
+      // (the walls' own colour is a dark blue; trees and furniture have other hues and keep theirs)
+      if (c.b >= c.g * 0.95) s.rgb = mix(s.rgb, vec3(0.93, 0.92, 0.9), 0.72);
+    }
     else if (n.y > 0.22) {
       // a roof slope: tiles in rows up the slope
       vec2 along = normalize(n.xz + vec2(0.0001));
       q = vec2(dot(P.xz, vec2(-along.y, along.x)), dot(P.xz, along) / max(n.y, 0.3) * 0.9 + P.y * 0.2);
-      s = nfRoofTiles(q, tint);
+      s = uTexB.x > 0.5 ? nfPhoto(uTexRoof, q, 1.3, tint, 0.45, 0.25) * vec4(1.35, 1.25, 1.2, 1.0) : nfRoofTiles(q, tint);
     } else {
       q = abs(n.x) > abs(n.z) ? vec2(P.z, P.y) : vec2(P.x, P.y);
-      s = nfPlaster(q, tint);
+      s = uTexA.z > 0.5 ? nfPhoto(uTexPlaster, q, 1.6, tint, 0.12, 0.05) * vec4(1.12, 1.12, 1.12, 1.0) : nfPlaster(q, tint);
     }
   }
-  vec3 nb = kind == 2 ? n : nfBump(P, n, s.a, kind == 1 ? 0.025 : 0.02);
+  vec3 nb = (kind == 2 || plant) ? n : nfBump(P, n, s.a, kind == 1 ? 0.025 : 0.02);
   vec3 sun = normalize(vec3(0.45, 0.8, 0.35));
   float ndl = max(dot(nb, sun), 0.0);
   vec3 sky = mix(vec3(0.3, 0.28, 0.26), vec3(0.62, 0.72, 0.86), nb.y * 0.5 + 0.5);
@@ -250,7 +311,7 @@ export function themed<T extends Material>(material: T, uniform: ThemeUniform, l
   const kind = surface === "floor" ? 0 : surface === "wall" ? 1 : 2;
   material.onBeforeCompile = (shader, renderer) => {
     previous(shader, renderer);
-    Object.assign(shader.uniforms, { uTheme: uniform, ...(uniform.look ?? { uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms }) });
+    Object.assign(shader.uniforms, { uTheme: uniform, ...(surface ? realTextureUniforms : {}), ...(uniform.look ?? { uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms }) });
     // the realistic look needs the world position of every point: only the surfaces that get its materials carry it
     if (surface) {
       shader.vertexShader = shader.vertexShader
@@ -265,6 +326,24 @@ export function themed<T extends Material>(material: T, uniform: ThemeUniform, l
       );
   };
   material.customProgramCacheKey = () => `${previousKey()}-themed-${line ? "l" : glass ? "g" : "s"}${surface}`;
+  return material;
+}
+
+/**
+ * Floor shadows (along walls, under furniture) in the realistic look: deeper and reaching further than in the other looks, which
+ * gives the corners and the furniture the soft contact darkness of a rendered picture. Other looks are left as they are.
+ */
+export function deepenedShadow<T extends Material>(material: T, uniform: ThemeUniform): T {
+  const previous = material.onBeforeCompile.bind(material);
+  const previousKey = material.customProgramCacheKey.bind(material);
+  material.onBeforeCompile = (shader, renderer) => {
+    previous(shader, renderer);
+    shader.uniforms.uTheme = uniform;
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform int uTheme;")
+      .replace("#include <color_fragment>", "#include <color_fragment>\n  if (uTheme == 4) diffuseColor.rgb = pow(diffuseColor.rgb, vec3(1.8));");
+  };
+  material.customProgramCacheKey = () => `${previousKey()}-deep-shadow`;
   return material;
 }
 

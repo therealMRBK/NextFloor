@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { AdditiveBlending, MeshBasicMaterial, NormalBlending } from "three";
 import { lightStage } from "../themes.ts";
-import { lineBlending, lookUniforms, ownUniforms, parseAccent, setOwnLook, themed, themeIndex } from "./theme.ts";
+import { deepenedShadow, lineBlending, lookUniforms, realTextureUniforms, ownUniforms, parseAccent, setOwnLook, themed, themeIndex } from "./theme.ts";
 
 test("an accent colour is read from #rrggbb, with or without the hash, and nothing else", () => {
   assert.deepEqual(parseAccent("#ff0000"), [1, 0, 0]);
@@ -94,4 +94,16 @@ test("the realistic look is index 4, draws lines without glow, and only surfaces
   themed(new MeshBasicMaterial(), uniform).onBeforeCompile(plain as never, undefined as never);
   assert.ok(!plain.fragmentShader.includes("nfReal(nfRaw"));
   assert.notEqual(floor.customProgramCacheKey(), themed(new MeshBasicMaterial(), uniform, false, false, "wall").customProgramCacheKey());
+});
+
+test("the realistic look reads photo textures only where they have arrived, and deepens the floor shadows in that look alone", () => {
+  const source = { uniforms: {} as Record<string, unknown>, vertexShader: "#include <common>\n#include <project_vertex>", fragmentShader: "#include <common>\nvoid main() {\n#include <color_fragment>\n}" };
+  themed(new MeshBasicMaterial(), { value: 4 }, false, false, "wall").onBeforeCompile(source as never, undefined as never);
+  assert.equal(source.uniforms.uTexA, realTextureUniforms.uTexA);
+  assert.ok(source.fragmentShader.includes("uTexA.z > 0.5 ? nfPhoto(uTexPlaster"));
+  assert.deepEqual(realTextureUniforms.uTexA.value.toArray(), [0, 0, 0]);
+  const shadow = deepenedShadow(new MeshBasicMaterial(), { value: 4 });
+  const shader = { uniforms: {} as Record<string, unknown>, fragmentShader: "#include <common>\n#include <color_fragment>" };
+  shadow.onBeforeCompile(shader as never, undefined as never);
+  assert.ok(shader.fragmentShader.includes("if (uTheme == 4)"));
 });
