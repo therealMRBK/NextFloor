@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **People in the whole-house overview:** enable the new switch under Editor → Presence to show person avatars on all visible floors, including the view with floors pulled apart. Off by default; individual floor views are unchanged.
+
 ## [0.31.2]
 
 ### Added
