@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { OrthographicCamera } from "three";
-import { LabelPlacer, centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, leftAt, project, stackFloorLabels } from "./labels.ts";
+import { LabelPlacer, centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, leftAt, project, stackFloorLabels } from "./labels.ts";
 
 test("a point in front of the camera lands on the screen, one behind it is off", () => {
   const camera = new OrthographicCamera(-5, 5, 5, -5, 0.1, 100);
@@ -68,4 +68,16 @@ test("outdoor markers show wherever their floor is drawn and settled", () => {
   assert.equal(floorShowsOutdoorMarkers({ to: 0.22, o: 0.22 }), true, "a dimmed floor below the opened one");
   assert.equal(floorShowsOutdoorMarkers({ to: 0, o: 0 }), false, "a hidden floor");
   assert.equal(floorShowsOutdoorMarkers({ to: 1, o: 0.5 }), false, "still fading in");
+});
+
+test("people show on visible floors in the house overview and keep floor-view filtering", () => {
+  const floor = { to: 1, o: 1, group: { visible: true } };
+  assert.equal(floorShowsPersons(floor, true, false, true), true);
+  assert.equal(floorShowsPersons({ ...floor, to: 0.22, o: 0.22 }, true, true, true), true);
+  assert.equal(floorShowsPersons({ ...floor, group: { visible: false } }, true, false, true), false);
+  assert.equal(floorShowsPersons(floor, true, false), false, "overview is opt-in");
+  assert.equal(floorShowsPersons(floor, true, false, false), false);
+  assert.equal(floorShowsPersons(floor, false, false), true);
+  assert.equal(floorShowsPersons(floor, false, true), false);
+  assert.equal(floorShowsPersons({ ...floor, o: 0.5 }, false, false), false);
 });
