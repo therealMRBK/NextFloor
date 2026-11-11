@@ -152,6 +152,18 @@ test("a door in a lowered room stands on that room's floor, not on the floor lev
   assert.ok(Math.abs(Math.min(...ys) - -0.39) < 0.02, `lowest part at ${Math.min(...ys)}`);
 });
 
+test("a door in a raised room stands on that room's floor, and a door sill lifts it further (#137)", () => {
+  const door = (sill: number) => ({ id: "o", room_id: "a", edge: 0, offset: 1.5, width: 0.9, type: "door", sill, height: 1.87, hinge: "left", leaves: 1, swing: "in", cover: null, contact: null, contact2: null, tilt: null }) as Opening;
+  const lowest = (offset: number, sill: number) => {
+    const infos = buildFloorGeometry({ ...newFloor("f", "F", 0), rooms: [{ ...room, floor_offset: offset }], openings: [door(sill)] }, 0.3, 0.1).openings;
+    const ys = positions(buildOpeningParts(infos, new Map([["o", CLOSED]]), 1.2).frames).filter((_, i) => i % 3 === 1);
+    return Math.min(...ys);
+  };
+  assert.ok(Math.abs(lowest(0.3, 0) - 0.3) < 0.02, "raised room");
+  assert.ok(Math.abs(lowest(0, 0.1) - 0.1) < 0.02, "door sill");
+  assert.ok(Math.abs(lowest(0, 0)) < 0.02, "ordinary door unchanged");
+});
+
 test("a glass wall divides into about 0.9 m panes unless it is told how many", () => {
   const wall = (panes?: number | null) => build({ type: "window", sill: 0, height: 2.4, width: 3.6, style: "glass_wall", ...(panes === undefined ? {} : { panes }) });
   const auto = wall();

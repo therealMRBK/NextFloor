@@ -4,6 +4,18 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.3]
+
+### Added
+
+- **People in the whole-house overview:** a new switch under Editor → Presence shows the person avatars on all visible floors, also with the floors pulled apart. Off by default. Thanks to plueoend for the pull request (#139).
+- **A sill for doors** (#137): a door can stand above the floor, for a raised threshold that keeps spills in. The field *Sill* is in the door's form, like for windows.
+
+### Fixed
+
+- **Doors in a raised room** (#137): a room with *Floor level* above its floor lifted walls and floor, but the doors stayed at the floor's base. Frame, leaf and threshold now stand on the room's own floor, as for a lowered room.
+- **Full screen on a dashboard card** (#138): the button gave the card's height, not the screen's. Inside a dashboard the browser reports the card itself as the full-screen element, which the card did not recognise.
+
 ## [0.31.2]
 
 ### Added

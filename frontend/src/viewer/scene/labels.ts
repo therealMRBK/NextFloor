@@ -81,6 +81,11 @@ export function floorShowsMarkers(floor: { to: number; o: number }, otherFloor: 
   return floor.to >= 0.99 && floor.o >= 0.9 && !otherFloor;
 }
 
+/** People remain visible on drawn floors in the house overview; floor views keep their existing filtering. */
+export function floorShowsPersons(floor: { to: number; o: number; group: { visible: boolean } }, house: boolean, otherFloor: boolean, overview = false): boolean {
+  return house ? overview && floor.group.visible : floorShowsMarkers(floor, otherFloor);
+}
+
 /**
  * Whether outdoor markers set to "always" may show: their floor is drawn and has settled, in the house view and below an opened
  * floor too (the garden belongs to no storey).

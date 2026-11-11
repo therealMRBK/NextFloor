@@ -115,7 +115,11 @@ export class NextFloorCard extends LitElement {
     window.dispatchEvent(new CustomEvent("location-changed", { bubbles: true, composed: true, detail: { replace: false } }));
   }
 
-  private readonly onFullscreen = () => (this._fullscreen = !!document.fullscreenElement && this.shadowRoot?.contains(document.fullscreenElement) === true);
+  // inside a dashboard the full-screen element is seen from outside as the card itself (the shadow root hides ha-card)
+  private readonly onFullscreen = () => {
+    const el = document.fullscreenElement;
+    this._fullscreen = !!el && (el === this || this.shadowRoot?.contains(el) === true || (this.shadowRoot as ShadowRoot & { fullscreenElement?: Element | null })?.fullscreenElement != null);
+  };
 
   connectedCallback(): void {
     super.connectedCallback();

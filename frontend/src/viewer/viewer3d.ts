@@ -47,7 +47,7 @@ import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
-import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
+import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
 import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
@@ -3568,7 +3568,7 @@ export class NextFloorViewer {
       const pin = this.personPins.get(person.id);
       const fv = this.floorMap.get(person.floorId);
       if (!pin) continue;
-      const spot = fv && !house && floorShowsMarkers(fv, this.otherFloor(fv)) ? this.screenPoint([person.x, fv.floor.elevation + fv.y + 0.9, person.z]) : null;
+      const spot = fv && floorShowsPersons(fv, house, this.otherFloor(fv), !!this.building?.settings.presence_overview) ? this.screenPoint([person.x, fv.floor.elevation + fv.y + 0.9, person.z]) : null;
       this.labelPlacer.place(pin, spot && !spot.off ? centredAt(spot) : null);
     }
     for (const marker of this.devices) {

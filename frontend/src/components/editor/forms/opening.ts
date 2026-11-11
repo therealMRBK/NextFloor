@@ -220,7 +220,7 @@ export function renderOpeningForm(host: EditorHost, o: Opening, actions: Opening
     <div class="nf-form">
       ${numberField(host, t("width"), o.width, (v) => at({ width: Math.max(0.3, v) }), 0.01, 0.3)}
       ${numberField(host, t("opening_position"), o.offset, (v) => at({ offset: Math.max(0, v) }), 0.01, 0)}
-      ${window ? numberField(host, t("sill"), o.sill, (v) => at({ sill: Math.max(0, v) }), 0.01, 0) : nothing}
+      ${window || (door && !garage) ? numberField(host, t("sill"), o.sill, (v) => at({ sill: Math.max(0, v) }), 0.01, 0) : nothing}
       ${numberField(host, t("opening_height"), o.height, (v) => at({ height: Math.max(0.3, v) }), 0.01, 0.3)}
       ${garage ? nothing : styleField(host, o, actions)} ${sidelightFields(host, o, actions)} ${glassWallPanes(host, o, actions)}
       ${window && o.style !== "glass_wall"

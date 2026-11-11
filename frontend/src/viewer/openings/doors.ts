@@ -10,8 +10,8 @@ import { flatPanel, panel, splitBox, type Frame } from "./primitives.ts";
 /** The frame (Zarge) around a door or garage opening, covering the reveal on both faces. An open garage door glows warm. */
 export function doorFrame(c: Ctx): void {
   const { info, state, frame, fold } = c;
-  // B: the floor the door stands on – below 0 in a room set lower than its floor (floor_offset)
-  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
+  // B: the floor the door stands on – the room's own level when it is set higher or lower than its floor (floor_offset), plus a raised sill
+  const [W, T, B] = [info.width, info.top, info.sill];
   const garageOpen = info.opening.type === "garage" && (c.markClosed ? !!state.sensed && (state.cover ?? 1) >= 0.95 : (state.cover ?? 1) < 0.95);
   const side = garageOpen ? shade(OPEN_WARM, 0.8) : new Color(FRAME);
   const top = garageOpen ? shade(OPEN_WARM, 1) : new Color(FRAME_TOP);
@@ -25,7 +25,7 @@ export function doorFrame(c: Ctx): void {
 /** A door: one leaf or two, each turning around its hinge (or sliding), with sidelights, a threshold and handles. */
 export function doorLeaves(c: Ctx): void {
   const { info, state, frame, fold, mid } = c;
-  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
+  const [W, T, B] = [info.width, info.top, info.sill];
   const H = T - B;
   const style = openingStyle(info.opening, info.exterior);
   const passage = style === "passage";
@@ -108,7 +108,7 @@ export function doorLeaves(c: Ctx): void {
 /** A sectional garage door: the closed part hangs in the opening, the open part lies under the ceiling. */
 export function garageDoor(c: Ctx): void {
   const { info, state, frame, fold } = c;
-  const [W, T, B] = [info.width, info.top, Math.min(0, info.sill)];
+  const [W, T, B] = [info.width, info.top, info.sill];
   const closed = Math.min(1, Math.max(0, state.cover ?? 1));
   const color = new Color(0xd4e0ff);
   const plane = info.faceRoom - 0.03;
