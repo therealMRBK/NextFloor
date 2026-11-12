@@ -101,7 +101,7 @@ export const cardStyles = css`
   }
   .nf-card-panel {
     position: absolute;
-    top: 10px;
+    top: max(10px, var(--nf-nav-top, 0px));
     right: 10px;
     bottom: 10px;
     width: min(340px, calc(100% - 20px));
@@ -122,6 +122,7 @@ export const cardStyles = css`
       bottom: 8px;
       width: auto;
       height: 55%;
+      max-height: calc(100% - var(--nf-nav-top, 0px) - 8px);
       justify-content: flex-end;
     }
   }

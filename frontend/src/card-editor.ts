@@ -126,6 +126,8 @@ export class NextFloorCardEditor extends LitElement {
     ${checkbox(f, f.value.central, "card_central", "card_central_hint", (checked) => f.set("central", checked ? undefined : false))}
     ${checkbox(f, f.value.lock_button !== false, "card_lock_button", undefined, (checked) => f.set("lock_button", checked ? undefined : false))}
     ${checkbox(f, f.value.walk_button !== false, "card_walk_button", undefined, (checked) => f.set("walk_button", checked ? undefined : false))}
+    ${checkbox(f, f.value.nav_controls === true, "card_nav_controls", undefined, (checked) => f.set("nav_controls", checked ? true : undefined))}
+    ${f.value.nav_controls === true ? choice(f, "nav_style", "card_nav_style", [["buttons", "nav_style_buttons"], ["cube", "nav_style_cube"]], f.value.nav_style ?? "buttons") : nothing}
     ${checkbox(f, f.value.time_travel !== false, "card_travel_button", undefined, (checked) => f.set("time_travel", checked ? undefined : false))}
     ${flagOption(f, "marker_names", "card_marker_names", "card_marker_names_hint")} ${flagOption(f, "controls_hidden", "card_controls_hidden", "card_controls_hidden_hint")}
     ${numberChoice(f, "controls_hide_after", "card_controls_hide_after", hideAfter)}

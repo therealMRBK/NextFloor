@@ -349,6 +349,8 @@ export class NextFloorCard extends LitElement {
       .clock=${c?.clock && c.clock !== "none" ? c.clock : null}
       .lockButton=${c?.lock_button !== false}
       .walkButton=${c?.walk_button !== false}
+      .navControls=${c?.nav_controls === true}
+      .navStyle=${c?.nav_style === "cube" ? "cube" : "buttons"}
       .travelButton=${c?.time_travel !== false}
       .accent=${c?.accent ?? null}
       .furnitureColors=${c?.furniture_colors ?? null}
@@ -399,11 +401,17 @@ export class NextFloorCard extends LitElement {
     ></nf-view3d>`;
   }
 
+  /** The room panel starts below the navigation block, which stays at the top right. */
+  private navPanelTop(): string {
+    return this._config?.nav_controls !== true ? "" : `--nf-nav-top: ${this._config?.nav_style === "cube" ? 220 : 280}px`;
+  }
+
   private renderRoomPanel(): TemplateResult {
     const b = this.plan()!;
     return html`<nf-room-panel
             .building=${this.plan() ?? null}
       class="nf-card-panel"
+      style=${this.navPanelTop()}
       .hass=${this.hass}
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}
       .floor=${b.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}

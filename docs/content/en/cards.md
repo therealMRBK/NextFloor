@@ -89,6 +89,8 @@ The card's own options win. A change in the editor reaches every card that uses 
 | `start_view` | plan's | a start view of this card's own |
 | `lock_button` | `true` | the 🔒 button that locks the camera |
 | `walk_button` | `true` | the 🚶 button for walking through the house |
+| `nav_controls` | `false` | the navigation at the top right: zoom, turn, tilt, compass, reset view |
+| `nav_style` | `buttons` | `buttons` (buttons with a compass) or `cube` (a clickable orientation cube) |
 | `time_travel` | `true` | the ⏪ button for replaying the last day or week |
 | `fullscreen_button` | `false` | a button for full screen |
 | `dashboard`, `dashboard_label` | | a button to another dashboard or view |

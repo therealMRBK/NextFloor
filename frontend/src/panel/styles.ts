@@ -360,7 +360,7 @@ export const panelStyles = css`
   }
   .nf-room-panel {
     position: absolute;
-    top: 58px;
+    top: max(58px, var(--nf-nav-top, 0px));
     right: 14px;
     bottom: 14px;
     width: min(360px, calc(100% - 28px));
@@ -402,6 +402,7 @@ export const panelStyles = css`
       bottom: 8px;
       width: auto;
       height: 55%;
+      max-height: calc(100% - var(--nf-nav-top, 0px) - 8px);
       justify-content: flex-end;
     }
     .nf-room-open .nf-overlay {

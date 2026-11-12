@@ -142,6 +142,7 @@ Ten minutes after the robot docks the pad fades out, so the floor does not keep 
 
 - **Walk through the house (🚶):** on the open floor at eye height. Drag to look around, W A S D or the arrow keys walk (Q/E turn), the mouse wheel takes a step, and on tablets the stick at the bottom right steers. ✕ ends it.
 - **Time travel (⏪):** replays the last 24 hours or 7 days from Home Assistant's history: lamps, blinds, doors and windows, locks, media, robots. The bar marks every change; play at 1 min, 10 min or 1 h per second or drag to a moment. *Live* comes back; nothing is switched while in the past.
+- **Navigation buttons:** at the top right, like a map: **+ / −** zoom, **↺ / ↻** turn, **∨ / ∧** tilt (hold a button to keep going), the **compass** shows where north is (tap it to put north at the top) and the **house** button resets the view. They also work by touch. They are hidden by the 3D lock and the clean view, and only the compass stays while walking. With `nav_style: cube` (or in the card editor) an **orientation cube** replaces turn, tilt and compass: it follows the camera, and a click on Top, N, E, S or W looks from there. Always on in the panel; on a dashboard card only with `nav_controls: true` (or in the card editor).
 - **3D lock (🔒):** turning, zooming and panning are off on this device; taps on devices still work.
 - **Clock:** 🕒 in the header puts a large clock in a corner of the view.
 - **Look *Auto*:** the day look while the sun is up, neon after sunset.

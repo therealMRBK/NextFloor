@@ -48,6 +48,10 @@ export interface CardConfig {
   lock_button?: boolean;
   /** The 🚶 button that walks through the house at eye level (default shown). */
   walk_button?: boolean;
+  /** The zoom, turn, tilt, compass and reset buttons at the right edge (default shown). */
+  nav_controls?: boolean;
+  /** How the navigation block turns the view: "buttons" (turn, tilt, compass; the default) or "cube" (an orientation cube you click). */
+  nav_style?: "buttons" | "cube";
   /** The ⏪ button that replays the last day or week (default shown). */
   time_travel?: boolean;
   /** Accent colour for the neon look and the card's chips ("#rrggbb"); leave out for the stock cyan. */

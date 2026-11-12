@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Vector3 } from "three";
-import { blendViews, cameraPosition, clamp, coast, copyView, ease, flightGoal, MAX_PHI, MIN_PHI, orbitView, panView, type OrbitView } from "./view.ts";
+import { blendViews, cameraPosition, clamp, coast, compassAngle, copyView, ease, flightGoal, MAX_PHI, MIN_PHI, northUpHeading, nudgeView, orbitView, panView, type OrbitView } from "./view.ts";
 
 const near = (a: number, b: number, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} vs ${b}`);
 const view = (extra: Partial<OrbitView> = {}): OrbitView => ({ target: new Vector3(1, 2, 3), radius: 10, theta: 0, phi: Math.PI / 2, ...extra });
@@ -108,4 +108,33 @@ test("walking moves the eye along its heading, turns with the stick and stays in
   walk.stick = [0, -1];
   for (let i = 0; i < 50; i++) stepWalk(walk, 100);
   assert.ok(Math.abs(walk.eye.x) <= 1 && Math.abs(walk.eye.z) <= 1, "never leaves the floor");
+});
+
+test("a navigation step turns, tilts and zooms the view and keeps it inside its limits", () => {
+  const v = view({ phi: 0.8 });
+  const next = nudgeView(v, { turn: 0.5, tilt: 0.1, zoom: 0.8 }, 2, 80);
+  near(next.theta, 0.5);
+  near(next.phi, 0.9);
+  near(next.radius, 8);
+  assert.equal(v.theta, 0, "the given view is left alone");
+  assert.notEqual(next.target, v.target);
+  near(nudgeView(v, { tilt: -5 }, 2, 80).phi, MIN_PHI);
+  near(nudgeView(v, { tilt: 5 }, 2, 80).phi, MAX_PHI);
+  near(nudgeView(v, { zoom: 0.01 }, 2, 80).radius, 2);
+  near(nudgeView(v, { zoom: 100 }, 2, 80).radius, 80);
+  near(nudgeView(v, {}, 2, 80).radius, 10);
+});
+
+test("the compass needle points to north whatever the view and the plan's north", () => {
+  // the camera looks along (-sin θ, -cos θ) and the plan's north is (sin N, -cos N): the needle turns by θ + N
+  for (const [heading, north] of [[0, 0], [-0.6, 0], [1.2, 40], [-2, 270]] as const) {
+    const n = (north * Math.PI) / 180;
+    const forward = [-Math.sin(heading), -Math.cos(heading)];
+    const right = [Math.cos(heading), -Math.sin(heading)];
+    const toNorth = [Math.sin(n), -Math.cos(n)];
+    const onScreen = Math.atan2(toNorth[0] * right[0] + toNorth[1] * right[1], toNorth[0] * forward[0] + toNorth[1] * forward[1]);
+    near(Math.cos(compassAngle(heading, north)), Math.cos(onScreen));
+    near(Math.sin(compassAngle(heading, north)), Math.sin(onScreen));
+    near(Math.cos(compassAngle(northUpHeading(north), north)), 1, 1e-9);
+  }
 });

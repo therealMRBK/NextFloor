@@ -63,7 +63,7 @@ import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
 import { buildFloorGeometry, SLAB, stairHoles, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
-import { OrbitControls, type OrbitView } from "./controls.ts";
+import { compassAngle, northUpHeading, OrbitControls, type Nudge, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
 import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
 import { coverReach, hasMesh, hasMovingParts, mountBase, packItem, setMeshSource, setPacks, type FurniturePack, type MeshSource } from "../packs.ts";
@@ -133,6 +133,10 @@ export interface ViewerOptions {
   onFurnitureSelect?: (furnitureId: string | null) => void;
   onFurnitureMove?: (furnitureId: string, x: number, z: number) => void;
   onStats?: (stats: ViewerStats) => void;
+  /** The compass needle of the on-screen navigation: how far north lies clockwise from the top of the screen, in radians. Called when it changes. */
+  onCompass?: (angle: number) => void;
+  /** The orientation cube of the on-screen navigation: the camera's azimuth and polar angle, called when they change. */
+  onOrient?: (theta: number, phi: number) => void;
   /** Text for the floor labels in the house view, e.g. "5 rooms". */
   floorInfo?: (floor: Floor) => string;
 }
@@ -853,6 +857,58 @@ export class NextFloorViewer {
     if (!this.controls.walk) return;
     this.controls.walk.stick = [x, y];
     this.wake();
+  }
+
+  /** One press of a navigation button: turn (+ = clockwise), tilt (+ = a lower, flatter view) and a zoom factor on the distance (< 1 closer). */
+  nudgeCamera(step: Nudge): void {
+    this.controls.nudge(step);
+    this.wake();
+  }
+
+  /** Back to the start view of what is open (the house, or the open floor). Not while walking. */
+  resetCamera(): void {
+    if (this.controls.walk) return;
+    this.fit(600);
+  }
+
+  /** Looks at the house from the given side and height (azimuth and polar angle in radians; leave one out to keep it). */
+  lookFrom(theta?: number, phi?: number): void {
+    if (this.controls.walk) return;
+    const to: { theta?: number; phi?: number } = {};
+    if (theta !== undefined) to.theta = theta;
+    if (phi !== undefined) to.phi = phi;
+    this.controls.flyTo(to, 450);
+  }
+
+  /** The north of the plan in degrees clockwise (for the orientation cube). */
+  get planNorth(): number {
+    return this.building?.settings.north ?? 0;
+  }
+
+  /** Turns the view so that the north of the plan is at the top of the screen. */
+  faceNorth(): void {
+    if (this.controls.walk) return;
+    this.controls.flyTo({ theta: northUpHeading(this.building?.settings.north ?? 0) }, 400);
+  }
+
+  private compassSent = NaN;
+  private orientSent: [number, number] = [NaN, NaN];
+
+  /** Tells the page where the compass needle points, when it moved. */
+  private sendCompass(): void {
+    if (this.options.onOrient && !this.controls.walk) {
+      const { theta, phi } = this.controls.view;
+      if (!(Math.abs(theta - this.orientSent[0]) <= 0.002 && Math.abs(phi - this.orientSent[1]) <= 0.002)) {
+        this.orientSent = [theta, phi];
+        this.options.onOrient(theta, phi);
+      }
+    }
+    if (!this.options.onCompass) return;
+    const heading = this.controls.walk ? this.controls.walk.yaw : this.controls.view.theta;
+    const angle = compassAngle(heading, this.building?.settings.north ?? 0);
+    if (Math.abs(angle - this.compassSent) < 0.002) return;
+    this.compassSent = angle;
+    this.options.onCompass(angle);
   }
 
   /** Show one floor (null = the whole house). */
@@ -3368,6 +3424,7 @@ export class NextFloorViewer {
       orbiting = true;
     } else this.orbitLast = 0;
     const cameraMoving = this.controls.update(now);
+    this.sendCompass();
     const floorsMoving = this.stepFloors(dt);
     // all three step every frame: a door swinging must not hold up a curtain
     const steps = [this.stepOpenings(dt), this.stepFridges(dt), this.stepCovers(dt)];

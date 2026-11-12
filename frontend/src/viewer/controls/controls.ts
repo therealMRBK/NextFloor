@@ -3,7 +3,7 @@
 
 import type { PerspectiveCamera } from "three";
 import { Vector3 } from "three";
-import { blendViews, cameraPosition, clamp, coast, copyView, flightGoal, orbitView, panView, type OrbitView } from "./view.ts";
+import { blendViews, cameraPosition, clamp, coast, copyView, flightGoal, nudgeView, orbitView, panView, type Nudge, type OrbitView } from "./view.ts";
 
 export interface ControlEvents {
   change(): void;
@@ -193,6 +193,16 @@ export class OrbitControls {
       this.flight = { from, to: goal, start: performance.now(), duration };
     }
     this.events.change();
+  }
+
+  /**
+   * One step of an on-screen navigation button: a short flight from where the view is heading (so quick presses add up). Does nothing
+   * while the camera is locked or while walking, where the stick and keys steer.
+   */
+  nudge(step: Nudge, duration = 220): void {
+    if (this.locked || this.walk) return;
+    const base = this.flight ? this.flight.to : this.view;
+    this.flyTo(nudgeView(base, step, this.minRadius, this.maxRadius), duration);
   }
 
   private local(e: { clientX: number; clientY: number }): [number, number] {

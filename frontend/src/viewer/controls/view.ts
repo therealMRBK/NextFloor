@@ -71,3 +71,33 @@ export function coast(view: OrbitView, velocity: { theta: number; phi: number })
   velocity.phi *= 0.9;
   return true;
 }
+
+/** One press of a navigation button: turn (radians, + = clockwise on screen), tilt (radians, + = lower, flatter view) and a zoom factor on the distance (< 1 closer). */
+export interface Nudge {
+  turn?: number;
+  tilt?: number;
+  zoom?: number;
+}
+
+/** The view after one navigation step; the tilt and distance stay inside their limits. The given view is not changed. */
+export function nudgeView(view: OrbitView, step: Nudge, minRadius: number, maxRadius: number): OrbitView {
+  return {
+    target: view.target.clone(),
+    radius: clamp(view.radius * (step.zoom ?? 1), minRadius, maxRadius),
+    theta: view.theta + (step.turn ?? 0),
+    phi: clamp(view.phi + (step.tilt ?? 0), MIN_PHI, MAX_PHI),
+  };
+}
+
+/**
+ * How far the compass needle turns clockwise from straight up the screen, in radians: the plan's north (degrees clockwise, the plan's
+ * `north` setting) plus the view's azimuth. Zero when north is at the top of the screen.
+ */
+export function compassAngle(heading: number, northDegrees: number): number {
+  return heading + (northDegrees * Math.PI) / 180;
+}
+
+/** The azimuth that puts north at the top of the screen. */
+export function northUpHeading(northDegrees: number): number {
+  return (-northDegrees * Math.PI) / 180;
+}

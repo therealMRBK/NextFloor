@@ -4,7 +4,9 @@ import { changeMoments, hassAt, loadHistory, replayable, type History } from "..
 import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
-import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
+import { css, html, LitElement, nothing, svg, type PropertyValues, type TemplateResult } from "lit";
+import type { Nudge } from "../viewer/controls/view.ts";
+import { CUBE_FACES, cubeFaces, faceMatrix, faceView, faceVisible, type CubeFace } from "../viewer/controls/cube.ts";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
 import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
@@ -74,6 +76,8 @@ const LOCK_KEY = "nextfloor.lock3d";
 
 /** Below this stage height (px) the floor pictures get small and stop above the buttons at the bottom. */
 const SHORT_STAGE = 520;
+/** Edge of the navigation cube in px. */
+const CUBE_SIZE = 52;
 
 export class NfView3d extends LitElement {
   static properties = {
@@ -152,6 +156,8 @@ export class NfView3d extends LitElement {
     clock: { attribute: false },
     lockButton: { attribute: false },
     walkButton: { attribute: false },
+    navControls: { attribute: false },
+    navStyle: { attribute: false },
     travelButton: { attribute: false },
     _travel: { state: true },
     _walking: { state: true },
@@ -176,6 +182,7 @@ export class NfView3d extends LitElement {
     _narrowStage: { state: true },
     _shortStage: { state: true },
     _phoneStage: { state: true },
+    _navOpen: { state: true },
     _alerts: { state: true },
     _alertsAll: { state: true },
     _sceneFired: { state: true },
@@ -295,6 +302,10 @@ export class NfView3d extends LitElement {
   declare lockButton: boolean;
   /** Show the 🚶 button that walks through the house at eye level. */
   declare walkButton: boolean;
+  /** Show the navigation block: zoom, turn, tilt, compass and reset (default off here, the card and the panel switch it on). */
+  declare navControls: boolean;
+  /** "buttons" (turn and tilt buttons with a compass) or "cube" (an orientation cube you click to look from a side). */
+  declare navStyle: "buttons" | "cube";
   /** Show the ⏪ button that replays the last day or week. */
   declare travelButton: boolean;
   /** Time travel: the loaded history, its span, the moment shown, and whether it plays (null: live). */
@@ -326,6 +337,7 @@ export class NfView3d extends LitElement {
   private declare _shortStage: boolean;
   /** The stage is as narrow as a phone held upright: the floor pictures step aside, the floor tabs above do the job (#70). */
   private declare _phoneStage: boolean;
+  private declare _navOpen: boolean;
   private stopPlugins: (() => void) | null = null;
   private pluginsDirty = false;
   private resizeObs: ResizeObserver | null = null;
@@ -493,6 +505,8 @@ export class NfView3d extends LitElement {
     this.clock = null;
     this.lockButton = false;
     this.walkButton = false;
+    this.navControls = false;
+    this.navStyle = "buttons";
     this.travelButton = false;
     this._travel = null;
     this._walking = false;
@@ -512,6 +526,7 @@ export class NfView3d extends LitElement {
     this._narrowStage = false;
     this._shortStage = false;
     this._phoneStage = false;
+    this._navOpen = false;
     this.alerts = true;
     this.alertJump = false;
     this.announcements = false;
@@ -557,6 +572,7 @@ export class NfView3d extends LitElement {
     this.resizeObs = null;
     clearInterval(this.alertTimer);
     this.alertTimer = undefined;
+    this.navRelease();
     clearInterval(this.contactTimer);
     this.contactTimer = undefined;
     clearInterval(this.clockTimer);
@@ -620,6 +636,8 @@ export class NfView3d extends LitElement {
         onDeviceSwipe: (id, phase, dy, x, y) => this.onDeviceSwipe(id, phase, dy, x, y),
         onFurnitureSelect: (id) => this.fire("furniture-select", { id }),
         onFurnitureMove: (id, x, z) => this.fire("furniture-move", { id, x, z }),
+        onCompass: (angle) => this.setNeedle(angle),
+        onOrient: (theta, phi) => this.setOrient(theta, phi),
         onDeviceSelect: (id) => this.fire("device-select", { id }),
         onDeviceMove: (id, x, z) => this.fire("device-move", { id, x, z }),
         // stats can be switched on at any time; they only cause updates while shown
@@ -678,6 +696,7 @@ export class NfView3d extends LitElement {
   }
 
   protected updated(changed: PropertyValues): void {
+    if (this.navStyle === "cube") this.paintCube();
     if (changed.has("announcements") || (changed.has("hass") && this.announcements && !this.stopAnnouncements)) this.listenToAnnouncements(this.announcements && !!this.hass && this.isConnected);
     if (changed.has("hass") && this.live?.el) this.live.el.hass = this.hass;
     // a plugin window's content (a Home Assistant card) gets every new hass
@@ -2243,6 +2262,146 @@ export class NfView3d extends LitElement {
         : nothing}`;
   }
 
+  /** The compass needle, in radians clockwise from the top of the screen. Set on the element itself, not through a render: it follows every frame of a turn. */
+  private _needle = 0;
+
+  private setNeedle(angle: number): void {
+    this._needle = angle;
+    const needle = this.renderRoot?.querySelector<HTMLElement>(".nf-nav-needle");
+    if (needle) needle.style.transform = `rotate(${angle}rad)`;
+  }
+
+  private _orient: [number, number] = [0, 1];
+
+  /** The cube follows every frame of a turn, so its faces are set on the elements themselves, not through a render. */
+  private setOrient(theta: number, phi: number): void {
+    this._orient = [theta, phi];
+    this.paintCube();
+  }
+
+  private paintCube(): void {
+    const faces = cubeFaces(this.viewer?.planNorth ?? 0);
+    const [theta, phi] = this._orient;
+    for (const el of this.renderRoot?.querySelectorAll<HTMLElement>(".nf-cube-face") ?? []) {
+      const face = el.dataset.face as CubeFace;
+      el.style.transform = faceMatrix(theta, phi, faces[face], CUBE_SIZE);
+      el.style.visibility = faceVisible(theta, phi, faces[face]) ? "visible" : "hidden";
+    }
+  }
+
+  private renderCube() {
+    const faces = cubeFaces(this.viewer?.planNorth ?? 0);
+    const t = (k: I18nKey) => translate(this.hass, k);
+    const label: Record<CubeFace, I18nKey> = { top: "nav_face_top", north: "nav_face_n", east: "nav_face_e", south: "nav_face_s", west: "nav_face_w" };
+    return html`<div class="nf-cube" role="group" aria-label=${t("nav_style_cube")}>
+      ${CUBE_FACES.map((f) => {
+        const goal = faceView(faces[f], this._orient[0]);
+        return html`<button
+          class="nf-cube-face"
+          data-face=${f}
+          title=${t(label[f])}
+          @click=${() => this.viewer?.lookFrom(goal.theta, goal.phi)}
+        >
+          ${t(label[f])}
+        </button>`;
+      })}
+    </div>`;
+  }
+
+  private navTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** A press on a navigation button steps at once, and keeps stepping while it is held. Keyboard presses arrive as clicks without a pointer. */
+  private navPress(e: PointerEvent, step: Nudge): void {
+    if (e.button !== 0) return;
+    const button = e.currentTarget as HTMLElement;
+    button.setPointerCapture?.(e.pointerId);
+    this.navRelease();
+    this.viewer?.nudgeCamera(step);
+    const again = (delay: number) => {
+      this.navTimer = setTimeout(() => {
+        this.viewer?.nudgeCamera(step);
+        again(160);
+      }, delay);
+    };
+    again(380);
+  }
+
+  private navRelease(): void {
+    clearTimeout(this.navTimer);
+    this.navTimer = undefined;
+  }
+
+  private navKey(e: MouseEvent, run: () => void): void {
+    if (e.detail === 0) run();
+  }
+
+  /**
+   * Zoom, turn, tilt, the compass and "reset view", like a map's. Gone while the 3D lock is on and in the clean view; while walking only
+   * the compass stays (the stick and keys steer).
+   */
+  private navShown(): boolean {
+    return this.navControls && !!this.hass && !this.clean && !this._locked;
+  }
+
+  /** On a phone or a short stage the block sits at the bottom right and starts folded to one button: the top right is where the energy bar and the cards are. */
+  private navLow(): boolean {
+    return (this._phoneStage || this._shortStage) && !this._walking && !this.roomId;
+  }
+
+  private renderNav() {
+    if (!this.navShown()) return nothing;
+    const t = (k: I18nKey) => translate(this.hass, k);
+    const icon = (path: TemplateResult) =>
+      svg`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+    const step = (key: I18nKey, glyph: TemplateResult, nudge: Nudge) => html`<button
+      class="nf-nav-btn"
+      title=${t(key)}
+      @pointerdown=${(e: PointerEvent) => this.navPress(e, nudge)}
+      @pointerup=${() => this.navRelease()}
+      @pointercancel=${() => this.navRelease()}
+      @lostpointercapture=${() => this.navRelease()}
+      @click=${(e: MouseEvent) => this.navKey(e, () => this.viewer?.nudgeCamera(nudge))}
+    >
+      ${icon(glyph)}
+    </button>`;
+    const zoom = html`${step("nav_zoom_in", svg`<path d="M12 5v14M5 12h14" />`, { zoom: 0.8 })} ${step("nav_zoom_out", svg`<path d="M5 12h14" />`, { zoom: 1.25 })}`;
+    const resetBtn = html`<button class="nf-nav-btn nf-nav-reset" title=${t("nav_reset")} @click=${() => this.viewer?.resetCamera()}>
+      ${icon(svg`<path d="M3 11l9-8 9 8M5 10v10h14V10" />`)}
+    </button>`;
+    const north = t("nav_north");
+    const needle = html`<svg viewBox="-12 -12 24 24" width="34" height="34" aria-hidden="true">
+      <g class="nf-nav-needle" style="transform:rotate(${this._needle}rad)">
+        <path d="M0 -10L3.6 0H-3.6z" fill="#ff5a4d" />
+        <path d="M0 10L3.6 0H-3.6z" fill="currentColor" opacity="0.55" />
+      </g>
+    </svg>`;
+    const compass = html`<button class="nf-nav-btn nf-nav-compass" title=${north} ?disabled=${this._walking} @click=${() => this.viewer?.faceNorth()}>${needle}</button>`;
+    // on a phone the block starts as one button (the compass), so it does not cover the energy bar and the cards; it opens on a tap
+    const phone = this.navLow();
+    const clk = this.clock === "top_right" ? "nf-nav-clock" : "";
+    if (phone && !this._navOpen) {
+      return html`<div class="nf-nav nf-nav-walk nf-nav-low ${clk}"><button class="nf-nav-btn nf-nav-compass" title=${t("nav_group")} @click=${() => (this._navOpen = true)}>${needle}</button></div>`;
+    }
+    const closeBtn = phone ? html`<button class="nf-nav-btn" title=${t("nav_group")} @click=${() => (this._navOpen = false)}>${icon(svg`<path d="M6 6l12 12M18 6L6 18" />`)}</button>` : nothing;
+    const cls = `nf-nav ${clk} ${phone ? "nf-nav-phone nf-nav-low" : ""}`;
+    // with a room selected its info card takes the right side: keep only the compass
+    const compact = this._walking || !!this.roomId;
+    if (this.navStyle === "cube" && !compact) {
+      return html`<div class="${cls} nf-nav-cubed" role="group" aria-label=${t("nav_group")}>
+        ${this.renderCube()} ${zoom} ${resetBtn}${closeBtn}
+      </div>`;
+    }
+    if (this._walking) return html`<div class="nf-nav nf-nav-walk ${clk}">${compass}</div>`;
+    const STEP = Math.PI / 12;
+    return html`<div class="${cls}" role="group" aria-label=${t("nav_group")}>
+      ${compass}
+      ${zoom}
+      ${step("nav_turn_left", svg`<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />`, { turn: -STEP })} ${step("nav_turn_right", svg`<path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" />`, { turn: STEP })}
+      ${step("nav_tilt_up", svg`<path d="M6 15l6-6 6 6" />`, { tilt: -0.12 })} ${step("nav_tilt_down", svg`<path d="M6 9l6 6 6-6" />`, { tilt: 0.12 })}
+      ${resetBtn}${closeBtn}
+    </div>`;
+  }
+
   private renderLock() {
     if (!this.lockButton || !this.hass || this.clean) return nothing;
     const label = translate(this.hass, this._locked ? "lock3d_off" : "lock3d_on");
@@ -2591,7 +2750,7 @@ export class NfView3d extends LitElement {
     const forecast = this.renderForecast("top_right");
     const today = this.today === false ? nothing : this.renderTodayCard(b, hass);
     if (today === nothing && forecast === nothing) return nothing;
-    return html`<div class="nf-right-col" style=${this.clock === "top_right" ? "top: 78px" : ""}>${today}${forecast}</div>`;
+    return html`<div class="nf-right-col" style=${this.clock === "top_right" ? "top: calc(78px + var(--nf-nav-push, 0px))" : ""}>${today}${forecast}</div>`;
   }
 
   private renderTodayCard(b: Building, hass: HomeAssistant) {
@@ -2872,12 +3031,12 @@ export class NfView3d extends LitElement {
     const stage = stageFor(this.theme, this.filledOwnLook);
     const style = `--nf-sky:${mix(stage.night[0], stage.day[0])};--nf-ground:${mix(stage.night[1], stage.day[1])}` + backdropStyle(this.building?.settings.backdrop);
     return html`<div
-      class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
+      class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this.navShown() ? (this._walking ? "nf-nav-walking" : this.navLow() ? "" : this.navStyle === "cube" ? "nf-nav-on-cube" : "nf-nav-on") : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
     >
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
-      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
+      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderNav()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
             ><b>${this._stats.fps ? translate(this.hass, "stats_fps", { fps: this._stats.fps, ms: this._stats.worstMs }) : translate(this.hass, "stats_idle")}</b>
@@ -3196,7 +3355,6 @@ export class NfView3d extends LitElement {
         white-space: nowrap;
         backdrop-filter: blur(6px);
         touch-action: manipulation;
-        -webkit-user-select: none;
         user-select: none;
         transition: opacity 0.2s ease;
       }
@@ -3483,10 +3641,10 @@ export class NfView3d extends LitElement {
       /* top right: "Today" and the forecast below it, one column */
       .nf-right-col {
         position: absolute;
-        top: 12px;
+        top: calc(12px + var(--nf-nav-push, 0px));
         right: 12px;
         width: min(280px, calc(100% - 24px));
-        max-height: calc(100% - 140px);
+        max-height: calc(100% - 140px - var(--nf-nav-push, 0px));
         display: flex;
         flex-direction: column;
         align-items: flex-end;
@@ -3498,7 +3656,7 @@ export class NfView3d extends LitElement {
         pointer-events: auto;
       }
       .nf-has-alerts .nf-right-col {
-        top: 58px;
+        top: calc(58px + var(--nf-nav-push, 0px));
       }
       /* "Today": the day's appointments and bins, folds to its title */
       .nf-today {
@@ -3785,6 +3943,96 @@ export class NfView3d extends LitElement {
         font-size: 12px;
         pointer-events: none;
         z-index: 3;
+      }
+      /* top right, below the alert bar and the clock when they are there; the "Today" column moves down by --nf-nav-push (the block's height) */
+      .nf-stage {
+        --nf-nav-push: 0px;
+      }
+      .nf-nav-on {
+        --nf-nav-push: 252px;
+      }
+      .nf-nav-walking {
+        --nf-nav-push: 52px;
+      }
+      .nf-nav-on-cube {
+        --nf-nav-push: 190px;
+      }
+      .nf-nav-cubed .nf-cube {
+        grid-column: 1 / -1;
+        justify-self: center;
+        position: relative;
+        width: 76px;
+        height: 76px;
+        perspective: 260px;
+        transform-style: preserve-3d;
+      }
+      .nf-cube-face {
+        width: 52px;
+        height: 52px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -26px 0 0 -26px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 1px solid rgba(160, 240, 255, 0.5);
+        background: rgba(8, 16, 34, 0.78);
+        color: var(--nf-text);
+        font: 600 12px/1 system-ui, sans-serif;
+        touch-action: manipulation;
+        backface-visibility: hidden;
+      }
+      .nf-nav {
+        position: absolute;
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        right: calc(12px + env(safe-area-inset-right, 0px));
+        display: grid;
+        grid-template-columns: repeat(2, 44px);
+        gap: 6px;
+        z-index: 4;
+      }
+      .nf-has-alerts .nf-nav {
+        top: 58px;
+      }
+      .nf-nav-clock,
+      .nf-has-alerts .nf-nav-clock {
+        top: 78px;
+      }
+      .nf-nav-walk {
+        grid-template-columns: 44px;
+      }
+      .nf-stage .nf-nav.nf-nav-low {
+        top: auto;
+        bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+      }
+      .nf-nav-phone .nf-nav-reset {
+        grid-column: auto;
+      }
+      .nf-nav-btn {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(160, 240, 255, 0.35);
+        background: rgba(8, 16, 34, 0.7);
+        color: var(--nf-text);
+        touch-action: manipulation;
+        user-select: none;
+      }
+      .nf-nav-btn:active:not(:disabled) {
+        color: #041018;
+        background: var(--nf-accent);
+      }
+      .nf-nav-compass,
+      .nf-nav-reset {
+        grid-column: 1 / -1;
+        justify-self: center;
+      }
+      .nf-nav-needle {
+        transform-origin: 0 0;
       }
       .nf-lock3d {
         position: absolute;
