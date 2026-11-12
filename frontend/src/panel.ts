@@ -467,8 +467,9 @@ export class NextFloorPanel extends LitElement {
       : html`${outside} ${this.allOffChip(building)}`;
     const roomChips = shown.flatMap((floor) => [
       // in the house view a small floor label comes before the rooms of each floor
-      shown.length > 1 && floor.rooms.length ? html`<span class="nf-nav-floor">${floor.name}</span>` : nothing,
-      ...floor.rooms.map(
+      // a room without a name has no button, like it has no label in the 3D view (#152)
+      shown.length > 1 && floor.rooms.some((r) => r.name.trim()) ? html`<span class="nf-nav-floor">${floor.name}</span>` : nothing,
+      ...floor.rooms.filter((r) => r.name.trim()).map(
         (room) => html`<button
           class="nf-chip nf-room-chip"
           aria-pressed=${room.id === this._roomId}
@@ -583,6 +584,7 @@ export class NextFloorPanel extends LitElement {
           .travelButton=${true}
           .accent=${p.accent}
           .centralOpen=${p.menuOpen}
+          @nf-central-dismiss=${() => this.setPref("menuOpen", false)}
           .keepCamera=${p.keepCamera}
           .plain=${p.plain}
           .rightBack=${p.rightBack}

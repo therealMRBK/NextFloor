@@ -13,8 +13,10 @@ const house = {
 
 test("the house view offers the rooms of every floor with rooms, grouped by floor", () => {
   const groups = roomButtons(house, null);
-  assert.deepEqual(groups.map((g) => [g.floorId, g.rooms.length]), [["eg", 2], ["og", 1]]);
-  assert.equal(groups[0].rooms[1].name, "–", "an unnamed room still gets a button");
+  assert.deepEqual(groups.map((g) => [g.floorId, g.rooms.length]), [["eg", 1], ["og", 1]]);
+  assert.deepEqual(groups[0].rooms.map((r) => r.id), ["a"], "an unnamed room gets no button (#152)");
+  const onlyUnnamed = { floors: [{ id: "x", name: "X", rooms: [{ id: "u", name: " " }] }] } as unknown as Building;
+  assert.deepEqual(roomButtons(onlyUnnamed, null), [], "a floor with only unnamed rooms offers no group");
 });
 
 test("a shown floor offers only its own rooms, and a missing plan offers none", () => {

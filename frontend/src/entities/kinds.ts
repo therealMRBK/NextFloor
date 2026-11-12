@@ -134,6 +134,18 @@ export function lightGlow(st: HassEntity | undefined, colorFrom?: HassEntity): {
 }
 
 /**
+ * Whether an entity linked to a lamp makes it shine: lights, switches and the like do; a sensor or a binary sensor that
+ * reports "on" (a device's status) does not, except a binary sensor that says a light is on.
+ */
+export function shinesAsLamp(st: HassEntity | undefined): boolean {
+  if (!st) return false;
+  const domain = st.entity_id.split(".")[0];
+  if (domain === "sensor") return false;
+  if (domain === "binary_sensor") return st.attributes.device_class === "light";
+  return true;
+}
+
+/**
  * A fixture with several bulbs (a main light, a night light, an ambient ring): it glows with its main light, and while that is off
  * with the first other light that is on, a little dimmer.
  */

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { appColor, assumedCover, defaultHeight, domainOf, entityName, fixtureGlow, groupCovers, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, markerKind, lightGlow, tempUnit, toCelsius } from "./kinds.ts";
+import { appColor, assumedCover, defaultHeight, domainOf, entityName, fixtureGlow, shinesAsLamp, groupCovers, fromCelsius, isActive, isPlaceable, isStatusSensor, isUnavailable, kelvinToRgb, kindOf, markerKind, lightGlow, tempUnit, toCelsius } from "./kinds.ts";
 import { entity, hassOf } from "./fixtures.ts";
 
 test("the domain decides the kind; unknown domains have none", () => {
@@ -143,4 +143,15 @@ test("a fixture with several bulbs glows with its main light, else dimmer with a
   assert.deepEqual(fixtureGlow(main, [undefined, night]), { color: [1, 0, 0], level: 0.6 });
   assert.equal(fixtureGlow({ ...main, state: "on" }, [night])?.level, 1, "the main light wins");
   assert.equal(fixtureGlow(main, [{ ...night, state: "off" }]), null);
+});
+
+test("a lamp shines with a light or a switch, not with a sensor that reports a device's status (#153)", () => {
+  const st = (entity_id: string, attributes: Record<string, unknown> = {}) => ({ entity_id, state: "on", attributes }) as never;
+  assert.equal(shinesAsLamp(st("light.desk")), true);
+  assert.equal(shinesAsLamp(st("switch.plug")), true);
+  assert.equal(shinesAsLamp(st("input_boolean.lamp")), true);
+  assert.equal(shinesAsLamp(st("binary_sensor.nas_status", { device_class: "running" })), false);
+  assert.equal(shinesAsLamp(st("sensor.nas_state")), false);
+  assert.equal(shinesAsLamp(st("binary_sensor.light_on", { device_class: "light" })), true);
+  assert.equal(shinesAsLamp(undefined), false);
 });
