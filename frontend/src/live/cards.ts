@@ -80,7 +80,7 @@ function ring(share: number, color: string): TemplateResult {
   </svg>`;
 }
 
-/** The house card's fold: a small corner button shrinks it to its ring and the sun's power, on desktop and phones. */
+/** A card's fold: a small corner button shrinks it to its ring (house: and the sun's power), on desktop and phones. */
 export interface LiveCardFold {
   folded: boolean;
   toggle: () => void;
@@ -165,7 +165,7 @@ function dayChart(hass: HomeAssistant | undefined, curves: HouseCard["curves"]):
   </div>`;
 }
 
-function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: LiveCardAction): TemplateResult {
+function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: LiveCardAction, fold?: LiveCardFold): TemplateResult {
   const car = c.car;
   const t = (k: Parameters<typeof translate>[1], v?: Record<string, string | number>) => translate(hass, k, v);
   const color = socColor(car.soc);
@@ -177,9 +177,23 @@ function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: Li
         ? `🔌 ${t("live_car_plugged")}`
         : "";
   const e = car.entities;
+  // a phone: the cars' cards covered large parts of the map (#147), so they fold to their ring like the house card
+  const foldBtn = fold
+    ? html`<button class="live-fold" title=${t(fold.folded ? "live_unfold" : "live_fold")} aria-label=${t(fold.folded ? "live_unfold" : "live_fold")} aria-expanded=${!fold.folded} @click=${fold.toggle}>${fold.folded ? "+" : "−"}</button>`
+    : nothing;
   const button = (on: boolean | null, label: string, icon: string, run: () => void) =>
     html`<button class="live-btn ${on ? "live-on" : ""}" title=${label} aria-label=${label} aria-pressed=${on ?? false} @click=${(ev: Event) => (ev.stopPropagation(), run())}>${icon}</button>`;
+  if (fold?.folded) {
+    return html`<div class="live-card live-card-car live-folded ${car.charging ? "live-charging" : ""} ${car.home ? "" : "live-away"}" data-i=${i} style=${`--live-soc:${color}`} title=${c.name}>
+      <div class="live-own">
+        ${ring((car.soc ?? 0) / 100, color)}
+        <div class="live-own-text"><b>${car.soc !== null ? `${Math.round(car.soc)} %` : "🚗"}</b></div>
+      </div>
+      ${foldBtn}
+    </div>`;
+  }
   return html`<div class="live-card live-card-car ${car.charging ? "live-charging" : ""} ${car.home ? "" : "live-away"}" data-i=${i} style=${`--live-soc:${color}`}>
+    ${foldBtn}
     <div class="live-own">
       ${ring((car.soc ?? 0) / 100, color)}
       <div class="live-own-text"><b>${car.soc !== null ? `${Math.round(car.soc)} %` : "–"}</b><span>${car.range !== null ? `${Math.round(car.range)} ${car.rangeUnit}` : ""}</span></div>
@@ -313,10 +327,10 @@ function heatPumpCard(hass: HomeAssistant | undefined, c: HeatPumpCard, i: numbe
   </div>`;
 }
 
-export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction, fold?: LiveCardFold): TemplateResult | typeof nothing {
+export function renderLhCards(hass: HomeAssistant | undefined, cards: readonly LiveCard[], act: LiveCardAction, fold?: LiveCardFold, carFold?: LiveCardFold): TemplateResult | typeof nothing {
   if (!cards.length) return nothing;
   return html`<div class="live-cards">
-    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i, fold) : c.kind === "car" ? carCard(hass, c, i, act) : c.kind === "printer" ? printerCard(hass, c, i) : c.kind === "heatpump" ? heatPumpCard(hass, c, i) : mediaCard(hass, c, i, act)))}
+    ${cards.map((c, i) => (c.kind === "house" ? houseCard(hass, c, i, fold) : c.kind === "car" ? carCard(hass, c, i, act, carFold) : c.kind === "printer" ? printerCard(hass, c, i) : c.kind === "heatpump" ? heatPumpCard(hass, c, i) : mediaCard(hass, c, i, act)))}
   </div>`;
 }
 
@@ -399,7 +413,8 @@ export const liveCardStyles = css`
     opacity: 1;
     background: color-mix(in srgb, var(--nf-text) 20%, transparent);
   }
-  .live-card-house:not(.live-folded) {
+  .live-card-house:not(.live-folded),
+  .live-card-car:not(.live-folded) {
     padding-right: 30px;
   }
   .live-folded {
@@ -413,6 +428,21 @@ export const liveCardStyles = css`
   }
   .live-folded .live-own-text b {
     font-size: 11px;
+  }
+  /* a finger needs more than 20 px */
+  @media (pointer: coarse) {
+    .live-fold {
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+    }
+    .live-card-house:not(.live-folded),
+    .live-card-car:not(.live-folded) {
+      padding-right: 38px;
+    }
+    .live-folded {
+      padding-right: 38px;
+    }
   }
   .live-rows {
     display: grid;

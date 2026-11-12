@@ -120,6 +120,7 @@ export class NfView3d extends LitElement {
     _liveCards: { state: true },
     _liveCardOn: { state: true },
     _houseFolded: { state: true },
+    _carsFolded: { state: true },
     _swipe: { state: true },
     _menu: { state: true },
     _pluginWindow: { state: true },
@@ -408,6 +409,8 @@ export class NfView3d extends LitElement {
   private declare _liveCardOn: boolean;
   /** The house card folded to its ring by the small corner button; remembered in this browser. */
   private declare _houseFolded: boolean;
+  /** The cars' cards folded to their rings by the small corner button (#147); remembered in this browser. */
+  private declare _carsFolded: boolean;
 
   private viewer: NextFloorViewer | null = null;
   private starting = false;
@@ -457,6 +460,7 @@ export class NfView3d extends LitElement {
     this._liveCards = [];
     this._liveCardOn = localStorage.getItem("nextfloor.cards") !== "0";
     this._houseFolded = localStorage.getItem("nextfloor.house_card_folded") === "1";
+    this._carsFolded = localStorage.getItem("nextfloor.car_card_folded") === "1";
     this.selectedFurniture = null;
     this.selectedDevice = null;
     this._sky = 0;
@@ -2731,6 +2735,15 @@ export class NfView3d extends LitElement {
     }
   }
 
+  private toggleCarFold(): void {
+    this._carsFolded = !this._carsFolded;
+    try {
+      localStorage.setItem("nextfloor.car_card_folded", this._carsFolded ? "1" : "0");
+    } catch {
+      // private mode: the choice lasts for this page only
+    }
+  }
+
   private toggleLhCards(): void {
     this._liveCardOn = !this._liveCardOn;
     try {
@@ -2862,7 +2875,7 @@ export class NfView3d extends LitElement {
       class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
     >
-      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
+      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
       ${this.showStats && this._stats
@@ -3910,7 +3923,8 @@ export class NfView3d extends LitElement {
         display: flex;
         flex-direction: column-reverse;
         gap: 6px;
-        z-index: 3;
+        /* above the buttons along the bottom edge (they sit at z-index 3-4), which covered the field on a phone (#147) */
+        z-index: 6;
       }
       .nf-find input {
         box-sizing: border-box;

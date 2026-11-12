@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.3.1]
+
+### Fixed
+
+- **Car cards and the search field on a phone** (#147): the cards of the cars at their parking spots covered large parts of the map on a small screen; each now has the small corner button that folds it to its ring, like the house card (remembered in the browser). The search field no longer hides behind the buttons along the bottom edge.
+
 ## [0.31.3]
 
 ### Added
