@@ -135,7 +135,7 @@ NextFloor is in the **official HACS store**.
 - **The card:** `custom:nextfloor-card` with a visual editor, card templates, a card for chosen rooms, floor-plan-only mode.
 - **Wall tablet:** kiosk mode with night dimming, an easy-to-read mode, and quality that steps down by itself on slow tablets.
 - **Automations:** *Open windows and doors* and *Lights on* as sensors for the house and every floor, plus the actions `nextfloor.announce` and `nextfloor.reload_screens`.
-- **Look:** colours, font and corner radius from your Home Assistant theme; looks *Neon*, *Blueprint*, *Day* and *Own* (your own colours). Nineteen languages.
+- **Look:** colours, font and corner radius from your Home Assistant theme; looks *Neon*, *Blueprint*, *Day* and *Own* (your own colours). Twenty languages.
 
 → [The dashboard card](https://therealmrbk.github.io/NextFloor/docs/en/cards/) · [Wall tablet](https://therealmrbk.github.io/NextFloor/docs/en/tablet/) · [Services and sensors](https://therealmrbk.github.io/NextFloor/docs/en/automations/)
 </details>
