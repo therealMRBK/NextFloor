@@ -1356,7 +1356,9 @@ export class NextFloorViewer {
 
   /** The room name, with a line of values below it when there is one. */
   private fillRoomPin(pin: HTMLElement, name: string, info: string | undefined): void {
-    pin.textContent = name || "–";
+    // a room without a name has no label (#142: closets and the like); values behind it (heat mode) keep the label
+    pin.textContent = name;
+    pin.classList.toggle("nf-pin-empty", !name && !info);
     if (info) {
       const small = document.createElement("small");
       small.textContent = info;

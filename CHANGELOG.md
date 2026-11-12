@@ -7,9 +7,11 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 ### Fixed
 
 - **Car cards and the search field on a phone** (#147): the cards of the cars at their parking spots covered large parts of the map on a small screen; each now has the small corner button that folds it to its ring, like the house card (remembered in the browser). The search field no longer hides behind the buttons along the bottom edge.
+- **No label for a room without a name** (#142): a room whose name is empty (a closet, say) shows no label in the 3D view any more instead of a dash.
 
 ### Added
 
+- **Open ends for loft parts** (#140): a `loft` part of a furniture pack takes `"capFront": false` and `"capBack": false` to leave the end at +z or -z open, for roofs, open gables and frames. Both default to closed, so existing packs look the same.
 - **A realistic look (preview):** a fifth look, *Realistic*, in the look row and the card editor. Floors get wood planks, tiles or grass, walls plaster, roofs tiles and flat tops concrete, with relief and light from a sun and the sky. Photo textures (CC0, Poly Haven, about 230 KB beside the bundles) for wood floors, stone tiles, plaster, roof tiles, ground and concrete, with the procedural materials as fallback when a file is missing. Walls get light tops that outline the rooms, and floor shadows are deeper and softer. Only this look changes, the others are untouched. First step, still plain on furniture and trees.
 
 ## [0.31.3]

@@ -63,7 +63,7 @@ The easiest way to build furniture is the **[furniture builder](https://therealm
 | `edges` | glowing edges: `true` subtle blue, `"glow"` cyan like the walls, `"faint"` very delicate |
 
 - A **cylinder** takes the smaller of `w` and `d` as its diameter. With `axis: "x"` or `"z"` it lies down (wheels, rollers); the length is the extent along the axis, the diameter the smaller of the cross extent and `h`.
-- A **loft** is a box whose top face is another rectangle (`tx`/`tz` centre, `tw`/`td` size) for sloping surfaces such as bonnets, windscreens or lampshades. A narrow loft with an offset top makes a slanted rod (handrail).
+- A **loft** is a box whose top face is another rectangle (`tx`/`tz` centre, `tw`/`td` size) for sloping surfaces such as bonnets, windscreens or lampshades. With `"capFront": false` and/or `"capBack": false` the end at +z (front) or −z (back) stays open, for roofs, open gables or frames; without them both ends are closed. A narrow loft with an offset top makes a slanted rod (handrail).
 - A **sweep** is a smooth body: cross-sections along the depth (z) with skin stretched between them, for anything round such as cars, boats or mudguards. `stations` is a list of `[z, bottom, top, width]`: `z` the centre of the cross-section (−0.5 … 0.5), `bottom` and `top` as a fraction of the height, `width` as a fraction of the width. `x` shifts the body sideways. `exp` shapes the cross-section (2 = ellipse, higher is boxier, default 2.6) and `n` is the number of points around (6 … 32, default 16). The vehicles of the pack *Vehicles* are built this way, see `tools/build_packs.py`.
 
 ### Plan symbol

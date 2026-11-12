@@ -67,6 +67,33 @@ test("a turned builder rotates its parts around the given centre", () => {
   assert.ok(Math.min(...xs) >= -0.51 && Math.max(...xs) <= 0.01);
 });
 
+test("a loft can leave its front (+z) or back (-z) end open, and stays closed by default (#140)", () => {
+  // faces lying flat in the plane z = value: all three corners of a triangle there
+  const flatAt = (t: ReturnType<typeof tools>, z: number) => {
+    let n = 0;
+    for (let i = 0; i + 8 < t.buf.p.length; i += 9) if ([2, 5, 8].every((k) => Math.abs(t.buf.p[i + k] - z) < 1e-6)) n++;
+    return n;
+  };
+  const make = (caps: { front?: boolean; back?: boolean }) => {
+    const t = tools();
+    t.b.loft([0, 1, 0, 2], [0, 1, 0, 2], 0, 1, M.wood, null, caps);
+    return t;
+  };
+  const closed = make({});
+  assert.equal(flatAt(closed, 2), 2, "front wall: two triangles");
+  assert.equal(flatAt(closed, 0), 2, "back wall: two triangles");
+  assert.equal(flatAt(make({ front: false }), 2), 0);
+  assert.equal(flatAt(make({ front: false }), 0), 2);
+  assert.equal(flatAt(make({ back: false }), 0), 0);
+  assert.equal(flatAt(make({ back: false }), 2), 2);
+  assert.equal(make({ front: false, back: false }).buf.count, closed.buf.count - 4);
+  // a mirrored base (the corner ring wound the other way) keeps front and back where they are
+  const mirrored = tools();
+  mirrored.b.loft([1, 0, 0, 2], [1, 0, 0, 2], 0, 1, M.wood, null, { front: false });
+  assert.equal(flatAt(mirrored, 2), 0);
+  assert.equal(flatAt(mirrored, 0), 2);
+});
+
 test("a loft, a pad and a sweep add geometry; a pad too small to bevel is a plain box", () => {
   const loft = tools();
   loft.b.loft([0, 1, 0, 1], [0.2, 0.8, 0.2, 0.8], 0, 1, M.wood);

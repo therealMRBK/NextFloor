@@ -70,6 +70,9 @@ PART_SCHEMA = vol.Schema(
         vol.Optional("tz"): _FRACTION,
         vol.Optional("tw"): _SPAN,
         vol.Optional("td"): _SPAN,
+        # loft: false leaves the end at +z (capFront) or -z (capBack) open; both default to closed
+        vol.Optional("capFront"): bool,
+        vol.Optional("capBack"): bool,
         # sweep: cross sections along z, each [z, bottom, top, width] in fractions of the item's depth, height, width
         vol.Optional("stations"): vol.All([_station], vol.Length(min=2, max=48)),
         # sweep: how boxy the cross section is (2 = ellipse) and how many points go round it
