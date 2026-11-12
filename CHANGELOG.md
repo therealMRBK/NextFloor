@@ -2,6 +2,14 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [0.31.4.1]
+
+### Fixed
+
+- **The star menu kept opening** (#158): with *Menu open* switched on for the device, the menu came back on every visit, however often it was closed. Closing it with the star now switches *Menu open* off, so it stays closed; the star opens it as before.
+- **Rooms without a name in the room row** (#152): an unnamed room showed as an empty button in the row above the 3D view and as a dash in the card's room buttons. It has no button any more, like it has no label in the 3D view.
+- **A NAS lit the whole room** (#153): a device from a pack with a status light (NAS, router, server rack and the like) that is linked to a sensor or binary sensor lit its room like a lamp while the sensor reported "on". Now only its small lights glow. Lamps linked to a light or a switch shine as before.
+
 ## [0.31.4]
 
 ### Fixed

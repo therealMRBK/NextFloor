@@ -18,6 +18,8 @@ export interface RoomButtonGroup {
 export function roomButtons(building: Building | null | undefined, floorId: string | null): RoomButtonGroup[] {
   if (!building) return [];
   return building.floors
-    .filter((f) => (floorId === null || f.id === floorId) && f.rooms.length > 0)
-    .map((f) => ({ floorId: f.id, floorName: f.name, rooms: f.rooms.map((r) => ({ id: r.id, name: r.name || "–", floorId: f.id })) }));
+    .filter((f) => floorId === null || f.id === floorId)
+    // a room without a name has no button, like it has no label in the 3D view (#152)
+    .map((f) => ({ floorId: f.id, floorName: f.name, rooms: f.rooms.filter((r) => (r.name ?? "").trim()).map((r) => ({ id: r.id, name: r.name, floorId: f.id })) }))
+    .filter((g) => g.rooms.length > 0);
 }
