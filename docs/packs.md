@@ -66,7 +66,9 @@ entfernen, und ein importiertes Pack darf nicht dieselbe ID haben.
   `"z"` liegt er (Räder, Rollen – die Länge ist die Ausdehnung entlang der Achse, der Durchmesser der
   kleinere Wert aus Querausdehnung und `h`). Ein `loft` ist ein Quader, dessen Oberseite ein anderes
   Rechteck ist (`tx`/`tz` Mitte, `tw`/`td` Größe; Standard wie unten) – für schräge Flächen wie
-  Motorhauben, Windschutzscheiben oder Lampenschirme.
+  Motorhauben, Windschutzscheiben oder Lampenschirme. Mit `"capFront": false` und/oder `"capBack": false` bleibt
+  das Ende bei +z (vorne) oder −z (hinten) offen, für Dächer, offene Giebel oder Rahmen; ohne Angabe sind beide Enden
+  geschlossen.
   Ein Teil mit `rot` (Grad) ist um seine eigene Mitte um die Hochachse gedreht – für Wendeltreppen
   oder diagonale Streben; ein schmaler `loft` mit versetzter Oberseite ergibt eine schräge Stange
   (Handlauf).

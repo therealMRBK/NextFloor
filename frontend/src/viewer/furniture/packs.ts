@@ -44,7 +44,7 @@ export function packModel(b: Builder, item: PackItem, w: number, d: number, h: n
       target.cylinder(cx, cz, Math.min(part.w * w, part.d * d) / 2, y0, y1, look, 14, edges);
     } else if (part.shape === "loft") {
       const [tx, tz, tw, td] = [part.tx ?? part.x, part.tz ?? part.z, part.tw ?? part.w, part.td ?? part.d];
-      target.loft([(part.x - part.w / 2) * w, (part.x + part.w / 2) * w, (part.z - part.d / 2) * d, (part.z + part.d / 2) * d], [(tx - tw / 2) * w, (tx + tw / 2) * w, (tz - td / 2) * d, (tz + td / 2) * d], y0, y1, look, edges);
+      target.loft([(part.x - part.w / 2) * w, (part.x + part.w / 2) * w, (part.z - part.d / 2) * d, (part.z + part.d / 2) * d], [(tx - tw / 2) * w, (tx + tw / 2) * w, (tz - td / 2) * d, (tz + td / 2) * d], y0, y1, look, edges, { front: part.capFront, back: part.capBack });
     } else if (part.shape === "sweep") {
       const stations = (part.stations ?? []).map(([z, sy0, sy1, sw]) => ({ x: cx, z: z * d, y0: base + sy0 * h, y1: base + sy1 * h, hw: (sw * w) / 2 }));
       target.sweep(stations, look, part.n ?? 16, part.exp ?? 2.6, edges);

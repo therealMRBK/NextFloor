@@ -44,6 +44,9 @@ export interface PackPart {
   tz?: number;
   tw?: number;
   td?: number;
+  /** Loft: false leaves the end at +z (front) or -z (back) open, for roofs, gables and open frames. Default true. */
+  capFront?: boolean;
+  capBack?: boolean;
   /** Cylinder axis: upright (y, the default) or lying along x or z (wheels, pipes, rollers). */
   axis?: "x" | "y" | "z";
   /** Sweep: cross sections along z as [z, bottom, top, width], as fractions of depth, height and width. */

@@ -40,8 +40,8 @@ export interface CardConfig {
   buttons?: { label: string; icon?: string; action: "navigate" | "more_info" | "service" | "fire_dom_event"; target?: string; data?: Record<string, unknown> }[];
   /** Heatmap of the rooms: none | temperature | humidity | co2. */
   heatmap?: "none" | "temperature" | "humidity" | "co2";
-  /** Look: neon | blueprint | day. */
-  theme?: "auto" | "neon" | "blueprint" | "day" | "own";
+  /** Look: neon | blueprint | day | own | real. */
+  theme?: "auto" | "neon" | "blueprint" | "day" | "own" | "real";
   /** A clock in a corner of the view (default none). */
   clock?: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
   /** The 🔒 button that locks the camera on this device (default shown). */

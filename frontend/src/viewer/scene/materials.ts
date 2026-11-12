@@ -3,7 +3,7 @@
 
 import { AdditiveBlending, NormalBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
 import { makeFoldable, type FoldMasks } from "../fold.ts";
-import { lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
+import { deepenedShadow, lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
 import type { OwnLook } from "../../themes.ts";
 
 export interface FloorMaterials {
@@ -68,16 +68,16 @@ export function makeFloorMaterials({ mask, look, theme, own, textures }: Materia
   const solid = (extra: ConstructorParameters<typeof MeshBasicMaterial>[0] = {}) => new MeshBasicMaterial({ vertexColors: true, ...extra });
   const foldable = <T extends Material>(m: T, glass?: "solid" | "glass") => makeFoldable(m as never, mask, glass) as unknown as T;
   return {
-    floor: themed(solid(), look),
+    floor: themed(solid(), look, false, false, "floor"),
     pattern: patternMaterial(textures.pattern),
-    wall: themed(foldable(solid(), "solid"), look),
+    wall: themed(foldable(solid(), "solid"), look, false, false, "wall"),
     glassWall: foldable(solid({ transparent: true, depthWrite: false }), "glass"),
     // the result is the floor colour times the vertex colour: white leaves the floor as it is
-    shadow: solid({ blending: MultiplyBlending, premultipliedAlpha: true, transparent: true, depthWrite: false, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }),
+    shadow: deepenedShadow(solid({ blending: MultiplyBlending, premultipliedAlpha: true, transparent: true, depthWrite: false, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }), look),
     lines: themed(foldable(new LineBasicMaterial({ vertexColors: true, transparent: true, blending: lineBlending(theme, own), depthWrite: false })), look, true),
     // light on floors and walls follows the cut and the glass walls like the walls themselves
     glow: foldable(overlay({ side: DoubleSide, polygonOffset: true, polygonOffsetFactor: -3 }), "solid"),
-    frames: themed(foldable(solid({ side: DoubleSide })), look),
+    frames: themed(foldable(solid({ side: DoubleSide })), look, false, false, "frame"),
     // window glass follows the look like the other surfaces (D#82)
     glass: themed(foldable(overlay({ side: DoubleSide, ...(ownGlass(theme, own ?? {}) ? PAINTED_GLASS : {}) })), look, false, true),
     blinds: themed(foldable(solid({ map: textures.blinds, side: DoubleSide })), look),

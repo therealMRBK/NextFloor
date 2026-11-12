@@ -27,11 +27,13 @@ const normalized = (a: Rgb3): Rgb3 => {
 
 /**
  * A box whose top rectangle differs from its bottom one (sloped sides). `lo` and `hi` are the four corners in the same
- * order. Faces that lean upwards blend towards the top colour.
+ * order. Faces that lean upwards blend towards the top colour. `open` lists the side faces (by index of their bottom edge)
+ * that are left out, for open ends (#140).
  */
-export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1: number, side: number, top: number): void {
+export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1: number, side: number, top: number, open: readonly number[] = []): void {
   const topColor = new Color(top);
   for (let i = 0; i < 4; i++) {
+    if (open.includes(i)) continue;
     const [a, b] = [lo[i], lo[(i + 1) % 4]];
     const [A, B] = [hi[i], hi[(i + 1) % 4]];
     const [dx, dz] = [b[0] - a[0], b[1] - a[1]];

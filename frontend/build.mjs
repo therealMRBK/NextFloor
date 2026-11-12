@@ -63,6 +63,9 @@ function copyAssets() {
   for (const f of ["LICENSE", "THIRD_PARTY_NOTICES.md"]) copyFileSync(`../${f}`, `../custom_components/nextfloor/${f}`);
   mkdirSync(`${out}/lang`, { recursive: true });
   for (const f of langFiles) copyFileSync(`lang/${f}`, `${out}/lang/${f}`);
+  // photo textures of the realistic look (CC0, Poly Haven); the look falls back to its procedural materials without them
+  mkdirSync(`${out}/textures`, { recursive: true });
+  for (const f of readdirSync("textures")) copyFileSync(`textures/${f}`, `${out}/textures/${f}`);
 }
 
 // Size budgets, small enough for old wall tablets. The editor bundles only load for admins and the card's settings, so they

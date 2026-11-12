@@ -96,7 +96,7 @@ export class Builder {
   }
 
   /** A box whose top face is another rectangle (sloped sides): hoods, windscreens, tapered shades. Rectangles are [x0, x1, z0, z1]. */
-  loft(base: [number, number, number, number], top: [number, number, number, number], y0: number, y1: number, material: Material, edges: Color | null = null): void {
+  loft(base: [number, number, number, number], top: [number, number, number, number], y0: number, y1: number, material: Material, edges: Color | null = null, caps: { front?: boolean; back?: boolean } = {}): void {
     if (y1 - y0 < 1e-4) return;
     const corners = (r: [number, number, number, number]): Vec2[] => [this.plan(r[0], r[2]), this.plan(r[0], r[3]), this.plan(r[1], r[3]), this.plan(r[1], r[2])];
     const lo = corners(base);
@@ -105,7 +105,8 @@ export class Builder {
       lo.reverse();
       hi.reverse();
     }
-    pushLoft(this.buf, lo, hi, y0, y1, material.side, material.top);
+    // the faces at +z (front) and -z (back) are the 2nd and 4th edge of the corner ring, in either winding
+    pushLoft(this.buf, lo, hi, y0, y1, material.side, material.top, [...(caps.front === false ? [1] : []), ...(caps.back === false ? [3] : [])]);
     if (edges) {
       for (let i = 0; i < 4; i++) {
         this.edge(hi[i], hi[(i + 1) % 4], y1, y1, edges);

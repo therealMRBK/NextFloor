@@ -75,6 +75,17 @@ def test_a_studio_recipe_is_kept_and_checked() -> None:
         packs.validate_payload(payload)
 
 
+def test_a_loft_can_leave_its_ends_open() -> None:
+    open_ends = copy.deepcopy(PAYLOAD)
+    box = {"x": 0, "z": 0, "w": 1, "d": 1, "y": 0, "h": 0.5, "color": "body"}
+    open_ends["items"][0]["parts"] = [{"shape": "loft", **box, "capFront": False, "capBack": True}]
+    part = packs.validate_payload(open_ends)["items"][0]["parts"][0]
+    assert part["capFront"] is False and part["capBack"] is True
+    open_ends["items"][0]["parts"][0]["capFront"] = "no"
+    with pytest.raises(packs.PackError):
+        packs.validate_payload(open_ends)
+
+
 def test_a_pack_needs_items() -> None:
     with pytest.raises(packs.PackError):
         packs.validate_payload({**PAYLOAD, "items": []})

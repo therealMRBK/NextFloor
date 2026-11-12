@@ -3255,7 +3255,8 @@ export class NfView3d extends LitElement {
       .nf-person[hidden] {
         display: none;
       }
-      .nf-no-room-names .nf-pin {
+      .nf-no-room-names .nf-pin,
+      .nf-pin.nf-pin-empty {
         display: none !important;
       }
       /* tablet level: blur over the canvas and glowing shadows are expensive on weak GPUs */
