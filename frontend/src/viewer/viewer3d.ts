@@ -80,7 +80,7 @@ export type { Theme } from "./theme.ts";
 import { ALWAYS, DEG, GeoBuffer, LineBuffer, pushPrism } from "./geo.ts";
 import { buildLightSurface, lightColors, type LightSurface } from "./lighting.ts";
 import { animateGlow } from "../light-effects.ts";
-import { buildOpeningParts, CLOSED, type OpeningState } from "./openings.ts";
+import { buildOpeningParts, openingSlots, CLOSED, type OpeningState } from "./openings.ts";
 import { WeatherLayer, type SkyView } from "./live-weather.ts";
 import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./live-energy.ts";
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
@@ -2035,8 +2035,7 @@ export class NextFloorViewer {
     for (const fv of this.floors) {
       this.buildLamps(fv);
       this.buildScreens(fv);
-      const prev = previousOpenings.get(fv.floor.id);
-      for (const info of fv.geo.openings) fv.openings.set(info.opening.id, prev?.get(info.opening.id) ?? this.openingTargets.get(info.opening.id) ?? CLOSED);
+      fv.openings = openingSlots(fv.geo.openings, previousOpenings.get(fv.floor.id), this.openingTargets);
       this.buildOpenings(fv);
       this.buildLightSurface(fv);
       this.buildSun(fv);

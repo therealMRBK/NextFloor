@@ -15,6 +15,18 @@ import { glassWall, window } from "./windows.ts";
 /** The id that groups the pieces of one glass pane; a normal opening is a group of its own. */
 const paneOf = (info: OpeningInfo): string => info.opening.front ?? info.opening.id;
 
+/**
+ * The states a floor's openings move through, keyed the way they are read: every opening under its own id (sunlight, door glow)
+ * and a pane over several edges under its front id as well, which is where `buildOpeningParts` looks for it. Without that slot
+ * the pane finds no state at all and is drawn without its shutter box and blind (#115). A slot keeps the state it is moving
+ * through (`previous`), else it starts at its target.
+ */
+export function openingSlots(infos: readonly OpeningInfo[], previous: ReadonlyMap<string, OpeningState> | undefined, targets: ReadonlyMap<string, OpeningState>): Map<string, OpeningState> {
+  const slots = new Map<string, OpeningState>();
+  for (const info of infos) for (const id of new Set([info.opening.id, paneOf(info)])) slots.set(id, previous?.get(id) ?? targets.get(id) ?? CLOSED);
+  return slots;
+}
+
 export function buildOpeningParts(infos: readonly OpeningInfo[], states: ReadonlyMap<string, OpeningState>, cut: number, ground = -Infinity): OpeningParts {
   const frames = new GeoBuffer();
   const glass = new GeoBuffer();
