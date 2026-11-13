@@ -2350,7 +2350,7 @@ export class NextFloorViewer {
     // plugin wedges on the floor are drawn at every quality: they are also what one taps
     const wedges: FloorView["wedgeTris"] = [];
     for (const marker of this.devices) if (marker.floorId === fv.floor.id && marker.wedge) {
-      const range = addFloorWedge(cones, marker, fv.geo.walls2d);
+      const range = addFloorWedge(cones, marker, fv.geo.walls2d, fv.floor.height);
       if (!marker.wedge.through) wedges.push({ id: marker.id, ...range });
     }
     fv.wedgeTris = wedges;

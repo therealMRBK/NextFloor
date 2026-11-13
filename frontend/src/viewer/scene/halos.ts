@@ -6,7 +6,8 @@ import { HANGING_LAMPS, LAMP_SIZE } from "./lamp-data.ts";
 import type { DeviceMarker, LampModel } from "./types.ts";
 import { stripPoint, stripRiseLift } from "./strip.ts";
 
-type Wall2d = { a: readonly [number, number]; b: readonly [number, number] };
+/** A wall seen from above; `height` and `heightEnd` are its own heights at `a` and `b` (absent: as high as the floor). */
+type Wall2d = { a: readonly [number, number]; b: readonly [number, number]; height?: number; heightEnd?: number };
 
 /** Height above the floor at which a wedge is drawn. */
 const WEDGE_Y = 0.015;
@@ -18,9 +19,20 @@ const OWN_WALL = 0.45;
  * first wall in the way.
  */
 export function viewReach(walls: readonly Wall2d[], origin: readonly [number, number], heading: readonly [number, number], turn: number, reach: number): number {
+  return viewSpans(walls, origin, heading, turn, reach, Infinity, Infinity)[0]?.[1] ?? 0;
+}
+
+/**
+ * The stretches of one ray (metres from the device, from 0 to `reach`) that the device sees on the floor. A wall at least as high as
+ * the device (`eye`, its height above the floor) hides everything behind it. A lower wall only casts a shadow: the line of sight over
+ * its top meets the floor again at `along * eye / (eye - top)`, and what lies from the wall to there is hidden (#164: a pony wall
+ * 10 cm high must not blank a camera two metres up).
+ */
+export function viewSpans(walls: readonly Wall2d[], origin: readonly [number, number], heading: readonly [number, number], turn: number, reach: number, eye: number, floorHeight: number): [number, number][] {
   const [c, s] = [Math.cos(turn), Math.sin(turn)];
   const ray: [number, number] = [heading[0] * c - heading[1] * s, heading[1] * c + heading[0] * s];
-  let nearest = reach;
+  let end = reach;
+  const shadows: [number, number][] = [];
   for (const wall of walls) {
     const edge: [number, number] = [wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]];
     const denominator = ray[0] * edge[1] - ray[1] * edge[0];
@@ -29,13 +41,27 @@ export function viewReach(walls: readonly Wall2d[], origin: readonly [number, nu
     const along = (toStart[0] * edge[1] - toStart[1] * edge[0]) / denominator;
     const across = (toStart[0] * ray[1] - toStart[1] * ray[0]) / denominator;
     // a device just inside an outer wall looks out through it, so the wall it hangs on does not count
-    if (along > OWN_WALL && along < nearest && across >= 0 && across <= 1) nearest = along;
+    if (!(along > OWN_WALL && along < end && across >= 0 && across <= 1)) continue;
+    const top = (wall.height ?? floorHeight) + ((wall.heightEnd ?? wall.height ?? floorHeight) - (wall.height ?? floorHeight)) * across;
+    if (!(top < eye)) end = along;
+    else shadows.push([along, Math.min(reach, (along * eye) / (eye - Math.max(0, top)))]);
   }
-  return nearest;
+  // what is left of 0…end once the shadows are taken out
+  const spans: [number, number][] = [];
+  let from = 0;
+  for (const [a, b] of shadows.filter(([a]) => a < end).sort((p, q) => p[0] - q[0])) {
+    if (a > from) spans.push([from, a]);
+    from = Math.max(from, Math.min(b, end));
+  }
+  if (from < end) spans.push([from, end]);
+  return spans;
 }
 
-/** A plugin's wedge on the floor: from `near` to the reach (or the first wall), fading out. Returns the triangles it added. */
-export function addFloorWedge(buffer: GeoBuffer, device: DeviceMarker, walls: readonly Wall2d[]): { start: number; end: number } {
+/**
+ * A plugin's wedge on the floor: from `near` to the reach, fading out, with a wall in the way cutting the view. `floorHeight` is the
+ * height of the floor's walls; the device's own height (`device.y`) decides whether lower walls only cast a shadow.
+ */
+export function addFloorWedge(buffer: GeoBuffer, device: DeviceMarker, walls: readonly Wall2d[], floorHeight = Infinity): { start: number; end: number } {
   const start = buffer.count;
   const wedge = device.wedge;
   if (!wedge) return { start, end: start };
@@ -47,15 +73,23 @@ export function addFloorWedge(buffer: GeoBuffer, device: DeviceMarker, walls: re
   const steps = Math.max(4, Math.round(half / 0.15));
   const origin: [number, number] = [device.x, device.z];
   const at = (t: number, r: number): [number, number, number] => [device.x + (heading[0] * Math.cos(t) - heading[1] * Math.sin(t)) * r, WEDGE_Y, device.z + (heading[1] * Math.cos(t) + heading[0] * Math.sin(t)) * r];
+  // the stretches seen along every ray, from `near` out; a radio's reach (Wi-Fi) goes through walls, a camera's view does not
+  const rays = Array.from({ length: steps + 1 }, (_, i) => {
+    const t = -half + (2 * half * i) / steps;
+    const spans = wedge.walls === false ? [[0, wedge.reach] as [number, number]] : viewSpans(walls, origin, heading, t, wedge.reach, device.y, floorHeight);
+    // before `near` nothing is drawn, and a ray that ends inside it still keeps a sliver so the wedge stays closed
+    const seen = spans.map(([a, b]): [number, number] => [Math.max(a, Math.min(wedge.near, b)), b]).filter(([a, b]) => b > a || (wedge.near <= 0 && a === 0));
+    return { t, seen: seen.length ? seen : [[Math.min(wedge.near, spans[0]?.[1] ?? 0), spans[0]?.[1] ?? 0] as [number, number]] };
+  });
   for (let i = 0; i < steps; i++) {
-    const [t0, t1] = [-half + (2 * half * i) / steps, -half + (2 * half * (i + 1)) / steps];
-    // a radio's reach (Wi-Fi) goes through walls; a camera's view stops at them
-    const [r0, r1] = wedge.walls === false ? [wedge.reach, wedge.reach] : [viewReach(walls, origin, heading, t0, wedge.reach), viewReach(walls, origin, heading, t1, wedge.reach)];
-    const [n0, n1] = [Math.min(wedge.near, r0), Math.min(wedge.near, r1)];
-    if (wedge.near <= 0) buffer.tri([device.x, WEDGE_Y, device.z], at(t1, r1), at(t0, r0), inner, outer, outer);
-    else {
-      buffer.tri(at(t0, n0), at(t1, r1), at(t0, r0), inner, outer, outer);
-      buffer.tri(at(t0, n0), at(t1, n1), at(t1, r1), inner, inner, outer);
+    const [p, q] = [rays[i], rays[i + 1]];
+    for (let k = 0; k < Math.min(p.seen.length, q.seen.length); k++) {
+      const [[a0, e0], [a1, e1]] = [p.seen[k], q.seen[k]];
+      if (a0 <= 0 && a1 <= 0) buffer.tri([device.x, WEDGE_Y, device.z], at(q.t, e1), at(p.t, e0), inner, outer, outer);
+      else {
+        buffer.tri(at(p.t, a0), at(q.t, e1), at(p.t, e0), inner, outer, outer);
+        buffer.tri(at(p.t, a0), at(q.t, a1), at(q.t, e1), inner, inner, outer);
+      }
     }
   }
   return { start, end: buffer.count };

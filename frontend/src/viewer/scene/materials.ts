@@ -1,7 +1,7 @@
 // The materials of one floor. Every floor gets its own set so that its opacity can change without touching the others. Surfaces and
 // lines pass through the look (neon, blueprint, day), and the ones that follow the cut view are made foldable.
 
-import { AdditiveBlending, NormalBlending, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
+import { AddEquation, AdditiveBlending, CustomBlending, NormalBlending, OneFactor, SrcAlphaFactor, ZeroFactor, DoubleSide, LineBasicMaterial, MeshBasicMaterial, MultiplyBlending, PointsMaterial, type CanvasTexture, type Material } from "three";
 import { makeFoldable, type FoldMasks } from "../fold.ts";
 import { deepenedShadow, lineBlending, ownGlass, themed, type Theme, type ThemeUniform } from "../theme.ts";
 import type { OwnLook } from "../../themes.ts";
@@ -60,6 +60,14 @@ export function patternMaterial(texture: CanvasTexture): MeshBasicMaterial {
 export const PAINTED_GLASS = { blending: NormalBlending, opacity: 0.55 } as const;
 export const GLOWING_GLASS = { blending: AdditiveBlending, opacity: 1 } as const;
 
+/**
+ * Additive light that leaves the canvas' own transparency alone. The canvas is see-through (the page shows behind the house), and
+ * plain additive blending also adds the light's alpha: where no floor lies under a wedge or a halo (a camera outside the walls, a lamp in
+ * the garden) the pixel turned opaque and its black fade-out edge showed as black instead of vanishing (#165). Colour is added as
+ * before; the alpha of what is under it is kept.
+ */
+export const LIGHT_ONLY = { blending: CustomBlending, blendEquation: AddEquation, blendSrc: SrcAlphaFactor, blendDst: OneFactor, blendSrcAlpha: ZeroFactor, blendDstAlpha: OneFactor } as const;
+
 /** A glowing, see-through material drawn on top of what is under it. */
 const overlay = (extra: ConstructorParameters<typeof MeshBasicMaterial>[0] = {}) =>
   new MeshBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false, ...extra });
@@ -82,8 +90,8 @@ export function makeFloorMaterials({ mask, look, theme, own, textures }: Materia
     glass: themed(foldable(overlay({ side: DoubleSide, ...(ownGlass(theme, own ?? {}) ? PAINTED_GLASS : {}) })), look, false, true),
     blinds: themed(foldable(solid({ map: textures.blinds, side: DoubleSide })), look),
     lamps: themed(solid(), look),
-    halos: new PointsMaterial({ map: textures.halo, size: 0.9, sizeAttenuation: true, vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false }),
-    cones: overlay({ side: DoubleSide }),
+    halos: new PointsMaterial({ map: textures.halo, size: 0.9, sizeAttenuation: true, vertexColors: true, transparent: true, ...LIGHT_ONLY, depthWrite: false }),
+    cones: overlay({ side: DoubleSide, ...LIGHT_ONLY }),
     screens: overlay({ side: DoubleSide }),
     ghosts: [],
   };
