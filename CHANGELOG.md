@@ -9,6 +9,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **A window lost its roller shutter in 3D to a window with the same id on another floor** (thanks @Gifford47, #115): when two floors used the same id for a window or door (a plan written by hand or by an AI), the later floor's links replaced the earlier one's. A window with a cover picked in the editor then showed no shutter box, no blind and did not react to a tap, because its namesake upstairs had none. Ids of doors and windows are now unique in the whole house; the first one keeps its id.
 - **Bay windows over several walls show their roller shutter** (#115): the fix from 0.27.0 did not reach the 3D view, which still looked for the blind per piece. The pane now really gets its shutter box and blind.
 - **A window in a free wall outside every room keeps its blind** (#115): a cover or contact picked by hand for such a window was ignored in the 3D view.
+- **No console error on the model upload page**: the page asks the server whether a model is there with a HEAD request, which was refused (405); the server now answers it.
+- **A map tile that cannot be decoded** (an error page instead of a picture) no longer raises an error in the 3D view; its square stays empty.
 - **Keep camera: the first floor no longer turns the view round** (thanks @Gifford47): with *🎥 Keep camera* on (card option `keep_camera`), the first floor opened from the house view still flew to the start view's side. It now opens from the side and height the house is looked at, like every later switch. A floor that was open before still comes back as it was left.
 
 ## [0.31.4.1]
