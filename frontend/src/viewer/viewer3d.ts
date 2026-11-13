@@ -861,8 +861,10 @@ export class NextFloorViewer {
     const v = this.controls.view;
     const now = { theta: v.theta, phi: v.phi, radius: v.radius };
     let keep: { theta: number; phi: number; radius?: number } | null = null;
-    // not on the first, unanimated call when the view is set up: a tablet that starts on a floor opens in its start view
-    if (this.keepCamera && animate && floorId !== this.floorId) {
+    // not on the very first call, which sets the view up: a tablet that starts on a floor opens in its start view
+    const firstCall = !this.floorSet;
+    this.floorSet = true;
+    if (this.keepCamera && !firstCall && floorId !== this.floorId) {
       // the house view keeps the side and height but fits its own distance; coming back from it, a floor opens as the
       // last floor was left (#119), and the first floor from the side the house is looked at
       if (this.floorId !== null) this.lastFloorCamera = now;
@@ -2548,6 +2550,8 @@ export class NextFloorViewer {
   }
 
   private keepCamera = false;
+  /** Whether a floor (or the house) was chosen yet: the first choice sets the view up and keeps no camera. */
+  private floorSet = false;
   /** The camera of the floor last left while the camera is kept: a floor opened from the house view takes it again (#119). */
   private lastFloorCamera: { theta: number; phi: number; radius: number } | null = null;
   private zoom = 1;
