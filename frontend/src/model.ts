@@ -1674,18 +1674,21 @@ export function normalizeBuilding(b: Building): Building {
 
 /** Hand-written or AI-written plans often leave ids out or repeat them; the editor selects by id, so every piece needs its own. */
 function uniqueIds(b: Building): void {
-  const fix = <T extends { id: string }>(list: T[], prefix: string) => {
-    const seen = new Set<string>();
+  const fix = <T extends { id: string }>(list: T[], prefix: string, seen = new Set<string>()) => {
     for (const item of list) {
       if (typeof item.id !== "string" || !item.id || seen.has(item.id)) item.id = uid(prefix);
       seen.add(item.id);
     }
   };
   fix(b.floors, "floor");
+  // The links, states and tap targets of doors and windows are kept per id for the whole house, so an id must not come back on
+  // another floor: the later floor's entry would replace the earlier one's, and a window with a blind lost it to its namesake
+  // upstairs that has none (#115). The first one keeps its id.
+  const openingIds = new Set<string>();
   for (const f of b.floors) {
     // rooms are referenced by openings and walls, so only missing room ids are filled in
     for (const r of f.rooms) if (typeof r.id !== "string" || !r.id) r.id = uid("room");
-    fix(f.openings, "op");
+    fix(f.openings, "op", openingIds);
     fix(f.furniture, "furn");
     fix(f.outdoor, "out");
   }

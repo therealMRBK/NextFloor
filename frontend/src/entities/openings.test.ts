@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, entity, floorWith, hassOf, opening } from "./fixtures.ts";
+import { emptyBuilding, newFloor, normalizeBuilding } from "../model.ts";
 import { DOOR_DEFAULT_OPEN, isUnlocked, openingEntities, openingState, windowPosition, withFrontIds } from "./openings.ts";
 
 const sensors = [
@@ -212,4 +213,38 @@ test("a gate moved by a relay or a push button (#134): the drive is tapped, the 
   // a chosen drive is kept as the opening's link
   const floor = floorWith([box("r", 0, 0, 5, 4, "a")], { openings: [opening("g", "r", "garage", { cover: "switch.gate" })] });
   assert.equal(openingEntities(hass, [floor]).get("g")?.cover, "switch.gate");
+});
+
+test("a window in a free wall outside every room keeps the blind linked by hand (#115)", () => {
+  const hass = hassOf(sensors, registry);
+  // the editor stores the wall's id as the room of such an opening
+  const floor = floorWith([box("r", 0, 0, 5, 4, "a")], { openings: [opening("w", "wall-1", "window", { wall: "wall-1", cover: "cover.blind" }), opening("x", "wall-1", "window", { wall: "wall-1" })] });
+  const links = openingEntities(hass, [floor]);
+  assert.equal(links.get("w")?.cover, "cover.blind");
+  assert.equal(openingState(hass, links.get("w")!).cover, 0);
+  // nothing is matched automatically without a room
+  assert.equal(links.get("x")?.cover, null);
+  assert.equal(links.get("x")?.contact, null);
+});
+
+test("two floors that reuse an opening id keep their own blinds: the upper window does not switch the lower one's off (#115)", () => {
+  const hass = hassOf([entity("cover.living", "open", { device_class: "shutter" })], {});
+  // a floor copied to the next storey: the same id on both, the cover linked on the ground floor and switched off upstairs
+  const raw = {
+    ...emptyBuilding(),
+    floors: [
+      { ...newFloor("eg", "EG", 0), rooms: [box("eg_room", 0, 0, 5, 4, null)], openings: [opening("fenster_erker_w", "eg_room", "window", { cover: "cover.living" })] },
+      { ...newFloor("dg", "DG", 2.8), rooms: [box("dg_room", 0, 0, 5, 4, null)], openings: [opening("fenster_erker_w", "dg_room", "window", { cover: "none" })] },
+    ],
+  };
+  // as stored, the links are kept per id for the whole house: the upper floor's entry replaces the lower one's
+  assert.equal(openingEntities(hass, raw.floors).get("fenster_erker_w")?.cover, null);
+  const b = normalizeBuilding(structuredClone(raw));
+  const [lower, upper] = b.floors.map((f) => f.openings[0]);
+  assert.equal(lower.id, "fenster_erker_w", "the first one keeps its id");
+  assert.notEqual(upper.id, lower.id);
+  const links = openingEntities(hass, b.floors);
+  assert.equal(links.get(lower.id)?.cover, "cover.living");
+  assert.equal(openingState(hass, links.get(lower.id)!).cover, 0);
+  assert.equal(links.get(upper.id)?.cover, null);
 });
