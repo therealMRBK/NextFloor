@@ -81,11 +81,11 @@ export interface CameraStand {
 /**
  * With "keep camera" on: what a switch from `from` to `to` (null is the house view) keeps of the camera, instead of fitting the
  * new view from the start view's side. Between two floors it keeps side, height and distance. The house view keeps side and
- * height and fits its own distance. A floor opened from the house view comes back as the last floor was left (#119); when no
- * floor was left yet, it keeps the side and height the house is looked at from, so the first floor does not turn round either.
+ * height and fits its own distance. A floor opened from the house view takes the side and height the house is looked at, and
+ * the distance the last floor was left with (fitted when no floor was left yet). As the house view keeps side and height, a
+ * floor comes back exactly as it was left unless the house was turned in between (#119), and then it follows that turn.
  */
 export function keptCamera(from: string | null, to: string | null, now: CameraStand, lastFloor: CameraStand | null): { theta: number; phi: number; radius?: number } {
-  if (to === null) return { theta: now.theta, phi: now.phi };
-  if (from !== null) return now;
-  return lastFloor ?? { theta: now.theta, phi: now.phi };
+  if (to !== null && from !== null) return now;
+  return { theta: now.theta, phi: now.phi, ...(to !== null && lastFloor ? { radius: lastFloor.radius } : {}) };
 }

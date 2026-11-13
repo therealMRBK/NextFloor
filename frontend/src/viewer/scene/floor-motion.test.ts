@@ -42,15 +42,17 @@ test("fading switches see-through materials off again at full opacity", () => {
   assert.equal(m.lines.opacity, 1);
 });
 
-test("a kept camera stays where it is between floors, and the first floor opened from the house view does not turn round", () => {
+test("a kept camera stays where it is between floors, and a floor opened from the house view does not turn round", () => {
   const now = { theta: 1.2, phi: 0.4, radius: 9 };
   // from one floor to another: side, height and distance stay
   assert.deepEqual(keptCamera("eg", "dg", now, null), now);
   // into the house view: side and height stay, the distance is fitted to the house
   assert.deepEqual(keptCamera("eg", null, now, null), { theta: 1.2, phi: 0.4 });
-  // back to a floor: as the last floor was left (#119)
-  const left = { theta: -0.3, phi: 0.9, radius: 7 };
-  assert.deepEqual(keptCamera(null, "eg", now, left), left);
-  // no floor was left yet: the floor opens from the side the house is looked at, at its own fitted distance
+  // back to a floor without turning the house: exactly as the floor was left (#119)
+  const left = { theta: 1.2, phi: 0.4, radius: 7 };
+  assert.deepEqual(keptCamera(null, "eg", { ...left, radius: 14 }, left), left);
+  // the house was turned in between: the floor follows that turn and keeps the distance it was left with
+  assert.deepEqual(keptCamera(null, "eg", { theta: -2, phi: 0.9, radius: 14 }, left), { theta: -2, phi: 0.9, radius: 7 });
+  // no floor was left yet: the side and height of the house view, at the floor's own fitted distance
   assert.deepEqual(keptCamera(null, "eg", now, null), { theta: 1.2, phi: 0.4 });
 });

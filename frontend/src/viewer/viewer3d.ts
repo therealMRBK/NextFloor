@@ -862,8 +862,8 @@ export class NextFloorViewer {
     const now = { theta: v.theta, phi: v.phi, radius: v.radius };
     let keep: { theta: number; phi: number; radius?: number } | null = null;
     if (this.keepCamera && floorId !== this.floorId) {
-      // the house view keeps the side and height but fits its own distance; coming back from it, a floor opens as the
-      // last floor was left (#119), and the first floor from the side the house is looked at
+      // the house view keeps the side and height but fits its own distance; a floor opened from it keeps the side and
+      // height of the house view and takes the distance the last floor was left with (#119)
       if (this.floorId !== null) this.lastFloorCamera = now;
       keep = keptCamera(this.floorId, floorId, now, this.lastFloorCamera);
     }

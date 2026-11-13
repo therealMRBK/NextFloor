@@ -6,7 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Fixed
 
-- **Keep camera: the first floor no longer turns the view round** (thanks @Gifford47): with *🎥 Keep camera* on (card option `keep_camera`), the first floor opened from the house view still flew to the start view's side. It now opens from the side and height the house is looked at, like every later switch. A floor that was open before still comes back as it was left.
+- **Keep camera: opening a floor from the house view no longer turns the view round** (thanks @Gifford47): with *🎥 Keep camera* on (card option `keep_camera`), a floor opened from the house view flew back to the angle the last floor was left with, or to the start view's side when no floor had been open yet, even after the house had been turned. It now opens from the side and height the house is looked at, at the distance the last floor was left with. Without turning the house in between, a floor still comes back exactly as it was left.
 
 ## [0.31.4.1]
 
