@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, floorWith, opening } from "../../../entities/fixtures.ts";
 import type { Building, Furniture, Placement } from "../../../model.ts";
-import { drawOrder, copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, insertOutdoorCorner, removeOutdoorCorner, edgeOf, furnitureForDevice, newFloorOpening, newFreeWall, newFurniture, newOpening, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, wallEndForLength, wallHeightPatch } from "./items.ts";
+import { drawOrder, copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, insertOutdoorCorner, removeOutdoorCorner, edgeOf, furnitureForDevice, newFloorOpening, newFreeWall, newFurniture, newOpening, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, wallEndForLength, wallHeightPatch, freeWallNear } from "./items.ts";
 import { NO_CHANGE, NOTHING_TO_MOVE, nudge, type Nudge } from "./nudge.ts";
 
 const sofa = (extra: Partial<Furniture> = {}): Furniture => ({ id: "s", type: "sofa", x: 1, z: 1, rotation: 0, w: 2, d: 0.9, h: 0.8, variant: null, ...extra });
@@ -220,4 +220,17 @@ test("a wall drawn by its face: the drawn line is that face, and the wall is fou
   // a thicker wall grows away from the drawn face
   const thicker = wallFromAxis(line[0], line[1], { ...wall, thickness: 0.5 }, 0.12);
   assert.ok(Math.abs(Math.abs(thicker[0][1]) - 0.25) < 1e-9);
+});
+
+test("a press near a free wall finds it by position, the nearest one when two are close", () => {
+  const walls = [
+    { id: "a", a: [0, 0] as [number, number], b: [10, 0] as [number, number] },
+    { id: "b", a: [0, 1] as [number, number], b: [10, 1] as [number, number] },
+  ];
+  const px = (p: [number, number]): [number, number] => [p[0] * 10, p[1] * 10];
+  assert.equal(freeWallNear(walls, [50, 3], px, 9), "a");
+  assert.equal(freeWallNear(walls, [50, 8], px, 9), "b", "the nearer of two");
+  assert.equal(freeWallNear(walls, [50, 40], px, 9), null, "too far from both");
+  assert.equal(freeWallNear(walls, [150, 0], px, 9), null, "beyond the end");
+  assert.equal(freeWallNear([], [1, 1], px, 9), null);
 });
