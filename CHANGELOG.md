@@ -2,6 +2,12 @@
 
 All notable changes to NextFloor, newest first. Every release lists what is **Added**, **Changed** and **Fixed**. Releases: [GitHub releases](https://github.com/therealMRBK/NextFloor/releases).
 
+## [Unreleased]
+
+### Fixed
+
+- **Keep camera: the first floor no longer turns the view round** (thanks @Gifford47): with *🎥 Keep camera* on (card option `keep_camera`), the first floor opened from the house view still flew to the start view's side. It now opens from the side and height the house is looked at, like every later switch. A floor that was open before still comes back as it was left.
+
 ## [0.31.4.1]
 
 ### Fixed

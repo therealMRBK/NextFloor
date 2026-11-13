@@ -48,7 +48,7 @@ import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
-import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
+import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
@@ -863,9 +863,9 @@ export class NextFloorViewer {
     let keep: { theta: number; phi: number; radius?: number } | null = null;
     if (this.keepCamera && floorId !== this.floorId) {
       // the house view keeps the side and height but fits its own distance; coming back from it, a floor opens as the
-      // last floor was left (#119)
+      // last floor was left (#119), and the first floor from the side the house is looked at
       if (this.floorId !== null) this.lastFloorCamera = now;
-      keep = floorId === null ? { theta: now.theta, phi: now.phi } : this.floorId !== null ? now : this.lastFloorCamera;
+      keep = keptCamera(this.floorId, floorId, now, this.lastFloorCamera);
     }
     this.floorId = floorId;
     this.roomId = null;
