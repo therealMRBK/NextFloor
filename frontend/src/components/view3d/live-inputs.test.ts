@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { box, entity, floorWith, hassOf } from "../../entities/fixtures.ts";
 import type { Building, Furniture } from "../../model.ts";
-import { gameNow } from "../../live/screen-sources.ts";
+import { gameNow, screenWatched } from "../../live/screen-sources.ts";
 import { renderLhCards } from "../../live/cards.ts";
 import { liveScreens, mediaInPlan, readSun, roofWindowStates, skyLightness } from "./live-inputs.ts";
 
@@ -122,6 +122,15 @@ test("a game takes the next artwork when the wide one has no picture", () => {
   hass.states["image.a_now"] = entity("image.a_now", "t", { entity_picture: "/a-now" });
   (hass.entities as Record<string, unknown>)["image.a_now"] = { entity_id: "image.a_now", device_id: "a", translation_key: "now_playing" };
   assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => s.picture), ["/a-now"]);
+});
+
+test("a screen follows every artwork of its accounts, also one that has no picture yet", () => {
+  const hass = xboxHass("on", "a");
+  hass.states["image.a_hero"] = entity("image.a_hero", "t", { entity_picture: "" });
+  hass.states["image.a_now"] = entity("image.a_now", "t", {});
+  (hass.entities as Record<string, unknown>)["image.a_now"] = { entity_id: "image.a_now", device_id: "a", translation_key: "now_playing" };
+  const watched = screenWatched(hass, monitor());
+  for (const id of ["media_player.xbox", "binary_sensor.a_in_game", "sensor.a_playing", "image.a_hero", "image.a_now", "binary_sensor.b_in_game", "image.b_now"]) assert.ok(watched.includes(id), id);
 });
 
 test("a game names the account that plays: the device's name, the user's own name first, nothing without a device", () => {

@@ -42,6 +42,7 @@ import type { FurnitureColors } from "../furniture-colors.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
 import { multiroom, type MediaNow } from "../live/media.ts";
+import { screenDeviceOn } from "../live/screen-sources.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { searchIndex, searchItems, type SearchItem } from "../search.ts";
 import { coverPositionable, lightAbilities } from "./quick-menu.ts";
@@ -1329,7 +1330,8 @@ export class NfView3d extends LitElement {
           const soc = Number(hass.states[extra]?.state);
           if (Number.isFinite(soc)) screens.set(f.id, { color: soc > 60 ? [0.29, 0.87, 0.5] : soc > 25 ? [0.98, 0.8, 0.08] : [0.97, 0.44, 0.44], level: 0.95, fill: soc / 100 });
         }
-        if (st && hasScreen(f.type)) {
+        // a screen with a device on it (a games console) stays dark while that device is off
+        if (st && hasScreen(f.type) && screenDeviceOn(hass, f)) {
           // a screen is lit or dark (what plays on it is drawn by NextFloor's TV screens); a light (an aquarium,
           // a lit panel) glows in its own colour, other entities in the neon cyan
           const lit = kindOf(st.entity_id) === "light" ? lightGlow(st) : null;

@@ -69,5 +69,7 @@ export function gameNow(hass: HomeAssistant, f: Furniture, name: string, at: Pla
 
 /** The entities a screen's picture follows. */
 export function screenWatched(hass: HomeAssistant, f: Furniture): (string | null | undefined)[] {
-  return [f.screen_device, ...(f.screen_sources ?? []).flatMap((id) => [id, titleOf(hass, id), artOf(hass, id)])];
+  // every artwork, also one without a picture yet: when it gets one, the screen changes to it
+  const art = (id: string) => ["titled_hero_art", "now_playing"].map((key) => sibling(hass, id, "image", [key]));
+  return [f.screen_device, ...(f.screen_sources ?? []).flatMap((id) => [id, titleOf(hass, id), ...art(id)])];
 }

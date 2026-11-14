@@ -15,6 +15,14 @@ test("a TV takes the media player of its room, a real TV before another player",
   assert.equal(furnitureEntities(hass, [floor]).get("tv")?.entity, "media_player.living_tv");
 });
 
+test("a console set as a screen's device is not taken by another TV as its player", () => {
+  const hass = hassOf([entity("media_player.console", "on")], inRoom("media_player.console"));
+  const tvOnly = floorWith([room], { furniture: [piece("tv", "tv_board")] });
+  assert.equal(furnitureEntities(hass, [tvOnly]).get("tv")?.entity, "media_player.console", "free, it is taken");
+  const both = floorWith([room], { furniture: [piece("tv", "tv_board"), piece("monitor", "desk", { screen_device: "media_player.console" })] });
+  assert.equal(furnitureEntities(hass, [both]).get("tv")?.entity ?? null, null, "set on a screen, it is not");
+});
+
 test("a desk's monitor does not take a smart speaker, but a TV board takes any player", () => {
   const hass = hassOf([entity("media_player.speaker", "idle")], inRoom("media_player.speaker"));
   assert.equal(furnitureEntities(hass, [floorWith([room], { furniture: [piece("desk", "desk")] })]).get("desk"), undefined);
