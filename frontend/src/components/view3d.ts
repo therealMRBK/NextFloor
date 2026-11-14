@@ -6,7 +6,7 @@ import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
-import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
+import { liveScreens, liveSprays, mediaInPlan, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { roomToggleLights, roomToggleMode, type RoomToggle } from "./view3d/room-toggle.ts";
 import { ownTaps } from "./view3d/own-taps.ts";
@@ -41,8 +41,7 @@ import { coverageColor, isAccessPoint, networkHealth, readAccessPoint } from "..
 import type { FurnitureColors } from "../furniture-colors.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
-import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
-import { gameNow, screenDeviceOn } from "../live/screen-sources.ts";
+import { multiroom, type MediaNow } from "../live/media.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { searchIndex, searchItems, type SearchItem } from "../search.ts";
 import { coverPositionable, lightAbilities } from "./quick-menu.ts";
@@ -996,7 +995,7 @@ export class NfView3d extends LitElement {
     const liveFlows = (this.flows ?? this._flows) && !this.dimmed;
     v.setLiveEnergy(liveFlows ? livePic.arcs : [], liveFlows ? livePic.sparks : []);
     if (JSON.stringify(livePic) !== JSON.stringify(this._liveEnergy)) this._liveEnergy = livePic;
-    const liveMedia = this.liveMedia(hass, b);
+    const liveMedia = mediaInPlan(hass, b, this.furnitureLinks);
     const playing = liveMedia.filter((m) => m.playing && !this.dimmed);
     v.setLiveSound(
       playing.filter((m) => m.rings > 0).map((m) => ({ id: m.entity, at: m.at, color: m.color, level: m.volume ?? 0.5, size: m.rings })),
@@ -2515,33 +2514,6 @@ export class NfView3d extends LitElement {
       }
     }
     return out;
-  }
-
-  /** Media players in the plan: placed as a device, or linked to furniture (TV, speaker), and games on a monitor; their point is on top of it. */
-  private liveMedia(hass: HomeAssistant, b: Building): MediaNow[] {
-    const spots: { entity: string; name: string; at: { floorId: string; x: number; z: number; y: number }; rings?: number | null }[] = [];
-    const games: MediaNow[] = [];
-    for (const floor of b.floors) {
-      for (const f of floor.furniture) {
-        const name = f.name || furnitureName(hass, f.type);
-        const at = { floorId: floor.id, x: f.x, z: f.z, y: mountBase(floor, f) + f.h + 0.15 };
-        if (hasScreen(f.type)) {
-          // same as the picture on the screen: dark while its device is off, and a game goes before a linked player
-          if (!screenDeviceOn(hass, f)) continue;
-          const game = gameNow(hass, f, name, at);
-          if (game) {
-            games.push(game);
-            continue;
-          }
-        }
-        const e = this.furnitureLinks?.get(f.id)?.entity;
-        if (e?.startsWith("media_player.")) spots.push({ entity: e, name, at, rings: f.sound_rings });
-      }
-      for (const pl of floor.placements) {
-        if (pl.entity_id.startsWith("media_player.")) spots.push({ entity: pl.entity_id, name: pl.name || entityName(hass, pl.entity_id), at: { floorId: floor.id, x: pl.x, z: pl.z, y: (pl.y ?? 1.1) + 0.15 }, rings: pl.sound_rings });
-      }
-    }
-    return [...mediaNow(hass, spots), ...games];
   }
 
   /** Today's appointments, loaded at most every 15 minutes, and again after midnight. */

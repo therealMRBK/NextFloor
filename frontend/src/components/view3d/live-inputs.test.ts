@@ -3,7 +3,8 @@ import { test } from "node:test";
 import { box, entity, floorWith, hassOf } from "../../entities/fixtures.ts";
 import type { Building, Furniture } from "../../model.ts";
 import { gameNow } from "../../live/screen-sources.ts";
-import { liveScreens, readSun, roofWindowStates, skyLightness } from "./live-inputs.ts";
+import { renderLhCards } from "../../live/cards.ts";
+import { liveScreens, mediaInPlan, readSun, roofWindowStates, skyLightness } from "./live-inputs.ts";
 
 const tv = (extra: Partial<Furniture> = {}): Furniture => ({ id: "tv", type: "tv_board", x: 2, z: 2, rotation: 0, w: 1.4, d: 0.4, h: 0.5, variant: null, ...extra });
 const house = (furniture: Furniture[], placements: { entity_id: string; x: number; z: number; y: null }[] = [], roofWindows: unknown[] = []): Building =>
@@ -82,13 +83,45 @@ test("a game without a title or art still shows, with what is known", () => {
   assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => [s.title, s.picture]), [["", null]]);
 });
 
-test("a game on a screen makes a card without a player's controls, only while the console is on", () => {
+test("a game on a screen makes a card in the plan, before its own player, only while the console is on", () => {
+  const links = new Map([["tv", { entity: "media_player.tv", power: null }]]) as never;
+  const cards = (console: string, account: "a" | "b" | null, f = monitor()) => {
+    const hass = xboxHass(console, account);
+    hass.states["media_player.tv"] = entity("media_player.tv", "playing", { media_title: "Film" });
+    return mediaInPlan(hass, house([{ ...f, name: "Monitor" }]), links).map((m) => [m.entity, m.title, m.picture, m.game ?? false, m.name]);
+  };
+  assert.deepEqual(cards("on", "a"), [["tv", "Halo", "/a-hero", true, "Monitor"]], "the game, not the linked player");
+  assert.deepEqual(cards("off", "a"), [], "console off: no game and no player either");
+  assert.deepEqual(cards("on", null), [["media_player.tv", "Film", null, false, "Monitor"]], "nobody plays: the linked player");
+  assert.deepEqual(cards("on", "a", tv()), [["media_player.tv", "Film", null, false, "Monitor"]], "a plain TV has no game");
+});
+
+/** The text of a lit template with everything it nests, to look for what it draws without a browser. */
+function markup(value: unknown): string {
+  if (Array.isArray(value)) return value.map(markup).join("");
+  if (value && typeof value === "object" && "strings" in value && "values" in value) {
+    const t = value as { strings: readonly string[]; values: unknown[] };
+    return t.strings.map((s, i) => s + (i < t.values.length ? markup(t.values[i]) : "")).join("");
+  }
+  return typeof value === "string" ? value : "";
+}
+
+test("a game's card has no player buttons, a player's card has them", () => {
   const at = { floorId: "g", x: 2, z: 2, y: 1 };
-  const card = gameNow(xboxHass("on", "a"), monitor(), "Monitor", at);
-  assert.deepEqual([card?.entity, card?.title, card?.picture, card?.playing, card?.game, card?.name], ["tv", "Halo", "/a-hero", true, true, "Monitor"]);
-  assert.equal(gameNow(xboxHass("off", "a"), monitor(), "Monitor", at), null, "console off");
-  assert.equal(gameNow(xboxHass("on", null), monitor(), "Monitor", at), null, "nobody plays");
-  assert.equal(gameNow(xboxHass("on", "a"), tv(), "TV", at), null, "a plain TV has no game");
+  const game = gameNow(xboxHass("on", "a"), monitor(), "Monitor", at)!;
+  const player = { ...game, entity: "media_player.tv", game: undefined };
+  const drawn = (m: typeof game) => markup(renderLhCards(undefined, [{ kind: "media", at, media: m }], () => undefined));
+  assert.ok(drawn(game).includes("Halo"));
+  assert.ok(!drawn(game).includes("live-actions") && !drawn(game).includes("live-btn"), "no controls on a game");
+  assert.ok(drawn(player).includes("live-actions") && drawn(player).includes("live-btn"), "controls on a player");
+});
+
+test("a game takes the next artwork when the wide one has no picture", () => {
+  const hass = xboxHass("on", "a");
+  hass.states["image.a_hero"] = entity("image.a_hero", "t", { entity_picture: "" });
+  hass.states["image.a_now"] = entity("image.a_now", "t", { entity_picture: "/a-now" });
+  (hass.entities as Record<string, unknown>)["image.a_now"] = { entity_id: "image.a_now", device_id: "a", translation_key: "now_playing" };
+  assert.deepEqual(liveScreens(hass, house([monitor()]), null).map((s) => s.picture), ["/a-now"]);
 });
 
 test("a game names the account that plays: the device's name, the user's own name first, nothing without a device", () => {

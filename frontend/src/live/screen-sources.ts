@@ -12,9 +12,9 @@ import { appColor, type MediaNow } from "./media.ts";
 const NOT_ON = ["off", "standby", "unavailable", "unknown"];
 const NO_TEXT = ["unavailable", "unknown", ""];
 
-/** The entity of the account's device with one of these translation keys (or, without keys, these words in its id), the first key first. */
-function sibling(hass: HomeAssistant, account: string, domain: string, keys: string[]): string | null {
-  const own = deviceSiblings(hass, account).filter((id) => id.startsWith(`${domain}.`) && hass.states[id]);
+/** The entity of the account's device with one of these translation keys (or, without keys, these words in its id), the first key first; only entities that are usable count. */
+function sibling(hass: HomeAssistant, account: string, domain: string, keys: string[], usable: (id: string) => boolean = () => true): string | null {
+  const own = deviceSiblings(hass, account).filter((id) => id.startsWith(`${domain}.`) && hass.states[id] && usable(id));
   for (const key of keys) {
     const hit = own.find((id) => hass.entities?.[id]?.translation_key === key) ?? own.find((id) => !hass.entities?.[id]?.translation_key && id.includes(key));
     if (hit) return hit;
@@ -23,7 +23,12 @@ function sibling(hass: HomeAssistant, account: string, domain: string, keys: str
 }
 
 const titleOf = (hass: HomeAssistant, account: string) => sibling(hass, account, "sensor", ["now_playing"]);
-const artOf = (hass: HomeAssistant, account: string) => sibling(hass, account, "image", ["titled_hero_art", "now_playing"]);
+const pictureOf = (hass: HomeAssistant, id: string): string | null => {
+  const picture = hass.states[id]?.attributes.entity_picture;
+  return typeof picture === "string" && picture ? picture : null;
+};
+// the first artwork that has a picture: the titled hero art, or else the now-playing image
+const artOf = (hass: HomeAssistant, account: string) => sibling(hass, account, "image", ["titled_hero_art", "now_playing"], (id) => pictureOf(hass, id) !== null);
 
 /** A game account's "In game" sensor: what a screen can take as a source. */
 export const isGameAccount = (hass: HomeAssistant, id: string): boolean => {
@@ -53,8 +58,7 @@ export function gameOnScreen(hass: HomeAssistant, f: Furniture): { title: string
   const titleId = titleOf(hass, account);
   const title = titleId ? hass.states[titleId].state : "";
   const artId = artOf(hass, account);
-  const picture = artId ? hass.states[artId].attributes.entity_picture : null;
-  return { title: NO_TEXT.includes(title) ? "" : title, picture: typeof picture === "string" && picture ? picture : null, player: accountName(hass, account) };
+  return { title: NO_TEXT.includes(title) ? "" : title, picture: artId ? pictureOf(hass, artId) : null, player: accountName(hass, account) };
 }
 
 /** The game on a screen, for its card above the screen; it has no player of its own, so the card goes by the screen's id. */
