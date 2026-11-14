@@ -12,9 +12,12 @@ import { appColor, type MediaNow } from "./media.ts";
 const NOT_ON = ["off", "standby", "unavailable", "unknown"];
 const NO_TEXT = ["unavailable", "unknown", ""];
 
-/** The entity of the account's device with one of these translation keys (or, without keys, these words in its id), the first key first; only entities that are usable count. */
-function sibling(hass: HomeAssistant, account: string, domain: string, keys: string[], usable: (id: string) => boolean = () => true): string | null {
-  const own = deviceSiblings(hass, account).filter((id) => id.startsWith(`${domain}.`) && hass.states[id] && usable(id));
+/**
+ * The entity of the account's device with one of these translation keys (or, without keys, these words in its id), the first key first.
+ * Only usable entities count: by default those that have a state; the watch list takes every entity of the registry.
+ */
+function sibling(hass: HomeAssistant, account: string, domain: string, keys: string[], usable: (id: string) => boolean = (id) => !!hass.states[id]): string | null {
+  const own = deviceSiblings(hass, account).filter((id) => id.startsWith(`${domain}.`) && usable(id));
   for (const key of keys) {
     const hit = own.find((id) => hass.entities?.[id]?.translation_key === key) ?? own.find((id) => !hass.entities?.[id]?.translation_key && id.includes(key));
     if (hit) return hit;
@@ -69,7 +72,8 @@ export function gameNow(hass: HomeAssistant, f: Furniture, name: string, at: Pla
 
 /** The entities a screen's picture follows. */
 export function screenWatched(hass: HomeAssistant, f: Furniture): (string | null | undefined)[] {
-  // every artwork, also one without a picture yet: when it gets one, the screen changes to it
-  const art = (id: string) => ["titled_hero_art", "now_playing"].map((key) => sibling(hass, id, "image", [key]));
-  return [f.screen_device, ...(f.screen_sources ?? []).flatMap((id) => [id, titleOf(hass, id), ...art(id)])];
+  // the title and every artwork from the registry, also ones without a state or a picture yet: when they get one, the screen changes
+  const any = () => true;
+  const parts = (id: string) => [sibling(hass, id, "sensor", ["now_playing"], any), ...["titled_hero_art", "now_playing"].map((key) => sibling(hass, id, "image", [key], any))];
+  return [f.screen_device, ...(f.screen_sources ?? []).flatMap((id) => [id, ...parts(id)])];
 }

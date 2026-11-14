@@ -131,6 +131,11 @@ test("a screen follows every artwork of its accounts, also one that has no pictu
   (hass.entities as Record<string, unknown>)["image.a_now"] = { entity_id: "image.a_now", device_id: "a", translation_key: "now_playing" };
   const watched = screenWatched(hass, monitor());
   for (const id of ["media_player.xbox", "binary_sensor.a_in_game", "sensor.a_playing", "image.a_hero", "image.a_now", "binary_sensor.b_in_game", "image.b_now"]) assert.ok(watched.includes(id), id);
+  // a title or artwork that is registered but has no state yet is watched too
+  delete hass.states["sensor.a_playing"];
+  delete hass.states["image.a_hero"];
+  const later = screenWatched(hass, monitor());
+  assert.ok(later.includes("sensor.a_playing") && later.includes("image.a_hero"), "registered, no state yet");
 });
 
 test("a game names the account that plays: the device's name, the user's own name first, nothing without a device", () => {
