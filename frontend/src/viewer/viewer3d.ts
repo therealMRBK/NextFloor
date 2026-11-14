@@ -48,7 +48,7 @@ import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
-import { easeFloor, fadeMaterials, floorShare, floorTarget } from "./scene/floor-motion.ts";
+import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
@@ -80,7 +80,7 @@ export type { Theme } from "./theme.ts";
 import { ALWAYS, DEG, GeoBuffer, LineBuffer, pushPrism } from "./geo.ts";
 import { buildLightSurface, lightColors, type LightSurface } from "./lighting.ts";
 import { animateGlow } from "../light-effects.ts";
-import { buildOpeningParts, CLOSED, type OpeningState } from "./openings.ts";
+import { buildOpeningParts, openingSlots, CLOSED, type OpeningState } from "./openings.ts";
 import { WeatherLayer, type SkyView } from "./live-weather.ts";
 import { EnergyLayer, type EnergyArc, type PlanPoint, type SparkField } from "./live-energy.ts";
 import { SoundLayer, type SoundSpot } from "./live-sound.ts";
@@ -861,11 +861,14 @@ export class NextFloorViewer {
     const v = this.controls.view;
     const now = { theta: v.theta, phi: v.phi, radius: v.radius };
     let keep: { theta: number; phi: number; radius?: number } | null = null;
-    if (this.keepCamera && floorId !== this.floorId) {
+    // not on the very first call, which sets the view up: a tablet that starts on a floor opens in its start view
+    const firstCall = !this.floorSet;
+    this.floorSet = true;
+    if (this.keepCamera && !firstCall && floorId !== this.floorId) {
       // the house view keeps the side and height but fits its own distance; coming back from it, a floor opens as the
-      // last floor was left (#119)
+      // last floor was left (#119), and the first floor from the side the house is looked at
       if (this.floorId !== null) this.lastFloorCamera = now;
-      keep = floorId === null ? { theta: now.theta, phi: now.phi } : this.floorId !== null ? now : this.lastFloorCamera;
+      keep = keptCamera(this.floorId, floorId, now, this.lastFloorCamera);
     }
     this.floorId = floorId;
     this.roomId = null;
@@ -2035,8 +2038,7 @@ export class NextFloorViewer {
     for (const fv of this.floors) {
       this.buildLamps(fv);
       this.buildScreens(fv);
-      const prev = previousOpenings.get(fv.floor.id);
-      for (const info of fv.geo.openings) fv.openings.set(info.opening.id, prev?.get(info.opening.id) ?? this.openingTargets.get(info.opening.id) ?? CLOSED);
+      fv.openings = openingSlots(fv.geo.openings, previousOpenings.get(fv.floor.id), this.openingTargets);
       this.buildOpenings(fv);
       this.buildLightSurface(fv);
       this.buildSun(fv);
@@ -2350,7 +2352,7 @@ export class NextFloorViewer {
     // plugin wedges on the floor are drawn at every quality: they are also what one taps
     const wedges: FloorView["wedgeTris"] = [];
     for (const marker of this.devices) if (marker.floorId === fv.floor.id && marker.wedge) {
-      const range = addFloorWedge(cones, marker, fv.geo.walls2d);
+      const range = addFloorWedge(cones, marker, fv.geo.walls2d, fv.floor.height);
       if (!marker.wedge.through) wedges.push({ id: marker.id, ...range });
     }
     fv.wedgeTris = wedges;
@@ -2548,6 +2550,8 @@ export class NextFloorViewer {
   }
 
   private keepCamera = false;
+  /** Whether a floor (or the house) was chosen yet: the first choice sets the view up and keeps no camera. */
+  private floorSet = false;
   /** The camera of the floor last left while the camera is kept: a floor opened from the house view takes it again (#119). */
   private lastFloorCamera: { theta: number; phi: number; radius: number } | null = null;
   private zoom = 1;

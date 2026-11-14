@@ -48,6 +48,29 @@ function assign(openings: Opening[], entities: string[], shared = false): Map<st
 const chosenOr = (choice: string | null, automatic: string | undefined): string | null => (choice === "none" ? null : (choice ?? automatic ?? null));
 const unlessNone = (ref: string | null | undefined): string | null => (ref && ref !== "none" ? ref : null);
 
+/** The links of one opening: what was set by hand, else the automatic match of its room's area. */
+function linksOf(o: Opening, automaticCover: string | undefined, automaticContact: string | undefined): OpeningEntities {
+  const secondLeaf = o.leaves === 2;
+  return {
+    cover: chosenOr(o.cover, automaticCover),
+    // a window with a handle sensor gets no plain contact automatically
+    contact: o.sensor === "handle" && o.contact == null ? null : chosenOr(o.contact, automaticContact),
+    tilt: o.tilt === "none" ? null : o.tilt,
+    contact2: secondLeaf ? unlessNone(o.contact2) : null,
+    tilt2: secondLeaf ? unlessNone(o.tilt2) : null,
+    position: unlessNone(o.position),
+    positionInverted: !!o.position_inverted,
+    tiltAngle: unlessNone(o.tilt_angle),
+    tiltMax: o.tilt_max ?? null,
+    tiltOffset: o.tilt_offset ?? null,
+    tiltInvert: !!o.tilt_invert,
+    shut: !!o.shut,
+    angled: o.type === "door" && !!o.open_angle,
+    lock: o.type === "door" ? unlessNone(o.lock) : null,
+    cover2: o.type === "garage" ? null : unlessNone(o.cover2),
+  };
+}
+
 /**
  * The entities of every door and window: those set by hand, otherwise matched automatically with the covers and
  * contact sensors of the room's area, in the order the openings sit along the room's outline.
@@ -73,27 +96,12 @@ export function openingEntities(hass: HomeAssistant, floors: readonly Floor[]): 
       for (const o of openings) {
         const covers = o.type === "window" ? windowBlind : o.type === "garage" ? garageCover : null;
         const contacts = o.type === "window" ? windowContact : o.type === "garage" ? garageContact : doorContact;
-        const secondLeaf = o.leaves === 2;
-        result.set(o.id, {
-          cover: chosenOr(o.cover, covers?.get(o.id)),
-          // a window with a handle sensor gets no plain contact automatically
-          contact: o.sensor === "handle" && o.contact == null ? null : chosenOr(o.contact, contacts.get(o.id)),
-          tilt: o.tilt === "none" ? null : o.tilt,
-          contact2: secondLeaf ? unlessNone(o.contact2) : null,
-          tilt2: secondLeaf ? unlessNone(o.tilt2) : null,
-          position: unlessNone(o.position),
-          positionInverted: !!o.position_inverted,
-          tiltAngle: unlessNone(o.tilt_angle),
-          tiltMax: o.tilt_max ?? null,
-          tiltOffset: o.tilt_offset ?? null,
-          tiltInvert: !!o.tilt_invert,
-          shut: !!o.shut,
-          angled: o.type === "door" && !!o.open_angle,
-          lock: o.type === "door" ? unlessNone(o.lock) : null,
-          cover2: o.type === "garage" ? null : unlessNone(o.cover2),
-        });
+        result.set(o.id, linksOf(o, covers?.get(o.id), contacts.get(o.id)));
       }
     }
+    // an opening in a free wall that stands in no room carries the wall's id as its room: there is no area to match from, but
+    // what was linked by hand still counts. Without an entry its blind was never drawn and a tap did nothing (#115).
+    for (const o of floor.openings) if (!result.has(o.id) && !floor.rooms.some((r) => r.id === o.room_id)) result.set(o.id, linksOf(o, undefined, undefined));
   }
   return result;
 }

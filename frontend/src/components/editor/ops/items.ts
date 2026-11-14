@@ -242,3 +242,20 @@ export function drawOrder(floor: Floor): Furniture[] {
     .sort((a, b) => a.base - b.base || a.index - b.index)
     .map((e) => e.item);
 }
+
+/**
+ * The free wall nearest to a press, within `reach` (screen units) of its line: found by geometry, not by what the browser says
+ * was under the pointer. A wall lying over an outdoor area or a room is drawn above it, but the thin invisible grab line lost the
+ * press to the area below (the lawn was selected instead of its fence); the closest wall wins.
+ */
+export function freeWallNear(walls: readonly Pick<FreeWall, "id" | "a" | "b">[], press: [number, number], toScreen: (p: Vec2) => [number, number], reach: number): string | null {
+  let best: { id: string; d: number } | null = null;
+  for (const w of walls) {
+    const [a, b] = [toScreen(w.a), toScreen(w.b)];
+    const l2 = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2;
+    const t = l2 < 1e-9 ? 0 : Math.min(1, Math.max(0, ((press[0] - a[0]) * (b[0] - a[0]) + (press[1] - a[1]) * (b[1] - a[1])) / l2));
+    const d = Math.hypot(press[0] - (a[0] + (b[0] - a[0]) * t), press[1] - (a[1] + (b[1] - a[1]) * t));
+    if (d <= reach && (!best || d < best.d)) best = { id: w.id, d };
+  }
+  return best?.id ?? null;
+}

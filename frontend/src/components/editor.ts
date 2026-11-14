@@ -97,7 +97,7 @@ import { RoofController } from "./editor/roof-controller.ts";
 import { importEnergyPrefs } from "./editor/ops/energy-import.ts";
 import { newEnergyDevice } from "./editor/ops/energy-devices.ts";
 import { EditHistory } from "./editor/history.ts";
-import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, wallOnSide, wallAxisLine, wallFromAxis, type WallSide, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
+import { copyOfFurniture, copyOfOutdoorArea, deviceForFurniture, furnitureForDevice, newFloorOpening, newFreeWall, wallOnSide, wallAxisLine, wallFromAxis, freeWallNear, type WallSide, newFurniture, newOutdoorArea, offsetOnEdge, openingKindPatch, parkingSpotFor, placeInRoom, removeDevice, roomCentre, turnedBy } from "./editor/ops/items.ts";
 import { NO_CHANGE, NOTHING_TO_MOVE, nudge, type NudgeTarget } from "./editor/ops/nudge.ts";
 import { areaChoice, copyOfRoom, cornerMoved, evenCeilingLights, newRoom, rectangleAfter, removeCorner, removeRoom, type RectField } from "./editor/ops/rooms.ts";
 import { translate as moveScope, turnQuarterClockwise, type Scope } from "./editor/ops/transform.ts";
@@ -1554,6 +1554,12 @@ export class NfEditor extends LitElement {
     if (outVertex && this.isAdmin) {
       const [id, index] = outVertex.split(":");
       return { kind: "outvertex", id, index: Number(index), base, moved: false };
+    }
+    // a wall over an outdoor area or a room is found by its position: the area below won the press otherwise
+    const nearWall = freeWallNear(this.floor?.walls ?? [], local, (p) => this.toScreen(p), 9);
+    if (nearWall) {
+      this.selectItem("wall", nearWall);
+      return this.moves(press, { kind: "wallmove", id: nearWall, end: null, start: world, startScreen: local, base, moved: false });
     }
     const outdoor = find("[data-outdoor]", "data-outdoor");
     if (outdoor && !target.closest("[data-room]") && !this.roomAt(world)) {

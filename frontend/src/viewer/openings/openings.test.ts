@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { newFloor, type Opening } from "../../model.ts";
 import { buildFloorGeometry } from "../build.ts";
-import { buildOpeningParts, CLOSED, type OpeningState } from "../openings.ts";
+import { buildOpeningParts, openingSlots, CLOSED, type OpeningState } from "../openings.ts";
 import { slidingPanes } from "./windows.ts";
 import { frontPieces } from "../../geometry/glass-front.ts";
 
@@ -324,4 +324,28 @@ test("a bay window over two edges gets its shutter box once its state is known u
   const byPiece = new Map([["p1", { ...CLOSED, cover: 0.5 }], ["p2", { ...CLOSED, cover: 0.5 }]]);
   assert.equal(triangles(buildOpeningParts(infos, byPiece, 1.2).blinds), 0, "states only per piece: the pane finds none");
   assert.ok(triangles(buildOpeningParts(infos, withFrontIds(byPiece, [floor]), 1.2).blinds) > 0);
+});
+
+test("the 3D view keeps a slot for the front id of a bay window, so its shutter box is really drawn (#115)", async () => {
+  const { withFrontIds } = await import("../../entities/openings.ts");
+  const base = { room_id: "a", type: "window", sill: 0, height: 2.1, hinge: "left", leaves: 2, swing: "in", cover: "cover.x", contact: null, contact2: null, tilt: null, front: "front-p1" } as const;
+  const pieces = [
+    { ...base, id: "p1", edge: 0, offset: 4.8, width: 1.2 },
+    { ...base, id: "p2", edge: 1, offset: 0, width: 1.2 },
+  ] as unknown as Opening[];
+  const plain = { ...base, id: "w", edge: 2, offset: 2, width: 1.2, front: null } as unknown as Opening;
+  const floor = { ...newFloor("f", "F", 0), rooms: [room], openings: [...pieces, plain] };
+  const infos = buildFloorGeometry(floor, 0.3, 0.1).openings;
+  // what the 3D view is given: a state per piece, and for the pane one under its front id
+  const up = { ...CLOSED, cover: 0 };
+  const targets = withFrontIds(new Map([["p1", up], ["p2", up], ["w", up]]), [floor]);
+  const slots = openingSlots(infos, undefined, targets);
+  assert.deepEqual([...slots.keys()].sort(), ["front-p1", "p1", "p2", "w"]);
+  // the shutter box is a frame part: with the blind up the pane must still have more frame than without any blind
+  const framesOf = (states: ReadonlyMap<string, OpeningState>) => triangles(buildOpeningParts(infos.filter((i) => i.opening.front), states, 3).frames);
+  assert.ok(framesOf(slots) > framesOf(new Map()), "the pane has its shutter box");
+  // a slot that is moving keeps its state, and the blind comes down on the pane
+  const moving = openingSlots(infos, new Map([["front-p1", { ...CLOSED, cover: 0.5 }]]), targets);
+  assert.equal(moving.get("front-p1")?.cover, 0.5);
+  assert.ok(triangles(buildOpeningParts(infos.filter((i) => i.opening.front), moving, 3).blinds) > 0);
 });

@@ -53,7 +53,7 @@ import { fixtureGlow, shinesAsLamp } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage, markNoteDone } from "../api.ts";
-import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
+import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, isStatusDevice, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
 import { floorCounts, floorInfoText, personsInRooms, powerText } from "../presence.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HassEntity, HomeAssistant } from "../types.ts";
@@ -1243,7 +1243,7 @@ export class NfView3d extends LitElement {
           const lamp = this.lampMarker(hass, floor, f, linked?.entity ?? null);
           // a device from a pack with a status light (a NAS, a router) linked to a sensor: its small lights glow, the room stays as it is (#153)
           const lampSt = linked?.entity ? hass.states[linked.entity] : undefined;
-          if (plate && lampSt && !shinesAsLamp(lampSt) && isActive(lampSt) && plate.parts.some((p) => p.glow || p.screen)) screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8, leds: true });
+          if (plate && lampSt && (!shinesAsLamp(lampSt) || isStatusDevice(f.type)) && isActive(lampSt) && plate.parts.some((p) => p.glow || p.screen)) screens.set(f.id, { color: [0.3, 0.85, 1], level: 0.8, leds: true });
           // a lamp with a power sensor (a smart plug, a measuring switch): its watts on the pin and in the house's balance
           const lampW = linked?.power ? readPower(hass.states[linked.power]) : null;
           if (linked?.power && lampW !== null) {
@@ -1662,7 +1662,7 @@ export class NfView3d extends LitElement {
       active: (st ? isActive(st) : false) || !!otherOn,
       unavailable: st ? isUnavailable(st) : false,
       // a sensor that reports "on" (a NAS's status, a running device) is no light: it must not light the room (#153)
-      glow: (st && shinesAsLamp(st)) || others.length ? scaleGlow(fixtureGlow(st && shinesAsLamp(st) ? st : undefined, others, f.color_entity && f.color_entity !== "none" ? hass.states[f.color_entity] : undefined), f.glow_scale) : null,
+      glow: !isStatusDevice(f.type) && ((st && shinesAsLamp(st)) || others.length) ? scaleGlow(fixtureGlow(st && shinesAsLamp(st) ? st : undefined, others, f.color_entity && f.color_entity !== "none" ? hass.states[f.color_entity] : undefined), f.glow_scale) : null,
       lamp: model,
       rotation: f.rotation,
       mirror: !!f.mirror,
@@ -1676,7 +1676,7 @@ export class NfView3d extends LitElement {
       pack: item ? f.type : null,
       lightY: item ? (item.mount === "ceiling" ? base : base + f.h * 0.85) : undefined,
       ceiling: H,
-      effect: st?.state === "on" && shinesAsLamp(st) ? lightAnimation(f, lightEffectSource(hass, f, entity)) : undefined,
+      effect: st?.state === "on" && shinesAsLamp(st) && !isStatusDevice(f.type) ? lightAnimation(f, lightEffectSource(hass, f, entity)) : undefined,
       variant: f.variant,
       show: f.marker ?? undefined,
       fromFurniture: true,

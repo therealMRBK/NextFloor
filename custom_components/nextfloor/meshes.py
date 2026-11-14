@@ -48,6 +48,15 @@ class MeshView(HomeAssistantView):
             body=data, content_type="model/gltf-binary", headers={"Cache-Control": "private, max-age=3600"}
         )
 
+    async def head(self, request: web.Request, mesh_id: str) -> web.Response:
+        """Is the model there? (the upload page asks once per model; a refused HEAD showed as a 405 in the console)"""
+        hass: HomeAssistant = request.app["hass"]
+        path = _path(hass, mesh_id)
+        if path is None:
+            return web.Response(status=HTTPStatus.BAD_REQUEST)
+        found = await hass.async_add_executor_job(path.is_file)
+        return web.Response(status=HTTPStatus.OK if found else HTTPStatus.NOT_FOUND, content_type="model/gltf-binary")
+
     async def post(self, request: web.Request, mesh_id: str) -> web.Response:
         hass: HomeAssistant = request.app["hass"]
         if not request["hass_user"].is_admin:

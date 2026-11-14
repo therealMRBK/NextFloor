@@ -89,7 +89,8 @@ export class MapLayer {
 
   private draw(ctx: CanvasRenderingContext2D, tile: MapTile, template: string, generation: number, col: number, row: number): void {
     void tileBlob(tileUrl(template, tile))
-      .then((blob) => (blob ? createImageBitmap(blob) : null))
+      // a tile that cannot be decoded (an error page instead of a picture) leaves its square empty
+      .then((blob) => (blob ? createImageBitmap(blob).catch(() => null) : null))
       .then((bitmap) => {
         if (!bitmap || generation !== this.generation) return;
         ctx.drawImage(bitmap, col * TILE_PX, row * TILE_PX, TILE_PX, TILE_PX);
