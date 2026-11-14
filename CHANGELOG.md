@@ -4,8 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.2]
+
 ### Fixed
 
+- **Roofs and other thin loft parts of a furniture pack can be seen from below** (thanks @daluposoft, #170): a `loft` had no bottom face, so a sloped roof built from lofts vanished as soon as the camera went under it. Lofts of pack items now have an underside.
+- **A NAS or router still lit the room when linked to a switch or light** (thanks @Guenni75, #153): the 0.31.4.1 fix only covered sensors. Pack devices with status lights (NAS, router, server rack, PC tower, inverter, wallbox, battery, boiler, game console and the like) now never light their room, whatever they are linked to; only their own small lights glow.
 - **A window lost its roller shutter in 3D to a window with the same id on another floor** (thanks @Gifford47, #115): when two floors used the same id for a window or door (a plan written by hand or by an AI), the later floor's links replaced the earlier one's. A window with a cover picked in the editor then showed no shutter box, no blind and did not react to a tap, because its namesake upstairs had none. Ids of doors and windows are now unique in the whole house; the first one keeps its id.
 - **Bay windows over several walls show their roller shutter** (#115): the fix from 0.27.0 did not reach the 3D view, which still looked for the blind per piece. The pane now really gets its shutter box and blind.
 - **A window in a free wall outside every room keeps its blind** (#115): a cover or contact picked by hand for such a window was ignored in the 3D view.

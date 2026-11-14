@@ -28,9 +28,9 @@ const normalized = (a: Rgb3): Rgb3 => {
 /**
  * A box whose top rectangle differs from its bottom one (sloped sides). `lo` and `hi` are the four corners in the same
  * order. Faces that lean upwards blend towards the top colour. `open` lists the side faces (by index of their bottom edge)
- * that are left out, for open ends (#140).
+ * that are left out, for open ends (#140). `underside` also closes the bottom.
  */
-export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1: number, side: number, top: number, open: readonly number[] = []): void {
+export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1: number, side: number, top: number, open: readonly number[] = [], underside = false): void {
   const topColor = new Color(top);
   for (let i = 0; i < 4; i++) {
     if (open.includes(i)) continue;
@@ -52,6 +52,13 @@ export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1:
   if (Math.hypot(h2[0] - h0[0], h2[1] - h0[1]) > 1e-4) {
     buf.tri([h0[0], y1, h0[1]], [h2[0], y1, h2[1]], [h1[0], y1, h1[1]], topColor);
     buf.tri([h0[0], y1, h0[1]], [h3[0], y1, h3[1]], [h2[0], y1, h2[1]], topColor);
+  }
+  // the underside, for parts that are seen from below (a roof of a pack item, #170)
+  const [l0, l1, l2, l3] = lo;
+  if (underside && Math.hypot(l2[0] - l0[0], l2[1] - l0[1]) > 1e-4) {
+    const under = shade(side, heightShade(y0) * 0.7);
+    buf.tri([l0[0], y0, l0[1]], [l1[0], y0, l1[1]], [l2[0], y0, l2[1]], under);
+    buf.tri([l0[0], y0, l0[1]], [l2[0], y0, l2[1]], [l3[0], y0, l3[1]], under);
   }
 }
 

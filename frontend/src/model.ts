@@ -1319,6 +1319,10 @@ export function isLamp(type: string): boolean {
   return LAMP_TYPES.has(type) || !!packItem(type)?.light;
 }
 
+/** Pack devices whose small status lights are no lamp: linked to any entity, only their own lights glow, never the room (#153). */
+const STATUS_DEVICES = new Set<string>(["nas", "router", "server_rack", "tower_pc", "inverter", "wallbox", "home_battery", "pellet_boiler", "game_console", "mower_robot", "treadmill", "bike_trainer", "wine_fridge", "display_cabinet"]);
+export const isStatusDevice = (type: string): boolean => STATUS_DEVICES.has(type) && !!packItem(type);
+
 /** Furniture a table lamp can stand on. */
 const SURFACES = new Set<string>([
   "table",

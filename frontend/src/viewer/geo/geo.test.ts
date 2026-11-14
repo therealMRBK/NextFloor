@@ -145,6 +145,25 @@ test("a loft has sloped sides and a top of the smaller rectangle", () => {
   assert.equal(flatTop.count, 8 + 2);
 });
 
+test("a loft with an underside faces down on the bottom, so a roof can be seen from below (#170)", () => {
+  const buf = new GeoBuffer();
+  pushLoft(buf, square, [[0.5, 0.5], [1.5, 0.5], [1.5, 1.5], [0.5, 1.5]], 0, 1, 0x888888, 0xcccccc, [], true);
+  assert.equal(buf.count, 8 + 2 + 2);
+  let down = 0;
+  let up = 0;
+  for (let i = 0; i < buf.p.length; i += 9) {
+    const [a, b, c] = [0, 3, 6].map((k) => buf.p.slice(i + k, i + k + 3));
+    const flat = a[1] === b[1] && b[1] === c[1];
+    if (!flat) continue;
+    const ny = (b[2] - a[2]) * (c[0] - a[0]) - (b[0] - a[0]) * (c[2] - a[2]);
+    // the top face winds one way and the underside the other way round
+    if (a[1] === 0 && ny < 0) down++;
+    if (a[1] === 1 && ny > 0) up++;
+  }
+  assert.equal(down, 2);
+  assert.equal(up, 2);
+});
+
 test("a skin joins rings into a closed body", () => {
   const ring = (z: number, r: number) => [0, 1, 2, 3, 4, 5].map((i) => [Math.cos((i / 6) * 6.2832) * r, 1 + Math.sin((i / 6) * 6.2832) * r, z]);
   const buf = new GeoBuffer();
