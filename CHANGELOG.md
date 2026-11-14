@@ -6,7 +6,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ### Added
 
-- **A monitor shows the game on an Xbox**: the form of a TV or monitor has *Device on this screen* and *Game account*. With the console and the *In game* sensors of its accounts set, the screen shows the game and its artwork of whichever account is playing, and stays dark while the console is off. A card above the screen shows the same game and artwork, and both name the account that is playing.
+- **A monitor shows the game on an Xbox**: the form of a TV or monitor has *Device on this screen* and *Game account*. With the console and the *In game* sensors of its accounts set, the screen shows the game and its artwork of whichever account is playing, and stays dark while the console is off. A card above the screen shows the same game and artwork, and both name the account that is playing. The console's on or off comes from Microsoft's Xbox service and can lag after a full shutdown, which the form's hint says.
 
 ## [0.31.4.2]
 
