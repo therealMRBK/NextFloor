@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **The dashboard clock keeps updating after returning to a card**: its timer restarts when the existing view is reattached, and the displayed time refreshes immediately.
+
 ## [0.31.4.2]
 
 ### Fixed
