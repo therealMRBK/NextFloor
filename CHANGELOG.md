@@ -4,6 +4,13 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.3]
+
+### Fixed
+
+- **Dragging a blind in the 3D view no longer floods Home Assistant with commands** (thanks @tichris0, #174): a swipe on a blind sent a new position every 350 ms while the finger moved, and a blind motor cannot follow, so the controller queued every intermediate position and kept moving for a minute. A blind (and a fan) now gets one command when the finger lifts. A drag that ends where it began, such as a pan or rotation that merely started on a blind, sends nothing. Lamps still follow the finger.
+- **Bottom buttons are no longer hidden under the system's navigation bar or home indicator** (thanks @tichris0, #175): the companion apps draw the page under it; the switches and floor buttons at the bottom now keep clear of the safe area (`env(safe-area-inset-bottom)`). The card in full screen or with *fill* now uses the visible height (`dvh`) instead of `100vh`, which on iOS is taller than what you see and made the page scroll.
+
 ## [0.31.4.2]
 
 ### Fixed

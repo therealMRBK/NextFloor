@@ -377,7 +377,7 @@ export class NextFloorCard extends LitElement {
       .dimmed=${this._night}
       .autoOrbit=${this._orbit}
       .startView=${c?.start_view ?? null}
-      style=${s.showBar ? "--nf-bottom-inset: 52px" : ""}
+      style=${this._fullscreen ? `--nf-bottom-inset: calc(${s.showBar ? 52 : 0}px + env(safe-area-inset-bottom, 0px))` : s.showBar ? "--nf-bottom-inset: 52px" : ""}
       @room-tap=${(e: CustomEvent<{ floorId: string; roomId: string | null }>) => {
         // an outdoor area's pin opens Outside over the house view (or closes it again), as in the panel (D#83)
         if (e.detail.roomId === OUTSIDE) {
@@ -426,7 +426,8 @@ export class NextFloorCard extends LitElement {
     }
     const s = this.stage();
     // full screen, the screen below the dashboard header, or a fixed height
-    const size = this._fullscreen ? "100vh" : c?.fill ? "calc(100vh - var(--header-height, 56px) - 16px)" : `${c?.height ?? 420}px`;
+    // (vh first, dvh after it for browsers that know it: on iOS 100vh is taller than what is visible, so the page scrolled, #175)
+    const size = this._fullscreen ? "100vh;height:100dvh" : c?.fill ? "calc(100vh - var(--header-height, 56px) - 16px);height:calc(100dvh - var(--header-height, 56px) - 16px)" : `${c?.height ?? 420}px`;
     const accent = /^#[0-9a-f]{6}$/i.test(c?.accent ?? "") ? c!.accent : null;
     const touch = () => this.kiosk.touched();
     return html`<ha-card class=${this._night ? "nf-night" : ""} style=${accent ? `--nf-accent:${accent}` : ""} @pointerdown=${touch} @keydown=${touch} @wheel=${touch}>

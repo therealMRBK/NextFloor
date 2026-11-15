@@ -1,5 +1,6 @@
 // Lit wrapper around the lazily loaded 3D viewer.
 
+import { swipeSendsOnRelease, swipeSendsWhileMoving } from "../swipe-policy.ts";
 import { changeMoments, hassAt, loadHistory, replayable, type History } from "../live/time-travel.ts";
 import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
@@ -1850,14 +1851,16 @@ export class NfView3d extends LitElement {
       // the whole range over about 220 pixels; up = brighter / blind up
       const value = Math.round(Math.min(100, Math.max(0, s.start - (dy / 220) * 100)));
       if (value !== s.value) this._swipe = { ...s, value };
-      // at most a few calls per second while the finger moves
+      // a lamp follows the finger, a few calls per second; a blind or a fan only gets one command when the finger lifts
+      // (a blind motor cannot follow, every intermediate position would be queued on the controller, #174)
       const now = performance.now();
-      if (now - this.swipeSent > 350) {
+      if (swipeSendsWhileMoving(s.kind) && now - this.swipeSent > 350) {
         this.swipeSent = now;
         this.applySwipe();
       }
     } else {
-      this.applySwipe();
+      // a drag that ended where it began (a pan that started on the device) changes nothing
+      if (this._swipe && swipeSendsOnRelease(this._swipe.kind, this._swipe.start, this._swipe.value)) this.applySwipe();
       clearTimeout(this.swipeTimer);
       this.swipeTimer = setTimeout(() => (this._swipe = null), 700);
     }
