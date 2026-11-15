@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **Leaving a room goes back to the view you had** (thanks @Gifford47): closing a room flies back to exactly the camera from before it was opened, also after going on from one room to another, instead of fitting the floor anew from the start view's side. A floor switch while a room is open now keeps its own camera too (with *Keep camera* on, that fit overruled it).
+
 ## [0.31.4.3]
 
 ### Fixed

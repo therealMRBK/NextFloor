@@ -182,6 +182,11 @@ export class OrbitControls {
     return moving;
   }
 
+  /** Where the camera is headed: the goal of a running flight, else where it stands (a copy). */
+  get settledView(): OrbitView {
+    return copyView(this.flight?.to ?? this.view);
+  }
+
   flyTo(to: Partial<OrbitView>, duration = 700): void {
     const goal = flightGoal(this.view, to);
     const from = copyView(this.view);

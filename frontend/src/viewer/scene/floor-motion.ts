@@ -89,3 +89,17 @@ export function keptCamera(from: string | null, to: string | null, now: CameraSt
   if (from !== null) return now;
   return lastFloor ?? { theta: now.theta, phi: now.phi };
 }
+
+/**
+ * The camera around opening and closing a room. Opening one from the floor (or the house) remembers the camera as it stands;
+ * closing the room flies back to exactly that, instead of fitting the floor anew from the start view's side. Going from one room
+ * straight to another keeps what was remembered, so closing the last one still returns to the view before the first. `close` is
+ * where closing goes: a remembered camera, "fit" without one, or null when nothing moves (opening a room flies into it, and a
+ * room that was closed already, by a floor switch, leaves the camera to that switch).
+ */
+export function roomCamera<T>(from: string | null, to: string | null, remembered: T | null, current: () => T): { remembered: T | null; close: T | "fit" | null } {
+  if (to !== null) return { remembered: from === null ? current() : remembered, close: null };
+  if (from === null) return { remembered, close: null };
+  return { remembered: null, close: remembered ?? "fit" };
+}
+
