@@ -2,9 +2,9 @@
 // the outer measurements), one page each, and a table of the areas at the end. Opened in a window of its own and printed from there,
 // so the browser's print dialog can also save it as PDF.
 
-import { centroid, furnitureFootprint, type Building, type Floor, type Vec2 } from "../../model.ts";
+import { centroid, furnitureFootprint, openingStyle, signedArea, type Building, type Floor, type Vec2 } from "../../model.ts";
 import { floorAreas, totalOf, type RoomArea } from "../../geometry/living-area.ts";
-import { generateWalls, locateOpening, openingHost, wallOptions } from "../../geometry/walls.ts";
+import { generateWalls, locateOpening, openingHost, pointOnRoomEdge, wallOptions } from "../../geometry/walls.ts";
 
 export interface PrintTexts {
   title: string;
@@ -66,12 +66,39 @@ export function floorSvg(b: Building, floor: Floor, areas: readonly RoomArea[], 
       parts.push(`<polyline points="${pts([p(s0, mid), p(s1, mid)])}" fill="none" stroke="#222" stroke-width="0.03"/>`);
       parts.push(`<polyline points="${pts([p(s0, l - 0.01), p(s1, l - 0.01)])}" fill="none" stroke="#222" stroke-width="0.015"/><polyline points="${pts([p(s0, r + 0.01), p(s1, r + 0.01)])}" fill="none" stroke="#222" stroke-width="0.015"/>`);
     } else {
-      // a quarter circle on the room side of the wall
-      const side = o.room_id === wall.roomRight ? -1 : 1;
-      const hinge = p(s0, side * (side > 0 ? wall.left : wall.right));
-      const tip = p(s0, side * ((side > 0 ? wall.left : wall.right) + o.width));
-      const end = p(s1, side * (side > 0 ? wall.left : wall.right));
-      parts.push(`<path d="M ${hinge[0]} ${hinge[1]} L ${tip[0]} ${tip[1]} A ${o.width} ${o.width} 0 0 ${side > 0 ? 1 : 0} ${end[0]} ${end[1]}" fill="none" stroke="#555" stroke-width="0.015"/>`);
+      // the leaf and its swing, as the editor draws them: on the side the door opens to, hinged where "left"/"right" says,
+      // seen from the room it belongs to (#172: the export used to draw every door the same way, into its room, hinge first)
+      const room = host!.room;
+      const p0 = pointOnRoomEdge(room, host!.edge, o.offset - o.width / 2);
+      const p1 = pointOnRoomEdge(room, host!.edge, o.offset + o.width / 2);
+      const span = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) || 1;
+      const along: Vec2 = [(p1[0] - p0[0]) / span, (p1[1] - p0[1]) / span];
+      const winding = signedArea(room.points) >= 0 ? 1 : -1;
+      const inward: Vec2 = [-along[1] * winding, along[0] * winding];
+      const across: [number, number] = wall.free || wall.roomLeft === room.id ? [wall.left, wall.right] : [wall.right, wall.left];
+      const out = o.swing === "out";
+      const style = openingStyle(o, wall.exterior);
+      const face = out ? -across[1] : across[0];
+      const at = (q: Vec2, by: number): Vec2 => [q[0] + inward[0] * by, q[1] + inward[1] * by];
+      const leafWidth = (o.leaves === 2 ? 0.5 : 1) * span;
+      const swing = (hingePt: Vec2, freePt: Vec2) => {
+        const [hx, hy] = at(hingePt, face);
+        const [fx, fy] = at(freePt, face);
+        const leaf = at(hingePt, face + (out ? -leafWidth : leafWidth));
+        const turn = (leaf[0] - hx) * (fy - hy) - (leaf[1] - hy) * (fx - hx) > 0 ? 1 : 0;
+        return `<path d="M ${hx} ${hy} L ${leaf[0]} ${leaf[1]} A ${leafWidth} ${leafWidth} 0 0 ${turn} ${fx} ${fy}" fill="none" stroke="#555" stroke-width="0.015"/>`;
+      };
+      const hingeAtStart = (o.hinge === "left") === winding > 0;
+      const centre: Vec2 = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+      if (style === "passage") {
+        // an opening without a door: no leaf
+      } else if (style === "sliding") {
+        parts.push(`<polyline points="${pts([at(p0, face), at(p1, face)])}" fill="none" stroke="#555" stroke-width="0.015"/>`);
+      } else if (o.leaves === 2) {
+        parts.push(swing(p0, centre), swing(p1, centre));
+      } else {
+        parts.push(hingeAtStart ? swing(p0, p1) : swing(p1, p0));
+      }
     }
   }
   if (draw.furniture) {

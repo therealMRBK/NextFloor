@@ -46,6 +46,7 @@ export class NextFloorCard extends LitElement {
     _heat: { state: true },
     _explode: { state: true },
     _fullscreen: { state: true },
+    _pseudoFull: { state: true },
     _clean: { state: true },
     _night: { state: true },
     _orbit: { state: true },
@@ -66,6 +67,8 @@ export class NextFloorCard extends LitElement {
   private declare _heat: HeatMode | null;
   private declare _explode: boolean | null;
   private declare _fullscreen: boolean;
+  /** Full screen done by the card itself (a fixed overlay), where the browser has no Fullscreen API. */
+  private declare _pseudoFull: boolean;
   /** The clean view: only the stage (option controls_hidden, the eye button, or the hide-after timer). */
   private declare _clean: boolean;
   /** Kiosk: the night dimming is on, and the screensaver turn runs (after an idle return). */
@@ -92,6 +95,7 @@ export class NextFloorCard extends LitElement {
     this._heat = null;
     this._explode = null;
     this._fullscreen = false;
+    this._pseudoFull = false;
     this._clean = false;
     this._night = false;
     this._orbit = false;
@@ -117,6 +121,7 @@ export class NextFloorCard extends LitElement {
 
   // inside a dashboard the full-screen element is seen from outside as the card itself (the shadow root hides ha-card)
   private readonly onFullscreen = () => {
+    if (this._pseudoFull) return;
     const el = document.fullscreenElement;
     this._fullscreen = !!el && (el === this || this.shadowRoot?.contains(el) === true || (this.shadowRoot as ShadowRoot & { fullscreenElement?: Element | null })?.fullscreenElement != null);
   };
@@ -134,8 +139,22 @@ export class NextFloorCard extends LitElement {
   }
 
   private toggleFullscreen(): void {
-    if (document.fullscreenElement) void document.exitFullscreen();
-    else void this.shadowRoot?.querySelector("ha-card")?.requestFullscreen?.();
+    if (this._pseudoFull) {
+      this._pseudoFull = false;
+      this._fullscreen = false;
+      return;
+    }
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+    const card = this.shadowRoot?.querySelector("ha-card");
+    // the iPhone has no Fullscreen API for elements: the card then covers the screen itself (#175)
+    if (card && typeof card.requestFullscreen === "function") void card.requestFullscreen();
+    else {
+      this._pseudoFull = true;
+      this._fullscreen = true;
+    }
   }
 
   /** The visual editor in the dashboard, so no YAML is needed. */
@@ -377,7 +396,7 @@ export class NextFloorCard extends LitElement {
       .dimmed=${this._night}
       .autoOrbit=${this._orbit}
       .startView=${c?.start_view ?? null}
-      style=${s.showBar ? "--nf-bottom-inset: 52px" : ""}
+      style=${this._fullscreen ? `--nf-bottom-inset: calc(${s.showBar ? 52 : 0}px + env(safe-area-inset-bottom, 0px))` : s.showBar ? "--nf-bottom-inset: 52px" : ""}
       @room-tap=${(e: CustomEvent<{ floorId: string; roomId: string | null }>) => {
         // an outdoor area's pin opens Outside over the house view (or closes it again), as in the panel (D#83)
         if (e.detail.roomId === OUTSIDE) {
@@ -426,10 +445,11 @@ export class NextFloorCard extends LitElement {
     }
     const s = this.stage();
     // full screen, the screen below the dashboard header, or a fixed height
-    const size = this._fullscreen ? "100vh" : c?.fill ? "calc(100vh - var(--header-height, 56px) - 16px)" : `${c?.height ?? 420}px`;
+    // (vh first, dvh after it for browsers that know it: on iOS 100vh is taller than what is visible, so the page scrolled, #175)
+    const size = this._fullscreen ? "100vh;height:100dvh" : c?.fill ? "calc(100vh - var(--header-height, 56px) - 16px);height:calc(100dvh - var(--header-height, 56px) - 16px)" : `${c?.height ?? 420}px`;
     const accent = /^#[0-9a-f]{6}$/i.test(c?.accent ?? "") ? c!.accent : null;
     const touch = () => this.kiosk.touched();
-    return html`<ha-card class=${this._night ? "nf-night" : ""} style=${accent ? `--nf-accent:${accent}` : ""} @pointerdown=${touch} @keydown=${touch} @wheel=${touch}>
+    return html`<ha-card class=${(this._night ? "nf-night " : "") + (this._pseudoFull ? "nf-pseudo-full" : "")} style=${accent ? `--nf-accent:${accent}` : ""} @pointerdown=${touch} @keydown=${touch} @wheel=${touch}>
       <div class="nf-card-body" style="height:${size}">
         ${b && b.floors.some((f) => f.rooms.length)
           ? this.renderStage(s)

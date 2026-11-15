@@ -194,6 +194,7 @@ export class NfWallView extends LitElement {
     .sheet {
       width: min(1100px, calc(100vw - 32px));
       max-height: calc(100vh - 32px);
+      max-height: calc(100dvh - 32px);
       display: flex;
       flex-direction: column;
       border-radius: 20px;

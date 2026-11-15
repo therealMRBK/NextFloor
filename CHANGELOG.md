@@ -8,6 +8,15 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **A monitor shows the game on an Xbox**: the form of a TV or monitor has *Device on this screen* and *Game account*. With the console and the *In game* sensors of its accounts set (from Home Assistant's Xbox integration), the screen shows the game and its artwork of whichever account is playing, and stays dark while the console is off. A card above the screen shows the same game and artwork, and both name the account that is playing. The console's on or off comes from Microsoft's Xbox service and can lag after a full shutdown, which the form's hint says.
 
+## [0.31.4.3]
+
+### Fixed
+
+- **Dragging a blind in the 3D view no longer floods Home Assistant with commands** (thanks @tichris0, #174): a swipe on a blind sent a new position every 350 ms while the finger moved, and a blind motor cannot follow, so the controller queued every intermediate position and kept moving for a minute. A blind (and a fan) now gets one command when the finger lifts. A drag that ends where it began, such as a pan or rotation that merely started on a blind, sends nothing. Lamps still follow the finger.
+- **On an iPhone the full-screen button now works, and the bottom buttons keep clear of the system bar** (thanks @tichris0, #175): iPhone browsers have no Fullscreen API for elements, so the ⛶ button of the card did nothing; the card now covers the visible screen itself there. The switches and floor buttons at the bottom keep clear of the system's navigation bar or home indicator (`env(safe-area-inset-bottom)`), and the card's *fill* and full-screen height use the visible height (`dvh`) instead of `100vh`, which on iOS is taller than what you see. I could not try this on a real iPhone; please tell me whether the panel or a card is affected if it is not fixed for you.
+- **A NAS, router or server rack from a pack no longer lights the room** (thanks @Guenni75, #153): the fix in 0.31.4.2 never took effect. It looked for the item name (`nas`), but a pack item's type reads `pack:<pack>:nas`, so no device was recognised. It is matched by its item name now, with a test against the real pack.
+- **Door arcs in the exported or printed plan match the editor** (thanks @Guenni75, #172): the export drew every door the same way, into its room and hinged at the first end, whatever you had chosen. It now follows *Swing in/out*, the hinge side (seen from the room), two leaves, sliding doors and openings without a door.
+
 ## [0.31.4.2]
 
 ### Fixed

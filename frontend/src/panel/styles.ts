@@ -378,11 +378,12 @@ export const panelStyles = css`
     bottom: 14px;
   }
   /* the switches sit at the bottom (as in the card), where they never meet the energy values or warnings */
+  /* plus the system's bottom bar or home indicator: the companion apps draw the page under it (#175) */
   nf-view3d {
-    --nf-bottom-inset: 52px;
+    --nf-bottom-inset: calc(52px + env(safe-area-inset-bottom, 0px));
   }
   .nf-clean nf-view3d {
-    --nf-bottom-inset: 0px;
+    --nf-bottom-inset: env(safe-area-inset-bottom, 0px);
   }
   .nf-furnish-bar {
     bottom: 68px;
