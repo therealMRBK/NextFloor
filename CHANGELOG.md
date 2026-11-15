@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **Rain, snow and hail update while a dashboard stays open**: precipitation starts, stops and changes intensity when the weather changes, without switching views.
+
 ## [0.31.4.3]
 
 ### Fixed

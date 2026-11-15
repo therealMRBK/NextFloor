@@ -253,9 +253,21 @@ export class WeatherLayer {
       this.scene.fog = new FogExp2(color, 0.008 + 0.04 * w.fog);
     } else if (this.scene.fog instanceof FogExp2) this.scene.fog = null;
     if (!before || before.low !== view?.low || !!before.weather !== !!w) this.seed();
+    this.syncPrecipitation();
     this.placeDisc();
     this.placeNight();
     if (!w?.lightning) this.endBolt();
+  }
+
+  /** Weather amounts can change while the layer stays attached to the dashboard. */
+  private syncPrecipitation(): void {
+    const w = this.view?.weather;
+    this.rain.geometry.setDrawRange(0, this.count(w?.rain ?? 0, RAIN_MAX) * 2);
+    this.snow.geometry.setDrawRange(0, this.count(w?.snow ?? 0, SNOW_MAX));
+    this.hail.geometry.setDrawRange(0, this.count(w?.hail ?? 0, 600));
+    this.rain.visible = !!w && w.rain > 0.01;
+    this.snow.visible = !!w && w.snow > 0.01;
+    this.hail.visible = !!w && w.hail > 0.01;
   }
 
   /** Wind as a horizontal velocity in plan coordinates (x right, z down), metres per second. */
@@ -277,7 +289,6 @@ export class WeatherLayer {
   /** New random positions for everything that falls or drifts (after a change of the area or of the amounts). */
   private seed(): void {
     const b = this.bounds;
-    const w = this.view?.weather;
     const rx = () => b.x0 + Math.random() * (b.x1 - b.x0);
     const rz = () => b.z0 + Math.random() * (b.z1 - b.z0);
     const ry = () => b.y0 + Math.random() * (b.y1 - b.y0);
@@ -295,12 +306,7 @@ export class WeatherLayer {
     const hp = this.hail.geometry.getAttribute("position") as Float32BufferAttribute;
     for (let i = 0; i < hp.count; i++) hp.setXYZ(i, rx(), ry(), rz());
     hp.needsUpdate = true;
-    this.rain.geometry.setDrawRange(0, this.count(w?.rain ?? 0, RAIN_MAX) * 2);
-    this.snow.geometry.setDrawRange(0, this.count(w?.snow ?? 0, SNOW_MAX));
-    this.hail.geometry.setDrawRange(0, this.count(w?.hail ?? 0, 600));
-    this.rain.visible = !!w && w.rain > 0.01;
-    this.snow.visible = !!w && w.snow > 0.01;
-    this.hail.visible = !!w && w.hail > 0.01;
+    this.syncPrecipitation();
     // clouds on a ring around the plot, their shadows anywhere over it
     this.clouds.forEach((c, i) => {
       c.angle = (i / CLOUDS) * Math.PI * 2 + Math.random() * 0.5;
