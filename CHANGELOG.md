@@ -4,6 +4,15 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.4]
+
+### Fixed
+
+- **The panel no longer scrolls in the iPhone app** (thanks @tichris0, #175): Home Assistant keeps the status bar and the home indicator free around a custom panel, and NextFloor was still as tall as the whole screen, so the page was taller than the screen: it scrolled, and the *Switches* button was out of sight. The panel now takes off what Home Assistant keeps free, and no longer adds the bottom margin a second time.
+- **The dashboard clock keeps updating after returning to a card** (thanks @philipplueoend, #179): its timer restarts when the existing view is reattached, and the displayed time refreshes immediately.
+- **Rain, snow and hail update while a dashboard stays open** (thanks @philipplueoend, #181): precipitation starts, stops and changes intensity when the weather changes, without switching views.
+- **Leaving a room goes back to the view you had** (thanks @Gifford47, #185): closing a room flies back to exactly the camera from before it was opened, also after going on from one room to another, instead of fitting the floor anew from the start view's side. A floor switch while a room is open now keeps its own camera too (with *Keep camera* on, that fit overruled it).
+
 ## [0.31.4.3]
 
 ### Fixed

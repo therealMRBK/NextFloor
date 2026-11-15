@@ -23,6 +23,7 @@ import { LOOKS, lookNow, type Look } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
 import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
 import type { FloorStack, Quality, WallMode } from "./viewer/viewer3d.ts";
+import { hostPad } from "./panel/safe-area.ts";
 
 type Mode = "view" | "editor" | "extensions";
 type Key = I18nKey;
@@ -257,11 +258,23 @@ export class NextFloorPanel extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     window.addEventListener("keydown", this.onKey);
+    window.addEventListener("resize", this.syncHostPad);
+    this.syncHostPad();
   }
+
+  /** Home Assistant pads the element around the panel with the safe areas: keep the panel inside (#175) */
+  private readonly syncHostPad = () => {
+    const parent = this.parentElement;
+    const pad = hostPad(parent ? getComputedStyle(parent) : null);
+    this.style.setProperty("--nf-host-pad", `${pad.vertical}px`);
+    if (pad.bottomHandled) this.style.setProperty("--nf-safe-bottom", "0px");
+    else this.style.removeProperty("--nf-safe-bottom");
+  };
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     window.removeEventListener("keydown", this.onKey);
+    window.removeEventListener("resize", this.syncHostPad);
   }
 
   protected render() {

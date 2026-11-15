@@ -48,7 +48,7 @@ import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
-import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera } from "./scene/floor-motion.ts";
+import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera, roomCamera } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
@@ -872,6 +872,8 @@ export class NextFloorViewer {
     }
     this.floorId = floorId;
     this.roomId = null;
+    // a room closed by the floor switch: the switch places the camera, the view from before the room is gone
+    this.beforeRoom = null;
     this.labelsDirty = true;
     this.applyTargets(!animate);
     this.applyHighlight();
@@ -913,13 +915,16 @@ export class NextFloorViewer {
     if (this.floorId === null) this.fit(700);
   }
 
-  /** Highlight a room and fly into it (null = back to the floor overview). */
+  /** Highlight a room and fly into it (null = back to the camera from before the room was opened). */
   selectRoom(roomId: string | null): void {
+    const step = roomCamera(this.roomId, roomId, this.beforeRoom, () => this.controls.settledView);
+    this.beforeRoom = step.remembered;
     this.roomId = roomId;
     this.labelsDirty = true;
     this.applyHighlight();
     if (!roomId) {
-      this.fit(700);
+      if (step.close === "fit") this.fit(700);
+      else if (step.close) this.controls.flyTo(step.close, 700);
       return;
     }
     const fv = this.floors.find((f) => f.floor.rooms.some((r) => r.id === roomId));
@@ -2552,6 +2557,8 @@ export class NextFloorViewer {
   private keepCamera = false;
   /** Whether a floor (or the house) was chosen yet: the first choice sets the view up and keeps no camera. */
   private floorSet = false;
+  /** The camera as it stood when a room was opened from the floor: closing the room flies back to it. */
+  private beforeRoom: OrbitView | null = null;
   /** The camera of the floor last left while the camera is kept: a floor opened from the house view takes it again (#119). */
   private lastFloorCamera: { theta: number; phi: number; radius: number } | null = null;
   private zoom = 1;
