@@ -4169,6 +4169,7 @@ export class NfView3d extends LitElement {
       .nf-wall-big > hui-picture-entity-card,
       .nf-wall-big > hui-error-card {
         width: min(100%, calc((100vh - 200px) * 16 / 9));
+        width: min(100%, calc((100dvh - 200px) * 16 / 9));
         --ha-card-background: transparent;
         --ha-card-border-width: 0;
         --ha-card-box-shadow: none;

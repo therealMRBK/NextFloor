@@ -75,6 +75,17 @@ export const cardStyles = css`
   .nf-card-controls > * {
     pointer-events: auto;
   }
+  /* full screen without the Fullscreen API (iPhone): the card covers the visible screen itself */
+  ha-card.nf-pseudo-full {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    border-radius: 0;
+    margin: 0;
+  }
+  ha-card.nf-pseudo-full .nf-card-full {
+    top: calc(10px + env(safe-area-inset-top, 0px));
+  }
   .nf-card-full {
     position: absolute;
     right: 10px;
