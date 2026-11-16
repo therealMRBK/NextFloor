@@ -1212,8 +1212,8 @@ export class NextFloorViewer {
     const zs = rooms.map((p) => p[1]);
     const centre: [number, number] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2];
     const radius = Math.max(6, Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) / 2 + 3);
-    const ground = Math.min(0, ...b.floors.map((f) => f.elevation));
-    this.sunArc.update({ centre, radius, north: b.settings.north ?? 0, ...loc }, this.sun, ground);
+    // the ring lies on the ground the house stands on (elevation 0), not under a basement
+    this.sunArc.update({ centre, radius, north: b.settings.north ?? 0, ...loc }, this.sun, 0);
   }
 
   /**
