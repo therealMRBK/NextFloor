@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.6]
+
+### Fixed
+
+- **Sun arc and compass under the basement** (thanks @Gifford47, #188): in a house with a basement, the ring, the compass points and the sun's arc lay at the level of the lowest floor. They now always lie at ground level (elevation 0 m), where the ground floor stands.
+
 ## [0.31.4.5]
 
 ### Fixed
