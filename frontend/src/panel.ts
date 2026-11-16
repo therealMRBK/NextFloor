@@ -262,12 +262,16 @@ export class NextFloorPanel extends LitElement {
     this.syncHostPad();
   }
 
-  /** Home Assistant pads the element around the panel with the safe areas: keep the panel inside (#175) */
+  /**
+   * Home Assistant pads the element around the panel with the safe areas (#175): the panel starts below the status
+   * bar and reaches down through the strip kept free for the home indicator, where only its controls keep clear.
+   */
   private readonly syncHostPad = () => {
     const parent = this.parentElement;
     const pad = hostPad(parent ? getComputedStyle(parent) : null);
-    this.style.setProperty("--nf-host-pad", `${pad.vertical}px`);
-    if (pad.bottomHandled) this.style.setProperty("--nf-safe-bottom", "0px");
+    this.style.setProperty("--nf-host-pad", `${pad.top}px`);
+    this.style.setProperty("--nf-host-bottom", `${pad.bottom}px`);
+    if (pad.bottom > 0) this.style.setProperty("--nf-safe-bottom", `${pad.bottom}px`);
     else this.style.removeProperty("--nf-safe-bottom");
   };
 

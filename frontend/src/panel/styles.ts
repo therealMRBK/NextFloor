@@ -15,9 +15,11 @@ export const panelStyles = css`
   :host {
     display: block;
     /* HA gives the custom panel's parent no explicit height, so 100% collapses. */
-    /* minus what Home Assistant keeps free around the panel for the status bar and home indicator (#175) */
+    /* minus the strip Home Assistant keeps free above the panel for the status bar; the strip it keeps free below
+       (home indicator) the panel fills itself, so no empty bar is left under the 3D view (#175) */
     height: calc(100vh - var(--nf-host-pad, 0px));
     height: calc(100dvh - var(--nf-host-pad, 0px));
+    margin-bottom: calc(-1 * var(--nf-host-bottom, 0px));
     background: var(--nf-bg);
   }
   .nf-app {

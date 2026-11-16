@@ -4,6 +4,14 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.5]
+
+### Fixed
+
+- **The 3D view fills the iPhone screen down to the edge** (thanks @tichris0, #175): after 0.31.4.4 the page no longer scrolled, but an empty grey bar stayed below the panel, the strip Home Assistant keeps free for the home indicator. The panel now reaches through that strip to the edge of the screen, and only its buttons keep clear of the home indicator.
+- **What glows on a tilted item tilts with it** (thanks @michaelltaylor, #186): the lit screen of a TV, its picture while it plays, the glow behind it, a photo in a picture frame and all other glowing faces (charge bars, LEDs, button plates, a printer's print) stayed upright when the item was tilted with *Tilt front/back* or *Tilt sideways*. They now follow the tilt in the 3D view and the editor.
+- **A roof built from open `loft` parts of a furniture pack stays visible from inside** (thanks @daluposoft, #170): a loft with `capFront` or `capBack` set to `false` is an open shell one can look into, and its faces were only drawn from the outside, so the roof vanished when seen through the open end or from below. Open lofts are now drawn from the inside too, a little darker. Closed lofts are unchanged.
+
 ## [0.31.4.4]
 
 ### Fixed

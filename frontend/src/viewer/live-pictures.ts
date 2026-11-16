@@ -4,6 +4,7 @@
  */
 import { CanvasTexture, Group, Mesh, MeshBasicMaterial, PlaneGeometry, SRGBColorSpace, type Scene } from "three";
 import type { FloorLift } from "./live-energy.ts";
+import { tiltMesh } from "./scene/tilt-pose.ts";
 
 export interface LivePicture {
   id: string;
@@ -13,6 +14,10 @@ export interface LivePicture {
   rotation: number;
   /** The picture part in the furniture's frame (x across, y up from the floor, z its front face). */
   rect: { x0: number; x1: number; y0: number; y1: number; z: number };
+  /** A tilted item: its underside (m above the floor) and its tilt in degrees, so the photo tilts with it. */
+  base?: number;
+  tilt_x?: number | null;
+  tilt_z?: number | null;
   url: string;
   /** Mat around the picture in % of the shorter side (0 = none). */
   border: number;
@@ -140,6 +145,7 @@ export class PictureLayer {
     v.mesh.position.set(p.x + cx * Math.cos(a) - lz * Math.sin(a), l.y + (r.y0 + r.y1) / 2, p.z + cx * Math.sin(a) + lz * Math.cos(a));
     v.mesh.rotation.set(0, -a, 0);
     v.mesh.scale.set(r.x1 - r.x0, r.y1 - r.y0, 1);
+    tiltMesh(v.mesh, { x: p.x, z: p.z, rotation: p.rotation, base: p.base ?? 0, tilt_x: p.tilt_x, tilt_z: p.tilt_z }, l.y);
     v.mesh.visible = l.visible;
   }
 

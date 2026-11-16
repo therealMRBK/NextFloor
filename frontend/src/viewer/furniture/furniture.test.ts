@@ -82,16 +82,17 @@ test("a loft can leave its front (+z) or back (-z) end open, and stays closed by
   const closed = make({});
   assert.equal(flatAt(closed, 2), 2, "front wall: two triangles");
   assert.equal(flatAt(closed, 0), 2, "back wall: two triangles");
+  // an open loft is a shell one looks into, so what is left of it is drawn from the inside too (#170)
   assert.equal(flatAt(make({ front: false }), 2), 0);
-  assert.equal(flatAt(make({ front: false }), 0), 2);
+  assert.equal(flatAt(make({ front: false }), 0), 4);
   assert.equal(flatAt(make({ back: false }), 0), 0);
-  assert.equal(flatAt(make({ back: false }), 2), 2);
-  assert.equal(make({ front: false, back: false }).buf.count, closed.buf.count - 4);
+  assert.equal(flatAt(make({ back: false }), 2), 4);
+  assert.equal(make({ front: false, back: false }).buf.count, (closed.buf.count - 4) * 2);
   // a mirrored base (the corner ring wound the other way) keeps front and back where they are
   const mirrored = tools();
   mirrored.b.loft([1, 0, 0, 2], [1, 0, 0, 2], 0, 1, M.wood, null, { front: false });
   assert.equal(flatAt(mirrored, 2), 0);
-  assert.equal(flatAt(mirrored, 0), 2);
+  assert.equal(flatAt(mirrored, 0), 4);
 });
 
 test("a loft, a pad and a sweep add geometry; a pad too small to bevel is a plain box", () => {

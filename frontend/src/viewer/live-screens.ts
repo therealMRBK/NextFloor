@@ -5,6 +5,7 @@
  */
 import { AdditiveBlending, CanvasTexture, Color, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, SRGBColorSpace, type Scene } from "three";
 import type { FloorLift } from "./live-energy.ts";
+import { tiltMesh } from "./scene/tilt-pose.ts";
 
 export interface LiveScreen {
   id: string;
@@ -23,6 +24,10 @@ export interface LiveScreen {
   playing: boolean;
   /** Strength of the glow on the wall behind the screen: 1 is the usual, 0 switches it off. */
   ambilight?: number;
+  /** A tilted item: its underside (m above the floor) and its tilt in degrees, so the picture tilts with it. */
+  base?: number;
+  tilt_x?: number | null;
+  tilt_z?: number | null;
 }
 
 const DEG = Math.PI / 180;
@@ -183,6 +188,9 @@ export class ScreenLayer {
     v.glow.position.set(gx, l.y + (r.y0 + r.y1) / 2, gz);
     v.glow.rotation.set(0, -a, 0);
     v.glow.scale.set(w * 2.4, h * 2.6, 1);
+    const pose = { x: s.x, z: s.z, rotation: s.rotation, base: s.base ?? 0, tilt_x: s.tilt_x, tilt_z: s.tilt_z };
+    tiltMesh(v.screen, pose, l.y);
+    tiltMesh(v.glow, pose, l.y);
     (v.glow.material as MeshBasicMaterial).color = new Color(s.color[0] / 255, s.color[1] / 255, s.color[2] / 255);
     v.screen.visible = l.visible;
     v.glow.visible = l.visible && (s.ambilight ?? 1) > 0;
