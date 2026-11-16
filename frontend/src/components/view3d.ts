@@ -538,6 +538,7 @@ export class NfView3d extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.syncClock();
     // a plugin that registers later changes markers: rebuild them in the next update (through updated(),
     // like any other forced change), not only on the next state change
     this.stopPlugins = onPluginsChanged(() => {
@@ -568,6 +569,16 @@ export class NfView3d extends LitElement {
     this.live = null;
     this.viewer?.dispose();
     this.viewer = null;
+  }
+
+  /** Restart the clock when an existing dashboard card is connected again. */
+  private syncClock(): void {
+    clearInterval(this.clockTimer);
+    this.clockTimer = undefined;
+    this._now = Date.now();
+    if (this.isConnected && this.clock) {
+      this.clockTimer = setInterval(() => (this._now = Date.now()), 10000);
+    }
   }
 
   protected firstUpdated(): void {
@@ -689,10 +700,7 @@ export class NfView3d extends LitElement {
     if (this._central && !this.centralOpen && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
     if (changed.has("centralOpen") && this.centralOpen) this._central = true;
     // before the viewer exists: the card loads it late and `clock` does not change again, so the clock never ticked (#68)
-    if (changed.has("clock")) {
-      clearInterval(this.clockTimer);
-      this.clockTimer = this.clock ? setInterval(() => (this._now = Date.now()), 10000) : undefined;
-    }
+    if (changed.has("clock")) this.syncClock();
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture

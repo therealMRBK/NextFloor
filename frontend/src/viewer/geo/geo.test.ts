@@ -164,6 +164,23 @@ test("a loft with an underside faces down on the bottom, so a roof can be seen f
   assert.equal(up, 2);
 });
 
+test("a loft with an open end is a shell: every face is drawn from the inside too (#170)", () => {
+  const top: Vec2[] = [[0.5, 0.5], [1.5, 0.5], [1.5, 1.5], [0.5, 1.5]];
+  const closed = new GeoBuffer();
+  pushLoft(closed, square, top, 0, 1, 0x888888, 0xcccccc, [], true);
+  const open = new GeoBuffer();
+  pushLoft(open, square, top, 0, 1, 0x888888, 0xcccccc, [1, 3], true);
+  // two sides left, the top and the underside: 8 triangles, each one a second time the other way round
+  assert.equal(open.count, 2 * (2 * 2 + 2 + 2));
+  const normalY = (b: GeoBuffer, i: number) => {
+    const [p, q, r] = [0, 3, 6].map((k) => b.p.slice(i + k, i + k + 3));
+    return (q[2] - p[2]) * (r[0] - p[0]) - (q[0] - p[0]) * (r[2] - p[2]);
+  };
+  for (let i = 0; i < open.p.length; i += 18) assert.ok(normalY(open, i) * normalY(open, i + 9) <= 0, "the second copy faces the other way");
+  // a closed loft stays single-sided
+  assert.equal(closed.count, 8 + 2 + 2);
+});
+
 test("a skin joins rings into a closed body", () => {
   const ring = (z: number, r: number) => [0, 1, 2, 3, 4, 5].map((i) => [Math.cos((i / 6) * 6.2832) * r, 1 + Math.sin((i / 6) * 6.2832) * r, z]);
   const buf = new GeoBuffer();

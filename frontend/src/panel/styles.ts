@@ -15,8 +15,11 @@ export const panelStyles = css`
   :host {
     display: block;
     /* HA gives the custom panel's parent no explicit height, so 100% collapses. */
-    height: 100vh;
-    height: 100dvh;
+    /* minus the strip Home Assistant keeps free above the panel for the status bar; the strip it keeps free below
+       (home indicator) the panel fills itself, so no empty bar is left under the 3D view (#175) */
+    height: calc(100vh - var(--nf-host-pad, 0px));
+    height: calc(100dvh - var(--nf-host-pad, 0px));
+    margin-bottom: calc(-1 * var(--nf-host-bottom, 0px));
     background: var(--nf-bg);
   }
   .nf-app {
@@ -380,10 +383,10 @@ export const panelStyles = css`
   /* the switches sit at the bottom (as in the card), where they never meet the energy values or warnings */
   /* plus the system's bottom bar or home indicator: the companion apps draw the page under it (#175) */
   nf-view3d {
-    --nf-bottom-inset: calc(52px + env(safe-area-inset-bottom, 0px));
+    --nf-bottom-inset: calc(52px + var(--nf-safe-bottom, env(safe-area-inset-bottom, 0px)));
   }
   .nf-clean nf-view3d {
-    --nf-bottom-inset: env(safe-area-inset-bottom, 0px);
+    --nf-bottom-inset: var(--nf-safe-bottom, env(safe-area-inset-bottom, 0px));
   }
   .nf-furnish-bar {
     bottom: 68px;

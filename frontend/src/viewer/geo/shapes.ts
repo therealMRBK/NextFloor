@@ -32,6 +32,12 @@ const normalized = (a: Rgb3): Rgb3 => {
  */
 export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1: number, side: number, top: number, open: readonly number[] = [], underside = false): void {
   const topColor = new Color(top);
+  // a loft with an open end is a shell one can look into: its faces are drawn from the inside too, a little darker (#170)
+  const shell = open.length > 0;
+  const face = (a: number[], b: number[], c: number[], ca: Color, cb: Color = ca, cc: Color = ca): void => {
+    buf.tri(a, b, c, ca, cb, cc);
+    if (shell) buf.tri(a, c, b, ca.clone().multiplyScalar(0.72), cc.clone().multiplyScalar(0.72), cb.clone().multiplyScalar(0.72));
+  };
   for (let i = 0; i < 4; i++) {
     if (open.includes(i)) continue;
     const [a, b] = [lo[i], lo[(i + 1) % 4]];
@@ -45,20 +51,20 @@ export function pushLoft(buf: GeoBuffer, lo: Vec2[], hi: Vec2[], y0: number, y1:
     const light = sideLight(dx, dz);
     const lower = shade(side, heightShade(y0) * light).lerp(topColor, blendUp);
     const upper = shade(side, heightShade(y1) * light).lerp(topColor, blendUp);
-    buf.tri([a[0], y0, a[1]], [A[0], y1, A[1]], [B[0], y1, B[1]], lower, upper, upper);
-    buf.tri([a[0], y0, a[1]], [B[0], y1, B[1]], [b[0], y0, b[1]], lower, upper, lower);
+    face([a[0], y0, a[1]], [A[0], y1, A[1]], [B[0], y1, B[1]], lower, upper, upper);
+    face([a[0], y0, a[1]], [B[0], y1, B[1]], [b[0], y0, b[1]], lower, upper, lower);
   }
   const [h0, h1, h2, h3] = hi;
   if (Math.hypot(h2[0] - h0[0], h2[1] - h0[1]) > 1e-4) {
-    buf.tri([h0[0], y1, h0[1]], [h2[0], y1, h2[1]], [h1[0], y1, h1[1]], topColor);
-    buf.tri([h0[0], y1, h0[1]], [h3[0], y1, h3[1]], [h2[0], y1, h2[1]], topColor);
+    face([h0[0], y1, h0[1]], [h2[0], y1, h2[1]], [h1[0], y1, h1[1]], topColor);
+    face([h0[0], y1, h0[1]], [h3[0], y1, h3[1]], [h2[0], y1, h2[1]], topColor);
   }
   // the underside, for parts that are seen from below (a roof of a pack item, #170)
   const [l0, l1, l2, l3] = lo;
   if (underside && Math.hypot(l2[0] - l0[0], l2[1] - l0[1]) > 1e-4) {
     const under = shade(side, heightShade(y0) * 0.7);
-    buf.tri([l0[0], y0, l0[1]], [l1[0], y0, l1[1]], [l2[0], y0, l2[1]], under);
-    buf.tri([l0[0], y0, l0[1]], [l2[0], y0, l2[1]], [l3[0], y0, l3[1]], under);
+    face([l0[0], y0, l0[1]], [l1[0], y0, l1[1]], [l2[0], y0, l2[1]], under);
+    face([l0[0], y0, l0[1]], [l2[0], y0, l2[1]], [l3[0], y0, l3[1]], under);
   }
 }
 

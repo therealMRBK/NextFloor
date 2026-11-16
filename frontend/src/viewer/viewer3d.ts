@@ -43,12 +43,12 @@ import {
   type BufferGeometry,
   type Material,
 } from "three";
-import type { Building, Floor, PlanNote, Room, StartView } from "../model.ts";
+import type { Building, Floor, Furniture, PlanNote, Room, StartView } from "../model.ts";
 import { recolorLamps, SHADE_SENTINEL, shadeFactors } from "./lamp-colors.ts";
 import { CEILING_TYPES, ceilingOf, centroid, NOTE_Y, noteDoable, noteDue, furnitureFootprint, pointInPolygon, polygonArea, openingStyle, WALL_LAMP_Y } from "../model.ts";
 import { roofRider, roofUnderAt, sectionCutsBelow } from "../roof-sections.ts";
 import { centredAt, floorLabelPosition, floorShowsMarkers, floorShowsPersons, floorShowsOutdoorMarkers, LabelPlacer, leftAt, project, stackFloorLabels, type FloorLabel, type ScreenPoint } from "./scene/labels.ts";
-import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera } from "./scene/floor-motion.ts";
+import { easeFloor, fadeMaterials, floorShare, floorTarget, keptCamera, roomCamera } from "./scene/floor-motion.ts";
 import { atTarget, stepOpening, stepShare } from "./scene/opening-motion.ts";
 import { addFloorWedge, addLampHalo, addSpotCone, hiddenInCut, type HaloPoints } from "./scene/halos.ts";
 import { sunlightPatches, sunSignature } from "./scene/sunlight.ts";
@@ -65,7 +65,7 @@ import { SunArc } from "./scene/sun-arc.ts";
 import { buildFloorGeometry, SLAB, stairHoles, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
-import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors } from "./furniture.ts";
+import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors, tiltBuilt } from "./furniture.ts";
 import { coverReach, hasMesh, hasMovingParts, mountBase, packItem, setMeshSource, setPacks, type FurniturePack, type MeshSource } from "../packs.ts";
 import { withVehicles } from "../parking.ts";
 import { buildRoof, type RoofWindowState } from "./roof.ts";
@@ -872,6 +872,8 @@ export class NextFloorViewer {
     }
     this.floorId = floorId;
     this.roomId = null;
+    // a room closed by the floor switch: the switch places the camera, the view from before the room is gone
+    this.beforeRoom = null;
     this.labelsDirty = true;
     this.applyTargets(!animate);
     this.applyHighlight();
@@ -913,13 +915,16 @@ export class NextFloorViewer {
     if (this.floorId === null) this.fit(700);
   }
 
-  /** Highlight a room and fly into it (null = back to the floor overview). */
+  /** Highlight a room and fly into it (null = back to the camera from before the room was opened). */
   selectRoom(roomId: string | null): void {
+    const step = roomCamera(this.roomId, roomId, this.beforeRoom, () => this.controls.settledView);
+    this.beforeRoom = step.remembered;
     this.roomId = roomId;
     this.labelsDirty = true;
     this.applyHighlight();
     if (!roomId) {
-      this.fit(700);
+      if (step.close === "fit") this.fit(700);
+      else if (step.close) this.controls.flyTo(step.close, 700);
       return;
     }
     const fv = this.floors.find((f) => f.floor.rooms.some((r) => r.id === roomId));
@@ -1207,8 +1212,8 @@ export class NextFloorViewer {
     const zs = rooms.map((p) => p[1]);
     const centre: [number, number] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...zs) + Math.max(...zs)) / 2];
     const radius = Math.max(6, Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs)) / 2 + 3);
-    const ground = Math.min(0, ...b.floors.map((f) => f.elevation));
-    this.sunArc.update({ centre, radius, north: b.settings.north ?? 0, ...loc }, this.sun, ground);
+    // the ring lies on the ground the house stands on (elevation 0), not under a basement
+    this.sunArc.update({ centre, radius, north: b.settings.north ?? 0, ...loc }, this.sun, 0);
   }
 
   /**
@@ -1288,7 +1293,7 @@ export class NextFloorViewer {
       const f = floor?.furniture.find((m) => m.id === s.furnitureId);
       const rect = f && floor ? screenRect(f, floor) : null;
       if (!f || !rect) continue;
-      out.push({ ...s, x: f.x, z: f.z, rotation: f.rotation, rect });
+      out.push({ ...s, x: f.x, z: f.z, rotation: f.rotation, rect, base: mountBase(floor!, f), tilt_x: f.tilt_x, tilt_z: f.tilt_z });
     }
     this.screenLayer.set(out);
     this.invalidate();
@@ -1302,7 +1307,7 @@ export class NextFloorViewer {
       const f = floor?.furniture.find((m) => m.id === p.furnitureId);
       const rect = f && floor ? pictureRect(f, floor) : null;
       if (!f || !rect) continue;
-      out.push({ id: p.furnitureId, floorId: p.floorId, url: p.url, border: p.border, fit: p.fit, x: f.x, z: f.z, rotation: f.rotation, rect });
+      out.push({ id: p.furnitureId, floorId: p.floorId, url: p.url, border: p.border, fit: p.fit, x: f.x, z: f.z, rotation: f.rotation, rect, base: mountBase(floor!, f), tilt_x: f.tilt_x, tilt_z: f.tilt_z });
     }
     this.pictureLayer.set(out);
     this.invalidate();
@@ -2380,11 +2385,25 @@ export class NextFloorViewer {
   private buildScreens(fv: FloorView): void {
     // the vehicles in the parking spots count as furniture here too
     const items = withVehicles(fv.floor, this.parked).furniture.filter((f) => this.screens.has(f.id));
-    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0}:${JSON.stringify(this.screens.get(f.id))}`).join(";");
+    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0},${f.tilt_x ?? 0},${f.tilt_z ?? 0}:${JSON.stringify(this.screens.get(f.id))}`).join(";");
     if (sig === fv.screenSig && fv.screenMesh.geometry.getAttribute("position")) return;
     fv.screenSig = sig;
     const buf = new GeoBuffer();
+    const noLines = new LineBuffer();
     for (const f of items) {
+      // what glows on a tilted item tilts with it (#186)
+      const start = { vertex: buf.p.length, line: 0 };
+      this.pushScreen(buf, fv, f);
+      tiltBuilt(buf, noLines, start, f, mountBase(fv.floor, f));
+    }
+    fv.screenMesh.geometry.dispose();
+    fv.screenMesh.geometry = buf.geometry();
+    fv.screenMesh.visible = buf.count > 0;
+  }
+
+  /** The glowing faces of one item with a state, upright (the caller tilts them). */
+  private pushScreen(buf: GeoBuffer, fv: FloorView, f: Furniture): void {
+    {
       const st = this.screens.get(f.id)!;
       const a = f.rotation * DEG;
       const c = Math.cos(a);
@@ -2393,12 +2412,12 @@ export class NextFloorViewer {
       if (st.gangs) {
         // a switch plate or socket: each button that is on glows in its light's colour (green for a socket)
         const item = packItem(f.type);
-        if (!item) continue;
+        if (!item) return;
         for (const g of st.gangs) {
           const col = new Color(...g.color.map((v) => Math.min(1, v * (0.45 + 0.55 * g.level))) as [number, number, number]);
           pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => p.gang === g.gang);
         }
-        continue;
+        return;
       }
       if (st.print !== undefined) {
         // the print on the bed: a block in the middle of the printer that grows with the progress
@@ -2416,12 +2435,12 @@ export class NextFloorViewer {
           buf.tri(c4[k], c4[j], t4[j], side);
           buf.tri(c4[k], t4[j], t4[k], side);
         }
-        continue;
+        return;
       }
       if (st.fill !== undefined) {
         // a home battery's charge bar, filled up to its charge (sideways on a wall unit), the rest dim
         const bar = batteryBar(f, fv.floor);
-        if (!bar) continue;
+        if (!bar) return;
         const r = bar.rect;
         const k = Math.min(1, Math.max(0, st.fill));
         const lit = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
@@ -2440,21 +2459,21 @@ export class NextFloorViewer {
           if (k > 0) quad(r.x0, x, r.y0, r.y1, lit);
           if (k < 1) quad(x, r.x1, r.y0, r.y1, dim);
         }
-        continue;
+        return;
       }
       if (st.leds) {
         const item = packItem(f.type);
-        if (!item) continue;
+        if (!item) return;
         const col = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
         pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), (p) => !!p.glow || !!p.screen);
-        continue;
+        return;
       }
       if (st.heat) {
         const item = packItem(f.type);
-        if (!item) continue;
+        if (!item) return;
         const col = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
         pushPackGlow(buf, item, f, mountBase(fv.floor, f), col.getHex(), () => true);
-        continue;
+        return;
       }
       if (st.faces) {
         // a state on the item itself: a glowing plate on its top (a half of it for a bed's side or a bunk)
@@ -2481,10 +2500,10 @@ export class NextFloorViewer {
             buf.tri(inner[i], inner[j], outer[j], halo, halo, edge);
           }
         }
-        continue;
+        return;
       }
       const r = screenRect(f, fv.floor);
-      if (!r) continue;
+      if (!r) return;
       const core = new Color(...st.color.map((v) => Math.min(1, v * (0.35 + 0.65 * st.level))) as [number, number, number]);
       const edge = new Color(0, 0, 0);
       const z = r.z + 0.004;
@@ -2492,7 +2511,7 @@ export class NextFloorViewer {
       buf.tri(P(r.x0, r.y0, z), P(r.x1, r.y1, z), P(r.x0, r.y1, z), core);
       // glow frame fading out around the screen
       const strength = Math.min(1.5, st.halo ?? 1);
-      if (strength <= 0) continue;
+      if (strength <= 0) return;
       const g = (0.18 + 0.12 * st.level) * Math.min(1, strength);
       const halo = core.clone().multiplyScalar(0.5 * strength);
       const inner = [P(r.x0, r.y0, z), P(r.x1, r.y0, z), P(r.x1, r.y1, z), P(r.x0, r.y1, z)];
@@ -2503,9 +2522,6 @@ export class NextFloorViewer {
         buf.tri(inner[i], outer[j], inner[j], halo, edge, halo);
       }
     }
-    fv.screenMesh.geometry.dispose();
-    fv.screenMesh.geometry = buf.geometry();
-    fv.screenMesh.visible = buf.count > 0;
   }
 
   private buildOpenings(fv: FloorView): void {
@@ -2552,6 +2568,8 @@ export class NextFloorViewer {
   private keepCamera = false;
   /** Whether a floor (or the house) was chosen yet: the first choice sets the view up and keeps no camera. */
   private floorSet = false;
+  /** The camera as it stood when a room was opened from the floor: closing the room flies back to it. */
+  private beforeRoom: OrbitView | null = null;
   /** The camera of the floor last left while the camera is kept: a floor opened from the house view takes it again (#119). */
   private lastFloorCamera: { theta: number; phi: number; radius: number } | null = null;
   private zoom = 1;
