@@ -88,7 +88,7 @@ test("a game on a screen makes a card in the plan, before its own player, only w
   const cards = (console: string, account: "a" | "b" | null, f = monitor()) => {
     const hass = xboxHass(console, account);
     hass.states["media_player.tv"] = entity("media_player.tv", "playing", { media_title: "Film" });
-    return mediaInPlan(hass, house([{ ...f, name: "Monitor" }]), links).map((m) => [m.entity, m.title, m.picture, m.game ?? false, m.name]);
+    return mediaInPlan(hass, house([{ ...f, name: "Monitor" }]), links).map((m) => [m.entity, m.title, m.picture, !!m.game, m.name]);
   };
   assert.deepEqual(cards("on", "a"), [["tv", "Halo", "/a-hero", true, "Monitor"]], "the game, not the linked player");
   assert.deepEqual(cards("off", "a"), [], "console off: no game and no player either");
@@ -114,6 +114,32 @@ test("a game's card has no player buttons, a player's card has them", () => {
   assert.ok(drawn(game).includes("Halo"));
   assert.ok(!drawn(game).includes("live-actions") && !drawn(game).includes("live-btn"), "no controls on a game");
   assert.ok(drawn(player).includes("live-actions") && drawn(player).includes("live-btn"), "controls on a player");
+});
+
+test("a game's card shows the account's picture, since when it plays and its achievements", () => {
+  const at = { floorId: "g", x: 2, z: 2, y: 1 };
+  const hass = xboxHass("on", "a");
+  hass.devices = { a: { id: "a", name: "Gamertag" } } as never;
+  hass.states["binary_sensor.a_in_game"] = { ...hass.states["binary_sensor.a_in_game"], last_changed: "2026-11-16T14:05:00Z" };
+  hass.states["sensor.a_playing"] = entity("sensor.a_playing", "Halo", { achievements: "12 / 50", gamerscore: "340 / 1000", progress: "24 %" });
+  hass.states["image.a_pic"] = entity("image.a_pic", "t", { entity_picture: "/a-pic" });
+  hass.states["image.a_avatar"] = entity("image.a_avatar", "t", { entity_picture: "/a-avatar" });
+  Object.assign(hass.entities as Record<string, unknown>, {
+    "image.a_pic": { entity_id: "image.a_pic", device_id: "a", translation_key: "gamerpic" },
+    "image.a_avatar": { entity_id: "image.a_avatar", device_id: "a", translation_key: "avatar" },
+  });
+  const game = gameNow(hass, monitor(), "Monitor", at)!;
+  assert.deepEqual(game.game, { avatar: "/a-pic", since: Date.parse("2026-11-16T14:05:00Z"), achievements: "12 / 50 · 340 / 1000 G" });
+  const drawn = markup(renderLhCards(undefined, [{ kind: "media", at, media: game }], () => undefined));
+  assert.ok(drawn.includes("/a-pic") && drawn.includes("Gamertag") && drawn.includes("🏆 12 / 50 · 340 / 1000 G"), drawn);
+  // the gamerpic without a picture: the avatar; a game without achievements and an unknown start: neither line
+  hass.states["image.a_pic"] = entity("image.a_pic", "t", {});
+  hass.states["sensor.a_playing"] = entity("sensor.a_playing", "Halo", { achievements: null, gamerscore: null });
+  hass.states["binary_sensor.a_in_game"] = entity("binary_sensor.a_in_game", "on");
+  assert.deepEqual(gameNow(hass, monitor(), "Monitor", at)!.game, { avatar: "/a-avatar", since: null, achievements: null });
+  const bare = markup(renderLhCards(undefined, [{ kind: "media", at, media: gameNow(hass, monitor(), "Monitor", at)! }], () => undefined));
+  assert.ok(!bare.includes("🏆") && bare.includes("Gamertag"), bare);
+  assert.ok(screenWatched(hass, monitor()).includes("image.a_pic") && screenWatched(hass, monitor()).includes("image.a_avatar"), "the account's picture is watched");
 });
 
 test("a game takes the next artwork when the wide one has no picture", () => {

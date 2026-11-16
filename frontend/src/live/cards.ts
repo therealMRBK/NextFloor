@@ -218,6 +218,15 @@ function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: Li
   </div>`;
 }
 
+/** A game's lines under the title: who plays (with the account's picture) and since when, then the achievements. */
+function gameRows(hass: HomeAssistant | undefined, m: MediaNow): TemplateResult {
+  const g = m.game!;
+  const since = g.since !== null ? translate(hass, "live_game_since", { time: new Intl.DateTimeFormat(hass?.language ?? navigator.language, { hour: "2-digit", minute: "2-digit" }).format(new Date(g.since)) }) : "";
+  const who = [m.artist, since].filter(Boolean).join(" · ");
+  return html`<div class="live-status live-game-who">${g.avatar ? html`<img class="live-avatar" src=${g.avatar} alt="" loading="lazy" />` : nothing}<span>${who || m.name}</span></div>
+    ${g.achievements ? html`<div class="live-status" title=${translate(hass, "live_game_achievements")}>🏆 ${g.achievements}</div>` : nothing}`;
+}
+
 function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act: LiveCardAction): TemplateResult {
   const m = c.media;
   const t = (k: Parameters<typeof translate>[1]) => translate(hass, k);
@@ -229,7 +238,7 @@ function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act
     ${m.picture ? html`<img class="live-cover" src=${m.picture} alt="" loading="lazy" />` : html`<div class="live-cover live-cover-none">♪</div>`}
     <div class="live-rows">
       <div class="live-title" title=${m.title}>${m.title || m.name}</div>
-      <div class="live-status">${m.artist || m.app || m.name}</div>
+      ${m.game ? gameRows(hass, m) : html`<div class="live-status">${m.artist || m.app || m.name}</div>`}
       ${m.game
         ? nothing
         : html`<div class="live-actions">
@@ -601,6 +610,18 @@ export const liveCardStyles = css`
   }
   .live-card-media.live-open .live-actions {
     display: flex;
+  }
+  .live-game-who {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .live-avatar {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: none;
   }
   .live-card-media.live-open {
     z-index: 5;
