@@ -221,6 +221,10 @@ export interface Furniture extends LightEffectConfig {
   ambilight?: number | null;
   /** Speakers (a linked media player): size of the sound rings while it plays, 0 to 1.5 (null = 1, 0 = none) – #94. */
   sound_rings?: number | null;
+  /** Screens: the device on it (a games console); the screen stays dark while it is off. */
+  screen_device?: string | null;
+  /** Screens: "In game" sensors of game accounts; the first that is on shows its game and artwork. */
+  screen_sources?: string[];
   /** An own symbol for the marker: a Material Design icon name without "mdi:" (null = by kind). */
   icon?: string | null;
   /** Linked entity, e.g. the TV's media player (null = automatic, "none" = none). */

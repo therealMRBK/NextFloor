@@ -358,6 +358,9 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("ambilight", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
         # speakers: size of the sound rings while the linked media player plays (None = full, 0 = none)
         vol.Optional("sound_rings", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
+        # screens: the device on it (dark while it is off) and the game accounts whose game it shows
+        vol.Optional("screen_device", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("screen_sources"): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=4)),
         # linked entities (e.g. the TV's media player, a power sensor): None = automatic, "none" = no entity
         vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("power", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),

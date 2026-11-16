@@ -5,6 +5,13 @@
 import type { HomeAssistant } from "../types.ts";
 import type { PlanPoint } from "../viewer/live-energy.ts";
 
+/** What a game's card shows beside the title: the account's picture, when it went in game (ms) and its achievements ("12 / 50 · 340 / 1000 G"). */
+export interface GameExtras {
+  avatar: string | null;
+  since: number | null;
+  achievements: string | null;
+}
+
 export interface MediaNow {
   entity: string;
   name: string;
@@ -21,6 +28,8 @@ export interface MediaNow {
   group: string[];
   /** Size of its sound rings (1 = as usual, 0 = none). */
   rings: number;
+  /** A game on a monitor: nothing here can control it, so its card has no buttons; it shows who plays, since when and the achievements. */
+  game?: GameExtras;
 }
 
 /** App colours: the ring around a speaker and the card's edge take the colour of what plays. */
