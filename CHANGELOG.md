@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **Delete removes the selected roof piece**: with the roof tool, the Delete or Backspace key did nothing to the selected roof section, roof window or chimney, and could take away the room still selected beneath it instead. The key now removes the roof piece the panel shows, like its red button, and can be undone.
+
 ## [0.31.4.6]
 
 ### Fixed
