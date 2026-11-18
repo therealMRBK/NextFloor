@@ -4,9 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.7]
+
 ### Fixed
 
-- **Delete removes the selected roof piece**: with the roof tool, the Delete or Backspace key did nothing to the selected roof section, roof window or chimney, and could take away the room still selected beneath it instead. The key now removes the roof piece the panel shows, like its red button, and can be undone.
+- **Weather switched off stays off** (thanks @Guenni75, #196): in the panel and in a card, rain and the other weather were still shown when the weather option was off, as soon as the page was opened or reloaded. Switching the option while the view was open worked, which is why it was easy to miss. The view now starts with the option as it was saved.
+- **Delete removes the selected roof piece** (thanks @orshih6, #193 and @tichris0, #192): with the roof tool, the Delete or Backspace key did nothing to the selected roof section, roof window or chimney, and could take away the room still selected beneath it instead. The key now removes the roof piece the panel shows, like its red button, and can be undone.
 
 ## [0.31.4.6]
 
