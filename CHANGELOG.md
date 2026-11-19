@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Fixed
+
+- **Dashboard cards recover after Home Assistant restarts**: the plan reloads when the connection returns and failed loads retry every five seconds, without closing the tablet app. Unsaved edits are kept.
+
 ## [0.31.4.8]
 
 ### Fixed
