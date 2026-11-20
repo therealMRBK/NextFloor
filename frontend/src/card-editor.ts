@@ -187,6 +187,7 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "central_open", "card_central_open", "card_central_open_hint")}
       ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
       ${switchOption(f, "readable", "card_readable", "readable_hint")}
+      ${switchOption(f, "view_only", "card_view_only", "view_only_hint")}
       ${switchOption(f, "plain", "card_plain", "plain_hint")}
       ${switchOption(f, "right_back", "right_back", "right_back_hint")}
       ${this.roomsChoice()}
