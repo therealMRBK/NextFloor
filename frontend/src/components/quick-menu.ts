@@ -298,7 +298,7 @@ export class NfQuickMenu extends LitElement {
       background: rgba(8, 16, 34, 0.55);
       color: inherit;
       font: inherit;
-      font-size: 12.5px;
+      font-size: 13px;
       cursor: pointer;
     }
     .qm-chip-on {
@@ -320,6 +320,11 @@ export class NfQuickMenu extends LitElement {
         color: var(--nf-text);
         text-align: center;
         animation: qm-in 140ms ease-out;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :host([low]) .qm {
+          animation: none;
+        }
       }
       @keyframes qm-in {
         from {

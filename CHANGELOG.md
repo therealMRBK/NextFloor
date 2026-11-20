@@ -4,6 +4,23 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.5]
+
+### Fixed
+
+- **The 3D view starts even where the browser blocks local storage** (private mode, blocked site data): it used to fail on start, now it uses its defaults.
+
+### Changed
+
+- **Buttons answer your touch at once.** Chips, switches, buttons and the round buttons in the 3D view dip a little while pressed and spring back, there is no tap delay on touch screens and no grey tap flash.
+- **No more "stuck" hover on touch screens.** Hover highlights only appear with a real mouse, so a tapped button on a wall tablet no longer stays lit.
+- **A calmer type scale and corner radii.** The half-pixel text sizes (11.5, 12.5, 13.5 px) now sit on whole sizes, a few stray corner radii snap to the common ones, headings wrap evenly, and selected text uses your accent colour.
+- **The room panel's info line wraps between facts, never inside one,** and the editor's "move floor" row groups its fields and buttons cleanly instead of breaking at random.
+- **The room panel eases in** with a short fade and rise instead of popping up, and the other looping or entering animations (charging pulse, the "found" pulse, the context menu, the editor preview) stand still when the device asks for reduced motion.
+- **The on/off switches in the room panel** fade their colour, slide with a stronger ease and a soft knob shadow, and the icon buttons in the editor, header, card and live cards dip when pressed.
+- **Touch screens get 40 px buttons** for the shared chips, switches and buttons. The press effects and the entrance animation are switched off when the device asks for reduced motion.
+- **Under the hood:** the 3D viewer's shared types now live in one place, a few unused definitions and one duplicated style rule are gone.
+
 ## [0.31.4.10]
 
 ### Fixed

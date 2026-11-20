@@ -1536,12 +1536,6 @@ export const FURNITURE_SIZE: Record<FurnitureType, [number, number, number]> = {
   coat_rack: [1.0, 0.35, 1.9],
 };
 
-export const OPENING_DEFAULTS = {
-  door: { width: 0.9, sill: 0, height: 2.05 },
-  window: { width: 1.2, sill: 0.9, height: 1.3 },
-  garage: { width: 2.5, sill: 0, height: 2.1 },
-} as const;
-
 /** Kinds of openings offered when placing one; a terrace door is a window down to the floor. */
 /** Door looks: room doors, front doors (with glass, one or two sidelights), a glass door, a sliding door. */
 export const DOOR_STYLES = ["interior", "front", "front_glass", "sidelight", "sidelights", "glass", "sliding", "passage"] as const;

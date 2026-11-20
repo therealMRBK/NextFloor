@@ -135,13 +135,6 @@ export function arcOfNearest(room: Room, world: Vec2): number {
   return found;
 }
 
-/** Where a front of `width` may start on the outline, so that it stays on it as a whole. */
-export function frontRange(room: Room, width: number): [number, number] {
-  const total = outlineLength(room);
-  const w = Math.min(width, total);
-  return [0, Math.max(0, total - w)];
-}
-
 /** Whether an opening is wide enough to leave its own edge and become a front of several pieces. */
 export function spansEdges(room: Room, edge: number, width: number): boolean {
   const lengths = edgeLengths(room);

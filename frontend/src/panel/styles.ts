@@ -73,7 +73,7 @@ export const panelStyles = css`
     border-radius: 10px;
     border: 1px solid var(--nf-line);
     background: var(--nf-chrome-solid);
-    font-size: 13.5px;
+    font-size: 14px;
   }
   .nf-notice span {
     flex: 1;
@@ -107,7 +107,7 @@ export const panelStyles = css`
     border-radius: 999px;
     background: var(--nf-chrome);
     box-shadow: var(--nf-shadow);
-    font-size: 13.5px;
+    font-size: 14px;
   }
   .nf-size-select {
     font: inherit;
@@ -141,7 +141,7 @@ export const panelStyles = css`
     flex: 1;
   }
   .nf-save {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-muted);
   }
   .nf-view-opts {
@@ -189,7 +189,7 @@ export const panelStyles = css`
   /* the installed version, at the far right of the header */
   .nf-version {
     margin-left: auto;
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--nf-muted);
     white-space: nowrap;
     opacity: 0.8;
@@ -312,8 +312,10 @@ export const panelStyles = css`
     flex: none;
   }
   /* a desktop shows a thin scrollbar while the pointer rests on the bar */
-  .nf-nav:hover {
-    scrollbar-width: thin;
+  @media (hover: hover) and (pointer: fine) {
+    .nf-nav:hover {
+      scrollbar-width: thin;
+    }
   }
   /* wrapped: several lines, at most about three before the bar itself scrolls */
   .nf-nav-wrap {
@@ -489,5 +491,20 @@ export const panelStyles = css`
     justify-items: center;
     gap: 12px;
     margin: auto;
+  }
+  .nf-opts-btn,
+  .nf-accent-reset {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-opts-btn:active,
+  .nf-accent-reset:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-opts-btn:active,
+    .nf-accent-reset:active {
+      transform: none;
+    }
   }
 `;
