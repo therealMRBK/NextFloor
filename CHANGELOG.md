@@ -4,6 +4,18 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.32.0]
+
+### Added
+
+- **A list of a room's objects in the editor** (thanks @Noack1978, #180): select a room and its form lists every piece of furniture, lamp and device standing in it, with a ⚡ for linked ones and a 🔒 for fixed ones. A click selects the item exactly like a click in the plan, which finally reaches small and covered pieces.
+- **A three-quarter turn staircase** (thanks @gimmel, #157): the stair tool has a new shape, *Dreiviertelgewendelt*, with flights along three sides and winders in the two corners.
+- **Free outdoor corners** (thanks @michaelltaylor, #160): hold Shift while dragging a corner of a rectangular outdoor area and only that corner moves, so the area becomes a free shape that lines up with walls and other areas.
+- **View only** (thanks @tfischer84, #156): a new switch in the panel's view options and on the card (`view_only: true`) shows everything but sends nothing to Home Assistant, so a touch on a wall tablet can no longer switch things by accident. Home Assistant's own details dialog stays usable.
+- **Thermostats show their wish** (thanks @Jkazama6, #205): the marker of a radiator or thermostat reads "19,4 °C → 19 °C" with a flame while it heats and a snowflake while it cools.
+- **Roomba+ position tracking** (thanks @cwar36, #210): a `device_tracker` with `map_x_mm` and `map_y_mm` attributes is found as the position source of a robot vacuum and moves it whenever either coordinate changes. The usual two-place calibration ties it to the plan.
+
+
 ## [0.31.5]
 
 ### Fixed
