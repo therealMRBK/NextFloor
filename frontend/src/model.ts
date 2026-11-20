@@ -36,6 +36,8 @@ export interface Room {
   floor_material: string;
   /** Paint of the room's walls on its inside in the solid wall view ("#rrggbb"; null = the building's inside colour). */
   wall_paint?: string | null;
+  /** Material of the room's inside walls (null = the building's inside material / plaster). */
+  wall_material?: string | null;
   /** Entities shown in the room's panel although they are not in the plan. */
   panel?: string[];
   /** Entities of the room's area kept out of the room panel. */
@@ -213,6 +215,14 @@ export interface Furniture extends LightEffectConfig {
   variant: string | null;
   /** Own name (e.g. "Wechselrichter Nord"); null = the type's name. */
   name?: string | null;
+  /** Custom colour ("#rrggbb") for this piece of furniture (null = default). */
+  color?: string | null;
+  /** Surface texture/material for this piece of furniture (null = automatic). */
+  material?: string | null;
+  /** Group name/id so multiple pieces of furniture can be moved, rotated and duplicated together. */
+  group?: string | null;
+  /** Custom uploaded 3D model id (".glb" stored in nextfloor_meshes). */
+  mesh?: string | null;
   /** The own name shows as a small label under its marker in 3D. */
   show_name?: boolean;
   /** Lamps: how strongly the lamp glows in 3D, 0.1–1.5 (1 = as bright as the light reports) – #181. */
@@ -404,6 +414,8 @@ export interface Floor {
   notes?: PlanNote[];
   /** Paint of this floor's outer walls in the solid wall view ("#rrggbb"; null = the building's outside colour): a plinth, a garage (#110). */
   wall_paint_outside?: string | null;
+  /** Material of this floor's outer walls (null = the building's outside material). */
+  wall_material_outside?: string | null;
 }
 
 /** A note pinned to a spot of a floor. */
@@ -703,6 +715,14 @@ export interface BleTag {
   scanners?: Record<string, string>;
 }
 
+/** A touch-friendly quick-control group button outside the 3D model, opening a popup with lights/devices. */
+export interface QuickControlGroup {
+  id: string;
+  label: string;
+  icon?: string | null;
+  entities: string[];
+}
+
 export interface BuildingSettings {
   /** Bluetooth tags located by room (the sensor and the editor's learning by walking). */
   ble?: { tags: BleTag[] } | null;
@@ -720,11 +740,18 @@ export interface BuildingSettings {
   favorite_floors?: Record<string, string>;
   /** Own buttons in the central menu (D143). */
   buttons?: CustomButton[];
+  /** Customizable tablet quick-control buttons outside the 3D model, each opening a popup. */
+  quick_controls?: QuickControlGroup[] | null;
+  /** Master switch for outdoor weather animations (rain, snow, clouds, wind); default true. */
+  weather_animations?: boolean;
   wall_exterior: number;
   wall_interior: number;
   /** Paint of the walls in the solid wall view ("#rrggbb"): outside, and inside where a room has no colour of its own (null = default). */
   wall_paint_outside?: string | null;
   wall_paint_inside?: string | null;
+  /** Material of the walls in realistic / natural looks: outside, and inside where a room has no material of its own. */
+  wall_material_outside?: string | null;
+  wall_material_inside?: string | null;
   /** Furniture colours per role ("#rrggbb"; body, wood, fabric, white, metal, dark), house-wide (#82). */
   furniture_colors?: FurnitureColors | null;
   /** The colours of the own look ("#rrggbb": dark and light surfaces, lines, background), house-wide (#82). */
@@ -1126,7 +1153,11 @@ export const DEFAULT_ENERGY: EnergySettings = {
   tariff: null,
 };
 
-export const FLOOR_MATERIALS = ["wood", "oak", "tiles", "carpet", "stone", "concrete"] as const;
+export const FLOOR_MATERIALS = ["wood", "oak", "herringbone", "parquet", "tiles", "marble", "terrazzo", "carpet", "stone", "concrete", "vinyl", "laminate", "cork_vinyl", "linoleum", "brick", "decking"] as const;
+
+export const WALL_MATERIALS = ["plaster", "brick", "concrete", "wood_cladding", "stone", "tile", "wallpaper", "slate"] as const;
+
+export const FURNITURE_MATERIALS = ["auto", "wood", "oak", "fabric", "leather", "metal", "lacquer", "marble", "rattan"] as const;
 
 export const DEFAULT_ROOF: RoofSettings = { type: "none", pitch: 35, overhang: 0.4 };
 

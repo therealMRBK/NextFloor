@@ -3,8 +3,10 @@
 // the floor's wall buffer, main outlines into its line buffer and a soft contact shadow into the shadow layer, so furniture
 // adds no draw calls.
 
+import { Color } from "three";
 import { builtinBase, type Furniture } from "../../model.ts";
 import { packItem } from "../../packs.ts";
+import { FURNITURE_MATERIAL_INDEX } from "../build/look.ts";
 import { GeoBuffer, type LineBuffer } from "../geo.ts";
 import { Builder, contactShadow } from "./builder.ts";
 import { bunkBed, barStool, bed, bench, chair, officeChair, shapedSofa, sofa, stool } from "./seating.ts";
@@ -247,9 +249,26 @@ export function tiltBuilt(buf: GeoBuffer, lines: LineBuffer, from: { vertex: num
 }
 
 export function pushFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {
-  const start = { vertex: buf.p.length, line: lines.p.length };
+  const start = { vertex: buf.p.length, line: lines.p.length, tile: buf.tile?.length ?? 0 };
   pushUpright(buf, lines, shadow, f, base);
   tiltBuilt(buf, lines, start, f, base);
+  if (buf.tile) {
+    const mat = f.material && f.material in FURNITURE_MATERIAL_INDEX ? FURNITURE_MATERIAL_INDEX[f.material] : 0;
+    for (let i = start.tile; i < buf.tile.length; i += 2) {
+      buf.tile[i] = mat;
+      buf.tile[i + 1] = 2;
+    }
+  }
+  if (f.color && /^#[0-9a-f]{6}$/i.test(f.color)) {
+    const col = new Color(f.color);
+    for (let i = start.vertex; i < buf.c.length; i += 3) {
+      const mx = Math.max(buf.c[i], buf.c[i + 1], buf.c[i + 2]);
+      const shade = Math.max(0.38, Math.min(1.25, mx * 4.2));
+      buf.c[i] = col.r * 0.36 * shade;
+      buf.c[i + 1] = col.g * 0.36 * shade;
+      buf.c[i + 2] = col.b * 0.36 * shade;
+    }
+  }
 }
 
 function pushUpright(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {

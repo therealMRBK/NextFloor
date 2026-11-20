@@ -4,6 +4,7 @@ import { swipeSendsOnRelease, swipeSendsWhileMoving } from "../swipe-policy.ts";
 import { changeMoments, hassAt, loadHistory, replayable, type History } from "../live/time-travel.ts";
 import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
+import { quickDockStyles, renderQuickDock } from "./quick-dock.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
@@ -124,6 +125,7 @@ export class NfView3d extends LitElement {
     _carsFolded: { state: true },
     _swipe: { state: true },
     _menu: { state: true },
+    _quickGroup: { state: true },
     _pluginWindow: { state: true },
     _plate: { state: true },
     _blend: { state: true },
@@ -266,6 +268,7 @@ export class NfView3d extends LitElement {
   private declare _swipe: { entity: string; kind: "light" | "cover" | "fan"; start: number; value: number; x: number; y: number } | null;
   /** Quick menu at a device (long press). */
   private declare _menu: { entity: string; x: number; y: number; car?: CarState } | null;
+  private declare _quickGroup: string | null;
   /** A window a plugin opened in the lower right corner (a camera's live picture). */
   private declare _pluginWindow: { node: Node; title: string } | null;
   /** Where each placed device stands, for plugins that handle its taps. */
@@ -472,6 +475,7 @@ export class NfView3d extends LitElement {
     this._energy = null;
     this._swipe = null;
     this._menu = null;
+    this._quickGroup = null;
     this._pluginWindow = null;
     this._plate = null;
     this._wallBig = null;
@@ -1026,12 +1030,13 @@ export class NfView3d extends LitElement {
     v.setSun(sunNow);
     v.setLocation(config?.latitude !== undefined && config.longitude !== undefined ? { latitude: config.latitude, longitude: config.longitude, zone: config.time_zone } : null);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
-    const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;
+    const weatherOn = this.weather && b.settings.weather_animations !== false && !this.dimmed;
+    const raw = weatherOn ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;
     const weather = raw ? withDensity(chosenEffects(raw, b.settings.weather_effects), this.weatherDensity) : null;
     this.cloud = weather?.cloud ?? 0;
     this._sky = skyLightness(sunNow?.elevation ?? null, this.cloud);
     v.setSky(
-      this.weather && !this.dimmed
+      weatherOn
         ? {
             weather,
             sun: sunNow,
@@ -2895,6 +2900,7 @@ export class NfView3d extends LitElement {
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
+      ${this.clean || this.furnish ? nothing : renderQuickDock(this.hass, this.building?.settings.quick_controls ?? [], this._quickGroup, (id) => (this._quickGroup = id))}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
             ><b>${this._stats.fps ? translate(this.hass, "stats_fps", { fps: this._stats.fps, ms: this._stats.worstMs }) : translate(this.hass, "stats_idle")}</b>
@@ -2910,6 +2916,7 @@ export class NfView3d extends LitElement {
     tokens,
     controls,
     liveCardStyles,
+    quickDockStyles,
     css`
       :host {
         display: block;

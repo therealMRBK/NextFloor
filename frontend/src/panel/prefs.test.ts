@@ -10,7 +10,7 @@ function memory(initial: Record<string, string> = {}): PrefsStorage & { data: Re
 test("nothing stored gives the defaults", () => {
   const prefs = new PrefStore(memory()).load();
   assert.deepEqual(prefs, {
-    explode: true, keepRoof: false, solidWalls: false, quality: "auto", stats: false, markers: "important", heat: "none", theme: "neon", accent: null,
+    explode: true, keepRoof: false, solidWalls: false, quality: "auto", stats: false, markers: "important", heat: "none", theme: "neon", autoDay: "nordic", autoNight: "warm_evening", accent: null,
     floorStack: "dim", roomNames: true, clean: false, navWrap: false, weather: true, timeSlider: false, menuOpen: false, keepCamera: false, readable: false, plain: false, rightBack: false, zoom: 100, clock: "none", screenName: "", announceMuted: false, glassWalls: 20,
   });
 });

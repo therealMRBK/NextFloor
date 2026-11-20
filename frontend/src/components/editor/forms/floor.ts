@@ -1,7 +1,8 @@
 // The side panel's floor part: the floors of the house as chips, and the form of the selected floor.
 
 import { html, nothing, type TemplateResult } from "lit";
-import { DEFAULT_PAINT_OUTSIDE, type Floor } from "../../../model.ts";
+import { DEFAULT_PAINT_OUTSIDE, WALL_MATERIALS, type Floor } from "../../../model.ts";
+import type { I18nKey } from "../../../i18n.ts";
 import type { HassFloor } from "../../../types.ts";
 import { checkField, colorField, entityField, hint, numberField, selectField, textField } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
@@ -128,6 +129,7 @@ function floorForm(host: EditorHost, state: SideState, floorActions: FloorAction
     ${entityField(host, t("floor_power"), floor.power_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.") && host.hass?.states[id]?.attributes.device_class === "power"), (v) => update({ power_entity: v && v !== "none" ? v : null }))}
     ${floor.power_entity ? hint(t("floor_power_hint"), "nf-wide") : nothing}
     ${floor.layer ? nothing : colorField(host, t("wall_paint_floor"), floor.wall_paint_outside, host.doc.settings.wall_paint_outside ?? DEFAULT_PAINT_OUTSIDE, (v) => update({ wall_paint_outside: v }))}
+    ${floor.layer ? nothing : selectField(host, t("wall_material_floor"), floor.wall_material_outside ?? "", [["", t("wall_material_default")], ...WALL_MATERIALS.map((m): [string, string] => [m, t(`wmat_${m}` as I18nKey)])], (v) => update({ wall_material_outside: v || null }), { wide: true })}
     ${areaRow(host, floor, floorActions, state)}
     ${host.admin && lacking.length > 0
       ? html`<div class="nf-actions nf-wide"><button class="nf-btn nf-primary" title=${t("area_rooms_hint")} @click=${() => floorActions.addAreaRooms(floor)}>${t("area_rooms", { n: lacking.length })}</button></div>`

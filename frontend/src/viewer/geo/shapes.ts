@@ -158,6 +158,8 @@ export interface PrismOptions {
   skipSide?: (a: Vec2, b: Vec2) => boolean;
   /** The colour of each side face instead of `side` (painted walls: each face in the colour of the room it faces). */
   sideColor?: (a: Vec2, b: Vec2) => number;
+  /** The material tile of each side face (wall materials: [index, 0]). */
+  sideTile?: (a: Vec2, b: Vec2) => [number, number];
 }
 
 /**
@@ -204,8 +206,9 @@ export function pushPrism(buf: GeoBuffer, poly: Vec2[], y0: number | ((x: number
       const footB = shade(own, occlusion(fb) * light);
       const headA = shade(own, occlusion(ya) * light);
       const headB = shade(own, occlusion(yb) * light);
-      buf.tri([a[0], fa, a[1]], [a[0], ya, a[1]], [b[0], yb, b[1]], footA, headA, headB, undefined, fold);
-      buf.tri([a[0], fa, a[1]], [b[0], yb, b[1]], [b[0], fb, b[1]], footA, headB, footB, undefined, fold);
+      const tile = opts.sideTile ? opts.sideTile(a, b) : undefined;
+      buf.tri([a[0], fa, a[1]], [a[0], ya, a[1]], [b[0], yb, b[1]], footA, headA, headB, undefined, fold, tile);
+      buf.tri([a[0], fa, a[1]], [b[0], yb, b[1]], [b[0], fb, b[1]], footA, headB, footB, undefined, fold, tile);
     });
   }
 }

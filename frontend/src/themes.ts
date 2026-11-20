@@ -1,9 +1,9 @@
 // Looks of the 3D view, shared by the main bundle (settings, stage background) and the 3D bundle.
 
-export type Theme = "neon" | "blueprint" | "day" | "own" | "real";
+export type Theme = "neon" | "blueprint" | "day" | "own" | "real" | "nordic" | "warm_evening" | "minimal";
 
-// the order is the shader's look number (neon 0 ... own 3, real 4): new looks go to the end
-export const THEMES: Theme[] = ["neon", "blueprint", "day", "own", "real"];
+// the order is the shader's look number (neon 0 ... own 3, real 4, nordic 5, warm_evening 6, minimal 7): new looks go to the end
+export const THEMES: Theme[] = ["neon", "blueprint", "day", "own", "real", "nordic", "warm_evening", "minimal"];
 
 /** The colours of the own look ("#rrggbb" each; missing ones take the default), house-wide in the settings or a card's own (#82). */
 export interface OwnLook {
@@ -42,7 +42,7 @@ export function ownLook(...layers: (OwnLook | null | undefined)[]): Required<Own
 
 /** A light stage needs dark lines drawn without glow and no neon ground grid: the day look, or an own look on a light background. */
 export function lightStage(theme: Theme, own: OwnLook): boolean {
-  if (theme === "day" || theme === "real") return true;
+  if (theme === "day" || theme === "real" || theme === "nordic" || theme === "minimal") return true;
   if (theme !== "own") return false;
   const [r, g, b] = hexRgb(own.background) ?? [0, 0, 0];
   return 0.299 * r + 0.587 * g + 0.114 * b > 140;
@@ -61,10 +61,10 @@ export type Look = Theme | "auto";
 
 export const LOOKS: Look[] = ["auto", ...THEMES];
 
-/** The look to draw now: "auto" follows sun.sun (day above the horizon, else neon; neon when there is no sun entity). */
-export function lookNow(look: Look | undefined, sunState: string | undefined): Theme {
+/** The look to draw now: "auto" follows sun.sun (autoDay above the horizon, else autoNight). */
+export function lookNow(look: Look | undefined, sunState: string | undefined, autoDay: Theme = "day", autoNight: Theme = "neon"): Theme {
   if (look !== "auto") return look ?? "neon";
-  return sunState === "above_horizon" ? "day" : "neon";
+  return sunState === "above_horizon" ? autoDay : autoNight;
 }
 
 /** Background of the 3D stage per look (sky in the middle, ground at the edges), night and day. */
@@ -108,6 +108,39 @@ export const STAGE: Record<Exclude<Theme, "own">, { night: [number[], number[]];
     day: [
       [150, 190, 232],
       [214, 228, 240],
+    ],
+  },
+  // Scandinavian daylight: warm off-white sky and soft sand horizon
+  nordic: {
+    night: [
+      [196, 202, 212],
+      [162, 170, 182],
+    ],
+    day: [
+      [246, 243, 236],
+      [220, 214, 202],
+    ],
+  },
+  // Cozy warm evening: deep espresso/charcoal without harsh neon cyan
+  warm_evening: {
+    night: [
+      [26, 22, 19],
+      [14, 12, 10],
+    ],
+    day: [
+      [44, 38, 32],
+      [24, 20, 17],
+    ],
+  },
+  // Architectural studio clay / maquette
+  minimal: {
+    night: [
+      [182, 184, 188],
+      [146, 148, 154],
+    ],
+    day: [
+      [238, 236, 231],
+      [210, 206, 198],
     ],
   },
 };

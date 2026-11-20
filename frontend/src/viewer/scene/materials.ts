@@ -39,9 +39,9 @@ const PATTERN_VERTEX_DECLARATIONS = "#include <common>\nattribute vec2 tile;\nva
 const PATTERN_TILE_PASS = "#include <begin_vertex>\nvNfTile = tile;";
 const PATTERN_SAMPLE = `#ifdef USE_MAP
         vec2 nfCell = fract(vMapUv);
-        vec2 nfUv = (vNfTile + 0.004 + nfCell * 0.992) / vec2(3.0, 2.0);
+        vec2 nfUv = (vNfTile + 0.004 + nfCell * 0.992) / vec2(4.0, 4.0);
         // gradients of the unwrapped coordinates avoid mip seams at the tile borders
-        vec4 sampledDiffuseColor = textureGrad(map, nfUv, dFdx(vMapUv) / vec2(3.0, 2.0), dFdy(vMapUv) / vec2(3.0, 2.0));
+        vec4 sampledDiffuseColor = textureGrad(map, nfUv, dFdx(vMapUv) / vec2(4.0, 4.0), dFdy(vMapUv) / vec2(4.0, 4.0));
         diffuseColor *= sampledDiffuseColor;
       #endif`;
 

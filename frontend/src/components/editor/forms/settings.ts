@@ -1,7 +1,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { weatherEntity } from "../../../weather.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, DEFAULT_WEATHER_EFFECTS, WEATHER_EFFECTS, type Building, type RoofType } from "../../../model.ts";
+import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, DEFAULT_WEATHER_EFFECTS, WALL_MATERIALS, WEATHER_EFFECTS, type Building, type RoofType } from "../../../model.ts";
 import { entityName } from "../../../devices.ts";
 import { FURNITURE_ROLES, STOCK_ROLE_HEX } from "../../../furniture-colors.ts";
 import { OWN_LOOK_KEYS, ownLookShown } from "../../../themes.ts";
@@ -74,6 +74,8 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${hint(t("rooms_as_drawn_hint"), "nf-wide")}
       ${colorField(host, t("wall_paint_outside"), s.wall_paint_outside, DEFAULT_PAINT_OUTSIDE, (v) => set({ wall_paint_outside: v }))}
       ${colorField(host, t("wall_paint_inside"), s.wall_paint_inside, DEFAULT_PAINT_INSIDE, (v) => set({ wall_paint_inside: v }))}
+      ${selectField(host, t("wall_material_outside"), s.wall_material_outside ?? "plaster", WALL_MATERIALS.map((m): [string, string] => [m, t(`wmat_${m}` as I18nKey)]), (v) => set({ wall_material_outside: v === "plaster" ? null : v }))}
+      ${selectField(host, t("wall_material_inside"), s.wall_material_inside ?? "plaster", WALL_MATERIALS.map((m): [string, string] => [m, t(`wmat_${m}` as I18nKey)]), (v) => set({ wall_material_inside: v === "plaster" ? null : v }))}
       ${hint(t("wall_paint_hint"), "nf-wide")}
       ${FURNITURE_ROLES.map((role) =>
         colorField(host, t(`furn_color_${role}`), s.furniture_colors?.[role], STOCK_ROLE_HEX[role], (v) => {
@@ -102,6 +104,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${gable ? numberField(host, t("roof_pitch"), s.roof.pitch, (v) => setRoof({ pitch: clamp(v, 5, 60) }), 1, 5) : nothing}
       ${s.roof.type !== "none" ? numberField(host, t("roof_overhang"), s.roof.overhang, (v) => setRoof({ overhang: clamp(v, 0, 2) }), 0.05, 0) : nothing}
       ${host.hass ? entityField(host, t("weather_entity"), s.weather_entity ?? null, weatherEntity(host.hass, null), entityOptions(host.hass, (id) => id.startsWith("weather.")), (v) => set({ weather_entity: v })) : nothing}
+      ${checkField(host, t("weather_animations"), s.weather_animations !== false, (on) => set({ weather_animations: on }), { title: t("weather_animations_hint") })}
       <div class="nf-sub nf-wide">${t("weather_effects")}</div>
       ${WEATHER_EFFECTS.map((effect) => checkField(host, t(`weather_effect_${effect}` as I18nKey), current.includes(effect), (on) => set({ weather_effects: withEffect(current, effect, on) }), { wide: false }))}
       ${checkField(host, t("rain_warning"), s.rain_warning !== false, (on) => set({ rain_warning: on }))}

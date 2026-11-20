@@ -19,13 +19,13 @@ import { NEXTFLOOR_MARK } from "./panel/mark.ts";
 import { browserStorage, PrefStore, type DevicePrefs } from "./panel/prefs.ts";
 import { panelStyles } from "./panel/styles.ts";
 import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
-import { LOOKS, lookNow, type Look } from "./themes.ts";
+import { LOOKS, THEMES, lookNow, type Look, type Theme } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
 import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
 import type { FloorStack, Quality, WallMode } from "./viewer/viewer3d.ts";
 import { hostPad } from "./panel/safe-area.ts";
 
-type Mode = "view" | "editor" | "extensions";
+type Mode = "view" | "editor" | "settings" | "extensions";
 type Key = I18nKey;
 
 export class NextFloorPanel extends LitElement {
@@ -289,6 +289,7 @@ export class NextFloorPanel extends LitElement {
     let body: TemplateResult | typeof nothing = nothing;
     if (building) {
       if (this._mode === "editor" && this.isAdmin) body = this.renderEditor(building);
+      else if (this._mode === "settings" && this.isAdmin) body = this.renderSettingsPage(building);
       else if (this._mode === "extensions" && this.isAdmin) body = this.renderExtensions();
       else body = this.renderView(building);
     }
@@ -323,6 +324,20 @@ export class NextFloorPanel extends LitElement {
       <div class="nf-view-opts ${this._optsOpen ? "nf-opts-open" : ""}">
         ${this.choiceRow("quality", ["auto", "low", "high"] as Quality[], p.quality, (q) => this.t(`quality_${q}`), (q) => this.setPref("quality", q))}
         ${this.choiceRow("theme", LOOKS as readonly Look[], p.theme, (th) => this.t(`theme_${th}`), (th) => this.setPref("theme", th), this.accentPicker())}
+        ${p.theme === "auto"
+          ? html`<label class="nf-seg nf-clock-pick" title=${this.t("auto_day")}
+                >☀
+                <select aria-label=${this.t("auto_day")} @change=${(e: Event) => this.setPref("autoDay", (e.target as HTMLSelectElement).value as Theme)}>
+                  ${THEMES.map((th) => html`<option value=${th} ?selected=${p.autoDay === th}>${this.t(`theme_${th}`)}</option>`)}
+                </select>
+              </label>
+              <label class="nf-seg nf-clock-pick" title=${this.t("auto_night")}
+                >🌙
+                <select aria-label=${this.t("auto_night")} @change=${(e: Event) => this.setPref("autoNight", (e.target as HTMLSelectElement).value as Theme)}>
+                  ${THEMES.map((th) => html`<option value=${th} ?selected=${p.autoNight === th}>${this.t(`theme_${th}`)}</option>`)}
+                </select>
+              </label>`
+          : nothing}
         ${this.choiceRow("markers", ["none", "important", "all"] as MarkerMode[], p.markers, (m) => this.t(`markers_${m}`), (m) => this.setPref("markers", m))}
         <label class="nf-seg nf-clock-pick" title=${this.t("clock")}
           >🕒
@@ -370,7 +385,7 @@ export class NextFloorPanel extends LitElement {
     return html`<header class="nf-header">
       <ha-menu-button .hass=${this.hass} .narrow=${this.narrow}></ha-menu-button>
       <h1>${NEXTFLOOR_MARK}NextFloor</h1>
-      ${this.isAdmin ? html`<div class="nf-seg" role="tablist">${tab("view", this.t("view"))}${tab("editor", this.t("editor"))}${tab("extensions", `✦ ${this.t("ext_tab")}`, "nf-tab-ext")}</div>` : nothing}
+      ${this.isAdmin ? html`<div class="nf-seg" role="tablist">${tab("view", this.t("view"))}${tab("editor", this.t("editor"))}${tab("settings", `⚙ ${this.t("settings")}`)}${tab("extensions", `✦ ${this.t("ext_tab")}`, "nf-tab-ext")}</div>` : nothing}
       <span class="nf-grow"></span>
       ${this._mode === "view" && building?.floors.some((f) => f.rooms.length) ? this.renderViewOptions() : nothing}
       ${this._mode === "editor" && saveState !== "idle" ? html`<span class="nf-save nf-save-${saveState}">${this.t(saveLabel)}</span>` : nothing}
@@ -413,6 +428,17 @@ export class NextFloorPanel extends LitElement {
       (err: unknown) => (this.data.error = String(err)),
     );
     return html`<div class="nf-empty"><p>${this.t("loading")}</p></div>`;
+  }
+
+  private renderSettingsPage(building: Building) {
+    return this.whenEditorLoaded(
+      () => html`<nf-settings
+        class="nf-body"
+        .hass=${this.hass}
+        .building=${building}
+        @plan-changed=${(e: CustomEvent<Building>) => this.applyEdit(() => e.detail)}
+      ></nf-settings>`,
+    );
   }
 
   private renderExtensions() {
@@ -590,7 +616,7 @@ export class NextFloorPanel extends LitElement {
           .keepRoof=${p.keepRoof}
           .markerMode=${p.markers}
           .heatMode=${p.heat}
-          .theme=${lookNow(p.theme, this.sunState())}
+          .theme=${lookNow(p.theme, this.sunState(), p.autoDay, p.autoNight)}
           .timeOfDay=${this._timeOfDay}
           .clock=${p.clock === "none" ? null : p.clock}
           .announcements=${!p.announceMuted}
