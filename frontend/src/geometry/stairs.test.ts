@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { DEFAULT_STAIR, STAIR_SHAPES, STAIR_SIZES, stairConfig, stairLayout, stairOpening, stairOpeningInPlan, type StairConfig } from "./stairs.ts";
 
@@ -125,4 +126,9 @@ test("the three-quarter stair walks up the left side, along the back and down th
   const back = Math.min(...centres.map((c) => c[1]));
   assert.ok(back < -d / 4, "passes along the back");
   assert.ok(layout.treads.some((t) => Math.abs(t.poly.reduce((s, p) => s + p[0], 0) / t.poly.length) < w / 6), "has treads along the middle of the back");
+});
+
+test("the server's plan schema accepts every stair shape the editor offers", () => {
+  const schema = readFileSync(new URL("../../../custom_components/nextfloor/schema.py", import.meta.url), "utf8");
+  for (const shape of STAIR_SHAPES) assert.ok(schema.includes(`"${shape}"`), `schema.py does not know the stair shape "${shape}"`);
 });

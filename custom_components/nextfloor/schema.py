@@ -304,7 +304,7 @@ _TAP_SCHEMA = vol.Schema(
 # stairs: shape, turn, build and direction of a shaped stair (no defaults: plans without it keep the simple stair)
 _STAIR_SCHEMA = vol.Schema(
     {
-        vol.Optional("shape"): vol.In(["straight", "quarter", "l", "half", "u", "spiral"]),
+        vol.Optional("shape"): vol.In(["straight", "quarter", "l", "half", "u", "spiral", "three_quarter"]),
         vol.Optional("turn"): vol.In(["left", "right"]),
         vol.Optional("build"): vol.In(["solid", "stringer", "mono", "cantilever"]),
         vol.Optional("risers"): bool,
