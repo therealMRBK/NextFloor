@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.10]
+
+### Fixed
+
+- **Very small dashboard cards no longer pile their buttons on top of each other** (thanks @Guenni75, #203): below about 260 px of card height the floor pictures on the left and the house/energy cards used to lie under the room row at the top and the control buttons at the bottom. On such a small card they are now left out, so the room row at the top and the buttons at the bottom stay readable.
+
 ## [0.31.4.9]
 
 ### Fixed

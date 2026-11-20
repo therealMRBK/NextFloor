@@ -485,6 +485,14 @@ const params = new URLSearchParams(location.search);
         card.hass = hass;
         editorBox.append(editor);
         wrap.append(editorBox, card);
+        // ?cardsize=735x192: only the card, at exactly that size (to look at small dashboard cards)
+        if (params.get("cardsize")) {
+          const [cw, ch] = params.get("cardsize").split("x");
+          editorBox.style.display = "none";
+          wrap.style.cssText += ";display:block;padding:0";
+          card.style.cssText = `display:block;width:${cw}px;height:${ch}px`;
+          card.setConfig({ ...config, height: Number(ch) });
+        }
         document.body.append(wrap);
         window.nfCard = card;
       } else {
