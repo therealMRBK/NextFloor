@@ -492,4 +492,19 @@ export const panelStyles = css`
     gap: 12px;
     margin: auto;
   }
+  .nf-opts-btn,
+  .nf-accent-reset {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-opts-btn:active,
+  .nf-accent-reset:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-opts-btn:active,
+    .nf-accent-reset:active {
+      transform: none;
+    }
+  }
 `;

@@ -11,6 +11,7 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 - **A calmer type scale and corner radii.** The half-pixel text sizes (11.5, 12.5, 13.5 px) now sit on whole sizes, a few stray corner radii snap to the common ones, headings wrap evenly, and selected text uses your accent colour.
 - **The room panel's info line wraps between facts, never inside one,** and the editor's "move floor" row groups its fields and buttons cleanly instead of breaking at random.
 - **The room panel eases in** with a short fade and rise instead of popping up, and the other looping or entering animations (charging pulse, the "found" pulse, the context menu, the editor preview) stand still when the device asks for reduced motion.
+- **The on/off switches in the room panel** fade their colour, slide with a stronger ease and a soft knob shadow, and the icon buttons in the editor, header, card and live cards dip when pressed.
 - **Touch screens get 40 px buttons** for the shared chips, switches and buttons.
 - **Clearer keyboard focus** on the shared buttons, and the press effect is switched off when the device asks for reduced motion.
 

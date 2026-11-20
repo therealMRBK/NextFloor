@@ -661,4 +661,19 @@ export const liveCardStyles = css`
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
+  .live-fold,
+  .live-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .live-fold:active,
+  .live-btn:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-fold:active,
+    .live-btn:active {
+      transform: none;
+    }
+  }
 `;

@@ -136,4 +136,16 @@ export const cardStyles = css`
       justify-content: flex-end;
     }
   }
+  .nf-card-full {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-card-full:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-card-full:active {
+      transform: none;
+    }
+  }
 `;

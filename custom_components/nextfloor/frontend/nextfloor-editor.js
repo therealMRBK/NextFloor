@@ -3931,6 +3931,39 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     font-size: 13px;
     color: var(--nf-warm);
   }
+  .nf-strip-btn,
+  .nf-picture-reuse-btn,
+  .nf-keys-open,
+  .nf-card-star,
+  .nf-chip-x,
+  .nf-swatch,
+  .nf-lib-toggle,
+  .nf-more {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-strip-btn:active,
+  .nf-picture-reuse-btn:active,
+  .nf-keys-open:active,
+  .nf-card-star:active,
+  .nf-chip-x:active,
+  .nf-swatch:active,
+  .nf-lib-toggle:active,
+  .nf-more:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-strip-btn:active,
+    .nf-picture-reuse-btn:active,
+    .nf-keys-open:active,
+    .nf-card-star:active,
+    .nf-chip-x:active,
+    .nf-swatch:active,
+    .nf-lib-toggle:active,
+    .nf-more:active {
+      transform: none;
+    }
+  }
 `;var Jg=["cabinet","shelf","lamp","device"],bn="own_studio";var Uk={cabinet:{w:120,d:45,h:80,doors:2,drawers:1,shelves:2,base:"plinth",handle:"bar",back:!0,lamp:"floor",display:!1,mount:"floor",body:"white",front:"wood"},shelf:{w:80,d:35,h:180,doors:0,drawers:0,shelves:4,base:"none",handle:"none",back:!0,lamp:"floor",display:!1,mount:"floor",body:"wood",front:"wood"},lamp:{w:40,d:40,h:160,doors:0,drawers:0,shelves:0,base:"none",handle:"none",back:!1,lamp:"floor",display:!1,mount:"floor",body:"metal",front:"white"},device:{w:60,d:60,h:85,doors:0,drawers:0,shelves:0,base:"none",handle:"none",back:!1,lamp:"floor",display:!0,mount:"floor",body:"white",front:"dark"}},Jl=(t,e)=>({kind:t,name:e,...Uk[t]}),Qg=(t,e)=>({...Jl(e,t.name),body:t.body,front:t.front}),rr=(t,e,n)=>Math.min(n,Math.max(e,Number.isFinite(t)?t:e)),or=t=>Math.round(t*1e4)/1e4;function Ql(t){return{...t,name:t.name.trim().slice(0,60),w:rr(Math.round(t.w),5,400),d:rr(Math.round(t.d),2,200),h:rr(Math.round(t.h),2,300),doors:rr(Math.round(t.doors),0,6),drawers:rr(Math.round(t.drawers),0,6),shelves:rr(Math.round(t.shelves),0,12)}}function ue(t,e,n,r,o,i,s,a,l={}){let[c,u,d]=t,f=(x,k,S)=>{let $=Math.max(-S,x-k/2),E=Math.min(S,x+k/2);return E-$<1e-4?[Math.max(-S,Math.min(S,x)),.001*S*2]:[($+E)/2,E-$]},[h,p]=f(e,r,c/2),[_,b]=f(n,o,u/2),w=Math.max(0,Math.min(d*.999,i)),v=Math.max(d*.001,Math.min(d-w,s)),y=x=>or(Math.max(.001,Math.min(1,x)));return{shape:"box",x:or(h/c),z:or(_/u),w:y(p/c),d:y(b/u),y:or(w/d),h:y(v/d),color:a,...l}}function e_(t,e,n){let[r,o,i]=t;if(e==="legs"){let s=Math.min(.1,i*.25),a=Math.min(.04,r/6,o/6);for(let[l,c]of[[-1,-1],[1,-1],[-1,1],[1,1]])n.push(ue(t,l*(r/2-a),c*(o/2-a),a,a,0,s,"metal"));return s}if(e==="plinth"){let s=Math.min(.08,i*.2);return n.push(ue(t,0,-.02,r-.02,o-.04,0,s,"dark")),s}return 0}function jk(t,e){let[n,r,o]=e,i=[],s=e_(e,t.base,i),a=t.doors+t.drawers>0,l=t.handle==="none"||!a?0:Math.min(.025,r*.08),c=a?Math.min(.02,r*.1):0,u=r-c-l,d=-r/2+u/2,f=o-s;if(!a){let v=Math.min(.018,n/10,f/10);i.push(ue(e,-n/2+v/2,0,v,r,s,f,t.body,{edges:!0})),i.push(ue(e,n/2-v/2,0,v,r,s,f,t.body,{edges:!0})),i.push(ue(e,0,-r/2+.005,n-2*v,.01,s,f,t.body));for(let y=0;y<=t.shelves+1;y++)i.push(ue(e,0,.005,n-2*v,r-.01,s+(f-v)*y/(t.shelves+1),v,t.front,{edges:"faint"}));return i}i.push(ue(e,0,d,n,u,s,f,t.body,{edges:!0}));let h=.004,p=-r/2+u+c/2,_=t.doors>0?Math.min(.18,Math.max(.08,(f-.3)/Math.max(1,t.drawers))):f/t.drawers,b=s+(t.drawers>0?_*t.drawers:0),w=(v,y,x)=>{if(t.handle==="none")return;let k=r/2-l/2;t.handle==="knob"?i.push(ue(e,v,k,.025,l,y-.0125,.025,"metal")):x?i.push(ue(e,v,k,.015,l,y-.08,.16,"metal")):i.push(ue(e,v,k,Math.min(.16,n*.4),l,y-.0075,.015,"metal"))};for(let v=0;v<t.drawers;v++){let y=s+_*v;i.push(ue(e,0,p,n-2*h,c,y+h,_-2*h,t.front,{edges:"faint"})),w(0,y+_*(t.drawers===1&&t.doors===0?.5:.7),!1)}if(t.doors>0){let v=n/t.doors,y=o-b;for(let x=0;x<t.doors;x++){let k=-n/2+v*(x+.5);i.push(ue(e,k,p,v-2*h,c,b+h,y-2*h,t.front,{edges:"faint"}));let S=t.doors===1||x%2===0?1:-1,$=b+y*(o>1.2?.45:.8);w(k+S*(v/2-.04),Math.min($,o-.1),!0)}}return i}function Zk(t,e){let[n,r,o]=e,i=Math.min(.02,n/10,o/10),s=[ue(e,-n/2+i/2,0,i,r,0,o,t.body,{edges:!0}),ue(e,n/2-i/2,0,i,r,0,o,t.body,{edges:!0})];t.back&&s.push(ue(e,0,-r/2+.005,n-2*i,.01,0,o,t.body));let a=t.shelves+2;for(let l=0;l<a;l++)s.push(ue(e,0,t.back?.005:0,n-2*i,t.back?r-.01:r,(o-i)*l/(a-1),i,t.front,{edges:!0}));return s}function qk(t,e){let[n,r,o]=e,i=Math.min(n,r),s=(l,c,u,d,f,h,p={})=>({...ue(e,l,c,u,u,d,f,h,p),shape:"cyl"}),a=(l,c,u)=>({...ue(e,0,0,i,i,l,c,t.front,{glow:!0,edges:"faint"}),shape:"loft",tw:or(Math.min(1,i*u/n)),td:or(Math.min(1,i*u/r))});switch(t.lamp){case"pendant":{let l=Math.min(.3,o*.4);return[s(0,0,Math.min(.12,i),o-.03,.03,t.body),s(0,0,Math.min(.01,i/4),l,o-l-.03,"dark"),a(0,l,.35)]}case"wall":{let l=Math.min(.02,r*.2);return[ue(e,0,-r/2+l/2,Math.min(.1,n),l,o*.3,o*.4,t.body),ue(e,0,0,Math.min(.02,n),r-l,o*.45,Math.min(.02,o*.1),t.body),a(o*.15,o*.7,.7)]}default:{let l=Math.min(t.lamp==="table"?.25:.35,o*.4);return[s(0,0,i*.6,0,Math.min(.03,o*.05),t.body,{edges:!0}),s(0,0,Math.min(.03,i/6),.02,o-l-.02,t.body),a(o-l,l,.7)]}}}function Yk(t,e){let[n,r,o]=e,i=[],s=t.mount==="floor"?e_(e,t.base,i):0,a=t.display?Math.min(.01,r*.1):0;if(i.push(ue(e,0,-a/2,n,r-a,s,o-s,t.body,{edges:!0})),t.display){let l=Math.min(.02,n*.08,(o-s)*.08);i.push(ue(e,0,r/2-a/2,n-2*l,a,s+l,o-s-2*l,t.front,{screen:!0}))}return i}function fs(t,e,n){let r=Ql(t),o=[r.w/100,r.d/100,r.h/100],i=r.name||e,s=n==="en"?{en:i}:{[n.slice(0,5)]:i,en:i},a={id:e,name:s,size:o,parts:[],recipe:r};switch(r.kind){case"cabinet":a.parts=jk(r,o),a.surface=!0;break;case"shelf":a.parts=Zk(r,o);break;case"lamp":a.parts=qk(r,o),a.light=r.lamp,a.mount=r.lamp==="pendant"?"ceiling":r.lamp==="wall"?"wall":r.lamp==="table"?"surface":"floor",r.lamp==="wall"&&(a.wall_y=1.6);break;case"device":a.parts=Yk(r,o),a.electric=!0,a.mount=r.mount,r.mount==="wall"&&(a.wall_y=1.2);break}return a}function t_(t,e){let n=t.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/ß/g,"ss").replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"").slice(0,32)||"piece",r=/^[a-z0-9]/.test(n)?n:`p${n}`;if(!e.includes(r))return r;for(let o=2;;o++)if(!e.includes(`${r}_${o}`))return`${r}_${o}`}var n_=["white","wood","body","metal","dark","glass","accent"],Xk={white:"#dfe6f2",wood:"#8a6a4a",body:"#3a4a6a",metal:"#9aa7bf",dark:"#1e2638",glass:"#7fd0e8",accent:"#37e0ff",fabric:"#4b5d8c",cushion:"#6a7fb3"},o_=t=>Xk[t]??t;function Jk(t){let e=fs(t,"preview","en"),[n,,r]=e.size,o=180/Math.max(n,r),[i,s]=[n*o,r*o],a=[...e.parts].sort((l,c)=>l.z+l.d/2-(c.z+c.d/2));return m`<svg class="nf-studio-view" viewBox="-4 -4 ${i+8} ${s+8}" role="img" aria-hidden="true">
     ${a.map(l=>{let c=l.w*i,u=l.h*s,d=(l.x+.5)*i-c/2,f=s-(l.y+l.h)*s,h=l.shape==="cyl"?Math.min(c,u)/2:l.shape==="loft"?3:1;return A`<rect x=${d} y=${f} width=${Math.max(.6,c)} height=${Math.max(.6,u)} rx=${h} fill=${l.screen?"#0b1020":o_(l.color)} stroke="rgba(10,16,32,0.55)" stroke-width="0.8" class=${l.glow?"nf-studio-glow":""} />`})}
   </svg>`}function r_(t,e,n,r){let o=t.t,i=!n_.includes(n),s=[...n_.map(a=>[a,o(a==="body"?"studio_color_plan":`studio_color_${a}`)]),["own",o("studio_color_own")]];return m`${O(t,e,i?"own":n,s,a=>r(a==="own"?o_(n):a))}

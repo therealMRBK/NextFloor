@@ -1113,6 +1113,14 @@ export class NfRoomPanel extends LitElement {
         border: none;
         background: color-mix(in srgb, var(--nf-text) 10%, transparent);
         cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.2s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .nf-switch:active:not(:disabled),
+      .nf-rp-close:active,
+      .nf-rp-swatch:active {
+        transform: scale(0.95);
       }
       .nf-switch::after {
         content: "";
@@ -1123,7 +1131,19 @@ export class NfRoomPanel extends LitElement {
         height: 20px;
         border-radius: 50%;
         background: #e6eefc;
-        transition: transform 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+        transition: transform 0.22s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-switch,
+        .nf-switch::after {
+          transition: none;
+        }
+        .nf-switch:active:not(:disabled),
+        .nf-rp-close:active,
+        .nf-rp-swatch:active {
+          transform: none;
+        }
       }
       .nf-switch[aria-checked="true"] {
         background: var(--nf-warm);

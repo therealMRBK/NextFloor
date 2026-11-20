@@ -707,6 +707,14 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         border: none;
         background: color-mix(in srgb, var(--nf-text) 10%, transparent);
         cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.2s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .nf-switch:active:not(:disabled),
+      .nf-rp-close:active,
+      .nf-rp-swatch:active {
+        transform: scale(0.95);
       }
       .nf-switch::after {
         content: "";
@@ -717,7 +725,19 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         height: 20px;
         border-radius: 50%;
         background: #e6eefc;
-        transition: transform 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+        transition: transform 0.22s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-switch,
+        .nf-switch::after {
+          transition: none;
+        }
+        .nf-switch:active:not(:disabled),
+        .nf-rp-close:active,
+        .nf-rp-swatch:active {
+          transform: none;
+        }
       }
       .nf-switch[aria-checked="true"] {
         background: var(--nf-warm);
@@ -1295,6 +1315,21 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     opacity: 0.75;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+  .live-fold,
+  .live-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .live-fold:active,
+  .live-btn:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-fold:active,
+    .live-btn:active {
+      transform: none;
+    }
   }
 `;function Pr(r){return r.toLocaleLowerCase().normalize("NFD").replace(new RegExp("\\p{M}","gu"),"")}var gi=r=>r.points.length>=3;function Nc(r,e,t){return r.rooms.filter(gi).find(n=>N([e,t],n.points))}function Vm(r,e,t,n){let o=[];for(let a of e.rooms.filter(gi)){let[l,c]=Ue(a.points);o.push({kind:"room",name:a.name,where:n?e.name:"",floorId:e.id,roomId:a.id,entity:null,icon:null,x:l,z:c,y:0})}let i=new Set,s=(a,l,c,u)=>{if(i.has(a)||!(a in r.states))return;i.add(a);let d=Nc(e,l,c),p=[d?.name,n?e.name:void 0].filter(m=>!!m).join(" \xB7 ");o.push({kind:"device",name:B(r,a),where:p,floorId:e.id,roomId:d?.id??null,entity:a,icon:P(a),x:l,z:c,y:u})};for(let a of e.placements){let l=a.y??yt(P(a.entity_id)??"sensor",ke(e,a.x,a.z),a.mount);s(a.entity_id,a.x,a.z,l)}for(let a of e.furniture){let l=t.get(a.id),c=l?.entity??l?.power;if(!c)continue;let u=ke(e,a.x,a.z)-.3;s(c,a.x,a.z,Math.min(u,Math.max(.5,a.h)))}for(let a of e.notes??[]){if(!a.text)continue;let l=Nc(e,a.x,a.z),c=[l?.name,n?e.name:void 0].filter(u=>!!u).join(" \xB7 ");o.push({kind:"note",name:`\u270E ${a.text.length>60?`${a.text.slice(0,59)}\u2026`:a.text}`,where:c,floorId:e.id,roomId:l?.id??null,entity:null,icon:null,x:a.x,z:a.z,y:1.3})}return o}function Cc(r,e){let t=st(r,e.floors),n=e.floors.length>1,o=e.floors.flatMap(i=>Vm(r,i,t,n));for(let i of e.settings.circuits??[]){let s=e.floors.flatMap(d=>d.rooms.filter(p=>i.rooms.includes(p.id)&&gi(p)).map(p=>({f:d,r:p})));if(!s.length)continue;let[{f:a,r:l}]=s,[c,u]=Ue(l.points);o.push({kind:"circuit",name:`\u{1F50C} ${i.name}`,where:s.map(d=>d.r.name).join(", "),floorId:a.id,roomId:l.id,entity:null,icon:null,x:c,z:u,y:0})}return o}function Km(r,e){return(Pr(r.name).startsWith(e)?0:2)+(r.kind==="room"?0:1)}function Oc(r,e,t=8){let n=Pr(e).split(/\s+/).filter(Boolean);if(n.length===0)return[];let o=Pr(e.trim());return r.filter(i=>{let s=Pr([i.name,i.where,i.entity].filter(Boolean).join(" "));return n.every(a=>s.includes(a))}).map(i=>({item:i,cost:Km(i,o)})).sort((i,s)=>i.cost-s.cost||i.item.name.localeCompare(s.item.name)).slice(0,t).map(i=>i.item)}var Gm=[[255,181,71],[255,236,210],[55,224,255],[91,124,255],[190,90,255],[255,95,210],[255,70,70],[120,255,150]],Um=[2200,2700,3200,4e3,5e3,6500],jm=["hs","rgb","rgbw","rgbww","xy"],qm=4,Wc=16,Lc=32,Zm=128;function bi(r){let e=r.attributes.supported_color_modes??[],t=e.some(n=>jm.includes(n));return{dim:e.some(n=>n!=="onoff"),color:t,temp:e.includes("color_temp")}}function wi(r){return((r.attributes.supported_features??0)&qm)!==0&&typeof r.attributes.current_position=="number"}var _i=class extends ce{static properties={hass:{attribute:!1},entity:{attribute:!1},car:{attribute:!1},presets:{attribute:!1},confirmSwitch:{type:Boolean},myPosition:{attribute:!1},low:{type:Boolean,reflect:!0}};t(e,t){return A(this.hass,e,t)}ask(){return!this.confirmSwitch||confirm(this.t("confirm_switch",{name:B(this.hass,this.entity)}))}call(e,t,n={}){this.hass.callService(e,t,{entity_id:this.entity,...n})}close(){this.dispatchEvent(new CustomEvent("close",{bubbles:!0,composed:!0}))}details(){_e(this,this.entity),this.close()}ring(e){let t=e.length;return e.map((n,o)=>{let i=o/t*Math.PI*2-Math.PI/2;return f`<div class="qm-at" style="left:${50+Math.cos(i)*39}%;top:${50+Math.sin(i)*39}%">${n}</div>`})}renderLight(e){let t=bi(e),n=e.state==="on",o=n&&typeof e.attributes.brightness=="number"?Math.round(e.attributes.brightness/2.55):n?100:0,i=t.color?Gm.map(s=>f`<button class="qm-swatch" style="background:rgb(${s.join(",")})" aria-label=${`RGB ${s.join(", ")}`} @click=${()=>this.call("light","turn_on",{rgb_color:s})}></button>`):t.temp?Um.map(s=>f`<button class="qm-swatch" style="background:${Ym(s)}" aria-label=${`${s} K`} @click=${()=>this.call("light","turn_on",{color_temp_kelvin:s})}></button>`):[];return f`<div class="qm-ring ${i.length?"":"qm-ring-small"}">
         ${this.ring(i)}
@@ -3470,7 +3505,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         inset: auto 16px 16px;
         color: var(--nf-danger);
       }
-    `]};customElements.get("nf-view3d")||customElements.define("nf-view3d",xi);function de(r,e){return Math.abs(e)>=1e3?`${L(r,e/1e3,1)} kW`:`${Math.round(e)} W`}function ki(r){return r.type==="tv_board"?r.h+.9:r.type==="tv_wall"||r.type==="kitchen_wall"?r.h+.25:r.h+.35}function sf(r,e){let t=e.attributes.percentage;return e.state==="on"&&typeof t=="number"?`${Math.round(t)} %`:ie(r,e)}var Qc;function Xc(){let r=new URL("./nextfloor-editor.js?v=222fd60c87b2",new URL(import.meta.url)).href;return Qc??=import(r),Qc}var af=.25,eu=r=>Math.round(r*1e3)/1e3,tu=(r,e,t)=>r.rooms.find(n=>n.points.length>=3&&N([e,t],n.points));function Mi(r,e,t,n,o){let i=tu(r,e,t);if(!i)return[n,o];let s=(a,l)=>N([a,l],i.points);return s(n,o)?[n,o]:s(n,t)?[n,t]:s(e,o)?[e,o]:[e,t]}function lf(r,e,t,n){return r.rooms.some(o=>o.id!==e.id&&o.points.some((i,s)=>{let a=o.points[(s+1)%o.points.length];return Math.abs(U(q(i,t),n))<.02&&Math.abs(U(q(a,t),n))<.02}))}var Si=(r,e)=>Math.abs((r-e+540)%360-180);function nu(r,e,t,n=af){let o=tu(r,e.x,e.z);if(!o)return null;let i=o.points,s=He(i)>=0?1:-1,a=null;return i.forEach((l,c)=>{let u=i[(c+1)%i.length],d=Se(q(u,l));if(d<.3)return;let p=[(u[0]-l[0])/d,(u[1]-l[1])/d],m=[-p[1]*s,p[0]*s],h=U(q([e.x,e.z],l),p);if(h<0||h>d)return;let w=lf(r,o,l,m)?t/2:0,_=U(q([e.x,e.z],l),m)-w,k=Math.atan2(-m[0],m[1])*180/Math.PI,M=[{rotation:k,extent:e.d/2},{rotation:k+90,extent:e.w/2},{rotation:k-90,extent:e.w/2}].reduce((b,H)=>Si(e.rotation,H.rotation)<Si(e.rotation,b.rotation)?H:b);if(Si(e.rotation,M.rotation)>50)return;let x=_-M.extent;Math.abs(x)>n||a&&Math.abs(x)>=Math.abs(a.gap)||(a={x:eu(e.x-m[0]*x),z:eu(e.z-m[1]*x),rotation:(Math.round(M.rotation)%360+360)%360,gap:x})}),a&&{x:a.x,z:a.z,rotation:a.rotation}}function Ir(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.furniture.find(s=>s.id===e);i&&t(i,o)}return n}function Nr(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.placements.find(s=>s.entity_id===e);i&&t(i,o)}return n}function ru(r,e){let t=structuredClone(r);for(let n of t.floors)n.furniture=n.furniture.filter(o=>o.id!==e);return t}function ou(r,e){let t=structuredClone(r);for(let n of t.floors)n.placements=n.placements.filter(o=>o.entity_id!==e);return t}function iu(r,e,t,n){return Nr(r,e,(o,i)=>{[o.x,o.z]=Mi(i,o.x,o.z,t,n)})}function su(r,e,t,n){let o=r.settings.wall_interior??.12;return Ir(r,e,(i,s)=>{[i.x,i.z]=Mi(s,i.x,i.z,t,n);let a=nu(s,i,o);a&&Object.assign(i,a)})}var $i=(r,e)=>((r+e)%360+360)%360,au=r=>Number.parseFloat(r.replace(",",".")),xn=(r,e)=>Math.round(r*10**e)/10**e;function Ai(r){let{min:e,max:t,accepts:n=()=>!0}=r,o=i=>{let s=au(i.target.value);!Number.isFinite(s)||!n(s)||r.apply(t===void 0?s:Math.min(t,Math.max(e,s)))};return f`<label class="nf-size" title=${r.title}
+    `]};customElements.get("nf-view3d")||customElements.define("nf-view3d",xi);function de(r,e){return Math.abs(e)>=1e3?`${L(r,e/1e3,1)} kW`:`${Math.round(e)} W`}function ki(r){return r.type==="tv_board"?r.h+.9:r.type==="tv_wall"||r.type==="kitchen_wall"?r.h+.25:r.h+.35}function sf(r,e){let t=e.attributes.percentage;return e.state==="on"&&typeof t=="number"?`${Math.round(t)} %`:ie(r,e)}var Qc;function Xc(){let r=new URL("./nextfloor-editor.js?v=33e9d60d164d",new URL(import.meta.url)).href;return Qc??=import(r),Qc}var af=.25,eu=r=>Math.round(r*1e3)/1e3,tu=(r,e,t)=>r.rooms.find(n=>n.points.length>=3&&N([e,t],n.points));function Mi(r,e,t,n,o){let i=tu(r,e,t);if(!i)return[n,o];let s=(a,l)=>N([a,l],i.points);return s(n,o)?[n,o]:s(n,t)?[n,t]:s(e,o)?[e,o]:[e,t]}function lf(r,e,t,n){return r.rooms.some(o=>o.id!==e.id&&o.points.some((i,s)=>{let a=o.points[(s+1)%o.points.length];return Math.abs(U(q(i,t),n))<.02&&Math.abs(U(q(a,t),n))<.02}))}var Si=(r,e)=>Math.abs((r-e+540)%360-180);function nu(r,e,t,n=af){let o=tu(r,e.x,e.z);if(!o)return null;let i=o.points,s=He(i)>=0?1:-1,a=null;return i.forEach((l,c)=>{let u=i[(c+1)%i.length],d=Se(q(u,l));if(d<.3)return;let p=[(u[0]-l[0])/d,(u[1]-l[1])/d],m=[-p[1]*s,p[0]*s],h=U(q([e.x,e.z],l),p);if(h<0||h>d)return;let w=lf(r,o,l,m)?t/2:0,_=U(q([e.x,e.z],l),m)-w,k=Math.atan2(-m[0],m[1])*180/Math.PI,M=[{rotation:k,extent:e.d/2},{rotation:k+90,extent:e.w/2},{rotation:k-90,extent:e.w/2}].reduce((b,H)=>Si(e.rotation,H.rotation)<Si(e.rotation,b.rotation)?H:b);if(Si(e.rotation,M.rotation)>50)return;let x=_-M.extent;Math.abs(x)>n||a&&Math.abs(x)>=Math.abs(a.gap)||(a={x:eu(e.x-m[0]*x),z:eu(e.z-m[1]*x),rotation:(Math.round(M.rotation)%360+360)%360,gap:x})}),a&&{x:a.x,z:a.z,rotation:a.rotation}}function Ir(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.furniture.find(s=>s.id===e);i&&t(i,o)}return n}function Nr(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.placements.find(s=>s.entity_id===e);i&&t(i,o)}return n}function ru(r,e){let t=structuredClone(r);for(let n of t.floors)n.furniture=n.furniture.filter(o=>o.id!==e);return t}function ou(r,e){let t=structuredClone(r);for(let n of t.floors)n.placements=n.placements.filter(o=>o.entity_id!==e);return t}function iu(r,e,t,n){return Nr(r,e,(o,i)=>{[o.x,o.z]=Mi(i,o.x,o.z,t,n)})}function su(r,e,t,n){let o=r.settings.wall_interior??.12;return Ir(r,e,(i,s)=>{[i.x,i.z]=Mi(s,i.x,i.z,t,n);let a=nu(s,i,o);a&&Object.assign(i,a)})}var $i=(r,e)=>((r+e)%360+360)%360,au=r=>Number.parseFloat(r.replace(",",".")),xn=(r,e)=>Math.round(r*10**e)/10**e;function Ai(r){let{min:e,max:t,accepts:n=()=>!0}=r,o=i=>{let s=au(i.target.value);!Number.isFinite(s)||!n(s)||r.apply(t===void 0?s:Math.min(t,Math.max(e,s)))};return f`<label class="nf-size" title=${r.title}
     >${r.label}
     <input type="number" inputmode="decimal" step=${r.step} min=${e} max=${t??g} .value=${String(xn(r.value,2))} @change=${o} />
   </label>`}var cu=(r,e)=>f`<button class="nf-chip" @click=${e}>${r.t("height_auto")}</button>`,lu=(r,e)=>f`<button class="nf-chip" @click=${()=>e(-r)}>↺ ${r}°</button><button class="nf-chip" @click=${()=>e(r)}>↻ ${r}°</button>`;function cf(r,e){let t=r.building.floors.find(s=>s.furniture.some(a=>a.id===e)),n=t?.furniture.find(s=>s.id===e);if(!t||!n)return g;let o=(s,a)=>Ai({label:r.t(a),title:r.t(`size_${s}`),value:n[s],step:.05,min:.05,accepts:l=>l>0,apply:l=>r.editFurniture(e,c=>c[s]=xn(l,3))}),i=As(n)?f`${Ai({label:"\u2195",title:r.t("mount_height"),value:n.mount_y??pe(t,n),step:.05,min:0,accepts:s=>s>=0,apply:s=>r.editFurniture(e,a=>a.mount_y=xn(s,3))})}
@@ -3980,6 +4015,21 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     gap: 12px;
     margin: auto;
   }
+  .nf-opts-btn,
+  .nf-accent-reset {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-opts-btn:active,
+  .nf-accent-reset:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-opts-btn:active,
+    .nf-accent-reset:active {
+      transform: none;
+    }
+  }
 `;var fu=r=>{let e=parseFloat(r??"");return Number.isFinite(e)&&e>0?e:0};function gu(r){return{top:fu(r?.paddingTop),bottom:fu(r?.paddingBottom)}}var Ri=class extends ce{static properties={hass:{attribute:!1},narrow:{type:Boolean},route:{attribute:!1},panel:{attribute:!1},_mode:{state:!0},_editorReady:{state:!0},_floorId:{state:!0},_roomId:{state:!0},_wallMode:{state:!0},_prefs:{state:!0},_furnish:{state:!0},_selFurniture:{state:!0},_selDevice:{state:!0},_optsOpen:{state:!0},_switchesOpen:{state:!0},_timeOfDay:{state:!0},_outside:{state:!0},_timeDrag:{state:!0},_floorUndo:{state:!0}};outsideMemo=null;floorUndoTimer;data=new vt(this);store=new Cr(Or());constructor(){super(),this.narrow=!1,this._mode="view",this._editorReady=!!customElements.get("nf-editor"),this._floorId=null,this._roomId=null,this._wallMode="auto",this._prefs=this.store.load(location.search),this._furnish=!1,this._selFurniture=null,this._selDevice=null,this._optsOpen=!1,this._switchesOpen=!1,this._timeOfDay=null,this._outside=!1,this._timeDrag=null,this._floorUndo=null}toggleTimeSlider(e){this.setPref("timeSlider",e),e||([this._timeOfDay,this._timeDrag]=[null,null])}sunState(){let e=this.hass?.config;return this._timeOfDay===null||e?.latitude===void 0||e.longitude===void 0?this.hass?.states["sun.sun"]?.state:ot(ft(this._timeOfDay,e.time_zone),e.latitude,e.longitude).elevation>0?"above_horizon":"below_horizon"}renderTimeOfDay(){let e=this.t;if(this.hass?.config?.latitude===void 0)return g;let t=this._timeDrag??this._timeOfDay,n=i=>`${String(Math.floor(i)).padStart(2,"0")}:${String(Math.round(i%1*60)).padStart(2,"0")}`,o=()=>{let i=new Date;return Math.round((i.getHours()+i.getMinutes()/60)*4)/4};return f`<button class="nf-chip" aria-pressed=${t!==null} title=${e("time_of_day_hint")} @click=${()=>(this._timeDrag=null,this._timeOfDay=t===null?o():null)}>☀ ${t===null?e("time_of_day"):n(t)}</button>
       ${t!==null?f`<label class="nf-chip nf-time-slider"
             ><input type="range" min="0" max="23.75" step="0.25" .value=${String(t)} aria-label=${e("time_of_day")} @input=${i=>this._timeDrag=Number(i.target.value)}
@@ -4306,6 +4356,18 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       width: auto;
       height: 55%;
       justify-content: flex-end;
+    }
+  }
+  .nf-card-full {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-card-full:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-card-full:active {
+      transform: none;
     }
   }
 `;function zi(r,e){let t=r.template,n=t?e?.[t]:void 0;if(!n)return r;let{type:o,template:i,...s}=n;return{...s,...r}}function vu(r,e){let t=new Set(e),n=[];for(let i of r.floors){let s=i.rooms.filter(c=>t.has(c.id));if(!s.length)continue;let a=(c,u)=>s.some(d=>d.points.length>=3&&N([c,u],d.points)),l=new Set(s.map(c=>c.id));n.push({...i,rooms:s,openings:i.openings.filter(c=>l.has(c.room_id)),furniture:i.furniture.filter(c=>a(c.x,c.z)),placements:i.placements.filter(c=>a(c.x,c.z)),walls:(i.walls??[]).filter(c=>a((c.a[0]+c.b[0])/2,(c.a[1]+c.b[1])/2)),outdoor:[]})}let o={...r.settings.roof,type:"none",sections:[],solar:[]};return{...r,floors:n,settings:{...r.settings,roof:o}}}var Ke="nf-outside",Ti=class extends ce{static properties={hass:{attribute:!1},_config:{state:!0},_roomId:{state:!0},_floorId:{state:!0},_walls:{state:!0},_heat:{state:!0},_explode:{state:!0},_fullscreen:{state:!0},_pseudoFull:{state:!0},_clean:{state:!0},_night:{state:!0},_orbit:{state:!0}};_own=null;templatesSeen;roomApplied=!1;data=new vt(this);kiosk=new Wr({config:()=>this._config,hass:()=>this.hass,setClean:e=>this._clean=e,isClean:()=>this._clean,setOrbit:e=>this._orbit=e,isOrbit:()=>this._orbit,setNight:e=>this._night=e,goHome:()=>this.returnHome()});constructor(){super(),this._roomId=null,this._floorId=void 0,this._walls=null,this._heat=null,this._explode=null,this._fullscreen=!1,this._pseudoFull=!1,this._clean=!1,this._night=!1,this._orbit=!1}view3d(){return this.shadowRoot?.querySelector("nf-view3d")}returnHome(){this._roomId=this._config?.room??null,this._floorId=void 0,this.view3d()?.resetView(),this._config?.idle_orbit&&(this._orbit=!0)}openDashboard(e){history.pushState(null,"",e),window.dispatchEvent(new CustomEvent("location-changed",{bubbles:!0,composed:!0,detail:{replace:!1}}))}onFullscreen=()=>{if(this._pseudoFull)return;let e=document.fullscreenElement;this._fullscreen=!!e&&(e===this||this.shadowRoot?.contains(e)===!0||this.shadowRoot?.fullscreenElement!=null)};connectedCallback(){super.connectedCallback(),document.addEventListener("fullscreenchange",this.onFullscreen),this.kiosk.start()}disconnectedCallback(){super.disconnectedCallback(),document.removeEventListener("fullscreenchange",this.onFullscreen),this.kiosk.stop()}toggleFullscreen(){if(this._pseudoFull){this._pseudoFull=!1,this._fullscreen=!1;return}if(document.fullscreenElement){document.exitFullscreen();return}let e=this.shadowRoot?.querySelector("ha-card");e&&typeof e.requestFullscreen=="function"?e.requestFullscreen():(this._pseudoFull=!0,this._fullscreen=!0)}static async getConfigElement(){return await Rn(),document.createElement("nextfloor-card-editor")}static getStubConfig(){return{type:"custom:nextfloor-card"}}setConfig(e){if(e.height!==void 0&&!(e.height>100))throw new Error("height must be a number of pixels above 100");this._own=e,this._config=zi(e,this.data.building?.settings.card_templates),this._floorId=void 0,this._walls=null,this._heat=null,this._explode=null,this._orbit=!1,this._night=Sn(e.night,this.hass),this._clean=e.controls_hidden===!0,this.kiosk.armClean(),this.kiosk.armIdle()}getCardSize(){return Math.ceil((this._config?.height??420)/50)}getGridOptions(){return{columns:"full",rows:this._config?.fill?12:Math.ceil((this._config?.height??420)/56),min_rows:4}}willUpdate(e){let t=this.data.building?.settings.card_templates;if(this._own?.template&&t!==this.templatesSeen&&(this.templatesSeen=t,this._config=zi(this._own,t)),this.toggleAttribute("readable",this._config?.readable===!0),e.has("hass")&&(this.style.colorScheme=wr(this.hass)),!e.has("hass")||!this.hass)return;this.data.setHass(this.hass);let n=Sn(this._config?.night,this.hass);n!==this._night&&(this._night=n)}get canSwitch(){return!this._config?.floor||this.thumbs}get thumbs(){return this._config?.floor_thumbs??!this._config?.floor}back(){this._roomId?this._roomId=null:this.canSwitch&&(this._floorId=null)}roomsMemo=null;plan(){let e=this.data.building??null,t=this._config?.rooms;if(!e||!t?.length)return e;let n=t.join(",");return(!this.roomsMemo||this.roomsMemo.source!==e||this.roomsMemo.ids!==n)&&(this.roomsMemo={source:e,ids:n,result:vu(e,t)}),this.roomsMemo.result}t=e=>A(this.hass,e);stage(){let e=this.plan(),t=this._config,n=this._floorId===void 0?t?.floor??null:this._floorId,o=e&&e.floors.length===1?e.floors[0].id:e?.floors.some(a=>a.id===n)?n:null,i=!!this._roomId&&t?.room_panel!==!1,s=!!this._roomId&&t?.room_panel===!1||!this.thumbs&&this.canSwitch&&!this._roomId&&!!o&&(e?.floors.length??0)>1;return{floorId:o,walls:this._walls??t?.walls??"auto",heat:this._heat??t?.heatmap??"none",explode:this._explode??t?.explode??!0,canGoBack:s,showBar:!!e&&!this._clean&&(s||!!t?.controls&&!i)}}shows(e){let t=this._config?.controls;return t===!0||Array.isArray(t)&&t.includes(e)}renderBar(e){let t=this.plan(),n=this.t,o=["temperature","humidity","co2"].filter(s=>this.shows(s)),i=(s,a)=>f`<div class="nf-seg" role=${s?"group":g} aria-label=${s??g}>${a.map(([l,c,u])=>f`<button aria-pressed=${l} @click=${c}>${u}</button>`)}</div>`;return f`<div class="nf-card-controls">

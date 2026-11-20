@@ -2036,4 +2036,37 @@ export const editorStyles = css`
     font-size: 13px;
     color: var(--nf-warm);
   }
+  .nf-strip-btn,
+  .nf-picture-reuse-btn,
+  .nf-keys-open,
+  .nf-card-star,
+  .nf-chip-x,
+  .nf-swatch,
+  .nf-lib-toggle,
+  .nf-more {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-strip-btn:active,
+  .nf-picture-reuse-btn:active,
+  .nf-keys-open:active,
+  .nf-card-star:active,
+  .nf-chip-x:active,
+  .nf-swatch:active,
+  .nf-lib-toggle:active,
+  .nf-more:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-strip-btn:active,
+    .nf-picture-reuse-btn:active,
+    .nf-keys-open:active,
+    .nf-card-star:active,
+    .nf-chip-x:active,
+    .nf-swatch:active,
+    .nf-lib-toggle:active,
+    .nf-more:active {
+      transform: none;
+    }
+  }
 `;
