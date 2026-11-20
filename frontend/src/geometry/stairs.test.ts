@@ -115,3 +115,14 @@ test("a U stair can have its landing at a chosen riser (#58)", () => {
   const even = stairLayout({ ...cfg, landing_after: null }, 2.2, 2.6, 19 * 0.17);
   assert.notEqual(even.treads.findIndex((t) => t.landing), 7);
 });
+
+test("the three-quarter stair walks up the left side, along the back and down the right side", () => {
+  const [w, d] = STAIR_SIZES.three_quarter;
+  const layout = stairLayout(cfg({ shape: "three_quarter" }), w, d, 2.8);
+  const centres = layout.treads.map((t) => [t.poly.reduce((s, p) => s + p[0], 0) / t.poly.length, t.poly.reduce((s, p) => s + p[1], 0) / t.poly.length]);
+  assert.ok(centres[0][0] < -w / 4 && centres[0][1] > 0, "starts at the front of the left side");
+  assert.ok(centres.at(-1)![0] > w / 4 && centres.at(-1)![1] > 0, "ends at the front of the right side");
+  const back = Math.min(...centres.map((c) => c[1]));
+  assert.ok(back < -d / 4, "passes along the back");
+  assert.ok(layout.treads.some((t) => Math.abs(t.poly.reduce((s, p) => s + p[0], 0) / t.poly.length) < w / 6), "has treads along the middle of the back");
+});
