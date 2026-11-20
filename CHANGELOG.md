@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Changed
+
+- **Buttons answer your touch at once.** Chips, switches, buttons and the round buttons in the 3D view dip a little while pressed and spring back, there is no tap delay on touch screens and no grey tap flash.
+- **No more "stuck" hover on touch screens.** Hover highlights only appear with a real mouse, so a tapped button on a wall tablet no longer stays lit.
+- **Clearer keyboard focus** on the shared buttons, and the press effect is switched off when the device asks for reduced motion.
+
 ## [0.31.4.10]
 
 ### Fixed

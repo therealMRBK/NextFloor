@@ -83,10 +83,12 @@ export const controls = css`
       background 0.15s,
       color 0.15s;
   }
-  .nf-seg button:hover:not(:disabled),
-  .nf-chip:hover {
-    background: var(--nf-fill);
-    color: var(--nf-text);
+@media (hover: hover) and (pointer: fine) {
+    .nf-seg button:hover:not(:disabled),
+    .nf-chip:hover {
+      background: var(--nf-fill);
+      color: var(--nf-text);
+    }
   }
   /* on a small stage (a small window, a zoomed browser, a dashboard column) the switches at the bottom take less room */
   @container nf ((max-width: 1360px) or (max-height: 640px)) {
@@ -165,8 +167,10 @@ export const controls = css`
     min-height: 36px;
     transition: background 0.15s;
   }
-  .nf-btn:hover {
-    background: var(--nf-fill-strong);
+@media (hover: hover) and (pointer: fine) {
+    .nf-btn:hover {
+      background: var(--nf-fill-strong);
+    }
   }
   .nf-btn.nf-danger {
     color: var(--nf-danger);
@@ -175,8 +179,10 @@ export const controls = css`
     background: var(--nf-accent);
     color: var(--nf-accent-text);
   }
-  .nf-btn.nf-primary:hover {
-    background: color-mix(in srgb, var(--nf-accent) 88%, var(--nf-text));
+@media (hover: hover) and (pointer: fine) {
+    .nf-btn.nf-primary:hover {
+      background: color-mix(in srgb, var(--nf-accent) 88%, var(--nf-text));
+    }
   }
   .nf-field {
     display: grid;
@@ -216,6 +222,38 @@ export const controls = css`
     .nf-chip,
     .nf-btn {
       min-height: 40px;
+    }
+  }
+
+  /* every pressable answers at once: it dips on press and springs back (no delay on touch, no grey tap flash) */
+  .nf-seg button,
+  .nf-chip,
+  .nf-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .nf-seg button:active:not(:disabled),
+  .nf-chip:active,
+  .nf-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .nf-seg button:focus-visible,
+  .nf-chip:focus-visible,
+  .nf-btn:focus-visible {
+    outline: 2px solid var(--nf-accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-seg button,
+    .nf-chip,
+    .nf-btn {
+      transition: background-color 0.01ms, color 0.01ms;
+    }
+    .nf-seg button:active:not(:disabled),
+    .nf-chip:active,
+    .nf-btn:active:not(:disabled) {
+      transform: none;
     }
   }
 `;

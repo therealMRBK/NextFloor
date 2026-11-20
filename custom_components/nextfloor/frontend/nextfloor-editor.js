@@ -68,10 +68,12 @@ var M={ca:"6e08c894e522",cs:"6f8031965f91",da:"0fe66a82bf2a",es:"b20874014798",f
       background 0.15s,
       color 0.15s;
   }
-  .nf-seg button:hover:not(:disabled),
-  .nf-chip:hover {
-    background: var(--nf-fill);
-    color: var(--nf-text);
+@media (hover: hover) and (pointer: fine) {
+    .nf-seg button:hover:not(:disabled),
+    .nf-chip:hover {
+      background: var(--nf-fill);
+      color: var(--nf-text);
+    }
   }
   /* on a small stage (a small window, a zoomed browser, a dashboard column) the switches at the bottom take less room */
   @container nf ((max-width: 1360px) or (max-height: 640px)) {
@@ -150,8 +152,10 @@ var M={ca:"6e08c894e522",cs:"6f8031965f91",da:"0fe66a82bf2a",es:"b20874014798",f
     min-height: 36px;
     transition: background 0.15s;
   }
-  .nf-btn:hover {
-    background: var(--nf-fill-strong);
+@media (hover: hover) and (pointer: fine) {
+    .nf-btn:hover {
+      background: var(--nf-fill-strong);
+    }
   }
   .nf-btn.nf-danger {
     color: var(--nf-danger);
@@ -160,8 +164,10 @@ var M={ca:"6e08c894e522",cs:"6f8031965f91",da:"0fe66a82bf2a",es:"b20874014798",f
     background: var(--nf-accent);
     color: var(--nf-accent-text);
   }
-  .nf-btn.nf-primary:hover {
-    background: color-mix(in srgb, var(--nf-accent) 88%, var(--nf-text));
+@media (hover: hover) and (pointer: fine) {
+    .nf-btn.nf-primary:hover {
+      background: color-mix(in srgb, var(--nf-accent) 88%, var(--nf-text));
+    }
   }
   .nf-field {
     display: grid;
@@ -201,6 +207,38 @@ var M={ca:"6e08c894e522",cs:"6f8031965f91",da:"0fe66a82bf2a",es:"b20874014798",f
     .nf-chip,
     .nf-btn {
       min-height: 40px;
+    }
+  }
+
+  /* every pressable answers at once: it dips on press and springs back (no delay on touch, no grey tap flash) */
+  .nf-seg button,
+  .nf-chip,
+  .nf-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.14s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .nf-seg button:active:not(:disabled),
+  .nf-chip:active,
+  .nf-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .nf-seg button:focus-visible,
+  .nf-chip:focus-visible,
+  .nf-btn:focus-visible {
+    outline: 2px solid var(--nf-accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-seg button,
+    .nf-chip,
+    .nf-btn {
+      transition: background-color 0.01ms, color 0.01ms;
+    }
+    .nf-seg button:active:not(:disabled),
+    .nf-chip:active,
+    .nf-btn:active:not(:disabled) {
+      transform: none;
     }
   }
 `;var me=t=>/^(sensor|input_number|number)\./.test(t),yi=t=>/^(binary_sensor|input_boolean)\./.test(t);function Ln(t,e){if(!me(e))return!1;let n=t?.states[e]?.attributes;return n?.device_class==="power"||n?.unit_of_measurement==="W"||n?.unit_of_measurement==="kW"}function Sy(t,e){let n=t?.entities?.[e],r=n?.area_id??(n?.device_id?t?.devices?.[n.device_id]?.area_id:null);return r?t?.areas?.[r]?.name:void 0}function C(t,e){return Object.keys(t?.states??{}).filter(e).map(n=>{let r=Sy(t,n);return{id:n,label:r?`${G(t,n)} \xB7 ${r}`:G(t,n)}}).sort((n,r)=>n.label.localeCompare(r.label))}function wi(t,e){return t.power&&t.power!=="none"?t.power:e.get(t.id)?.power??null}var vi={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},Jr=t=>(...e)=>({_$litDirective$:t,values:e}),Hn=class{constructor(e){}get _$AU(){return this._$AM._$AU}_$AT(e,n,r){this._$Ct=e,this._$AM=n,this._$Ci=r}_$AS(e,n){return this.update(e,n)}update(e,n){return this.render(...n)}};var Qr=class extends Hn{constructor(e){if(super(e),this.it=g,e.type!==vi.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(e){if(e===g||e==null)return this._t=void 0,this.it=e;if(e===wt)return e;if(typeof e!="string")throw Error(this.constructor.directiveName+"() called with a non-string value");if(e===this.it)return this._t;this.it=e;let n=[e];return n.raw=n,this._t={_$litType$:this.constructor.resultType,strings:n,values:[]}}};Qr.directiveName="unsafeHTML",Qr.resultType=1;var Ud=Jr(Qr);var jd=40,za=class extends se{static properties={options:{attribute:!1},fixed:{attribute:!1},value:{attribute:!1},disabled:{type:Boolean},placeholder:{attribute:!1},_query:{state:!0},_open:{state:!0},_cursor:{state:!0}};blurTimer;constructor(){super(),this.options=[],this.fixed=[],this.value=null,this.disabled=!1,this.placeholder="",this._query="",this._open=!1,this._cursor=0}get current(){return[...this.fixed,...this.options].find(e=>e.id===this.value)}get hits(){let e=this._query.trim().toLowerCase(),n=e.split(/\s+/).filter(Boolean),r=s=>{let a=`${s.label} ${s.id}`.toLowerCase();return n.every(l=>a.includes(l))},o=this.fixed.filter(s=>!e||r(s)),i=e?this.options.filter(r):this.options;return[...o,...i.slice(0,jd)]}get leftOut(){let e=this._query.trim().toLowerCase(),n=e.split(/\s+/).filter(Boolean),r=e?this.options.filter(o=>n.every(i=>`${o.label} ${o.id}`.toLowerCase().includes(i))).length:this.options.length;return Math.max(0,r-jd)}choose(e){this.value=e,this._query="",this._open=!1,this.dispatchEvent(new CustomEvent("change",{detail:{value:e},bubbles:!0,composed:!0}))}onKey(e){let n=this.hits;e.key==="ArrowDown"?(this._open=!0,this._cursor=Math.min(n.length-1,this._cursor+1),e.preventDefault()):e.key==="ArrowUp"?(this._cursor=Math.max(0,this._cursor-1),e.preventDefault()):e.key==="Enter"?(this._open&&n[this._cursor]&&this.choose(n[this._cursor].id),e.preventDefault()):e.key==="Escape"&&(this._open=!1,this._query="")}render(){let e=this.current,n=this._open?this.hits:[];return m`<div class="wrap">
@@ -2014,8 +2052,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     max-width: 60px;
     object-fit: contain;
   }
-  .nf-picture-reuse-btn:hover {
-    border-color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-picture-reuse-btn:hover {
+      border-color: var(--nf-accent);
+    }
   }
   .nf-picture-thumb {
     max-height: 60px;
@@ -2055,8 +2095,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     background: var(--nf-line);
     touch-action: none;
   }
-  .nf-split-handle:hover {
-    background: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-split-handle:hover {
+      background: var(--nf-accent);
+    }
   }
   .nf-editor-3d {
     position: relative;
@@ -2164,8 +2206,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     stroke-linejoin: round;
     cursor: pointer;
   }
-  .nf-room:hover {
-    fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-room:hover {
+      fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+    }
   }
   .nf-room-sel {
     fill: color-mix(in srgb, var(--nf-accent) 14%, transparent);
@@ -2582,8 +2626,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     cursor: pointer;
     text-align: left;
   }
-  .nf-row:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-row:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-check {
     display: flex;
@@ -3080,8 +3126,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     text-decoration: none;
     cursor: pointer;
   }
-  .nf-checklist .nf-chk:hover {
-    background: rgba(127, 127, 127, 0.12);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-checklist .nf-chk:hover {
+      background: rgba(127, 127, 127, 0.12);
+    }
   }
   .nf-checklist .nf-chk span {
     width: 18px;
@@ -3321,8 +3369,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     text-align: left;
     cursor: pointer;
   }
-  .nf-ctx button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-ctx button:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+    }
   }
   .nf-ctx button:disabled {
     opacity: 0.45;
@@ -3536,8 +3586,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     cursor: pointer;
     text-align: left;
   }
-  .nf-lib-toggle:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-lib-toggle:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-lib-caret {
     width: 12px;
@@ -3676,8 +3728,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     padding: 2px 26px 8px;
     cursor: pointer;
   }
-  .nf-more:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-more:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-dev-hidden .nf-dev-name {
     opacity: 0.45;
@@ -3705,8 +3759,10 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     align-items: center;
     cursor: default;
   }
-  .nf-dev-row:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-dev-row:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-dev-name {
     display: inline-flex;

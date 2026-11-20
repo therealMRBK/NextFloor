@@ -170,8 +170,10 @@ export const editorStyles = css`
     max-width: 60px;
     object-fit: contain;
   }
-  .nf-picture-reuse-btn:hover {
-    border-color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-picture-reuse-btn:hover {
+      border-color: var(--nf-accent);
+    }
   }
   .nf-picture-thumb {
     max-height: 60px;
@@ -211,8 +213,10 @@ export const editorStyles = css`
     background: var(--nf-line);
     touch-action: none;
   }
-  .nf-split-handle:hover {
-    background: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-split-handle:hover {
+      background: var(--nf-accent);
+    }
   }
   .nf-editor-3d {
     position: relative;
@@ -320,8 +324,10 @@ export const editorStyles = css`
     stroke-linejoin: round;
     cursor: pointer;
   }
-  .nf-room:hover {
-    fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-room:hover {
+      fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+    }
   }
   .nf-room-sel {
     fill: color-mix(in srgb, var(--nf-accent) 14%, transparent);
@@ -738,8 +744,10 @@ export const editorStyles = css`
     cursor: pointer;
     text-align: left;
   }
-  .nf-row:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-row:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-check {
     display: flex;
@@ -1236,8 +1244,10 @@ export const editorStyles = css`
     text-decoration: none;
     cursor: pointer;
   }
-  .nf-checklist .nf-chk:hover {
-    background: rgba(127, 127, 127, 0.12);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-checklist .nf-chk:hover {
+      background: rgba(127, 127, 127, 0.12);
+    }
   }
   .nf-checklist .nf-chk span {
     width: 18px;
@@ -1477,8 +1487,10 @@ export const editorStyles = css`
     text-align: left;
     cursor: pointer;
   }
-  .nf-ctx button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-ctx button:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+    }
   }
   .nf-ctx button:disabled {
     opacity: 0.45;
@@ -1692,8 +1704,10 @@ export const editorStyles = css`
     cursor: pointer;
     text-align: left;
   }
-  .nf-lib-toggle:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-lib-toggle:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-lib-caret {
     width: 12px;
@@ -1832,8 +1846,10 @@ export const editorStyles = css`
     padding: 2px 26px 8px;
     cursor: pointer;
   }
-  .nf-more:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-more:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-dev-hidden .nf-dev-name {
     opacity: 0.45;
@@ -1861,8 +1877,10 @@ export const editorStyles = css`
     align-items: center;
     cursor: default;
   }
-  .nf-dev-row:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-dev-row:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-dev-name {
     display: inline-flex;

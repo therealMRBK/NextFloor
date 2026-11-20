@@ -3405,6 +3405,36 @@ export class NfView3d extends LitElement {
       .nf-thumbs-small .nf-thumb {
         width: 104px;
       }
+      .nf-thumb,
+      .nf-find-btn,
+      .nf-central-btn,
+      .nf-walk-btn,
+      .nf-eye,
+      .nf-lock3d,
+      .nf-flow-toggle {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .nf-thumb:active,
+      .nf-find-btn:active,
+      .nf-central-btn:active,
+      .nf-walk-btn:active,
+      .nf-eye:active,
+      .nf-lock3d:active,
+      .nf-flow-toggle:active {
+        transform: scale(0.96);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-thumb:active,
+        .nf-find-btn:active,
+        .nf-central-btn:active,
+        .nf-walk-btn:active,
+        .nf-eye:active,
+        .nf-lock3d:active,
+        .nf-flow-toggle:active {
+          transform: none;
+        }
+      }
       .nf-find-btn {
         position: absolute;
         left: 12px;
@@ -3944,9 +3974,11 @@ export class NfView3d extends LitElement {
         top: calc(12px + env(safe-area-inset-top, 0px));
         opacity: 0.55;
       }
-      .nf-eye:hover,
-      .nf-eye-clean:hover {
-        opacity: 1;
+      @media (hover: hover) and (pointer: fine) {
+        .nf-eye:hover,
+        .nf-eye-clean:hover {
+          opacity: 1;
+        }
       }
       .nf-find {
         position: absolute;
@@ -4103,8 +4135,10 @@ export class NfView3d extends LitElement {
         text-align: left;
         cursor: pointer;
       }
-      .nf-plate-menu button:hover {
-        background: rgba(127, 127, 127, 0.14);
+      @media (hover: hover) and (pointer: fine) {
+        .nf-plate-menu button:hover {
+          background: rgba(127, 127, 127, 0.14);
+        }
       }
       .nf-plate-menu button.on b {
         background: var(--nf-accent, #37e0ff);

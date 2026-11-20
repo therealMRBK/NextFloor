@@ -312,8 +312,10 @@ export const panelStyles = css`
     flex: none;
   }
   /* a desktop shows a thin scrollbar while the pointer rests on the bar */
-  .nf-nav:hover {
-    scrollbar-width: thin;
+  @media (hover: hover) and (pointer: fine) {
+    .nf-nav:hover {
+      scrollbar-width: thin;
+    }
   }
   /* wrapped: several lines, at most about three before the bar itself scrolls */
   .nf-nav-wrap {
