@@ -3457,7 +3457,7 @@ export class NfView3d extends LitElement {
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
-        backdrop-filter: blur(10px);
+        backdrop-filter: var(--nf-backdrop, blur(10px));
         z-index: 4;
       }
       .nf-central > b {
@@ -3543,7 +3543,7 @@ export class NfView3d extends LitElement {
         border: 1px solid var(--nf-line);
         background: var(--nf-chrome);
         box-shadow: var(--nf-shadow);
-        backdrop-filter: blur(10px);
+        backdrop-filter: var(--nf-backdrop, blur(10px));
         color: var(--nf-text);
         z-index: 3;
       }
@@ -3566,7 +3566,7 @@ export class NfView3d extends LitElement {
         border: 1px solid var(--nf-line);
         background: var(--nf-chrome);
         box-shadow: var(--nf-shadow);
-        backdrop-filter: blur(10px);
+        backdrop-filter: var(--nf-backdrop, blur(10px));
         color: var(--nf-text);
         pointer-events: auto;
       }
@@ -3683,7 +3683,7 @@ export class NfView3d extends LitElement {
         border-radius: 50%;
         border: 1px solid rgba(160, 240, 255, 0.35);
         background: rgba(8, 16, 34, 0.7);
-        color: var(--nf-text);
+        color: #e6f4fb;
         font-size: 14px;
         cursor: pointer;
         z-index: 4;
@@ -3701,7 +3701,7 @@ export class NfView3d extends LitElement {
         border-radius: 18px;
         background: rgba(8, 16, 34, 0.82);
         box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
-        color: var(--nf-text);
+        color: #e6f4fb;
         z-index: 5;
         flex-wrap: wrap;
       }
@@ -3772,7 +3772,7 @@ export class NfView3d extends LitElement {
         border-radius: 50%;
         border: 1px solid rgba(160, 240, 255, 0.35);
         background: rgba(8, 16, 34, 0.7);
-        color: var(--nf-text);
+        color: #e6f4fb;
         font-size: 16px;
         cursor: pointer;
         z-index: 4;
@@ -3830,7 +3830,7 @@ export class NfView3d extends LitElement {
         border-radius: 50%;
         border: 1px solid rgba(160, 240, 255, 0.35);
         background: rgba(8, 16, 34, 0.7);
-        color: var(--nf-text);
+        color: #e6f4fb;
         cursor: pointer;
         z-index: 4;
       }
@@ -3887,7 +3887,7 @@ export class NfView3d extends LitElement {
         border: 1px solid var(--nf-line);
         background: var(--nf-chrome);
         box-shadow: var(--nf-shadow);
-        backdrop-filter: blur(10px);
+        backdrop-filter: var(--nf-backdrop, blur(10px));
         color: var(--nf-text);
         pointer-events: none;
         line-height: 1.1;
@@ -3932,7 +3932,7 @@ export class NfView3d extends LitElement {
         border-radius: 50%;
         border: 1px solid rgba(160, 240, 255, 0.35);
         background: rgba(8, 16, 34, 0.7);
-        color: var(--nf-text);
+        color: #e6f4fb;
         cursor: pointer;
         z-index: 4;
       }

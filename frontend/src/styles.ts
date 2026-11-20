@@ -64,7 +64,7 @@ export const controls = css`
     border-radius: 999px;
     background: var(--nf-chrome);
     box-shadow: var(--nf-shadow);
-    backdrop-filter: blur(10px);
+    backdrop-filter: var(--nf-backdrop, blur(10px));
   }
   .nf-seg button,
   .nf-chip {
@@ -122,7 +122,7 @@ export const controls = css`
     background: var(--nf-chrome);
     color: var(--nf-text);
     box-shadow: var(--nf-shadow);
-    backdrop-filter: blur(10px);
+    backdrop-filter: var(--nf-backdrop, blur(10px));
   }
 
   button:focus-visible,
@@ -224,3 +224,104 @@ export const controls = css`
 export function colorSchemeOf(hass: { themes?: { darkMode?: boolean } } | undefined | null): "light" | "dark" {
   return hass?.themes?.darkMode === false ? "light" : "dark";
 }
+
+/** The interface skins: Home Assistant's own look ("ha", nothing changes) or the glass skin, always with a light and a dark mode. */
+export const SKINS = ["ha", "glass"] as const;
+export type Skin = (typeof SKINS)[number];
+export const SCHEMES = ["auto", "light", "dark"] as const;
+export type Scheme = (typeof SCHEMES)[number];
+
+/** The mode a skin is drawn in: the chosen one, or (auto) the one of Home Assistant's theme, then of the device. */
+export function skinMode(scheme: Scheme | undefined, hass: { themes?: { darkMode?: boolean } } | undefined | null): "light" | "dark" {
+  if (scheme === "light" || scheme === "dark") return scheme;
+  if (typeof hass?.themes?.darkMode === "boolean") return hass.themes.darkMode ? "dark" : "light";
+  try {
+    return globalThis.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  } catch {
+    return "dark";
+  }
+}
+
+/**
+ * The glass skin (host attributes skin="glass" and scheme="light|dark"): translucent, softly blurred bars, large radii, the system font
+ * and calm colours. It sets Home Assistant's variables on the host, so every inner component's tokens follow it, like "readable" does.
+ * Reduced transparency makes the bars solid, reduced motion drops the press animation.
+ */
+export const skinStyles = css`
+  :host([skin="glass"]) {
+    --ha-card-border-radius: 18px;
+    --primary-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+    --nf-chrome-mix: 66%;
+    --nf-backdrop: blur(22px) saturate(180%);
+    letter-spacing: -0.003em;
+  }
+  :host([skin="glass"][scheme="dark"]) {
+    --primary-text-color: #f5f5f7;
+    --secondary-text-color: #a1a1a6;
+    --primary-color: #0a84ff;
+    --text-primary-color: #ffffff;
+    --card-background-color: #1c1c1e;
+    --ha-card-background: #1c1c1e;
+    --primary-background-color: #000000;
+    --secondary-background-color: #2c2c2e;
+    --divider-color: rgba(255, 255, 255, 0.12);
+    --info-color: #64d2ff;
+    --state-light-active-color: #ff9f0a;
+    --error-color: #ff453a;
+    --success-color: #30d158;
+    --ha-card-box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.16), 0 0 0 0.5px rgba(255, 255, 255, 0.08), 0 10px 34px rgba(0, 0, 0, 0.45);
+  }
+  :host([skin="glass"][scheme="light"]) {
+    --primary-text-color: #1d1d1f;
+    --secondary-text-color: #6e6e73;
+    --primary-color: #007aff;
+    --text-primary-color: #ffffff;
+    --card-background-color: #ffffff;
+    --ha-card-background: #ffffff;
+    --primary-background-color: #f2f2f7;
+    --secondary-background-color: #e5e5ea;
+    --divider-color: rgba(0, 0, 0, 0.1);
+    --info-color: #0a84ff;
+    --state-light-active-color: #ff9500;
+    --error-color: #ff3b30;
+    --success-color: #34c759;
+    --nf-tint: 38%;
+    --ha-card-box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.9), 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 8px 28px rgba(0, 0, 0, 0.14);
+  }
+  :host([skin="glass"][readable]) {
+    --nf-chrome-mix: 97%;
+    --nf-backdrop: none;
+  }
+  :host([skin="glass"][readable][scheme="dark"]) {
+    --secondary-text-color: #f5f5f7;
+    --divider-color: rgba(245, 245, 247, 0.4);
+  }
+  :host([skin="glass"][readable][scheme="light"]) {
+    --secondary-text-color: #1d1d1f;
+    --divider-color: rgba(29, 29, 31, 0.4);
+  }
+  :host([skin="glass"]) .nf-seg button,
+  :host([skin="glass"]) .nf-chip {
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  :host([skin="glass"]) .nf-seg button:active,
+  :host([skin="glass"]) .nf-chip:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    :host([skin="glass"]) {
+      --nf-chrome-mix: 100%;
+      --nf-backdrop: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :host([skin="glass"]) .nf-seg button,
+    :host([skin="glass"]) .nf-chip {
+      transition: none;
+    }
+    :host([skin="glass"]) .nf-seg button:active,
+    :host([skin="glass"]) .nf-chip:active {
+      transform: none;
+    }
+  }
+`;

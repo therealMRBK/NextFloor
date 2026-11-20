@@ -18,7 +18,7 @@ import { furnishBar, type FurnishHost } from "./panel/furnish-bar.ts";
 import { NEXTFLOOR_MARK } from "./panel/mark.ts";
 import { browserStorage, PrefStore, type DevicePrefs } from "./panel/prefs.ts";
 import { panelStyles } from "./panel/styles.ts";
-import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, readableStyles, SCHEMES, SKINS, skinMode, skinStyles, tokens, type Scheme, type Skin } from "./styles.ts";
 import { LOOKS, lookNow, type Look } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
 import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
@@ -146,8 +146,15 @@ export class NextFloorPanel extends LitElement {
 
   protected willUpdate(changed: PropertyValues): void {
     this.toggleAttribute("readable", !!this._prefs?.readable);
+    if (this._prefs?.skin === "glass") {
+      this.setAttribute("skin", "glass");
+      this.setAttribute("scheme", skinMode(this._prefs.scheme, this.hass));
+    } else {
+      this.removeAttribute("skin");
+      this.removeAttribute("scheme");
+    }
     if (changed.has("hass") && this.hass) {
-      this.style.colorScheme = colorSchemeOf(this.hass);
+      this.style.colorScheme = this._prefs?.skin === "glass" ? skinMode(this._prefs.scheme, this.hass) : colorSchemeOf(this.hass);
       this.data.setHass(this.hass);
     }
     // a floor that no longer exists (the plan was edited elsewhere) closes
@@ -322,6 +329,8 @@ export class NextFloorPanel extends LitElement {
     return html`<button class="nf-opts-btn" aria-expanded=${this._optsOpen} title=${this.t("view_options")} aria-label=${this.t("view_options")} @click=${() => (this._optsOpen = !this._optsOpen)}>⚙</button>
       <div class="nf-view-opts ${this._optsOpen ? "nf-opts-open" : ""}">
         ${this.choiceRow("quality", ["auto", "low", "high"] as Quality[], p.quality, (q) => this.t(`quality_${q}`), (q) => this.setPref("quality", q))}
+        ${this.choiceRow("skin", SKINS as readonly Skin[], p.skin, (k) => this.t(`skin_${k}`), (k) => this.setPref("skin", k))}
+        ${p.skin === "glass" ? this.choiceRow("scheme", SCHEMES as readonly Scheme[], p.scheme, (m) => this.t(`scheme_${m}`), (m) => this.setPref("scheme", m)) : nothing}
         ${this.choiceRow("theme", LOOKS as readonly Look[], p.theme, (th) => this.t(`theme_${th}`), (th) => this.setPref("theme", th), this.accentPicker())}
         ${this.choiceRow("markers", ["none", "important", "all"] as MarkerMode[], p.markers, (m) => this.t(`markers_${m}`), (m) => this.setPref("markers", m))}
         <label class="nf-seg nf-clock-pick" title=${this.t("clock")}
@@ -650,7 +659,7 @@ export class NextFloorPanel extends LitElement {
     `;
   }
 
-  static styles = [tokens, controls, panelStyles, readableStyles];
+  static styles = [tokens, controls, panelStyles, readableStyles, skinStyles];
 }
 
 if (!customElements.get("nextfloor-panel")) customElements.define("nextfloor-panel", NextFloorPanel);

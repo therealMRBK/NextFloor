@@ -103,6 +103,10 @@ export interface CardConfig {
   keep_camera?: boolean;
   /** Easy to read: stronger contrast and larger text, for wall tablets (default false). */
   readable?: boolean;
+  /** The interface skin: "glass" (translucent, rounded, light or dark); leave out for Home Assistant's own look. */
+  skin?: "ha" | "glass";
+  /** The glass skin's mode; leave out (auto) to follow Home Assistant's theme. */
+  skin_scheme?: "auto" | "light" | "dark";
   /** Only the floor plan: no furniture (devices and their pins stay). */
   plain?: boolean;
   /** A short right click goes one step back (off by default). */

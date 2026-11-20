@@ -4,6 +4,14 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **A new interface skin: Glass, with a light and a dark mode.** Translucent, softly blurred bars, rounder corners, the system font and calm Apple-style colours, in the panel (view options: *Interface* → *Glass*, then *Mode*: Auto, Light or Dark) and on every card (`skin: glass`, `skin_scheme: auto | light | dark`, also in the card editor). *Auto* follows the light or dark mode of your Home Assistant theme. The 3D looks (Neon, Blueprint, Day ...) stay as they are and combine with either mode, and *Easy to read* keeps working on top of it. The skin respects *reduce transparency* (solid bars) and *reduce motion*. Home Assistant's own look stays the default.
+
+### Added
+
+- **A new interface skin: Glass, with a light and a dark mode.** Translucent, softly blurred bars, rounder corners, the system font and calm Apple-style colours, in the panel (view options: *Interface* → *Glass*, then *Mode*: Auto, Light or Dark) and on every card (`skin: glass`, `skin_scheme: auto | light | dark`, also in the card editor). *Auto* follows the light or dark mode of your Home Assistant theme. The 3D looks (Neon, Blueprint, Day ...) are untouched and combine with either mode. The skin respects *reduce transparency* (solid bars) and *reduce motion* of the device. Home Assistant's own look stays the default.
+
 ## [0.31.4.10]
 
 ### Fixed

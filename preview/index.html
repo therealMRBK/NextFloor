@@ -471,6 +471,7 @@ const params = new URLSearchParams(location.search);
           ...(params.get("stack") ? { floor_stack: params.get("stack") } : {}),
           ...(params.has("nopanel") ? { room_panel: false } : {}),
           ...(params.has("roombuttons") ? { room_buttons: true } : {}),
+          ...(params.get("skin") ? { skin: params.get("skin"), skin_scheme: params.get("scheme") || "auto" } : {}),
           ...(params.has("night") ? { night: "00:00-23:59" } : {}),
           ...(params.has("kiosk") ? { idle_return: 1, idle_orbit: true } : {}),
         };

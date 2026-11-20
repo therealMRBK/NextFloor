@@ -5,6 +5,7 @@ import type { MarkerMode } from "../components/view3d.ts";
 import type { HeatMode } from "../heatmap.ts";
 import { LOOKS, type Look } from "../themes.ts";
 import type { FloorStack, Quality } from "../viewer/viewer3d.ts";
+import { SCHEMES, SKINS, type Scheme, type Skin } from "../styles.ts";
 
 export interface DevicePrefs {
   explode: boolean;
@@ -29,6 +30,10 @@ export interface DevicePrefs {
   menuOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   keepCamera: boolean;
+  /** The interface skin: Home Assistant's own look or the glass skin. */
+  skin: Skin;
+  /** The glass skin's mode: light, dark, or the one of Home Assistant's theme. */
+  scheme: Scheme;
   /** Easy to read: stronger contrast and larger text for wall tablets. */
   readable: boolean;
   /** Only the floor plan: walls, doors, windows and stairs without furniture (devices and pins stay). */
@@ -90,6 +95,8 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   timeSlider: flag("time_slider", false),
   menuOpen: flag("menu_open", false),
   keepCamera: flag("keep_camera", false),
+  skin: word("skin", SKINS, "ha"),
+  scheme: word("scheme", SCHEMES, "auto"),
   readable: flag("readable", false),
   plain: flag("plain", false),
   rightBack: flag("right_back", false),

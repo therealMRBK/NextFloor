@@ -311,7 +311,7 @@ export class NfQuickMenu extends LitElement {
         border-radius: 22px;
         background: var(--nf-chrome);
         box-shadow: var(--nf-shadow), 0 0 0 1px var(--nf-line);
-        backdrop-filter: blur(10px);
+        backdrop-filter: var(--nf-backdrop, blur(10px));
       }
       :host([low]) .qm {
         backdrop-filter: none;

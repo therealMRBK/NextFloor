@@ -16,7 +16,7 @@ import { loadCardEditor } from "./load-card-editor.ts";
 import { withTemplate, type CardTemplates } from "./card-template.ts";
 import type { Building } from "./model.ts";
 import { roomsOnly } from "./rooms-only.ts";
-import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, readableStyles, skinMode, skinStyles, tokens } from "./styles.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
 import { lookNow } from "./themes.ts";
@@ -198,7 +198,15 @@ export class NextFloorCard extends LitElement {
       this._config = withTemplate(this._own, templates as CardTemplates | undefined);
     }
     this.toggleAttribute("readable", this._config?.readable === true);
-    if (changed.has("hass")) this.style.colorScheme = colorSchemeOf(this.hass);
+    const glass = this._config?.skin === "glass";
+    if (glass) {
+      this.setAttribute("skin", "glass");
+      this.setAttribute("scheme", skinMode(this._config?.skin_scheme, this.hass));
+    } else {
+      this.removeAttribute("skin");
+      this.removeAttribute("scheme");
+    }
+    if (changed.has("hass") || changed.has("_config")) this.style.colorScheme = glass ? skinMode(this._config?.skin_scheme, this.hass) : colorSchemeOf(this.hass);
     if (!changed.has("hass") || !this.hass) return;
     this.data.setHass(this.hass);
     const night = nightActive(this._config?.night, this.hass);
@@ -462,7 +470,7 @@ export class NextFloorCard extends LitElement {
     </ha-card>`;
   }
 
-  static styles = [tokens, controls, cardStyles, readableStyles];
+  static styles = [tokens, controls, cardStyles, readableStyles, skinStyles];
 }
 
 if (!customElements.get("nextfloor-card")) {

@@ -187,6 +187,8 @@ export class NextFloorCardEditor extends LitElement {
       ${switchOption(f, "central_open", "card_central_open", "card_central_open_hint")}
       ${switchOption(f, "keep_camera", "card_keep_camera", "card_keep_camera_hint")}
       ${switchOption(f, "readable", "card_readable", "readable_hint")}
+      ${choice(f, "skin", "skin", [["ha", "skin_ha"], ["glass", "skin_glass"]], f.value.skin ?? "ha")}
+      ${f.value.skin === "glass" ? choice(f, "skin_scheme", "scheme", [["auto", "scheme_auto"], ["light", "scheme_light"], ["dark", "scheme_dark"]], f.value.skin_scheme ?? "auto") : nothing}
       ${switchOption(f, "plain", "card_plain", "plain_hint")}
       ${switchOption(f, "right_back", "right_back", "right_back_hint")}
       ${this.roomsChoice()}

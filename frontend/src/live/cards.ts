@@ -498,19 +498,19 @@ export const liveCardStyles = css`
     opacity: 0.8;
   }
   .live-solar b {
-    color: color-mix(in srgb, #ffd166 72%, var(--nf-text));
+    color: color-mix(in srgb, #ffd166 var(--nf-tint, 72%), var(--nf-text));
   }
   .live-battery b {
-    color: color-mix(in srgb, #4ade80 72%, var(--nf-text));
+    color: color-mix(in srgb, #4ade80 var(--nf-tint, 72%), var(--nf-text));
   }
   .live-import b {
-    color: color-mix(in srgb, #f87193 72%, var(--nf-text));
+    color: color-mix(in srgb, #f87193 var(--nf-tint, 72%), var(--nf-text));
   }
   .live-export b {
-    color: color-mix(in srgb, #38dcf5 72%, var(--nf-text));
+    color: color-mix(in srgb, #38dcf5 var(--nf-tint, 72%), var(--nf-text));
   }
   .live-house b {
-    color: color-mix(in srgb, #b6c2ff 72%, var(--nf-text));
+    color: color-mix(in srgb, #b6c2ff var(--nf-tint, 72%), var(--nf-text));
   }
   .live-title {
     font-weight: 600;
