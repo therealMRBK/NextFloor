@@ -37,11 +37,19 @@ function coverText(hass: Hass, st: HassEntity): string {
   return typeof position === "number" && !moving ? `${position} %` : stateWord(hass, st.state);
 }
 
+/** What a radiator or thermostat does right now, as a small symbol on its marker (heating, cooling); nothing while it idles. */
+const CLIMATE_ACTION: Record<string, string> = { heating: "🔥", cooling: "❄️" };
+
 function climateText(hass: Hass, st: HassEntity): string {
+  const unit = hass ? tempUnit(hass) : "°C";
   const current = st.attributes.current_temperature;
-  const reading = typeof current === "number" ? `${formatNumber(hass, current, 1)} ${hass ? tempUnit(hass) : "°C"}` : null;
+  const reading = typeof current === "number" ? `${formatNumber(hass, current, 1)} ${unit}` : null;
   if (st.state === "off") return reading ? `${reading} · ${say(hass, "state_off")}` : say(hass, "state_off");
-  return reading ?? stateWord(hass, st.state);
+  // the wish next to the reading, so one look tells whether the room is warm enough (#205): "19,4 °C → 19 °C 🔥"
+  const wish = st.attributes.temperature;
+  const target = reading && typeof wish === "number" ? ` → ${formatNumber(hass, wish, wish % 1 ? 1 : 0)} ${unit}` : "";
+  const action = CLIMATE_ACTION[String(st.attributes.hvac_action)];
+  return reading ? `${reading}${target}${action ? ` ${action}` : ""}` : stateWord(hass, st.state);
 }
 
 function mediaText(hass: Hass, st: HassEntity): string {

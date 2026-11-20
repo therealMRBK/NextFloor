@@ -50,15 +50,27 @@ function dockOf(attributes: Record<string, unknown> | undefined): [number, numbe
 }
 
 /**
- * The camera whose attributes describe a robot map: it reports where the robot is or where it docks, so it can
+ * Where the robot is in the map's grid: `vacuum_position` (the map card's name), or the `map_x_mm` and `map_y_mm` of a tracker
+ * such as Roomba+'s device_tracker, which carry the robot's coordinates in its own map (#210).
+ */
+function positionOf(attributes: Record<string, unknown> | undefined): [number, number] | null {
+  if (!attributes) return null;
+  const mm = attributes.map_x_mm !== undefined && attributes.map_y_mm !== undefined ? pair({ x: attributes.map_x_mm, y: attributes.map_y_mm }) : null;
+  return pair(attributes.vacuum_position) ?? mm;
+}
+
+/**
+ * The entity whose attributes describe a robot map: it reports where the robot is or where it docks, so it can
  * be found without being configured.
  */
 export function mapCamera(hass: HomeAssistant): string | null {
   for (const [id, st] of Object.entries(hass.states)) {
     if (!id.startsWith("camera.")) continue;
     // where the robot is, or where it docks: either says this camera carries a robot's map
-    if (pair(st.attributes?.vacuum_position) ?? dockOf(st.attributes)) return id;
+    if (positionOf(st.attributes) ?? dockOf(st.attributes)) return id;
   }
+  // no map camera: a tracker with the robot's coordinates (Roomba+) is a position source on its own
+  for (const [id, st] of Object.entries(hass.states)) if (id.startsWith("device_tracker.") && positionOf(st.attributes)) return id;
   return null;
 }
 
@@ -116,7 +128,7 @@ export function readVacuum(hass: HomeAssistant, camera: string | null, cal: Vacu
   const facingSign = cal?.mirror === true ? -1 : 1;
 
   const position = attributes.vacuum_position as { a?: unknown } | undefined;
-  const at = pair(position);
+  const at = positionOf(attributes);
   const pose = at
     ? (() => {
         const [x, z] = toPlan(at);
@@ -166,7 +178,7 @@ const MIN_BASELINE = 1.5;
 export function gridPlaces(hass: HomeAssistant, camera: string | null): { at: [number, number] | null; dock: [number, number] | null } {
   const attributes = camera ? hass.states[camera]?.attributes : undefined;
   return {
-    at: attributes ? pair(attributes.vacuum_position) : null,
+    at: positionOf(attributes),
     dock: dockOf(attributes),
   };
 }

@@ -103,6 +103,8 @@ export interface CardConfig {
   keep_camera?: boolean;
   /** Easy to read: stronger contrast and larger text, for wall tablets (default false). */
   readable?: boolean;
+  /** View only: nothing in the card switches or changes a device, so an accidental touch does no harm (#156). */
+  view_only?: boolean;
   /** Only the floor plan: no furniture (devices and their pins stay). */
   plain?: boolean;
   /** A short right click goes one step back (off by default). */
