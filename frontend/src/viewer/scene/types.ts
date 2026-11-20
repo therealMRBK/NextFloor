@@ -14,47 +14,52 @@ export type { SoundSpot } from "../live-sound.ts";
 
 export type Quality = "auto" | "low" | "high";
 export type WallMode = "auto" | "cut" | "slope";
-/** How the floors above and below the chosen one are shown. */
+
 export type FloorStack = "dim" | "stacked" | "single";
+
 
 export type LampModel = "ceiling" | "downlight" | "spot" | "panel" | "pendant" | "fan" | "floor" | "uplight" | "table" | "wall" | "strip" | "bollard" | "garden";
 
 export interface ViewerOptions {
   quality?: Quality;
-  /** Pull the floors apart in the house view (default true). */
+  /** Pull floors apart in the house view (default true). */
   explode?: boolean;
   onRoomTap?: (floorId: string, roomId: string | null) => void;
+  /** A note was marked as done (its button, shown when it has a due day or repeats). */
+  onNoteDone?: (noteId: string) => void;
+  /** Text of the "done" button of a note and the line with the day it was last done. */
+  noteDoneLabels?: { done: string; last: (day: string) => string };
   onFloorTap?: (floorId: string) => void;
   onBack?: () => void;
-  /** A short tap on a device marker. */
+  /** Short tap on a device marker. */
   onDeviceTap?: (entityId: string, x: number, y: number) => void;
-  /** A double tap on a room of the opened floor (without it, a double tap goes one level back). */
+  /** Double tap on a room of the opened floor (without it, a double tap goes one level back). */
   onRoomDoubleTap?: (floorId: string, roomId: string) => void;
-  /** A long press on a device marker. */
+  /** Long press on a device marker. */
   onDeviceHold?: (entityId: string, x: number, y: number) => void;
   /**
-   * A vertical swipe on a device (dim a lamp, move a blind). "start" returns whether the device takes it; "move" reports the
-   * distance from the start (pixels, down is positive).
+   * Vertical swipe on a device (dim a lamp, move a blind): "start" returns whether the device takes
+   * it; "move" reports the distance from the start (pixels, down positive).
    */
   onDeviceSwipe?: (entityId: string, phase: "start" | "move" | "end", dy: number, x: number, y: number) => boolean | void;
   /** Furnishing in 3D: a device was selected (null: none) or dragged to a new place. */
   onDeviceSelect?: (entityId: string | null) => void;
   onDeviceMove?: (entityId: string, x: number, z: number) => void;
-  /** Furnishing in 3D: a piece of furniture was selected (null: none) or dragged to a new place. */
+  /** Furnishing in 3D: an item was selected (null: none) or dragged to a new place. */
   onFurnitureSelect?: (furnitureId: string | null) => void;
   onFurnitureMove?: (furnitureId: string, x: number, z: number) => void;
   onStats?: (stats: ViewerStats) => void;
-  /** The text for the floor labels in the house view, for example "5 rooms". */
+  /** Text for the floor labels in the house view, e.g. "5 rooms". */
   floorInfo?: (floor: Floor) => string;
 }
 
-/** A device shown in the 3D view, prepared by the main bundle from placements and states. */
+/** A device shown in the 3D view (prepared by the main bundle from placements and states). */
 export interface DeviceMarker {
-  /** The entity id. */
+  /** entity_id */
   id: string;
-  /** A small label under the pin: the device's own name. Empty for none. */
+  /** A small label under the pin (the device's own name, #156); empty = none. */
   caption?: string;
-  /** The device's own name from the plan (the card option marker_names shows it as the caption). */
+  /** The device's own name from the plan (the card option marker_names shows it as caption). */
   ownName?: string;
   /** The own name is shown under the pin (per device). */
   showName?: boolean;
@@ -62,57 +67,57 @@ export interface DeviceMarker {
   roomId: string | null;
   x: number;
   z: number;
-  /** The height above the floor. */
+  /** Height above the floor. */
   y: number;
-  /** The icon as inline SVG markup. */
+  /** Inline SVG markup of the icon. */
   icon: string;
   name: string;
-  /** A short state text such as "60 %" or "21,5 °C". */
+  /** Short state text, e.g. "60 %" or "21,5 °C". */
   text: string;
   active: boolean;
   /** The text shows on the floor as well (a marker set to "always"); otherwise only in its room or while active. */
   full?: boolean;
   unavailable: boolean;
-  /** A light cone on the floor for lights that are on. */
+  /** Light cone on the floor for lights that are on. */
   glow: { color: [number, number, number]; level: number } | null;
-  /** The power drawn (W), when the device reports it. */
+  /** Power drawn (W) when the device reports it. */
   power?: number | null;
-  /** Lights: the lamp model drawn at the device's position. */
+  /** Lights: lamp model drawn at the device position. */
   lamp?: LampModel | null;
-  /** A mirrored lamp furniture: its pack model is drawn mirrored. */
+  /** Lamp: turn around y (degrees), size (w, d, h) and height of what it stands on. */
+  /** A mirrored lamp furniture (its pack model is drawn mirrored). */
   mirror?: boolean;
-  /** A lamp: turn around y (degrees), size (w, d, h) and the height of what it stands on. */
   rotation?: number;
   size?: [number, number, number];
   base?: number;
-  /** An LED strip: roll about its length (degrees), and standing upright (its length runs up from the base). */
+  /** LED strip: roll about its length (degrees) and standing upright (its length runs up from the base). */
   roll?: number;
   upright?: boolean;
-  /** An LED strip: how steeply its length rises (degrees). */
+  /** LED strip: how steeply its length rises (degrees). */
   rise?: number;
-  /** Show the HTML marker. False: the 3D object alone stands for the device. */
+  /** Show the HTML marker (false: the 3D object alone stands for the device). */
   pin?: boolean;
   /** A placed device fixed against moving. */
   fixed?: boolean;
-  /** The marker setting of its placement or furniture item (undefined means automatic). */
+  /** The marker setting of its placement or furniture item (undefined = automatic). */
   show?: "always" | "active" | "no_power" | "never";
-  /** The 3D lamp can be tapped: it has an entity. */
+  /** The 3D lamp can be tapped (it has an entity). */
   pickable?: boolean;
-  /** The furniture item this lamp is, so it can be moved in 3D. */
+  /** Furniture item this lamp is (for moving it in 3D). */
   furnitureId?: string;
-  /** A lamp from a furniture pack (its type): drawn from the pack's parts. */
+  /** Lamp from a furniture pack (its type): drawn from the pack's parts. */
   pack?: string | null;
-  /** The height its light comes from (pack lamps). */
+  /** Height its light comes from (pack lamps). */
   lightY?: number;
   /** Hanging lamps and fans: the ceiling they hang from (null = the floor height). */
   ceiling?: number;
   /** Ceiling fan: turns of its blades per second (0 or unset = standing still). */
   spin?: number;
-  /** A colour effect runs (colour loop and the like): the colour is animated in 3D. */
+  /** A colour effect runs (colour loop …): the colour is animated in 3D. */
   effect?: AnimationName;
-  /** The pendant shape: shade (default), globe, cone or drum. */
+  /** Pendant shape: shade (default), globe, cone or drum. */
   variant?: string | null;
-  /** The formatted power, for example "85 W". */
+  /** Formatted power, e.g. "85 W". */
   powerText?: string;
   /** A plugin's shape on the floor from the device (a camera's field of view): stops at walls; `through` lets taps pass. */
   wedge?: { angle: number; reach: number; near: number; color: [number, number, number]; opacity: number; through: boolean; walls?: boolean } | null;
@@ -124,24 +129,35 @@ export interface SurfaceRay {
   d: [number, number, number];
 }
 
-/** Grabbing and moving things on surfaces with rays; `start` says whether something was grabbed. */
+/** Grab and move things on surfaces with rays: start says whether something was grabbed. */
 export interface SurfaceGrab {
   start(ray: SurfaceRay): boolean;
   move(ray: SurfaceRay): void;
   end(): void;
 }
 
-/** A lit TV or monitor screen: the colour (the light of a lit item) and the brightness (0..1). */
+/** A lit TV or monitor screen: colour (the light of a lit item) and brightness (0..1). */
+
 export interface ScreenState {
   color: [number, number, number];
   level: number;
   /** Strength of the glow frame around the screen: 1 is the usual, 0 draws none (the item's own *Glow behind the TV*). */
   halo?: number;
-  /** Furniture with a state: glowing faces on top of the item instead of a screen, the whole top or a half of it. */
+  /** Furniture with a state: glowing faces on top of the item instead of a screen – the whole top, or a half of it. */
   faces?: { part: "all" | "left" | "right" | "top" | "bottom"; color: [number, number, number]; level: number }[];
+  /** Light switches and sockets: the buttons (gangs) that are on glow in their colour. */
+  gangs?: { gang: number; color: [number, number, number]; level: number }[];
+  /** A heater from a pack without a screen part (a towel radiator): the whole item glows in the colour while it heats. */
+  heat?: boolean;
+  /** An electric pack item that runs (a coffee machine, a compressor): its status lights and display light up. */
+  leds?: boolean;
+  /** A home battery: its charge (0…1) fills the bar on its front. */
+  fill?: number;
+  /** A 3D printer: how far the print has grown (0…1) on its bed, in the colour. */
+  print?: number;
 }
 
-/** The position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
+/** Position of the sun (from sun.sun): degrees above the horizon and clockwise from north. */
 export interface SunState {
   elevation: number;
   azimuth: number;
@@ -165,11 +181,11 @@ export interface PersonPin {
 }
 
 export interface ViewerStats {
-  /** Frames per second while something moves; 0 at rest, when nothing is drawn. */
+  /** Frames per second while something moves; 0 at rest (nothing is drawn then). */
   fps: number;
   /** What keeps the picture moving: camera, floors, openings, flash, roof, flow, effect, robot, orbit, tint. */
   busy: string[];
-  /** The slowest frame of the last measuring window (ms). */
+  /** Slowest frame of the last measuring window (ms). */
   worstMs: number;
   calls: number;
   triangles: number;

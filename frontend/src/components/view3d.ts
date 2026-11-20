@@ -3440,10 +3440,10 @@ export class NfView3d extends LitElement {
           transform: none;
         }
       }
-      .nf-find-btn {
+      .nf-find-btn,
+      .nf-central-btn {
         position: absolute;
         left: 12px;
-        bottom: calc(10px + var(--nf-bottom-inset, 0px));
         width: 40px;
         height: 40px;
         display: grid;
@@ -3455,21 +3455,12 @@ export class NfView3d extends LitElement {
         box-shadow: var(--nf-shadow);
         cursor: pointer;
       }
+      .nf-find-btn {
+        bottom: calc(10px + var(--nf-bottom-inset, 0px));
+      }
       /* the star sits above the search button, its menu opens above it */
       .nf-central-btn {
-        position: absolute;
-        left: 12px;
         bottom: calc(56px + var(--nf-bottom-inset, 0px));
-        width: 40px;
-        height: 40px;
-        display: grid;
-        place-items: center;
-        border: 0;
-        border-radius: 12px;
-        background: var(--nf-chrome);
-        color: var(--nf-text);
-        box-shadow: var(--nf-shadow);
-        cursor: pointer;
         z-index: 3;
       }
       .nf-central-on {
