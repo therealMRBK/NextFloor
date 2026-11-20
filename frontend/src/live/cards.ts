@@ -568,6 +568,11 @@ export const liveCardStyles = css`
   .live-card-car.live-charging {
     animation: live-charge 1.6s ease-in-out infinite;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .live-card-car.live-charging {
+      animation: none;
+    }
+  }
   @keyframes live-charge {
     50% {
       box-shadow: 0 0 34px color-mix(in srgb, var(--live-soc) 55%, transparent), inset 0 0 18px rgba(120, 200, 255, 0.1);

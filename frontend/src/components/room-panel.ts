@@ -885,6 +885,18 @@ export class NfRoomPanel extends LitElement {
     css`
       :host {
         display: block;
+        animation: nf-rp-in 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      @keyframes nf-rp-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :host {
+          animation: none;
+        }
       }
       .nf-rp {
         /* the host may be pointer-events: none so the 3D view stays usable around the panel */

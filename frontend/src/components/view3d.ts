@@ -3070,6 +3070,11 @@ export class NfView3d extends LitElement {
           animation: none;
         }
       }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-dev-found {
+          animation: none;
+        }
+      }
       .nf-stage {
         position: absolute;
         inset: 0;

@@ -1554,6 +1554,11 @@ export const editorStyles = css`
     pointer-events: none;
     animation: nf-pop 120ms ease-out;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-preview {
+      animation: none;
+    }
+  }
   @keyframes nf-pop {
     from {
       opacity: 0;

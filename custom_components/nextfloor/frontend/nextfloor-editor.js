@@ -235,11 +235,12 @@ var M={ca:"6e08c894e522",cs:"6f8031965f91",da:"0fe66a82bf2a",es:"b20874014798",f
   .nf-btn:active:not(:disabled) {
     transform: scale(0.97);
   }
-  .nf-seg button:focus-visible,
-  .nf-chip:focus-visible,
-  .nf-btn:focus-visible {
-    outline: 2px solid var(--nf-accent);
-    outline-offset: 2px;
+  @media (pointer: coarse) {
+    .nf-seg button,
+    .nf-chip,
+    .nf-btn {
+      min-height: 40px;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .nf-seg button,
@@ -3447,6 +3448,11 @@ ${i}`}else o=Rh(s)}}catch(s){let a=s.message,l={not_json:"import_error_not_json"
     text-align: center;
     pointer-events: none;
     animation: nf-pop 120ms ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-preview {
+      animation: none;
+    }
   }
   @keyframes nf-pop {
     from {

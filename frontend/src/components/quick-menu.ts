@@ -321,6 +321,11 @@ export class NfQuickMenu extends LitElement {
         text-align: center;
         animation: qm-in 140ms ease-out;
       }
+      @media (prefers-reduced-motion: reduce) {
+        :host([low]) .qm {
+          animation: none;
+        }
+      }
       @keyframes qm-in {
         from {
           opacity: 0;

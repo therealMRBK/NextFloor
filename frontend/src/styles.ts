@@ -250,11 +250,12 @@ export const controls = css`
   .nf-btn:active:not(:disabled) {
     transform: scale(0.97);
   }
-  .nf-seg button:focus-visible,
-  .nf-chip:focus-visible,
-  .nf-btn:focus-visible {
-    outline: 2px solid var(--nf-accent);
-    outline-offset: 2px;
+  @media (pointer: coarse) {
+    .nf-seg button,
+    .nf-chip,
+    .nf-btn {
+      min-height: 40px;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .nf-seg button,
