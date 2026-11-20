@@ -5,7 +5,7 @@
 import type { Vec2 } from "../model.ts";
 import { mergeHoles } from "./holes.ts";
 
-export const STAIR_SHAPES = ["straight", "quarter", "l", "half", "u", "spiral"] as const;
+export const STAIR_SHAPES = ["straight", "quarter", "l", "half", "u", "spiral", "three_quarter"] as const;
 export type StairShape = (typeof STAIR_SHAPES)[number];
 
 /** How the stair is built: a solid mass under the steps, side stringers, one spine under the middle, or steps out of the wall. */
@@ -51,6 +51,7 @@ export const STAIR_SIZES: Record<StairShape, [number, number]> = {
   half: [2.0, 2.6],
   u: [2.2, 2.6],
   spiral: [1.6, 1.6],
+  three_quarter: [2.6, 2.6],
 };
 
 const MIN_STEPS = 2;
@@ -175,6 +176,15 @@ function share(count: number, first: number, second: number): [number, number] {
   return [a, count - a];
 }
 
+/** Splits `count` treads between three flights by their length. */
+function share3(count: number, a: number, b: number, c: number): [number, number, number] {
+  if (count <= 0) return [0, 0, 0];
+  const total = Math.max(1e-6, a + b + c);
+  const x = Math.min(count, Math.max(0, Math.round((count * a) / total)));
+  const y = Math.min(count - x, Math.max(0, Math.round((count * b) / total)));
+  return [x, y, count - x - y];
+}
+
 /** A landing at a chosen riser: treads before it and after it (the landing itself is one tread); null when it is not set. */
 function landingSplit(cfg: StairConfig, n: number): [number, number] | null {
   if (cfg.landing_after == null) return null;
@@ -211,6 +221,19 @@ function rightLayout(cfg: StairConfig, w: number, d: number, n: number): { tread
       // the second flight comes back towards the front, its outer (left) side along the right edge
       const second = flight([x1, zt], exit, [x1, zf], [x1 - f, zf], b);
       return { treads: [...first, ...middle, ...second], flight: f, column: 0 };
+    }
+    case "three_quarter": {
+      // three flights round a square well, a quarter of winders in the two corners: up the left side, along the back, down the right side
+      const f = Math.min(cfg.run_width ?? Math.min(1.0, Math.min(w, d) / 3), (Math.min(w, d) - 0.05) / 2);
+      const [c1, c2]: Vec2[] = [[x0 + f, zb + f], [x1 - f, zb + f]];
+      const turn = Math.min(Math.floor(n / 3), n >= 12 ? 3 : 2);
+      const [a, b, c] = share3(n - 2 * turn, d - f, w - 2 * f, d - f);
+      const first = flight([x0, zf], [x0 + f, zf], [x0, zb + f], c1, a);
+      const corner1 = winders([[x0, zb + f], [x0, zb], [x0 + f, zb]], c1, c1, c1, turn);
+      const middle = flight([x0 + f, zb], c1, [x1 - f, zb], c2, b);
+      const corner2 = winders([[x1 - f, zb], [x1, zb], [x1, zb + f]], c2, c2, c2, turn);
+      const last = flight([x1, zb + f], c2, [x1, zf], [x1 - f, zf], c);
+      return { treads: [...first, ...corner1, ...middle, ...corner2, ...last], flight: f, column: 0 };
     }
     case "spiral": {
       const r = Math.min(w, d) / 2;

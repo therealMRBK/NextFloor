@@ -35,6 +35,7 @@ export function renderOutdoorForm(host: EditorHost, area: OutdoorArea, actions: 
         ? html`${entityField(host, t("pool_temp"), area.temp_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.") && host.hass?.states[id]?.attributes.device_class === "temperature"), (v) => set({ temp_entity: v && v !== "none" ? v : null }))}
           ${entityField(host, t("pool_pump"), area.pump_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(switch|fan|valve|input_boolean|binary_sensor)\./.test(id)), (v) => set({ pump_entity: v && v !== "none" ? v : null }))}`
         : nothing}
+      ${isAxisRect(area.points) && host.admin ? hint(t("outdoor_free_corner_hint")) : nothing}
       ${isAxisRect(area.points)
         ? html`${numberField(host, t("x"), box.x0, (v) => actions.setRectangle("x", v))} ${numberField(host, t("z"), box.z0, (v) => actions.setRectangle("z", v))}
           ${numberField(host, t("width"), box.x1 - box.x0, (v) => actions.setRectangle("w", v), 0.01, 0.1)} ${numberField(host, t("depth"), box.z1 - box.z0, (v) => actions.setRectangle("d", v), 0.01, 0.1)}`
