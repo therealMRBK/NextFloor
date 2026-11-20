@@ -45,6 +45,11 @@ test("a media player shows what runs, a heater its temperature", () => {
   assert.equal(stateText(hass, state("media_player.tv", "playing", { media_title: "Show" })), "Show");
   assert.equal(stateText(hass, state("climate.h", "heat", { current_temperature: 20.5 })), "20.5 °C");
   assert.equal(stateText(hass, state("climate.h", "off", { current_temperature: 20.5 })), "20.5 °C · Off");
+  // the wish and what the device does are shown next to the reading (#205)
+  assert.equal(stateText(hass, state("climate.h", "heat", { current_temperature: 19.4, temperature: 19 })), "19.4 °C → 19 °C");
+  assert.equal(stateText(hass, state("climate.h", "heat", { current_temperature: 19.4, temperature: 21.5, hvac_action: "heating" })), "19.4 °C → 21.5 °C 🔥");
+  assert.equal(stateText(hass, state("climate.h", "cool", { current_temperature: 25, temperature: 23, hvac_action: "cooling" })), "25 °C → 23 °C ❄️");
+  assert.equal(stateText(hass, state("climate.h", "heat", { current_temperature: 19.4, temperature: 19, hvac_action: "idle" })), "19.4 °C → 19 °C");
 });
 
 test("unknown or unavailable entities read as unavailable", () => {
