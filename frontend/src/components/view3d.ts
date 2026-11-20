@@ -74,6 +74,14 @@ const LOCK_KEY = "nextfloor.lock3d";
 
 
 /** Below this stage height (px) the floor pictures get small and stop above the buttons at the bottom. */
+/** A value of the browser's storage; null where it is blocked (private mode), so the view still starts. */
+function storedValue(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
 const SHORT_STAGE = 520;
 const TINY_STAGE = 260;
 
@@ -464,9 +472,9 @@ export class NfView3d extends LitElement {
     this.flows = null;
     this._liveEnergy = null;
     this._liveCards = [];
-    this._liveCardOn = localStorage.getItem("nextfloor.cards") !== "0";
-    this._houseFolded = localStorage.getItem("nextfloor.house_card_folded") === "1";
-    this._carsFolded = localStorage.getItem("nextfloor.car_card_folded") === "1";
+    this._liveCardOn = storedValue("nextfloor.cards") !== "0";
+    this._houseFolded = storedValue("nextfloor.house_card_folded") === "1";
+    this._carsFolded = storedValue("nextfloor.car_card_folded") === "1";
     this.selectedFurniture = null;
     this.selectedDevice = null;
     this._sky = 0;
