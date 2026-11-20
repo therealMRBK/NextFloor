@@ -53,10 +53,11 @@ export const aimReach = (centre: Vec2, pointer: Vec2): number => Math.min(50, Ma
 
 /**
  * The outline of an outdoor area after one corner was dragged to `to`. A rectangle stays a rectangle: the corners that share an x or a
- * z with the dragged one follow along that axis.
+ * z with the dragged one follow along that axis. With `free` (Shift held) only the dragged corner moves, so a rectangle becomes a free
+ * shape whose corners line up with walls or other areas (#160).
  */
-export function outlineWithCornerAt(points: readonly Vec2[], index: number, to: Vec2): Vec2[] {
-  const keepsRectangle = isAxisRect([...points]);
+export function outlineWithCornerAt(points: readonly Vec2[], index: number, to: Vec2, free = false): Vec2[] {
+  const keepsRectangle = !free && isAxisRect([...points]);
   const was = points[index];
   const target: Vec2 = [thousandths(to[0]), thousandths(to[1])];
   return points.map((p, j): Vec2 => {

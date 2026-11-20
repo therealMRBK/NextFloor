@@ -1667,7 +1667,7 @@ export class NfEditor extends LitElement {
 
   /** What the pointer has done in this move, with the modifier keys. */
   private moveDrag(drag: Drag, at: { local: [number, number]; world: Vec2; fine: boolean; straight: boolean }): void {
-    const { local, world, fine } = at;
+    const { local, world, fine, straight } = at;
     const grid = this._doc.settings.grid;
     // a press only becomes a drag after the pointer has left the spot
     const started = (d: { moved: boolean; startScreen: [number, number] }) => d.moved || hasLeftStart(local, d.startScreen);
@@ -1824,7 +1824,7 @@ export class NfEditor extends LitElement {
         if (!area) return;
         this.live(drag, (_, floor) => {
           const target = floor.outdoor.find((o) => o.id === drag.id);
-          if (target) target.points = outlineWithCornerAt(area.points, drag.index, to);
+          if (target) target.points = outlineWithCornerAt(area.points, drag.index, to, straight);
         });
         return;
       }
