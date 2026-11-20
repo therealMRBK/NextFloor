@@ -7,7 +7,7 @@ import { loadPlugins } from "./plugins/loader.ts";
 import { onPluginsChanged } from "./plugins/registry.ts";
 import { normalizeBuilding, type Building } from "./model.ts";
 import { setPacks, type FurniturePack } from "./packs.ts";
-import type { HomeAssistant } from "./types.ts";
+import type { HassConnection, HomeAssistant } from "./types.ts";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -74,6 +74,10 @@ export class BuildingController implements ReactiveController {
   private hass: HomeAssistant | null = null;
   private connected = false;
   private revision = -1;
+  private connection: HassConnection | null = null;
+  private retryTimer: ReturnType<typeof setTimeout> | undefined;
+  private starting: Promise<void> | null = null;
+  private readonly onReady = () => { void this.start(); };
   /** Revisions our own saves produced, so their echo over the subscription is ignored. */
   private readonly ownRevisions = new Set<number>();
   private stopListening: (() => Promise<void>) | null = null;
@@ -89,23 +93,32 @@ export class BuildingController implements ReactiveController {
   /** Hand over every new hass object; the first one starts loading. */
   setHass(hass: HomeAssistant): void {
     const isFirst = this.hass === null;
+    const connectionChanged = this.hass?.connection !== hass.connection;
     this.hass = hass;
-    if (isFirst && this.connected) void this.start();
+    if (this.connected) {
+      this.watchConnection();
+      if (isFirst || connectionChanged) void this.start();
+    }
   }
 
   hostConnected(): void {
     this.connected = true;
     // a plugin that loads or registers later changes markers, animations and room panels
     this.stopPlugins = onPluginsChanged(() => this.host.requestUpdate());
+    this.watchConnection();
     if (this.hass) void this.start();
   }
 
   hostDisconnected(): void {
     this.connected = false;
+    clearTimeout(this.retryTimer);
+    this.retryTimer = undefined;
+    this.connection?.removeEventListener?.("ready", this.onReady);
+    this.connection = null;
     this.stopPlugins?.();
     this.stopPlugins = null;
     void this.flush();
-    void this.stopListening?.();
+    void this.stopListening?.().catch(() => undefined);
     this.stopListening = null;
   }
 
@@ -184,19 +197,59 @@ export class BuildingController implements ReactiveController {
     this.host.requestUpdate();
   }
 
-  private async start(): Promise<void> {
+  /** Follow the WebSocket even when the dashboard card itself never disconnects. */
+  private watchConnection(): void {
+    const connection = this.hass?.connection ?? null;
+    if (connection === this.connection) return;
+    this.connection?.removeEventListener?.("ready", this.onReady);
+    // Home Assistant restores subscriptions on the same connection itself.
+    if (this.connection) {
+      void this.stopListening?.().catch(() => undefined);
+      this.stopListening = null;
+    }
+    this.connection = connection;
+    connection?.addEventListener?.("ready", this.onReady);
+  }
+
+  private retry(): void {
+    if (!this.connected || this.retryTimer !== undefined) return;
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = undefined;
+      void this.start();
+    }, 5000);
+    // In node tests this must not keep the process alive; browsers return a number.
+    this.retryTimer.unref?.();
+  }
+
+  private start(): Promise<void> {
+    if (this.starting) return this.starting;
+    this.starting = this.connect().finally(() => { this.starting = null; });
+    return this.starting;
+  }
+
+  private async connect(): Promise<void> {
     const hass = this.hass;
-    if (!hass) return;
+    if (!hass || !this.connected) return;
+    clearTimeout(this.retryTimer);
+    this.retryTimer = undefined;
+    // Reloading after a reconnect must not replace edits still being saved.
+    if (this.waiting || this.inFlight) { this.retry(); return; }
     await Promise.all([this.reloadPacks(), this.reload()]);
-    if (this.stopListening || !this.connected) return;
+    if (!this.connected) return;
+    if (hass.connection !== this.hass?.connection) { this.retry(); return; }
+    if (this.error) this.retry();
+    if (this.stopListening) return;
     try {
-      this.stopListening = await subscribeBuilding(hass, (revision) => {
+      const stop = await subscribeBuilding(hass, (revision) => {
         const ours = this.ownRevisions.has(revision) || revision === this.revision;
-        const busy = this.waiting !== null || this.inFlight !== null; // our own edits win and are saved next
+        const busy = this.waiting !== null || this.inFlight !== null;
         if (!ours && !busy) void this.reload();
       });
+      if (!this.connected || hass.connection !== this.hass?.connection) {
+        void stop().catch(() => undefined);
+      } else this.stopListening = stop;
     } catch {
-      // an older backend or a lost connection: changes from elsewhere show up after a reload
+      this.retry();
     }
   }
 
@@ -213,9 +266,11 @@ export class BuildingController implements ReactiveController {
   }
 
   private async reload(): Promise<void> {
-    if (!this.hass) return;
+    const hass = this.hass;
+    if (!hass) return;
     try {
-      const fetched = await fetchBuilding(this.hass);
+      const fetched = await fetchBuilding(hass);
+      if (!this.connected || this.hass?.connection !== hass.connection || this.waiting || this.inFlight) return;
       this.building = normalizeBuilding(fetched.building);
       void loadPlugins(this.building.settings.plugins);
       this.backendVersion = fetched.version ?? null;

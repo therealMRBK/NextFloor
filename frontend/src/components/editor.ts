@@ -2237,8 +2237,10 @@ export class NfEditor extends LitElement {
     } else if (mod && e.key.toLowerCase() === "d") {
       e.preventDefault();
       this.duplicateRoom();
-    } else if (e.key === "Delete" || (e.key === "Backspace" && (this._tool === "select" || this._tool === "furniture"))) {
-      if (this.sel.device) this.deleteItem("device", this.sel.device);
+    } else if (e.key === "Delete" || (e.key === "Backspace" && (this._tool === "select" || this._tool === "furniture" || this._tool === "roof"))) {
+      // the roof tool deletes its own selection and never the room still selected beneath it
+      if (this._tool === "roof") this.roof.removeSelected();
+      else if (this.sel.device) this.deleteItem("device", this.sel.device);
       else if (this.sel.outdoor) this.deleteOutdoor();
       else if (this.sel.wall) this.deleteFreeWall();
       else if (this.sel.opening) this.deleteOpening();

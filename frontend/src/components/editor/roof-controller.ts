@@ -176,6 +176,13 @@ export class RoofController {
     this.sectionId = null;
   }
 
+  /** Removes what the panel shows: the selected roof window, else the chimney, else the section (the Delete key). */
+  removeSelected(): void {
+    if (this.window) this.removeWindow();
+    else if (this.chimney) this.removeChimney();
+    else if (this.section) this.removeSection();
+  }
+
   duplicateSection(): void {
     const original = this.section;
     if (!original || !this.admin) return;

@@ -147,6 +147,28 @@ test("chimneys are added near the ridge, kept on their face when changed, and re
   assert.deepEqual(s.doc().settings.roof.chimneys, []);
 });
 
+test("removing the selection takes the roof window, else the chimney, else the section, as the panel shows them", () => {
+  const s = setup();
+  s.controller.addSection([0, 0], [8, 5]);
+  const section = s.controller.sectionId;
+  s.controller.addWindow();
+  s.controller.sectionId = section;
+  s.controller.removeSelected();
+  assert.deepEqual(s.doc().settings.roof.windows, []);
+  assert.equal(s.doc().settings.roof.sections!.length, 1, "the section stays");
+  s.controller.addChimney();
+  s.controller.removeSelected();
+  assert.deepEqual(s.doc().settings.roof.chimneys, []);
+  assert.equal(s.doc().settings.roof.sections!.length, 1);
+  s.controller.sectionId = section;
+  s.controller.removeSelected();
+  assert.equal(s.controller.sectionId, null);
+  assert.deepEqual(s.doc().settings.roof.sections, []);
+  const changes = s.calls.changes;
+  s.controller.removeSelected();
+  assert.equal(s.calls.changes, changes, "nothing selected, nothing changed");
+});
+
 test("selecting a wall field brings up its floor, and the selection changes ask for a redraw", () => {
   const s = setup();
   s.controller.addWallField();

@@ -76,6 +76,7 @@ const LOCK_KEY = "nextfloor.lock3d";
 
 /** Below this stage height (px) the floor pictures get small and stop above the buttons at the bottom. */
 const SHORT_STAGE = 520;
+const TINY_STAGE = 260;
 
 export class NfView3d extends LitElement {
   static properties = {
@@ -178,6 +179,7 @@ export class NfView3d extends LitElement {
     _low: { state: true },
     _narrowStage: { state: true },
     _shortStage: { state: true },
+    _tinyStage: { state: true },
     _phoneStage: { state: true },
     _alerts: { state: true },
     _alertsAll: { state: true },
@@ -233,6 +235,7 @@ export class NfView3d extends LitElement {
   declare holograms: boolean | null;
 
   private get liveCardsOn(): boolean {
+    if (this._tinyStage) return false;
     return this.holograms ?? this._liveCardOn;
   }
   /** Furnishing: furniture and lamps are dragged in 3D (admins, panel only). */
@@ -328,6 +331,8 @@ export class NfView3d extends LitElement {
   private declare _narrowStage: boolean;
   /** The stage is low (a small card): the floor pictures leave room for the buttons below them. */
   private declare _shortStage: boolean;
+  /** A very small stage (a dashboard card under about 260 px): the floor pictures and the live cards would only cover the picture (#203). */
+  private declare _tinyStage: boolean;
   /** The stage is as narrow as a phone held upright: the floor pictures step aside, the floor tabs above do the job (#70). */
   private declare _phoneStage: boolean;
   private stopPlugins: (() => void) | null = null;
@@ -516,6 +521,7 @@ export class NfView3d extends LitElement {
     this.panelOpen = false;
     this._narrowStage = false;
     this._shortStage = false;
+    this._tinyStage = false;
     this._phoneStage = false;
     this.alerts = true;
     this.alertJump = false;
@@ -598,6 +604,8 @@ export class NfView3d extends LitElement {
       const narrow = (rect?.width ?? 1000) < 700 || (rect?.height ?? 1000) < SHORT_STAGE;
       const short = (rect?.height ?? 1000) < SHORT_STAGE;
       if (short !== this._shortStage) this._shortStage = short;
+      const tiny = (rect?.height ?? 1000) < TINY_STAGE;
+      if (tiny !== this._tinyStage) this._tinyStage = tiny;
       const phone = (rect?.width ?? 1000) < 520;
       if (phone !== this._phoneStage) this._phoneStage = phone;
       if (narrow === this._narrowStage) return;
@@ -1811,7 +1819,7 @@ export class NfView3d extends LitElement {
         // private mode: the choice lasts for this page only
       }
     };
-    return html`<nav class="nf-thumbs ${this.narrowThumbs ? "nf-thumbs-small" : ""} ${this._shortStage ? "nf-thumbs-short" : ""} ${compact ? "nf-thumbs-compact" : ""}" aria-label=${translate(this.hass, "floors")}>
+    return html`<nav class="nf-thumbs ${this._tinyStage ? "nf-thumbs-tiny" : ""} ${this.narrowThumbs ? "nf-thumbs-small" : ""} ${this._shortStage ? "nf-thumbs-short" : ""} ${compact ? "nf-thumbs-compact" : ""}" aria-label=${translate(this.hass, "floors")}>
       <button class="nf-thumbs-fold" title=${translate(this.hass, compact ? "thumbs_show" : "thumbs_fold")} aria-label=${translate(this.hass, compact ? "thumbs_show" : "thumbs_fold")} @click=${fold}>${compact ? "▸" : "◂"}</button>
       <button class="nf-thumb nf-thumb-house" aria-pressed=${this.floorId === null} @click=${() => this.fire("floor-tap", { floorId: null })}>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 10v10h14V10" /></svg>
@@ -2805,7 +2813,7 @@ export class NfView3d extends LitElement {
     }
     if (e.tariff) items.push({ cls: "tariff", label: t("energy_tariff"), value: `${formatNumber(this.hass, e.tariff.value, 3)} ${e.tariff.unit}`.trim() });
     if (this.building) for (const m of this.meterRows(this.building)) items.push({ cls: "meter", label: `${m.icon} ${m.label}`, value: m.value });
-    return html`<div class="nf-energy" aria-live="off">
+    return html`<div class="nf-energy ${this._tinyStage ? "nf-energy-tiny" : ""}" aria-live="off">
       ${this.liveCardsOn && this._liveCards.some((c) => c.kind === "house") ? nothing : items.map((i) => html`<div class="nf-energy-item nf-energy-${i.cls}"><span>${i.label}</span><b>${i.value}</b></div>`)}
       ${this.flows !== null
         ? nothing
@@ -3393,6 +3401,13 @@ export class NfView3d extends LitElement {
         top: 52px;
         transform: none;
         max-height: calc(100% - 52px - 150px);
+      }
+      /* a very small card: the floor pictures would cover the picture and run into the buttons, the floor can still be changed in the room row (#203) */
+      .nf-energy.nf-energy-tiny {
+        display: none;
+      }
+      .nf-thumbs.nf-thumbs-tiny {
+        display: none;
       }
       .nf-thumbs-small .nf-thumb {
         width: 104px;

@@ -46,6 +46,8 @@ export interface HassEntity {
 }
 
 export interface HassConnection {
+  addEventListener?(event: "ready", callback: () => void): void;
+  removeEventListener?(event: "ready", callback: () => void): void;
   subscribeMessage<T>(callback: (msg: T) => void, msg: Record<string, unknown>): Promise<() => Promise<void>>;
 }
 

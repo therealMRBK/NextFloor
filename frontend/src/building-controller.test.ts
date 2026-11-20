@@ -140,3 +140,109 @@ test("older backends without packs just have none", async () => {
   assert.deepEqual(controller.packs, []);
   assert.ok(controller.building);
 });
+
+function connectionEvents(hass: HomeAssistant) {
+  const ready = new Set<() => void>();
+  Object.assign(hass.connection, {
+    addEventListener: (_event: string, callback: () => void) => ready.add(callback),
+    removeEventListener: (_event: string, callback: () => void) => ready.delete(callback),
+  });
+  return { fire: () => ready.forEach(callback => callback()), count: () => ready.size };
+}
+
+const microtasks = async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); };
+
+test("the same dashboard card recovers when the existing connection becomes ready again", async () => {
+  let down = true;
+  const { controller, hass, sent } = setup({
+    "nextfloor/building/get": () => {
+      if (down) throw new Error("backend starting");
+      return { building: emptyBuilding(), revision: 20, version: "1.0.0" };
+    },
+  });
+  const events = connectionEvents(hass);
+  controller.hostConnected(); controller.setHass(hass);
+  await microtasks();
+  assert.match(controller.error ?? "", /backend starting/);
+  down = false; events.fire();
+  await microtasks();
+  assert.equal(controller.error, null);
+  assert.ok(controller.building);
+  const loads = sent.filter(m => m.type === "nextfloor/building/get").length;
+  controller.setHass({ ...hass });
+  await microtasks();
+  assert.equal(sent.filter(m => m.type === "nextfloor/building/get").length, loads);
+  assert.equal(events.count(), 1);
+  controller.hostDisconnected();
+  assert.equal(events.count(), 0);
+});
+
+test("backend still starting at ready is retried and disconnect cancels retries", async t => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let down = true;
+  const { controller, hass, sent } = setup({
+    "nextfloor/building/get": () => {
+      if (down) throw new Error("not loaded yet");
+      return { building: emptyBuilding(), revision: 20 };
+    },
+  });
+  controller.hostConnected(); controller.setHass(hass);
+  await microtasks();
+  down = false;
+  t.mock.timers.tick(5000); await microtasks();
+  assert.equal(controller.error, null);
+  assert.ok(controller.building);
+  down = true;
+  controller.hostDisconnected();
+  controller.hostConnected();
+  await microtasks();
+  assert.match(controller.error ?? "", /not loaded yet/);
+  controller.hostDisconnected();
+  const loads = sent.length;
+  t.mock.timers.tick(15000); await microtasks();
+  assert.equal(sent.length, loads);
+});
+
+test("a replacement connection is watched and the old ready listener is removed", async () => {
+  const first = setup(); const second = setup();
+  const oldEvents = connectionEvents(first.hass), newEvents = connectionEvents(second.hass);
+  first.controller.hostConnected(); first.controller.setHass(first.hass);
+  await microtasks();
+  first.controller.setHass(second.hass); await microtasks();
+  assert.equal(oldEvents.count(), 0); assert.equal(newEvents.count(), 1);
+  assert.ok(second.sent.some(m => m.type === "nextfloor/building/get"));
+  first.controller.hostDisconnected();
+  assert.equal(newEvents.count(), 0);
+});
+
+test("a reconnect preserves unsaved edits and does not duplicate building subscriptions", async () => {
+  const { controller, hass, sent } = setup();
+  const events = connectionEvents(hass);
+  let subscriptions = 0;
+  const subscribe = hass.connection.subscribeMessage.bind(hass.connection);
+  hass.connection.subscribeMessage = (callback, message) => { subscriptions++; return subscribe(callback, message); };
+  controller.hostConnected(); controller.setHass(hass); await microtasks();
+  events.fire(); events.fire(); await microtasks();
+  assert.equal(subscriptions, 1);
+  const edited = emptyBuilding();
+  edited.settings.north = 42;
+  controller.edit(edited);
+  const before = sent.filter(m => m.type === "nextfloor/building/get").length;
+  events.fire(); await microtasks();
+  assert.equal(controller.building, edited);
+  assert.equal(sent.filter(m => m.type === "nextfloor/building/get").length, before);
+  await controller.flush();
+  controller.hostDisconnected();
+});
+
+test("a subscription completing after the card is removed is immediately cleaned up", async () => {
+  const { controller, hass } = setup();
+  let resolve!: (stop: () => Promise<void>) => void;
+  hass.connection.subscribeMessage = () => new Promise(done => { resolve = done; });
+  controller.hostConnected(); controller.setHass(hass); await microtasks();
+  controller.hostDisconnected();
+  let stopped = false;
+  resolve(async () => { stopped = true; });
+  await microtasks();
+  assert.equal(stopped, true);
+});

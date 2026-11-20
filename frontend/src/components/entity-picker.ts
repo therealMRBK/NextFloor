@@ -157,7 +157,9 @@ export class EntityPicker extends LitElement {
         box-sizing: border-box;
         font: inherit;
         color: var(--nf-text);
-        background: var(--nf-chrome-solid);
+        /* a theme may make the card colour see-through (glass themes): the field and its list must not */
+        background-color: var(--nf-bg, #1c1c1c);
+        background-image: linear-gradient(var(--nf-chrome-solid), var(--nf-chrome-solid));
         border: 1px solid var(--nf-line);
         border-radius: 10px;
         padding: 8px 10px;
@@ -184,7 +186,8 @@ export class EntityPicker extends LitElement {
         list-style: none;
         max-height: 280px;
         overflow-y: auto;
-        background: var(--nf-chrome-solid);
+        background-color: var(--nf-bg, #1c1c1c);
+        background-image: linear-gradient(var(--nf-chrome-solid), var(--nf-chrome-solid));
         border: 1px solid var(--nf-line);
         border-radius: 10px;
         box-shadow: var(--nf-shadow);

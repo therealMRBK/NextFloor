@@ -4,6 +4,30 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.10]
+
+### Fixed
+
+- **Very small dashboard cards no longer pile their buttons on top of each other** (thanks @Guenni75, #203): below about 260 px of card height the floor pictures on the left and the house/energy cards used to lie under the room row at the top and the control buttons at the bottom. On such a small card they are now left out, so the room row at the top and the buttons at the bottom stay readable.
+
+## [0.31.4.9]
+
+### Fixed
+
+- **The entity list in the editor is readable again** (thanks @Jkazama6, #201): the field and the drop-down list under *Zustand von*, the device pickers and every other entity choice took the colour of the Home Assistant card as their background. With a theme that makes that colour see-through (glass themes), the list lay transparent over the plan and was hard to read. They now always have a solid background, the card colour on top of the theme's page colour.
+- **Dashboard cards recover after Home Assistant restarts** (thanks @philipplueoend, #199): the plan reloads when the connection returns and failed loads retry every five seconds, without closing the tablet app. Unsaved edits are kept.
+
+## [0.31.4.8]
+
+### Fixed
+
+- **Weather switched off stays off** (thanks @Guenni75, #196): in the panel and in a card, rain and the other weather were still shown when the weather option was off, as soon as the page was opened or reloaded. Switching the option while the view was open worked, which is why it was easy to miss. The view now starts with the option as it was saved.
+- **Delete removes the selected roof piece** (thanks @orshih6, #193 and @tichris0, #192): with the roof tool, the Delete or Backspace key did nothing to the selected roof section, roof window or chimney, and could take away the room still selected beneath it instead. The key now removes the roof piece the panel shows, like its red button, and can be undone.
+
+## [0.31.4.7]
+
+Withdrawn: the release was tagged on the previous commit by mistake and does not contain its fixes. They are in 0.31.4.8.
+
 ## [0.31.4.6]
 
 ### Fixed
