@@ -4,6 +4,13 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.31.4.9]
+
+### Fixed
+
+- **The entity list in the editor is readable again** (thanks @Jkazama6, #201): the field and the drop-down list under *Zustand von*, the device pickers and every other entity choice took the colour of the Home Assistant card as their background. With a theme that makes that colour see-through (glass themes), the list lay transparent over the plan and was hard to read. They now always have a solid background, the card colour on top of the theme's page colour.
+- **Dashboard cards recover after Home Assistant restarts** (thanks @philipplueoend, #199): the plan reloads when the connection returns and failed loads retry every five seconds, without closing the tablet app. Unsaved edits are kept.
+
 ## [0.31.4.8]
 
 ### Fixed
