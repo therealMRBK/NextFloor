@@ -348,7 +348,7 @@ export const liveCardStyles = css`
     .live-card {
       gap: 8px;
       padding: 8px 10px;
-      font-size: 11.5px;
+      font-size: 12px;
     }
     .live-card-house:not(.live-folded) {
       padding-right: 28px;
@@ -376,7 +376,7 @@ export const liveCardStyles = css`
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--nf-text);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.35;
     white-space: nowrap;
     will-change: transform;

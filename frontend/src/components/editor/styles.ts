@@ -112,7 +112,7 @@ export const editorStyles = css`
   }
   .nf-warn {
     color: var(--nf-warm);
-    font-size: 12.5px;
+    font-size: 13px;
   }
   .nf-picture-group {
     display: grid;
@@ -480,7 +480,7 @@ export const editorStyles = css`
   .nf-keys kbd {
     display: inline-block;
     padding: 1px 6px;
-    border-radius: 5px;
+    border-radius: 6px;
     border: 1px solid var(--nf-line);
     font: 600 12px var(--nf-font);
   }
@@ -535,7 +535,7 @@ export const editorStyles = css`
   h3,
   summary {
     margin: 0 0 8px;
-    font-size: 11.5px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--nf-muted);
@@ -1629,6 +1629,9 @@ export const editorStyles = css`
   .nf-shift input {
     width: 5.5em;
   }
+  .nf-shift > span {
+    flex: 0 0 100%;
+  }
   .nf-headroom {
     stroke: rgba(255, 214, 90, 0.55);
     stroke-width: 1;
@@ -2020,12 +2023,12 @@ export const editorStyles = css`
   }
   .nf-sub {
     margin: 8px 0 0;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-muted);
   }
   .nf-note {
     margin: 0;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-warm);
   }
 `;

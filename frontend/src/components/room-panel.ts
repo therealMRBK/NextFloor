@@ -463,7 +463,7 @@ export class NfRoomPanel extends LitElement {
       <header class="nf-rp-head">
         <div>
           <h2>${room.name}</h2>
-          ${facts.length ? html`<p class="nf-rp-facts">${facts.join(" · ")}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
+          ${facts.length ? html`<p class="nf-rp-facts">${facts.map((f) => html`<span>${f}</span>`)}</p>` : nothing} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
           ${this.renderOpenWhileHeating(climates)} ${this.renderEmptyLights(room, lightsOn)}
           ${this.renderCurve()}
         </div>
@@ -919,6 +919,12 @@ export class NfRoomPanel extends LitElement {
         color: var(--nf-muted);
         font-size: 13px;
         font-variant-numeric: tabular-nums;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 12px;
+      }
+      .nf-rp-facts span {
+        white-space: nowrap;
       }
       @media (pointer: coarse) {
         .nf-rp-close {
@@ -1025,7 +1031,7 @@ export class NfRoomPanel extends LitElement {
       }
       h3 {
         margin: 0;
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.06em;
         text-transform: uppercase;
@@ -1075,7 +1081,7 @@ export class NfRoomPanel extends LitElement {
         white-space: nowrap;
       }
       .nf-rp-state {
-        font-size: 12.5px;
+        font-size: 13px;
         color: var(--nf-muted);
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
@@ -1255,7 +1261,7 @@ export class NfRoomPanel extends LitElement {
       }
       .nf-rp-media {
         margin: 0;
-        font-size: 12.5px;
+        font-size: 13px;
         color: var(--nf-muted);
       }
       button:focus-visible,

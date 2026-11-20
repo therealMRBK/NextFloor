@@ -34,6 +34,18 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     --nf-title-font: var(--nf-font);
     font-family: var(--nf-font);
     color: var(--nf-text);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--nf-accent) 32%, transparent);
   }
 `,br=se`
   :host([readable]) {
@@ -87,7 +99,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       padding: 3px;
     }
     :is(.nf-overlay, .nf-card-controls) :is(.nf-seg button, .nf-chip) {
-      font-size: 12.5px;
+      font-size: 13px;
       padding: 5px 10px;
     }
   }
@@ -292,7 +304,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       <header class="nf-rp-head">
         <div>
           <h2>${t.name}</h2>
-          ${$.length?f`<p class="nf-rp-facts">${$.join(" \xB7 ")}</p>`:g} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
+          ${$.length?f`<p class="nf-rp-facts">${$.map(x=>f`<span>${x}</span>`)}</p>`:g} ${this.renderEnergy()} ${this.renderSunYear()} ${this.renderShade()}
           ${this.renderOpenWhileHeating(m)} ${this.renderEmptyLights(t,M)}
           ${this.renderCurve()}
         </div>
@@ -500,6 +512,12 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         color: var(--nf-muted);
         font-size: 13px;
         font-variant-numeric: tabular-nums;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 12px;
+      }
+      .nf-rp-facts span {
+        white-space: nowrap;
       }
       @media (pointer: coarse) {
         .nf-rp-close {
@@ -606,7 +624,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       }
       h3 {
         margin: 0;
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.06em;
         text-transform: uppercase;
@@ -656,7 +674,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         white-space: nowrap;
       }
       .nf-rp-state {
-        font-size: 12.5px;
+        font-size: 13px;
         color: var(--nf-muted);
         font-variant-numeric: tabular-nums;
         white-space: nowrap;
@@ -836,7 +854,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       }
       .nf-rp-media {
         margin: 0;
-        font-size: 12.5px;
+        font-size: 13px;
         color: var(--nf-muted);
       }
       button:focus-visible,
@@ -952,7 +970,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     .live-card {
       gap: 8px;
       padding: 8px 10px;
-      font-size: 11.5px;
+      font-size: 12px;
     }
     .live-card-house:not(.live-folded) {
       padding-right: 28px;
@@ -980,7 +998,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--nf-text);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.35;
     white-space: nowrap;
     will-change: transform;
@@ -1357,7 +1375,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
       background: rgba(8, 16, 34, 0.55);
       color: inherit;
       font: inherit;
-      font-size: 12.5px;
+      font-size: 13px;
       cursor: pointer;
     }
     .qm-chip-on {
@@ -2287,7 +2305,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         display: grid;
         place-items: center;
         border: 0;
-        border-radius: 13px;
+        border-radius: 12px;
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
@@ -2303,7 +2321,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         display: grid;
         place-items: center;
         border: 0;
-        border-radius: 13px;
+        border-radius: 12px;
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
@@ -2940,7 +2958,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         position: relative;
         width: 10px;
         height: 44px;
-        border-radius: 5px;
+        border-radius: 6px;
         background: rgba(127, 127, 127, 0.25);
         overflow: hidden;
       }
@@ -3414,7 +3432,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         position: absolute;
         right: 10px;
         bottom: calc(8px + var(--nf-bottom-inset, 0px));
-        font-size: 11.5px;
+        font-size: 12px;
         color: var(--nf-muted);
         font-variant-numeric: tabular-nums;
         pointer-events: none;
@@ -3424,7 +3442,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
         inset: auto 16px 16px;
         color: var(--nf-danger);
       }
-    `]};customElements.get("nf-view3d")||customElements.define("nf-view3d",xi);function de(r,e){return Math.abs(e)>=1e3?`${L(r,e/1e3,1)} kW`:`${Math.round(e)} W`}function ki(r){return r.type==="tv_board"?r.h+.9:r.type==="tv_wall"||r.type==="kitchen_wall"?r.h+.25:r.h+.35}function sf(r,e){let t=e.attributes.percentage;return e.state==="on"&&typeof t=="number"?`${Math.round(t)} %`:ie(r,e)}var Qc;function Xc(){let r=new URL("./nextfloor-editor.js?v=37c705fff494",new URL(import.meta.url)).href;return Qc??=import(r),Qc}var af=.25,eu=r=>Math.round(r*1e3)/1e3,tu=(r,e,t)=>r.rooms.find(n=>n.points.length>=3&&N([e,t],n.points));function Mi(r,e,t,n,o){let i=tu(r,e,t);if(!i)return[n,o];let s=(a,l)=>N([a,l],i.points);return s(n,o)?[n,o]:s(n,t)?[n,t]:s(e,o)?[e,o]:[e,t]}function lf(r,e,t,n){return r.rooms.some(o=>o.id!==e.id&&o.points.some((i,s)=>{let a=o.points[(s+1)%o.points.length];return Math.abs(U(q(i,t),n))<.02&&Math.abs(U(q(a,t),n))<.02}))}var Si=(r,e)=>Math.abs((r-e+540)%360-180);function nu(r,e,t,n=af){let o=tu(r,e.x,e.z);if(!o)return null;let i=o.points,s=He(i)>=0?1:-1,a=null;return i.forEach((l,c)=>{let u=i[(c+1)%i.length],d=Se(q(u,l));if(d<.3)return;let p=[(u[0]-l[0])/d,(u[1]-l[1])/d],m=[-p[1]*s,p[0]*s],h=U(q([e.x,e.z],l),p);if(h<0||h>d)return;let w=lf(r,o,l,m)?t/2:0,_=U(q([e.x,e.z],l),m)-w,k=Math.atan2(-m[0],m[1])*180/Math.PI,M=[{rotation:k,extent:e.d/2},{rotation:k+90,extent:e.w/2},{rotation:k-90,extent:e.w/2}].reduce((b,H)=>Si(e.rotation,H.rotation)<Si(e.rotation,b.rotation)?H:b);if(Si(e.rotation,M.rotation)>50)return;let x=_-M.extent;Math.abs(x)>n||a&&Math.abs(x)>=Math.abs(a.gap)||(a={x:eu(e.x-m[0]*x),z:eu(e.z-m[1]*x),rotation:(Math.round(M.rotation)%360+360)%360,gap:x})}),a&&{x:a.x,z:a.z,rotation:a.rotation}}function Ir(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.furniture.find(s=>s.id===e);i&&t(i,o)}return n}function Nr(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.placements.find(s=>s.entity_id===e);i&&t(i,o)}return n}function ru(r,e){let t=structuredClone(r);for(let n of t.floors)n.furniture=n.furniture.filter(o=>o.id!==e);return t}function ou(r,e){let t=structuredClone(r);for(let n of t.floors)n.placements=n.placements.filter(o=>o.entity_id!==e);return t}function iu(r,e,t,n){return Nr(r,e,(o,i)=>{[o.x,o.z]=Mi(i,o.x,o.z,t,n)})}function su(r,e,t,n){let o=r.settings.wall_interior??.12;return Ir(r,e,(i,s)=>{[i.x,i.z]=Mi(s,i.x,i.z,t,n);let a=nu(s,i,o);a&&Object.assign(i,a)})}var $i=(r,e)=>((r+e)%360+360)%360,au=r=>Number.parseFloat(r.replace(",",".")),xn=(r,e)=>Math.round(r*10**e)/10**e;function Ai(r){let{min:e,max:t,accepts:n=()=>!0}=r,o=i=>{let s=au(i.target.value);!Number.isFinite(s)||!n(s)||r.apply(t===void 0?s:Math.min(t,Math.max(e,s)))};return f`<label class="nf-size" title=${r.title}
+    `]};customElements.get("nf-view3d")||customElements.define("nf-view3d",xi);function de(r,e){return Math.abs(e)>=1e3?`${L(r,e/1e3,1)} kW`:`${Math.round(e)} W`}function ki(r){return r.type==="tv_board"?r.h+.9:r.type==="tv_wall"||r.type==="kitchen_wall"?r.h+.25:r.h+.35}function sf(r,e){let t=e.attributes.percentage;return e.state==="on"&&typeof t=="number"?`${Math.round(t)} %`:ie(r,e)}var Qc;function Xc(){let r=new URL("./nextfloor-editor.js?v=4227ad878639",new URL(import.meta.url)).href;return Qc??=import(r),Qc}var af=.25,eu=r=>Math.round(r*1e3)/1e3,tu=(r,e,t)=>r.rooms.find(n=>n.points.length>=3&&N([e,t],n.points));function Mi(r,e,t,n,o){let i=tu(r,e,t);if(!i)return[n,o];let s=(a,l)=>N([a,l],i.points);return s(n,o)?[n,o]:s(n,t)?[n,t]:s(e,o)?[e,o]:[e,t]}function lf(r,e,t,n){return r.rooms.some(o=>o.id!==e.id&&o.points.some((i,s)=>{let a=o.points[(s+1)%o.points.length];return Math.abs(U(q(i,t),n))<.02&&Math.abs(U(q(a,t),n))<.02}))}var Si=(r,e)=>Math.abs((r-e+540)%360-180);function nu(r,e,t,n=af){let o=tu(r,e.x,e.z);if(!o)return null;let i=o.points,s=He(i)>=0?1:-1,a=null;return i.forEach((l,c)=>{let u=i[(c+1)%i.length],d=Se(q(u,l));if(d<.3)return;let p=[(u[0]-l[0])/d,(u[1]-l[1])/d],m=[-p[1]*s,p[0]*s],h=U(q([e.x,e.z],l),p);if(h<0||h>d)return;let w=lf(r,o,l,m)?t/2:0,_=U(q([e.x,e.z],l),m)-w,k=Math.atan2(-m[0],m[1])*180/Math.PI,M=[{rotation:k,extent:e.d/2},{rotation:k+90,extent:e.w/2},{rotation:k-90,extent:e.w/2}].reduce((b,H)=>Si(e.rotation,H.rotation)<Si(e.rotation,b.rotation)?H:b);if(Si(e.rotation,M.rotation)>50)return;let x=_-M.extent;Math.abs(x)>n||a&&Math.abs(x)>=Math.abs(a.gap)||(a={x:eu(e.x-m[0]*x),z:eu(e.z-m[1]*x),rotation:(Math.round(M.rotation)%360+360)%360,gap:x})}),a&&{x:a.x,z:a.z,rotation:a.rotation}}function Ir(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.furniture.find(s=>s.id===e);i&&t(i,o)}return n}function Nr(r,e,t){let n=structuredClone(r);for(let o of n.floors){let i=o.placements.find(s=>s.entity_id===e);i&&t(i,o)}return n}function ru(r,e){let t=structuredClone(r);for(let n of t.floors)n.furniture=n.furniture.filter(o=>o.id!==e);return t}function ou(r,e){let t=structuredClone(r);for(let n of t.floors)n.placements=n.placements.filter(o=>o.entity_id!==e);return t}function iu(r,e,t,n){return Nr(r,e,(o,i)=>{[o.x,o.z]=Mi(i,o.x,o.z,t,n)})}function su(r,e,t,n){let o=r.settings.wall_interior??.12;return Ir(r,e,(i,s)=>{[i.x,i.z]=Mi(s,i.x,i.z,t,n);let a=nu(s,i,o);a&&Object.assign(i,a)})}var $i=(r,e)=>((r+e)%360+360)%360,au=r=>Number.parseFloat(r.replace(",",".")),xn=(r,e)=>Math.round(r*10**e)/10**e;function Ai(r){let{min:e,max:t,accepts:n=()=>!0}=r,o=i=>{let s=au(i.target.value);!Number.isFinite(s)||!n(s)||r.apply(t===void 0?s:Math.min(t,Math.max(e,s)))};return f`<label class="nf-size" title=${r.title}
     >${r.label}
     <input type="number" inputmode="decimal" step=${r.step} min=${e} max=${t??g} .value=${String(xn(r.value,2))} @change=${o} />
   </label>`}var cu=(r,e)=>f`<button class="nf-chip" @click=${e}>${r.t("height_auto")}</button>`,lu=(r,e)=>f`<button class="nf-chip" @click=${()=>e(-r)}>↺ ${r}°</button><button class="nf-chip" @click=${()=>e(r)}>↻ ${r}°</button>`;function cf(r,e){let t=r.building.floors.find(s=>s.furniture.some(a=>a.id===e)),n=t?.furniture.find(s=>s.id===e);if(!t||!n)return g;let o=(s,a)=>Ai({label:r.t(a),title:r.t(`size_${s}`),value:n[s],step:.05,min:.05,accepts:l=>l>0,apply:l=>r.editFurniture(e,c=>c[s]=xn(l,3))}),i=As(n)?f`${Ai({label:"\u2195",title:r.t("mount_height"),value:n.mount_y??pe(t,n),step:.05,min:0,accepts:s=>s>=0,apply:s=>r.editFurniture(e,a=>a.mount_y=xn(s,3))})}
@@ -3515,7 +3533,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     border-radius: 10px;
     border: 1px solid var(--nf-line);
     background: var(--nf-chrome-solid);
-    font-size: 13.5px;
+    font-size: 14px;
   }
   .nf-notice span {
     flex: 1;
@@ -3549,7 +3567,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     border-radius: 999px;
     background: var(--nf-chrome);
     box-shadow: var(--nf-shadow);
-    font-size: 13.5px;
+    font-size: 14px;
   }
   .nf-size-select {
     font: inherit;
@@ -3583,7 +3601,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
     flex: 1;
   }
   .nf-save {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-muted);
   }
   .nf-view-opts {
@@ -3631,7 +3649,7 @@ A plugin runs with the same rights as NextFloor in your browser. The file has be
   /* the installed version, at the far right of the header */
   .nf-version {
     margin-left: auto;
-    font-size: 11.5px;
+    font-size: 12px;
     color: var(--nf-muted);
     white-space: nowrap;
     opacity: 0.8;

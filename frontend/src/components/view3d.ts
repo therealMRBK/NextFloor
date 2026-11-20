@@ -3444,7 +3444,7 @@ export class NfView3d extends LitElement {
         display: grid;
         place-items: center;
         border: 0;
-        border-radius: 13px;
+        border-radius: 12px;
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
@@ -3460,7 +3460,7 @@ export class NfView3d extends LitElement {
         display: grid;
         place-items: center;
         border: 0;
-        border-radius: 13px;
+        border-radius: 12px;
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
@@ -4097,7 +4097,7 @@ export class NfView3d extends LitElement {
         position: relative;
         width: 10px;
         height: 44px;
-        border-radius: 5px;
+        border-radius: 6px;
         background: rgba(127, 127, 127, 0.25);
         overflow: hidden;
       }
@@ -4571,7 +4571,7 @@ export class NfView3d extends LitElement {
         position: absolute;
         right: 10px;
         bottom: calc(8px + var(--nf-bottom-inset, 0px));
-        font-size: 11.5px;
+        font-size: 12px;
         color: var(--nf-muted);
         font-variant-numeric: tabular-nums;
         pointer-events: none;

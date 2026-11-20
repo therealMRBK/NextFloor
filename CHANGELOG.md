@@ -8,6 +8,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 - **Buttons answer your touch at once.** Chips, switches, buttons and the round buttons in the 3D view dip a little while pressed and spring back, there is no tap delay on touch screens and no grey tap flash.
 - **No more "stuck" hover on touch screens.** Hover highlights only appear with a real mouse, so a tapped button on a wall tablet no longer stays lit.
+- **A calmer type scale and corner radii.** The half-pixel text sizes (11.5, 12.5, 13.5 px) now sit on whole sizes, a few stray corner radii snap to the common ones, headings wrap evenly, and selected text uses your accent colour.
+- **The room panel's info line wraps between facts, never inside one,** and the editor's "move floor" row groups its fields and buttons cleanly instead of breaking at random.
 - **Clearer keyboard focus** on the shared buttons, and the press effect is switched off when the device asks for reduced motion.
 
 ## [0.31.4.10]

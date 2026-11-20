@@ -34,6 +34,18 @@ export const tokens = css`
     --nf-title-font: var(--nf-font);
     font-family: var(--nf-font);
     color: var(--nf-text);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--nf-accent) 32%, transparent);
   }
 `;
 
@@ -96,7 +108,7 @@ export const controls = css`
       padding: 3px;
     }
     :is(.nf-overlay, .nf-card-controls) :is(.nf-seg button, .nf-chip) {
-      font-size: 12.5px;
+      font-size: 13px;
       padding: 5px 10px;
     }
   }
