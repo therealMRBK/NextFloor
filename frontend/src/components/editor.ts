@@ -70,6 +70,7 @@ import { insertRoofCorner, roofOutline } from "./editor/ops/roof.ts";
 import { applyWallJoins, wallJoins } from "../geometry/wall-joins.ts";
 import { insertOutdoorCorner, outdoorRectangleAfter, removeOutdoorCorner } from "./editor/ops/items.ts";
 import { renderDeviceList, renderRoomClimate, type DeviceListActions } from "./editor/forms/device-list.ts";
+import { renderRoomObjects } from "./editor/forms/room-objects.ts";
 import { formatArea, formatLength, setUnits } from "../units.ts";
 import "./editor/wall-view.ts";
 import "./editor/ble-locate.ts";
@@ -3514,7 +3515,7 @@ export class NfEditor extends LitElement {
     }
     if (room && this._tool !== "measure") {
       return html`<button class="nf-btn nf-back" @click=${() => this.selectItem("room", null)}>‹ ${this.t("back_to_floor")}</button>
-        ${renderRoomForm(this.host, this.side, room, this.roomActions(room))} ${renderDeviceList(this.host, this.side, room, this.deviceListActions())}`;
+        ${renderRoomForm(this.host, this.side, room, this.roomActions(room))} ${renderDeviceList(this.host, this.side, room, this.deviceListActions())} ${renderRoomObjects(this.host, floor ?? null, room, { select: (id) => this.selectItem("furniture", id) })}`;
     }
     return html`
       ${admin ? nothing : html`<p class="nf-note">${this.t("read_only")}</p>`}
@@ -3537,7 +3538,7 @@ export class NfEditor extends LitElement {
           : this.device
             ? renderDeviceForm(this.host, this.device, this.deviceActions())
           : room
-            ? html`${renderRoomForm(this.host, this.side, room, this.roomActions(room))} ${renderDeviceList(this.host, this.side, room, this.deviceListActions())}`
+            ? html`${renderRoomForm(this.host, this.side, room, this.roomActions(room))} ${renderDeviceList(this.host, this.side, room, this.deviceListActions())} ${renderRoomObjects(this.host, floor ?? null, room, { select: (id) => this.selectItem("furniture", id) })}`
             : floor
               ? renderRoomList(this.host, floor, { select: (id) => this.selectItem("room", id) })
               : nothing}
