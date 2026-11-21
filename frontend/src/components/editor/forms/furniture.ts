@@ -187,7 +187,21 @@ function tapField(host: EditorHost, item: Furniture, actions: FurnitureActions):
     if (tap.action === "more_info") return entityField(host, host.t("own_target_more_info"), tap.target ?? null, undefined, entityOptions(host.hass, () => true), (v) => set({ target: v && v !== "none" ? v : null }));
     return textField(host, host.t(`own_target_${tap.action}` as I18nKey), tap.target ?? "", (v) => set({ target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[tap.action] });
   };
+  const quickAssign = (id: string | null) => {
+    if (!id || id === "none") return;
+    const domain = id.split(".")[0];
+    const srv = domain === "scene" ? "scene.turn_on" : domain === "script" ? "script.turn_on" : domain === "light" ? "light.toggle" : "homeassistant.toggle";
+    const icon = domain === "light" ? "lightbulb" : domain === "switch" || domain === "input_boolean" ? "power-socket-eu" : "lightbulb-on";
+    actions.update({
+      ...(domain === "light" || domain === "switch" || domain === "input_boolean" ? { entity: id } : {}),
+      tap: { action: "service", target: srv, data: { entity_id: id } },
+      icon: item.icon ?? icon,
+      marker: item.marker ?? "always",
+    });
+  };
+  const quickVal = typeof tap?.data?.entity_id === "string" ? tap.data.entity_id : null;
   return html`<div class="nf-form">
+    ${entityField(host, host.t("furn_quick_control"), quickVal, undefined, entityOptions(host.hass, (id) => /^(light|switch|scene|script|input_boolean)\./.test(id)), quickAssign)}
     ${selectField(host, host.t("furn_tap"), tap?.action ?? "", choices, (v) => (v ? set({ action: v as ButtonAction }) : actions.update({ tap: null })), { wide: true, title: host.t("furn_tap_hint") })}
     ${targetInput()}
     ${tap && tap.action === "service" ? serviceTargetEntityField(host, tap.target, tap.data, (data) => set({ data }), item.entity) : nothing}

@@ -167,8 +167,8 @@ export class PackManager extends LitElement {
   }
 
   protected render() {
-    const own = (this.packs ?? []).filter((p) => !p.builtin);
-    const builtin = (this.packs ?? []).length - own.length;
+    const own = (this.packs ?? []).filter((p) => !p.builtin || p.publisher === "Davvarn" || p.id === "nextfloor.davvarn");
+    const builtin = (this.packs ?? []).filter((p) => p.builtin).length;
     const language = this.hass?.language ?? "de";
     return html`<section class="nf-packs">
       <h3>${this.t("packs_title")}</h3>
@@ -182,7 +182,9 @@ export class PackManager extends LitElement {
                   <span class="nf-detail">${p.id} · ${this.t("pack_by", { publisher: p.publisher, n: p.items.length })}</span>
                   ${p.description ? html`<span class="nf-detail">${p.description}</span>` : nothing}
                 </div>
-                <button class="nf-btn" ?disabled=${this._busy} @click=${() => this.deletePack(p)}>${this.t("pack_remove")}</button>
+                ${p.builtin
+                  ? html`<span class="nf-tag" style="opacity:0.75;font-size:12px;padding:4px 8px;border:1px solid var(--nf-line);border-radius:6px">${this.t("pack_builtin_tag")}</span>`
+                  : html`<button class="nf-btn" ?disabled=${this._busy} @click=${() => this.deletePack(p)}>${this.t("pack_remove")}</button>`}
               </li>`,
             )}
           </ul>`

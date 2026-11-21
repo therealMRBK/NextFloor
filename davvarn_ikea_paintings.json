@@ -1,0 +1,2030 @@
+{
+ "format": "nfpack",
+ "version": 1,
+ "id": "nextfloor.davvarn_art",
+ "name": "IKEA Paintings & Wall Art",
+ "publisher": "Davvarn",
+ "description": "Complete IKEA wall art, canvas paintings, gallery sets, frames (BJÖRKSTA, PJÄTTERYD, VILSHULT, RIBBA, RÖDALM, LOMVIKEN, GRÖNBY, KNOPPÄNG) and MOSSLANDA picture ledge.",
+ "release": 1,
+ "items": [
+  {
+   "id": "bjorksta_200x140",
+   "name": {
+    "en": "IKEA BJÖRKSTA Giant Canvas (200x140)",
+    "sv": "IKEA BJÖRKSTA Tavla (200x140)",
+    "de": "IKEA BJÖRKSTA Bild (200x140)"
+   },
+   "size": [
+    2.0,
+    0.03,
+    1.4
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#3c5a6e",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#3c5a6e",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "bjorksta_140x100",
+   "name": {
+    "en": "IKEA BJÖRKSTA Large Canvas (140x100)",
+    "sv": "IKEA BJÖRKSTA Tavla (140x100)",
+    "de": "IKEA BJÖRKSTA Bild (140x100)"
+   },
+   "size": [
+    1.4,
+    0.03,
+    1.0
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#4f6d5c",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#4f6d5c",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "bjorksta_118x78",
+   "name": {
+    "en": "IKEA BJÖRKSTA Canvas (118x78)",
+    "sv": "IKEA BJÖRKSTA Tavla (118x78)",
+    "de": "IKEA BJÖRKSTA Bild (118x78)"
+   },
+   "size": [
+    1.18,
+    0.03,
+    0.78
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#7d6852",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#7d6852",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "bjorksta_78x118",
+   "name": {
+    "en": "IKEA BJÖRKSTA Portrait Canvas (78x118)",
+    "sv": "IKEA BJÖRKSTA Stående tavla (78x118)",
+    "de": "IKEA BJÖRKSTA Hochformat (78x118)"
+   },
+   "size": [
+    0.78,
+    0.03,
+    1.18
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#525e75",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#525e75",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "pjatteryd_90x90",
+   "name": {
+    "en": "IKEA PJÄTTERYD Square Canvas (90x90)",
+    "sv": "IKEA PJÄTTERYD Kvadratisk tavla (90x90)",
+    "de": "IKEA PJÄTTERYD Bild (90x90)"
+   },
+   "size": [
+    0.9,
+    0.03,
+    0.9
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#6e5c4f",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#6e5c4f",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "pjatteryd_78x118",
+   "name": {
+    "en": "IKEA PJÄTTERYD Canvas (78x118)",
+    "sv": "IKEA PJÄTTERYD Tavla (78x118)",
+    "de": "IKEA PJÄTTERYD Bild (78x118)"
+   },
+   "size": [
+    0.78,
+    0.03,
+    1.18
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#3c4c5c",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#3c4c5c",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "pjatteryd_set_3",
+   "name": {
+    "en": "IKEA PJÄTTERYD Triptych Set of 3 (56x56)",
+    "sv": "IKEA PJÄTTERYD 3-delad tavla",
+    "de": "IKEA PJÄTTERYD 3er-Set"
+   },
+   "size": [
+    1.8,
+    0.03,
+    0.56
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#4a5c6a",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#4a5c6a",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "premiar_200x140",
+   "name": {
+    "en": "IKEA PREMIÄR Panoramic Canvas (200x140)",
+    "sv": "IKEA PREMIÄR Stor canvastavla (200x140)",
+    "de": "IKEA PREMIÄR Großbild (200x140)"
+   },
+   "size": [
+    2.0,
+    0.03,
+    1.4
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 0.9,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "#2b4257",
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.46,
+     "w": 0.98,
+     "d": 0.08,
+     "y": 0.01,
+     "h": 0.98,
+     "color": "#2b4257",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "vilshult_140x100",
+   "name": {
+    "en": "IKEA VILSHULT City Print (140x100)",
+    "sv": "IKEA VILSHULT Tavla (140x100)",
+    "de": "IKEA VILSHULT Bild (140x100)"
+   },
+   "size": [
+    1.4,
+    0.03,
+    1.0
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.35,
+     "w": 0.92,
+     "d": 0.28,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#4a4e54",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "ribba_61x91",
+   "name": {
+    "en": "IKEA RIBBA Frame (61x91)",
+    "sv": "IKEA RIBBA Ram/Tavla (61x91)",
+    "de": "IKEA RIBBA Rahmen (61x91)"
+   },
+   "size": [
+    0.61,
+    0.035,
+    0.91
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#5c6e78",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "ribba_50x70",
+   "name": {
+    "en": "IKEA RIBBA Frame (50x70)",
+    "sv": "IKEA RIBBA Ram/Tavla (50x70)",
+    "de": "IKEA RIBBA Rahmen (50x70)"
+   },
+   "size": [
+    0.5,
+    0.035,
+    0.7
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#6a7568",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "ribba_50x50",
+   "name": {
+    "en": "IKEA RIBBA Square Frame (50x50)",
+    "sv": "IKEA RIBBA Kvadratisk ram (50x50)",
+    "de": "IKEA RIBBA Rahmen (50x50)"
+   },
+   "size": [
+    0.5,
+    0.035,
+    0.5
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#7a6354",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "rodalm_61x91",
+   "name": {
+    "en": "IKEA RÖDALM Frame (61x91)",
+    "sv": "IKEA RÖDALM Ram/Tavla (61x91)",
+    "de": "IKEA RÖDALM Rahmen (61x91)"
+   },
+   "size": [
+    0.61,
+    0.03,
+    0.91
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#445a68",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "rodalm_50x70",
+   "name": {
+    "en": "IKEA RÖDALM Frame (50x70)",
+    "sv": "IKEA RÖDALM Ram/Tavla (50x70)",
+    "de": "IKEA RÖDALM Rahmen (50x70)"
+   },
+   "size": [
+    0.5,
+    0.03,
+    0.7
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#846d58",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "lomviken_61x91",
+   "name": {
+    "en": "IKEA LOMVIKEN Aluminum Frame (61x91)",
+    "sv": "IKEA LOMVIKEN Aluminiumram (61x91)",
+    "de": "IKEA LOMVIKEN Rahmen (61x91)"
+   },
+   "size": [
+    0.61,
+    0.025,
+    0.91
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.95,
+     "d": 0.25,
+     "y": 0.025,
+     "h": 0.95,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.887,
+     "d": 0.14,
+     "y": 0.055,
+     "h": 0.887,
+     "color": "#3f4c59",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "hovsta_50x70",
+   "name": {
+    "en": "IKEA HOVSTA Wood Frame (50x70)",
+    "sv": "IKEA HOVSTA Träram (50x70)",
+    "de": "IKEA HOVSTA Holzrahmen (50x70)"
+   },
+   "size": [
+    0.5,
+    0.035,
+    0.7
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#5b7065",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "fiskbo_50x70",
+   "name": {
+    "en": "IKEA FISKBO Frame (50x70)",
+    "sv": "IKEA FISKBO Ram (50x70)",
+    "de": "IKEA FISKBO Rahmen (50x70)"
+   },
+   "size": [
+    0.5,
+    0.02,
+    0.7
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.35,
+     "w": 0.92,
+     "d": 0.28,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#635a70",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "sannahed_50x50",
+   "name": {
+    "en": "IKEA SANNAHED Deep Box Frame (50x50)",
+    "sv": "IKEA SANNAHED Djup ram (50x50)",
+    "de": "IKEA SANNAHED Objektrahmen (50x50)"
+   },
+   "size": [
+    0.5,
+    0.06,
+    0.5
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#4f6367",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "silverhojden_50x70",
+   "name": {
+    "en": "IKEA SILVERHÖJDEN Frame (50x70)",
+    "sv": "IKEA SILVERHÖJDEN Ram (50x70)",
+    "de": "IKEA SILVERHÖJDEN Rahmen (50x70)"
+   },
+   "size": [
+    0.5,
+    0.025,
+    0.7
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#4d5866",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "olunda_91x30",
+   "name": {
+    "en": "IKEA OLUNDA Panoramic Art (91x30)",
+    "sv": "IKEA OLUNDA Panoramatavla (91x30)",
+    "de": "IKEA OLUNDA Panoramabild (91x30)"
+   },
+   "size": [
+    0.91,
+    0.03,
+    0.3
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#5c6b5e",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "tvilling_set_2",
+   "name": {
+    "en": "IKEA TVILLING Twin Poster Set (40x50 x2)",
+    "sv": "IKEA TVILLING 2-pack tavlor",
+    "de": "IKEA TVILLING 2er-Set"
+   },
+   "size": [
+    0.92,
+    0.025,
+    0.52
+   ],
+   "mount": "wall",
+   "wall_y": 1.25,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.15,
+     "w": 1.0,
+     "d": 0.7,
+     "y": 0.0,
+     "h": 1.0,
+     "color": "dark",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.25,
+     "w": 0.92,
+     "d": 0.25,
+     "y": 0.04,
+     "h": 0.92,
+     "color": "#f4f2ec"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 0.82,
+     "d": 0.14,
+     "y": 0.088,
+     "h": 0.82,
+     "color": "#6b5b4e",
+     "picture": true
+    }
+   ]
+  },
+  {
+   "id": "gronby_gallery_9",
+   "name": {
+    "en": "IKEA GRÖNBY 9-Piece Gallery Wall",
+    "sv": "IKEA GRÖNBY 9-delad tavelvägg",
+    "de": "IKEA GRÖNBY 9er-Bilderwand"
+   },
+   "size": [
+    1.8,
+    0.03,
+    1.1
+   ],
+   "mount": "wall",
+   "wall_y": 1.15,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.03,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.03,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.03,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.36,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.36,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.36,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.69,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.69,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.0,
+     "w": 0.28,
+     "d": 0.8,
+     "y": 0.69,
+     "h": 0.28,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.055,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.055,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.055,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.385,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.385,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": true
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.385,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": -0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.715,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.715,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.33,
+     "z": 0.44,
+     "w": 0.23,
+     "d": 0.12,
+     "y": 0.715,
+     "h": 0.23,
+     "color": "#4f6d7a",
+     "picture": false
+    }
+   ]
+  },
+  {
+   "id": "knoppang_gallery_8",
+   "name": {
+    "en": "IKEA KNOPPÄNG 8-Frame Gallery Set",
+    "sv": "IKEA KNOPPÄNG 8-ramars tavelvägg",
+    "de": "IKEA KNOPPÄNG 8er-Rahmenset"
+   },
+   "size": [
+    1.6,
+    0.03,
+    1.0
+   ],
+   "mount": "wall",
+   "wall_y": 1.2,
+   "colors": [
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#202226"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#bfa074"
+    },
+    {
+     "id": "brass",
+     "name": {
+      "en": "Gold / Brass",
+      "sv": "Guld / Mässing",
+      "de": "Gold"
+     },
+     "hex": "#c8a454"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": -0.36,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.06,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.06,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.06,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.36,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.06,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.36,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.54,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.54,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.54,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": 0.36,
+     "z": 0.0,
+     "w": 0.2,
+     "d": 0.8,
+     "y": 0.54,
+     "h": 0.4,
+     "color": "dark",
+     "paint": true,
+     "edges": "faint"
+    },
+    {
+     "shape": "box",
+     "x": -0.36,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.1,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.1,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": true
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.1,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.36,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.1,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": -0.36,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.58,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": -0.12,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.58,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.12,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.58,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    },
+    {
+     "shape": "box",
+     "x": 0.36,
+     "z": 0.44,
+     "w": 0.16,
+     "d": 0.12,
+     "y": 0.58,
+     "h": 0.32,
+     "color": "#f0eee9",
+     "picture": false
+    }
+   ]
+  },
+  {
+   "id": "mosslanda_ledge_115",
+   "name": {
+    "en": "IKEA MOSSLANDA Picture Ledge (115 cm)",
+    "sv": "IKEA MOSSLANDA Tavellist (115 cm)",
+    "de": "IKEA MOSSLANDA Bilderleiste (115 cm)"
+   },
+   "size": [
+    1.15,
+    0.12,
+    0.07
+   ],
+   "mount": "wall",
+   "wall_y": 1.4,
+   "surface": true,
+   "colors": [
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#b89060"
+    },
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#ecece8"
+    },
+    {
+     "id": "black_brown",
+     "name": {
+      "en": "Black-brown",
+      "sv": "Svartbrun",
+      "de": "Schwarzbraun"
+     },
+     "hex": "#2c2623"
+    }
+   ],
+   "parts": [
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.0,
+     "w": 1.0,
+     "d": 1.0,
+     "y": 0.0,
+     "h": 0.28,
+     "color": "body",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": -0.42,
+     "w": 1.0,
+     "d": 0.16,
+     "y": 0.28,
+     "h": 0.72,
+     "color": "body",
+     "paint": true,
+     "edges": true
+    },
+    {
+     "shape": "box",
+     "x": 0.0,
+     "z": 0.42,
+     "w": 1.0,
+     "d": 0.16,
+     "y": 0.28,
+     "h": 0.32,
+     "color": "body",
+     "paint": true
+    }
+   ]
+  }
+ ]
+}

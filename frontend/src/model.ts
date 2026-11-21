@@ -723,6 +723,39 @@ export interface QuickControlGroup {
   entities: string[];
 }
 
+/** Customizable tablet / kiosk UI visibility & side info panel settings. */
+export interface TabletUI {
+  sidebar?: "off" | "left" | "right";
+  sidebar_style?: "card" | "clean" | "minimal";
+  sidebar_clock?: boolean;
+  clock_size?: "normal" | "large" | "xl";
+  clock_seconds?: boolean;
+  clock_color?: string | null;
+  sidebar_weather?: boolean;
+  sidebar_summary?: boolean;
+  sidebar_people?: boolean;
+  sidebar_energy?: boolean;
+  sidebar_media?: boolean;
+  show_quick_dock?: boolean;
+  dock_style?: "pill" | "clean" | "large";
+  show_nav_in_kiosk?: boolean;
+  show_central?: boolean;
+  show_walk?: boolean;
+  show_legend?: boolean;
+}
+
+/** Visual perimeter glow around the house for armed/disarmed alarm status. */
+export interface AlarmRingConfig {
+  entity?: string | null;
+  style?: "perimeter" | "circle";
+  show_armed?: boolean;
+  show_disarmed?: boolean;
+  /** Optional HA helper (input_boolean / binary_sensor / switch) to turn the ring on or off. */
+  enable_entity?: string | null;
+  /** Optional PIN code for DIY alarms (input_boolean/switch) when using the 3D alarm keypad popup. */
+  pin?: string | null;
+}
+
 export interface BuildingSettings {
   /** Bluetooth tags located by room (the sensor and the editor's learning by walking). */
   ble?: { tags: BleTag[] } | null;
@@ -742,8 +775,14 @@ export interface BuildingSettings {
   buttons?: CustomButton[];
   /** Customizable tablet quick-control buttons outside the 3D model, each opening a popup. */
   quick_controls?: QuickControlGroup[] | null;
+  /** Tablet / kiosk UI visibility and side info panel settings. */
+  tablet_ui?: TabletUI | null;
   /** Master switch for outdoor weather animations (rain, snow, clouds, wind); default true. */
   weather_animations?: boolean;
+  /** Optional simulated weather condition to test outdoor animations ("snowy", "rainy", etc.). */
+  weather_preview?: string | null;
+  /** Visual perimeter glow around the house for armed/disarmed status. */
+  alarm_ring?: AlarmRingConfig | null;
   wall_exterior: number;
   wall_interior: number;
   /** Paint of the walls in the solid wall view ("#rrggbb"): outside, and inside where a room has no colour of its own (null = default). */
@@ -809,6 +848,7 @@ export interface BuildingSettings {
   /** Announcements: the text-to-speech entity (null = the first one) and the sentences a room offers (null = the default ones). */
   announce_tts?: string | null;
   announce_phrases?: string[] | null;
+  announce_volume?: number | null;
   /** Own warnings: a line in the warning bar while an entity is in a state ("Water tank empty", "Dishwasher done"). */
   own_alerts?: OwnAlert[] | null;
   /** How many warnings the warning bar shows at once (null = 3) and in how many rows (null = 1, D#52). */

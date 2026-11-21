@@ -33,7 +33,7 @@ export function desk(b: Builder, w: number, d: number, h: number): void {
   for (const y of [h * 0.35, h * 0.66]) b.seg(x1 - drawers, y, front, x1, y, front, EDGE_FAINT);
   for (const y of [h * 0.2, h * 0.5, h * 0.82]) b.seg(x1 - drawers / 2 - 0.07, y, front + 0.012, x1 - drawers / 2 + 0.07, y, front + 0.012, EDGE_GLOW);
   // the screen on its foot
-  b.block({ x: [-0.3, 0.3], y: [h + 0.08, h + 0.42], z: [-d / 2 + 0.08, -d / 2 + 0.11] }, M.dark, EDGE_GLOW);
+  b.block({ x: [-0.3, 0.3], y: [h + 0.08, h + 0.42], z: [-d / 2 + 0.08, -d / 2 + 0.11] }, M.screen, EDGE_GLOW);
   b.block({ x: [-0.03, 0.03], y: [h, h + 0.1], z: [-d / 2 + 0.09, -d / 2 + 0.13] }, M.metal);
 }
 
@@ -147,12 +147,12 @@ export function tvBoard(b: Builder, w: number, d: number, h: number, rim: Parame
   const screen = Math.min(w * 0.8, 1.45);
   b.block({ x: [-0.1, 0.1], y: [h, h + 0.02], z: [-d / 2 + 0.08, -d / 2 + 0.24] }, M.metal);
   b.block({ x: [-0.02, 0.02], y: [h + 0.02, h + 0.12], z: [-d / 2 + 0.14, -d / 2 + 0.18] }, M.metal);
-  b.block({ x: [-screen / 2, screen / 2], y: [h + 0.1, h + 0.1 + screen * 0.56], z: [-d / 2 + 0.12, -d / 2 + 0.16] }, M.dark, rim);
+  b.block({ x: [-screen / 2, screen / 2], y: [h + 0.1, h + 0.1 + screen * 0.56], z: [-d / 2 + 0.12, -d / 2 + 0.16] }, M.screen, rim);
 }
 
 /** A flat screen on a wall bracket, centred at 1.3 m. */
 export function tvWall(b: Builder, w: number, d: number, h: number, rim: Parameters<Builder["block"]>[2] = EDGE_GLOW): void {
   const y0 = 1.3 - h / 2;
   b.block({ x: [-0.12, 0.12], y: [y0 + h * 0.3, y0 + h * 0.7], z: [-d / 2, -d / 2 + 0.03] }, M.metal);
-  b.block({ x: [-w / 2, w / 2], y: [y0, y0 + h], z: [-d / 2 + 0.03, d / 2] }, M.dark, rim);
+  b.block({ x: [-w / 2, w / 2], y: [y0, y0 + h], z: [-d / 2 + 0.03, d / 2] }, M.screen, rim);
 }

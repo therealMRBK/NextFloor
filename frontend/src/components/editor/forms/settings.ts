@@ -105,6 +105,7 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${s.roof.type !== "none" ? numberField(host, t("roof_overhang"), s.roof.overhang, (v) => setRoof({ overhang: clamp(v, 0, 2) }), 0.05, 0) : nothing}
       ${host.hass ? entityField(host, t("weather_entity"), s.weather_entity ?? null, weatherEntity(host.hass, null), entityOptions(host.hass, (id) => id.startsWith("weather.")), (v) => set({ weather_entity: v })) : nothing}
       ${checkField(host, t("weather_animations"), s.weather_animations !== false, (on) => set({ weather_animations: on }), { title: t("weather_animations_hint") })}
+      ${selectField(host, t("weather_preview"), s.weather_preview ?? "", [["", t("weather_preview_live")], ["snowy", t("weather_preview_snow")], ["rainy", t("weather_preview_rain")], ["pouring", t("weather_preview_pour")], ["lightning-rainy", t("weather_preview_storm")], ["fog", t("weather_preview_fog")]], (v) => set({ weather_preview: v || null }), { wide: true })}
       <div class="nf-sub nf-wide">${t("weather_effects")}</div>
       ${WEATHER_EFFECTS.map((effect) => checkField(host, t(`weather_effect_${effect}` as I18nKey), current.includes(effect), (on) => set({ weather_effects: withEffect(current, effect, on) }), { wide: false }))}
       ${checkField(host, t("rain_warning"), s.rain_warning !== false, (on) => set({ rain_warning: on }))}
@@ -116,10 +117,18 @@ export function renderSettings(host: EditorHost, actions: SettingsActions): Temp
       ${hint(t("outage_hint"), "nf-wide")}
       ${checkField(host, t("contact_warning"), !!s.contact_warning, (on) => set({ contact_warning: on || undefined }), { title: t("contact_warning_hint") })}
       ${checkField(host, t("night_lock_warning"), !!s.night_lock_warning, (on) => set({ night_lock_warning: on || undefined }), { title: t("night_lock_warning_hint") })}
+      <div class="nf-sub nf-wide">🚨 ${t("alarm_ring_title")}</div>
+      ${host.hass ? entityField(host, t("alarm_ring_entity"), s.alarm_ring?.entity ?? null, undefined, entityOptions(host.hass, (id) => /^(alarm_control_panel|input_boolean|binary_sensor|switch)\./.test(id)), (v) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), entity: v === "none" ? null : v } })) : nothing}
+      ${selectField(host, t("alarm_ring_style"), s.alarm_ring?.style ?? "perimeter", [["perimeter", t("alarm_ring_perimeter")], ["circle", t("alarm_ring_circle")]], (v) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), style: v as "perimeter" | "circle" } }))}
+      ${checkField(host, t("alarm_ring_armed"), s.alarm_ring?.show_armed !== false, (on) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), show_armed: on } }))}
+      ${checkField(host, t("alarm_ring_disarmed"), s.alarm_ring?.show_disarmed !== false, (on) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), show_disarmed: on } }))}
+      ${host.hass ? entityField(host, t("alarm_ring_helper"), s.alarm_ring?.enable_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(input_boolean|binary_sensor|switch)\./.test(id)), (v) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), enable_entity: v === "none" ? null : v } })) : nothing}
+      ${textField(host, t("alarm_ring_pin"), s.alarm_ring?.pin ?? "", (v) => set({ alarm_ring: { ...(s.alarm_ring ?? {}), pin: v.replace(/\s+/g, "").slice(0, 16) || null } }), { placeholder: "1234", title: t("alarm_ring_pin_hint") })}
       ${selectField(host, t("room_double_tap"), s.room_double_tap ?? "area", [["area", t("room_double_tap_area")], ["plan", t("room_double_tap_plan")], ["off", t("room_double_tap_off")]] as const, (v) => set({ room_double_tap: v === "plan" || v === "off" ? v : null }), { title: t("room_double_tap_hint") })}
       ${checkField(host, t("motion_markers_active"), !!s.motion_markers_active, (on) => set({ motion_markers_active: on || undefined }), { title: t("motion_markers_active_hint") })}
       ${host.hass ? statusFields(host, s.status_entities ?? [], s.status_names ?? {}, (status_entities, status_names) => set({ status_entities: status_entities.length ? status_entities : null, status_names: Object.keys(status_names).length ? status_names : null })) : nothing}
       ${host.hass ? entityField(host, t("announce_tts"), s.announce_tts ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("tts.")), (v) => set({ announce_tts: v === "none" ? null : v })) : nothing}
+      ${numberField(host, t("announce_volume"), s.announce_volume ?? 70, (v) => set({ announce_volume: Math.max(0, Math.min(100, Math.round(v))) }), 5, 0)}
       <label class="nf-field nf-wide"
         >${t("announce_phrases")}
         <textarea

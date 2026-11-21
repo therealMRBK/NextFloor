@@ -67,21 +67,29 @@ export function buildFloorGeometry(
 
   const shadow = buildShadow(outline.edges, floor.rooms, spans);
   const ghosts = new Map<number, GeoBuffer>();
+  const ghostFor = (o: number) => {
+    let g = ghosts.get(o);
+    if (!g) ghosts.set(o, (g = new GeoBuffer()));
+    return g;
+  };
   pushOutdoor(wallBuf, lines, floor, ghosts, () => new GeoBuffer());
   for (const s of solar) pushModules(wallBuf, lines, s.face, s.field, floor.elevation);
 
   // lamps are drawn live by the viewer: they glow with their light
   const cut = Math.min(floor.cut_height, floor.height);
   const furnitureTris: FloorGeometry["furnitureTris"] = [];
+  const furnGlass = ghostFor(0.26);
   for (const piece of floor.furniture.filter((f) => !isLamp(f.type))) {
     const start = wallBuf.count;
+    const glassStart = furnGlass.count;
     const firstLine = lines.p.length / 6;
     const base = mountBase(floor, piece);
     // an owned 3D model replaces the parts: the viewer adds it as its own object
-    if (!hasMesh(piece.type, piece.mesh)) pushFurniture(wallBuf, lines, shadow, piece, base);
+    if (!hasMesh(piece.type, piece.mesh)) pushFurniture(wallBuf, lines, shadow, piece, base, furnGlass);
     // a wardrobe or a stair reaching above the cut height is cut with the walls, so it hides nothing behind it
     if (base + piece.h > cut + 0.05) {
       cutAbove(wallBuf, start, cut, FURN_OFFSET);
+      cutAbove(furnGlass, glassStart, cut, FURN_OFFSET);
       cutLinesAbove(lines, firstLine, cut, FURN_OFFSET);
     }
     furnitureTris.push({ id: piece.id, start, end: wallBuf.count });

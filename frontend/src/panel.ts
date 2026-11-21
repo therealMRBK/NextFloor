@@ -388,6 +388,7 @@ export class NextFloorPanel extends LitElement {
       ${this.isAdmin ? html`<div class="nf-seg" role="tablist">${tab("view", this.t("view"))}${tab("editor", this.t("editor"))}${tab("settings", `⚙ ${this.t("settings")}`)}${tab("extensions", `✦ ${this.t("ext_tab")}`, "nf-tab-ext")}</div>` : nothing}
       <span class="nf-grow"></span>
       ${this._mode === "view" && building?.floors.some((f) => f.rooms.length) ? this.renderViewOptions() : nothing}
+      ${this._mode === "view" && building ? html`<button class="nf-opts-btn" title=${this.t("controls_hide")} aria-label=${this.t("controls_hide")} @click=${() => this.setPref("clean", true)}>🖥️</button>` : nothing}
       ${this._mode === "editor" && saveState !== "idle" ? html`<span class="nf-save nf-save-${saveState}">${this.t(saveLabel)}</span>` : nothing}
       <span class="nf-version" title=${this.t("version_hint", { backend: this.data.backendVersion ?? "?" })}>v${this.data.frontendVersion}</span>
     </header>`;
@@ -593,7 +594,7 @@ export class NextFloorPanel extends LitElement {
     this.furnishHost.hass = this.hass;
     this.furnishHost.building = building;
     return html`
-      ${p.clean ? nothing : this.renderNav(building)}
+      ${p.clean && !building.settings.tablet_ui?.show_nav_in_kiosk ? nothing : this.renderNav(building)}
       <div class="nf-stage-wrap ${this._roomId ? "nf-room-open" : ""}">
         <nf-view3d
           class="nf-body"

@@ -146,8 +146,8 @@ vec3 nfThemed(vec3 c, bool isLine, bool isGlass) {
     if (uAccentOn == 1 && (isLine || cyanish)) return uAccent * strongest;
     return c;
   }
-  // signal colours keep their colour
-  if (!isLine && strongest > 0.45 && saturation > 0.45) return c;
+  // signal colours keep their colour (but not unpainted neon-blue in realistic/architectural themes)
+  if (!isLine && strongest > 0.45 && saturation > 0.45 && !(uTheme >= 4 && c.b > c.r * 1.15 && c.b > c.g * 1.08)) return c;
   float luma = dot(c, vec3(0.299, 0.587, 0.114));
   if (uTheme == 1) {
     // blueprint: pale lines on shades of blue
@@ -164,7 +164,10 @@ vec3 nfThemed(vec3 c, bool isLine, bool isGlass) {
   if (uTheme == 4) {
     // realistic: furniture, trees and everything without a material of its own keep their hue, lifted for daylight
     if (isLine) return vec3(0.1, 0.13, 0.18) * clamp(strongest * 1.2, 0.35, 1.0);
-    if (isGlass) return vec3(0.4, 0.55, 0.65) * min(1.0, strongest * 1.3);
+    if (isGlass) return vec3(0.72, 0.80, 0.86) * clamp(0.6 + strongest * 0.8, 0.55, 0.95);
+    if (c.b > c.r * 1.15 && c.b > c.g * 1.08) {
+      return mix(vec3(0.24, 0.23, 0.22), vec3(0.86, 0.84, 0.80), smoothstep(0.06, 0.36, strongest));
+    }
     return c / max(strongest, 0.001) * clamp(0.3 + strongest * 1.15, 0.0, 0.95);
   }
   if (uTheme == 5) {
@@ -330,9 +333,18 @@ vec3 nfReal(vec3 c, int kind) {
   float shiny = 0.0;
   bool plant = kind == 1 && c.g > c.r * 1.08 && c.g > c.b * 1.08;
   if (kind == 2 || plant) {
-    s = kind == 2 ? vec4(c * 2.4 + 0.12, 0.0) : vec4(tint * clamp(0.32 + strongest * 1.4, 0.0, 0.85) * (0.9 + 0.2 * nfFbm(P.xz * 6.0 + P.y * 3.0)), 0.0);
+    bool isNeon = c.b > c.r * 1.15 && c.b > c.g * 1.05;
+    vec3 fc = isNeon
+      ? mix(vec3(0.22, 0.20, 0.19), vec3(0.88, 0.86, 0.83), smoothstep(0.06, 0.35, strongest))
+      : c * 2.4 + 0.12;
+    s = kind == 2 ? vec4(fc, 0.0) : vec4(tint * clamp(0.32 + strongest * 1.4, 0.0, 0.85) * (0.9 + 0.2 * nfFbm(P.xz * 6.0 + P.y * 3.0)), 0.0);
   } else if (kind == 1 && vNfTile.y > 1.5) {
-    // furniture: default neon-blue pieces get a warm natural palette; custom-coloured pieces keep their hue
+    // furniture: off TV/monitor screens (C.screen = 0x040507, linear ~0.0018) stay deep glossy black
+    if (strongest < 0.0035) {
+      s = vec4(0.018, 0.020, 0.025, 0.0);
+      shiny = 0.55;
+    } else {
+    // default neon-blue pieces get a warm natural palette; custom-coloured pieces keep their hue
     int fm = int(vNfTile.x + 0.5);
     bool isNeonBlue = c.b > c.r * 1.08 && c.b > c.g * 1.04;
     vec3 baseCol = isNeonBlue
@@ -371,6 +383,7 @@ vec3 nfReal(vec3 c, int kind) {
     } else {
       float rt = abs(sin(fq.x * 65.0)) * abs(sin(fq.y * 65.0));
       s = vec4(mix(vec3(0.72, 0.56, 0.36), baseCol, 0.4) * (0.8 + 0.3 * rt), (rt - 0.5) * 0.18);
+    }
     }
   } else if (kind == 0) {
     int fm = int(vNfTile.y * 4.0 + vNfTile.x + 0.5);

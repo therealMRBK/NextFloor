@@ -7,7 +7,7 @@ import { Color } from "three";
 import { builtinBase, type Furniture } from "../../model.ts";
 import { packItem } from "../../packs.ts";
 import { FURNITURE_MATERIAL_INDEX } from "../build/look.ts";
-import { GeoBuffer, type LineBuffer } from "../geo.ts";
+import { GeoBuffer, LineBuffer } from "../geo.ts";
 import { Builder, contactShadow } from "./builder.ts";
 import { bunkBed, barStool, bed, bench, chair, officeChair, shapedSofa, sofa, stool } from "./seating.ts";
 import { bathtub, dishwasher, fridge, fridgeSmart, island, kitchenTall, kitchenUnit, kitchenWall, laundry, radiator, shower, sink, stove, washbasin, wc, worktopOnly } from "./kitchen.ts";
@@ -22,7 +22,7 @@ import { EDGE_FAINT, EDGE_FURN, M } from "./palette.ts";
 type Shadow = "yes" | "no";
 
 /** Draws one built-in model. Returns "no" for items that hang on a wall or lie flat, "yes" for those standing on the floor. */
-function drawBuiltIn(b: Builder, f: Furniture, w: number, d: number, h: number, base: number): Shadow {
+function drawBuiltIn(b: Builder, f: Furniture, w: number, d: number, h: number, base: number, glassB: Builder | null = null): Shadow {
   switch (f.type) {
     case "sofa":
       if (f.variant === "l" || f.variant === "u") shapedSofa(b, w, d, h, f.variant);
@@ -198,18 +198,19 @@ function drawBuiltIn(b: Builder, f: Furniture, w: number, d: number, h: number, 
       }
       // a pet is drawn by the view's own layer, where it walks around
       if (item.pet) return "no";
-      packModel(b, item, w, d, h, base, null, null, f.variant ?? null);
+      packModel(b, item, w, d, h, base, null, null, f.variant ?? null, null, glassB);
       // items on furniture, walls or ceilings cast no shadow on the floor
       return base > 0.05 ? "no" : "yes";
     }
   }
 }
 
-function buildFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base: number): void {
+function buildFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base: number, glassBuf?: GeoBuffer): void {
   const plan = placement(f);
   const b = new Builder(buf, lines, plan);
+  const glassB = glassBuf ? new Builder(glassBuf, lines, plan) : null;
   const [w, d, h] = [Math.max(0.05, f.w), Math.max(0.05, f.d), Math.max(0.005, f.h)];
-  if (drawBuiltIn(b, f, w, d, h, base) === "yes") contactShadow(shadow, plan, w, d, f.type === "plant" ? 0.35 : 0.5);
+  if (drawBuiltIn(b, f, w, d, h, base, glassB) === "yes") contactShadow(shadow, plan, w, d, f.type === "plant" ? 0.35 : 0.5);
 }
 
 /**
@@ -248,10 +249,12 @@ export function tiltBuilt(buf: GeoBuffer, lines: LineBuffer, from: { vertex: num
   move(lines.p, from.line);
 }
 
-export function pushFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {
+export function pushFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0, glassBuf?: GeoBuffer): void {
   const start = { vertex: buf.p.length, line: lines.p.length, tile: buf.tile?.length ?? 0 };
-  pushUpright(buf, lines, shadow, f, base);
+  const glassStart = glassBuf ? { vertex: glassBuf.p.length, line: lines.p.length } : null;
+  pushUpright(buf, lines, shadow, f, base, glassBuf);
   tiltBuilt(buf, lines, start, f, base);
+  if (glassBuf && glassStart) tiltBuilt(glassBuf, new LineBuffer(), glassStart, f, base);
   if (buf.tile) {
     const mat = f.material && f.material in FURNITURE_MATERIAL_INDEX ? FURNITURE_MATERIAL_INDEX[f.material] : 0;
     for (let i = start.tile; i < buf.tile.length; i += 2) {
@@ -271,14 +274,14 @@ export function pushFurniture(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuff
   }
 }
 
-function pushUpright(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0): void {
+function pushUpright(buf: GeoBuffer, lines: LineBuffer, shadow: GeoBuffer, f: Furniture, base = 0, glassBuf?: GeoBuffer): void {
   // pack items place their parts at `base` themselves; built-in models are drawn on the floor and lifted as a whole (a dryer on the
   // washer, a shelf on the wall), without a shadow on the floor. The mount height is absolute: a wall cabinet drawn at 1.45 m
   // moves by the difference, up or down.
   const lift = packItem(f.type) ? 0 : base - builtinBase(f);
-  if (packItem(f.type) || Math.abs(lift) < 0.001) return buildFurniture(buf, lines, shadow, f, base);
+  if (packItem(f.type) || Math.abs(lift) < 0.001) return buildFurniture(buf, lines, shadow, f, base, glassBuf);
   const [firstVertex, firstLine] = [buf.p.length, lines.p.length];
-  buildFurniture(buf, lines, base < 0.05 ? shadow : new GeoBuffer(), f, 0);
+  buildFurniture(buf, lines, base < 0.05 ? shadow : new GeoBuffer(), f, 0, glassBuf);
   for (let i = firstVertex + 1; i < buf.p.length; i += 3) buf.p[i] += lift;
   for (let i = firstLine + 1; i < lines.p.length; i += 3) lines.p[i] += lift;
 }

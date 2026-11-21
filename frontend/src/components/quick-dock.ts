@@ -1,9 +1,17 @@
 import { css, html, nothing, type TemplateResult } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { entityName } from "../devices.ts";
+import { sceneEntitiesOn } from "../entities/misc.ts";
 import { translate } from "../i18n.ts";
-import type { QuickControlGroup } from "../model.ts";
+import type { AlarmRingConfig, QuickControlGroup } from "../model.ts";
 import type { HomeAssistant } from "../types.ts";
+
+let pinCode = "";
+let pinError = false;
+
+const isAlarmButton = (g: QuickControlGroup, alarmConfig?: AlarmRingConfig | null): boolean =>
+  g.entities.length === 1 &&
+  (g.entities[0].startsWith("alarm_control_panel.") || (Boolean(alarmConfig?.entity) && g.entities[0] === alarmConfig!.entity));
 
 const rgbToHex = (rgb: unknown): string => {
   if (!Array.isArray(rgb) || rgb.length < 3) return "#ffffff";
@@ -16,6 +24,7 @@ const hexToRgb = (hex: string): [number, number, number] => {
 };
 
 const isActive = (hass: HomeAssistant, id: string): boolean => {
+  if (id.startsWith("scene.")) return sceneEntitiesOn(hass, id).length > 0;
   const st = hass.states[id]?.state;
   return st === "on" || st === "open" || st === "opening" || st === "heat" || st === "cool" || st === "auto" || st === "armed_away" || st === "armed_home" || st === "armed_night" || st === "locked";
 };
@@ -27,7 +36,11 @@ function directToggle(hass: HomeAssistant, id: string): void {
     void hass.callService("alarm_control_panel", st === "disarmed" ? "alarm_arm_away" : "alarm_disarm", { entity_id: id });
   } else if (domain === "lock") {
     void hass.callService("lock", st === "locked" ? "unlock" : "lock", { entity_id: id });
-  } else if (domain === "scene" || domain === "script") {
+  } else if (domain === "scene") {
+    const onIds = sceneEntitiesOn(hass, id);
+    if (onIds.length) void hass.callService("homeassistant", "turn_off", { entity_id: onIds });
+    else void hass.callService("scene", "turn_on", { entity_id: id });
+  } else if (domain === "script") {
     void hass.callService(domain, "turn_on", { entity_id: id });
   } else if (domain === "button" || domain === "input_button") {
     void hass.callService(domain, "press", { entity_id: id });
@@ -71,6 +84,14 @@ export const quickDockStyles = css`
   .nf-qd-btn:active { transform: scale(0.96); }
   .nf-qd-btn[aria-expanded="true"] { border-color: var(--nf-accent, #40b8ff); }
   .nf-qd-btn.nf-qd-on { background: color-mix(in srgb, var(--nf-accent, #40b8ff) 22%, var(--nf-surface, rgba(16, 22, 34, 0.9))); }
+  .nf-quick-dock.dock-clean .nf-qd-btn {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+    backdrop-filter: none;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+  }
+  .nf-quick-dock.dock-large .nf-qd-btn { min-height: 54px; padding: 0 22px; font-size: 16px; }
   .nf-quick-popup {
     position: absolute;
     left: 50%;
@@ -120,6 +141,42 @@ export const quickDockStyles = css`
     cursor: pointer;
   }
   .nf-qp-toggle.on { background: var(--nf-accent, #40b8ff); color: #09131f; border-color: transparent; }
+  .nf-kp-disp {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font: 700 20px/1 monospace;
+    letter-spacing: 6px;
+  }
+  .nf-kp-disp.muted { opacity: 0.4; }
+  .nf-kp-err { color: #ff6b6b; font-size: 12px; text-align: center; font-weight: 600; }
+  .nf-kp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .nf-kp-key {
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+    font: 600 18px/1 inherit;
+    cursor: pointer;
+  }
+  .nf-kp-key:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.16); }
+  .nf-kp-actions { display: flex; gap: 8px; }
+  .nf-kp-actions button {
+    flex: 1;
+    min-height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    font: 600 13px/1 inherit;
+    cursor: pointer;
+  }
+  .nf-kp-actions button.primary { background: var(--nf-accent, #40b8ff); color: #09131f; border-color: transparent; }
 `;
 
 export function renderQuickDock(
@@ -127,6 +184,9 @@ export function renderQuickDock(
   groups: readonly QuickControlGroup[],
   openId: string | null,
   onToggleOpen: (id: string | null) => void,
+  dockStyle: "pill" | "clean" | "large" = "pill",
+  alarmConfig?: AlarmRingConfig | null,
+  onRefresh?: () => void,
 ): TemplateResult | typeof nothing {
   if (!hass || !groups.length) return nothing;
   const openGroup = groups.find((g) => g.id === openId) ?? null;
@@ -236,8 +296,58 @@ export function renderQuickDock(
     </div>`;
   };
 
-  const anyOn = openGroup ? openGroup.entities.filter(isToggleable).some((id) => isActive(hass, id)) : false;
-  const hasToggle = openGroup ? openGroup.entities.some(isToggleable) : false;
+  const openIsAlarm = openGroup ? isAlarmButton(openGroup, alarmConfig) : false;
+  const anyOn = openGroup && !openIsAlarm ? openGroup.entities.filter(isToggleable).some((id) => isActive(hass, id)) : false;
+  const hasToggle = openGroup && !openIsAlarm ? openGroup.entities.some(isToggleable) : false;
+
+  const renderAlarmKeypad = (entityId: string) => {
+    const isPanel = entityId.startsWith("alarm_control_panel.");
+    const st = hass.states[entityId]?.state ?? "unknown";
+    const disarmed = isPanel ? st === "disarmed" : !isActive(hass, entityId);
+    const pressKey = (k: string) => {
+      pinError = false;
+      if (k === "C") pinCode = "";
+      else if (k === "⌫") pinCode = pinCode.slice(0, -1);
+      else if (pinCode.length < 12) pinCode += k;
+      onRefresh?.();
+    };
+    const submitPanel = (srv: "alarm_arm_away" | "alarm_arm_home" | "alarm_disarm") => {
+      void hass.callService("alarm_control_panel", srv, pinCode ? { entity_id: entityId, code: pinCode } : { entity_id: entityId });
+      pinCode = "";
+      pinError = false;
+      onToggleOpen(null);
+    };
+    const submitDiy = () => {
+      if (alarmConfig?.pin && pinCode !== alarmConfig.pin) {
+        pinError = true;
+        pinCode = "";
+        onRefresh?.();
+        return;
+      }
+      void hass.callService("homeassistant", disarmed ? "turn_on" : "turn_off", { entity_id: entityId });
+      pinCode = "";
+      pinError = false;
+      onToggleOpen(null);
+    };
+    const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "⌫"];
+    return html`
+      <div class="nf-kp-disp ${pinCode ? "" : "muted"}">${pinCode ? "•".repeat(pinCode.length) : "••••"}</div>
+      ${pinError ? html`<div class="nf-kp-err">${translate(hass, "alarm_wrong_pin")}</div>` : nothing}
+      <div class="nf-kp-grid">
+        ${keys.map((k) => html`<button class="nf-kp-key" @click=${() => pressKey(k)}>${k}</button>`)}
+      </div>
+      <div class="nf-kp-actions">
+        ${isPanel
+          ? disarmed
+            ? html`
+                <button class="primary" @click=${() => submitPanel("alarm_arm_away")}>${translate(hass, "alarm_arm_away")}</button>
+                <button @click=${() => submitPanel("alarm_arm_home")}>${translate(hass, "alarm_arm_home")}</button>
+              `
+            : html`<button class="primary" @click=${() => submitPanel("alarm_disarm")}>${translate(hass, "alarm_disarm")}</button>`
+          : html`<button class="primary" @click=${submitDiy}>${disarmed ? translate(hass, "alarm_arm_away") : translate(hass, "alarm_disarm")}</button>`}
+      </div>
+    `;
+  };
 
   return html`
     ${openGroup
@@ -251,17 +361,26 @@ export function renderQuickDock(
               <button class="nf-qp-toggle" @click=${() => onToggleOpen(null)}>✕</button>
             </div>
           </div>
-          ${openGroup.entities.map(renderEntity)}
+          ${openIsAlarm ? renderAlarmKeypad(openGroup.entities[0]) : openGroup.entities.map(renderEntity)}
         </div>`
       : nothing}
-    <div class="nf-quick-dock" @pointerdown=${(e: Event) => e.stopPropagation()}>
+    <div class="nf-quick-dock dock-${dockStyle}" @pointerdown=${(e: Event) => e.stopPropagation()}>
       ${groups.map((g) => {
         const active = g.entities.some((id) => isActive(hass, id));
+        const alarm = isAlarmButton(g, alarmConfig);
+        const single = g.entities.length === 1 && !alarm;
         const icon = g.icon ? (g.icon.startsWith("mdi:") ? g.icon : `mdi:${g.icon}`).replace(/[^a-z0-9:-]/gi, "") : "";
         return html`<button
           class="nf-qd-btn ${active ? "nf-qd-on" : ""}"
-          aria-expanded=${g.entities.length === 1 ? nothing : openId === g.id}
-          @click=${() => (g.entities.length === 1 ? directToggle(hass, g.entities[0]) : onToggleOpen(openId === g.id ? null : g.id))}
+          aria-expanded=${single ? nothing : openId === g.id}
+          @click=${() => {
+            if (single) directToggle(hass, g.entities[0]);
+            else {
+              pinCode = "";
+              pinError = false;
+              onToggleOpen(openId === g.id ? null : g.id);
+            }
+          }}
         >
           ${icon ? unsafeHTML(`<ha-icon icon="${icon}"></ha-icon>`) : nothing}
           <span>${g.label}</span>

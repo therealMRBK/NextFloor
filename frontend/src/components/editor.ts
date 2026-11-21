@@ -1070,6 +1070,7 @@ export class NfEditor extends LitElement {
       ${this.render3dBar()}
       <nf-view3d
         .hass=${this.hass}
+        .weather=${false}
         .building=${this._doc3d}
         .floorId=${this.houseTool ? null : this._floorId}
         .roomId=${null}

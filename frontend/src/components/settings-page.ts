@@ -5,7 +5,7 @@ import type { Building, Floor } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
 import type { HomeAssistant } from "../types.ts";
 import type { EditorHost } from "./editor/host.ts";
-import { renderFavorites, renderPresence, renderQuickControlsSection } from "./editor/forms/house.ts";
+import { renderFavorites, renderPresence, renderQuickControlsSection, renderTabletUISection } from "./editor/forms/house.ts";
 import { renderSettings } from "./editor/forms/settings.ts";
 
 export class SettingsPage extends LitElement {
@@ -52,6 +52,7 @@ export class SettingsPage extends LitElement {
         <p class="nf-sub">${this.t("settings_page_intro")}</p>
       </header>
       <div class="nf-set-grid">
+        <div class="nf-card">${renderTabletUISection(h)}</div>
         <div class="nf-card">${renderQuickControlsSection(h)}</div>
         <div class="nf-card">${renderSettings(h, { useRoofSections: () => undefined })}</div>
         <div class="nf-card">${renderFavorites(h)}</div>
@@ -106,6 +107,15 @@ export class SettingsPage extends LitElement {
         background: rgba(255, 255, 255, 0.02);
       }
       .nf-chip { display: inline-flex; align-items: center; gap: 6px; }
+      .nf-compass { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+      .nf-compass-dial { width: 92px; height: 92px; flex: 0 0 auto; }
+      .nf-compass-ring { fill: rgba(255, 255, 255, 0.04); stroke: var(--nf-line, rgba(255, 255, 255, 0.25)); stroke-width: 2; }
+      .nf-compass-up { fill: var(--nf-accent, #40b8ff); }
+      .nf-compass-n { fill: #e05a5a; }
+      .nf-compass-s { fill: rgba(255, 255, 255, 0.28); }
+      .nf-compass-label { font: 700 10px/1 sans-serif; fill: #fff; text-anchor: middle; }
+      .nf-compass-label-s { opacity: 0.7; }
+      .nf-compass-side { display: grid; gap: 6px; flex: 1; min-width: 180px; }
     `,
   ];
 }

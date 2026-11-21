@@ -3,7 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName, outsideEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type QuickControlGroup, type StartView } from "../../../model.ts";
+import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type QuickControlGroup, type StartView, type TabletUI } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
 import { actions, checkField, colorField, entityField, hint, iconField, selectField, serviceField, serviceTargetEntityField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
@@ -295,6 +295,39 @@ function quickControls(host: EditorHost): TemplateResult {
     ${list.length < 12
       ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("qd"), label: host.t("quick_group_new"), icon: "mdi:lightbulb-group", entities: [] }])}>+ ${host.t("quick_group_add")}</button>`)
       : nothing}`;
+}
+
+export function renderTabletUISection(host: EditorHost): TemplateResult {
+  const t = host.t;
+  const ui = host.doc.settings.tablet_ui ?? {};
+  const set = (patch: Partial<TabletUI>) =>
+    host.change((d) => {
+      const next = { ...(d.settings.tablet_ui ?? {}), ...patch };
+      d.settings.tablet_ui = next;
+    });
+  return html`<details class="nf-section" open>
+    <summary>📱 ${t("tablet_ui_title")}</summary>
+    ${hint(t("tablet_ui_hint"))}
+    <div class="nf-form">
+      ${selectField(host, t("tablet_sidebar_pos"), ui.sidebar ?? "right", [["right", t("tablet_side_right")], ["left", t("tablet_side_left")], ["off", t("tablet_side_off")]], (v) => set({ sidebar: v as TabletUI["sidebar"] }))}
+      ${selectField(host, t("tablet_sidebar_style"), ui.sidebar_style ?? "card", [["card", t("tablet_style_card")], ["clean", t("tablet_style_clean")], ["minimal", t("tablet_style_minimal")]], (v) => set({ sidebar_style: v as TabletUI["sidebar_style"] }))}
+      ${selectField(host, t("tablet_clock_size"), ui.clock_size ?? "normal", [["normal", t("tablet_size_normal")], ["large", t("tablet_size_large")], ["xl", t("tablet_size_xl")]], (v) => set({ clock_size: v as TabletUI["clock_size"] }))}
+      ${colorField(host, t("tablet_clock_color"), ui.clock_color ?? null, "#f3f5f8", (v) => set({ clock_color: v }))}
+      ${checkField(host, t("tablet_sidebar_clock"), ui.sidebar_clock !== false, (v) => set({ sidebar_clock: v }))}
+      ${checkField(host, t("tablet_clock_seconds"), !!ui.clock_seconds, (v) => set({ clock_seconds: v }))}
+      ${checkField(host, t("tablet_sidebar_weather"), ui.sidebar_weather !== false, (v) => set({ sidebar_weather: v }))}
+      ${checkField(host, t("tablet_sidebar_summary"), ui.sidebar_summary !== false, (v) => set({ sidebar_summary: v }))}
+      ${checkField(host, t("tablet_sidebar_people"), ui.sidebar_people !== false, (v) => set({ sidebar_people: v }))}
+      ${checkField(host, t("tablet_sidebar_energy"), ui.sidebar_energy !== false, (v) => set({ sidebar_energy: v }))}
+      ${checkField(host, t("tablet_sidebar_media"), ui.sidebar_media !== false, (v) => set({ sidebar_media: v }))}
+      ${selectField(host, t("tablet_dock_style"), ui.dock_style ?? "pill", [["pill", t("tablet_dock_pill")], ["clean", t("tablet_dock_clean")], ["large", t("tablet_dock_large")]], (v) => set({ dock_style: v as TabletUI["dock_style"] }))}
+      ${checkField(host, t("tablet_show_quick_dock"), ui.show_quick_dock !== false, (v) => set({ show_quick_dock: v }))}
+      ${checkField(host, t("tablet_show_nav_kiosk"), !!ui.show_nav_in_kiosk, (v) => set({ show_nav_in_kiosk: v }))}
+      ${checkField(host, t("tablet_show_central"), ui.show_central !== false, (v) => set({ show_central: v }))}
+      ${checkField(host, t("tablet_show_walk"), ui.show_walk !== false, (v) => set({ show_walk: v }))}
+      ${checkField(host, t("tablet_show_legend"), ui.show_legend !== false, (v) => set({ show_legend: v }))}
+    </div>
+  </details>`;
 }
 
 export function renderQuickControlsSection(host: EditorHost): TemplateResult {

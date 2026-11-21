@@ -29,6 +29,7 @@ import {
   PlaneGeometry,
   Raycaster,
   RepeatWrapping,
+  RingGeometry,
   Scene,
   SRGBColorSpace,
   Float32BufferAttribute,
@@ -62,7 +63,8 @@ import { GLOWING_GLASS, PAINTED_GLASS, makeFloorMaterials, type FloorMaterials }
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
-import { buildFloorGeometry, SLAB, stairHoles, wallMaterialOf, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
+import { buildFloorGeometry, outlineOf, SLAB, stairHoles, wallMaterialOf, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
+import { generateWalls, wallOptions } from "../geometry/walls.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
 import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors, tiltBuilt } from "./furniture.ts";
@@ -626,6 +628,9 @@ export class NextFloorViewer {
     this.weatherLayer = new WeatherLayer(this.scene);
     this.scene.add(this.houseShadow.mesh);
     this.scene.add(this.sunArc.group);
+    this.alarmGroup = new Group();
+    this.alarmGroup.name = "alarm-perimeter";
+    this.scene.add(this.alarmGroup);
     this.mapLayer = new MapLayer(this.scene);
     this.mapLayer.onChange = () => this.invalidate();
     this.energyLayer = new EnergyLayer(this.scene, this.liftOf);
@@ -1206,6 +1211,84 @@ export class NextFloorViewer {
   }
 
   /** The ring, compass letters and today's arc of the sun round the plot (building setting `sun_arc`, default off). */
+  private alarmGroup!: Group;
+  private alarmKey = "";
+
+  /** Draws a glowing perimeter line (hugging exterior walls) or circle around the house for armed/disarmed status. */
+  setAlarmRing(state: { color: number; style: "perimeter" | "circle" } | null): void {
+    const b = this.building;
+    if (!state || !b?.floors.length) {
+      this.alarmGroup.visible = false;
+      this.alarmKey = "";
+      return;
+    }
+    const key = `${state.style}:${state.color}:${b.floors[0].rooms.length}`;
+    this.alarmGroup.visible = true;
+    if (key === this.alarmKey) return;
+    this.alarmKey = key;
+    while (this.alarmGroup.children.length) {
+      const ch = this.alarmGroup.children.pop() as Mesh | LineSegments;
+      ch.geometry.dispose();
+      (ch.material as Material).dispose();
+    }
+    const y = 0.04;
+    if (state.style === "circle") {
+      const pts = b.floors.flatMap((f) => f.rooms.flatMap((r) => r.points));
+      if (!pts.length) return;
+      const xs = pts.map((p) => p[0]);
+      const zs = pts.map((p) => p[1]);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
+      const r = Math.max(2, Math.max(...pts.map((p) => Math.hypot(p[0] - cx, p[1] - cz))) + 1.1);
+      const ringGeo = new RingGeometry(r - 0.16, r + 0.16, 96);
+      ringGeo.rotateX(-Math.PI / 2);
+      const ribbon = new Mesh(ringGeo, new MeshBasicMaterial({ color: state.color, transparent: true, opacity: 0.38, blending: AdditiveBlending, depthWrite: false, side: DoubleSide }));
+      ribbon.position.set(cx, y, cz);
+      const linePos: number[] = [];
+      for (let i = 0; i < 96; i++) {
+        const a0 = (i / 96) * Math.PI * 2;
+        const a1 = ((i + 1) / 96) * Math.PI * 2;
+        linePos.push(cx + Math.cos(a0) * r, y + 0.01, cz + Math.sin(a0) * r, cx + Math.cos(a1) * r, y + 0.01, cz + Math.sin(a1) * r);
+      }
+      const lineGeo = new Geometry();
+      lineGeo.setAttribute("position", new Float32BufferAttribute(linePos, 3));
+      const core = new LineSegments(lineGeo, new LineBasicMaterial({ color: state.color, transparent: true, opacity: 0.95 }));
+      this.alarmGroup.add(ribbon, core);
+    } else {
+      const floor = b.floors[0];
+      const { walls } = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []);
+      const outline = outlineOf(walls, walls.flatMap((w) => w.footprint));
+      const ext = outline.edges;
+      if (!ext.length) return;
+      const linePos: number[] = [];
+      const triPos: number[] = [];
+      const w = 0.14;
+      for (const e of ext) {
+        const dx = e.b[0] - e.a[0];
+        const dz = e.b[1] - e.a[1];
+        const len = Math.hypot(dx, dz) || 1;
+        const nx = (-dz / len) * w;
+        const nz = (dx / len) * w;
+        const ox = (-dz / len) * 0.12;
+        const oz = (dx / len) * 0.12;
+        const [ax, az] = [e.a[0] + ox, e.a[1] + oz];
+        const [bx, bz] = [e.b[0] + ox, e.b[1] + oz];
+        linePos.push(ax, y + 0.01, az, bx, y + 0.01, bz);
+        triPos.push(ax - nx, y, az - nz, bx - nx, y, bz - nz, bx + nx, y, bz + nz);
+        triPos.push(ax - nx, y, az - nz, bx + nx, y, bz + nz, ax + nx, y, az + nz);
+      }
+      const lineGeo = new Geometry();
+      lineGeo.setAttribute("position", new Float32BufferAttribute(linePos, 3));
+      const triGeo = new Geometry();
+      triGeo.setAttribute("position", new Float32BufferAttribute(triPos, 3));
+      this.alarmGroup.add(
+        new Mesh(triGeo, new MeshBasicMaterial({ color: state.color, transparent: true, opacity: 0.35, blending: AdditiveBlending, depthWrite: false, side: DoubleSide })),
+        new LineSegments(lineGeo, new LineBasicMaterial({ color: state.color, transparent: true, opacity: 0.95 })),
+      );
+    }
+    this.invalidate();
+  }
+
   private buildSunArc(): void {
     const b = this.building;
     const loc = this.sunArcLocation;
