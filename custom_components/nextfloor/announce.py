@@ -209,9 +209,7 @@ def _tts_entity(hass: HomeAssistant, building: dict[str, Any], wanted: str | Non
     return entities[0] if entities else None
 
 
-async def _speak(
-    hass: HomeAssistant, speaker: str, message: str, tts: str | None, volume: float | None = None
-) -> str:
+async def _speak(hass: HomeAssistant, speaker: str, message: str, tts: str | None, volume: float | None = None) -> str:
     """Say the message on one speaker; returns how (for the response). Raises NoSpeech when it needs text-to-speech."""
     if volume is not None and speaker.startswith("media_player."):
         try:

@@ -871,7 +871,9 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("wall_material_outside", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
         vol.Optional("wall_material_inside", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
         vol.Optional("weather_animations", default=True): bool,
-        vol.Optional("weather_preview", default=None): vol.Any(None, vol.In(["snowy", "rainy", "pouring", "lightning-rainy", "fog"])),
+        vol.Optional("weather_preview", default=None): vol.Any(
+            None, vol.In(["snowy", "rainy", "pouring", "lightning-rainy", "fog"])
+        ),
         vol.Optional("alarm_ring", default=None): vol.Any(
             None,
             vol.Schema(
