@@ -689,7 +689,8 @@
      "d": 0.9617,
      "y": 0,
      "h": 0.12,
-     "color": "#cdccc6"
+     "color": "#cdccc6",
+     "paint": true
     },
     {
      "shape": "box",
@@ -700,7 +701,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -711,7 +713,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -722,7 +725,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -733,7 +737,8 @@
      "y": 0,
      "h": 1,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -776,6 +781,53 @@
      "h": 0.12,
      "color": "#f4f4f6"
     }
+   ],
+   "colors": [
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#1d1f23"
+    },
+    {
+     "id": "black_brown",
+     "name": {
+      "en": "Black-brown",
+      "sv": "Svartbrun",
+      "de": "Schwarzbraun"
+     },
+     "hex": "#2c2623"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#b89060"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "en": "Grey",
+      "sv": "Grå",
+      "de": "Grau"
+     },
+     "hex": "#6e7278"
+    }
    ]
   },
   {
@@ -798,7 +850,8 @@
      "d": 0.9617,
      "y": 0,
      "h": 0.12,
-     "color": "#cdccc6"
+     "color": "#cdccc6",
+     "paint": true
     },
     {
      "shape": "box",
@@ -809,7 +862,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -820,7 +874,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -831,7 +886,8 @@
      "y": 0.12,
      "h": 0.26,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -842,7 +898,8 @@
      "y": 0,
      "h": 1,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -885,6 +942,53 @@
      "h": 0.12,
      "color": "#f4f4f6"
     }
+   ],
+   "colors": [
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#1d1f23"
+    },
+    {
+     "id": "black_brown",
+     "name": {
+      "en": "Black-brown",
+      "sv": "Svartbrun",
+      "de": "Schwarzbraun"
+     },
+     "hex": "#2c2623"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#b89060"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "en": "Grey",
+      "sv": "Grå",
+      "de": "Grau"
+     },
+     "hex": "#6e7278"
+    }
    ]
   },
   {
@@ -907,7 +1011,8 @@
      "d": 0.9167,
      "y": 0,
      "h": 0.1026,
-     "color": "#cdccc6"
+     "color": "#cdccc6",
+     "paint": true
     },
     {
      "shape": "box",
@@ -918,7 +1023,8 @@
      "y": 0.1026,
      "h": 0.8718,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -928,7 +1034,8 @@
      "d": 1,
      "y": 0.9744,
      "h": 0.0256,
-     "color": "#f0f0ec"
+     "color": "#f0f0ec",
+     "paint": true
     },
     {
      "shape": "box",
@@ -939,7 +1046,8 @@
      "y": 0.1154,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -960,7 +1068,8 @@
      "y": 0.3974,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -981,7 +1090,8 @@
      "y": 0.6795,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1002,7 +1112,8 @@
      "y": 0.1154,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1023,7 +1134,8 @@
      "y": 0.3974,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1044,7 +1156,8 @@
      "y": 0.6795,
      "h": 0.2718,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1055,6 +1168,53 @@
      "y": 0.8974,
      "h": 0.0128,
      "color": "#9c9a93"
+    }
+   ],
+   "colors": [
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#1d1f23"
+    },
+    {
+     "id": "black_brown",
+     "name": {
+      "en": "Black-brown",
+      "sv": "Svartbrun",
+      "de": "Schwarzbraun"
+     },
+     "hex": "#2c2623"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#b89060"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "en": "Grey",
+      "sv": "Grå",
+      "de": "Grau"
+     },
+     "hex": "#6e7278"
     }
    ]
   },
@@ -1078,7 +1238,8 @@
      "d": 0.9167,
      "y": 0,
      "h": 0.08,
-     "color": "#cdccc6"
+     "color": "#cdccc6",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1089,7 +1250,8 @@
      "y": 0.08,
      "h": 0.9,
      "color": "#f0f0ec",
-     "edges": true
+     "edges": true,
+     "paint": true
     },
     {
      "shape": "box",
@@ -1099,7 +1261,8 @@
      "d": 1,
      "y": 0.98,
      "h": 0.02,
-     "color": "#f0f0ec"
+     "color": "#f0f0ec",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1110,7 +1273,8 @@
      "y": 0.09,
      "h": 0.212,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1131,7 +1295,8 @@
      "y": 0.31,
      "h": 0.212,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1152,7 +1317,8 @@
      "y": 0.53,
      "h": 0.212,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1173,7 +1339,8 @@
      "y": 0.75,
      "h": 0.212,
      "color": "#f0f0ec",
-     "edges": "faint"
+     "edges": "faint",
+     "paint": true
     },
     {
      "shape": "box",
@@ -1184,6 +1351,53 @@
      "y": 0.92,
      "h": 0.01,
      "color": "#9c9a93"
+    }
+   ],
+   "colors": [
+    {
+     "id": "white",
+     "name": {
+      "en": "White",
+      "sv": "Vit",
+      "de": "Weiß"
+     },
+     "hex": "#f0f0ec"
+    },
+    {
+     "id": "black",
+     "name": {
+      "en": "Black",
+      "sv": "Svart",
+      "de": "Schwarz"
+     },
+     "hex": "#1d1f23"
+    },
+    {
+     "id": "black_brown",
+     "name": {
+      "en": "Black-brown",
+      "sv": "Svartbrun",
+      "de": "Schwarzbraun"
+     },
+     "hex": "#2c2623"
+    },
+    {
+     "id": "oak",
+     "name": {
+      "en": "Oak",
+      "sv": "Ek",
+      "de": "Eiche"
+     },
+     "hex": "#b89060"
+    },
+    {
+     "id": "grey",
+     "name": {
+      "en": "Grey",
+      "sv": "Grå",
+      "de": "Grau"
+     },
+     "hex": "#6e7278"
     }
    ]
   },

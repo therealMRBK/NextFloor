@@ -2,6 +2,7 @@
 // towards the viewer, mark the body paint, choose how detailed it stays, and put it on Home Assistant, all in the browser.
 
 import { css, html, LitElement, nothing, type TemplateResult } from "lit";
+import { importPack } from "../api.ts";
 import { translate, type I18nKey } from "../i18n.ts";
 import { load3d } from "../load3d.ts";
 import { DETAIL_LEVELS, MAX_UPLOAD_BYTES, meshPath, modelSlots, readableSize, trianglesFor, uploadProblem, type DetailKey, type ModelSlot } from "../model-slots.ts";
@@ -14,6 +15,10 @@ type Present = "unknown" | "yes" | "no";
 
 interface Draft {
   slot: ModelSlot;
+  /** True when creating a brand-new item in custom.library instead of replacing an existing slot. */
+  isNewLibraryItem?: boolean;
+  customName?: string;
+  customSize?: [number, number, number];
   fileName: string;
   data: ArrayBuffer;
   info: ModelInfo;
@@ -77,6 +82,45 @@ export class NfModelUpload extends LitElement {
   }
 
   // choosing a file
+
+  private async chooseLibraryModel(file: File | undefined): Promise<void> {
+    if (!file) return;
+    this._message = null;
+    this._busy = true;
+    try {
+      const data = await file.arrayBuffer();
+      const viewer = await load3d();
+      const info = await viewer.inspectModel(data);
+      const base = file.name.replace(/\.[^.]+$/, "").trim() || "3D-Modell";
+      const slug = base.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 24) || "item";
+      const suffix = Date.now().toString(36).slice(-6);
+      const meshId = `lib_${slug}_${suffix}`.slice(0, 48);
+      const size: [number, number, number] = [
+        Math.max(0.05, Math.round(info.size[0] * 100) / 100),
+        Math.max(0.05, Math.round(info.size[2] * 100) / 100),
+        Math.max(0.05, Math.round(info.size[1] * 100) / 100),
+      ];
+      this._draft = {
+        slot: { id: meshId, items: [base] },
+        isNewLibraryItem: true,
+        customName: base,
+        customSize: size,
+        fileName: file.name,
+        data,
+        info,
+        turns: 0,
+        paint: info.paint,
+        detail: "normal",
+        colour: "#8b7355",
+        result: null,
+      };
+      await this.refresh();
+    } catch (err) {
+      this._message = { ok: false, text: String((err as Error)?.message ?? err) };
+    } finally {
+      this._busy = false;
+    }
+  }
 
   private async choose(slot: ModelSlot, file: File | undefined): Promise<void> {
     if (!file) return;
@@ -155,6 +199,30 @@ export class NfModelUpload extends LitElement {
         return;
       }
       this._present = { ...this._present, [draft.slot.id]: "yes" };
+      if (draft.isNewLibraryItem) {
+        const existing = (this.packs ?? []).find((p) => p.id === "custom.library");
+        const prevItems = existing?.items ?? [];
+        const name = (draft.customName || draft.slot.items[0]).slice(0, 80);
+        const size = draft.customSize ?? [1, 1, 1];
+        const newItem = {
+          id: draft.slot.id,
+          name: { en: name, sv: name, de: name },
+          size,
+          mesh: draft.slot.id,
+          parts: [{ shape: "box", x: 0, z: 0, w: 1, d: 1, y: 0, h: 1, color: "body" }],
+        };
+        const packPayload = {
+          format: "nfpack",
+          version: 1,
+          id: "custom.library",
+          name: "Egna 3D-möbler",
+          publisher: "Custom",
+          release: Math.max(1, (existing?.release ?? 0) + 1),
+          items: [...prevItems, newItem],
+        };
+        await importPack(this.hass, JSON.stringify(packPayload));
+        this.dispatchEvent(new CustomEvent("packs-changed", { bubbles: true, composed: true }));
+      }
       this._message = { ok: true, text: this.t("model_uploaded", { id: draft.slot.id, size: readableSize(draft.result.glb.byteLength) }) };
       this._draft = null;
     } catch (err) {
@@ -185,7 +253,7 @@ export class NfModelUpload extends LitElement {
       <div class="nf-model-actions">
         <label class="nf-btn nf-primary">
           ${this.t(present === "yes" ? "model_replace" : "model_add")}
-          <input type="file" accept=".glb,model/gltf-binary" hidden @change=${(e: Event) => this.picked(slot, e)} />
+          <input type="file" accept=".glb,.gltf,.dae,.obj,.stl,model/gltf-binary,model/gltf+json" hidden @change=${(e: Event) => this.picked(slot, e)} />
         </label>
         ${present === "yes" ? html`<button class="nf-btn nf-danger" @click=${() => this.removeModel(slot)}>${this.t("model_remove")}</button>` : nothing}
       </div>
@@ -208,6 +276,9 @@ export class NfModelUpload extends LitElement {
       <div class="nf-model-body">
         <div class="nf-model-picture">${result ? html`<img src=${result.picture} alt="" />` : html`<span class="nf-sub">${this.t("loading")}</span>`}</div>
         <div class="nf-model-options">
+          ${draft.isNewLibraryItem
+            ? html`<label class="nf-field">${this.t("furn_name")}<input type="text" maxlength="60" .value=${draft.customName ?? ""} @input=${(e: Event) => (this._draft = { ...draft, customName: (e.target as HTMLInputElement).value })} /></label>`
+            : nothing}
           <div class="nf-field">
             <span>${this.t("model_front")}</span>
             <div class="nf-actions">
@@ -243,6 +314,23 @@ export class NfModelUpload extends LitElement {
     return html`<section class="nf-ext-card">
       <h3>${this.t("models")}</h3>
       <p class="nf-sub">${this.t("models_hint")}</p>
+      <div class="nf-model">
+        <div>
+          <b>➕ ${this.t("model_add_library")}</b>
+          <span class="nf-sub">${this.t("model_add_library_hint")}</span>
+        </div>
+        <div class="nf-model-actions">
+          <label class="nf-btn nf-primary">
+            ${this.t("model_add_library_btn")}
+            <input type="file" accept=".glb,.gltf,.dae,.obj,.stl,model/gltf-binary,model/gltf+json" hidden @change=${(e: Event) => {
+              const input = e.target as HTMLInputElement;
+              const f = input.files?.[0];
+              input.value = "";
+              void this.chooseLibraryModel(f);
+            }} />
+          </label>
+        </div>
+      </div>
       ${slots.map((slot) => this.row(slot))}
       ${this._draft ? this.editor(this._draft) : nothing}
       ${this._busy && !this._draft ? html`<p class="nf-sub">${this.t("loading")}</p>` : nothing}

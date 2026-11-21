@@ -15,7 +15,7 @@ function partColor(value: string | undefined, top: boolean): number | null {
 }
 
 /** The model of a pack item: its parts scaled to the item's size. Glowing parts take `glow` (a lit lamp). */
-export function packModel(b: Builder, item: PackItem, w: number, d: number, h: number, base: number, glow: number | null, only: ((p: PackPart) => boolean) | null = null, variant: string | null = null, reach: number | null = null): void {
+export function packModel(b: Builder, item: PackItem, w: number, d: number, h: number, base: number, glow: number | null, only: ((p: PackPart) => boolean) | null = null, variant: string | null = null, reach: number | null = null, glassBuilder: Builder | null = null): void {
   // the colour picked for the item (its first by default), for the parts that carry paint
   const paint = item.colors?.length ? (item.colors.find((c) => c.id === variant) ?? item.colors[0]).hex : null;
   // moving parts (a curtain, an awning) are drawn apart, at their reach; the item itself leaves them out
@@ -28,15 +28,16 @@ export function packModel(b: Builder, item: PackItem, w: number, d: number, h: n
     const lit = part.glow && glow !== null;
     const painted = !!(part.paint && paint);
     const body = painted ? paint! : part.color;
-    const side = lit ? glow : (partColor(body, false) ?? C.body);
+    const side = lit ? glow : (part.screen ? C.screen : (partColor(body, false) ?? C.body));
     // without a top colour, the top is the role's top shade or a little lighter
-    const top = lit ? glow : (partColor(painted ? undefined : part.top, false) ?? partColor(body, true) ?? shade(side, 1.25).getHex());
+    const top = lit ? glow : (part.screen ? C.screen : (partColor(painted ? undefined : part.top, false) ?? partColor(body, true) ?? shade(side, 1.25).getHex()));
     const look = material(side, top);
     const [y0, y1] = [base + part.y * h, base + Math.min(h, (part.y + part.h) * h)];
     // "glow" lines are as bright as the wall lines, so a pack item can be drawn like the walls
     const edges = part.edges === "glow" ? EDGE_TOP : part.edges === "faint" ? EDGE_FAINT : part.edges ? EDGE_FURN : null;
     // a turned part draws through a builder whose coordinates turn around the part's centre
-    const target = part.rot ? b.turned(part.x * w, part.z * d, part.rot) : b;
+    const dest = glassBuilder && !lit && part.color === "glass" ? glassBuilder : b;
+    const target = part.rot ? dest.turned(part.x * w, part.z * d, part.rot) : dest;
     const [cx, cz] = [part.x * w, part.z * d];
     if (part.shape === "cyl" && (part.axis === "x" || part.axis === "z")) {
       target.lyingCylinder(part.axis, cx, cz, y0, y1, part.axis === "x" ? part.w * w : part.d * d, part.axis === "x" ? part.d * d : part.w * w, look, 14, edges);

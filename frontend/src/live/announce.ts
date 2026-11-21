@@ -10,6 +10,7 @@ export interface Announcement {
   screens: string[];
   /** The message spoken by Home Assistant's text-to-speech, or null (the browser's own voice speaks then). */
   audio: string | null;
+  volume?: number | null;
   time: string;
 }
 
@@ -68,12 +69,13 @@ export function chime(): Promise<void> {
 }
 
 /** Speak with the browser's own voice in the user's language (when Home Assistant gave no audio). */
-function speakInBrowser(hass: HomeAssistant, message: string): void {
+function speakInBrowser(hass: HomeAssistant, message: string, volume?: number | null): void {
   const synth = (globalThis as { speechSynthesis?: SpeechSynthesis }).speechSynthesis;
   const Utterance = (globalThis as { SpeechSynthesisUtterance?: typeof SpeechSynthesisUtterance }).SpeechSynthesisUtterance;
   if (!synth || !Utterance) return;
   const u = new Utterance(message);
   u.lang = hass.language || "en";
+  if (typeof volume === "number") u.volume = Math.max(0, Math.min(1, volume));
   synth.cancel();
   synth.speak(u);
 }
@@ -81,16 +83,19 @@ function speakInBrowser(hass: HomeAssistant, message: string): void {
 /** Chime, then the message: Home Assistant's audio when there is one, else the browser's voice. Browsers may block sound until the page was tapped once. */
 export async function playAnnouncement(hass: HomeAssistant, a: Announcement): Promise<void> {
   await chime();
+  const vol = typeof a.volume === "number" ? Math.max(0, Math.min(1, a.volume)) : null;
   if (a.audio) {
     try {
       const url = a.audio.startsWith("/") && hass.hassUrl ? hass.hassUrl(a.audio) : a.audio;
-      await new Audio(url).play();
+      const audio = new Audio(url);
+      if (vol !== null) audio.volume = vol;
+      await audio.play();
       return;
     } catch {
       // blocked or failed: the browser's voice tries instead
     }
   }
-  speakInBrowser(hass, a.message);
+  speakInBrowser(hass, a.message, vol);
 }
 
 /** Subscribes this screen to the announcements; resolves to the unsubscribe function (or a no-op with an older backend). */

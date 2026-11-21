@@ -4,6 +4,21 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Tablet sidebar & customizable HUD:** Optional side panel in 3D view showing clock, date, outdoor weather, and status summary with clean/borderless styling, adjustable font size, and visibility in clean mode.
+- **Quick-control dock & 3D alarm PIN keypad:** Touch-friendly bottom dock with custom control groups and an interactive PIN keypad popup for both `alarm_control_panel.*` and DIY `input_boolean.*` / `switch.*` alarms.
+- **Alarm perimeter ring:** Visual red/green perimeter glow around the house showing armed/disarmed state, with optional helper toggle.
+- **Announcement volume:** Volume slider in the room panel's announcement section and default `announce_volume` setting for speakers and screens.
+- **Smart scene toggle:** Tapping a furniture item or dock button that triggers a scene (`scene.turn_on`) turns off the scene's active entities on the second tap and shows live on/off status on the marker.
+- **Refined light color picker:** Conic-gradient halo, active swatch highlight, free color picker, and color-temperature slider in the light quick menu.
+- **See-through glass furniture & IKEA MALM colors:** Pack parts using `"color": "glass"` render in the translucent glass layer, and built-in IKEA MALM beds and chests support White, Black, Black-brown, Oak, and Grey colorways.
+
+### Fixed
+
+- **Realistic theme colors & off screens:** Unpainted frames, doors, lampshades, and blinds map to natural architectural tones instead of bright blue, glass uses a neutral tint, and off TVs/monitors stay glossy black without darkening dark furniture.
+- **Outdoor weather only in 3D view** and resilient per-file error handling when loading built-in packs.
+
 ## [0.32.0]
 
 ### Added

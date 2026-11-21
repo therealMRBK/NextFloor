@@ -88,6 +88,7 @@ export class NfRoomPanel extends LitElement {
   /** What the last announcement from this panel did, shown under it for a moment. */
   private declare _said: { text: string; failed: boolean } | null;
   private saidTimer: ReturnType<typeof setTimeout> | undefined;
+  private declare _announceVol: number | null;
   /** Show the other devices of the area as well (their main entities). */
   private declare _showAll: boolean;
   /** Only the header shows (a small screen: the room stays in view, the devices are out of the way). Starts open for every room. */
@@ -615,11 +616,12 @@ export class NfRoomPanel extends LitElement {
   /** Announcements in the room: a tap on a sentence says it on the room's speaker; an own message too. */
   private announceSection(room: Room) {
     const phrases = this.phrases?.length ? this.phrases : [1, 2, 3, 4, 5].map((n) => this.t(`announce_phrase_${n}` as I18nKey));
+    const vol = this._announceVol ?? this.building?.settings.announce_volume ?? 70;
     const say = (message: string) => {
       const text = message.trim();
       if (!text) return;
       clearTimeout(this.saidTimer);
-      this.hass.callService("nextfloor", "announce", { message: text, rooms: [room.id], on_screens: false }).then(
+      this.hass.callService("nextfloor", "announce", { message: text, rooms: [room.id], on_screens: false, volume: vol / 100 }).then(
         () => (this._said = { text: this.t("announce_sent", { message: text }), failed: false }),
         (err: unknown) => (this._said = { text: this.t("announce_failed", { error: (err as { message?: string })?.message ?? String(err) }), failed: true }),
       );
@@ -633,6 +635,22 @@ export class NfRoomPanel extends LitElement {
     };
     return this.section("panel_announce", [
       html`<div class="nf-rp-scenes">${phrases.map((p) => html`<button class="nf-btn" @click=${() => say(p)}>${p}</button>`)}</div>
+        <div class="nf-rp-vol" style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px">
+          <span title=${this.t("announce_volume")}>🔊 ${vol}%</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            style="flex:1;accent-color:var(--nf-accent)"
+            .value=${String(vol)}
+            aria-label=${this.t("announce_volume")}
+            @input=${(e: Event) => {
+              this._announceVol = Number((e.target as HTMLInputElement).value);
+              this.requestUpdate();
+            }}
+          />
+        </div>
         <form class="nf-rp-say" @submit=${own}>
           <input type="text" maxlength="500" placeholder=${this.t("announce_placeholder")} aria-label=${this.t("announce_placeholder")} />
           <button class="nf-btn nf-primary" type="submit">${this.t("announce_send")}</button>

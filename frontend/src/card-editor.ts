@@ -307,7 +307,7 @@ export class NextFloorCardEditor extends LitElement {
             }}
           />
         </label>
-        ${choice(f, "theme", "theme", [["auto", "theme_auto"], ["neon", "theme_neon"], ["blueprint", "theme_blueprint"], ["day", "theme_day"], ["own", "theme_own"], ["real", "theme_real"]], v.theme)}
+        ${choice(f, "theme", "theme", [["auto", "theme_auto"], ["neon", "theme_neon"], ["blueprint", "theme_blueprint"], ["day", "theme_day"], ["own", "theme_own"], ["real", "theme_real"], ["nordic", "theme_nordic"], ["warm_evening", "theme_warm_evening"], ["minimal", "theme_minimal"]], v.theme)}
         ${choice(f, "clock", "clock", [["none", "clock_none"], ["top_left", "clock_top_left"], ["top_right", "clock_top_right"], ["bottom_left", "clock_bottom_left"], ["bottom_right", "clock_bottom_right"]], v.clock ?? "none")}
         <label class="field"
           >${f.t("accent")}

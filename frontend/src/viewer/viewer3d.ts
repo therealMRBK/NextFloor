@@ -31,6 +31,7 @@ import {
   PlaneGeometry,
   Raycaster,
   RepeatWrapping,
+  RingGeometry,
   Scene,
   SRGBColorSpace,
   Float32BufferAttribute,
@@ -64,7 +65,8 @@ import { GLOWING_GLASS, PAINTED_GLASS, makeFloorMaterials, type FloorMaterials }
 import { createDevicePin, type PinHooks } from "./scene/pins.ts";
 import { buildStl, type StlPart } from "./export/stl.ts";
 import { SunArc } from "./scene/sun-arc.ts";
-import { buildFloorGeometry, SLAB, stairHoles, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
+import { buildFloorGeometry, outlineOf, SLAB, stairHoles, wallMaterialOf, wallPaintOf, type FloorGeometry, type WallPaint } from "./build.ts";
+import { generateWalls, wallOptions } from "../geometry/walls.ts";
 import { OrbitControls, type OrbitView } from "./controls.ts";
 import { type FoldMasks } from "./fold.ts";
 import { batteryBar, pictureRect, pushPackGlow, pushPackLamp, pushPackMoving, screenRect, pushFridgeDoors, tiltBuilt } from "./furniture.ts";
@@ -443,6 +445,9 @@ export class NextFloorViewer {
     this.weatherLayer = new WeatherLayer(this.scene);
     this.scene.add(this.houseShadow.mesh);
     this.scene.add(this.sunArc.group);
+    this.alarmGroup = new Group();
+    this.alarmGroup.name = "alarm-perimeter";
+    this.scene.add(this.alarmGroup);
     this.mapLayer = new MapLayer(this.scene);
     this.mapLayer.onChange = () => this.invalidate();
     this.energyLayer = new EnergyLayer(this.scene, this.liftOf);
@@ -971,9 +976,12 @@ export class NextFloorViewer {
     if (this.theme === "real") loadRealTextures(() => this.invalidate());
     this.placeMap();
     const blending = lineBlending(this.theme, this.own);
+    const lineOp = this.theme === "real" ? 0.0 : this.theme === "nordic" || this.theme === "minimal" || this.theme === "warm_evening" ? 0.18 : 1.0;
     const lineMats = [...this.floors.map((f) => f.materials.lines), ...(this.roof ? [this.roof.lines] : [])];
     for (const m of lineMats) {
       m.blending = blending;
+      m.opacity = lineOp;
+      m.visible = lineOp > 0.01;
       m.needsUpdate = true;
     }
     // window glass in a colour of its own is painted, the stock glass glows
@@ -1020,6 +1028,84 @@ export class NextFloorViewer {
   }
 
   /** The ring, compass letters and today's arc of the sun round the plot (building setting `sun_arc`, default off). */
+  private alarmGroup!: Group;
+  private alarmKey = "";
+
+  /** Draws a glowing perimeter line (hugging exterior walls) or circle around the house for armed/disarmed status. */
+  setAlarmRing(state: { color: number; style: "perimeter" | "circle" } | null): void {
+    const b = this.building;
+    if (!state || !b?.floors.length) {
+      this.alarmGroup.visible = false;
+      this.alarmKey = "";
+      return;
+    }
+    const key = `${state.style}:${state.color}:${b.floors[0].rooms.length}`;
+    this.alarmGroup.visible = true;
+    if (key === this.alarmKey) return;
+    this.alarmKey = key;
+    while (this.alarmGroup.children.length) {
+      const ch = this.alarmGroup.children.pop() as Mesh | LineSegments;
+      ch.geometry.dispose();
+      (ch.material as Material).dispose();
+    }
+    const y = 0.04;
+    if (state.style === "circle") {
+      const pts = b.floors.flatMap((f) => f.rooms.flatMap((r) => r.points));
+      if (!pts.length) return;
+      const xs = pts.map((p) => p[0]);
+      const zs = pts.map((p) => p[1]);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
+      const r = Math.max(2, Math.max(...pts.map((p) => Math.hypot(p[0] - cx, p[1] - cz))) + 1.1);
+      const ringGeo = new RingGeometry(r - 0.16, r + 0.16, 96);
+      ringGeo.rotateX(-Math.PI / 2);
+      const ribbon = new Mesh(ringGeo, new MeshBasicMaterial({ color: state.color, transparent: true, opacity: 0.38, blending: AdditiveBlending, depthWrite: false, side: DoubleSide }));
+      ribbon.position.set(cx, y, cz);
+      const linePos: number[] = [];
+      for (let i = 0; i < 96; i++) {
+        const a0 = (i / 96) * Math.PI * 2;
+        const a1 = ((i + 1) / 96) * Math.PI * 2;
+        linePos.push(cx + Math.cos(a0) * r, y + 0.01, cz + Math.sin(a0) * r, cx + Math.cos(a1) * r, y + 0.01, cz + Math.sin(a1) * r);
+      }
+      const lineGeo = new Geometry();
+      lineGeo.setAttribute("position", new Float32BufferAttribute(linePos, 3));
+      const core = new LineSegments(lineGeo, new LineBasicMaterial({ color: state.color, transparent: true, opacity: 0.95 }));
+      this.alarmGroup.add(ribbon, core);
+    } else {
+      const floor = b.floors[0];
+      const { walls } = generateWalls(floor.rooms, wallOptions(b.settings), floor.walls ?? []);
+      const outline = outlineOf(walls, walls.flatMap((w) => w.footprint));
+      const ext = outline.edges;
+      if (!ext.length) return;
+      const linePos: number[] = [];
+      const triPos: number[] = [];
+      const w = 0.14;
+      for (const e of ext) {
+        const dx = e.b[0] - e.a[0];
+        const dz = e.b[1] - e.a[1];
+        const len = Math.hypot(dx, dz) || 1;
+        const nx = (-dz / len) * w;
+        const nz = (dx / len) * w;
+        const ox = (-dz / len) * 0.12;
+        const oz = (dx / len) * 0.12;
+        const [ax, az] = [e.a[0] + ox, e.a[1] + oz];
+        const [bx, bz] = [e.b[0] + ox, e.b[1] + oz];
+        linePos.push(ax, y + 0.01, az, bx, y + 0.01, bz);
+        triPos.push(ax - nx, y, az - nz, bx - nx, y, bz - nz, bx + nx, y, bz + nz);
+        triPos.push(ax - nx, y, az - nz, bx + nx, y, bz + nz, ax + nx, y, az + nz);
+      }
+      const lineGeo = new Geometry();
+      lineGeo.setAttribute("position", new Float32BufferAttribute(linePos, 3));
+      const triGeo = new Geometry();
+      triGeo.setAttribute("position", new Float32BufferAttribute(triPos, 3));
+      this.alarmGroup.add(
+        new Mesh(triGeo, new MeshBasicMaterial({ color: state.color, transparent: true, opacity: 0.35, blending: AdditiveBlending, depthWrite: false, side: DoubleSide })),
+        new LineSegments(lineGeo, new LineBasicMaterial({ color: state.color, transparent: true, opacity: 0.95 })),
+      );
+    }
+    this.invalidate();
+  }
+
   private buildSunArc(): void {
     const b = this.building;
     const loc = this.sunArcLocation;
@@ -1645,7 +1731,7 @@ export class NextFloorViewer {
             return y === null ? null : y - floor.elevation;
           }
         : undefined;
-      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor), !!b.settings.rooms_as_drawn);
+      const geo = buildFloorGeometry(this.withoutFurniture(withVehicles(floor, this.parked)), b.settings.wall_exterior, b.settings.wall_interior, stairHoles(b.floors, floor), garden, roofUnder, this.wallPaint(floor), !!b.settings.rooms_as_drawn, wallMaterialOf(b.settings, floor));
       const mask: FoldMasks = { standing: { value: 0xffff }, glass: { value: 0 }, slope: { value: new Vector4() }, slopeY: { value: new Vector2() }, glassAlpha: this.glassAlpha };
       const materials = makeFloorMaterials({ mask, look: this.themeUniform, theme: this.theme, own: this.own, textures: { pattern: this.patternTexture, blinds: this.blindTexture, halo: this.haloTexture } });
       const group = new Group();
@@ -1883,9 +1969,9 @@ export class NextFloorViewer {
     for (const fv of this.floors) {
       for (const f of withVehicles(fv.floor, this.parked).furniture) {
         const item = packItem(f.type);
-        if (!item?.mesh) continue;
-        const id = item.mesh;
-        if (!hasMesh(f.type)) {
+        const id = f.mesh ?? item?.mesh;
+        if (!id) continue;
+        if (!hasMesh(f.type, f.mesh)) {
           if (!this.meshAsked.has(id)) {
             this.meshAsked.add(id);
             void loadMesh(id).then((ok) => {
@@ -1894,7 +1980,7 @@ export class NextFloorViewer {
           }
           continue;
         }
-        const colour = item.colors?.length ? (item.colors.find((c) => c.id === f.variant) ?? item.colors[0]).hex : null;
+        const colour = f.color ?? (item?.colors?.length ? (item.colors.find((c) => c.id === f.variant) ?? item.colors[0]).hex : null);
         const group = instantiateMesh(id, { x: f.x, z: f.z, y: mountBase(fv.floor, f), rotation: f.rotation, mirror: f.mirror, w: f.w, d: f.d, h: f.h, paint: colour });
         if (!group) continue;
         if (!this.meshLight) this.meshLight = addMeshLighting(this.root, this.renderer);
@@ -3465,12 +3551,12 @@ export class NextFloorViewer {
   }
 }
 
-/** Pattern atlas: 3 × 2 tiles of 1 m each (wood, oak, tiles / carpet, stone, concrete), faint cyan lines. */
+/** Pattern atlas: 4 × 4 tiles of 1 m each, faint cyan lines. */
 function makePatternTexture(): CanvasTexture {
   const T = 256;
   const canvas = document.createElement("canvas");
-  canvas.width = T * 3;
-  canvas.height = T * 2;
+  canvas.width = T * 4;
+  canvas.height = T * 4;
   const ctx = canvas.getContext("2d")!;
   const line = (x0: number, y0: number, x1: number, y1: number, alpha: number) => {
     ctx.strokeStyle = `rgba(55,224,255,${alpha})`;
@@ -3514,6 +3600,16 @@ function makePatternTexture(): CanvasTexture {
       line(ox, oy + p, ox + T, oy + p, 0.1);
     }
   });
+  // herringbone: chevron zig-zag bands
+  tile(3, 0, (ox, oy) => {
+    const step = T / 4;
+    for (let y = -step; y < T + step; y += step / 2) {
+      for (let x = 0; x < T; x += step) {
+        line(ox + x, oy + y, ox + x + step / 2, oy + y + step / 2, 0.08);
+        line(ox + x + step / 2, oy + y + step / 2, ox + x + step, oy + y, 0.08);
+      }
+    }
+  });
   // carpet: plain (also used for slab sides)
   // stone: 0.5 m slabs in a running bond
   tile(1, 1, (ox, oy) => {
@@ -3530,6 +3626,82 @@ function makePatternTexture(): CanvasTexture {
     line(ox, oy + 0.75, ox + T, oy + 0.75, 0.08);
     ctx.fillStyle = "rgba(55,224,255,0.05)";
     for (let i = 0; i < 90; i++) ctx.fillRect(ox + ((i * 97) % T), oy + ((i * 61 + (i * i) % 37) % T), 2, 2);
+  });
+  // marble: 0.5 m slabs with diagonal veins
+  tile(3, 1, (ox, oy) => {
+    for (let i = 0; i < 2; i++) {
+      const p = (i * T) / 2 + 0.75;
+      line(ox + p, oy, ox + p, oy + T, 0.07);
+      line(ox, oy + p, ox + T, oy + p, 0.07);
+    }
+    line(ox + T * 0.1, oy + T * 0.2, ox + T * 0.9, oy + T * 0.75, 0.05);
+    line(ox + T * 0.2, oy + T * 0.85, ox + T * 0.75, oy + T * 0.15, 0.04);
+  });
+  // terrazzo: fine multi-size aggregate flecks
+  tile(0, 2, (ox, oy) => {
+    ctx.fillStyle = "rgba(55,224,255,0.06)";
+    for (let i = 0; i < 120; i++) {
+      const sz = (i % 3) + 1;
+      ctx.fillRect(ox + ((i * 73) % T), oy + ((i * 139 + (i * i) % 53) % T), sz, sz);
+    }
+  });
+  // vinyl: wide planks
+  tile(1, 2, (ox, oy) => {
+    for (let i = 0; i < 4; i++) {
+      const y = oy + (i * T) / 4 + 0.75;
+      line(ox, y, ox + T, y, 0.07);
+      const j = ox + ((i * 0.43) % 1) * T;
+      line(j, y, j, y + T / 4, 0.05);
+    }
+  });
+  // brick: small running bond pavers
+  tile(2, 2, (ox, oy) => {
+    for (let r = 0; r < 6; r++) {
+      const y = oy + (r * T) / 6 + 0.75;
+      line(ox, y, ox + T, y, 0.09);
+      const shift = (r % 2) * (T / 6);
+      for (let c = 0; c < 3; c++) {
+        const x = ox + ((shift + (c * T) / 3) % T) + 0.75;
+        line(x, y, x, y + T / 6, 0.08);
+      }
+    }
+  });
+  // decking: narrow parallel slats with thin gaps
+  tile(3, 2, (ox, oy) => {
+    for (let i = 0; i < 8; i++) {
+      const y = oy + (i * T) / 8 + 0.75;
+      line(ox, y, ox + T, y, 0.11);
+    }
+  });
+  // cork_vinyl: warm organic cork speckles
+  tile(0, 3, (ox, oy) => {
+    ctx.fillStyle = "rgba(55,224,255,0.05)";
+    for (let i = 0; i < 140; i++) ctx.fillRect(ox + ((i * 83) % T), oy + ((i * 113 + (i * i) % 41) % T), 3, 2);
+  });
+  // laminate: crisp modern planks
+  tile(1, 3, (ox, oy) => {
+    for (let i = 0; i < 6; i++) {
+      const y = oy + (i * T) / 6 + 0.75;
+      line(ox, y, ox + T, y, 0.08);
+      const j = ox + ((i * 0.61) % 1) * T;
+      line(j, y, j, y + T / 6, 0.06);
+    }
+  });
+  // linoleum: smooth sheet with subtle seam
+  tile(2, 3, (ox, oy) => {
+    line(ox + T / 2, oy, ox + T / 2, oy + T, 0.04);
+  });
+  // parquet: classic 4-square basketweave
+  tile(3, 3, (ox, oy) => {
+    const h = T / 2;
+    line(ox + h, oy, ox + h, oy + T, 0.09);
+    line(ox, oy + h, ox + T, oy + h, 0.09);
+    for (let i = 1; i < 4; i++) {
+      line(ox + (i * h) / 4, oy, ox + (i * h) / 4, oy + h, 0.05);
+      line(ox + h, oy + (i * h) / 4, ox + T, oy + (i * h) / 4, 0.05);
+      line(ox + h + (i * h) / 4, oy + h, ox + h + (i * h) / 4, oy + T, 0.05);
+      line(ox, oy + h + (i * h) / 4, ox + h, oy + h + (i * h) / 4, 0.05);
+    }
   });
   const tex = new CanvasTexture(canvas);
   tex.flipY = false;

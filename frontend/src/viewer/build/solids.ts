@@ -3,7 +3,7 @@
 import type { Wall } from "../../geometry/walls.ts";
 import { DEFAULT_PAINT_INSIDE, DEFAULT_PAINT_OUTSIDE, pointInPolygon, roomOffset, type BuildingSettings, type Floor, type Vec2 } from "../../model.ts";
 import { CAP_OFFSET, LOWER_OFFSET, PAINT_OFFSET, pushPrism, type GeoBuffer } from "../geo.ts";
-import { NEON, SLAB } from "./look.ts";
+import { NEON, SLAB, WALL_MATERIAL_INDEX } from "./look.ts";
 import { clipAlong, unit } from "./outline.ts";
 import { glassJoins } from "./glass-joins.ts";
 import { wallBottomAt, wallTops, type roofLimits } from "./placement.ts";
@@ -42,17 +42,47 @@ export function wallPaintOf(settings: Pick<BuildingSettings, "wall_paint_outside
 /** The top of a painted wall, where it is cut or ends: a plain light grey, like plaster seen in section. */
 const PAINT_TOP = 0xd9d5cd;
 
+/** Wall material for each side: outside, inside, and rooms with a material of their own. */
+export interface WallMaterial {
+  outside: number;
+  inside: number;
+  rooms: { points: Vec2[]; index: number }[];
+}
+
+const matIndex = (name: string | null | undefined, fallback = 0): number => (name && name in WALL_MATERIAL_INDEX ? WALL_MATERIAL_INDEX[name] : fallback);
+
+export function wallMaterialOf(
+  settings: Pick<BuildingSettings, "wall_material_outside" | "wall_material_inside">,
+  floor: { rooms: readonly { points: Vec2[]; wall_material?: string | null }[]; wall_material_outside?: string | null },
+): WallMaterial {
+  return {
+    outside: matIndex(floor.wall_material_outside ?? settings.wall_material_outside, 0),
+    inside: matIndex(settings.wall_material_inside, 0),
+    rooms: floor.rooms.filter((r) => r.wall_material && r.points.length >= 3).map((r) => ({ points: r.points, index: matIndex(r.wall_material, 0) })),
+  };
+}
+
+function sideTarget(poly: Vec2[], a: Vec2, b: Vec2): Vec2 {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  const m: Vec2 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  let n: Vec2 = [(b[1] - a[1]) / len, -(b[0] - a[0]) / len];
+  if (pointInPolygon([m[0] + n[0] * 0.01, m[1] + n[1] * 0.01], poly)) n = [-n[0], -n[1]];
+  return [m[0] + n[0] * 0.06, m[1] + n[1] * 0.06];
+}
+
+export function materialOfSide(poly: Vec2[], a: Vec2, b: Vec2, mat: WallMaterial, rooms: { points: Vec2[] }[]): [number, number] {
+  const front = sideTarget(poly, a, b);
+  const own = mat.rooms.find((r) => pointInPolygon(front, r.points));
+  if (own) return [own.index, 0];
+  return [rooms.some((r) => r.points.length >= 3 && pointInPolygon(front, r.points)) ? mat.inside : mat.outside, 0];
+}
+
 /**
  * The paint of one side face of a wall: the colour of the room in front of it, the inside colour when a room without one
  * of its own is there, the outside colour when no room is.
  */
 export function paintOfSide(poly: Vec2[], a: Vec2, b: Vec2, paint: WallPaint, rooms: { points: Vec2[] }[]): number {
-  const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
-  const m: Vec2 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-  let n: Vec2 = [(b[1] - a[1]) / len, -(b[0] - a[0]) / len];
-  // the normal that points away from the wall body
-  if (pointInPolygon([m[0] + n[0] * 0.01, m[1] + n[1] * 0.01], poly)) n = [-n[0], -n[1]];
-  const front: Vec2 = [m[0] + n[0] * 0.06, m[1] + n[1] * 0.06];
+  const front = sideTarget(poly, a, b);
   const own = paint.rooms.find((r) => pointInPolygon(front, r.points));
   if (own) return own.color;
   return rooms.some((r) => r.points.length >= 3 && pointInPolygon(front, r.points)) ? paint.inside : paint.outside;
@@ -92,10 +122,13 @@ export function buildWallSolids(
   hasRoof: boolean,
   /** Painted walls (solid wall view): each face in its colour, and marked so every look keeps that colour. */
   paint?: WallPaint,
+  /** Wall materials per face (realistic / natural looks). */
+  wallMat?: WallMaterial,
 ): void {
   const cut = Math.min(floor.cut_height, floor.height);
   const offset = paint ? PAINT_OFFSET : 0;
   const sideColor = paint ? (poly: Vec2[]) => (a: Vec2, b: Vec2) => paintOfSide(poly, a, b, paint, floor.rooms) : null;
+  const sideTile = wallMat ? (poly: Vec2[]) => (a: Vec2, b: Vec2) => materialOfSide(poly, a, b, wallMat, floor.rooms) : null;
   const top = paint ? PAINT_TOP : NEON.wallTop;
   // the two wall ends at an internal join of one pane are not a jamb: without this, a full-height wall
   // face stays there, which reads as a frame across the glass
@@ -181,10 +214,10 @@ export function buildWallSolids(
           // the top face at the cut height is only seen while the wall is cut
           const topFold = y1 > cut + 1e-6 ? CAP_OFFSET + bucket : LOWER_OFFSET + bucket;
           const capped = sloped && roofTop < cut ? (x: number, z: number) => Math.min(cut, topOf(x, z)) : Math.min(y1, cut);
-          pushPrism(buf, poly, foot, capped, NEON.wall, top, { aoFrom: 0, bottom: lintel, fold: offset + LOWER_OFFSET + bucket, topFold: offset + topFold, skipSide, sideColor: sideColor?.(poly) });
+          pushPrism(buf, poly, foot, capped, NEON.wall, top, { aoFrom: 0, bottom: lintel, fold: offset + LOWER_OFFSET + bucket, topFold: offset + topFold, skipSide, sideColor: sideColor?.(poly), sideTile: sideTile?.(poly) });
         }
         if (y1 > cut + 1e-6 && roofTop > cut + 1e-6) {
-          pushPrism(buf, poly, footAbove(cut), sloped ? topOf : y1, NEON.wall, top, { aoFrom: 0, fold: offset + bucket, bottom: lintel && low >= cut, skipSide, sideColor: sideColor?.(poly) });
+          pushPrism(buf, poly, footAbove(cut), sloped ? topOf : y1, NEON.wall, top, { aoFrom: 0, fold: offset + bucket, bottom: lintel && low >= cut, skipSide, sideColor: sideColor?.(poly), sideTile: sideTile?.(poly) });
         }
       }
     }

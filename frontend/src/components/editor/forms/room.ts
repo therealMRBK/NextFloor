@@ -2,7 +2,7 @@
 
 import { html, nothing, type TemplateResult } from "lit";
 import { formatNumber, type I18nKey } from "../../../i18n.ts";
-import { bounds, DEFAULT_PAINT_INSIDE, FLOOR_MATERIALS, isAxisRect, polygonArea, type Floor, type FurnitureType, type Room } from "../../../model.ts";
+import { bounds, DEFAULT_PAINT_INSIDE, FLOOR_MATERIALS, WALL_MATERIALS, isAxisRect, polygonArea, type Floor, type FurnitureType, type Room } from "../../../model.ts";
 import { PACKAGES, type PackageId } from "../../../packages.ts";
 import { entityOptions } from "../entities.ts";
 import { checkField, colorField, entityField, hint, numberField, selectField, textField } from "../fields.ts";
@@ -153,6 +153,7 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
   const walls = host.floor ? generateWalls(host.floor.rooms, wallOptions(host.doc.settings), host.floor.walls ?? []).walls : [];
   const inner = host.floor ? innerSize(room, walls) : null;
   const materials = FLOOR_MATERIALS.map((m): [string, string] => [m, t(`mat_${m}` as I18nKey)]);
+  const wallMaterials: [string, string][] = [["", t("wall_material_default")], ...WALL_MATERIALS.map((m): [string, string] => [m, t(`wmat_${m}` as I18nKey)])];
   const packageButton = (pkg: PackageId) =>
     html`<button class="nf-btn" @click=${() => actions.applyPackage(pkg)}><b>${t(`pkg_${pkg}` as I18nKey)}</b><span>${t(`pkg_${pkg}_desc` as I18nKey)}</span></button>`;
   return html`<section>
@@ -165,6 +166,7 @@ export function renderRoomForm(host: EditorHost, state: SideState, room: Room, a
         ? selectField(host, t("sub_area_add"), "", areaChoices.filter(([id]) => id !== room.area_id && !(room.sub_areas ?? []).includes(id)), (id) => id && actions.patch({ sub_areas: [...(room.sub_areas ?? []), id] }), { wide: true, title: t("sub_area_hint") })
         : nothing}
       ${selectField(host, t("material"), room.floor_material, materials, (floor_material) => actions.patch({ floor_material }), { wide: true })}
+      ${selectField(host, t("wall_material_room"), room.wall_material ?? "", wallMaterials, (v) => actions.patch({ wall_material: v || null }), { wide: true })}
       ${colorField(host, t("wall_paint_room"), room.wall_paint, host.doc.settings.wall_paint_inside ?? DEFAULT_PAINT_INSIDE, (wall_paint) => actions.patch({ wall_paint }))}
       ${host.floor ? ceilingField(host, room, host.floor, actions) : nothing}
       ${numberField(host, t("room_floor_offset"), room.floor_offset ?? 0, (v) => actions.patch({ floor_offset: Math.abs(v) < 0.005 ? null : Math.max(-2, Math.min(2, Math.round(v * 1000) / 1000)) }), 0.01)}

@@ -40,6 +40,7 @@ ANNOUNCE_SCHEMA = vol.Schema(
         vol.Optional("screens"): vol.All(cv.ensure_list, [cv.string]),
         # a text-to-speech entity instead of the one chosen in the plan (or the first one)
         vol.Optional("tts_entity"): cv.entity_id,
+        vol.Optional("volume"): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=1.0)),
     }
 )
 
@@ -208,8 +209,15 @@ def _tts_entity(hass: HomeAssistant, building: dict[str, Any], wanted: str | Non
     return entities[0] if entities else None
 
 
-async def _speak(hass: HomeAssistant, speaker: str, message: str, tts: str | None) -> str:
+async def _speak(hass: HomeAssistant, speaker: str, message: str, tts: str | None, volume: float | None = None) -> str:
     """Say the message on one speaker; returns how (for the response). Raises NoSpeech when it needs text-to-speech."""
+    if volume is not None and speaker.startswith("media_player."):
+        try:
+            await hass.services.async_call(
+                "media_player", "volume_set", {"entity_id": speaker, "volume_level": volume}, blocking=True
+            )
+        except Exception as err:
+            _LOGGER.debug("Could not set volume on %s: %s", speaker, err)
     if speaker.startswith("assist_satellite."):
         await hass.services.async_call(
             "assist_satellite", "announce", {"entity_id": speaker, "message": message}, blocking=True
@@ -276,6 +284,12 @@ async def async_announce(hass: HomeAssistant, building: dict[str, Any], data: di
     """Speak an announcement on the rooms' speakers and send it to the NextFloor screens."""
     message: str = data["message"]
     tts = _tts_entity(hass, building, data.get("tts_entity"))
+    raw_vol = data.get("volume")
+    if raw_vol is None:
+        cfg_vol = (building.get("settings") or {}).get("announce_volume")
+        if isinstance(cfg_vol, (int, float)):
+            raw_vol = max(0.0, min(1.0, float(cfg_vol) / 100.0))
+    volume: float | None = max(0.0, min(1.0, float(raw_vol))) if raw_vol is not None else None
     spoken: dict[str, str] = {}
     skipped: dict[str, str] = {}
     if data.get("on_speakers", True):
@@ -299,7 +313,7 @@ async def async_announce(hass: HomeAssistant, building: dict[str, Any], data: di
                 continue
             done.add(speaker)
             try:
-                spoken[speaker] = await _speak(hass, speaker, message, tts)
+                spoken[speaker] = await _speak(hass, speaker, message, tts, volume)
             except NoSpeech:
                 skipped[name] = "no_tts"
             except Exception as err:  # one speaker failing must not stop the others
@@ -312,6 +326,7 @@ async def async_announce(hass: HomeAssistant, building: dict[str, Any], data: di
             "message": message,
             "screens": data.get("screens") or [],
             "audio": audio,
+            "volume": volume,
             "time": dt_util.utcnow().isoformat(),
         }
         async_dispatcher_send(hass, SIGNAL_ANNOUNCE, payload)
