@@ -167,8 +167,8 @@ export class PackManager extends LitElement {
   }
 
   protected render() {
-    const own = (this.packs ?? []).filter((p) => !p.builtin || p.publisher === "Davvarn" || p.id === "nextfloor.davvarn");
-    const builtin = (this.packs ?? []).filter((p) => p.builtin).length;
+    const own = (this.packs ?? []).filter((p) => !p.builtin);
+    const builtin = (this.packs ?? []).length - own.length;
     const language = this.hass?.language ?? "de";
     return html`<section class="nf-packs">
       <h3>${this.t("packs_title")}</h3>
