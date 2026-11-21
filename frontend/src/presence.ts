@@ -6,17 +6,10 @@ import { readPower } from "./energy.ts";
 import { formatNumber, translate } from "./i18n.ts";
 import { centroid, type Building, type Floor, type Room } from "./model.ts";
 import type { HomeAssistant } from "./types.ts";
+import type { PersonPin } from "./viewer/scene/types.ts";
 
-export interface PersonMarker {
-  id: string;
-  name: string;
-  initials: string;
-  picture: string | null;
-  floorId: string;
-  roomId: string;
-  x: number;
-  z: number;
-}
+/** A person's pin: the same shape the 3D viewer draws. */
+export type PersonMarker = PersonPin;
 
 /** Spelling-insensitive form of a room name: underscores and dashes read as spaces. */
 const canonical = (text: string) => text.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();

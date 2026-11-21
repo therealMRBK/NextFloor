@@ -239,3 +239,19 @@ test("a nudge moves, turns and scales the whole map by hand", () => {
   assert.deepEqual([grown.a, grown.b], [[-1, 0], [5, 0]]);
   assert.deepEqual(grown.ga, cal.ga);
 });
+
+test("a tracker with the robot's map coordinates in millimetres is a position source on its own (#210)", () => {
+  const tracker = entity("device_tracker.roomba", "kitchen", { map_x_mm: 5000, map_y_mm: 2000 });
+  const hass = hassOf([entity("camera.a", "idle"), tracker]);
+  assert.equal(mapCamera(hass), "device_tracker.roomba");
+  // a camera with a map wins over a tracker
+  assert.equal(mapCamera(hassOf([tracker, entity("camera.map", "idle", { vacuum_position: { x: 1, y: 2, a: 0 } })])), "camera.map");
+  // 1 m of plan over 1000 grid units (mm): the robot at 5000 / 2000 stands at 5 m / 2 m
+  const cal: VacuumCalibration = { a: [0, 0], ga: [0, 0], b: [10, 0], gb: [10000, 0] };
+  const live = readVacuum(hass, "device_tracker.roomba", cal)!;
+  assert.deepEqual(pair2([live.pose!.x, live.pose!.z]), [5, 2]);
+  // it moves when only one coordinate changes, whatever the room says
+  const moved = readVacuum(hassOf([entity("device_tracker.roomba", "kitchen", { map_x_mm: 5000, map_y_mm: 2400 })]), "device_tracker.roomba", cal)!;
+  assert.deepEqual(pair2([moved.pose!.x, moved.pose!.z]), [5, 2.4]);
+  assert.deepEqual(gridPlaces(hass, "device_tracker.roomba").at, [5000, 2000]);
+});

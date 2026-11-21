@@ -33,6 +33,8 @@ export interface DevicePrefs {
   keepCamera: boolean;
   /** Easy to read: stronger contrast and larger text for wall tablets. */
   readable: boolean;
+  /** View only: nothing the view does reaches Home Assistant (no switching by an accidental touch). */
+  viewOnly: boolean;
   /** Only the floor plan: walls, doors, windows and stairs without furniture (devices and pins stay). */
   plain: boolean;
   /** A short right click goes one step back (like a double tap on empty space). */
@@ -95,6 +97,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   menuOpen: flag("menu_open", false),
   keepCamera: flag("keep_camera", false),
   readable: flag("readable", false),
+  viewOnly: flag("view_only", false),
   plain: flag("plain", false),
   rightBack: flag("right_back", false),
   zoom: {

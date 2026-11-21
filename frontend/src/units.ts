@@ -11,7 +11,6 @@ let current: Units = "metric";
 export const setUnits = (units: Units | null | undefined): void => {
   current = units === "imperial" ? "imperial" : "metric";
 };
-export const getUnits = (): Units => current;
 
 const FOOT = 0.3048;
 

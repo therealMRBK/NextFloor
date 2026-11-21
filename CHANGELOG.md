@@ -4,6 +4,35 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.32.0]
+
+### Added
+
+- **A list of a room's objects in the editor** (thanks @Noack1978, #180): select a room and its form lists every piece of furniture, lamp and device standing in it, with a ⚡ for linked ones and a 🔒 for fixed ones. A click selects the item exactly like a click in the plan, which finally reaches small and covered pieces.
+- **A three-quarter turn staircase** (thanks @gimmel, #157): the stair tool has a new shape, *Dreiviertelgewendelt*, with flights along three sides and winders in the two corners.
+- **Free outdoor corners** (thanks @michaelltaylor, #160): hold Shift while dragging a corner of a rectangular outdoor area and only that corner moves, so the area becomes a free shape that lines up with walls and other areas.
+- **View only** (thanks @tfischer84, #156): a new switch in the panel's view options and on the card (`view_only: true`) shows everything but sends nothing to Home Assistant, so a touch on a wall tablet can no longer switch things by accident. Home Assistant's own details dialog stays usable.
+- **Thermostats show their wish** (thanks @Jkazama6, #205): the marker of a radiator or thermostat reads "19,4 °C → 19 °C" with a flame while it heats and a snowflake while it cools.
+- **Roomba+ position tracking** (thanks @cwar36, #210): a `device_tracker` with `map_x_mm` and `map_y_mm` attributes is found as the position source of a robot vacuum and moves it whenever either coordinate changes. The usual two-place calibration ties it to the plan.
+
+
+## [0.31.5]
+
+### Fixed
+
+- **The 3D view starts even where the browser blocks local storage** (private mode, blocked site data): it used to fail on start, now it uses its defaults.
+
+### Changed
+
+- **Buttons answer your touch at once.** Chips, switches, buttons and the round buttons in the 3D view dip a little while pressed and spring back, there is no tap delay on touch screens and no grey tap flash.
+- **No more "stuck" hover on touch screens.** Hover highlights only appear with a real mouse, so a tapped button on a wall tablet no longer stays lit.
+- **A calmer type scale and corner radii.** The half-pixel text sizes (11.5, 12.5, 13.5 px) now sit on whole sizes, a few stray corner radii snap to the common ones, headings wrap evenly, and selected text uses your accent colour.
+- **The room panel's info line wraps between facts, never inside one,** and the editor's "move floor" row groups its fields and buttons cleanly instead of breaking at random.
+- **The room panel eases in** with a short fade and rise instead of popping up, and the other looping or entering animations (charging pulse, the "found" pulse, the context menu, the editor preview) stand still when the device asks for reduced motion.
+- **The on/off switches in the room panel** fade their colour, slide with a stronger ease and a soft knob shadow, and the icon buttons in the editor, header, card and live cards dip when pressed.
+- **Touch screens get 40 px buttons** for the shared chips, switches and buttons. The press effects and the entrance animation are switched off when the device asks for reduced motion.
+- **Under the hood:** the 3D viewer's shared types now live in one place, a few unused definitions and one duplicated style rule are gone.
+
 ## [0.31.4.10]
 
 ### Fixed

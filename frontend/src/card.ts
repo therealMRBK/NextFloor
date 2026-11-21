@@ -17,6 +17,7 @@ import { withTemplate, type CardTemplates } from "./card-template.ts";
 import type { Building } from "./model.ts";
 import { roomsOnly } from "./rooms-only.ts";
 import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { controlHass } from "./view-only.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
 import { lookNow } from "./themes.ts";
@@ -336,7 +337,7 @@ export class NextFloorCard extends LitElement {
     };
     const eye = c?.controls_hidden !== undefined || (c?.controls_hide_after ?? 0) > 0;
     return html`<nf-view3d
-      .hass=${this.hass}
+      .hass=${controlHass(this.hass, c?.view_only === true)}
       .building=${b}
       .packs=${this.data.packs}
       .floorId=${s.floorId}
@@ -423,7 +424,7 @@ export class NextFloorCard extends LitElement {
     return html`<nf-room-panel
             .building=${this.plan() ?? null}
       class="nf-card-panel"
-      .hass=${this.hass}
+      .hass=${controlHass(this.hass, this._config?.view_only === true)}
       .room=${b.floors.flatMap((f) => f.rooms).find((r) => r.id === this._roomId) ?? null}
       .floor=${b.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
       .outside=${this._roomId === OUTSIDE ? outsideEntities(this.hass, b.floors) : null}

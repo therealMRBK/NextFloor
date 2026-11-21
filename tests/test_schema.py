@@ -134,6 +134,11 @@ def test_shaped_stair_round_trips() -> None:
     assert "stair" not in FURNITURE_SCHEMA(STAIRS)
 
 
+def test_every_stair_shape_of_the_editor_is_accepted() -> None:
+    for shape in ("straight", "quarter", "l", "half", "u", "spiral", "three_quarter"):
+        assert FURNITURE_SCHEMA({**STAIRS, "stair": {"shape": shape}})["stair"]["shape"] == shape
+
+
 def test_shaped_stair_rejects_unknown_shapes() -> None:
     for bad in ({"shape": "zigzag"}, {"steps": 99}, {"rail": "middle"}, {"build": "rope"}, {"opening": "wide"}):
         with pytest.raises(vol.Invalid):

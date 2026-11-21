@@ -199,7 +199,7 @@ export class EntityPicker extends LitElement {
         padding: 6px 8px;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 13.5px;
+        font-size: 14px;
       }
       li small {
         color: var(--nf-muted);

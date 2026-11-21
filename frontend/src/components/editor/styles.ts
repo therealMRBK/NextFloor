@@ -112,7 +112,7 @@ export const editorStyles = css`
   }
   .nf-warn {
     color: var(--nf-warm);
-    font-size: 12.5px;
+    font-size: 13px;
   }
   .nf-picture-group {
     display: grid;
@@ -170,8 +170,10 @@ export const editorStyles = css`
     max-width: 60px;
     object-fit: contain;
   }
-  .nf-picture-reuse-btn:hover {
-    border-color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-picture-reuse-btn:hover {
+      border-color: var(--nf-accent);
+    }
   }
   .nf-picture-thumb {
     max-height: 60px;
@@ -211,8 +213,10 @@ export const editorStyles = css`
     background: var(--nf-line);
     touch-action: none;
   }
-  .nf-split-handle:hover {
-    background: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-split-handle:hover {
+      background: var(--nf-accent);
+    }
   }
   .nf-editor-3d {
     position: relative;
@@ -320,8 +324,10 @@ export const editorStyles = css`
     stroke-linejoin: round;
     cursor: pointer;
   }
-  .nf-room:hover {
-    fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-room:hover {
+      fill: color-mix(in srgb, var(--nf-accent) 9%, transparent);
+    }
   }
   .nf-room-sel {
     fill: color-mix(in srgb, var(--nf-accent) 14%, transparent);
@@ -474,7 +480,7 @@ export const editorStyles = css`
   .nf-keys kbd {
     display: inline-block;
     padding: 1px 6px;
-    border-radius: 5px;
+    border-radius: 6px;
     border: 1px solid var(--nf-line);
     font: 600 12px var(--nf-font);
   }
@@ -529,7 +535,7 @@ export const editorStyles = css`
   h3,
   summary {
     margin: 0 0 8px;
-    font-size: 11.5px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--nf-muted);
@@ -738,8 +744,10 @@ export const editorStyles = css`
     cursor: pointer;
     text-align: left;
   }
-  .nf-row:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-row:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-check {
     display: flex;
@@ -1236,8 +1244,10 @@ export const editorStyles = css`
     text-decoration: none;
     cursor: pointer;
   }
-  .nf-checklist .nf-chk:hover {
-    background: rgba(127, 127, 127, 0.12);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-checklist .nf-chk:hover {
+      background: rgba(127, 127, 127, 0.12);
+    }
   }
   .nf-checklist .nf-chk span {
     width: 18px;
@@ -1477,8 +1487,10 @@ export const editorStyles = css`
     text-align: left;
     cursor: pointer;
   }
-  .nf-ctx button:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-ctx button:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--nf-accent) 16%, transparent);
+    }
   }
   .nf-ctx button:disabled {
     opacity: 0.45;
@@ -1541,6 +1553,11 @@ export const editorStyles = css`
     text-align: center;
     pointer-events: none;
     animation: nf-pop 120ms ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-preview {
+      animation: none;
+    }
   }
   @keyframes nf-pop {
     from {
@@ -1617,6 +1634,9 @@ export const editorStyles = css`
   .nf-shift input {
     width: 5.5em;
   }
+  .nf-shift > span {
+    flex: 0 0 100%;
+  }
   .nf-headroom {
     stroke: rgba(255, 214, 90, 0.55);
     stroke-width: 1;
@@ -1692,8 +1712,10 @@ export const editorStyles = css`
     cursor: pointer;
     text-align: left;
   }
-  .nf-lib-toggle:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-lib-toggle:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-lib-caret {
     width: 12px;
@@ -1832,8 +1854,10 @@ export const editorStyles = css`
     padding: 2px 26px 8px;
     cursor: pointer;
   }
-  .nf-more:hover {
-    color: var(--nf-accent);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-more:hover {
+      color: var(--nf-accent);
+    }
   }
   .nf-dev-hidden .nf-dev-name {
     opacity: 0.45;
@@ -1861,8 +1885,10 @@ export const editorStyles = css`
     align-items: center;
     cursor: default;
   }
-  .nf-dev-row:hover {
-    color: var(--nf-text);
+  @media (hover: hover) and (pointer: fine) {
+    .nf-dev-row:hover {
+      color: var(--nf-text);
+    }
   }
   .nf-dev-name {
     display: inline-flex;
@@ -2002,12 +2028,45 @@ export const editorStyles = css`
   }
   .nf-sub {
     margin: 8px 0 0;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-muted);
   }
   .nf-note {
     margin: 0;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--nf-warm);
+  }
+  .nf-strip-btn,
+  .nf-picture-reuse-btn,
+  .nf-keys-open,
+  .nf-card-star,
+  .nf-chip-x,
+  .nf-swatch,
+  .nf-lib-toggle,
+  .nf-more {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nf-strip-btn:active,
+  .nf-picture-reuse-btn:active,
+  .nf-keys-open:active,
+  .nf-card-star:active,
+  .nf-chip-x:active,
+  .nf-swatch:active,
+  .nf-lib-toggle:active,
+  .nf-more:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-strip-btn:active,
+    .nf-picture-reuse-btn:active,
+    .nf-keys-open:active,
+    .nf-card-star:active,
+    .nf-chip-x:active,
+    .nf-swatch:active,
+    .nf-lib-toggle:active,
+    .nf-more:active {
+      transform: none;
+    }
   }
 `;

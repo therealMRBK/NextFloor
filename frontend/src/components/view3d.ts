@@ -77,6 +77,14 @@ const LOCK_KEY = "nextfloor.lock3d";
 
 
 /** Below this stage height (px) the floor pictures get small and stop above the buttons at the bottom. */
+/** A value of the browser's storage; null where it is blocked (private mode), so the view still starts. */
+function storedValue(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
 const SHORT_STAGE = 520;
 const TINY_STAGE = 260;
 
@@ -469,9 +477,9 @@ export class NfView3d extends LitElement {
     this.flows = null;
     this._liveEnergy = null;
     this._liveCards = [];
-    this._liveCardOn = localStorage.getItem("nextfloor.cards") !== "0";
-    this._houseFolded = localStorage.getItem("nextfloor.house_card_folded") === "1";
-    this._carsFolded = localStorage.getItem("nextfloor.car_card_folded") === "1";
+    this._liveCardOn = storedValue("nextfloor.cards") !== "0";
+    this._houseFolded = storedValue("nextfloor.house_card_folded") === "1";
+    this._carsFolded = storedValue("nextfloor.car_card_folded") === "1";
     this.selectedFurniture = null;
     this.selectedDevice = null;
     this._sky = 0;
@@ -3124,6 +3132,11 @@ export class NfView3d extends LitElement {
           animation: none;
         }
       }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-dev-found {
+          animation: none;
+        }
+      }
       .nf-stage {
         position: absolute;
         inset: 0;
@@ -3459,36 +3472,57 @@ export class NfView3d extends LitElement {
       .nf-thumbs-small .nf-thumb {
         width: 104px;
       }
-      .nf-find-btn {
+      .nf-thumb,
+      .nf-find-btn,
+      .nf-central-btn,
+      .nf-walk-btn,
+      .nf-eye,
+      .nf-lock3d,
+      .nf-flow-toggle {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .nf-thumb:active,
+      .nf-find-btn:active,
+      .nf-central-btn:active,
+      .nf-walk-btn:active,
+      .nf-eye:active,
+      .nf-lock3d:active,
+      .nf-flow-toggle:active {
+        transform: scale(0.96);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nf-thumb:active,
+        .nf-find-btn:active,
+        .nf-central-btn:active,
+        .nf-walk-btn:active,
+        .nf-eye:active,
+        .nf-lock3d:active,
+        .nf-flow-toggle:active {
+          transform: none;
+        }
+      }
+      .nf-find-btn,
+      .nf-central-btn {
         position: absolute;
         left: 12px;
-        bottom: calc(10px + var(--nf-bottom-inset, 0px));
         width: 40px;
         height: 40px;
         display: grid;
         place-items: center;
         border: 0;
-        border-radius: 13px;
+        border-radius: 12px;
         background: var(--nf-chrome);
         color: var(--nf-text);
         box-shadow: var(--nf-shadow);
         cursor: pointer;
       }
+      .nf-find-btn {
+        bottom: calc(10px + var(--nf-bottom-inset, 0px));
+      }
       /* the star sits above the search button, its menu opens above it */
       .nf-central-btn {
-        position: absolute;
-        left: 12px;
         bottom: calc(56px + var(--nf-bottom-inset, 0px));
-        width: 40px;
-        height: 40px;
-        display: grid;
-        place-items: center;
-        border: 0;
-        border-radius: 13px;
-        background: var(--nf-chrome);
-        color: var(--nf-text);
-        box-shadow: var(--nf-shadow);
-        cursor: pointer;
         z-index: 3;
       }
       .nf-central-on {
@@ -3998,9 +4032,11 @@ export class NfView3d extends LitElement {
         top: calc(12px + env(safe-area-inset-top, 0px));
         opacity: 0.55;
       }
-      .nf-eye:hover,
-      .nf-eye-clean:hover {
-        opacity: 1;
+      @media (hover: hover) and (pointer: fine) {
+        .nf-eye:hover,
+        .nf-eye-clean:hover {
+          opacity: 1;
+        }
       }
       .nf-find {
         position: absolute;
@@ -4119,7 +4155,7 @@ export class NfView3d extends LitElement {
         position: relative;
         width: 10px;
         height: 44px;
-        border-radius: 5px;
+        border-radius: 6px;
         background: rgba(127, 127, 127, 0.25);
         overflow: hidden;
       }
@@ -4157,8 +4193,10 @@ export class NfView3d extends LitElement {
         text-align: left;
         cursor: pointer;
       }
-      .nf-plate-menu button:hover {
-        background: rgba(127, 127, 127, 0.14);
+      @media (hover: hover) and (pointer: fine) {
+        .nf-plate-menu button:hover {
+          background: rgba(127, 127, 127, 0.14);
+        }
       }
       .nf-plate-menu button.on b {
         background: var(--nf-accent, #37e0ff);
@@ -4591,7 +4629,7 @@ export class NfView3d extends LitElement {
         position: absolute;
         right: 10px;
         bottom: calc(8px + var(--nf-bottom-inset, 0px));
-        font-size: 11.5px;
+        font-size: 12px;
         color: var(--nf-muted);
         font-variant-numeric: tabular-nums;
         pointer-events: none;

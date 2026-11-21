@@ -11,9 +11,8 @@ export const MAX_DIFF = 40;
 /** Above this distance (RMS in dB) no room is a good match. */
 export const UNKNOWN_DISTANCE = 18;
 
-/** How long a room is recorded, how often it is sampled, and into how many spots the samples are split. */
+/** How long a room is recorded, and into how many spots the samples are split. */
 export const RECORD_SECONDS = 30;
-export const SAMPLE_EVERY_MS = 1500;
 export const SPOTS_PER_ROOM = 3;
 
 export function distance(a: Reading, b: Reading): number {

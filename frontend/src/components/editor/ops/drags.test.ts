@@ -51,3 +51,8 @@ test("dragging a corner of a rectangular area drags its neighbours along one axi
   const triangle: [number, number][] = [[0, 0], [4, 0], [0, 3]];
   assert.deepEqual(outlineWithCornerAt(triangle, 1, [6, 1]), [[0, 0], [6, 1], [0, 3]]);
 });
+
+test("with free set only the dragged corner of a rectangle moves, so it becomes a free shape (#160)", () => {
+  const rect: [number, number][] = [[0, 0], [4, 0], [4, 2], [0, 2]];
+  assert.deepEqual(outlineWithCornerAt(rect, 2, [5, 3], true), [[0, 0], [4, 0], [5, 3], [0, 2]]);
+});

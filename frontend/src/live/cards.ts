@@ -348,7 +348,7 @@ export const liveCardStyles = css`
     .live-card {
       gap: 8px;
       padding: 8px 10px;
-      font-size: 11.5px;
+      font-size: 12px;
     }
     .live-card-house:not(.live-folded) {
       padding-right: 28px;
@@ -376,7 +376,7 @@ export const liveCardStyles = css`
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--nf-text);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.35;
     white-space: nowrap;
     will-change: transform;
@@ -568,6 +568,11 @@ export const liveCardStyles = css`
   .live-card-car.live-charging {
     animation: live-charge 1.6s ease-in-out infinite;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .live-card-car.live-charging {
+      animation: none;
+    }
+  }
   @keyframes live-charge {
     50% {
       box-shadow: 0 0 34px color-mix(in srgb, var(--live-soc) 55%, transparent), inset 0 0 18px rgba(120, 200, 255, 0.1);
@@ -655,5 +660,20 @@ export const liveCardStyles = css`
     opacity: 0.75;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+  .live-fold,
+  .live-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .live-fold:active,
+  .live-btn:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-fold:active,
+    .live-btn:active {
+      transform: none;
+    }
   }
 `;

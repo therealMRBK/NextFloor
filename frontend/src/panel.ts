@@ -19,6 +19,7 @@ import { NEXTFLOOR_MARK } from "./panel/mark.ts";
 import { browserStorage, PrefStore, type DevicePrefs } from "./panel/prefs.ts";
 import { panelStyles } from "./panel/styles.ts";
 import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { controlHass } from "./view-only.ts";
 import { LOOKS, THEMES, lookNow, type Look, type Theme } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
 import { allOffPlan, floorSwitchables, type ServiceCall } from "./live/all-off.ts";
@@ -372,6 +373,7 @@ export class NextFloorPanel extends LitElement {
           <button aria-pressed=${p.rightBack} title=${this.t("right_back_hint")} @click=${() => this.setPref("rightBack", !p.rightBack)}>${this.t("right_back")}</button>
           <button aria-pressed=${p.plain} title=${this.t("plain_hint")} @click=${() => this.setPref("plain", !p.plain)}>▭ ${this.t("plain")}</button>
           <button aria-pressed=${p.readable} title=${this.t("readable_hint")} @click=${() => this.setPref("readable", !p.readable)}>Aa ${this.t("readable")}</button>
+          <button aria-pressed=${p.viewOnly} title=${this.t("view_only_hint")} @click=${() => this.setPref("viewOnly", !p.viewOnly)}>👁 ${this.t("view_only")}</button>
           <button aria-pressed=${p.stats} title=${this.t("fps_title")} @click=${() => this.setPref("stats", !p.stats)}>${this.t("fps")}</button>
         </div>
       </div>`;
@@ -598,7 +600,7 @@ export class NextFloorPanel extends LitElement {
       <div class="nf-stage-wrap ${this._roomId ? "nf-room-open" : ""}">
         <nf-view3d
           class="nf-body"
-          .hass=${this.hass}
+          .hass=${controlHass(this.hass, p.viewOnly)}
           .building=${building}
           .packs=${this.data.packs}
           .floorStack=${p.floorStack}
@@ -650,7 +652,7 @@ export class NextFloorPanel extends LitElement {
           ? html`<nf-room-panel
             .building=${this.data.building ?? null}
               class="nf-room-panel"
-              .hass=${this.hass}
+              .hass=${controlHass(this.hass, p.viewOnly)}
               .room=${room}
               .floor=${building.floors.find((f) => f.rooms.some((r) => r.id === this._roomId)) ?? null}
               .confirmEntities=${confirmEntities(this.hass, building.floors)}
@@ -663,7 +665,7 @@ export class NextFloorPanel extends LitElement {
             ? html`<nf-room-panel
             .building=${this.data.building ?? null}
                 class="nf-room-panel"
-                .hass=${this.hass}
+                .hass=${controlHass(this.hass, p.viewOnly)}
                 .room=${null}
                 .outside=${this.outsideIds(building)}
                 .confirmEntities=${confirmEntities(this.hass, building.floors)}
