@@ -6,6 +6,7 @@ import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
 import { quickDockStyles, renderQuickDock } from "./quick-dock.ts";
 import { renderTabletSidebar, tabletSidebarStyles } from "./tablet-sidebar.ts";
+import { kioskExtrasStyles, loadCamBookmarks, renderCamBookmarks, renderPipCamera, renderScreensaver, saveCamBookmarks, type CameraBookmark } from "./kiosk-extras.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
@@ -137,6 +138,10 @@ export class NfView3d extends LitElement {
     _swipe: { state: true },
     _menu: { state: true },
     _quickGroup: { state: true },
+    _pipCamera: { state: true },
+    _pipTick: { state: true },
+    _screensaver: { state: true },
+    _camBookmarks: { state: true },
     _pluginWindow: { state: true },
     _plate: { state: true },
     _blend: { state: true },
@@ -282,6 +287,14 @@ export class NfView3d extends LitElement {
   /** Quick menu at a device (long press). */
   private declare _menu: { entity: string; x: number; y: number; car?: CarState } | null;
   private declare _quickGroup: string | null;
+  private declare _pipCamera: string | null;
+  private declare _pipTick: number;
+  private declare _screensaver: boolean;
+  private declare _camBookmarks: CameraBookmark[];
+  private pipCloseTimer: ReturnType<typeof setTimeout> | undefined;
+  private pipRefreshTimer: ReturnType<typeof setInterval> | undefined;
+  private lastPipTriggerState: string | undefined;
+  private lastActivity = Date.now();
   /** A window a plugin opened in the lower right corner (a camera's live picture). */
   private declare _pluginWindow: { node: Node; title: string } | null;
   /** Where each placed device stands, for plugins that handle its taps. */
@@ -491,6 +504,10 @@ export class NfView3d extends LitElement {
     this._swipe = null;
     this._menu = null;
     this._quickGroup = null;
+    this._pipCamera = null;
+    this._pipTick = 0;
+    this._screensaver = false;
+    this._camBookmarks = loadCamBookmarks();
     this._pluginWindow = null;
     this._plate = null;
     this._wallBig = null;
@@ -583,6 +600,10 @@ export class NfView3d extends LitElement {
     this.contactTimer = undefined;
     clearInterval(this.clockTimer);
     this.clockTimer = undefined;
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this.pipCloseTimer = undefined;
+    this.pipRefreshTimer = undefined;
     clearInterval(this.travelTimer);
     this.travelTimer = undefined;
     this.live = null;
@@ -597,10 +618,70 @@ export class NfView3d extends LitElement {
     this._now = Date.now();
     const ui = this.building?.settings.tablet_ui;
     const sidebarClock = (ui?.sidebar ?? "right") !== "off" && ui?.sidebar_clock !== false;
-    if (this.isConnected && (this.clock || sidebarClock)) {
-      const ms = sidebarClock && ui?.clock_seconds ? 1000 : 10000;
-      this.clockTimer = setInterval(() => (this._now = Date.now()), ms);
+    const ssMin = ui?.screensaver_minutes ?? 0;
+    if (this.isConnected && (this.clock || sidebarClock || ssMin > 0)) {
+      const ms = (sidebarClock || this._screensaver) && ui?.clock_seconds ? 1000 : 10000;
+      this.clockTimer = setInterval(() => {
+        this._now = Date.now();
+        if (ssMin > 0 && !this._screensaver && !this.furnish && Date.now() - this.lastActivity >= ssMin * 60_000) {
+          this._screensaver = true;
+        }
+      }, ms);
     }
+  }
+
+  private openPipCamera(cameraId: string, durationSec = 20): void {
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this._pipCamera = cameraId;
+    this._pipTick = Date.now();
+    this._screensaver = false;
+    this.lastActivity = Date.now();
+    this.pipRefreshTimer = setInterval(() => (this._pipTick = Date.now()), 2000);
+    this.pipCloseTimer = setTimeout(() => this.closePipCamera(), Math.max(5, Math.min(120, durationSec)) * 1000);
+  }
+
+  private closePipCamera(): void {
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this.pipCloseTimer = undefined;
+    this.pipRefreshTimer = undefined;
+    this._pipCamera = null;
+  }
+
+  private checkPipTrigger(): void {
+    const ui = this.building?.settings.tablet_ui;
+    const trig = ui?.pip_trigger;
+    const cam = ui?.pip_camera;
+    if (!trig || !cam || !this.hass?.states[trig]) return;
+    const st = this.hass.states[trig].state;
+    if (this.lastPipTriggerState === undefined) {
+      this.lastPipTriggerState = st;
+      return;
+    }
+    if (st !== this.lastPipTriggerState) {
+      const prev = this.lastPipTriggerState;
+      this.lastPipTriggerState = st;
+      const isPulse = trig.startsWith("button.") || trig.startsWith("input_button.") || trig.startsWith("event.");
+      if ((isPulse && prev !== "unknown") || st === "on" || st === "detected" || st === "open") {
+        this.openPipCamera(cam, ui?.pip_duration ?? 20);
+      }
+    }
+  }
+
+  private addCamBookmark(): void {
+    if (!this.viewer) return;
+    const name = prompt(translate(this.hass, "cam_bookmark_prompt"))?.trim();
+    if (!name) return;
+    const next: CameraBookmark[] = [...this._camBookmarks, { id: String(Date.now()), name: name.slice(0, 24), view: this.viewer.currentView() }].slice(0, 8);
+    this._camBookmarks = next;
+    saveCamBookmarks(next);
+  }
+
+  private removeCamBookmark(id: string): void {
+    const next = this._camBookmarks.filter((b) => b.id !== id);
+    this._camBookmarks = next;
+    saveCamBookmarks(next);
   }
 
   protected firstUpdated(): void {
@@ -725,6 +806,7 @@ export class NfView3d extends LitElement {
     if (changed.has("centralOpen") && this.centralOpen) this._central = true;
     // before the viewer exists: the card loads it late and `clock` does not change again, so the clock never ticked (#68)
     if (changed.has("clock") || changed.has("building")) this.syncClock();
+    if (changed.has("hass")) this.checkPipTrigger();
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture
@@ -2956,15 +3038,20 @@ export class NfView3d extends LitElement {
     const showWalk = !this.clean && ui?.show_walk !== false;
     const showDock = !this.furnish && ui?.show_quick_dock !== false;
     const showSide = !this.furnish && !this.roomId && !this.panelOpen;
+    const showCamBm = !this.furnish && !this.roomId && !this.panelOpen && ui?.show_cam_bookmarks !== false;
     const belowForecast = !this.clean && this.building?.settings.forecast?.corner === "top_right";
     return html`<div
       class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
+      @pointerdown=${() => (this.lastActivity = Date.now())}
     >
       ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${showLegend ? this.renderLegend() : nothing} ${this.renderMapCredit()}
       ${this.renderAlerts()} ${this.renderAnnouncement()} ${showCentral ? html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}` : nothing} ${this.renderSwipe()}
       ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${showWalk ? html`${this.renderLock()} ${this.renderWalk()}` : nothing} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
       ${showSide ? renderTabletSidebar(this.hass, this.building, ui, belowForecast) : nothing}
+      ${showCamBm ? renderCamBookmarks(this.hass, this._camBookmarks, !this.clean, (b) => this.viewer?.showView(b.view, 900), () => this.addCamBookmark(), (id) => this.removeCamBookmark(id)) : nothing}
+      ${renderPipCamera(this.hass, this._pipCamera, this._pipTick, () => this.closePipCamera(), (id) => { this.closePipCamera(); openMoreInfo(this, id); })}
+      ${this._screensaver ? renderScreensaver(this.hass, this.building, ui, () => { this._screensaver = false; this.lastActivity = Date.now(); }) : nothing}
       ${showDock ? renderQuickDock(this.hass, this.building?.settings.quick_controls ?? [], this._quickGroup, (id) => (this._quickGroup = id), ui?.dock_style ?? "pill", this.building?.settings.alarm_ring, () => this.requestUpdate()) : nothing}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
@@ -2983,6 +3070,7 @@ export class NfView3d extends LitElement {
     liveCardStyles,
     quickDockStyles,
     tabletSidebarStyles,
+    kioskExtrasStyles,
     css`
       :host {
         display: block;

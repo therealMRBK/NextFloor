@@ -5,7 +5,7 @@ import { entityName, outsideEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type QuickControlGroup, type StartView, type TabletUI } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
-import { actions, checkField, colorField, entityField, hint, iconField, selectField, serviceField, serviceTargetEntityField, textField } from "../fields.ts";
+import { actions, checkField, colorField, entityField, hint, iconField, numberField, selectField, serviceField, serviceTargetEntityField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { likelyRoomSensors, parseButtonData, patchPresence, startViewYaml } from "../ops/house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "../ops/lists.ts";
@@ -326,6 +326,13 @@ export function renderTabletUISection(host: EditorHost): TemplateResult {
       ${checkField(host, t("tablet_show_central"), ui.show_central !== false, (v) => set({ show_central: v }))}
       ${checkField(host, t("tablet_show_walk"), ui.show_walk !== false, (v) => set({ show_walk: v }))}
       ${checkField(host, t("tablet_show_legend"), ui.show_legend !== false, (v) => set({ show_legend: v }))}
+      ${checkField(host, t("tablet_sidebar_appliances"), ui.sidebar_appliances !== false, (v) => set({ sidebar_appliances: v }))}
+      ${checkField(host, t("tablet_show_cam_bookmarks"), ui.show_cam_bookmarks !== false, (v) => set({ show_cam_bookmarks: v }))}
+      ${host.hass ? entityField(host, t("tablet_price_entity"), ui.price_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.")), (v) => set({ price_entity: v === "none" ? null : v })) : nothing}
+      ${host.hass ? entityField(host, t("tablet_pip_camera"), ui.pip_camera ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("camera.")), (v) => set({ pip_camera: v === "none" ? null : v })) : nothing}
+      ${host.hass ? entityField(host, t("tablet_pip_trigger"), ui.pip_trigger ?? null, undefined, entityOptions(host.hass, (id) => /^(binary_sensor|button|input_button|event|input_boolean)\./.test(id)), (v) => set({ pip_trigger: v === "none" ? null : v })) : nothing}
+      ${numberField(host, t("tablet_pip_duration"), ui.pip_duration ?? 20, (v) => set({ pip_duration: Math.max(5, Math.min(120, Math.round(v))) }), 5, 5)}
+      ${numberField(host, t("tablet_screensaver"), ui.screensaver_minutes ?? 0, (v) => set({ screensaver_minutes: Math.max(0, Math.min(60, Math.round(v))) }), 1, 0)}
     </div>
   </details>`;
 }

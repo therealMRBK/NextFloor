@@ -1,5 +1,5 @@
 import { css, html, nothing, type TemplateResult } from "lit";
-import { entityName } from "../devices.ts";
+import { deviceSiblings, entityName, minutesText, remainingMinutes } from "../devices.ts";
 import { translate } from "../i18n.ts";
 import type { Building, TabletUI } from "../model.ts";
 import type { HomeAssistant } from "../types.ts";
@@ -77,6 +77,10 @@ export const tabletSidebarStyles = css`
   .nf-ts-val { font-weight: 600; opacity: 0.92; }
   .nf-ts-pills { display: flex; flex-wrap: wrap; gap: 6px; }
   .nf-ts-pill { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); }
+  .nf-ts-price-bars { display: flex; align-items: flex-end; gap: 2px; height: 28px; margin-top: 6px; }
+  .nf-ts-price-bars span { flex: 1; border-radius: 2px 2px 0 0; min-height: 3px; opacity: 0.55; }
+  .nf-ts-price-bars span.now { opacity: 1; box-shadow: 0 0 6px currentColor; }
+  .nf-ts-app-done { color: #52e088; font-weight: 700; }
   @media (max-width: 720px) {
     .nf-tablet-side { display: none; }
   }
@@ -96,7 +100,9 @@ export function renderTabletSidebar(
   const showPeople = ui?.sidebar_people !== false;
   const showEnergy = ui?.sidebar_energy !== false;
   const showMedia = ui?.sidebar_media !== false;
-  if (!showClock && !showWeather && !showSummary && !showPeople && !showEnergy && !showMedia) return nothing;
+  const showAppliances = ui?.sidebar_appliances !== false;
+  const priceSt = ui?.price_entity ? hass.states[ui.price_entity] : undefined;
+  if (!showClock && !showWeather && !showSummary && !showPeople && !showEnergy && !showMedia && !showAppliances && !priceSt) return nothing;
 
   const lang = hass.language || "en";
   const now = new Date();
@@ -150,6 +156,63 @@ export function renderTabletSidebar(
   const batSoc = building.energy.battery_soc ? hass.states[building.energy.battery_soc] : undefined;
   const hasEnergy = showEnergy && (gridPower || solarPower || batSoc);
 
+  // Electricity price (Nordpool / Tibber / generic sensor)
+  let priceBars: { pct: number; color: string; now: boolean }[] = [];
+  let priceColor = "#52e088";
+  if (priceSt) {
+    const cur = Number(priceSt.state);
+    const rawToday = Array.isArray(priceSt.attributes.today)
+      ? (priceSt.attributes.today as unknown[]).map(Number).filter(Number.isFinite)
+      : Array.isArray(priceSt.attributes.raw_today)
+        ? (priceSt.attributes.raw_today as { value?: unknown }[]).map((r) => Number(r?.value)).filter(Number.isFinite)
+        : [];
+    if (rawToday.length >= 6) {
+      const minP = Math.min(...rawToday);
+      const maxP = Math.max(...rawToday);
+      const span = Math.max(0.001, maxP - minP);
+      const hr = now.getHours();
+      const tone = (v: number) => {
+        const k = (v - minP) / span;
+        return k < 0.35 ? "#52e088" : k < 0.72 ? "#f5c249" : "#ff6b6b";
+      };
+      if (Number.isFinite(cur)) priceColor = tone(cur);
+      priceBars = rawToday.slice(0, 24).map((v, i) => ({
+        pct: Math.max(12, Math.round(((v - minP) / span) * 100)),
+        color: tone(v),
+        now: i === hr,
+      }));
+    } else if (Number.isFinite(cur)) {
+      priceColor = cur < 0.8 ? "#52e088" : cur < 2.0 ? "#f5c249" : "#ff6b6b";
+    }
+  }
+
+  // Washer / dryer / dishwasher timers
+  const APPLIANCE_ICON: Record<string, string> = { washer: "🫧", dryer: "🌀", dishwasher: "🍽️" };
+  const appliances: { name: string; icon: string; text: string; done: boolean }[] = [];
+  if (showAppliances) {
+    const seen = new Set<string>();
+    for (const f of building.floors) {
+      for (const m of f.furniture) {
+        if (!m.entity || seen.has(m.entity) || !(m.type in APPLIANCE_ICON)) continue;
+        seen.add(m.entity);
+        const st = hass.states[m.entity];
+        if (!st) continue;
+        const s = st.state.toLowerCase();
+        const rem = remainingMinutes(hass, deviceSiblings(hass, m.entity));
+        const done = /finish|done|complete|klar|fertig/.test(s);
+        const running = rem !== null && rem > 0 || /run|wash|dry|spin|rinse|active|on/.test(s);
+        if (done || running) {
+          appliances.push({
+            name: m.name || entityName(hass, m.entity),
+            icon: APPLIANCE_ICON[m.type],
+            text: done ? translate(hass, "appliance_done") : rem !== null && rem > 0 ? minutesText(rem) : st.state,
+            done,
+          });
+        }
+      }
+    }
+  }
+
   return html`<aside class="nf-tablet-side ${side} ${styleClass} ${belowForecast && side === "right" ? "below-forecast" : ""}" @pointerdown=${(e: Event) => e.stopPropagation()}>
     ${showClock
       ? html`<div class="nf-ts-card">
@@ -185,6 +248,24 @@ export function renderTabletSidebar(
           ${gridPower ? html`<div class="nf-ts-row"><span>⚡ ${translate(hass, "tablet_power")}</span><span class="nf-ts-val">${gridPower.state} ${gridPower.attributes.unit_of_measurement ?? "W"}</span></div>` : nothing}
           ${solarPower ? html`<div class="nf-ts-row"><span>☀️ ${translate(hass, "tablet_solar")}</span><span class="nf-ts-val">${solarPower.state} ${solarPower.attributes.unit_of_measurement ?? "W"}</span></div>` : nothing}
           ${batSoc ? html`<div class="nf-ts-row"><span>🔋 ${translate(hass, "tablet_battery")}</span><span class="nf-ts-val">${batSoc.state}%</span></div>` : nothing}
+        </div>`
+      : nothing}
+    ${priceSt
+      ? html`<div class="nf-ts-card">
+          <div class="nf-ts-row">
+            <span>⚡ ${translate(hass, "tablet_price")}</span>
+            <span class="nf-ts-val" style="color:${priceColor}">${priceSt.state} ${typeof priceSt.attributes.unit_of_measurement === "string" ? priceSt.attributes.unit_of_measurement : ""}</span>
+          </div>
+          ${priceBars.length
+            ? html`<div class="nf-ts-price-bars">
+                ${priceBars.map((b) => html`<span class=${b.now ? "now" : ""} style="height:${b.pct}%;background:${b.color};color:${b.color}"></span>`)}
+              </div>`
+            : nothing}
+        </div>`
+      : nothing}
+    ${appliances.length
+      ? html`<div class="nf-ts-card nf-ts-list">
+          ${appliances.map((a) => html`<div class="nf-ts-row"><span>${a.icon} ${a.name}</span><span class="nf-ts-val ${a.done ? "nf-ts-app-done" : ""}">${a.text}</span></div>`)}
         </div>`
       : nothing}
     ${peopleHome.length

@@ -742,6 +742,13 @@ export interface TabletUI {
   show_central?: boolean;
   show_walk?: boolean;
   show_legend?: boolean;
+  sidebar_appliances?: boolean;
+  price_entity?: string | null;
+  pip_camera?: string | null;
+  pip_trigger?: string | null;
+  pip_duration?: number;
+  screensaver_minutes?: number;
+  show_cam_bookmarks?: boolean;
 }
 
 /** Visual perimeter glow around the house for armed/disarmed alarm status. */
