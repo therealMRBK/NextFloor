@@ -85,6 +85,12 @@ export function watchedEntities(inputs: WatchInputs): string[] {
     ...(inputs.alertSources ? alertEntities(inputs.alertSources) : []),
     ...parkingEntities(b.floors),
     ...carWatched(hass, b.floors),
+    b.settings.alarm_ring?.entity,
+    b.settings.alarm_ring?.enable_entity,
+    b.settings.tablet_ui?.pip_trigger,
+    b.settings.tablet_ui?.price_entity,
+    ...(b.settings.quick_controls ?? []).flatMap((g) => g.entities),
+    ...(b.settings.status_entities ?? []),
     weatherEntity(hass, inputs.weatherEntityId ?? b.settings.weather_entity),
     "sun.sun",
   ];

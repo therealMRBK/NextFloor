@@ -1967,6 +1967,14 @@ export class NfView3d extends LitElement {
 
   /** Long press: the quick menu at the device, or the details for devices without one. */
   private onDeviceHold(entityId: string, x: number, y: number): void {
+    // an alarm entity (alarm_control_panel.* or configured alarm_ring.entity) never toggles directly without PIN
+    const arEnt = this.building?.settings.alarm_ring?.entity;
+    if (entityId.startsWith("alarm_control_panel.") || (arEnt && entityId === arEnt)) {
+      const dock = (this.building?.settings.quick_controls ?? []).find((g) => g.entities.length === 1 && g.entities[0] === entityId);
+      if (dock) this._quickGroup = dock.id;
+      else openMoreInfo(this, entityId);
+      return;
+    }
     const kind = kindOf(entityId);
     if (kind === "light" || kind === "cover" || kind === "switch" || kind === "fan" || kind === "lock") this._menu = { entity: entityId, x, y };
     else openMoreInfo(this, entityId);
@@ -2541,6 +2549,14 @@ export class NfView3d extends LitElement {
       const b = this.building;
       const sensor = b ? (b.energy.grid ?? deviceSensors(b, (f) => this.furnitureLinks?.get(f.id)?.power ?? null).grid) : null;
       if (sensor) openMoreInfo(this, sensor);
+      return;
+    }
+    // an alarm entity (alarm_control_panel.* or configured alarm_ring.entity) never toggles directly without PIN
+    const arEnt = this.building?.settings.alarm_ring?.entity;
+    if (entityId.startsWith("alarm_control_panel.") || (arEnt && entityId === arEnt)) {
+      const dock = (this.building?.settings.quick_controls ?? []).find((g) => g.entities.length === 1 && g.entities[0] === entityId);
+      if (dock) this._quickGroup = dock.id;
+      else openMoreInfo(this, entityId);
       return;
     }
     const kind = kindOf(entityId);
