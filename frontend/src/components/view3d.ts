@@ -595,8 +595,11 @@ export class NfView3d extends LitElement {
     clearInterval(this.clockTimer);
     this.clockTimer = undefined;
     this._now = Date.now();
-    if (this.isConnected && this.clock) {
-      this.clockTimer = setInterval(() => (this._now = Date.now()), 10000);
+    const ui = this.building?.settings.tablet_ui;
+    const sidebarClock = (ui?.sidebar ?? "right") !== "off" && ui?.sidebar_clock !== false;
+    if (this.isConnected && (this.clock || sidebarClock)) {
+      const ms = sidebarClock && ui?.clock_seconds ? 1000 : 10000;
+      this.clockTimer = setInterval(() => (this._now = Date.now()), ms);
     }
   }
 
@@ -721,7 +724,7 @@ export class NfView3d extends LitElement {
     if (this._central && !this.centralOpen && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
     if (changed.has("centralOpen") && this.centralOpen) this._central = true;
     // before the viewer exists: the card loads it late and `clock` does not change again, so the clock never ticked (#68)
-    if (changed.has("clock")) this.syncClock();
+    if (changed.has("clock") || changed.has("building")) this.syncClock();
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture
