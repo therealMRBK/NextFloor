@@ -5,6 +5,7 @@
 // flight into it). Each floor is a group with its own materials so its height and opacity can be
 // animated independently.
 
+import { SunShadow, SUN_DIRECTION, shadowUniforms } from "./scene/sun-shadow.ts";
 import type { DeviceMarker, FloorStack, LampModel, LiveAnchorCallback, LiveScreenInput, PersonPin, Quality, ScreenState, SunState, SurfaceGrab, ViewerOptions, WallMode } from "./scene/types.ts";
 export type { DeviceMarker, FloorStack, LampModel, LiveAnchorCallback, LiveScreenInput, PersonPin, Quality, ScreenState, SunState, SurfaceGrab, SurfaceRay, ViewerOptions, ViewerStats, WallMode } from "./scene/types.ts";
 import { packModel, placement } from "./furniture/packs.ts";
@@ -280,6 +281,12 @@ export class NextFloorViewer {
   private lastStatsFrame = 0;
   private lowQuality = false;
   private highQuality = false;
+  /** Sun shadows of the realistic look (made the first time they are needed). */
+  private sunShadow: SunShadow | null = null;
+  /** The wall state the sun shadow was drawn for (lowered and glass walls follow the camera). */
+  private shadowWalls = "";
+  private shadowAt = 0;
+  private shadowTimer: ReturnType<typeof setTimeout> | undefined;
   /** Seconds used for animated colour effects (advanced in steps while an effect runs). */
   private effectTime = 0;
   /** The frame was asked for by the effect timer or a room tint (shown in the statistics). */
@@ -967,7 +974,16 @@ export class NextFloorViewer {
     return lightStage(this.theme, this.own);
   }
 
+  /** In the realistic look the models' sun comes from where the surfaces' sun stands, so lit sides and shadows agree. */
+  private aimMeshSun(): void {
+    if (!this.meshLight) return;
+    if (this.theme === "real") this.meshLight.sun.position.copy(SUN_DIRECTION).multiplyScalar(10);
+    else this.meshLight.sun.position.set(-4, 9, 6);
+  }
+
   private lookChanged(): void {
+    this.aimMeshSun();
+    this.sunShadow?.markDirty();
     if (this.theme === "real") loadRealTextures(() => this.invalidate());
     this.placeMap();
     const blending = lineBlending(this.theme, this.own);
@@ -1346,6 +1362,9 @@ export class NextFloorViewer {
   }
 
   dispose(): void {
+    clearTimeout(this.shadowTimer);
+    this.sunShadow?.dispose();
+    this.sunShadow = null;
     this.disposed = true;
     cancelAnimationFrame(this.frame);
     clearTimeout(this.effectTimer);
@@ -1875,6 +1894,7 @@ export class NextFloorViewer {
 
   /** Put the owned 3D models of the furniture in place; models not loaded yet are fetched, and the floors rebuilt when they arrive. */
   private placeMeshes(): void {
+    this.sunShadow?.markDirty();
     for (const m of this.meshes) {
       m.group.removeFromParent();
       disposeMeshInstance(m.group);
@@ -1898,6 +1918,7 @@ export class NextFloorViewer {
         const group = instantiateMesh(id, { x: f.x, z: f.z, y: mountBase(fv.floor, f), rotation: f.rotation, mirror: f.mirror, w: f.w, d: f.d, h: f.h, paint: colour });
         if (!group) continue;
         if (!this.meshLight) this.meshLight = addMeshLighting(this.root, this.renderer);
+        this.aimMeshSun();
         applyEnvironment(group, this.meshLight.env);
         fv.group.add(group);
         this.meshes.push({ group, furnitureId: f.id });
@@ -3250,6 +3271,24 @@ export class NextFloorViewer {
       } else if (step) setTimeout(() => this.dropToLow(), 0);
     }
     this.updateWalls();
+    // sun shadows in the realistic look (not on slow devices); the map is redrawn only when the house changed
+    const sunShadows = this.theme === "real" && !this.lowQuality;
+    shadowUniforms.uNfShadowOn.value = sunShadows ? 1 : 0;
+    if (sunShadows) {
+      this.sunShadow ??= new SunShadow(this.highQuality ? 2048 : 1536);
+      if (floorsMoving || openingsMoving || roofMoving) this.sunShadow.markDirty();
+      // walls lowered or turned to glass as the camera turns change what casts a shadow; the sloped view changes them on every
+      // turn, so they are taken up at most five times a second and once more when the camera stops
+      const walls = this.floors.map((f) => `${f.mask.standing.value}/${f.mask.glass.value}/${f.mask.slope?.value.toArray().join(",") ?? ""}`).join(";");
+      if (walls !== this.shadowWalls) {
+        clearTimeout(this.shadowTimer);
+        if (now - this.shadowAt > 200) {
+          this.shadowWalls = walls;
+          this.sunShadow.markDirty();
+        } else this.shadowTimer = setTimeout(() => this.invalidate(), 220);
+      }
+      if (this.sunShadow.update(this.renderer, this.scene, this.root)) this.shadowAt = now;
+    }
     this.renderer.render(this.scene, this.camera);
     this.placeLhAnchors();
     // labels are placed only when the view or something on it moved (style writes cost layout)

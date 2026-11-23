@@ -4,6 +4,10 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Sun shadows and soft sky light in the realistic look:** walls, furniture and owned 3D models cast soft shadows from the look's sun, and corners, the floor along the walls and the space under shelves get less of the sky's light, so rooms read with depth instead of every surface facing one way being equally bright. The house is drawn from the sun and from eight directions of the sky into depth maps only when something changes (a rebuild, floors moving apart, a door, walls the camera lowers), so a still or turning view costs little. Walls lowered by the cut or sloped view cast no shadow above their cut. Owned models now take the same sun as the surfaces in this look. On with any quality above *Low*; the other looks are untouched.
+
 ## [0.32.0]
 
 ### Added

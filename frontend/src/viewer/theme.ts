@@ -2,6 +2,7 @@
 // instant and nothing has to be rebuilt. Signal colours (lit lamps, open windows, glowing screens) are bright and saturated and
 // stay as they are in every look.
 
+import { SHADOW_GLSL, shadowUniforms } from "./scene/sun-shadow.ts";
 import { AdditiveBlending, LinearMipmapLinearFilter, NormalBlending, RepeatWrapping, SRGBColorSpace, TextureLoader, Vector3, type Material, type Texture } from "three";
 import { hexRgb, lightStage, THEMES, type OwnLook, type Theme } from "../themes.ts";
 
@@ -182,6 +183,7 @@ vec3 nfThemed(vec3 c, bool isLine, bool isGlass) {
  */
 const REAL_FUNCTION = /* glsl */ `
 varying vec3 vNfWorld;
+${SHADOW_GLSL}
 uniform sampler2D uTexWood; uniform sampler2D uTexTile; uniform sampler2D uTexPlaster;
 uniform sampler2D uTexRoof; uniform sampler2D uTexGrass; uniform sampler2D uTexConcrete;
 uniform vec3 uTexA; uniform vec3 uTexB;
@@ -293,7 +295,11 @@ vec3 nfReal(vec3 c, int kind) {
   vec3 sun = normalize(vec3(0.45, 0.8, 0.35));
   float ndl = max(dot(nb, sun), 0.0);
   vec3 sky = mix(vec3(0.3, 0.28, 0.26), vec3(0.62, 0.72, 0.86), nb.y * 0.5 + 0.5);
-  vec3 lit = s.rgb * (sky * 0.85 + vec3(1.0, 0.94, 0.84) * ndl * 0.95);
+  // sun shadows (quality above low): the sun's share is taken away where the house stands between the point and the sun
+  float sunLit = ndl > 0.0 ? nfSunShadow(P, n) : 1.0;
+  // the sky's share falls in corners, under shelves and deep in rooms (how much sky the point sees), never below 45 %
+  float skyLit = mix(0.45, 1.0, nfSkyLight(P, n));
+  vec3 lit = s.rgb * (sky * 0.85 * skyLit + vec3(1.0, 0.94, 0.84) * ndl * 0.95 * sunLit);
   vec3 hv = normalize(sun + view);
   lit += shiny * vec3(1.0, 0.95, 0.88) * pow(max(dot(nb, hv), 0.0), 36.0) * ndl;
   // a gentle filmic curve keeps the bright plaster from clipping
@@ -311,7 +317,7 @@ export function themed<T extends Material>(material: T, uniform: ThemeUniform, l
   const kind = surface === "floor" ? 0 : surface === "wall" ? 1 : 2;
   material.onBeforeCompile = (shader, renderer) => {
     previous(shader, renderer);
-    Object.assign(shader.uniforms, { uTheme: uniform, ...(surface ? realTextureUniforms : {}), ...(uniform.look ?? { uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms }) });
+    Object.assign(shader.uniforms, { uTheme: uniform, ...(surface ? { ...realTextureUniforms, ...shadowUniforms } : {}), ...(uniform.look ?? { uAccent: accentUniform, uAccentOn: accentOnUniform, ...ownUniforms }) });
     // the realistic look needs the world position of every point: only the surfaces that get its materials carry it
     if (surface) {
       shader.vertexShader = shader.vertexShader
