@@ -298,7 +298,7 @@ vec3 nfReal(vec3 c, int kind) {
   // sun shadows (quality above low): the sun's share is taken away where the house stands between the point and the sun
   float sunLit = ndl > 0.0 ? nfSunShadow(P, n) : 1.0;
   // the sky's share falls in corners, under shelves and deep in rooms (how much sky the point sees), never below 45 %
-  float skyLit = mix(0.45, 1.0, nfSkyLight(P, n));
+  float skyLit = mix(0.55, 1.0, nfSkyLight(P, n));
   vec3 lit = s.rgb * (sky * 0.85 * skyLit + vec3(1.0, 0.94, 0.84) * ndl * 0.95 * sunLit);
   vec3 hv = normalize(sun + view);
   lit += shiny * vec3(1.0, 0.95, 0.88) * pow(max(dot(nb, hv), 0.0), 36.0) * ndl;

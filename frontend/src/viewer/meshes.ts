@@ -187,7 +187,7 @@ function receiveSunShadow(m: MeshStandardMaterial): void {
       .replace("#include <project_vertex>", "#include <project_vertex>\n  vNfW = (modelMatrix * vec4(transformed, 1.0)).xyz;\n  vNfN = normalize(mat3(modelMatrix) * objectNormal);");
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", `#include <common>\nvarying vec3 vNfW;\nvarying vec3 vNfN;\n${SHADOW_GLSL}`)
-      .replace("#include <lights_fragment_end>", "#include <lights_fragment_end>\n  { vec3 nfN = normalize(vNfN); float nfSh = nfSunShadow(vNfW, nfN); reflectedLight.directDiffuse *= nfSh; reflectedLight.directSpecular *= nfSh; reflectedLight.indirectDiffuse *= mix(0.45, 1.0, nfSkyLight(vNfW, nfN)); }");
+      .replace("#include <lights_fragment_end>", "#include <lights_fragment_end>\n  { vec3 nfN = normalize(vNfN); float nfSh = nfSunShadow(vNfW, nfN); reflectedLight.directDiffuse *= nfSh; reflectedLight.directSpecular *= nfSh; reflectedLight.indirectDiffuse *= mix(0.55, 1.0, nfSkyLight(vNfW, nfN)); }");
   };
   m.customProgramCacheKey = () => "nf-mesh-sun-shadow";
 }
