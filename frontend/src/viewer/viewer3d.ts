@@ -3274,6 +3274,9 @@ export class NextFloorViewer {
     // sun shadows in the realistic look (not on slow devices); the map is redrawn only when the house changed
     const sunShadows = this.theme === "real" && !this.lowQuality;
     shadowUniforms.uNfShadowOn.value = sunShadows ? 1 : 0;
+    // with real shadows the baked strips along the walls (straight-edged, 42 cm) are left out: the sky light darkens the floor
+    // along the walls softly by itself, and the strips' square ends read as dark boxes beside every wall end
+    for (const fv of this.floors) fv.materials.shadow.visible = !sunShadows;
     if (sunShadows) {
       this.sunShadow ??= new SunShadow(this.highQuality ? 2048 : 1536);
       if (floorsMoving || openingsMoving || roofMoving) this.sunShadow.markDirty();
