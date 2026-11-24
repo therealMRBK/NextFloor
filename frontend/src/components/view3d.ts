@@ -4,10 +4,13 @@ import { swipeSendsOnRelease, swipeSendsWhileMoving } from "../swipe-policy.ts";
 import { changeMoments, hassAt, loadHistory, replayable, type History } from "../live/time-travel.ts";
 import { sunPosition, todayAt } from "../sun-position.ts";
 import { dayCurves, statesRead, type DayCurves } from "../live/day-curves.ts";
+import { quickDockStyles, renderQuickDock } from "./quick-dock.ts";
+import { renderTabletSidebar, tabletSidebarStyles } from "./tablet-sidebar.ts";
+import { kioskExtrasStyles, loadCamBookmarks, renderCamBookmarks, renderPipCamera, renderScreensaver, saveCamBookmarks, type CameraBookmark } from "./kiosk-extras.ts";
 import { backdropStyle } from "../backdrop.ts";
 import { css, html, LitElement, nothing, svg, type PropertyValues } from "lit";
 import { type CarState, roomClimateValue, entityName, furnitureEntities, isActive, isCooling, isMotionSensor, coverReaches, deviceSiblings, hasPost, minutesText, pickupDays, plantThirst, remainingMinutes, gangGlows, gangEntities, isUnavailable, kindOf, markerKind, type MarkerKind, lightGlow, openingEntities, openingState, withFrontIds, isUnlocked, TOGGLE_KINDS, type FurnitureLinks, type OpeningEntities, confirmEntities, coolingTemps, deviceTempOf, namedTemps, DEVICE_HOT, fridgeDoors, hasScreen, fromCelsius, toCelsius, tempUnit, robotRoom, robotRoomSensor, isStatusSensor, floorControls, favoriteCall, runButton, ownButtonOn, roomEntities } from "../devices.ts";
-import { liveScreens, liveSprays, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
+import { liveScreens, liveSprays, mediaInPlan, readSun, roofWindowStates, skyLightness } from "./view3d/live-inputs.ts";
 import { watchedEntities } from "./view3d/watch-list.ts";
 import { roomToggleLights, roomToggleMode, type RoomToggle } from "./view3d/room-toggle.ts";
 import { ownTaps } from "./view3d/own-taps.ts";
@@ -42,7 +45,8 @@ import { coverageColor, isAccessPoint, networkHealth, readAccessPoint } from "..
 import type { FurnitureColors } from "../furniture-colors.ts";
 import { renderLhCards, liveCardStyles, unstackLhCards, type LiveCard } from "../live/cards.ts";
 import { readCar, type CarInfo } from "../live/car.ts";
-import { mediaNow, multiroom, type MediaNow } from "../live/media.ts";
+import { multiroom, type MediaNow } from "../live/media.ts";
+import { screenDeviceOn } from "../live/screen-sources.ts";
 import { SHOW_PRESENCE } from "../flags.ts";
 import { searchIndex, searchItems, type SearchItem } from "../search.ts";
 import { coverPositionable, lightAbilities } from "./quick-menu.ts";
@@ -50,6 +54,7 @@ import "./quick-menu.ts";
 import { load3d } from "../load3d.ts";
 import { scaleGlow, buildMarkers, openMoreInfo, stateText, toggleEntity, withPluginPatch } from "../markers.ts";
 import { fanSpin } from "../entities/fans.ts";
+import { sceneEntitiesOn } from "../entities/misc.ts";
 import { fixtureGlow, shinesAsLamp } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
 import { pictureUrl } from "../entities/pictures.ts";
@@ -83,7 +88,7 @@ function storedValue(key: string): string | null {
   }
 }
 const SHORT_STAGE = 520;
-const TINY_STAGE = 260;
+const TINY_STAGE = 340;
 
 export class NfView3d extends LitElement {
   static properties = {
@@ -133,6 +138,11 @@ export class NfView3d extends LitElement {
     _carsFolded: { state: true },
     _swipe: { state: true },
     _menu: { state: true },
+    _quickGroup: { state: true },
+    _pipCamera: { state: true },
+    _pipTick: { state: true },
+    _screensaver: { state: true },
+    _camBookmarks: { state: true },
     _pluginWindow: { state: true },
     _plate: { state: true },
     _blend: { state: true },
@@ -169,6 +179,7 @@ export class NfView3d extends LitElement {
     _locked: { state: true },
     _now: { state: true },
     roomLabels: { attribute: false },
+    deviceLabels: { attribute: false },
     floorStack: { attribute: false },
     panelOpen: { attribute: false },
     alerts: { attribute: false },
@@ -277,6 +288,15 @@ export class NfView3d extends LitElement {
   private declare _swipe: { entity: string; kind: "light" | "cover" | "fan"; start: number; value: number; x: number; y: number } | null;
   /** Quick menu at a device (long press). */
   private declare _menu: { entity: string; x: number; y: number; car?: CarState } | null;
+  private declare _quickGroup: string | null;
+  private declare _pipCamera: string | null;
+  private declare _pipTick: number;
+  private declare _screensaver: boolean;
+  private declare _camBookmarks: CameraBookmark[];
+  private pipCloseTimer: ReturnType<typeof setTimeout> | undefined;
+  private pipRefreshTimer: ReturnType<typeof setInterval> | undefined;
+  private lastPipTriggerState: string | undefined;
+  private lastActivity = Date.now();
   /** A window a plugin opened in the lower right corner (a camera's live picture). */
   private declare _pluginWindow: { node: Node; title: string } | null;
   /** Where each placed device stands, for plugins that handle its taps. */
@@ -325,6 +345,7 @@ export class NfView3d extends LitElement {
   private clockTimer: ReturnType<typeof setInterval> | undefined;
   /** Room names in 3D (cards can switch them off). */
   declare roomLabels: boolean;
+  declare deviceLabels: boolean;
   /** Floors below an opened floor: dimmed, stacked (the house up to it) or hidden. */
   declare floorStack: FloorStack;
   private declare _thumbs: { floorId: string; url: string }[];
@@ -336,7 +357,7 @@ export class NfView3d extends LitElement {
   private declare _narrowStage: boolean;
   /** The stage is low (a small card): the floor pictures leave room for the buttons below them. */
   private declare _shortStage: boolean;
-  /** A very small stage (a dashboard card under about 260 px): the floor pictures and the live cards would only cover the picture (#203). */
+  /** A very small stage (a dashboard card under about 340 px): the floor pictures and the live cards would only cover the picture (#203). */
   private declare _tinyStage: boolean;
   /** The stage is as narrow as a phone held upright: the floor pictures step aside, the floor tabs above do the job (#70). */
   private declare _phoneStage: boolean;
@@ -485,6 +506,11 @@ export class NfView3d extends LitElement {
     this._energy = null;
     this._swipe = null;
     this._menu = null;
+    this._quickGroup = null;
+    this._pipCamera = null;
+    this._pipTick = 0;
+    this._screensaver = false;
+    this._camBookmarks = loadCamBookmarks();
     this._pluginWindow = null;
     this._plate = null;
     this._wallBig = null;
@@ -520,6 +546,7 @@ export class NfView3d extends LitElement {
       }
     })();
     this.roomLabels = true;
+    this.deviceLabels = true;
     this.floorStack = "dim";
     this._low = false;
     this.panelOpen = false;
@@ -577,6 +604,10 @@ export class NfView3d extends LitElement {
     this.contactTimer = undefined;
     clearInterval(this.clockTimer);
     this.clockTimer = undefined;
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this.pipCloseTimer = undefined;
+    this.pipRefreshTimer = undefined;
     clearInterval(this.travelTimer);
     this.travelTimer = undefined;
     this.live = null;
@@ -589,9 +620,72 @@ export class NfView3d extends LitElement {
     clearInterval(this.clockTimer);
     this.clockTimer = undefined;
     this._now = Date.now();
-    if (this.isConnected && this.clock) {
-      this.clockTimer = setInterval(() => (this._now = Date.now()), 10000);
+    const ui = this.building?.settings.tablet_ui;
+    const sidebarClock = (ui?.sidebar ?? "off") !== "off" && ui?.sidebar_clock !== false;
+    const ssMin = ui?.screensaver_minutes ?? 0;
+    if (this.isConnected && (this.clock || sidebarClock || ssMin > 0)) {
+      const ms = (sidebarClock || this._screensaver) && ui?.clock_seconds ? 1000 : 10000;
+      this.clockTimer = setInterval(() => {
+        this._now = Date.now();
+        if (ssMin > 0 && !this._screensaver && !this.furnish && Date.now() - this.lastActivity >= ssMin * 60_000) {
+          this._screensaver = true;
+        }
+      }, ms);
     }
+  }
+
+  private openPipCamera(cameraId: string, durationSec = 20): void {
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this._pipCamera = cameraId;
+    this._pipTick = Date.now();
+    this._screensaver = false;
+    this.lastActivity = Date.now();
+    this.pipRefreshTimer = setInterval(() => (this._pipTick = Date.now()), 2000);
+    this.pipCloseTimer = setTimeout(() => this.closePipCamera(), Math.max(5, Math.min(120, durationSec)) * 1000);
+  }
+
+  private closePipCamera(): void {
+    clearTimeout(this.pipCloseTimer);
+    clearInterval(this.pipRefreshTimer);
+    this.pipCloseTimer = undefined;
+    this.pipRefreshTimer = undefined;
+    this._pipCamera = null;
+  }
+
+  private checkPipTrigger(): void {
+    const ui = this.building?.settings.tablet_ui;
+    const trig = ui?.pip_trigger;
+    const cam = ui?.pip_camera;
+    if (!trig || !cam || !this.hass?.states[trig]) return;
+    const st = this.hass.states[trig].state;
+    if (this.lastPipTriggerState === undefined) {
+      this.lastPipTriggerState = st;
+      return;
+    }
+    if (st !== this.lastPipTriggerState) {
+      const prev = this.lastPipTriggerState;
+      this.lastPipTriggerState = st;
+      const isPulse = trig.startsWith("button.") || trig.startsWith("input_button.") || trig.startsWith("event.");
+      if ((isPulse && prev !== "unknown") || st === "on" || st === "detected" || st === "open") {
+        this.openPipCamera(cam, ui?.pip_duration ?? 20);
+      }
+    }
+  }
+
+  private addCamBookmark(): void {
+    if (!this.viewer) return;
+    const name = prompt(translate(this.hass, "cam_bookmark_prompt"))?.trim();
+    if (!name) return;
+    const next: CameraBookmark[] = [...this._camBookmarks, { id: String(Date.now()), name: name.slice(0, 24), view: this.viewer.currentView() }].slice(0, 8);
+    this._camBookmarks = next;
+    saveCamBookmarks(next);
+  }
+
+  private removeCamBookmark(id: string): void {
+    const next = this._camBookmarks.filter((b) => b.id !== id);
+    this._camBookmarks = next;
+    saveCamBookmarks(next);
   }
 
   protected firstUpdated(): void {
@@ -715,7 +809,8 @@ export class NfView3d extends LitElement {
     if (this._central && !this.centralOpen && ((changed.has("roomId") && changed.get("roomId") !== undefined) || (changed.has("floorId") && changed.get("floorId") !== undefined))) this._central = false;
     if (changed.has("centralOpen") && this.centralOpen) this._central = true;
     // before the viewer exists: the card loads it late and `clock` does not change again, so the clock never ticked (#68)
-    if (changed.has("clock")) this.syncClock();
+    if (changed.has("clock") || changed.has("building")) this.syncClock();
+    if (changed.has("hass")) this.checkPipTrigger();
     const v = this.viewer;
     if (!v) return;
     // packs arrive with the building (or after an import): the viewer rebuilds pack furniture
@@ -1020,7 +1115,7 @@ export class NfView3d extends LitElement {
     const liveFlows = (this.flows ?? this._flows) && !this.dimmed;
     v.setLiveEnergy(liveFlows ? livePic.arcs : [], liveFlows ? livePic.sparks : []);
     if (JSON.stringify(livePic) !== JSON.stringify(this._liveEnergy)) this._liveEnergy = livePic;
-    const liveMedia = this.liveMedia(hass, b);
+    const liveMedia = mediaInPlan(hass, b, this.furnitureLinks);
     const playing = liveMedia.filter((m) => m.playing && !this.dimmed);
     v.setLiveSound(
       playing.filter((m) => m.rings > 0).map((m) => ({ id: m.entity, at: m.at, color: m.color, level: m.volume ?? 0.5, size: m.rings })),
@@ -1042,12 +1137,27 @@ export class NfView3d extends LitElement {
     v.setSun(sunNow);
     v.setLocation(config?.latitude !== undefined && config.longitude !== undefined ? { latitude: config.latitude, longitude: config.longitude, zone: config.time_zone } : null);
     // the sky over the plot (NextFloor's own weather layer): clouds darken the stage, rain and snow fall along the wind
-    const raw = this.weather && !this.dimmed ? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity)) : null;
+    const weatherOn = this.weather && b.settings.weather_animations !== false && !this.dimmed;
+    const preview = b.settings.weather_preview;
+    const sim = preview
+      ? {
+          rain: preview === "rainy" ? 0.6 : preview === "pouring" || preview === "lightning-rainy" ? 1 : 0,
+          snow: preview === "snowy" ? 0.9 : 0,
+          hail: 0,
+          cloud: preview === "fog" ? 0.9 : 0.75,
+          lightning: preview === "lightning-rainy",
+          fog: preview === "fog" ? 0.8 : 0,
+          wind: 0.45,
+          windSpeed: 5,
+          windFrom: 220,
+        }
+      : null;
+    const raw = weatherOn ? (sim ?? readSkyWeather(hass, weatherEntity(hass, this.weatherEntityId ?? b.settings.weather_entity))) : null;
     const weather = raw ? withDensity(chosenEffects(raw, b.settings.weather_effects), this.weatherDensity) : null;
     this.cloud = weather?.cloud ?? 0;
     this._sky = skyLightness(sunNow?.elevation ?? null, this.cloud);
     v.setSky(
-      this.weather && !this.dimmed
+      weatherOn
         ? {
             weather,
             sun: sunNow,
@@ -1058,6 +1168,18 @@ export class NfView3d extends LitElement {
           }
         : null,
     );
+    const ar = b.settings.alarm_ring;
+    const arEnabled = !ar?.enable_entity || hass.states[ar.enable_entity]?.state === "on";
+    const arEntity = ar?.entity ?? Object.keys(hass.states).find((id) => id.startsWith("alarm_control_panel."));
+    const arState = ar && arEnabled && arEntity ? hass.states[arEntity]?.state : undefined;
+    let ring: { color: number; style: "perimeter" | "circle" } | null = null;
+    if (arState) {
+      const armed = ["armed_away", "armed_home", "armed_night", "armed_vacation", "armed_custom_bypass", "arming", "pending", "triggered", "on", "true"].includes(arState);
+      const disarmed = ["disarmed", "off", "false"].includes(arState);
+      if (armed && ar?.show_armed !== false) ring = { color: 0xff3b30, style: ar?.style === "circle" ? "circle" : "perimeter" };
+      else if (disarmed && ar?.show_disarmed !== false) ring = { color: 0x34c759, style: ar?.style === "circle" ? "circle" : "perimeter" };
+    }
+    v.setAlarmRing(ring);
     this.applyTint();
     const hasEnergy = summary.grid !== null || summary.solar !== null || summary.battery !== null || summary.tariff !== null;
     const energy = hasEnergy ? summary : null;
@@ -1354,7 +1476,8 @@ export class NfView3d extends LitElement {
           const soc = Number(hass.states[extra]?.state);
           if (Number.isFinite(soc)) screens.set(f.id, { color: soc > 60 ? [0.29, 0.87, 0.5] : soc > 25 ? [0.98, 0.8, 0.08] : [0.97, 0.44, 0.44], level: 0.95, fill: soc / 100 });
         }
-        if (st && hasScreen(f.type)) {
+        // a screen with a device on it (a games console) stays dark while that device is off
+        if (st && hasScreen(f.type) && screenDeviceOn(hass, f)) {
           // a screen is lit or dark (what plays on it is drawn by NextFloor's TV screens); a light (an aquarium,
           // a lit panel) glows in its own colour, other entities in the neon cyan
           const lit = kindOf(st.entity_id) === "light" ? lightGlow(st) : null;
@@ -1436,7 +1559,17 @@ export class NfView3d extends LitElement {
     for (const { floor, item: f } of own.bare) {
       const room = floor.rooms.find((r) => r.points.length >= 3 && pointInPolygon([f.x, f.z], r.points));
       const name = f.name || furnitureName(hass, f.type);
-      markers.push({ id: `tap:${f.id}`, floorId: floor.id, roomId: room?.id ?? null, x: f.x, z: f.z, y: markerHeight(f) + mountBase(floor, f), icon: mdiIcon(f.icon || "gesture-tap-button"), name, ownName: f.name || undefined, showName: !!f.show_name, text: "", active: false, unavailable: false, glow: null, furnitureId: f.id, show: f.marker ?? undefined, fromFurniture: true });
+      const tapEnt = typeof f.tap?.data?.entity_id === "string" ? f.tap.data.entity_id : f.entity;
+      const st = tapEnt ? hass.states[tapEnt] : undefined;
+      const isScene = tapEnt?.startsWith("scene.") || tapEnt?.startsWith("script.");
+      const sceneOn = tapEnt?.startsWith("scene.") ? sceneEntitiesOn(hass, tapEnt, f.entity) : [];
+      const active = tapEnt?.startsWith("scene.") ? sceneOn.length > 0 : st?.state === "on";
+      const isSwitch = tapEnt?.startsWith("switch.") || tapEnt?.startsWith("input_boolean.");
+      const defaultIcon = tapEnt?.startsWith("light.") ? "lightbulb" : isSwitch ? "power-socket-eu" : isScene ? "lightbulb-on" : "gesture-tap-button";
+      const text = st ? (active ? translate(hass, "state_on") : translate(hass, "state_off")) : "";
+      const glowSt = active ? (sceneOn.length ? hass.states[sceneOn[0]] : st) : undefined;
+      const glow = glowSt ? lightGlow(glowSt) : null;
+      markers.push({ id: `tap:${f.id}`, floorId: floor.id, roomId: room?.id ?? null, x: f.x, z: f.z, y: markerHeight(f) + mountBase(floor, f), icon: mdiIcon(f.icon || defaultIcon), name, ownName: f.name || undefined, showName: !!f.show_name, text, active, unavailable: false, glow, furnitureId: f.id, show: f.marker ?? "always", fromFurniture: true });
     }
     return { markers, consumers, screens, targets };
   }
@@ -1839,6 +1972,14 @@ export class NfView3d extends LitElement {
 
   /** Long press: the quick menu at the device, or the details for devices without one. */
   private onDeviceHold(entityId: string, x: number, y: number): void {
+    // an alarm entity (alarm_control_panel.* or configured alarm_ring.entity) never toggles directly without PIN
+    const arEnt = this.building?.settings.alarm_ring?.entity;
+    if (entityId.startsWith("alarm_control_panel.") || (arEnt && entityId === arEnt)) {
+      const dock = (this.building?.settings.quick_controls ?? []).find((g) => g.entities.length === 1 && g.entities[0] === entityId);
+      if (dock) this._quickGroup = dock.id;
+      else openMoreInfo(this, entityId);
+      return;
+    }
     const kind = kindOf(entityId);
     if (kind === "light" || kind === "cover" || kind === "switch" || kind === "fan" || kind === "lock") this._menu = { entity: entityId, x, y };
     else openMoreInfo(this, entityId);
@@ -2133,7 +2274,7 @@ export class NfView3d extends LitElement {
                     if (btn.action !== "service") this._central = false;
                   }}
                 >
-                  ${btn.icon ? html`<ha-icon .icon=${btn.icon.startsWith("mdi:") ? btn.icon : `mdi:${btn.icon}`}></ha-icon>` : nothing}${btn.label}
+                  ${btn.icon ? html`<ha-icon .icon=${btn.icon.includes(":") ? btn.icon : `mdi:${btn.icon}`}></ha-icon>` : nothing}${btn.label}
                 </button>`,
               )}
             </div>`
@@ -2393,7 +2534,7 @@ export class NfView3d extends LitElement {
     const ownTap = entityId.startsWith("tap:") ? entityId.slice(4) : this.tapPins.get(entityId);
     if (ownTap) {
       const f = this.building?.floors.flatMap((fl) => fl.furniture).find((it) => it.id === ownTap);
-      if (f?.tap) runButton(this.hass, this, f.tap);
+      if (f?.tap) runButton(this.hass, this, f.tap, f.entity);
       return;
     }
     if (this.pluginTapped(entityId)) return;
@@ -2413,6 +2554,14 @@ export class NfView3d extends LitElement {
       const b = this.building;
       const sensor = b ? (b.energy.grid ?? deviceSensors(b, (f) => this.furnitureLinks?.get(f.id)?.power ?? null).grid) : null;
       if (sensor) openMoreInfo(this, sensor);
+      return;
+    }
+    // an alarm entity (alarm_control_panel.* or configured alarm_ring.entity) never toggles directly without PIN
+    const arEnt = this.building?.settings.alarm_ring?.entity;
+    if (entityId.startsWith("alarm_control_panel.") || (arEnt && entityId === arEnt)) {
+      const dock = (this.building?.settings.quick_controls ?? []).find((g) => g.entities.length === 1 && g.entities[0] === entityId);
+      if (dock) this._quickGroup = dock.id;
+      else openMoreInfo(this, entityId);
       return;
     }
     const kind = kindOf(entityId);
@@ -2541,21 +2690,6 @@ export class NfView3d extends LitElement {
       }
     }
     return out;
-  }
-
-  /** Media players in the plan: placed as a device, or linked to furniture (TV, speaker); their point is on top of it. */
-  private liveMedia(hass: HomeAssistant, b: Building): MediaNow[] {
-    const spots: { entity: string; name: string; at: { floorId: string; x: number; z: number; y: number }; rings?: number | null }[] = [];
-    for (const floor of b.floors) {
-      for (const f of floor.furniture) {
-        const e = this.furnitureLinks?.get(f.id)?.entity;
-        if (e?.startsWith("media_player.")) spots.push({ entity: e, name: f.name || furnitureName(hass, f.type), at: { floorId: floor.id, x: f.x, z: f.z, y: mountBase(floor, f) + f.h + 0.15 }, rings: f.sound_rings });
-      }
-      for (const pl of floor.placements) {
-        if (pl.entity_id.startsWith("media_player.")) spots.push({ entity: pl.entity_id, name: pl.name || entityName(hass, pl.entity_id), at: { floorId: floor.id, x: pl.x, z: pl.z, y: (pl.y ?? 1.1) + 0.15 }, rings: pl.sound_rings });
-      }
-    }
-    return mediaNow(hass, spots);
   }
 
   /** Today's appointments, loaded at most every 15 minutes, and again after midnight. */
@@ -2800,7 +2934,7 @@ export class NfView3d extends LitElement {
     const own = this.ownSensors();
     const e = this._liveEnergy?.summary;
     const energy = !!e && !this.roomId && this.showEnergy && !!this.hass && !(e.consumption === null && e.grid === null && e.solar === null && e.battery === null);
-    if (!energy) return own.length ? html`<div class="nf-energy" aria-live="off">${own}</div>` : nothing;
+    if (!energy) return own.length ? html`<div class="nf-energy ${this._tinyStage ? "nf-energy-tiny" : ""}" aria-live="off">${own}</div>` : nothing;
     const t = (k: Parameters<typeof translate>[1]) => translate(this.hass, k);
     const items: { cls: string; label: string; value: string }[] = [];
     if (e.solar !== null) items.push({ cls: "solar", label: t("energy_solar"), value: formatPower(this.hass, e.solar) });
@@ -2904,13 +3038,27 @@ export class NfView3d extends LitElement {
     const mix = (a: number[], b: number[]) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * sky)).join(",")})`;
     const stage = stageFor(this.theme, this.filledOwnLook);
     const style = `--nf-sky:${mix(stage.night[0], stage.day[0])};--nf-ground:${mix(stage.night[1], stage.day[1])}` + backdropStyle(this.building?.settings.backdrop);
+    const ui = this.building?.settings.tablet_ui;
+    const showLegend = !this.clean && ui?.show_legend !== false;
+    const showCentral = !this.clean && ui?.show_central !== false;
+    const showWalk = !this.clean && ui?.show_walk !== false;
+    const showDock = !this.furnish && ui?.show_quick_dock !== false;
+    const showSide = !this.furnish && !this.roomId && !this.panelOpen;
+    const showCamBm = !this.furnish && !this.roomId && !this.panelOpen && ui?.show_cam_bookmarks !== false;
+    const belowForecast = !this.clean && this.building?.settings.forecast?.corner === "top_right";
     return html`<div
-      class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
+      class="nf-stage ${this.roomLabels ? "" : "nf-no-room-names"} ${this.deviceLabels ? "" : "nf-no-device-names"} ${this._low ? "nf-low" : ""} ${this.panelOpen ? "nf-panel-open" : ""} ${this._alerts.length ? "nf-has-alerts" : ""} ${this._narrowStage ? "nf-narrow" : ""}"
       style=${style}
+      @pointerdown=${() => (this.lastActivity = Date.now())}
     >
-      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${this.clean ? nothing : this.renderLegend()} ${this.renderMapCredit()}
-      ${this.renderAlerts()} ${this.renderAnnouncement()} ${this.clean ? nothing : html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}`} ${this.renderSwipe()}
-      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${this.renderLock()} ${this.renderWalk()} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
+      ${this._error ? html`<p class="nf-error">${this._error}</p>` : nothing} ${this.renderTopLeft()} ${renderLhCards(this.hass, this.roomId || this.panelOpen ? [] : this._liveCards, (domain, service, entity, data) => this.hass?.callService(domain, service, { entity_id: entity, ...data }), { folded: this._houseFolded, toggle: () => this.toggleHouseFold() }, { folded: this._carsFolded, toggle: () => this.toggleCarFold() })} ${showLegend ? this.renderLegend() : nothing} ${this.renderMapCredit()}
+      ${this.renderAlerts()} ${this.renderAnnouncement()} ${showCentral ? html`${this.renderThumbs()} ${this.renderScenes()} ${this.renderFind()} ${this.renderCentral()}` : nothing} ${this.renderSwipe()}
+      ${this.renderMenu()} ${this.renderPlate()} ${this.renderEye()} ${showWalk ? html`${this.renderLock()} ${this.renderWalk()}` : nothing} ${this.renderTravel()} ${this.renderClock()} ${this.renderToday()} ${this.renderLayers()} ${this.renderPluginWindow()}
+      ${showSide ? renderTabletSidebar(this.hass, this.building, ui, belowForecast) : nothing}
+      ${showCamBm ? renderCamBookmarks(this.hass, this._camBookmarks, !this.clean, (b) => this.viewer?.showView(b.view, 900), () => this.addCamBookmark(), (id) => this.removeCamBookmark(id)) : nothing}
+      ${renderPipCamera(this.hass, this._pipCamera, this._pipTick, () => this.closePipCamera(), (id) => { this.closePipCamera(); openMoreInfo(this, id); })}
+      ${this._screensaver ? renderScreensaver(this.hass, this.building, ui, () => { this._screensaver = false; this.lastActivity = Date.now(); }) : nothing}
+      ${showDock ? renderQuickDock(this.hass, this.building?.settings.quick_controls ?? [], this._quickGroup, (id) => (this._quickGroup = id), ui?.dock_style ?? "pill", this.building?.settings.alarm_ring, () => this.requestUpdate()) : nothing}
       ${this.showStats && this._stats
         ? html`<span class="nf-stats"
             ><b>${this._stats.fps ? translate(this.hass, "stats_fps", { fps: this._stats.fps, ms: this._stats.worstMs }) : translate(this.hass, "stats_idle")}</b>
@@ -2926,6 +3074,9 @@ export class NfView3d extends LitElement {
     tokens,
     controls,
     liveCardStyles,
+    quickDockStyles,
+    tabletSidebarStyles,
+    kioskExtrasStyles,
     css`
       :host {
         display: block;
@@ -3037,13 +3188,13 @@ export class NfView3d extends LitElement {
       }
       .nf-has-alerts .nf-energy,
       .nf-has-alerts .nf-topleft {
-        top: 58px;
+        top: calc(58px + var(--nf-top-reserve, 0px));
       }
       /* the clock top left stacks above the sensor and energy bar rather than covering it */
       .nf-topleft {
         position: absolute;
         left: 12px;
-        top: 10px;
+        top: calc(10px + var(--nf-top-reserve, 0px));
         z-index: 3;
         display: flex;
         flex-direction: column;
@@ -4392,7 +4543,7 @@ export class NfView3d extends LitElement {
       .nf-energy {
         position: absolute;
         left: 12px;
-        top: 10px;
+        top: calc(10px + var(--nf-top-reserve, 0px));
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
@@ -4510,7 +4661,8 @@ export class NfView3d extends LitElement {
       .nf-dev-full .nf-dev-text {
         display: inline;
       }
-      .nf-dev-name:empty {
+      .nf-dev-name:empty,
+      .nf-no-device-names .nf-dev-name {
         display: none;
       }
       .nf-dev-name {

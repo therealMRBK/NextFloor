@@ -4,6 +4,29 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+### Added
+
+- **Traditional Chinese (Taiwan)** (thanks @monarchsofchaos004-gif, #216): a Home Assistant set to Traditional Chinese (`zh-Hant`, `zh-TW`, `zh-HK`) now reads its own language file; the other Chinese codes keep the Simplified one. The file was made from the Simplified texts with Taiwan wording, so corrections are welcome.
+- **A venetian blind inside the room** (thanks @halcycon, #213): a window's *Kind of blind* has a new choice, *Venetian blind inside (slats)*, with the slats and a slim box on the room side. The Raffstore with slats stays outside.
+- **Icons of your own icon sets on markers** (thanks @Argabor77, #226): the marker's own symbol takes any Home Assistant icon name, so `local:minisforum-ms01` from the Custom Icons integration (or any other registered icon set) shows next to `mdi:` names; the same goes for the quick dock and the marker buttons.
+- **A switch for device names** (#156): *Device names* (panel) and `device_names: false` (card) hide the names under devices and markers, next to the existing *Room names* switch.
+- **Sun shadows and soft sky light in the realistic look** (thanks @weisermakki, #221): walls, furniture and owned 3D models cast soft shadows from the look's sun, and corners, the floor along the walls and the space under shelves get less of the sky's light, so rooms read with depth instead of every surface facing one way being equally bright. The house is drawn from the sun and from eight directions of the sky into depth maps only when something changes (a rebuild, floors moving apart, a door, walls the camera lowers), so a still or turning view costs little. Walls lowered by the cut or sloped view cast no shadow above their cut. Owned models now take the same sun as the surfaces in this look. On with any quality above *Low*; the other looks are untouched.
+- **A monitor shows the game on an Xbox** (thanks @Luca-Bachini-Barr, #178): the form of a TV or monitor has *Device on this screen* and *Game account*. With the console and the *In game* sensors of its accounts set (from Home Assistant's Xbox integration), the screen shows the game and its artwork of whichever account is playing, and stays dark while the console is off. A card above the screen shows the same game and artwork, and both name the account that is playing. The card also shows the account's picture, since when it has been playing and its achievements and Gamerscore in that game. The console's on or off comes from Microsoft's Xbox service and can lag after a full shutdown, which the form's hint says.
+- **Tablet sidebar & customizable HUD** (thanks @davvarn, #217): optional side panel (off until you choose left or right) in 3D view showing clock, date, outdoor weather, and status summary with clean/borderless styling, adjustable font size, and visibility in clean mode.
+- **Quick-control dock & 3D alarm PIN keypad** (#217): Touch-friendly bottom dock with custom control groups and an interactive PIN keypad popup for both `alarm_control_panel.*` and DIY `input_boolean.*` / `switch.*` alarms.
+- **Alarm perimeter ring** (#217): Visual red/green perimeter glow around the house showing armed/disarmed state, with optional helper toggle.
+- **Announcement volume** (#217): Volume slider in the room panel's announcement section and default `announce_volume` setting for speakers and screens.
+- **Smart scene toggle** (#217): Tapping a furniture item or dock button that triggers a scene (`scene.turn_on`) turns off the scene's active entities on the second tap and shows live on/off status on the marker.
+- **Refined light color picker** (#217): Conic-gradient halo, active swatch highlight, free color picker, and color-temperature slider in the light quick menu.
+- **See-through glass furniture & IKEA MALM colors** (#217): Pack parts using `"color": "glass"` render in the translucent glass layer, and built-in IKEA MALM beds and chests support White, Black, Black-brown, Oak, and Grey colorways.
+
+### Fixed
+
+- **Cards and bars no longer cover each other on small or wide cards** (thanks @Guenni75, #203): with the room buttons on, the energy bar, the sensors and the clock start below the buttons instead of under them, the house and car cards keep below the buttons (a folded one can always be opened again), the floor pictures and the energy bar leave out on cards under 340 px (before: 260 px), and the sensors follow the same rule.
+- **The tablet side panel is opt-in** (from the tablet pull request #217): it stays off until *Side panel* is set to left or right in the plan's settings, so existing dashboards look as before. The saved-view buttons sit beside the round buttons at the bottom left instead of over them.
+- **Realistic theme colors & off screens:** Unpainted frames, doors, lampshades, and blinds map to natural architectural tones instead of bright blue, glass uses a neutral tint, and off TVs/monitors stay glossy black without darkening dark furniture.
+- **Outdoor weather only in 3D view** and resilient per-file error handling when loading built-in packs.
+
 ## [0.32.1]
 
 ### Fixed

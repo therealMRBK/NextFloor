@@ -4,11 +4,13 @@ import { html, nothing, type TemplateResult } from "lit";
 import { colourLabel, furnitureName, packItemLabel, packLabel } from "../../../furniture-names.ts";
 import { holePartInRoom } from "../../../geometry/holes.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, canLift, uid, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
+import { BUTTON_ACTIONS, canLift, uid, CEILING_TYPES, ceilingAt, ceilingOf, FURNITURE_MATERIALS, FURNITURE_TYPES, furnitureFootprint, isLamp, type ButtonAction, type Furniture } from "../../../model.ts";
 import { hasMovingParts, hasPicture, householdKind, isElectric, mountBase, packItem, packType, type FurniturePack } from "../../../packs.ts";
-import { checkField, entityField, hint, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, colorField, entityField, hint, iconField, markerField, pinShiftField, numberField, selectField, serviceField, serviceTargetEntityField, textField } from "../fields.ts";
 import { entityOptions } from "../entities.ts";
 import { storeImage } from "../../../api.ts";
+import { load3d } from "../../../load3d.ts";
+import { meshPath } from "../../../model-slots.ts";
 import { readPictureInBrowser } from "../background-tool.ts";
 import { roofUnderAt } from "../../../roof/proposal.ts";
 import type { EditorHost } from "../host.ts";
@@ -21,6 +23,8 @@ import { DEFAULT_STAIR } from "../../../geometry/stairs.ts";
 export interface FurnitureActions extends FurnitureLinkActions {
   rotate(delta: number): void;
   duplicate(): void;
+  rotateGroup?(delta: number): void;
+  duplicateGroup?(): void;
   /** A note (task) at this piece: a yearly check, a cleaning, a filter change (#113). */
   addTask(): void;
   remove(): void;
@@ -177,11 +181,30 @@ function tapField(host: EditorHost, item: Furniture, actions: FurnitureActions):
   const tap = item.tap ?? null;
   const choices: [string, string][] = [["", host.t("furn_tap_default")], ...BUTTON_ACTIONS.map((a): [string, string] => [a, host.t(`own_action_${a}` as I18nKey)])];
   const set = (patch: Partial<NonNullable<Furniture["tap"]>>) => actions.update({ tap: { action: tap?.action ?? "navigate", target: tap?.target ?? null, data: tap?.data ?? null, ...patch } });
+  const targetInput = () => {
+    if (!tap || tap.action === "fire_dom_event") return nothing;
+    if (tap.action === "service") return serviceField(host, host.t("own_target_service"), tap.target ?? null, (v) => set({ target: v }));
+    if (tap.action === "more_info") return entityField(host, host.t("own_target_more_info"), tap.target ?? null, undefined, entityOptions(host.hass, () => true), (v) => set({ target: v && v !== "none" ? v : null }));
+    return textField(host, host.t(`own_target_${tap.action}` as I18nKey), tap.target ?? "", (v) => set({ target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[tap.action] });
+  };
+  const quickAssign = (id: string | null) => {
+    if (!id || id === "none") return;
+    const domain = id.split(".")[0];
+    const srv = domain === "scene" ? "scene.turn_on" : domain === "script" ? "script.turn_on" : domain === "light" ? "light.toggle" : "homeassistant.toggle";
+    const icon = domain === "light" ? "lightbulb" : domain === "switch" || domain === "input_boolean" ? "power-socket-eu" : "lightbulb-on";
+    actions.update({
+      ...(domain === "light" || domain === "switch" || domain === "input_boolean" ? { entity: id } : {}),
+      tap: { action: "service", target: srv, data: { entity_id: id } },
+      icon: item.icon ?? icon,
+      marker: item.marker ?? "always",
+    });
+  };
+  const quickVal = typeof tap?.data?.entity_id === "string" ? tap.data.entity_id : null;
   return html`<div class="nf-form">
+    ${entityField(host, host.t("furn_quick_control"), quickVal, undefined, entityOptions(host.hass, (id) => /^(light|switch|scene|script|input_boolean)\./.test(id)), quickAssign)}
     ${selectField(host, host.t("furn_tap"), tap?.action ?? "", choices, (v) => (v ? set({ action: v as ButtonAction }) : actions.update({ tap: null })), { wide: true, title: host.t("furn_tap_hint") })}
-    ${tap && tap.action !== "fire_dom_event"
-      ? textField(host, host.t(`own_target_${tap.action}` as I18nKey), tap.target ?? "", (v) => set({ target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[tap.action] })
-      : nothing}
+    ${targetInput()}
+    ${tap && tap.action === "service" ? serviceTargetEntityField(host, tap.target, tap.data, (data) => set({ data }), item.entity) : nothing}
     ${tap && (tap.action === "service" || tap.action === "fire_dom_event") ? dataField(host, tap, (data) => set({ data })) : nothing}
     ${tap && !isElectric(item.type) && !packItem(item.type)?.gangs
       ? html`${markerField(host, item.marker ?? null, (v) => actions.update({ marker: v }))}${iconField(host, item.icon, (v) => actions.update({ icon: v }))}${pinShiftField(host, item.pin_offset, (v) => actions.update({ pin_offset: v }))}`
@@ -236,6 +259,46 @@ function showWhenField(host: EditorHost, item: Furniture, actions: FurnitureActi
   </div>`;
 }
 
+function appearanceFields(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
+  const t = host.t;
+  const matChoices = FURNITURE_MATERIALS.map((m): [string, string] => [m, t(`fmat_${m}` as I18nKey)]);
+  const groups = [...new Set((host.floor?.furniture ?? []).map((f) => f.group).filter((g): g is string => !!g))].sort();
+  const uploadMesh = async (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file || !host.hass?.fetchWithAuth) return;
+    const meshId = `m_${item.id.replace(/[^a-z0-9_]/gi, "_").toLowerCase()}`.slice(0, 48);
+    const data = await file.arrayBuffer();
+    const viewer = await load3d();
+    const { glb } = await viewer.prepareModel(data, { turns: 0, paint: [], maxTriangles: 15000 });
+    const res = await host.hass.fetchWithAuth(meshPath(meshId), { method: "POST", body: glb });
+    if (res.ok) actions.update({ mesh: meshId });
+  };
+  return html`<div class="nf-form">
+    ${colorField(host, t("furn_color"), item.color, "#8b7355", (color) => actions.update({ color }))}
+    ${selectField(host, t("furn_material"), item.material ?? "auto", matChoices, (v) => actions.update({ material: v === "auto" ? null : v }))}
+    ${host.admin
+      ? html`<div class="nf-actions nf-wide">
+          <label class="nf-btn nf-upload" title=${t("furn_mesh_hint")}>🧊 ${t("furn_mesh_upload")}<input type="file" accept=".glb,.gltf,.dae,.obj,.stl" hidden @change=${uploadMesh} /></label>
+          ${item.mesh ? html`<button class="nf-btn nf-danger" @click=${() => actions.update({ mesh: null })}>${t("furn_mesh_remove")}</button>` : nothing}
+        </div>`
+      : nothing}
+    <label class="nf-field nf-wide" title=${t("furn_group_hint")}
+      >${t("furn_group")}
+      <input type="text" list="nf-furn-groups" maxlength="64" .value=${item.group ?? ""} placeholder=${t("furn_group_placeholder")} ?disabled=${!host.admin} @change=${(e: Event) => actions.update({ group: (e.target as HTMLInputElement).value.trim() || null })} />
+    </label>
+    <datalist id="nf-furn-groups">${groups.map((g) => html`<option value=${g}></option>`)}</datalist>
+    ${item.group && host.admin
+      ? html`<div class="nf-actions nf-wide">
+          ${actions.rotateGroup ? html`<button class="nf-btn" @click=${() => actions.rotateGroup!(-90)}>↺ ${t("furn_group_rotate")}</button><button class="nf-btn" @click=${() => actions.rotateGroup!(90)}>↻ ${t("furn_group_rotate")}</button>` : nothing}
+          ${actions.duplicateGroup ? html`<button class="nf-btn" @click=${() => actions.duplicateGroup!()}>⧉ ${t("furn_group_duplicate")}</button>` : nothing}
+          <button class="nf-btn" @click=${() => actions.update({ group: null })}>${t("furn_group_leave")}</button>
+        </div>`
+      : nothing}
+  </div>`;
+}
+
 /** The form of the selected piece of furniture. */
 export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
   const gangs = packItem(item.type)?.gangs ?? 0;
@@ -243,7 +306,7 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
   return html`<section>
     <div class="nf-h3row"><h3>${item.name || host.t("furniture")}</h3>${actions.lockButton}</div>
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>
-    ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)}
+    ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)} ${appearanceFields(host, item, actions)}
     ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
     ${hasPicture(item.type) ? pictureFields(host, item, actions) : nothing}
     ${packItem(item.type)?.pet

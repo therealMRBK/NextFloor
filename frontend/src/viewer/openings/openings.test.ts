@@ -349,3 +349,15 @@ test("the 3D view keeps a slot for the front id of a bay window, so its shutter 
   assert.equal(moving.get("front-p1")?.cover, 0.5);
   assert.ok(triangles(buildOpeningParts(infos.filter((i) => i.opening.front), moving, 3).blinds) > 0);
 });
+
+test("a venetian blind can hang inside the room: its slats lie on the room side, the Raffstore's outside (#213)", () => {
+  // the first wall runs along z = 0 and the room lies on the positive side
+  const meanZ = (kind: Opening["blind"]) => {
+    const p = positions(build({ blind: kind }, { cover: 0.7, slats: 0.5 }).blinds).filter((_, i) => i % 3 === 2);
+    assert.ok(p.length > 0, `${kind} has slats`);
+    return p.reduce((a, b) => a + b, 0) / p.length;
+  };
+  assert.ok(meanZ("venetian") < 0, "outside");
+  assert.ok(meanZ("venetian_inside") > 0, "inside");
+  assert.ok(meanZ("inside") > 0, "the roller blind inside stays where it was");
+});

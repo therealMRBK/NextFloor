@@ -20,8 +20,11 @@ import {
   type Material,
   type Object3D,
 } from "three";
+import { ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader.js";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { guessPaint, paintName, shareBudget, type MaterialSummary } from "./choices.ts";
 import { decimate, triangleCount, type Mesh3 } from "./decimate.ts";
 
@@ -54,24 +57,55 @@ export class ModelError extends Error {
 
 const MAGIC = 0x46546c67; // "glTF"
 
-/** The whole file is read as binary glTF; anything else is refused before three.js sees it. */
-function check(data: ArrayBuffer): void {
-  if (data.byteLength < 20 || new DataView(data).getUint32(0, true) !== MAGIC) throw new ModelError("not_glb", "not a binary glTF (.glb) file");
-}
+const isGlb = (data: ArrayBuffer): boolean => data.byteLength >= 20 && new DataView(data).getUint32(0, true) === MAGIC;
 
 async function parse(data: ArrayBuffer): Promise<Object3D> {
-  check(data);
-  return new Promise((resolve, reject) => {
-    new GLTFLoader().parse(
-      data,
-      "",
-      (gltf) => resolve(gltf.scene),
-      (error) => {
-        const message = String((error as { message?: string })?.message ?? error);
-        reject(/draco|meshopt|ktx/i.test(message) ? new ModelError("compressed", message) : new ModelError("unreadable", message));
-      },
-    );
-  });
+  if (isGlb(data)) {
+    return new Promise((resolve, reject) => {
+      new GLTFLoader().parse(
+        data,
+        "",
+        (gltf) => resolve(gltf.scene),
+        (error) => {
+          const message = String((error as { message?: string })?.message ?? error);
+          reject(/draco|meshopt|ktx/i.test(message) ? new ModelError("compressed", message) : new ModelError("unreadable", message));
+        },
+      );
+    });
+  }
+  const head = new TextDecoder().decode(data.slice(0, Math.min(data.byteLength, 2048)));
+  if (/<COLLADA\b/i.test(head)) {
+    try {
+      const dae = new ColladaLoader().parse(new TextDecoder().decode(data), "");
+      if (!dae?.scene) throw new ModelError("unreadable", "empty COLLADA scene");
+      return dae.scene;
+    } catch (e) {
+      throw e instanceof ModelError ? e : new ModelError("unreadable", String(e));
+    }
+  }
+  if (/^\s*\{[\s\S]*"asset"\s*:/.test(head)) {
+    return new Promise((resolve, reject) => {
+      new GLTFLoader().parse(data, "", (gltf) => resolve(gltf.scene), (e) => reject(new ModelError("unreadable", String(e))));
+    });
+  }
+  if (/^(?:#.*\r?\n|\s)*(?:mtllib|o\s|g\s|v\s)/m.test(head)) {
+    try {
+      return new OBJLoader().parse(new TextDecoder().decode(data));
+    } catch (e) {
+      throw new ModelError("unreadable", String(e));
+    }
+  }
+  try {
+    const geom = new STLLoader().parse(data);
+    if (geom.getAttribute("position")?.count) {
+      const s = new Scene();
+      s.add(new Mesh(geom, new MeshStandardMaterial({ color: 0xb0b0b0 })));
+      return s;
+    }
+  } catch {
+    // not a valid STL
+  }
+  throw new ModelError("not_glb", "unsupported 3D model file (expected .glb, .gltf, .dae, .obj or .stl)");
 }
 
 /** One material's share of the model: its triangles with the placement of the parts already applied. */

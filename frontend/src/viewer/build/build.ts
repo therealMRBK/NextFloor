@@ -25,7 +25,7 @@ import { buildFloors } from "./floors.ts";
 import { outlineOf } from "./outline.ts";
 import { bucketWalls, placeOpenings, roofLimits } from "./placement.ts";
 import { buildShadow } from "./shadow.ts";
-import { buildWallSolids, type WallPaint } from "./solids.ts";
+import { buildWallSolids, type WallMaterial, type WallPaint } from "./solids.ts";
 import type { FloorGeometry } from "./types.ts";
 
 export function buildFloorGeometry(
@@ -44,6 +44,8 @@ export function buildFloorGeometry(
   paint?: WallPaint,
   /** Rooms stay as drawn: walls fill the gaps between them (see WallOptions.asDrawn). */
   asDrawn = false,
+  /** Wall materials for each side face. */
+  wallMaterial?: WallMaterial,
 ): FloorGeometry {
   const { walls, open: openRooms } = generateWalls(floor.rooms, { exterior: wallExterior, interior: wallInterior, ...(asDrawn ? { asDrawn } : {}) }, floor.walls ?? []);
   const limits = roofLimits(roofUnder);
@@ -53,8 +55,8 @@ export function buildFloorGeometry(
   const { buckets, wallBucket } = bucketWalls(walls);
   const { openings, spans } = placeOpenings(floor, walls, wallBucket, limits);
 
-  const wallBuf = new GeoBuffer();
-  buildWallSolids(wallBuf, floor, walls, wallBucket, spans, limits, hasRoof, paint);
+  const wallBuf = new GeoBuffer(false, true);
+  buildWallSolids(wallBuf, floor, walls, wallBucket, spans, limits, hasRoof, paint, wallMaterial);
 
   const outline = outlineOf(walls, walls.flatMap((w) => w.footprint));
   const lines = new LineBuffer();
@@ -65,21 +67,29 @@ export function buildFloorGeometry(
 
   const shadow = buildShadow(outline.edges, floor.rooms, spans);
   const ghosts = new Map<number, GeoBuffer>();
+  const ghostFor = (o: number) => {
+    let g = ghosts.get(o);
+    if (!g) ghosts.set(o, (g = new GeoBuffer()));
+    return g;
+  };
   pushOutdoor(wallBuf, lines, floor, ghosts, () => new GeoBuffer());
   for (const s of solar) pushModules(wallBuf, lines, s.face, s.field, floor.elevation);
 
   // lamps are drawn live by the viewer: they glow with their light
   const cut = Math.min(floor.cut_height, floor.height);
   const furnitureTris: FloorGeometry["furnitureTris"] = [];
+  const furnGlass = ghostFor(0.26);
   for (const piece of floor.furniture.filter((f) => !isLamp(f.type))) {
     const start = wallBuf.count;
+    const glassStart = furnGlass.count;
     const firstLine = lines.p.length / 6;
     const base = mountBase(floor, piece);
     // an owned 3D model replaces the parts: the viewer adds it as its own object
-    if (!hasMesh(piece.type)) pushFurniture(wallBuf, lines, shadow, piece, base);
+    if (!hasMesh(piece.type, piece.mesh)) pushFurniture(wallBuf, lines, shadow, piece, base, furnGlass);
     // a wardrobe or a stair reaching above the cut height is cut with the walls, so it hides nothing behind it
     if (base + piece.h > cut + 0.05) {
       cutAbove(wallBuf, start, cut, FURN_OFFSET);
+      cutAbove(furnGlass, glassStart, cut, FURN_OFFSET);
       cutLinesAbove(lines, firstLine, cut, FURN_OFFSET);
     }
     furnitureTris.push({ id: piece.id, start, end: wallBuf.count });

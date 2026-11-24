@@ -1,13 +1,16 @@
 // What the 3D view reads from Home Assistant each time something changed: the state of roof windows, which screens show what,
 // which sprinklers water, and where the sun is.
 
-import { hasScreen, isActive, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
-import { appColor, isLive, showsSomething } from "../../live/media.ts";
+import { entityName, hasScreen, isActive, isUnavailable, openingState, type FurnitureLinks } from "../../devices.ts";
+import { furnitureName } from "../../furniture-names.ts";
+import { appColor, isLive, mediaNow, showsSomething, type MediaNow } from "../../live/media.ts";
+import { gameNow, gameOnScreen, screenDeviceOn } from "../../live/screen-sources.ts";
 import type { Building, Floor, Furniture } from "../../model.ts";
 import type { HomeAssistant } from "../../types.ts";
 import { mountBase } from "../../packs.ts";
 import type { LiveScreenInput } from "../../viewer/viewer3d.ts";
 import type { SpraySpot } from "../../viewer/live-water.ts";
+import type { PlanPoint } from "../../viewer/live-energy.ts";
 
 /** How far a lawn sprinkler reaches when its form does not say (m). */
 export const SPRAY_REACH = 3;
@@ -70,7 +73,12 @@ export function liveScreens(hass: HomeAssistant, building: Building, links: Read
   const screens: LiveScreenInput[] = [];
   for (const floor of building.floors) {
     for (const furniture of floor.furniture) {
-      if (!hasScreen(furniture.type)) continue;
+      if (!hasScreen(furniture.type) || !screenDeviceOn(hass, furniture)) continue;
+      const game = gameOnScreen(hass, furniture);
+      if (game) {
+        screens.push({ id: furniture.id, furnitureId: furniture.id, floorId: floor.id, color: appColor(null), title: game.title, subtitle: game.player, app: null, picture: game.picture, playing: true, ambilight: furniture.ambilight ?? 1 });
+        continue;
+      }
       const linked = links?.get(furniture.id)?.entity ?? null;
       const player = linked?.startsWith("media_player.") ? linked : playerBeside(floor, furniture);
       const state = player ? hass.states[player] : undefined;
@@ -92,6 +100,33 @@ export function liveScreens(hass: HomeAssistant, building: Building, links: Read
     }
   }
   return screens;
+}
+
+/** Media players in the plan: placed as a device, or linked to furniture (TV, speaker), and games on a screen; their point is on top of it. */
+export function mediaInPlan(hass: HomeAssistant, building: Building, links: ReadonlyMap<string, FurnitureLinks> | null): MediaNow[] {
+  const spots: { entity: string; name: string; at: PlanPoint; rings?: number | null }[] = [];
+  const games: MediaNow[] = [];
+  for (const floor of building.floors) {
+    for (const f of floor.furniture) {
+      const name = f.name || furnitureName(hass, f.type);
+      const at = { floorId: floor.id, x: f.x, z: f.z, y: mountBase(floor, f) + f.h + 0.15 };
+      if (hasScreen(f.type)) {
+        // same as the picture on the screen: dark while its device is off, and a game goes before a linked player
+        if (!screenDeviceOn(hass, f)) continue;
+        const game = gameNow(hass, f, name, at);
+        if (game) {
+          games.push(game);
+          continue;
+        }
+      }
+      const e = links?.get(f.id)?.entity;
+      if (e?.startsWith("media_player.")) spots.push({ entity: e, name, at, rings: f.sound_rings });
+    }
+    for (const pl of floor.placements) {
+      if (pl.entity_id.startsWith("media_player.")) spots.push({ entity: pl.entity_id, name: pl.name || entityName(hass, pl.entity_id), at: { floorId: floor.id, x: pl.x, z: pl.z, y: (pl.y ?? 1.1) + 0.15 }, rings: pl.sound_rings });
+    }
+  }
+  return [...mediaNow(hass, spots), ...games];
 }
 
 /** The sun's position, or null when it is not reported. */

@@ -74,6 +74,8 @@ export interface CardConfig {
   controls_hide_after?: number;
   /** Room names in 3D (default true). */
   room_names?: boolean;
+  /** The names under devices and markers in 3D (default true). */
+  device_names?: boolean;
   /** An opened floor with the floors below it dimmed (default), stacked, or on its own. */
   floor_stack?: "dim" | "stacked" | "single";
   /** A button for full screen (hides the dashboard around the card). */

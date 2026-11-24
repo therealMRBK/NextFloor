@@ -22,6 +22,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { toCreasedNormals } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { getMeshSource, markMeshReady } from "../packs.ts";
+import { SHADOW_GLSL, shadowUniforms } from "./scene/sun-shadow.ts";
 
 interface LoadedMesh {
   root: Object3D;
@@ -127,6 +128,7 @@ export function instantiateMesh(id: string, at: MeshPlacement): Group | null {
     const mesh = o as Mesh;
     if (!mesh.isMesh) return;
     const mat = (mesh.material as MeshStandardMaterial).clone();
+    receiveSunShadow(mat);
     if (mesh.userData.paint && at.paint) mat.color = new Color(at.paint);
     mesh.material = mat;
     own.push(mat);
@@ -147,7 +149,7 @@ export function disposeMeshInstance(g: Object3D): void {
 }
 
 /** Light and reflections for the models; the rest of the scene is unlit, so they only touch these. */
-export function addMeshLighting(parent: Object3D, renderer: WebGLRenderer): { env: Texture; dispose: () => void } {
+export function addMeshLighting(parent: Object3D, renderer: WebGLRenderer): { env: Texture; sun: DirectionalLight; dispose: () => void } {
   const pmrem = new PMREMGenerator(renderer);
   const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   pmrem.dispose();
@@ -157,6 +159,7 @@ export function addMeshLighting(parent: Object3D, renderer: WebGLRenderer): { en
   parent.add(sky, sun);
   return {
     env,
+    sun,
     dispose: () => {
       env.dispose();
       sky.removeFromParent();
@@ -171,4 +174,20 @@ export function applyEnvironment(g: Object3D, env: Texture): void {
     m.envMap = env;
     m.envMapIntensity = 0.9;
   }
+}
+
+/** The models take the sun shadow of the realistic look on their direct light (off in the other looks, see shadowUniforms). */
+function receiveSunShadow(m: MeshStandardMaterial): void {
+  const previous = m.onBeforeCompile.bind(m);
+  m.onBeforeCompile = (shader, renderer) => {
+    previous(shader, renderer);
+    Object.assign(shader.uniforms, shadowUniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vNfW;\nvarying vec3 vNfN;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\n  vNfW = (modelMatrix * vec4(transformed, 1.0)).xyz;\n  vNfN = normalize(mat3(modelMatrix) * objectNormal);");
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", `#include <common>\nvarying vec3 vNfW;\nvarying vec3 vNfN;\n${SHADOW_GLSL}`)
+      .replace("#include <lights_fragment_end>", "#include <lights_fragment_end>\n  { vec3 nfN = normalize(vNfN); float nfSh = nfSunShadow(vNfW, nfN); reflectedLight.directDiffuse *= nfSh; reflectedLight.directSpecular *= nfSh; reflectedLight.indirectDiffuse *= mix(0.55, 1.0, nfSkyLight(vNfW, nfN)); }");
+  };
+  m.customProgramCacheKey = () => "nf-mesh-sun-shadow";
 }

@@ -400,9 +400,9 @@ export const getMeshSource = (): MeshSource | null => meshSource;
 export const markMeshReady = (id: string): void => void loadedMeshes.add(id);
 
 /** Whether the item's own model has loaded (then its parts stay out of the merged geometry). */
-export function hasMesh(type: string): boolean {
-  const id = byType.get(type)?.mesh;
-  return id !== undefined && loadedMeshes.has(id);
+export function hasMesh(type: string, ownMesh?: string | null): boolean {
+  const id = ownMesh ?? byType.get(type)?.mesh;
+  return id !== undefined && id !== null && loadedMeshes.has(id);
 }
 
 /** The household kind of a piece of furniture: the pack's flag, else the built-in plant, else a pack plant by its id. */

@@ -74,6 +74,7 @@ ROOM_SCHEMA = vol.Schema(
         vol.Optional("floor_heating"): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Required("points"): vol.All([_POINT], vol.Length(min=3, max=MAX_POINTS)),
         vol.Required("floor_material"): vol.All(str, vol.Length(max=32)),
+        vol.Optional("wall_material", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
         # the camera this room opens with when it is tapped (None = framed from above)
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         # entities shown in the room's panel although they are not in the plan
@@ -204,7 +205,7 @@ OPENING_SCHEMA = vol.Schema(
         vol.Optional("cover", default=None): _ENTITY_REF,
         # a second blind (the right half of a wide window), the kind of blind and its favourite position (Somfy "My", %)
         vol.Optional("cover2"): vol.Any(None, vol.All(str, vol.Length(max=255))),
-        vol.Optional("blind"): vol.Any(None, vol.In(["roller", "venetian", "inside"])),
+        vol.Optional("blind"): vol.Any(None, vol.In(["roller", "venetian", "inside", "venetian_inside"])),
         vol.Optional("my_position"): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=0, max=100))),
         vol.Optional("contact", default=None): _ENTITY_REF,
         vol.Optional("tilt", default=None): _ENTITY_REF,
@@ -358,6 +359,9 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("ambilight", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
         # speakers: size of the sound rings while the linked media player plays (None = full, 0 = none)
         vol.Optional("sound_rings", default=None): vol.Any(None, vol.All(vol.Coerce(float), vol.Range(min=0, max=1.5))),
+        # screens: the device on it (dark while it is off) and the game accounts whose game it shows
+        vol.Optional("screen_device", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+        vol.Optional("screen_sources"): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=4)),
         # linked entities (e.g. the TV's media player, a power sensor): None = automatic, "none" = no entity
         vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         vol.Optional("power", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
@@ -386,6 +390,10 @@ FURNITURE_SCHEMA = vol.Schema(
         vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
         # an own symbol for the marker: a Material Design icon name without "mdi:"
         vol.Optional("icon", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("color", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
+        vol.Optional("material", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
+        vol.Optional("group", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("mesh", default=None): vol.Any(None, vol.Match(r"^[a-z0-9_]{1,48}$")),
         # parking spots: the vehicle shown (a pack item type) while the entity reports a car, its size
         # factor, and a sensor naming the kind of vehicle with a state -> vehicle mapping
         # height of the bottom edge above the floor (None = default: the floor, a pack item's mount)
@@ -498,6 +506,10 @@ PLACEMENT_SCHEMA = vol.Schema(
         vol.Optional("marker", default=None): vol.Any(None, vol.In(["always", "active", "no_power", "never"])),
         # an own symbol for the marker: a Material Design icon name without "mdi:"
         vol.Optional("icon", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("color", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
+        vol.Optional("material", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
+        vol.Optional("group", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("mesh", default=None): vol.Any(None, vol.Match(r"^[a-z0-9_]{1,48}$")),
         # an own name in the plan, without renaming the entity; show_name puts it under the marker
         vol.Optional("name", default=None): vol.Any(None, vol.All(str, vol.Length(max=60))),
         vol.Optional("show_name", default=False): bool,
@@ -801,6 +813,7 @@ FLOOR_SCHEMA = vol.Schema(
         vol.Optional("start_view", default=None): vol.Any(None, START_VIEW_SCHEMA),
         # paint of this floor's outer walls in the solid view (None = the building's outside colour)
         vol.Optional("wall_paint_outside", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
+        vol.Optional("wall_material_outside", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -858,6 +871,75 @@ SETTINGS_SCHEMA = vol.Schema(
     {
         vol.Required("wall_exterior"): vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1)),
         vol.Required("wall_interior"): vol.All(vol.Coerce(float), vol.Range(min=0.02, max=1)),
+        vol.Optional("wall_material_outside", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
+        vol.Optional("wall_material_inside", default=None): vol.Any(None, vol.All(str, vol.Length(max=32))),
+        vol.Optional("weather_animations", default=True): bool,
+        vol.Optional("weather_preview", default=None): vol.Any(
+            None, vol.In(["snowy", "rainy", "pouring", "lightning-rainy", "fog"])
+        ),
+        vol.Optional("alarm_ring", default=None): vol.Any(
+            None,
+            vol.Schema(
+                {
+                    vol.Optional("entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+                    vol.Optional("style", default="perimeter"): vol.In(["perimeter", "circle"]),
+                    vol.Optional("show_armed", default=True): bool,
+                    vol.Optional("show_disarmed", default=True): bool,
+                    vol.Optional("enable_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
+                    vol.Optional("pin", default=None): vol.Any(None, vol.All(str, vol.Length(max=16))),
+                },
+                extra=vol.ALLOW_EXTRA,
+            ),
+        ),
+        vol.Optional("tablet_ui", default=None): vol.Any(
+            None,
+            vol.Schema(
+                {
+                    vol.Optional("sidebar", default="right"): vol.In(["off", "left", "right"]),
+                    vol.Optional("sidebar_style", default="card"): vol.In(["card", "clean", "minimal"]),
+                    vol.Optional("sidebar_clock", default=True): bool,
+                    vol.Optional("clock_size", default="normal"): vol.In(["normal", "large", "xl"]),
+                    vol.Optional("clock_seconds", default=False): bool,
+                    vol.Optional("clock_color", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
+                    vol.Optional("sidebar_weather", default=True): bool,
+                    vol.Optional("sidebar_summary", default=True): bool,
+                    vol.Optional("sidebar_people", default=True): bool,
+                    vol.Optional("sidebar_energy", default=True): bool,
+                    vol.Optional("sidebar_media", default=True): bool,
+                    vol.Optional("show_quick_dock", default=True): bool,
+                    vol.Optional("dock_style", default="pill"): vol.In(["pill", "clean", "large"]),
+                    vol.Optional("show_nav_in_kiosk", default=False): bool,
+                    vol.Optional("show_central", default=True): bool,
+                    vol.Optional("show_walk", default=True): bool,
+                    vol.Optional("show_legend", default=True): bool,
+                    vol.Optional("sidebar_appliances", default=True): bool,
+                    vol.Optional("price_entity", default=None): _ENTITY_REF,
+                    vol.Optional("pip_camera", default=None): _ENTITY_REF,
+                    vol.Optional("pip_trigger", default=None): _ENTITY_REF,
+                    vol.Optional("pip_duration", default=20): vol.All(int, vol.Range(min=5, max=120)),
+                    vol.Optional("screensaver_minutes", default=0): vol.All(int, vol.Range(min=0, max=60)),
+                    vol.Optional("show_cam_bookmarks", default=True): bool,
+                },
+                extra=vol.ALLOW_EXTRA,
+            ),
+        ),
+        vol.Optional("quick_controls", default=None): vol.Any(
+            None,
+            vol.All(
+                [
+                    vol.Schema(
+                        {
+                            vol.Required("id"): vol.All(str, vol.Length(min=1, max=64)),
+                            vol.Required("label"): vol.All(str, vol.Length(max=60)),
+                            vol.Optional("icon", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+                            vol.Required("entities"): vol.All([vol.All(str, vol.Length(max=255))], vol.Length(max=30)),
+                        },
+                        extra=vol.ALLOW_EXTRA,
+                    )
+                ],
+                vol.Length(max=12),
+            ),
+        ),
         vol.Required("grid"): vol.All(vol.Coerce(float), vol.Range(min=0.01, max=1)),
         # direction of north in the plan, degrees clockwise from "up"
         vol.Optional("north", default=0): vol.All(vol.Coerce(float), vol.Range(min=-360, max=360)),
@@ -1026,6 +1108,7 @@ SETTINGS_SCHEMA = vol.Schema(
         vol.Optional("announce_phrases"): vol.Any(
             None, vol.All([vol.All(str, vol.Length(min=1, max=200))], vol.Length(max=30))
         ),
+        vol.Optional("announce_volume"): vol.Any(None, vol.All(int, vol.Range(min=0, max=100))),
         # sunlight through the windows as patches on the floor
         vol.Optional("sun_patches", default=True): bool,
         # the sun's arc and a compass ring around the plot

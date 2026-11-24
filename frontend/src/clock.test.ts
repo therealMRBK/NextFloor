@@ -20,8 +20,9 @@ test("the dashboard clock resumes after reconnecting without a clock option chan
       return next;
     },
     clearInterval: (id: number) => timers.delete(id),
-  }) as (this: { isConnected: boolean; clock: string | null; _now: number }) => void;
-  const card = { isConnected: true, clock: "top_right" as string | null, _now: 0 };
+  }) as (this: { isConnected: boolean; clock: string | null; _now: number; building: unknown }) => void;
+  // the tablet sidebar (with its clock) is switched off here, so only the dashboard clock option decides
+  const card = { isConnected: true, clock: "top_right" as string | null, _now: 0, building: { settings: { tablet_ui: { sidebar: "off" } } } };
   sync.call(card);
   assert.equal(timers.size, 1);
   now = 200;
@@ -44,6 +45,6 @@ test("the dashboard clock resumes after reconnecting without a clock option chan
   sync.call(card);
   assert.equal(timers.size, 0, "a disabled clock has no running timer");
   assert.match(source, /connectedCallback\(\): void \{\s*super.connectedCallback\(\);\s*this.syncClock\(\)/);
-  assert.match(source, /if \(changed.has\("clock"\)\) this.syncClock\(\);/);
+  assert.match(source, /if \(changed.has\("clock"\) \|\| changed.has\("building"\)\) this.syncClock\(\);/);
   assert.match(source, /disconnectedCallback\(\)[\s\S]*?clearInterval\(this.clockTimer\);/);
 });

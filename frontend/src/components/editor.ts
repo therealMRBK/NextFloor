@@ -52,7 +52,7 @@ import {
   type Vec2,
 } from "../model.ts";
 import { controls, tokens } from "../styles.ts";
-import { renderBleLocate, renderFavorites, renderOutside, renderPresence, renderStartView } from "./editor/forms/house.ts";
+import { renderBleLocate, renderFavorites, renderOutside, renderPresence, renderQuickControlsSection, renderStartView } from "./editor/forms/house.ts";
 import { renderCardTemplates } from "./editor/forms/templates.ts";
 import { BackupService } from "./editor/backup.ts";
 import { renderBackup } from "./editor/forms/backup.ts";
@@ -658,6 +658,8 @@ export class NfEditor extends LitElement {
       update: (patch) => this.updateFurniture(patch),
       rotate: (delta) => this.rotateFurniture(delta),
       duplicate: () => this.duplicateFurniture(),
+      rotateGroup: (delta) => this.rotateFurnitureGroup(delta),
+      duplicateGroup: () => this.duplicateFurnitureGroup(),
       addTask: () => this.addTaskToFurniture(),
       remove: () => this.deleteFurniture(),
       toDevice: (item) => this.furnitureToDevice(item),
@@ -1069,6 +1071,7 @@ export class NfEditor extends LitElement {
       ${this.render3dBar()}
       <nf-view3d
         .hass=${this.hass}
+        .weather=${false}
         .building=${this._doc3d}
         .floorId=${this.houseTool ? null : this._floorId}
         .roomId=${null}
@@ -1771,7 +1774,21 @@ export class NfEditor extends LitElement {
         // near a wall the piece turns its back (or a side) to it and sits flush; Alt moves freely
         const flush = fine ? null : this.snapToWall({ ...item, x, z });
         const place = flush ?? { x, z, rotation: item.rotation };
-        this.live(drag, (_, floor) => void Object.assign(floor.furniture.find((f) => f.id === drag.id)!, place));
+        this.live(drag, (_, floor) => {
+          const target = floor.furniture.find((f) => f.id === drag.id);
+          if (!target) return;
+          const dx = place.x - target.x;
+          const dz = place.z - target.z;
+          Object.assign(target, place);
+          if (target.group && !fine) {
+            for (const other of floor.furniture) {
+              if (other.id !== target.id && other.group === target.group) {
+                other.x = Math.round((other.x + dx) * 1000) / 1000;
+                other.z = Math.round((other.z + dz) * 1000) / 1000;
+              }
+            }
+          }
+        });
         return;
       }
       case "resize": {
@@ -2619,6 +2636,46 @@ export class NfEditor extends LitElement {
     const copy = copyOfFurniture(item);
     this.change((_, floor) => floor.furniture.push(copy));
     this.selectItem("furniture", copy.id);
+  }
+
+  private rotateFurnitureGroup(delta: number): void {
+    const item = this.furnitureItem;
+    const floor = this.floor;
+    if (!item?.group || !floor || !this.isAdmin) return;
+    const members = floor.furniture.filter((f) => f.group === item.group);
+    if (!members.length) return;
+    const cx = members.reduce((s, f) => s + f.x, 0) / members.length;
+    const cz = members.reduce((s, f) => s + f.z, 0) / members.length;
+    const rad = (delta * Math.PI) / 180;
+    const [cos, sin] = [Math.cos(rad), Math.sin(rad)];
+    this.change((_, fl) => {
+      for (const f of fl.furniture) {
+        if (f.group !== item.group) continue;
+        const dx = f.x - cx;
+        const dz = f.z - cz;
+        f.x = Math.round((cx + dx * cos - dz * sin) * 1000) / 1000;
+        f.z = Math.round((cz + dx * sin + dz * cos) * 1000) / 1000;
+        f.rotation = turnedBy(f.rotation, delta);
+      }
+    });
+  }
+
+  private duplicateFurnitureGroup(): void {
+    const item = this.furnitureItem;
+    const floor = this.floor;
+    if (!item?.group || !floor || !this.isAdmin) return;
+    const members = floor.furniture.filter((f) => f.group === item.group);
+    if (!members.length) return;
+    const nextGroup = `${item.group}-2`;
+    let firstCopyId: string | null = null;
+    this.change((_, fl) => {
+      for (const m of members) {
+        const copy = { ...copyOfFurniture(m), group: nextGroup };
+        fl.furniture.push(copy);
+        if (m.id === item.id) firstCopyId = copy.id;
+      }
+    });
+    if (firstCopyId) this.selectItem("furniture", firstCopyId);
   }
 
   /** A vehicle placed as plain furniture becomes a parking spot holding it. */
@@ -3542,7 +3599,7 @@ export class NfEditor extends LitElement {
             : floor
               ? renderRoomList(this.host, floor, { select: (id) => this.selectItem("room", id) })
               : nothing}
-      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderOutside(this.host, () => this.groundView()) : nothing} ${admin ? renderFavorites(this.host) : nothing}
+      ${admin ? renderStartView(this.host, () => this.paneView()) : nothing} ${admin ? renderOutside(this.host, () => this.groundView()) : nothing} ${admin ? renderQuickControlsSection(this.host) : nothing} ${admin ? renderFavorites(this.host) : nothing}
       ${renderHelpLinks(this.host)}
       ${admin && SHOW_PRESENCE ? renderPresence(this.host) : nothing} ${admin ? renderBleLocate(this.host, this._doc) : nothing} ${admin ? renderCardTemplates(this.host) : nothing}
       ${floor && admin ? renderBackgroundForm(this.host, this.bg, floor) : nothing} ${admin ? renderSettings(this.host, this.settingsActions) : nothing}
@@ -3617,4 +3674,5 @@ if (!customElements.get("nf-editor")) customElements.define("nf-editor", NfEdito
 
 // the extensions page is part of this bundle: the panel loads it the same way as the editor
 import "./extensions.ts";
+import "./settings-page.ts";
 

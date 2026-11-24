@@ -155,11 +155,31 @@ export function favoriteCall(entityId: string): [domain: string, service: string
   }
 }
 
+const SWITCHABLE_RE = /^(light|switch|fan|input_boolean|media_player)\./;
+
+/** Entities controlled by a scene (plus an optional linked entity) that are currently "on". */
+export function sceneEntitiesOn(hass: HomeAssistant, sceneId: string | null | undefined, extraEntity?: string | null): string[] {
+  const ids = new Set<string>();
+  if (extraEntity && SWITCHABLE_RE.test(extraEntity)) ids.add(extraEntity);
+  const raw = sceneId ? hass.states[sceneId]?.attributes?.entity_id : undefined;
+  if (Array.isArray(raw)) {
+    for (const id of raw) if (typeof id === "string" && SWITCHABLE_RE.test(id)) ids.add(id);
+  }
+  return [...ids].filter((id) => hass.states[id]?.state === "on");
+}
+
 /**
  * Runs an own button from an element inside the dashboard: navigate, open more-info, call a service, or fire a DOM
  * event ("ll-custom" is what Home Assistant's fire-dom-event sends, and what browser_mod listens for).
+ * When calling `scene.turn_on`, if any switchable entity in the scene (or linked `extraEntity`) is already on,
+ * toggles them off instead so a single tap acts as an on/off toggle for the scene.
  */
-export function runButton(hass: HomeAssistant, from: HTMLElement, button: { action: string; target?: string | null; data?: Record<string, unknown> | null }): void {
+export function runButton(
+  hass: HomeAssistant,
+  from: HTMLElement,
+  button: { action: string; target?: string | null; data?: Record<string, unknown> | null },
+  extraEntity?: string | null,
+): void {
   const target = button.target?.trim() ?? "";
   const fire = (name: string, detail: unknown) => from.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   switch (button.action) {
@@ -174,6 +194,14 @@ export function runButton(hass: HomeAssistant, from: HTMLElement, button: { acti
     case "service": {
       if (!target.includes(".")) return;
       const [domain, service] = target.split(".", 2);
+      if (domain === "scene" && service === "turn_on") {
+        const sceneId = typeof button.data?.entity_id === "string" ? button.data.entity_id : null;
+        const onIds = sceneEntitiesOn(hass, sceneId, extraEntity);
+        if (onIds.length) {
+          void hass.callService("homeassistant", "turn_off", { entity_id: onIds });
+          return;
+        }
+      }
       void hass.callService(domain, service, button.data ?? {});
       return;
     }

@@ -7,10 +7,13 @@ A pack is plain JSON (format, id, name, publisher, items). The packs that come w
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
+
+_LOGGER = logging.getLogger(__name__)
 
 PACK_FORMAT = "nfpack"
 PACK_VERSION = 1
@@ -54,7 +57,7 @@ PART_SCHEMA = vol.Schema(
         vol.Required("color"): _COLOR,
         vol.Optional("top"): _COLOR,
         # outline: True (soft blue), "glow" (cyan like the walls) or "faint"
-        vol.Optional("edges", default=False): vol.Any(bool, vol.In(["glow", "faint"])),
+        vol.Optional("edges", default=False): vol.Any(bool, vol.In(["glow", "faint", "furn"])),
         # lamps: the part shines in the colour and brightness of the linked light
         vol.Optional("glow", default=False): bool,
         # a screen (TV, monitor): shows the linked media player's app colour and picture on its front (+z)
@@ -264,6 +267,9 @@ def load_builtin_packs() -> list[dict[str, Any]]:
     """The packs that come with the integration (blocking: run in the executor)."""
     packs = []
     for file in sorted(BUILTIN_DIR.glob("*.json")):
-        pack = parse_pack(file.read_text(encoding="utf-8"))
-        packs.append({**pack, "builtin": True})
+        try:
+            pack = parse_pack(file.read_text(encoding="utf-8"))
+            packs.append({**pack, "builtin": True})
+        except Exception as err:
+            _LOGGER.error("Built-in pack %s failed to load: %s", file.name, err)
     return packs

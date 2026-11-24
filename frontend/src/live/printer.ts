@@ -107,4 +107,5 @@ export function readPrinter(hass: HomeAssistant, anchor: string | null): Printer
 }
 
 /** Whether a piece of furniture is a 3D printer (by its pack item's id). */
-export const isPrinter3d = (type: string): boolean => /printer_(3d|cube|multi|large|open|resin|enclosed)$/.test(type);
+export const isPrinter3d = (type: string): boolean =>
+  /(printer_(3d|cube|multi|large|open|resin|enclosed)|prusa\w*|bambu\w*|voron\w*|ender\w*)$/i.test(type);

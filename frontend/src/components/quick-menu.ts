@@ -95,18 +95,25 @@ export class NfQuickMenu extends LitElement {
     const can = lightAbilities(st);
     const on = st.state === "on";
     const pct = on && typeof st.attributes.brightness === "number" ? Math.round((st.attributes.brightness as number) / 2.55) : on ? 100 : 0;
+    const rgb = Array.isArray(st.attributes.rgb_color) ? (st.attributes.rgb_color as number[]).slice(0, 3) : null;
+    const hexNow = rgb ? `#${rgb.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("")}` : "#ffb547";
+    const nearRgb = (c: [number, number, number]) => !!rgb && Math.abs(rgb[0] - c[0]) + Math.abs(rgb[1] - c[1]) + Math.abs(rgb[2] - c[2]) < 45;
     const swatches = can.color
       ? COLORS.map(
-          (c) => html`<button class="qm-swatch" style="background:rgb(${c.join(",")})" aria-label=${`RGB ${c.join(", ")}`} @click=${() => this.call("light", "turn_on", { rgb_color: c })}></button>`,
+          (c) => html`<button class="qm-swatch ${nearRgb(c) ? "qm-swatch-on" : ""}" style="background:rgb(${c.join(",")});color:rgb(${c.join(",")})" aria-label=${`RGB ${c.join(", ")}`} @click=${() => this.call("light", "turn_on", { rgb_color: c })}></button>`,
         )
       : can.temp
         ? KELVINS.map(
             (k) => html`<button class="qm-swatch" style="background:${kelvinCss(k)}" aria-label=${`${k} K`} @click=${() => this.call("light", "turn_on", { color_temp_kelvin: k })}></button>`,
           )
         : [];
-    return html`<div class="qm-ring ${swatches.length ? "" : "qm-ring-small"}">
+    const powerStyle = on && rgb ? `background:rgb(${rgb.join(",")});box-shadow:0 0 26px rgba(${rgb.join(",")},0.55)` : "";
+    const kMin = (st.attributes.min_color_temp_kelvin as number | undefined) ?? 2200;
+    const kMax = (st.attributes.max_color_temp_kelvin as number | undefined) ?? 6500;
+    const kNow = (st.attributes.color_temp_kelvin as number | undefined) ?? Math.round((kMin + kMax) / 2);
+    return html`<div class="qm-ring ${swatches.length ? (can.color ? "qm-color-ring" : "") : "qm-ring-small"}">
         ${this.ring(swatches)}
-        <button class="qm-power ${on ? "qm-on" : ""}" aria-pressed=${on} @click=${() => this.ask() && this.call("light", "toggle")}>
+        <button class="qm-power ${on ? "qm-on" : ""}" style=${powerStyle} aria-pressed=${on} @click=${() => this.ask() && this.call("light", "toggle")}>
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v8M6.3 6.8a8 8 0 1 0 11.4 0" /></svg>
           <b>${on ? `${pct} %` : this.t("qm_off")}</b>
         </button>
@@ -121,6 +128,34 @@ export class NfQuickMenu extends LitElement {
             aria-label=${this.t("brightness")}
             @change=${(e: Event) => this.call("light", "turn_on", { brightness_pct: Number((e.target as HTMLInputElement).value) })}
           />`
+        : nothing}
+      ${can.color || can.temp
+        ? html`<div class="qm-color-bar">
+            ${can.color
+              ? html`<label class="qm-pick" title=${this.t("color_pick")}>
+                  <input
+                    type="color"
+                    .value=${hexNow}
+                    @input=${(e: Event) => {
+                      const h = (e.target as HTMLInputElement).value;
+                      this.call("light", "turn_on", { rgb_color: [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)] });
+                    }}
+                  />
+                </label>`
+              : nothing}
+            ${can.temp
+              ? html`<input
+                  class="qm-temp-slider"
+                  type="range"
+                  min=${kMin}
+                  max=${kMax}
+                  step="100"
+                  .value=${String(kNow)}
+                  aria-label=${this.t("color_temp")}
+                  @change=${(e: Event) => this.call("light", "turn_on", { color_temp_kelvin: Number((e.target as HTMLInputElement).value) })}
+                />`
+              : nothing}
+          </div>`
         : nothing}`;
   }
 
@@ -349,17 +384,58 @@ export class NfQuickMenu extends LitElement {
       .qm-ring-small {
         height: 110px;
       }
+      .qm-color-ring::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border-radius: 50%;
+        background: conic-gradient(#ffb547, #ffecd2, #37e0ff, #5b7cff, #be5aff, #ff5fd2, #ff4646, #78ff96, #ffb547);
+        opacity: 0.22;
+        mask: radial-gradient(circle, transparent 52%, #000 54%);
+        -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%);
+        pointer-events: none;
+      }
       .qm-at {
         position: absolute;
         transform: translate(-50%, -50%);
       }
       .qm-swatch {
-        width: 34px;
-        height: 34px;
-        border: 2px solid color-mix(in srgb, var(--nf-text) 25%, transparent);
+        width: 32px;
+        height: 32px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
         border-radius: 50%;
         cursor: pointer;
-        box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        transition: transform 0.14s ease, box-shadow 0.14s ease;
+      }
+      .qm-swatch:hover { transform: scale(1.1); }
+      .qm-swatch-on {
+        border-color: #fff;
+        transform: scale(1.14);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 0 14px currentColor;
+      }
+      .qm-color-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 2px 0 4px;
+      }
+      .qm-pick input[type="color"] {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        border-radius: 50%;
+        padding: 0;
+        background: none;
+        cursor: pointer;
+      }
+      .qm-temp-slider {
+        flex: 1;
+        height: 8px;
+        border-radius: 999px;
+        appearance: none;
+        background: linear-gradient(90deg, #ffaa44, #fff4e0, #b8dcff);
+        cursor: pointer;
       }
       .qm-swatch:active {
         transform: scale(0.9);

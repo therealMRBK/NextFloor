@@ -8,6 +8,7 @@ import { placedEntities } from "../../markers.ts";
 import type { Building } from "../../model.ts";
 import { parkingEntities } from "../../parking.ts";
 import { pluginWatched } from "../../plugins/registry.ts";
+import { screenWatched } from "../../live/screen-sources.ts";
 import type { HomeAssistant } from "../../types.ts";
 import { mapCamera } from "../../live/vacuum-map.ts";
 import { weatherEntity } from "../../weather.ts";
@@ -43,6 +44,7 @@ function furnitureIds(inputs: WatchInputs): MaybeId[] {
     ...pieces.flatMap((m) => [m.state_entity, m.state_entity2, m.color_entity, ...(m.gang_entities ?? []), ...(m.extra_lights ?? []), m.cover_entity, m.care_entity, m.room_sensor, m.show_when?.entity, m.picture && /^[a-z_]+\.[a-z0-9_]+$/.test(m.picture) ? m.picture : null]),
     // a washer's, dryer's or dishwasher's time left comes from a sensor next to its switch
     ...pieces.filter((m) => m.type === "washer" || m.type === "dryer" || m.type === "dishwasher").flatMap((m) => deviceSiblings(hass, furnitureLinks.get(m.id)?.entity ?? furnitureLinks.get(m.id)?.power).filter((id) => id.startsWith("sensor."))),
+    ...pieces.flatMap((m) => screenWatched(hass, m)),
     ...pieces.flatMap((m) => [m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2, ...(m.temps ?? []).map((x) => x.entity)]),
     ...pieces.filter((m) => m.type === "robot_vacuum").map((m) => robotRoomSensor(hass, furnitureLinks.get(m.id)?.entity ?? null, m.room_sensor)),
     // the robot's own map (a map camera, or a tracker with map coordinates): the view follows every change of its position (#210)
@@ -88,6 +90,12 @@ export function watchedEntities(inputs: WatchInputs): string[] {
     ...(inputs.alertSources ? alertEntities(inputs.alertSources) : []),
     ...parkingEntities(b.floors),
     ...carWatched(hass, b.floors),
+    b.settings.alarm_ring?.entity,
+    b.settings.alarm_ring?.enable_entity,
+    b.settings.tablet_ui?.pip_trigger,
+    b.settings.tablet_ui?.price_entity,
+    ...(b.settings.quick_controls ?? []).flatMap((g) => g.entities),
+    ...(b.settings.status_entities ?? []),
     weatherEntity(hass, inputs.weatherEntityId ?? b.settings.weather_entity),
     "sun.sun",
   ];
