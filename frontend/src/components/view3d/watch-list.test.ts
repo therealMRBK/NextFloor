@@ -41,3 +41,13 @@ test("opening links bring their blinds, contacts and positions along", () => {
   const ids = watchedEntities(inputs({ openingLinks: links as never }));
   for (const id of ["cover.blind", "binary_sensor.window", "binary_sensor.second", "sensor.pos"]) assert.ok(ids.includes(id), id);
 });
+
+test("a robot's position tracker is watched, so every coordinate change redraws the robot (#210)", () => {
+  const robot = { id: "rv", type: "robot_vacuum", x: 1, z: 1, rotation: 0, w: 0.4, d: 0.4, h: 0.1, variant: null };
+  const base = inputs();
+  const withRobot = (hass: typeof base.hass) => ({ ...base, hass, building: { ...base.building, floors: [{ ...base.building.floors[0], furniture: [robot] }] } as unknown as typeof base.building });
+  const tracker = hassOf([entity("device_tracker.roomba", "kitchen", { map_x_mm: 100, map_y_mm: 200 })]);
+  assert.equal(watchedEntities(withRobot(tracker)).includes("device_tracker.roomba"), true);
+  // without a robot in the plan nothing of the sort is watched
+  assert.equal(watchedEntities({ ...base, hass: tracker }).includes("device_tracker.roomba"), false);
+});

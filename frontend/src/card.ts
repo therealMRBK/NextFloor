@@ -16,7 +16,7 @@ import { loadCardEditor } from "./load-card-editor.ts";
 import { withTemplate, type CardTemplates } from "./card-template.ts";
 import type { Building } from "./model.ts";
 import { roomsOnly } from "./rooms-only.ts";
-import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, followTheme, readableStyles, tokens } from "./styles.ts";
 import { controlHass } from "./view-only.ts";
 import type { HomeAssistant } from "./types.ts";
 import type { WallMode } from "./viewer/viewer3d.ts";
@@ -191,6 +191,9 @@ export class NextFloorCard extends LitElement {
     return { columns: "full", rows: this._config?.fill ? 12 : Math.ceil((this._config?.height ?? 420) / 56), min_rows: 4 };
   }
 
+  /** The theme (and its mode) the card colour was last made solid for. */
+  private themeKey = "";
+
   protected willUpdate(changed: PropertyValues): void {
     // a card template edited in the editor reaches the card as soon as the plan reloads
     const templates = this.data.building?.settings.card_templates;
@@ -199,7 +202,10 @@ export class NextFloorCard extends LitElement {
       this._config = withTemplate(this._own, templates as CardTemplates | undefined);
     }
     this.toggleAttribute("readable", this._config?.readable === true);
-    if (changed.has("hass")) this.style.colorScheme = colorSchemeOf(this.hass);
+    if (changed.has("hass")) {
+      this.style.colorScheme = colorSchemeOf(this.hass);
+      this.themeKey = followTheme(this, this.hass, this.themeKey);
+    }
     if (!changed.has("hass") || !this.hass) return;
     this.data.setHass(this.hass);
     const night = nightActive(this._config?.night, this.hass);

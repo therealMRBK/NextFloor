@@ -271,6 +271,61 @@ export const controls = css`
   }
 `;
 
+/** A colour blended over an opaque base, red, green and blue as whole numbers (the alpha of `top` is 0 to 1). */
+export function compositeOver(top: [number, number, number, number], base: [number, number, number]): [number, number, number] {
+  const a = Math.min(1, Math.max(0, top[3]));
+  return [0, 1, 2].map((i) => Math.round(top[i] * a + base[i] * (1 - a))) as [number, number, number];
+}
+
+let scratch: CanvasRenderingContext2D | null | undefined;
+
+/** Red, green, blue (0-255) and alpha (0-1) of a CSS colour, read through a canvas so every colour syntax works; null if invalid. */
+function readColour(css: string): [number, number, number, number] | null {
+  if (scratch === undefined) {
+    try {
+      scratch = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+    } catch {
+      scratch = null;
+    }
+  }
+  const ctx = scratch;
+  if (!ctx || !css) return null;
+  ctx.clearRect(0, 0, 1, 1);
+  ctx.fillStyle = "#010203";
+  ctx.fillStyle = css;
+  // an invalid colour leaves the previous one in place
+  if (ctx.fillStyle === "#010203" && css.replace(/\s/g, "").toLowerCase() !== "#010203") return null;
+  ctx.fillRect(0, 0, 1, 1);
+  const d = ctx.getImageData(0, 0, 1, 1).data;
+  return [d[0], d[1], d[2], d[3] / 255];
+}
+
+/**
+ * A glass theme can make Home Assistant's card colour see-through; every card, bar and list of ours would then lie bare over the
+ * plan (#201, #220). When the theme's card colour is see-through, this gives the host an opaque card colour of its own: the
+ * theme's colour blended over its page colour. A solid colour is left alone.
+ */
+export function solidCardColour(host: HTMLElement, dark: boolean): void {
+  host.style.removeProperty("--ha-card-background");
+  const style = getComputedStyle(host);
+  const own = (style.getPropertyValue("--ha-card-background") || style.getPropertyValue("--card-background-color")).trim();
+  const top = readColour(own);
+  if (!top || top[3] >= 0.98) return;
+  const fallback: [number, number, number] = dark ? [17, 17, 17] : [250, 250, 250];
+  const page = readColour(style.getPropertyValue("--primary-background-color").trim());
+  const base = page ? (page[3] >= 0.98 ? ([page[0], page[1], page[2]] as [number, number, number]) : compositeOver(page, fallback)) : fallback;
+  const [r, g, b] = compositeOver(top, base);
+  host.style.setProperty("--ha-card-background", `rgb(${r} ${g} ${b})`);
+}
+
+/** Runs solidCardColour when the theme or its light/dark mode changed since `last`; returns the key to remember. */
+export function followTheme(host: HTMLElement, hass: { themes?: { theme?: string; darkMode?: boolean } } | undefined | null, last: string): string {
+  const key = `${hass?.themes?.theme ?? ""}|${hass?.themes?.darkMode}`;
+  if (key === last || !host.isConnected) return last;
+  solidCardColour(host, hass?.themes?.darkMode !== false);
+  return key;
+}
+
 /** `color-scheme` for native controls (selects, scrollbars) from Home Assistant's own light or dark mode. */
 export function colorSchemeOf(hass: { themes?: { darkMode?: boolean } } | undefined | null): "light" | "dark" {
   return hass?.themes?.darkMode === false ? "light" : "dark";

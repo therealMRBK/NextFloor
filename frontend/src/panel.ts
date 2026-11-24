@@ -18,7 +18,7 @@ import { furnishBar, type FurnishHost } from "./panel/furnish-bar.ts";
 import { NEXTFLOOR_MARK } from "./panel/mark.ts";
 import { browserStorage, PrefStore, type DevicePrefs } from "./panel/prefs.ts";
 import { panelStyles } from "./panel/styles.ts";
-import { colorSchemeOf, controls, readableStyles, tokens } from "./styles.ts";
+import { colorSchemeOf, controls, followTheme, readableStyles, tokens } from "./styles.ts";
 import { controlHass } from "./view-only.ts";
 import { LOOKS, lookNow, type Look } from "./themes.ts";
 import type { HomeAssistant } from "./types.ts";
@@ -145,10 +145,14 @@ export class NextFloorPanel extends LitElement {
     this.store.save(key, value);
   }
 
+  /** The theme (and its mode) the card colour was last made solid for. */
+  private themeKey = "";
+
   protected willUpdate(changed: PropertyValues): void {
     this.toggleAttribute("readable", !!this._prefs?.readable);
     if (changed.has("hass") && this.hass) {
       this.style.colorScheme = colorSchemeOf(this.hass);
+      this.themeKey = followTheme(this, this.hass, this.themeKey);
       this.data.setHass(this.hass);
     }
     // a floor that no longer exists (the plan was edited elsewhere) closes
