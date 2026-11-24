@@ -1,5 +1,5 @@
 // The blind of a window: a roller shutter outside (a box above the opening and slats down to the closed fraction), a venetian blind
-// outside whose slats turn with the cover's tilt, or a roller blind inside the room. A wide window can have a second blind for its
+// outside whose slats turn with the cover's tilt, a roller blind inside the room, or a venetian blind inside it. A wide window can have a second blind for its
 // right half.
 
 import { Color } from "three";
@@ -24,7 +24,7 @@ export function blind(c: Ctx): void {
   const outside = -info.faceOut;
   const inside = info.faceRoom;
   // the cassette above the opening: a big box outside, a slim one on the room side for an inside blind
-  if (kind === "inside") splitBox(c.frames, frame, { x0: -0.03, x1: W + 0.03, n0: inside, n1: inside + 0.07, y0: T - 0.02, y1: T + 0.07 }, new Color(0xf2f2f2), new Color(0xf7f7f7), fold);
+  if (kind === "inside" || kind === "venetian_inside") splitBox(c.frames, frame, { x0: -0.03, x1: W + 0.03, n0: inside, n1: inside + 0.07, y0: T - 0.02, y1: T + 0.07 }, new Color(0xf2f2f2), new Color(0xf7f7f7), fold);
   else splitBox(c.frames, frame, { x0: -0.05, x1: W + 0.05, n0: outside - 0.15, n1: outside, y0: T, y1: T + 0.2 }, new Color(BLIND_BOX), new Color(FRAME_TOP), fold);
   const halves: [number, number, number][] = state.cover2 != null ? [[0, W / 2, state.cover], [W / 2, W, state.cover2]] : [[0, W, state.cover]];
   for (const [x0, x1, cover] of halves) {
@@ -33,6 +33,7 @@ export function blind(c: Ctx): void {
     const bottom = T - closed * (T - S);
     if (kind === "inside") panel(c.blinds, frame, x0 + 0.01, x1 - 0.01, inside + 0.04, bottom, T - 0.02, new Color(FABRIC), fold);
     else if (kind === "venetian") slats(c, x0, x1, outside - 0.07, bottom, T, state.slats ?? 0);
+    else if (kind === "venetian_inside") slats(c, x0, x1, inside + 0.06, bottom, T - 0.02, state.slats ?? 0);
     else panel(c.blinds, frame, x0, x1, outside - 0.07, bottom, T, new Color(SHUTTER), fold, 0.045);
   }
 }

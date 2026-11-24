@@ -20,10 +20,16 @@ const SHAPES: Record<DeviceKind, string> = {
 /** The path data of a device kind's icon. */
 export const iconPath = (kind: DeviceKind): string => SHAPES[kind];
 
-/** Markup for a user-chosen icon: Home Assistant's own icon element, given a Material Design Icons name. */
+/**
+ * Markup for a user-chosen icon: Home Assistant's own icon element. A plain name or `mdi:name` is a Material Design Icon; any other
+ * `set:name` (`local:minisforum-ms01`, `phu:printer`, `hue:…`) goes to Home Assistant as it is, so icon sets the user registered
+ * (the Custom Icons integration, HACS icon packs) work like in Home Assistant's own cards.
+ */
 export function mdiIcon(name: string): string {
-  const safe = name.replace(/^mdi:/, "").replace(/[^a-z0-9-]/gi, "");
-  return `<ha-icon icon="mdi:${safe}" style="--mdc-icon-size:18px"></ha-icon>`;
+  const clean = (part: string) => part.replace(/[^a-z0-9_-]/gi, "");
+  const [first, ...rest] = name.trim().split(":");
+  const icon = rest.length ? `${clean(first)}:${clean(rest.join(""))}` : `mdi:${clean(first)}`;
+  return `<ha-icon icon="${icon}" style="--mdc-icon-size:18px"></ha-icon>`;
 }
 
 /** Inline SVG for a device kind. Only static strings go in here. */

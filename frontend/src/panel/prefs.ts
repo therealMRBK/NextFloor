@@ -3,7 +3,7 @@
 
 import type { MarkerMode } from "../components/view3d.ts";
 import type { HeatMode } from "../heatmap.ts";
-import { LOOKS, type Look } from "../themes.ts";
+import { LOOKS, THEMES, type Look, type Theme } from "../themes.ts";
 import type { FloorStack, Quality } from "../viewer/viewer3d.ts";
 
 export interface DevicePrefs {
@@ -16,10 +16,14 @@ export interface DevicePrefs {
   markers: MarkerMode;
   heat: HeatMode;
   theme: Look;
+  autoDay: Theme;
+  autoNight: Theme;
   /** "#rrggbb", or null for the stock accent. */
   accent: string | null;
   floorStack: FloorStack;
   roomNames: boolean;
+  /** The names under devices and markers in the 3D view. */
+  deviceNames: boolean;
   clean: boolean;
   navWrap: boolean;
   weather: boolean;
@@ -82,10 +86,13 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   markers: word("markers", ["none", "important", "all"], "important"),
   heat: word("heat", ["none", "temperature", "humidity", "co2", "mould", "comfort", "power", "sun", "values", "wifi"], "none"),
   theme: word("theme", LOOKS, "neon"),
+  autoDay: word("auto_day", THEMES, "nordic"),
+  autoNight: word("auto_night", THEMES, "warm_evening"),
   clock: word("clock", ["none", "top_left", "top_right", "bottom_left", "bottom_right"], "none"),
   accent: { name: "accent", fallback: null, read: (raw) => (/^#[0-9a-f]{6}$/i.test(raw) ? raw : null), write: (value) => value ?? "" },
   floorStack: word("floor_stack", ["dim", "stacked", "single"], "dim"),
   roomNames: flag("room_names", true),
+  deviceNames: flag("device_names", true),
   clean: flag("clean", false),
   navWrap: flag("nav_wrap", false),
   weather: flag("weather", true),

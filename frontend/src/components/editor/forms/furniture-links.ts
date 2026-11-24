@@ -3,6 +3,7 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { canHangOff, deviceMeter, meterParent, subMeterIds } from "../../../energy.ts";
 import { furnitureEntities, hasScreen, isCooling, isMediaFurniture, isSpeakerFurniture, isStatusSensor, robotRoomSensor } from "../../../devices.ts";
+import { isGameAccount } from "../../../live/screen-sources.ts";
 import type { I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, MAX_DEVICE_TEMPS, isLamp, type Furniture, type VacuumCalibration } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
@@ -279,6 +280,22 @@ function extraLightFields(host: EditorHost, item: Furniture, actions: FurnitureL
   return html`${Array.from({ length: rows }, (_, i) => entityField(host, t("lamp_extra_light", { n: i + 2 }), current[i] ?? null, undefined, options, set(i)))}${hint(t("lamp_extra_hint"), "nf-wide")}`;
 }
 
+/** A screen on a games console: the console, and up to four game accounts, one more field than are set. */
+function screenSourceFields(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult {
+  const { hass, t } = host;
+  const current = item.screen_sources ?? [];
+  const devices = entityOptions(hass, (id) => id.startsWith("media_player.") || id.startsWith("remote."));
+  const accounts = entityOptions(hass, (id) => !!hass && isGameAccount(hass, id));
+  const set = (i: number) => (v: string | null) => {
+    const next = [...current];
+    if (v && v !== "none") next[i] = v;
+    else next.splice(i, 1);
+    actions.update({ screen_sources: next.filter(Boolean).length ? next.filter(Boolean) : undefined });
+  };
+  const rows = Math.min(4, current.length + 1);
+  return html`${entityField(host, t("screen_device"), item.screen_device ?? null, undefined, devices, (v) => actions.update({ screen_device: noneAsNull(v) }))}${Array.from({ length: rows }, (_, i) => entityField(host, t("screen_source", { n: i + 1 }), current[i] ?? null, undefined, accounts, set(i)))}${hint(t("screen_sources_hint"), "nf-wide")}`;
+}
+
 export function furnitureLinks(host: EditorHost, item: Furniture, actions: FurnitureLinkActions): TemplateResult | typeof nothing {
   const { hass } = host;
   if (!hass) return nothing;
@@ -306,6 +323,7 @@ export function furnitureLinks(host: EditorHost, item: Furniture, actions: Furni
       lamp ? lightEffectFields(host, item, lightEffectSource(hass, item, item.entity && item.entity !== "none" ? item.entity : automaticLink(host, item, "entity"))?.attributes.effect_list, actions.update) : nothing,
       hasScreen(item.type) ? glowField(host, item.ambilight, (v) => actions.update({ ambilight: v }), { label: "ambilight", hint: "ambilight_hint", lowest: 0 }) : nothing,
       (isMediaFurniture(item.type) || isSpeakerFurniture(item.type)) ? glowField(host, item.sound_rings, (v) => actions.update({ sound_rings: v }), { label: "sound_rings", hint: "sound_rings_hint", lowest: 0 }) : nothing,
+      hasScreen(item.type) ? screenSourceFields(host, item, actions) : nothing,
       item.type === "grid_point" ? nothing : entityField(host, t(meterParent(host.doc, item) ? "meter_sub_power" : powerLabel(item.type)), item.power ?? null, automaticLink(host, item, "power"), power, (v) => actions.update({ power: v })),
     )}
     ${isCooling(item.type) ? coolingLinks(host, item, actions) : lamp || item.type === "grid_point" ? nothing : deviceTempLink(host, item, actions)}

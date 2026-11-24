@@ -202,6 +202,8 @@ export class NextFloorCard extends LitElement {
       this._config = withTemplate(this._own, templates as CardTemplates | undefined);
     }
     this.toggleAttribute("readable", this._config?.readable === true);
+    // the room buttons lie along the top: the bars of the 3D view (energy, sensors, clock) start below them (#203)
+    this.style.setProperty("--nf-top-reserve", this._config?.room_buttons && !this._clean && this.plan() ? "46px" : "0px");
     if (changed.has("hass")) {
       this.style.colorScheme = colorSchemeOf(this.hass);
       this.themeKey = followTheme(this, this.hass, this.themeKey);
@@ -385,6 +387,7 @@ export class NextFloorCard extends LitElement {
       .floorThumbs=${this.thumbs}
       .thumbsFolded=${this.thumbs && c?.floor_thumbs_folded === true}
       .roomLabels=${c?.room_names !== false}
+      .deviceLabels=${c?.device_names !== false}
       .floorStack=${c?.floor_stack ?? "dim"}
       .panelOpen=${!!this._roomId && c?.room_panel !== false}
       .alerts=${c?.alerts !== false}

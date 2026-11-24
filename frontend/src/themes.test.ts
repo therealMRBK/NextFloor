@@ -23,3 +23,16 @@ test("the own stage takes its background for the sky, and a light one counts as 
   assert.equal(lightStage("day", ownLook()), true);
   assert.equal(lightStage("blueprint", own), false);
 });
+
+test("natural themes nordic and minimal are light stages while warm_evening is dark", () => {
+  const own = ownLook();
+  assert.ok(THEMES.includes("nordic"));
+  assert.ok(THEMES.includes("warm_evening"));
+  assert.ok(THEMES.includes("minimal"));
+  assert.equal(lightStage("nordic", own), true);
+  assert.equal(lightStage("minimal", own), true);
+  assert.equal(lightStage("warm_evening", own), false);
+  assert.equal(stageFor("nordic", own), STAGE.nordic);
+  assert.equal(stageFor("warm_evening", own), STAGE.warm_evening);
+  assert.equal(stageFor("minimal", own), STAGE.minimal);
+});

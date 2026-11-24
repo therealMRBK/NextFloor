@@ -6,7 +6,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { entityName } from "../../devices.ts";
 import type { I18nKey } from "../../i18n.ts";
 import { MARKER_SHOWS, type MarkerShow, type PinOffset } from "../../model.ts";
-import type { EntityOption } from "./entities.ts";
+import { entityOptions, serviceOptions, type EntityOption } from "./entities.ts";
 import type { EditorHost } from "./host.ts";
 import { pluginMdiIcon } from "../../plugins/registry.ts";
 import "../entity-picker.ts";
@@ -108,15 +108,72 @@ export function entityField(host: EditorHost, label: string, value: string | nul
   </label>`;
 }
 
+/** A searchable picker for a Home Assistant service (domain.service). */
+export function serviceField(host: EditorHost, label: string, value: string | null, onChange: (v: string | null) => void): TemplateResult {
+  const options = serviceOptions(host.hass, value);
+  return html`<label class="nf-field nf-wide"
+    >${label}
+    <nf-entity-picker
+      .options=${options}
+      .fixed=${[{ id: "none", label: host.t("entity_none") }]}
+      .value=${value ?? "none"}
+      .placeholder=${host.t("service_search")}
+      ?disabled=${!host.admin}
+      @change=${(e: CustomEvent<{ value: string }>) => {
+        e.stopPropagation();
+        onChange(e.detail.value === "none" ? null : e.detail.value);
+      }}
+    ></nf-entity-picker>
+  </label>`;
+}
+
+const ENTITY_DOMAINS = new Set(["light", "switch", "cover", "fan", "climate", "lock", "media_player", "vacuum", "scene", "script", "input_boolean", "button", "input_button", "number", "input_number", "select", "input_select", "humidifier", "water_heater", "valve", "siren", "camera"]);
+
+/**
+ * Searchable target entity picker for a service call: writes `data.entity_id` without requiring manual JSON.
+ * Filters entities to the service's domain when applicable (e.g. `light.*` for `light.toggle`).
+ */
+export function serviceTargetEntityField(
+  host: EditorHost,
+  service: string | null | undefined,
+  data: Record<string, unknown> | null | undefined,
+  onData: (next: Record<string, unknown> | null) => void,
+  suggestedEntity?: string | null,
+): TemplateResult {
+  const domain = service?.split(".")[0] ?? "";
+  const domainFilter = ENTITY_DOMAINS.has(domain) ? (id: string) => id.startsWith(`${domain}.`) : () => true;
+  let options = entityOptions(host.hass, domainFilter);
+  if (options.length === 0) options = entityOptions(host.hass, () => true);
+  const current = typeof data?.entity_id === "string" ? data.entity_id : null;
+  const setData = (key: string, val: unknown) => {
+    const next = { ...(data ?? {}) };
+    if (val === undefined || val === null || val === "" || val === "none") delete next[key];
+    else next[key] = val;
+    onData(Object.keys(next).length ? next : null);
+  };
+  const srvName = service?.split(".")[1] ?? "";
+  const srvMeta = domain && srvName ? (host.hass?.services?.[domain]?.[srvName] as { fields?: Record<string, { name?: string }> } | undefined) : undefined;
+  const fields = srvMeta?.fields ?? {};
+  const numField = (key: string, min: number, max: number, step: number) =>
+    key in fields
+      ? numberField(host, fields[key]?.name || key, typeof data?.[key] === "number" ? (data[key] as number) : min, (v) => setData(key, Math.min(max, Math.max(min, v))), step, min)
+      : nothing;
+  return html`${entityField(host, host.t("service_target_entity"), current, undefined, options, (v) => setData("entity_id", v))}
+    ${suggestedEntity && suggestedEntity !== "none" && !current && host.admin
+      ? html`<div class="nf-actions nf-wide"><button type="button" class="nf-btn" @click=${() => setData("entity_id", suggestedEntity)}>↗ ${host.t("service_use_linked", { name: entityName(host.hass, suggestedEntity) })}</button></div>`
+      : nothing}
+    ${numField("brightness_pct", 0, 100, 5)} ${numField("color_temp_kelvin", 2000, 6500, 100)} ${numField("kelvin", 2000, 6500, 100)} ${numField("transition", 0, 60, 0.5)} ${numField("position", 0, 100, 5)} ${numField("temperature", 5, 35, 0.5)}`;
+}
+
 /** The icon a device shows in the editor, as in 3D: the one picked in the plan, else a plugin's; null: its kind's drawing. */
 export function deviceIcon(host: EditorHost, entityId: string, own?: string | null): string | null {
-  if (own) return (own.startsWith("mdi:") ? own : `mdi:${own}`).replace(/[^a-z0-9:-]/gi, "");
+  if (own) return (own.includes(":") ? own : `mdi:${own}`).replace(/[^a-z0-9:-]/gi, "");
   return host.hass ? pluginMdiIcon(host.hass, entityId) : null;
 }
 
 /** The icon of a marker: a Material Design icon name, with a small preview. */
 export function iconField(host: EditorHost, value: string | null | undefined, onChange: (v: string | null) => void): TemplateResult {
-  const preview = value ? (value.startsWith("mdi:") ? value : `mdi:${value}`).replace(/[^a-z0-9:-]/gi, "") : "";
+  const preview = value ? (value.includes(":") ? value : `mdi:${value}`).replace(/[^a-z0-9:-]/gi, "") : "";
   return html`<label class="nf-field nf-wide" title=${host.t("marker_icon_hint")}
     >${host.t("marker_icon")}
     <span class="nf-icon-row">

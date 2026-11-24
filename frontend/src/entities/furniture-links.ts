@@ -102,9 +102,9 @@ function pickByName(candidates: string[], pattern: RegExp | undefined, describe:
 export function furnitureEntities(hass: HomeAssistant, floors: readonly Floor[]): Map<string, FurnitureLinks> {
   const links = new Map<string, FurnitureLinks>();
   for (const floor of floors) {
-    // entities set by hand and devices placed in the plan (an Echo Show in the corner) are taken already
+    // entities set by hand, the device on a screen (a games console) and devices placed in the plan (an Echo Show in the corner) are taken already
     const used = new Set<string>(
-      [...floor.furniture.flatMap((f) => [f.entity, f.power, f.fan_entity]), ...floor.placements.map((p) => p.entity_id)].filter(isSet),
+      [...floor.furniture.flatMap((f) => [f.entity, f.power, f.fan_entity, f.screen_device]), ...floor.placements.map((p) => p.entity_id)].filter(isSet),
     );
     for (const piece of floor.furniture) {
       const isLamp = piece.type in LAMP_NAMES;

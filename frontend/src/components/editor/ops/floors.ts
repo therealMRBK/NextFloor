@@ -106,6 +106,7 @@ const PLAIN_LINKS = [
   "temp_entity2",
   "state_entity",
   "state_entity2",
+  "screen_device",
   "color_entity",
   "care_entity",
   "cover_entity",
@@ -115,7 +116,7 @@ const PLAIN_LINKS = [
   "tap",
 ] as const;
 /** Lists of links, dropped as a whole. */
-const LINK_LISTS = ["gang_entities", "pictures", "types", "meter_floors", "show_when", "extra_lights"] as const;
+const LINK_LISTS = ["gang_entities", "pictures", "types", "meter_floors", "show_when", "extra_lights", "screen_sources"] as const;
 
 /** A piece of furniture with every link to Home Assistant removed, its size, place and look kept. */
 export function unlinked(item: Furniture): Furniture {

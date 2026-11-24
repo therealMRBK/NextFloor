@@ -3,9 +3,9 @@
 import { html, nothing, type TemplateResult } from "lit";
 import { entityName, outsideEntities } from "../../../devices.ts";
 import type { I18nKey } from "../../../i18n.ts";
-import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type StartView } from "../../../model.ts";
+import { BUTTON_ACTIONS, uid, type ButtonAction, type Circuit, type CustomButton, type ForecastCard, type MediaPreset, type OwnAlert, type QuickControlGroup, type StartView, type TabletUI } from "../../../model.ts";
 import { entityOptions, isNumeric } from "../entities.ts";
-import { actions, checkField, colorField, entityField, hint, iconField, selectField, textField } from "../fields.ts";
+import { actions, checkField, colorField, entityField, hint, iconField, numberField, selectField, serviceField, serviceTargetEntityField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { likelyRoomSensors, parseButtonData, patchPresence, startViewYaml } from "../ops/house.ts";
 import { moveWithin, orUndefined, patchAt, removeAt } from "../ops/lists.ts";
@@ -200,10 +200,16 @@ export function dataField(host: EditorHost, button: Pick<CustomButton, "action" 
     area.setCustomValidity(host.t("own_data_bad"));
     area.reportValidity();
   };
-  return html`<label class="nf-field nf-wide" title=${host.t("own_data_hint")}
+  const extra = Object.keys(button.data ?? {}).some((k) => k !== "entity_id");
+  const inner = html`<label class="nf-field nf-wide" title=${host.t("own_data_hint")}
     >${host.t("own_data")}
     <textarea rows="4" spellcheck="false" placeholder=${example} .value=${button.data ? JSON.stringify(button.data, null, 1) : ""} @change=${onChange}></textarea>
   </label>`;
+  if (button.action === "fire_dom_event") return inner;
+  return html`<details class="nf-wide nf-pin-shift" ?open=${extra}>
+    <summary>${host.t("own_data")}</summary>
+    ${inner}
+  </details>`;
 }
 
 /** Own buttons of the star menu: label, icon, what they do, the target, and extra data. */
@@ -215,9 +221,14 @@ function ownButtons(host: EditorHost): TemplateResult {
   const card = (b: CustomButton, i: number) => html`<div class="nf-form nf-own-button">
     ${textField(host, host.t("own_button_label"), b.label, (v) => edit(i, { label: v || host.t("own_button_new") }), { maxlength: 60 })}
     ${selectField(host, host.t("own_button_action"), b.action, actionChoices, (action) => edit(i, { action }))} ${iconField(host, b.icon ?? null, (icon) => edit(i, { icon }))}
-    ${b.action !== "fire_dom_event"
-      ? textField(host, host.t(`own_target_${b.action}` as I18nKey), b.target ?? "", (v) => edit(i, { target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[b.action] })
-      : nothing}
+    ${b.action === "service"
+      ? serviceField(host, host.t("own_target_service"), b.target ?? null, (v) => edit(i, { target: v }))
+      : b.action === "more_info"
+        ? entityField(host, host.t("own_target_more_info"), b.target ?? null, undefined, entityOptions(host.hass, () => true), (v) => edit(i, { target: v && v !== "none" ? v : null }))
+        : b.action !== "fire_dom_event"
+          ? textField(host, host.t(`own_target_${b.action}` as I18nKey), b.target ?? "", (v) => edit(i, { target: v || null }), { wide: true, placeholder: TARGET_EXAMPLES[b.action] })
+          : nothing}
+    ${b.action === "service" ? serviceTargetEntityField(host, b.target, b.data, (data) => edit(i, { data })) : nothing}
     ${b.action === "service" || b.action === "fire_dom_event" ? dataField(host, b, (data) => edit(i, { data })) : nothing}
     ${entityField(host, host.t("own_button_state"), b.state_entity ?? null, undefined, entityOptions(host.hass, (id) => /^(switch|light|input_boolean|binary_sensor|fan|cover|media_player|climate|lock|person|device_tracker)\./.test(id)), (v) => edit(i, { state_entity: v && v !== "none" ? v : null }))}
     <div class="nf-actions nf-wide">
@@ -239,6 +250,95 @@ function roomFacts(host: EditorHost): TemplateResult {
     checkField(host, host.t(`room_fact_${k}` as I18nKey), !off.includes(k), (on) => host.change((d) => (d.settings.room_facts_off = orUndefined(on ? off.filter((x) => x !== k) : [...off, k])))),
   );
   return html`<h4>${host.t("room_facts")}</h4><div class="nf-form">${facts}</div>`;
+}
+
+function quickControls(host: EditorHost): TemplateResult {
+  const list = host.doc.settings.quick_controls ?? [];
+  const store = (next: QuickControlGroup[]) => host.change((d) => (d.settings.quick_controls = next.length ? next : null));
+  const edit = (i: number, patch: Partial<QuickControlGroup>) => store(patchAt(list, i, patch));
+  const choices = entityOptions(host.hass, (id) => /^(light|switch|cover|climate|fan|scene|script|button|input_boolean|input_button|camera|alarm_control_panel|lock)\./.test(id));
+  const rooms = host.doc.floors.flatMap((f) => f.rooms.filter((r) => r.area_id).map((r) => ({ id: r.area_id!, name: host.doc.floors.length > 1 ? `${f.name} · ${r.name}` : r.name })));
+  const addFromRoom = (i: number, areaId: string) => {
+    if (!areaId || !host.hass) return;
+    const g = list[i];
+    const inArea = Object.keys(host.hass.states).filter((id) => {
+      if (!/^(light|switch|cover|climate|fan)\./.test(id) || g.entities.includes(id)) return false;
+      const e = host.hass?.entities?.[id];
+      const dev = e?.device_id ? host.hass?.devices?.[e.device_id] : undefined;
+      return (e?.area_id ?? dev?.area_id) === areaId;
+    });
+    if (inArea.length) edit(i, { entities: [...g.entities, ...inArea].slice(0, 30) });
+  };
+  const addCameras = (i: number) => {
+    const g = list[i];
+    const cams = Object.keys(host.hass?.states ?? {}).filter((id) => id.startsWith("camera.") && !g.entities.includes(id));
+    if (cams.length) edit(i, { entities: [...g.entities, ...cams].slice(0, 30) });
+  };
+  const card = (g: QuickControlGroup, i: number) => html`<div class="nf-form nf-own-button">
+    ${textField(host, host.t("own_button_label"), g.label, (v) => edit(i, { label: v || host.t("quick_group_new") }), { maxlength: 60 })}
+    ${iconField(host, g.icon ?? null, (icon) => edit(i, { icon }))}
+    ${g.entities.map(
+      (id) => html`<span class="nf-chip nf-wide">${entityName(host.hass, id)} <button class="nf-btn nf-field-btn" title=${host.t("delete")} @click=${() => edit(i, { entities: g.entities.filter((x) => x !== id) })}>✕</button></span>`,
+    )}
+    ${g.entities.length < 30
+      ? html`${entityField(host, host.t("quick_group_add_entity"), null, undefined, choices.filter((c) => !g.entities.includes(c.id)), (v) => v && v !== "none" && edit(i, { entities: [...g.entities, v] }))}
+        ${rooms.length ? selectField(host, host.t("quick_group_from_room"), "", [["", "–"], ...rooms.map((r): [string, string] => [r.id, r.name])], (id) => addFromRoom(i, id), { wide: true }) : nothing}
+        <div class="nf-actions nf-wide"><button class="nf-btn" @click=${() => addCameras(i)}>📷 ${host.t("quick_group_add_cameras")}</button></div>`
+      : nothing}
+    <div class="nf-actions nf-wide">
+      <button class="nf-btn" ?disabled=${i === 0} @click=${() => store(moveWithin(list, i, -1))}>↑</button>
+      <button class="nf-btn nf-danger" @click=${() => store(removeAt(list, i))}>${host.t("delete")}</button>
+    </div>
+  </div>`;
+  return html`<h4>${host.t("quick_controls")}</h4>
+    ${hint(host.t("quick_controls_hint"))} ${list.map(card)}
+    ${list.length < 12
+      ? actions(html`<button class="nf-btn" @click=${() => store([...list, { id: uid("qd"), label: host.t("quick_group_new"), icon: "mdi:lightbulb-group", entities: [] }])}>+ ${host.t("quick_group_add")}</button>`)
+      : nothing}`;
+}
+
+export function renderTabletUISection(host: EditorHost): TemplateResult {
+  const t = host.t;
+  const ui = host.doc.settings.tablet_ui ?? {};
+  const set = (patch: Partial<TabletUI>) =>
+    host.change((d) => {
+      const next = { ...(d.settings.tablet_ui ?? {}), ...patch };
+      d.settings.tablet_ui = next;
+    });
+  return html`<details class="nf-section" open>
+    <summary>📱 ${t("tablet_ui_title")}</summary>
+    ${hint(t("tablet_ui_hint"))}
+    <div class="nf-form">
+      ${selectField(host, t("tablet_sidebar_pos"), ui.sidebar ?? "off", [["right", t("tablet_side_right")], ["left", t("tablet_side_left")], ["off", t("tablet_side_off")]], (v) => set({ sidebar: v as TabletUI["sidebar"] }))}
+      ${selectField(host, t("tablet_sidebar_style"), ui.sidebar_style ?? "card", [["card", t("tablet_style_card")], ["clean", t("tablet_style_clean")], ["minimal", t("tablet_style_minimal")]], (v) => set({ sidebar_style: v as TabletUI["sidebar_style"] }))}
+      ${selectField(host, t("tablet_clock_size"), ui.clock_size ?? "normal", [["normal", t("tablet_size_normal")], ["large", t("tablet_size_large")], ["xl", t("tablet_size_xl")]], (v) => set({ clock_size: v as TabletUI["clock_size"] }))}
+      ${colorField(host, t("tablet_clock_color"), ui.clock_color ?? null, "#f3f5f8", (v) => set({ clock_color: v }))}
+      ${checkField(host, t("tablet_sidebar_clock"), ui.sidebar_clock !== false, (v) => set({ sidebar_clock: v }))}
+      ${checkField(host, t("tablet_clock_seconds"), !!ui.clock_seconds, (v) => set({ clock_seconds: v }))}
+      ${checkField(host, t("tablet_sidebar_weather"), ui.sidebar_weather !== false, (v) => set({ sidebar_weather: v }))}
+      ${checkField(host, t("tablet_sidebar_summary"), ui.sidebar_summary !== false, (v) => set({ sidebar_summary: v }))}
+      ${checkField(host, t("tablet_sidebar_people"), ui.sidebar_people !== false, (v) => set({ sidebar_people: v }))}
+      ${checkField(host, t("tablet_sidebar_energy"), ui.sidebar_energy !== false, (v) => set({ sidebar_energy: v }))}
+      ${checkField(host, t("tablet_sidebar_media"), ui.sidebar_media !== false, (v) => set({ sidebar_media: v }))}
+      ${selectField(host, t("tablet_dock_style"), ui.dock_style ?? "pill", [["pill", t("tablet_dock_pill")], ["clean", t("tablet_dock_clean")], ["large", t("tablet_dock_large")]], (v) => set({ dock_style: v as TabletUI["dock_style"] }))}
+      ${checkField(host, t("tablet_show_quick_dock"), ui.show_quick_dock !== false, (v) => set({ show_quick_dock: v }))}
+      ${checkField(host, t("tablet_show_nav_kiosk"), !!ui.show_nav_in_kiosk, (v) => set({ show_nav_in_kiosk: v }))}
+      ${checkField(host, t("tablet_show_central"), ui.show_central !== false, (v) => set({ show_central: v }))}
+      ${checkField(host, t("tablet_show_walk"), ui.show_walk !== false, (v) => set({ show_walk: v }))}
+      ${checkField(host, t("tablet_show_legend"), ui.show_legend !== false, (v) => set({ show_legend: v }))}
+      ${checkField(host, t("tablet_sidebar_appliances"), ui.sidebar_appliances !== false, (v) => set({ sidebar_appliances: v }))}
+      ${checkField(host, t("tablet_show_cam_bookmarks"), ui.show_cam_bookmarks !== false, (v) => set({ show_cam_bookmarks: v }))}
+      ${host.hass ? entityField(host, t("tablet_price_entity"), ui.price_entity ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("sensor.")), (v) => set({ price_entity: v === "none" ? null : v })) : nothing}
+      ${host.hass ? entityField(host, t("tablet_pip_camera"), ui.pip_camera ?? null, undefined, entityOptions(host.hass, (id) => id.startsWith("camera.")), (v) => set({ pip_camera: v === "none" ? null : v })) : nothing}
+      ${host.hass ? entityField(host, t("tablet_pip_trigger"), ui.pip_trigger ?? null, undefined, entityOptions(host.hass, (id) => /^(binary_sensor|button|input_button|event|input_boolean)\./.test(id)), (v) => set({ pip_trigger: v === "none" ? null : v })) : nothing}
+      ${numberField(host, t("tablet_pip_duration"), ui.pip_duration ?? 20, (v) => set({ pip_duration: Math.max(5, Math.min(120, Math.round(v))) }), 5, 5)}
+      ${numberField(host, t("tablet_screensaver"), ui.screensaver_minutes ?? 0, (v) => set({ screensaver_minutes: Math.max(0, Math.min(60, Math.round(v))) }), 1, 0)}
+    </div>
+  </details>`;
+}
+
+export function renderQuickControlsSection(host: EditorHost): TemplateResult {
+  return html`<details class="nf-section"><summary>🎛️ ${host.t("quick_controls")}</summary>${quickControls(host)}</details>`;
 }
 
 /** The favourites section with the own buttons and station presets below it (they all belong to the star menu). */

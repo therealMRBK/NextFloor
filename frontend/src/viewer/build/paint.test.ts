@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Vec2 } from "../../model.ts";
-import { paintOfSide, wallPaintOf, type WallPaint } from "./solids.ts";
+import { materialOfSide, paintOfSide, wallMaterialOf, wallPaintOf, type WallPaint } from "./solids.ts";
 
 // a wall 0.2 m thick along z = 0 (from x = 0 to 4): the room "a" lies north of it (z < 0), the room "b" south (z > 0)
 const wall: Vec2[] = [[0, -0.1], [4, -0.1], [4, 0.1], [0, 0.1]];
@@ -34,4 +34,15 @@ test("only the floor's own rooms paint its walls: a room upstairs leaves the wal
   assert.deepEqual(wallPaintOf(settings, upstairs).rooms.map((r) => r.color), [0x00ff00]);
   const below = wallPaintOf(settings, downstairs);
   assert.equal(paintOfSide(wall, [0, 0.1], [4, 0.1], below, downstairs.rooms), 0x222222, "the inside colour, not the green from upstairs");
+});
+
+test("wall materials resolve per room, floor outside, and building defaults", () => {
+  const settings = { wall_material_outside: "brick", wall_material_inside: "plaster" };
+  const floor = { rooms: [{ ...roomA }, { ...roomB, wall_material: "tile" }] };
+  const mat = wallMaterialOf(settings, floor);
+  assert.deepEqual(materialOfSide(wall, [0, -0.1], [4, -0.1], mat, floor.rooms), [0, 0], "room A uses inside plaster");
+  assert.deepEqual(materialOfSide(wall, [4, 0.1], [0, 0.1], mat, floor.rooms), [5, 0], "room B uses wall tile");
+  assert.deepEqual(materialOfSide(wall, [4, 0.1], [0, 0.1], wallMaterialOf(settings, { rooms: [roomA] }), [roomA]), [1, 0], "outdoors uses brick");
+  const stoneFloor = wallMaterialOf(settings, { rooms: [], wall_material_outside: "stone" });
+  assert.equal(stoneFloor.outside, 4, "floor outside overrides building outside");
 });

@@ -24,3 +24,11 @@ test("a chosen icon name is cleaned before it goes into markup", () => {
   assert.ok(!hostile.includes("<script"), hostile);
   assert.equal(hostile.split('"').length, 5, hostile); // only the two attributes' own quotes
 });
+
+test("an icon of a registered icon set keeps its set (#226)", () => {
+  assert.ok(mdiIcon("local:minisforum-ms01").includes('icon="local:minisforum-ms01"'));
+  assert.ok(mdiIcon(" phu:printer ").includes('icon="phu:printer"'));
+  const hostile = mdiIcon('local:x"><script>alert(1)</script>');
+  assert.ok(!hostile.includes("<script"), hostile);
+  assert.equal(hostile.split('"').length, 5, hostile);
+});

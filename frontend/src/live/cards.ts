@@ -218,6 +218,15 @@ function carCard(hass: HomeAssistant | undefined, c: CarCard, i: number, act: Li
   </div>`;
 }
 
+/** A game's lines under the title: who plays (with the account's picture) and since when, then the achievements. */
+function gameRows(hass: HomeAssistant | undefined, m: MediaNow): TemplateResult {
+  const g = m.game!;
+  const since = g.since !== null ? translate(hass, "live_game_since", { time: new Intl.DateTimeFormat(hass?.language ?? navigator.language, { hour: "2-digit", minute: "2-digit" }).format(new Date(g.since)) }) : "";
+  const who = [m.artist, since].filter(Boolean).join(" · ");
+  return html`<div class="live-status live-game-who">${g.avatar ? html`<img class="live-avatar" src=${g.avatar} alt="" loading="lazy" />` : nothing}<span>${who || m.name}</span></div>
+    ${g.achievements ? html`<div class="live-status" title=${translate(hass, "live_game_achievements")}>🏆 ${g.achievements}</div>` : nothing}`;
+}
+
 function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act: LiveCardAction): TemplateResult {
   const m = c.media;
   const t = (k: Parameters<typeof translate>[1]) => translate(hass, k);
@@ -225,26 +234,28 @@ function mediaCard(hass: HomeAssistant | undefined, c: MediaCard, i: number, act
   const btn = (label: string, icon: string, service: string) =>
     html`<button class="live-btn" title=${label} aria-label=${label} @click=${(ev: Event) => (ev.stopPropagation(), act("media_player", service, m.entity))}>${icon}</button>`;
   // compact (cover and title); a tap opens the controls
-  return html`<div class="live-card live-card-media" data-i=${i} style=${`--live-soc:${color}`} @click=${(ev: Event) => (ev.currentTarget as HTMLElement).classList.toggle("live-open")}>
+  return html`<div class="live-card live-card-media" data-i=${i} style=${`--live-soc:${color}`} @click=${m.game ? nothing : (ev: Event) => (ev.currentTarget as HTMLElement).classList.toggle("live-open")}>
     ${m.picture ? html`<img class="live-cover" src=${m.picture} alt="" loading="lazy" />` : html`<div class="live-cover live-cover-none">♪</div>`}
     <div class="live-rows">
       <div class="live-title" title=${m.title}>${m.title || m.name}</div>
-      <div class="live-status">${m.artist || m.app || m.name}</div>
-      <div class="live-actions">
-        ${btn(t("live_media_prev"), "⏮", "media_previous_track")} ${btn(t("live_media_playpause"), "⏯", "media_play_pause")} ${btn(t("live_media_next"), "⏭", "media_next_track")}
-        ${m.volume !== null
-          ? html`<input
-              class="live-volume"
-              type="range"
-              min="0"
-              max="100"
-              .value=${String(Math.round(m.volume * 100))}
-              aria-label=${t("live_media_volume")}
-              @click=${(ev: Event) => ev.stopPropagation()}
-              @change=${(ev: Event) => act("media_player", "volume_set", m.entity, { volume_level: Number((ev.target as HTMLInputElement).value) / 100 })}
-            />`
-          : nothing}
-      </div>
+      ${m.game ? gameRows(hass, m) : html`<div class="live-status">${m.artist || m.app || m.name}</div>`}
+      ${m.game
+        ? nothing
+        : html`<div class="live-actions">
+            ${btn(t("live_media_prev"), "⏮", "media_previous_track")} ${btn(t("live_media_playpause"), "⏯", "media_play_pause")} ${btn(t("live_media_next"), "⏭", "media_next_track")}
+            ${m.volume !== null
+              ? html`<input
+                  class="live-volume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  .value=${String(Math.round(m.volume * 100))}
+                  aria-label=${t("live_media_volume")}
+                  @click=${(ev: Event) => ev.stopPropagation()}
+                  @change=${(ev: Event) => act("media_player", "volume_set", m.entity, { volume_level: Number((ev.target as HTMLInputElement).value) / 100 })}
+                />`
+              : nothing}
+          </div>`}
     </div>
   </div>`;
 }
@@ -266,16 +277,24 @@ export function unstackLhCards(root: ParentNode): void {
       return { el, x, y: Number(el.dataset.y), w, h: el.offsetHeight };
     })
     .sort((a, b) => b.y - a.y);
+  // the room buttons of a card lie over the top of the stage: a card never rides up under them (#203)
+  const box = cards[0]?.parentElement?.getBoundingClientRect();
+  const host = (root as ShadowRoot).host;
+  const row = host ? ((host.getRootNode() as ParentNode).querySelector?.(".nf-card-rooms") as HTMLElement | null) : null;
+  const rowRect = row?.getBoundingClientRect();
+  const floor = box && rowRect && rowRect.height > 0 && rowRect.bottom > box.top ? rowRect.bottom - box.top + 8 : 0;
   for (const it of items) {
-    let bottom = it.y;
+    let bottom = Math.max(it.y, floor + it.h);
     for (let guard = 0; guard < 12; guard++) {
       const r = { x0: it.x - it.w / 2, x1: it.x + it.w / 2, y0: bottom - it.h, y1: bottom };
       const hit = placed.find((p) => r.x0 < p.x1 + 6 && r.x1 > p.x0 - 6 && r.y0 < p.y1 + 6 && r.y1 > p.y0 - 6);
       if (!hit) break;
-      bottom = hit.y0 - 8;
+      bottom = Math.max(hit.y0 - 8, floor + it.h);
+      // no room above it: it stays under the buttons and lets the others overlap
+      if (bottom === floor + it.h && hit.y0 - 8 < bottom) break;
     }
     placed.push({ x0: it.x - it.w / 2, x1: it.x + it.w / 2, y0: bottom - it.h, y1: bottom });
-    const lift = it.y - bottom;
+    const lift = Math.max(0, it.y - bottom);
     it.el.style.transform = `translate(${Math.round(it.x)}px, ${Math.round(bottom)}px) translate(-50%, -100%)`;
     it.el.style.setProperty("--live-thread", `${Math.round(18 + lift)}px`);
   }
@@ -604,6 +623,18 @@ export const liveCardStyles = css`
   }
   .live-card-media.live-open .live-actions {
     display: flex;
+  }
+  .live-game-who {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .live-avatar {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: none;
   }
   .live-card-media.live-open {
     z-index: 5;

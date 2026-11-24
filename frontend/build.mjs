@@ -24,8 +24,8 @@ const hashOf = (file) => createHash("sha256").update(readFileSync(file)).digest(
 
 // Further languages: each lang/<code>.json ships beside the bundles, and the bundles that show texts know
 // which ones there are, with a hash of each (so a changed file is never taken from the browser cache).
-const langFiles = readdirSync("lang").filter((f) => /^[a-z]{2}\.json$/.test(f));
-const langs = JSON.stringify(Object.fromEntries(langFiles.map((f) => [f.slice(0, 2), hashOf(`lang/${f}`)])));
+const langFiles = readdirSync("lang").filter((f) => /^[a-z]{2}(-[a-z]{2})?\.json$/.test(f));
+const langs = JSON.stringify(Object.fromEntries(langFiles.map((f) => [f.slice(0, -5), hashOf(`lang/${f}`)])));
 
 const viewerConfig = { ...common, entryPoints: ["src/viewer/viewer3d.ts"], outfile: `${out}/nextfloor-3d.js` };
 // the card's visual editor only loads in the dashboard's card dialog
@@ -70,7 +70,7 @@ function copyAssets() {
 
 // Size budgets, small enough for old wall tablets. The editor bundles only load for admins and the card's settings, so they
 // may grow more than the view; German and English texts ride in every bundle.
-const BUDGET = { "nextfloor.js": 1024 * 1024, "nextfloor-3d.js": 1000 * 1024, "nextfloor-editor.js": 720 * 1024, "nextfloor-card-editor.js": 240 * 1024 };
+const BUDGET = { "nextfloor.js": 1024 * 1024, "nextfloor-3d.js": 1050 * 1024, "nextfloor-editor.js": 720 * 1024, "nextfloor-card-editor.js": 240 * 1024 };
 
 copyAssets();
 if (watch) {

@@ -176,7 +176,7 @@ function blindFields(host: EditorHost, o: Opening, actions: OpeningActions, list
         ${o.position ? checkField(host, t("cover_position_invert"), !!o.position_inverted, (on) => actions.update({ position_inverted: on })) : nothing}
         ${checkField(host, t("device_confirm"), !!o.confirm, (on) => actions.update({ confirm: on }), { title: t("cover_confirm_hint") })}
         ${window
-          ? html`${selectField(host, t("blind_kind"), o.blind ?? "roller", [["roller", t("blind_roller")], ["venetian", t("blind_venetian")], ["inside", t("blind_inside")]], (v) => actions.update({ blind: v === "roller" ? null : (v as Opening["blind"]) }))}
+          ? html`${selectField(host, t("blind_kind"), o.blind ?? "roller", [["roller", t("blind_roller")], ["venetian", t("blind_venetian")], ["inside", t("blind_inside")], ["venetian_inside", t("blind_venetian_inside")]], (v) => actions.update({ blind: v === "roller" ? null : (v as Opening["blind"]) }))}
             ${entityField(host, t("cover2_entity"), o.cover2 ?? null, undefined, lists.covers, (v) => actions.update({ cover2: noneAsNull(v) }))}`
           : nothing}
         ${!window && o.type !== "garage" ? entityField(host, t("cover2_entity"), o.cover2 ?? null, undefined, lists.covers, (v) => actions.update({ cover2: noneAsNull(v) })) : nothing}
