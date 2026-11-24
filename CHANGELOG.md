@@ -4,6 +4,13 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.32.1]
+
+### Fixed
+
+- **Cards, bars and lists stay solid with a glass theme** (thanks @Jkazama6, #220): a theme that makes Home Assistant's card colour see-through left the room card, the buttons and the bars lying bare over the plan. NextFloor now blends such a card colour over the theme's page colour and uses that solid colour, and follows a change of theme or of light and dark mode. A theme with a solid card colour is untouched.
+- **A robot vacuum follows its position tracker** (thanks @cwar36, #210): the 3D view now watches the tracker (or map camera) a robot's position comes from, so every coordinate change redraws the robot instead of only some of them.
+
 ## [0.32.0]
 
 ### Added
