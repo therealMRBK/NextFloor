@@ -4,6 +4,8 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.33.0]
+
 ### Added
 
 - **Traditional Chinese (Taiwan)** (thanks @monarchsofchaos004-gif, #216): a Home Assistant set to Traditional Chinese (`zh-Hant`, `zh-TW`, `zh-HK`) now reads its own language file; the other Chinese codes keep the Simplified one. The file was made from the Simplified texts with Taiwan wording, so corrections are welcome.
