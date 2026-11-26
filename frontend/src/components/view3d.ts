@@ -1355,7 +1355,7 @@ export class NfView3d extends LitElement {
         // furniture with a state: a glowing plate on the item while its entity is on, occupied or home;
         // two entities light the halves (left/right of a bed, bottom/top of a bunk bed)
         const faces = this.stateFaces(hass, f);
-        if (faces.length) screens.set(f.id, { color: faces[0].color, level: faces[0].level, faces });
+        if (faces.length) screens.set(f.id, { color: faces[0].color, level: faces[0].level, faces, ...(f.on_effect ? { effect: f.on_effect } : {}) });
         // a light switch or socket: each button glows with its own entity; a tap switches it (or asks which, with several)
         // the household: a bin's pickup, post in the mailbox, a thirsty plant
         const care = householdKind(f.type);
@@ -1707,7 +1707,9 @@ export class NfView3d extends LitElement {
       const on = isActive(st) || st.state === "home" || st.state === "occupied" || st.state === "on";
       if (!on) continue;
       const lit = kindOf(ref) === "light" ? lightGlow(st) : null;
-      out.push({ part, color: lit ? lit.color : [1, 0.71, 0.28], level: lit ? lit.level : 0.85 });
+      const m = f.on_color ? /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(f.on_color) : null;
+      const own: [number, number, number] | null = m ? [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255] : null;
+      out.push({ part, color: lit ? lit.color : (own ?? [1, 0.71, 0.28]), level: lit ? lit.level : 0.85 });
     }
     return out;
   }

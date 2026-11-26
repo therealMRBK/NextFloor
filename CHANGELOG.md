@@ -4,6 +4,14 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.34.0]
+
+### Added
+
+- **Own colour and effect for a device that is on** (thanks @Gifford47, #229): with *State from* set, the item's form has *Colour while on* and *Effect while on* (steady, pulse, flicker, rainbow). While the entity counts as on, the glow takes that colour and runs that animation; a light's own colour still wins, and an item without them looks exactly as before.
+- **Windows in dormers** (thanks @kutzera, #230): a dormer's front gable is a face of its own (`<dormer id>:front`) that the roof window tool offers next to the slopes. The window takes a contact, tilt, blind and window motor like any roof window and is drawn in the gable wall.
+- **The roof in the 3D print** (thanks @Tkong1, #232): the STL export now contains the roof sections at their resting place on the house, not only walls and floors.
+
 ## [0.33.0.1]
 
 ### Fixed

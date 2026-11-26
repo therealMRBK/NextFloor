@@ -122,6 +122,7 @@ test("private export/import preserves local mappings and future identifiers with
 test("effect scheduling requires a visible animated floor and stops for hidden views", () => {
   const renderer = Object.create(NextFloorViewer.prototype) as any;
   renderer.effectFloors = new Set(["animated"]);
+  renderer.screenEffectFloors = new Set();
   renderer.floors = [{ floor: { id: "animated" }, o: 0 }, { floor: { id: "static" }, o: 1 }];
   renderer.onScreen = true;
   renderer.disposed = false;

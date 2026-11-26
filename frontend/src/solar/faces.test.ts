@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { emptyBuilding, newFloor, type RoofSection } from "../model.ts";
 import { sectionProfile, sectionUV } from "../roof/frame.ts";
+import { proposeDormer } from "../roof/dormers.ts";
 import { GROUND, fieldFace, groundFace, groundFloor, roofFaces, topFloor, wallFaces } from "./faces.ts";
 import { cottage, field, near } from "./fixtures.ts";
 
@@ -126,4 +127,24 @@ test("a field's face is found by its key; a vanished roof face gives null", () =
   assert.equal(fieldFace(b, field(GROUND))?.unbounded, true);
   const wall = wallFaces(b)[0];
   assert.equal(fieldFace(b, field(wall.key))?.key, wall.key);
+});
+
+test("a dormer has an upright front gable face that looks away from its parent's slope (#230)", () => {
+  const parent = section({ id: "p" });
+  const dormer = proposeDormer(parent, "a", "d");
+  assert.equal(dormer.dormer, true);
+  const b = cottage({ type: "custom", pitch: 35, overhang: 0, sections: [parent, dormer] });
+  const front = roofFaces(b).find((f) => f.key === "d:front");
+  assert.ok(front, "front face exists");
+  assert.equal(front.side, "front");
+  near(front.pitch, 90);
+  assert.equal(front.n[1], 0);
+  // side a is the low coordinate in z, so the dormer's front looks towards -z, away from the ridge
+  assert.ok(front.n[2] < -0.9, `looks outwards: ${front.n}`);
+  // the face's frame is right-handed outwards: eu = (-nz, 0, nx)
+  near(front.eu[0], -front.n[2]);
+  assert.ok(front.lu > 1 && front.ls > 0.3);
+  // full width up to the eaves, then narrowing towards the apex
+  assert.deepEqual(front.span(0.5), [0, front.lu]);
+  assert.ok(front.span(front.ls * 0.97)[1] - front.span(front.ls * 0.97)[0] < front.lu * 0.3);
 });

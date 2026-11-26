@@ -5,7 +5,7 @@
 
 import { generateWalls, wallOptions } from "../geometry/walls.ts";
 import { outdoorGround, type Building, type Floor, type RoofSection, type SolarField } from "../model.ts";
-import { sectionFrame, sectionOverhang, sectionProfile } from "../roof-sections.ts";
+import { dormerParent, effectiveDormer, sectionFrame, sectionGeometry, sectionHeightAt, sectionOverhang, sectionProfile, sectionUV } from "../roof-sections.ts";
 import { gradient, mansardParts } from "../roof/frame.ts";
 import { cross, DEG, length, normalize, sub, type V3 } from "./vec.ts";
 
@@ -20,7 +20,7 @@ export interface RoofFace {
   key: string;
   /** The section the face belongs to (null: the single roof). */
   section: string | null;
-  side: "a" | "b" | "c" | "d" | "top";
+  side: "a" | "b" | "c" | "d" | "top" | "front";
   flat: boolean;
   /** The eave corner (heights above the ground), unit vectors along the eave and up the slope, and the normal. */
   o: V3;
@@ -153,6 +153,49 @@ function sectionFaces(s: RoofSection, overhang: Overhang): RoofFace[] {
 }
 
 /**
+ * The front gable of a dormer (#230): an upright face a window can sit in, on the end that looks down the parent's slope
+ * (the one the 3D view draws the gable at). Nothing for other sections.
+ */
+function dormerFrontFace(sections: readonly RoofSection[], s: RoofSection): RoofFace[] {
+  if (!s.dormer || s.shape !== "gable") return [];
+  const parent = dormerParent(sections, s);
+  if (!parent) return [];
+  const drawn = effectiveDormer(parent, s);
+  const frame = sectionFrame(drawn);
+  const profile = sectionProfile(drawn);
+  const parentPlanes = sectionGeometry(parent, { u0: 0, u1: 0, a: 0, b: 0 });
+  const heightAt = (u: number) => {
+    const [x, z] = frame.at(u, frame.w / 2);
+    const [pu, pv] = sectionUV(parent, x, z);
+    return sectionHeightAt(parentPlanes, pu, pv) ?? sectionProfile(parent).y(pv);
+  };
+  const front0 = heightAt(frame.u0) <= heightAt(frame.u1);
+  const uf = front0 ? frame.u0 : frame.u1;
+  const [p0, p1] = [frame.at(0, 0), frame.at(1, 0)];
+  const [ux, uz] = [p1[0] - p0[0], p1[1] - p0[1]];
+  const ul = Math.hypot(ux, uz) || 1;
+  // outwards = away from the dormer's middle
+  const n: V3 = front0 ? [-ux / ul, 0, -uz / ul] : [ux / ul, 0, uz / ul];
+  const eu: V3 = [-n[2], 0, n[0]];
+  const [q0, q1] = [frame.at(uf, 0), frame.at(uf, 1)];
+  const left = (q1[0] - q0[0]) * eu[0] + (q1[1] - q0[1]) * eu[2] > 0 ? 0 : frame.w;
+  // the wall stands from the section's base: full width up to the eaves, then narrowing to the ridge
+  const base = Math.min(drawn.base, profile.y(0));
+  const eave = profile.y(0) - base;
+  const lu = frame.w;
+  const ls = profile.rh - base;
+  if (ls < 0.3 || lu < 0.5) return [];
+  const apex = Math.abs(profile.vr - left);
+  const [ox, oz] = frame.at(uf, left);
+  const span = (t: number): [number, number] => {
+    if (t <= eave) return [0, lu];
+    const k = Math.min(1, Math.max(0, (t - eave) / Math.max(0.01, ls - eave)));
+    return [apex * k, lu - (lu - apex) * k];
+  };
+  return [{ key: `${s.id}:front`, section: s.id, side: "front", flat: false, o: [ox, base, oz], eu, es: [0, 1, 0], n, lu, ls, pitch: 90, span, facing: [n[0], n[2]] }];
+}
+
+/**
  * A mansard breaks each side at a kink: the steep lower slope from the eave to the break, then the flatter upper slope
  * to the ridge. One plane from eave to ridge would cut under the break, so each part is a face of its own.
  */
@@ -185,7 +228,10 @@ export function topFloor(b: Building): Floor | null {
 export function roofFaces(b: Building): RoofFace[] {
   const roof = b.settings.roof;
   if (!roof || roof.type === "none") return [];
-  if (roof.type === "custom") return (roof.sections ?? []).flatMap((s) => sectionFaces(s, sectionOverhang(b, s, s.overhang ?? roof.overhang)));
+  if (roof.type === "custom") {
+    const sections = roof.sections ?? [];
+    return sections.flatMap((s) => [...sectionFaces(s, sectionOverhang(b, s, s.overhang ?? roof.overhang)), ...dormerFrontFace(sections, s)]);
+  }
   const floor = topFloor(b);
   if (!floor) return [];
   const xs = floor.rooms.flatMap((r) => r.points.map((p) => p[0]));

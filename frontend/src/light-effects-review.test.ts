@@ -143,7 +143,7 @@ test("one shared effect timer stops for no participants, hidden views/document, 
   const viewer = Object.create(NextFloorViewer.prototype) as any;
   const floor = { floor: { id: "f" }, o: 1 };
   let lamps = 0, glows = 0, frames = 0;
-  Object.assign(viewer, { floors: [floor], effectFloors: new Set(["f"]), onScreen: true, disposed: false, lowQuality: false, buildLamps() { lamps++; }, buildGlow() { glows++; }, invalidate() { frames++; } });
+  Object.assign(viewer, { floors: [floor], effectFloors: new Set(["f"]), screenEffectFloors: new Set(), onScreen: true, disposed: false, lowQuality: false, buildLamps() { lamps++; }, buildGlow() { glows++; }, invalidate() { frames++; } });
   try {
     viewer.scheduleEffects();
     const timer = viewer.effectTimer;
