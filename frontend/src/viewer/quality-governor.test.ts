@@ -40,3 +40,11 @@ test("one hiccup does not count", () => {
   const frames = Array.from({ length: 300 }, (_, i) => (i % 20 === 0 ? 90 : 16));
   assert.deepEqual(frames.map((dt, i) => g.frame(dt, i * 16)).filter(Boolean), []);
 });
+
+test("undo gives the last pixel step back", () => {
+  const g = new QualityGovernor(2);
+  run(g, 45, 200);
+  const lowered = g.pixelRatio;
+  g.undo();
+  assert.equal(g.pixelRatio, lowered + 0.25);
+});

@@ -33,6 +33,12 @@ export class QualityGovernor {
     return this.ratio;
   }
 
+  /** Takes back the last step down (something else was changed instead of the pixels). */
+  undo(): void {
+    this.ratio = Math.min(this.max, Math.round((this.ratio + STEP) * 100) / 100);
+    this.lastDown = -Infinity;
+  }
+
   /** One frame while something moves (`dt` in ms, `now` the frame's time). Returns a step when one is due. */
   frame(dt: number, now: number): QualityStep {
     if (this.settle > 0) {

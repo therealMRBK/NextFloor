@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.33.0.1]
+
+### Fixed
+
+- **The realistic look stuttered since 0.33.0** (#231, thanks @Noack1978 and @Jkazama6): the new sun shadows and sky light cost 60 lookups per pixel and frame, too much for tablets, and the automatic quality answered by changing the resolution up and down. Now, when the frames are too slow in the realistic look, the shadows and sky light are switched off first and the resolution stays; choosing a quality yourself starts them again.
+
 ## [0.33.0]
 
 ### Added
