@@ -33,9 +33,11 @@ export class QualityGovernor {
     return this.ratio;
   }
 
-  /** Takes back the last step down (something else was changed instead of the pixels). */
-  undo(): void {
-    this.ratio = Math.min(this.max, Math.round((this.ratio + STEP) * 100) / 100);
+  /** Takes back the last step (`pixels`: the pixel ratio went down) – something else was changed instead – and measures afresh. */
+  undo(pixels: boolean): void {
+    if (pixels) this.ratio = Math.min(this.max, Math.round((this.ratio + STEP) * 100) / 100);
+    this.slowAtFloor = 0;
+    this.settle = SETTLE;
     this.lastDown = -Infinity;
   }
 

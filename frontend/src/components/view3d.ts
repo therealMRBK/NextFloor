@@ -154,6 +154,7 @@ export class NfView3d extends LitElement {
     central: { attribute: false },
     centralOpen: { attribute: false },
     keepCamera: { attribute: false },
+    sunShadows: { attribute: false },
     plain: { attribute: false },
     rightBack: { attribute: false },
     templateName: { attribute: false },
@@ -411,6 +412,7 @@ export class NfView3d extends LitElement {
   declare centralOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   declare keepCamera: boolean;
+  declare sunShadows: boolean;
   /** Only the floor plan: no furniture in 3D. */
   declare plain: boolean;
   /** A short right click goes back one step. */
@@ -547,6 +549,7 @@ export class NfView3d extends LitElement {
     })();
     this.roomLabels = true;
     this.deviceLabels = true;
+    this.sunShadows = true;
     this.floorStack = "dim";
     this._low = false;
     this.panelOpen = false;
@@ -767,6 +770,7 @@ export class NfView3d extends LitElement {
       this.viewer.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
       this.viewer.setKeepRoof(this.keepRoof);
       this.viewer.setKeepCamera(!!this.keepCamera);
+      this.viewer.setSunShadows(this.sunShadows !== false);
       this.viewer.setPlain(!!this.plain);
       this.viewer.setRightBack(!!this.rightBack);
       this.viewer.setZoom(this.zoom ?? 1);
@@ -858,6 +862,7 @@ export class NfView3d extends LitElement {
     if (changed.has("explode")) v.setExplode(this.explode);
     if (changed.has("keepRoof")) v.setKeepRoof(this.keepRoof);
     if (changed.has("keepCamera")) v.setKeepCamera(!!this.keepCamera);
+    if (changed.has("sunShadows")) v.setSunShadows(this.sunShadows !== false);
     if (changed.has("plain")) v.setPlain(!!this.plain);
     if (changed.has("rightBack")) v.setRightBack(!!this.rightBack);
     if (changed.has("zoom")) v.setZoom(this.zoom ?? 1);

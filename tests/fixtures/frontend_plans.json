@@ -548,7 +548,10 @@
       "rotation": 0,
       "variant": null,
       "entity": null,
-      "power": null
+      "power": null,
+      "state_entity": "binary_sensor.laeuft",
+      "on_color": "#3b82f6",
+      "on_effect": "pulse"
      },
      {
       "id": "m2",
@@ -2358,6 +2361,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -2484,6 +2498,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -2610,6 +2635,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -2736,6 +2772,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -2862,6 +2909,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -2988,6 +3046,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -3114,6 +3183,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [
@@ -3240,6 +3320,17 @@
      "v": 1,
      "contact": "binary_sensor.schlafzimmer_fenster",
      "cover": "cover.kueche"
+    },
+    {
+     "id": "rwin_front",
+     "face": "dormer_1:front",
+     "u": 0.6,
+     "v": 0.2,
+     "w": 0.8,
+     "h": 0.8,
+     "cover": null,
+     "contact": "binary_sensor.gaube",
+     "tilt": null
     }
    ],
    "sections": [

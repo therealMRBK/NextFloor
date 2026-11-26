@@ -24,6 +24,7 @@ export const DEFAULTS: Partial<CardConfig> = {
   fullscreen_button: false,
   room_names: true,
   device_names: true,
+  sun_shadows: true,
   floor_stack: "dim",
   alerts: true,
   alert_jump: false,
@@ -50,7 +51,7 @@ export const DEFAULTS: Partial<CardConfig> = {
 };
 
 /** The yes/no options that get a plain checkbox. */
-export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "device_names" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room" | "central_open" | "keep_camera" | "today" | "readable" | "plain" | "right_back" | "view_only";
+export type SwitchOption = "solid_walls" | "explode" | "roof_fade" | "energy" | "room_panel" | "room_buttons" | "stats" | "fullscreen_button" | "room_names" | "device_names" | "sun_shadows" | "alerts" | "alert_jump" | "scenes" | "announcements" | "sensor_bar" | "idle_orbit" | "weather" | "tap_in_room" | "central_open" | "keep_camera" | "today" | "readable" | "plain" | "right_back" | "view_only";
 
 export type Choice = [value: string, label: I18nKey];
 

@@ -196,7 +196,10 @@ export class RoofController {
   addWindow(): void {
     if (!this.admin) return;
     const north = this.doc.settings.north ?? 0;
-    const face = bestFace(roofFaces(this.doc).filter((f) => !f.flat), north) ?? roofFaces(this.doc)[0];
+    // a selected dormer gets its window in the front gable (#230); otherwise the best slope
+    const faces = roofFaces(this.doc);
+    const dormerFront = this.section?.dormer ? faces.find((f) => f.key === `${this.section!.id}:front`) : undefined;
+    const face = dormerFront ?? bestFace(faces.filter((f) => !f.flat && f.side !== "front"), north) ?? faces[0];
     if (!face) return;
     const created = proposeWindow(face, uid("rwin"));
     this.ctx.host.change((doc) => (doc.settings.roof.windows = [...(doc.settings.roof.windows ?? []), created]));

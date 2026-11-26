@@ -285,6 +285,8 @@ export class NextFloorViewer {
   private highQuality = false;
   /** Auto quality found the frames too slow: the sun shadows and sky light (60 lookups per pixel) go first, before any pixels are given up. */
   private shadowsDropped = false;
+  /** The user's own switch for sun shadows and sky light (#231). */
+  private sunShadowsWanted = true;
   /** Sun shadows of the realistic look (made the first time they are needed). */
   private sunShadow: SunShadow | null = null;
   /** The wall state the sun shadow was drawn for (lowered and glass walls follow the camera). */
@@ -601,6 +603,13 @@ export class NextFloorViewer {
   setAutoOrbit(speed: number): void {
     this.orbitSpeed = speed;
     this.orbitLast = 0;
+    this.invalidate();
+  }
+
+  /** Sun shadows and sky light of the realistic look on or off (a switch of the user; on is the default). */
+  setSunShadows(on: boolean): void {
+    if (on === this.sunShadowsWanted) return;
+    this.sunShadowsWanted = on;
     this.invalidate();
   }
 
@@ -2330,7 +2339,7 @@ export class NextFloorViewer {
   private buildScreens(fv: FloorView): void {
     // the vehicles in the parking spots count as furniture here too
     const items = withVehicles(fv.floor, this.parked).furniture.filter((f) => this.screens.has(f.id));
-    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0},${f.tilt_x ?? 0},${f.tilt_z ?? 0}:${JSON.stringify(this.screens.get(f.id))}`).join(";");
+    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0},${f.tilt_x ?? 0},${f.tilt_z ?? 0}:${JSON.stringify(this.screens.get(f.id))}${this.screens.get(f.id)?.effect ? `@${this.effectTime}` : ""}`).join(";");
     if (sig === fv.screenSig && fv.screenMesh.geometry.getAttribute("position")) return;
     fv.screenSig = sig;
     const buf = new GeoBuffer();
@@ -3378,10 +3387,10 @@ export class NextFloorViewer {
     this.lastFrame = moving ? now : 0;
     if (moving && this.governor) {
       const step = this.governor.frame(dt, now);
-      if (step && "ratio" in step && !this.shadowsDropped && this.theme === "real") {
-        // too slow in the realistic look: take the shadows away first, the pixels stay (governor measures again after settling)
+      if (step && !this.shadowsDropped && this.theme === "real" && this.sunShadowsWanted) {
+        // too slow in the realistic look: the shadows go first, the pixels (and the look) stay; the governor measures again after settling
         this.shadowsDropped = true;
-        this.governor.undo();
+        this.governor.undo("ratio" in step);
       } else if (step && "ratio" in step) {
         this.renderer.setPixelRatio(step.ratio);
         this.resize();
@@ -3389,7 +3398,7 @@ export class NextFloorViewer {
     }
     this.updateWalls();
     // sun shadows in the realistic look (not on slow devices); the map is redrawn only when the house changed
-    const sunShadows = this.theme === "real" && !this.lowQuality && !this.shadowsDropped;
+    const sunShadows = this.theme === "real" && !this.lowQuality && !this.shadowsDropped && this.sunShadowsWanted;
     shadowUniforms.uNfShadowOn.value = sunShadows ? 1 : 0;
     // with real shadows the baked strips along the walls (straight-edged, 42 cm) are left out: the sky light darkens the floor
     // along the walls softly by itself, and the strips' square ends read as dark boxes beside every wall end

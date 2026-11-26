@@ -24,6 +24,8 @@ export interface DevicePrefs {
   roomNames: boolean;
   /** The names under devices and markers in the 3D view. */
   deviceNames: boolean;
+  /** Sun shadows and sky light in the realistic look (default on; they cost a lot on tablets, #231). */
+  sunShadows: boolean;
   clean: boolean;
   navWrap: boolean;
   weather: boolean;
@@ -93,6 +95,7 @@ const CODECS: { [K in keyof DevicePrefs]: Codec<DevicePrefs[K]> } = {
   floorStack: word("floor_stack", ["dim", "stacked", "single"], "dim"),
   roomNames: flag("room_names", true),
   deviceNames: flag("device_names", true),
+  sunShadows: flag("sun_shadows", true),
   clean: flag("clean", false),
   navWrap: flag("nav_wrap", false),
   weather: flag("weather", true),
