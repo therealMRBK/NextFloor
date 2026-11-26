@@ -4,6 +4,16 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.35.0]
+
+### Added
+
+- **The card can follow the panel's auto look** (thanks @luotongda, #237): the dashboard card has `auto_day` and `auto_night` (default `day` and `neon`) for `theme: auto`, and `theme` accepts all looks, including nordic, warm_evening and minimal. The card editor shows both choices when the theme is auto.
+
+### Fixed
+
+- The card docs said the default theme is `auto`; it is `neon`. They now also say the card does not read the panel's Look (#235).
+
 ## [0.34.0]
 
 ### Added

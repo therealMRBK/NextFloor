@@ -1,5 +1,5 @@
 import type { FurnitureColors } from "./furniture-colors.ts";
-import type { OwnLook } from "./themes.ts";
+import type { OwnLook, Theme } from "./themes.ts";
 // Configuration of the dashboard card, shared by the card and its visual editor (a bundle of its own).
 
 import type { MarkerKind } from "./entities/kinds.ts";
@@ -40,8 +40,12 @@ export interface CardConfig {
   buttons?: { label: string; icon?: string; action: "navigate" | "more_info" | "service" | "fire_dom_event"; target?: string; data?: Record<string, unknown> }[];
   /** Heatmap of the rooms: none | temperature | humidity | co2. */
   heatmap?: "none" | "temperature" | "humidity" | "co2";
-  /** Look: neon | blueprint | day | own | real. */
-  theme?: "auto" | "neon" | "blueprint" | "day" | "own" | "real";
+  /** Look: any of the looks, or "auto" (auto_day above the horizon, auto_night after sunset). */
+  theme?: "auto" | Theme;
+  /** The look "auto" uses while the sun is up (default day), like the panel's setting. */
+  auto_day?: Theme;
+  /** The look "auto" uses after sunset (default neon). */
+  auto_night?: Theme;
   /** A clock in a corner of the view (default none). */
   clock?: "none" | "top_left" | "top_right" | "bottom_left" | "bottom_right";
   /** The 🔒 button that locks the camera on this device (default shown). */

@@ -374,7 +374,7 @@ export class NextFloorCard extends LitElement {
       .zoom=${typeof c?.zoom === "number" ? c.zoom : 1}
       .buttons=${c?.buttons?.map((button, i) => ({ id: `card_${i}`, ...button })) ?? null}
       .heatMode=${s.heat}
-      .theme=${lookNow(c?.theme, this.hass?.states["sun.sun"]?.state)}
+      .theme=${lookNow(c?.theme, this.hass?.states["sun.sun"]?.state, c?.auto_day, c?.auto_night)}
       .clock=${c?.clock && c.clock !== "none" ? c.clock : null}
       .lockButton=${c?.lock_button !== false}
       .walkButton=${c?.walk_button !== false}
