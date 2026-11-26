@@ -283,6 +283,8 @@ export class NextFloorViewer {
   private lastStatsFrame = 0;
   private lowQuality = false;
   private highQuality = false;
+  /** Auto quality found the frames too slow: the sun shadows and sky light (60 lookups per pixel) go first, before any pixels are given up. */
+  private shadowsDropped = false;
   /** Sun shadows of the realistic look (made the first time they are needed). */
   private sunShadow: SunShadow | null = null;
   /** The wall state the sun shadow was drawn for (lowered and glass walls follow the camera). */
@@ -590,6 +592,7 @@ export class NextFloorViewer {
 
   setQuality(quality: Quality): void {
     this.qualityMode = quality;
+    this.shadowsDropped = false;
     this.swapRenderer(quality);
   }
 
@@ -3351,14 +3354,18 @@ export class NextFloorViewer {
     this.lastFrame = moving ? now : 0;
     if (moving && this.governor) {
       const step = this.governor.frame(dt, now);
-      if (step && "ratio" in step) {
+      if (step && "ratio" in step && !this.shadowsDropped && this.theme === "real") {
+        // too slow in the realistic look: take the shadows away first, the pixels stay (governor measures again after settling)
+        this.shadowsDropped = true;
+        this.governor.undo();
+      } else if (step && "ratio" in step) {
         this.renderer.setPixelRatio(step.ratio);
         this.resize();
       } else if (step) setTimeout(() => this.dropToLow(), 0);
     }
     this.updateWalls();
     // sun shadows in the realistic look (not on slow devices); the map is redrawn only when the house changed
-    const sunShadows = this.theme === "real" && !this.lowQuality;
+    const sunShadows = this.theme === "real" && !this.lowQuality && !this.shadowsDropped;
     shadowUniforms.uNfShadowOn.value = sunShadows ? 1 : 0;
     // with real shadows the baked strips along the walls (straight-edged, 42 cm) are left out: the sky light darkens the floor
     // along the walls softly by itself, and the strips' square ends read as dark boxes beside every wall end
