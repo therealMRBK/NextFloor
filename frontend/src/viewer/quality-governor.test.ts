@@ -45,6 +45,15 @@ test("undo gives the last pixel step back", () => {
   const g = new QualityGovernor(2);
   run(g, 45, 200);
   const lowered = g.pixelRatio;
-  g.undo();
+  g.undo(true);
   assert.equal(g.pixelRatio, lowered + 0.25);
+});
+
+test("undo of a 'low' request starts counting again", () => {
+  const g = new QualityGovernor(1, 1);
+  const steps = run(g, 90, 400);
+  assert.deepEqual(steps[0], { low: true });
+  g.undo(false);
+  // two fresh slow windows are needed again before the simple look is asked for
+  assert.deepEqual(run(g, 90, 100), []);
 });

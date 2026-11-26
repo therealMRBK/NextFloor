@@ -143,6 +143,8 @@ export interface ScreenState {
   level: number;
   /** Strength of the glow frame around the screen: 1 is the usual, 0 draws none (the item's own *Glow behind the TV*). */
   halo?: number;
+  /** The item's own animation while it is on (pulse, flicker, rainbow or a plugin's, #229). */
+  effect?: string;
   /** Furniture with a state: glowing faces on top of the item instead of a screen – the whole top, or a half of it. */
   faces?: { part: "all" | "left" | "right" | "top" | "bottom"; color: [number, number, number]; level: number }[];
   /** Light switches and sockets: the buttons (gangs) that are on glow in their colour. */

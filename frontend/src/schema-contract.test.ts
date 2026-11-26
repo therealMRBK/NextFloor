@@ -24,6 +24,8 @@ function plans() {
   // what 0.31.2 writes: walls drawn by a face and joined (#125), a gate moved by a relay (#134), the own look's glass (D#82),
   // reversed solar sensors, a pipe that branches off another (D#118)
   const ground = base.floors[0];
+  // a device that glows in its own colour with an effect while on (#229)
+  if (ground.furniture[0]) Object.assign(ground.furniture[0], { state_entity: "binary_sensor.laeuft", on_color: "#3b82f6", on_effect: "pulse" });
   ground.walls = [...(ground.walls ?? []), { ...newFreeWall(...wallOnSide([20, 1], [24, 1], 0.3, "left")), id: "wall_face_a", thickness: 0.3, axis: "left" }, { ...newFreeWall(...wallOnSide([20, 1], [20, 4], 0.12, "right")), id: "wall_face_b", axis: "right" }];
   applyWallJoins(ground, wallJoins(ground.walls, base.settings.wall_interior));
   const gate = ground.openings.find((o) => o.type === "garage") ?? ground.openings[0];
@@ -37,7 +39,8 @@ function plans() {
   for (const shape of shapes) {
     const sections: RoofSection[] = roofSectionsFromRooms(base).map((s, i) => ({ ...s, shape, flip: i % 2 === 0, rotation: i === 1 ? 30 : null, overhang_sides: i % 2 ? { a: 0.05, u0: 0.1 } : null }));
     if (sections[0]) sections.push(proposeDormer(sections[0] as never, "a", "dormer_1") as RoofSection);
-    roofs[shape] = { ...base.settings.roof, type: "custom", sections };
+    // a window in the dormer's front gable (#230)
+    roofs[shape] = { ...base.settings.roof, type: "custom", sections, windows: [...(base.settings.roof.windows ?? []), { id: "rwin_front", face: "dormer_1:front", u: 0.6, v: 0.2, w: 0.8, h: 0.8, cover: null, contact: "binary_sensor.gaube", tilt: null }] };
   }
   return { base, roofs };
 }

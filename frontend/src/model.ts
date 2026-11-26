@@ -279,6 +279,9 @@ export interface Furniture extends LightEffectConfig {
   /** A second state entity for the other half: left/right (a double bed) or bottom/top (a bunk bed). */
   state_entity2?: EntityRef;
   state_split?: "left_right" | "top_bottom" | null;
+  /** While the state entity is on: the glow's own colour (#rrggbb; null = amber, or the light's own colour) and animation (pulse, flicker, rainbow or a plugin's; null = steady). */
+  on_color?: string | null;
+  on_effect?: string | null;
   /** Household items: the sensor they show – a bin's pickup, a mailbox's post, a plant's soil moisture (null = none). */
   care_entity?: string | null;
   /** Plants: the soil moisture below which they are thirsty (%, default 20). */

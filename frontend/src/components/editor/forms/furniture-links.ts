@@ -8,7 +8,7 @@ import type { I18nKey } from "../../../i18n.ts";
 import { ENERGY_DEVICES, MAX_DEVICE_TEMPS, isLamp, type Furniture, type VacuumCalibration } from "../../../model.ts";
 import { isClimateFurniture, isPackType, packDisplay } from "../../../packs.ts";
 import { entityOptions, isBinary, isNumeric, isPowerSensor } from "../entities.ts";
-import { checkField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
+import { checkField, colorField, entityField, glowField, hint, iconField, markerField, pinShiftField, numberField, selectField, textField } from "../fields.ts";
 import type { EditorHost } from "../host.ts";
 import { lightEffectFields } from "../light-effect-fields.ts";
 import { lightEffectSource } from "../../../light-effects.ts";
@@ -32,6 +32,10 @@ export function stateLinks(host: EditorHost, item: Furniture, actions: Furniture
   return html`${entityField(host, t("furn_state_entity"), item.state_entity ?? null, undefined, options, (v) => actions.update({ state_entity: noneAsNull(v) }))}
     ${first ? entityField(host, t("furn_state_entity2"), item.state_entity2 ?? null, undefined, options, (v) => actions.update({ state_entity2: noneAsNull(v) })) : nothing}
     ${second ? selectField(host, t("furn_state_split"), item.state_split === "top_bottom" ? "top_bottom" : "left_right", splits, (v) => actions.update({ state_split: v })) : nothing}
+    ${first
+      ? html`${colorField(host, t("furn_on_color"), item.on_color ?? null, "#ffb547", (v) => actions.update({ on_color: v }))}
+        ${selectField(host, t("furn_on_effect"), item.on_effect ?? "", [["", t("furn_on_effect_none")], ["pulse", t("furn_on_effect_pulse")], ["flicker", t("furn_on_effect_flicker")], ["rainbow", t("furn_on_effect_rainbow")]], (v) => actions.update({ on_effect: v || null }))}`
+      : nothing}
     ${hint(t("furn_state_hint"), "nf-wide")}`;
 }
 

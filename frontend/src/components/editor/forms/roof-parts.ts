@@ -44,6 +44,7 @@ export function faceLabel(host: EditorHost, face: RoofFace): string {
     return `${t("solar_wall")} ${floor?.name ?? ""} · ${compass} · ${formatNumber(hass, face.lu, 1)} m`;
   }
   const sections = doc.settings.roof.sections ?? [];
+  if (face.side === "front") return `${t("solar_section", { n: sections.findIndex((s) => s.id === face.section) + 1 })} · ${t("solar_front")} · ${compass}`;
   const part = face.section ? t("solar_section", { n: sections.findIndex((s) => s.id === face.section) + 1 }) : t("solar_main");
   return face.flat ? `${part} · ${t("solar_flat")}` : `${part} · ${compass} · ${Math.round(face.pitch)}°`;
 }

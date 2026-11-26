@@ -76,6 +76,8 @@ export interface CardConfig {
   room_names?: boolean;
   /** The names under devices and markers in 3D (default true). */
   device_names?: boolean;
+  /** Sun shadows and sky light in the realistic look (default true; off saves a lot of work on tablets). */
+  sun_shadows?: boolean;
   /** An opened floor with the floors below it dimmed (default), stacked, or on its own. */
   floor_stack?: "dim" | "stacked" | "single";
   /** A button for full screen (hides the dashboard around the card). */

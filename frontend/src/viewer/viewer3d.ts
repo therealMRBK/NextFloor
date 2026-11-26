@@ -285,6 +285,8 @@ export class NextFloorViewer {
   private highQuality = false;
   /** Auto quality found the frames too slow: the sun shadows and sky light (60 lookups per pixel) go first, before any pixels are given up. */
   private shadowsDropped = false;
+  /** The user's own switch for sun shadows and sky light (#231). */
+  private sunShadowsWanted = true;
   /** Sun shadows of the realistic look (made the first time they are needed). */
   private sunShadow: SunShadow | null = null;
   /** The wall state the sun shadow was drawn for (lowered and glass walls follow the camera). */
@@ -340,6 +342,8 @@ export class NextFloorViewer {
   private labelInset = 0;
   /** Floors with lamps that run a colour effect, and the floor of every device (for flashes). */
   private effectFloors = new Set<string>();
+  /** Floors with a device that runs its own animation while on (#229). */
+  private screenEffectFloors = new Set<string>();
   private deviceFloor = new Map<string, string>();
   private statsOn = false;
   /** Vehicles standing in parking spots (spot id -> pack item type); they join the floor geometry. */
@@ -528,7 +532,7 @@ export class NextFloorViewer {
     }
   }
 
-  /** The house as a binary STL (walls, floors, furniture and outdoor areas of every floor), for printing; `scale` 10 is 1:100 in millimetres. */
+  /** The house as a binary STL (walls, floors, furniture and outdoor areas of every floor, and the roof), for printing; `scale` 10 is 1:100 in millimetres. */
   exportStl(scale = 10): Uint8Array {
     const parts: StlPart[] = [];
     for (const fv of this.floors) {
@@ -536,6 +540,18 @@ export class NextFloorViewer {
         const position = mesh.geometry.getAttribute("position");
         if (position) parts.push({ positions: position.array, lift: fv.floor.elevation });
       }
+    }
+    // the roof (#232) at its resting place on its floor; indexed geometry is opened up into plain triangles
+    for (const part of this.roof?.parts ?? []) {
+      const fv = this.floorMap.get(part.floorId);
+      if (!fv) continue;
+      part.group.traverse((o) => {
+        const mesh = o as Mesh;
+        if (!mesh.isMesh || mesh.material !== this.roof?.solid) return;
+        const geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry;
+        const position = geo.getAttribute("position");
+        if (position) parts.push({ positions: position.array, lift: fv.floor.elevation + part.base });
+      });
     }
     return buildStl(parts, scale);
   }
@@ -587,6 +603,13 @@ export class NextFloorViewer {
   setAutoOrbit(speed: number): void {
     this.orbitSpeed = speed;
     this.orbitLast = 0;
+    this.invalidate();
+  }
+
+  /** Sun shadows and sky light of the realistic look on or off (a switch of the user; on is the default). */
+  setSunShadows(on: boolean): void {
+    if (on === this.sunShadowsWanted) return;
+    this.sunShadowsWanted = on;
     this.invalidate();
   }
 
@@ -1280,7 +1303,9 @@ export class NextFloorViewer {
   /** Screens of TVs and monitors that are on (by furniture id). */
   setScreens(screens: Map<string, ScreenState>): void {
     this.screens = screens;
+    this.screenEffectFloors = new Set(this.floors.filter((fv) => fv.floor.furniture.some((f) => screens.get(f.id)?.effect)).map((fv) => fv.floor.id));
     for (const fv of this.floors) this.buildScreens(fv);
+    this.scheduleEffects();
     this.invalidate();
   }
 
@@ -1581,7 +1606,9 @@ export class NextFloorViewer {
       this.effectTime = performance.now() / 1000;
       this.effectTick = true;
       for (const fv of this.floors) {
-        if (fv.o < 0.02 || !this.effectFloors.has(fv.floor.id)) continue;
+        if (fv.o < 0.02 || !(this.effectFloors.has(fv.floor.id) || this.screenEffectFloors.has(fv.floor.id))) continue;
+        if (this.screenEffectFloors.has(fv.floor.id)) this.buildScreens(fv);
+        if (!this.effectFloors.has(fv.floor.id)) continue;
         this.buildLamps(fv);
         this.buildGlow(fv);
       }
@@ -1590,7 +1617,7 @@ export class NextFloorViewer {
   }
 
   private hasVisibleEffects(hidden: boolean): boolean {
-    return !hidden && !this.disposed && this.onScreen && this.floors.some((fv) => fv.o >= 0.02 && this.effectFloors.has(fv.floor.id));
+    return !hidden && !this.disposed && this.onScreen && this.floors.some((fv) => fv.o >= 0.02 && (this.effectFloors.has(fv.floor.id) || this.screenEffectFloors.has(fv.floor.id)));
   }
 
   private resize(): void {
@@ -2312,7 +2339,7 @@ export class NextFloorViewer {
   private buildScreens(fv: FloorView): void {
     // the vehicles in the parking spots count as furniture here too
     const items = withVehicles(fv.floor, this.parked).furniture.filter((f) => this.screens.has(f.id));
-    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0},${f.tilt_x ?? 0},${f.tilt_z ?? 0}:${JSON.stringify(this.screens.get(f.id))}`).join(";");
+    const sig = items.map((f) => `${f.id}:${f.x},${f.z},${f.rotation},${f.w},${f.d},${f.h},${f.mount_y ?? ""},${f.mirror ? 1 : 0},${f.tilt_x ?? 0},${f.tilt_z ?? 0}:${JSON.stringify(this.screens.get(f.id))}${this.screens.get(f.id)?.effect ? `@${this.effectTime}` : ""}`).join(";");
     if (sig === fv.screenSig && fv.screenMesh.geometry.getAttribute("position")) return;
     fv.screenSig = sig;
     const buf = new GeoBuffer();
@@ -2331,7 +2358,13 @@ export class NextFloorViewer {
   /** The glowing faces of one item with a state, upright (the caller tilts them). */
   private pushScreen(buf: GeoBuffer, fv: FloorView, f: Furniture): void {
     {
-      const st = this.screens.get(f.id)!;
+      let st = this.screens.get(f.id)!;
+      if (st.effect) {
+        // the item's own animation: colour and brightness of the glow sampled now (#229)
+        const seconds = this.effectTime;
+        const lit = animateGlow(st, st.effect, seconds) ?? st;
+        st = { ...st, color: lit.color, level: lit.level, faces: st.faces?.map((fc) => ({ ...fc, ...(animateGlow(fc, st.effect, seconds) ?? fc) })) };
+      }
       const a = f.rotation * DEG;
       const c = Math.cos(a);
       const s = Math.sin(a);
@@ -3354,10 +3387,10 @@ export class NextFloorViewer {
     this.lastFrame = moving ? now : 0;
     if (moving && this.governor) {
       const step = this.governor.frame(dt, now);
-      if (step && "ratio" in step && !this.shadowsDropped && this.theme === "real") {
-        // too slow in the realistic look: take the shadows away first, the pixels stay (governor measures again after settling)
+      if (step && !this.shadowsDropped && this.theme === "real" && this.sunShadowsWanted) {
+        // too slow in the realistic look: the shadows go first, the pixels (and the look) stay; the governor measures again after settling
         this.shadowsDropped = true;
-        this.governor.undo();
+        this.governor.undo("ratio" in step);
       } else if (step && "ratio" in step) {
         this.renderer.setPixelRatio(step.ratio);
         this.resize();
@@ -3365,7 +3398,7 @@ export class NextFloorViewer {
     }
     this.updateWalls();
     // sun shadows in the realistic look (not on slow devices); the map is redrawn only when the house changed
-    const sunShadows = this.theme === "real" && !this.lowQuality && !this.shadowsDropped;
+    const sunShadows = this.theme === "real" && !this.lowQuality && !this.shadowsDropped && this.sunShadowsWanted;
     shadowUniforms.uNfShadowOn.value = sunShadows ? 1 : 0;
     // with real shadows the baked strips along the walls (straight-edged, 42 cm) are left out: the sky light darkens the floor
     // along the walls softly by itself, and the strips' square ends read as dark boxes beside every wall end

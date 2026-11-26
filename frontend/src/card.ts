@@ -365,6 +365,7 @@ export class NextFloorCard extends LitElement {
       .central=${c?.central !== false}
       .centralOpen=${c?.central_open === true}
       .keepCamera=${c?.keep_camera === true}
+      .sunShadows=${c?.sun_shadows !== false}
       .readable=${c?.readable === true}
       .plain=${c?.plain === true}
       .templateName=${this._own?.template ?? null}

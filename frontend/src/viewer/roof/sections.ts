@@ -193,7 +193,7 @@ export function buildSections(b: Building, sections: readonly RoofSection[], ove
       .flatMap((d) => (dormerParent(sections, d) === section ? dormerHoles(section, d) : wingOf(sections, d)?.parent === section ? dormerHoles(section, wingOf(sections, d)!.extended) : []));
     for (const w of b.settings.roof.windows ?? []) {
       const face = faceByKey.get(w.face);
-      const corners = face && face.section === section.id ? windowCorners(face, w) : null;
+      const corners = face && face.section === section.id && face.side !== "front" ? windowCorners(face, w) : null;
       if (!corners) continue;
       const uv = corners.map((p) => sectionUV(section, p[0], p[2]));
       holes.push({ u0: Math.min(...uv.map((q) => q[0])), u1: Math.max(...uv.map((q) => q[0])), v0: Math.min(...uv.map((q) => q[1])), v1: Math.max(...uv.map((q) => q[1])) });

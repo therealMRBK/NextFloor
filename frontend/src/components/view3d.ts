@@ -154,6 +154,7 @@ export class NfView3d extends LitElement {
     central: { attribute: false },
     centralOpen: { attribute: false },
     keepCamera: { attribute: false },
+    sunShadows: { attribute: false },
     plain: { attribute: false },
     rightBack: { attribute: false },
     templateName: { attribute: false },
@@ -411,6 +412,7 @@ export class NfView3d extends LitElement {
   declare centralOpen: boolean;
   /** Switching floors keeps the camera's side, height and distance. */
   declare keepCamera: boolean;
+  declare sunShadows: boolean;
   /** Only the floor plan: no furniture in 3D. */
   declare plain: boolean;
   /** A short right click goes back one step. */
@@ -547,6 +549,7 @@ export class NfView3d extends LitElement {
     })();
     this.roomLabels = true;
     this.deviceLabels = true;
+    this.sunShadows = true;
     this.floorStack = "dim";
     this._low = false;
     this.panelOpen = false;
@@ -767,6 +770,7 @@ export class NfView3d extends LitElement {
       this.viewer.setAutoOrbit(this.autoOrbit ? 0.06 : 0);
       this.viewer.setKeepRoof(this.keepRoof);
       this.viewer.setKeepCamera(!!this.keepCamera);
+      this.viewer.setSunShadows(this.sunShadows !== false);
       this.viewer.setPlain(!!this.plain);
       this.viewer.setRightBack(!!this.rightBack);
       this.viewer.setZoom(this.zoom ?? 1);
@@ -858,6 +862,7 @@ export class NfView3d extends LitElement {
     if (changed.has("explode")) v.setExplode(this.explode);
     if (changed.has("keepRoof")) v.setKeepRoof(this.keepRoof);
     if (changed.has("keepCamera")) v.setKeepCamera(!!this.keepCamera);
+    if (changed.has("sunShadows")) v.setSunShadows(this.sunShadows !== false);
     if (changed.has("plain")) v.setPlain(!!this.plain);
     if (changed.has("rightBack")) v.setRightBack(!!this.rightBack);
     if (changed.has("zoom")) v.setZoom(this.zoom ?? 1);
@@ -1355,7 +1360,7 @@ export class NfView3d extends LitElement {
         // furniture with a state: a glowing plate on the item while its entity is on, occupied or home;
         // two entities light the halves (left/right of a bed, bottom/top of a bunk bed)
         const faces = this.stateFaces(hass, f);
-        if (faces.length) screens.set(f.id, { color: faces[0].color, level: faces[0].level, faces });
+        if (faces.length) screens.set(f.id, { color: faces[0].color, level: faces[0].level, faces, ...(f.on_effect ? { effect: f.on_effect } : {}) });
         // a light switch or socket: each button glows with its own entity; a tap switches it (or asks which, with several)
         // the household: a bin's pickup, post in the mailbox, a thirsty plant
         const care = householdKind(f.type);
@@ -1707,7 +1712,9 @@ export class NfView3d extends LitElement {
       const on = isActive(st) || st.state === "home" || st.state === "occupied" || st.state === "on";
       if (!on) continue;
       const lit = kindOf(ref) === "light" ? lightGlow(st) : null;
-      out.push({ part, color: lit ? lit.color : [1, 0.71, 0.28], level: lit ? lit.level : 0.85 });
+      const m = f.on_color ? /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(f.on_color) : null;
+      const own: [number, number, number] | null = m ? [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255] : null;
+      out.push({ part, color: lit ? lit.color : (own ?? [1, 0.71, 0.28]), level: lit ? lit.level : 0.85 });
     }
     return out;
   }

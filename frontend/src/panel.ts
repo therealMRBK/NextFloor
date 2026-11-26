@@ -541,7 +541,7 @@ export class NextFloorPanel extends LitElement {
   }
 
   /** A chip that toggles one remembered setting. */
-  private toggleChip(key: "roomNames" | "deviceNames" | "weather", label: Key, hint?: Key) {
+  private toggleChip(key: "roomNames" | "deviceNames" | "weather" | "sunShadows", label: Key, hint?: Key) {
     return html`<button class="nf-chip" aria-pressed=${this._prefs[key]} title=${hint ? this.t(hint) : nothing} @click=${() => this.setPref(key, !this._prefs[key])}>${this.t(label)}</button>`;
   }
 
@@ -583,6 +583,7 @@ export class NextFloorPanel extends LitElement {
       ${this.toggleChip("deviceNames", "device_names_short")}
      
       ${this.toggleChip("weather", "weather_short", "weather_hint")}
+      ${p.theme === "real" || p.theme === "auto" ? this.toggleChip("sunShadows", "sun_shadows_short", "sun_shadows_hint") : nothing}
       ${p.timeSlider ? this.renderTimeOfDay() : nothing}
       </div>
       ${toggle}${back}
@@ -638,6 +639,7 @@ export class NextFloorPanel extends LitElement {
           .centralOpen=${p.menuOpen}
           @nf-central-dismiss=${() => this.setPref("menuOpen", false)}
           .keepCamera=${p.keepCamera}
+          .sunShadows=${p.sunShadows}
           .plain=${p.plain}
           .rightBack=${p.rightBack}
           .readable=${p.readable}
