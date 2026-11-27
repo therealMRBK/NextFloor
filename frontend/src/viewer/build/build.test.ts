@@ -291,3 +291,24 @@ test("the baked shadow of a raised room lies on its own floor, not under it (#13
   assert.ok(ys.some((y) => Math.abs(y - 0.307) < 1e-6), "shadow on the raised floor");
   assert.ok(ys.some((y) => Math.abs(y - 0.002) < 1e-6), "shadow on the level floor");
 });
+
+test("a window can swap its inside and outside by hand (#213)", () => {
+  const f = floorOf([room("a", 0, 0, 4, 3)], [opening("window", "a", 0, 2)]);
+  const { walls } = generateWalls(f.rooms, { exterior: OUTER, interior: INNER });
+  const place = (fl: Floor) => placeOpenings(fl, walls, bucketWalls(walls).wallBucket, roofLimits()).openings[0];
+  // the bottom edge (z = 0): the room lies at +z
+  assert.ok(place(f).toRoom[1] > 0);
+  const flipped = place({ ...f, openings: [{ ...f.openings[0], swing: "out" }] });
+  assert.ok(flipped.toRoom[1] < 0);
+  near(flipped.faceRoom, place(f).faceOut);
+});
+
+test("a window in a free wall faces the room beside it, whichever way the wall was drawn (#213)", () => {
+  for (const [a, b] of [[[0, 3.5], [4, 3.5]], [[4, 3.5], [0, 3.5]]] as [Vec2, Vec2][]) {
+    const f: Floor = { ...floorOf([room("a", 0, 0, 4, 3)]), walls: [{ id: "fw", a, b, thickness: 0.2 }] };
+    f.openings = [{ ...opening("window", "a", 0, 2), wall: "fw" }];
+    const { walls } = generateWalls(f.rooms, { exterior: OUTER, interior: INNER }, f.walls);
+    const info = placeOpenings(f, walls, bucketWalls(walls).wallBucket, roofLimits()).openings[0];
+    assert.ok(info.toRoom[1] < 0, `drawn ${a} → ${b}: toRoom ${info.toRoom}`);
+  }
+});

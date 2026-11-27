@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Zawiasy na drugą stronę",
   "flip_swing": "Odwróć kierunek otwierania",
   "flip_swing_hint": "Drzwi otwierają się do pomieszczenia lub na drugą stronę",
+  "flip_window_side": "Zamień wewnątrz/na zewnątrz",
+  "flip_window_side_hint": "Okno otwiera się na drugą stronę ściany; roleta i parapet przechodzą razem z nim",
   "main_leaf": "Skrzydło główne (od strony pomieszczenia)",
   "contact_main": "Kontakt skrzydła głównego",
   "contact_second": "Kontakt drugiego skrzydła",

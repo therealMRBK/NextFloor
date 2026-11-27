@@ -1,7 +1,7 @@
 // Fold buckets of the walls, and the openings resolved onto their walls.
 
 import { locateOpening, openingHost, type Wall } from "../../geometry/walls.ts";
-import { roomOffset, type Floor, type Vec2 } from "../../model.ts";
+import { pointInPolygon, roomOffset, type Floor, type Vec2 } from "../../model.ts";
 import { SECTORS } from "./look.ts";
 import { unit } from "./outline.ts";
 import type { OpeningInfo, Span } from "./types.ts";
@@ -100,6 +100,23 @@ export function wallTops(wall: Wall, floorHeight: number, limits: ReturnType<typ
   return { H, varies: true, topAt, lowestTop };
 }
 
+/** A free wall with a room on just one side: whether that side is the left of the wall (null: rooms on both sides or none). */
+function freeWallRoomLeft(floor: Floor, wall: Wall, leftNormal: Vec2, s: number): boolean | null {
+  const axis = unit([wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]]);
+  const at = (side: number, d: number): boolean => {
+    const p: Vec2 = [wall.a[0] + axis[0] * s + leftNormal[0] * d * side, wall.a[1] + axis[1] * s + leftNormal[1] * d * side];
+    return floor.rooms.some((r) => pointInPolygon(p, r.points));
+  };
+  // the nearest room within about a metre and a half (a wall may stand a little apart from the room it closes off)
+  for (const gap of [0.25, 0.6, 1, 1.5]) {
+    const d = Math.max(wall.left, wall.right) + gap;
+    const [left, right] = [at(1, d), at(-1, d)];
+    if (left !== right) return left;
+    if (left) return null;
+  }
+  return null;
+}
+
 /** Puts every opening onto its wall: its span along the wall, the side the room is on, its sill and top. */
 export function placeOpenings(floor: Floor, walls: Wall[], wallBucket: Map<Wall, number>, limits: ReturnType<typeof roofLimits>): { openings: OpeningInfo[]; spans: Map<Wall, Span[]> } {
   const spans = new Map<Wall, Span[]>();
@@ -113,10 +130,12 @@ export function placeOpenings(floor: Floor, walls: Wall[], wallBucket: Map<Wall,
     const length = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
     const width = Math.min(o.width, length);
     const s0 = Math.max(0, Math.min(length - width, s - width / 2));
-    // in a free wall the "room" side is the left of the wall as drawn
-    const hp = host.room.points;
-    const roomOnLeft = wall.free ? axis[0] * (hp[1][0] - hp[0][0]) + axis[1] * (hp[1][1] - hp[0][1]) > 0 : wall.roomLeft === o.room_id;
     const leftNormal: Vec2 = [-axis[1], axis[0]];
+    // in a free wall the "room" side is the side a room of the floor lies on, else the left of the wall as drawn (#213)
+    const hp = host.room.points;
+    const drawnLeft = wall.free ? freeWallRoomLeft(floor, wall, leftNormal, s) ?? axis[0] * (hp[1][0] - hp[0][0]) + axis[1] * (hp[1][1] - hp[0][1]) > 0 : wall.roomLeft === o.room_id;
+    // a window can be turned round by hand when the plan has its sides the other way (#213)
+    const roomOnLeft = o.type === "window" && o.swing === "out" ? !drawnLeft : drawnLeft;
     const toRoom: Vec2 = roomOnLeft ? leftNormal : [-leftNormal[0], -leftNormal[1]];
     // sill and top count from the floor of the opening's room, which may lie on its own level (#57)
     const level = roomOffset(floor.rooms.find((r) => r.id === o.room_id));

@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.36.0.2]
+
+### Fixed
+
+- **Windows and blinds the wrong way round** (thanks @biersack71, #213): a window in a wall drawn by hand took the left side of the wall (as drawn) as the room side, so a wall drawn the other way put the blind box inside and opened the window outwards. Such a window now faces the room beside the wall, whichever way the wall was drawn. And every window has *Swap inside/outside* in its form for the cases the plan cannot tell.
+
 ## [0.36.0.1]
 
 ### Fixed
