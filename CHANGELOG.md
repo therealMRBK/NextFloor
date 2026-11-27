@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.35.0.1]
+
+### Fixed
+
+- **A fixed device whose pin lies outside every room could not be released** (thanks @tichris0, #240): the room's device list offered only *Place* for it, and its name could not be clicked, so its form with the lock button never opened. Such a pin now shows *outside the rooms* (with 🔒 when fixed) and can be selected from the list; *Place* on a fixed pin asks before it moves it.
+
 ## [0.35.0]
 
 ### Added

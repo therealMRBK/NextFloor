@@ -37,14 +37,18 @@ function rowFor(host: EditorHost, room: Room, here: Set<string>, elsewhere: Map<
   return (id, extra = false, nameArea = areaName) => {
     const placed = here.has(id);
     const other = placed ? undefined : elsewhere.get(id);
+    // a pin on this floor that lies in no room (outdoors, say): still reachable, to select it or release its lock
+    const pin = host.floor?.placements.find((p) => p.entity_id === id);
+    const outside = !placed && !other && !!pin;
+    const selectable = placed || outside;
     const isHidden = hidden.includes(id);
     const icon = deviceIcon(host, id);
     return html`<div class="nf-row nf-dev-row ${extra ? "nf-dev-extra" : ""} ${isHidden ? "nf-dev-hidden" : ""}">
-      <button class="nf-dev-name ${placed ? "" : "nf-muted"}" ?disabled=${!placed} @click=${() => actions.select(id)}>
+      <button class="nf-dev-name ${selectable ? "" : "nf-muted"}" ?disabled=${!selectable} @click=${() => actions.select(id)}>
         ${icon
           ? html`<ha-icon class="nf-dev-icon" style="--mdc-icon-size:16px" .icon=${icon}></ha-icon>`
           : html`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${iconPath((host.hass ? entityKind(host.hass, id) : kindOf(id)) ?? "sensor")} /></svg>`}
-        <span>${entityName(host.hass, id, nameArea)}${other ? html`<small class="nf-muted"> · ${host.t("devices_placed_in", { room: other })}</small>` : nothing}</span>
+        <span>${entityName(host.hass, id, nameArea)}${other ? html`<small class="nf-muted"> · ${host.t("devices_placed_in", { room: other })}</small>` : nothing}${outside ? html`<small class="nf-muted"> · ${host.t("devices_placed_outside")}${pin?.locked ? " 🔒" : ""}</small>` : nothing}</span>
       </button>
       ${host.admin ? roomFlag(host, hidden, id, "hidden", ["🙈", "👁"], ["panel_unhide", "panel_hide"], actions) : nothing}
       ${host.admin && !isHidden ? roomFlag(host, noState, id, "no_state", ["∅", "Aa"], ["panel_state_show", "panel_state_hide"], actions) : nothing}
@@ -52,7 +56,7 @@ function rowFor(host: EditorHost, room: Room, here: Set<string>, elsewhere: Map<
       ${host.admin
         ? placed
           ? html`<button class="nf-link" @click=${() => actions.remove(id)}>${host.t("devices_remove")}</button>`
-          : html`<button class="nf-link" @click=${() => actions.place([id])}>${host.t("devices_place")}</button>`
+          : html`<button class="nf-link" @click=${() => (!pin?.locked || actions.confirm(host.t("devices_place_fixed_confirm"))) && actions.place([id])}>${host.t("devices_place")}</button>`
         : nothing}
     </div>`;
   };

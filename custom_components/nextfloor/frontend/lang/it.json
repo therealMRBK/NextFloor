@@ -1801,6 +1801,8 @@
   "start_view_saved": "È salvata una vista iniziale propria.",
   "ctx_rotate": "Ruota di 90°",
   "devices_placed_in": "in {room}",
+  "devices_placed_outside": "fuori dalle stanze",
+  "devices_place_fixed_confirm": "Questo dispositivo è bloccato. Spostarlo qui comunque?",
   "devices_narrow": "altri {n}: restringi la ricerca",
   "climate": "Clima della stanza",
   "climate_temperature": "Temperatura",

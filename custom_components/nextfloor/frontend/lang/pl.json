@@ -1801,6 +1801,8 @@
   "start_view_saved": "Zapisano własny widok startowy.",
   "ctx_rotate": "Obróć o 90°",
   "devices_placed_in": "w {room}",
+  "devices_placed_outside": "poza pomieszczeniami",
+  "devices_place_fixed_confirm": "To urządzenie jest zablokowane. Przenieść je tutaj mimo to?",
   "devices_narrow": "jeszcze {n} – zawęź wyszukiwanie",
   "climate": "Klimat pomieszczenia",
   "climate_temperature": "Temperatura",
