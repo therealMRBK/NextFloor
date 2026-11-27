@@ -13,6 +13,9 @@ import { Builder } from "./furniture/builder.ts";
 import { advancePet, seededRandom, type PetMotion, type PetRoom } from "./pets.ts";
 import { isLowEnd } from "../hardware.ts";
 import { QualityGovernor } from "./quality-governor.ts";
+
+/** Auto quality turns the sun shadows off when the slower quarter of frames runs below this (fps). */
+const SHADOW_FPS = 40;
 import {
   AdditiveBlending,
   Box3,
@@ -3387,7 +3390,14 @@ export class NextFloorViewer {
     this.lastFrame = moving ? now : 0;
     if (moving && this.governor) {
       const step = this.governor.frame(dt, now);
-      if (step && !this.shadowsDropped && this.theme === "real" && this.sunShadowsWanted) {
+      const shadowsOn = !this.shadowsDropped && this.theme === "real" && this.sunShadowsWanted;
+      // the shadows cost a lot for little: they go already when a quarter of the frames is slower than SHADOW_FPS (felt as stutter),
+      // long before the pixels would; the governor measures afresh then
+      const slowQuarter = this.governor.takeSlowQuarterFps();
+      if (!step && shadowsOn && slowQuarter !== null && slowQuarter < SHADOW_FPS) {
+        this.shadowsDropped = true;
+        this.governor.undo(false);
+      } else if (step && shadowsOn) {
         // too slow in the realistic look: the shadows go first, the pixels (and the look) stay; the governor measures again after settling
         this.shadowsDropped = true;
         this.governor.undo("ratio" in step);

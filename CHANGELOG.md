@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.35.0.2]
+
+### Fixed
+
+- **The realistic look still stuttered a little in Auto quality** (thanks @Noack1978, #231): Auto turned the sun shadows off only when the median frame fell below 26 fps, so uneven frames (smooth most of the time, every third or fourth frame slow) kept them on. The shadows now go as soon as the slower quarter of frames runs below 40 fps; the pixels stay as they are.
+
 ## [0.35.0.1]
 
 ### Fixed

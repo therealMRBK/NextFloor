@@ -20,6 +20,8 @@ export class QualityGovernor {
   private ratio: number;
   private lastDown = -Infinity;
   private slowAtFloor = 0;
+  /** The pace of the slower quarter of the last measured window (fps), until it is taken. */
+  private measured: number | null = null;
   private readonly max: number;
   private readonly min: number;
 
@@ -31,6 +33,13 @@ export class QualityGovernor {
 
   get pixelRatio(): number {
     return this.ratio;
+  }
+
+  /** The pace of the slower quarter of frames of the window just measured (fps), once; null when no window ended since. */
+  takeSlowQuarterFps(): number | null {
+    const fps = this.measured;
+    this.measured = null;
+    return fps;
   }
 
   /** Takes back the last step (`pixels`: the pixel ratio went down) – something else was changed instead – and measures afresh. */
@@ -52,6 +61,7 @@ export class QualityGovernor {
     if (this.times.length < WINDOW) return null;
     const sorted = [...this.times].sort((a, b) => a - b);
     this.times = [];
+    this.measured = 1000 / sorted[Math.floor(sorted.length * 0.75)];
     // the median frame: one hiccup (a garbage collection) does not count
     const fps = 1000 / sorted[Math.floor(sorted.length / 2)];
     if (fps < SLOW_FPS && this.ratio > this.min + 1e-6) {
