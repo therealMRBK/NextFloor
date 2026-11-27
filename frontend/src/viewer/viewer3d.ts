@@ -3345,7 +3345,8 @@ export class NextFloorViewer {
   private render(now: number): void {
     this.frame = 0;
     if (this.disposed) return;
-    const dt = this.lastFrame ? Math.min(100, now - this.lastFrame) : 16;
+    const frameMs = this.lastFrame ? now - this.lastFrame : 16;
+    const dt = Math.min(100, frameMs);
     let orbiting = false;
     if (this.orbitSpeed && !this.controls.active) {
       if (this.orbitLast) this.controls.view.theta += (this.orbitSpeed * Math.min(100, now - this.orbitLast)) / 1000;
@@ -3389,7 +3390,8 @@ export class NextFloorViewer {
     this.effectTick = this.tintTick = false;
     this.lastFrame = moving ? now : 0;
     if (moving && this.governor) {
-      const step = this.governor.frame(dt, now);
+      // the real frame time, not the one clamped for the animations: slower than 10 fps must count too (#231)
+      const step = this.governor.frame(frameMs, now);
       const shadowsOn = !this.shadowsDropped && this.theme === "real" && this.sunShadowsWanted;
       // the shadows cost a lot for little: they go already when a quarter of the frames is slower than SHADOW_FPS (felt as stutter),
       // long before the pixels would; the governor measures afresh then
