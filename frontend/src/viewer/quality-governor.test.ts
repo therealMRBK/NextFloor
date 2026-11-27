@@ -57,3 +57,29 @@ test("undo of a 'low' request starts counting again", () => {
   // two fresh slow windows are needed again before the simple look is asked for
   assert.deepEqual(run(g, 90, 100), []);
 });
+
+test("uneven frames: the median is fine, but the slower quarter shows the stutter (for the sun shadows)", () => {
+  const g = new QualityGovernor(2);
+  const steps = [];
+  let fps: number | null = null;
+  // 70 % at 18 ms (55 fps), 30 % at 40 ms (25 fps): no pixel step, the slower quarter runs at 25 fps
+  for (let i = 0; i < 200; i++) {
+    const s = g.frame(i % 10 < 7 ? 18 : 40, i * 20);
+    if (s) steps.push(s);
+    fps = g.takeSlowQuarterFps() ?? fps;
+  }
+  assert.deepEqual(steps, []);
+  assert.ok(fps !== null && Math.abs(fps - 25) < 0.01, `slow quarter at ${fps}`);
+  // it is taken once
+  assert.equal(g.takeSlowQuarterFps(), null);
+});
+
+test("steady 60 fps: the slower quarter is fast too", () => {
+  const g = new QualityGovernor(2);
+  let fps: number | null = null;
+  for (let i = 0; i < 200; i++) {
+    g.frame(16, i * 16);
+    fps = g.takeSlowQuarterFps() ?? fps;
+  }
+  assert.ok(fps !== null && fps > 60);
+});
