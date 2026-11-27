@@ -1,6 +1,6 @@
 // Fold buckets of the walls, and the openings resolved onto their walls.
 
-import { locateOpening, openingHost, type Wall } from "../../geometry/walls.ts";
+import { locateOpening, openingHost, wallsAcross, type Wall } from "../../geometry/walls.ts";
 import { pointInPolygon, roomOffset, type Floor, type Vec2 } from "../../model.ts";
 import { SECTORS } from "./look.ts";
 import { unit } from "./outline.ts";
@@ -160,6 +160,8 @@ export function placeOpenings(floor: Floor, walls: Wall[], wallBucket: Map<Wall,
     };
     openings.push(info);
     spans.set(wall, [...(spans.get(wall) ?? []), { s0, s1: s0 + width, sill, top, info }]);
+    // a neighbour's wall right in front of it (rooms drawn a little apart) gets the same hole, or it closes the door from the other side (#247)
+    if (!o.front) for (const other of wallsAcross(walls, wall, s0, s0 + width)) spans.set(other.wall, [...(spans.get(other.wall) ?? []), { s0: other.s0, s1: other.s1, sill, top, info }]);
   }
   return { openings, spans };
 }
