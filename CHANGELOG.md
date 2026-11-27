@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.36.0.1]
+
+### Fixed
+
+- **The realistic look still stuttered heavily on slow tablets in Auto quality** (thanks @Noack1978, #231): frames slower than 10 fps were not counted at all, so on a tablet that slow Auto never noticed anything and never turned the sun shadows off. Every frame now counts (only pauses of more than 1.5 s are left out), and a slow tablet is measured within a few seconds instead of a few dozen frames: the sun shadows go first, then pixels, then the simple look.
+
 ## [0.36.0]
 
 ### Added

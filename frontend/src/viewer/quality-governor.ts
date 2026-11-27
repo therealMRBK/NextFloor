@@ -9,14 +9,22 @@ const SLOW_FPS = 26;
 const VERY_SLOW_FPS = 16;
 const FAST_FPS = 55;
 const STEP = 0.25;
-/** Frames after a change before the next measurement counts (the new size settles). */
+/** Frames after a change before the next measurement counts (the new size settles)... */
 const SETTLE = 30;
+/** ...or this long (ms), whichever comes first: a tablet at 3 fps must not wait ten seconds. */
+const SETTLE_MS = 1000;
+/** A window also ends after this long (ms) with at least MIN_WINDOW frames, so very slow tablets are measured quickly. */
+const WINDOW_MS = 2000;
+const MIN_WINDOW = 6;
+/** Longer gaps are a pause (another tab, a stalled app), not a slow frame. */
+const PAUSE_MS = 1500;
 /** No step up within this long after a step down (ms): no flicker between two levels. */
 const UP_DELAY = 30_000;
 
 export class QualityGovernor {
   private times: number[] = [];
   private settle = SETTLE;
+  private settleMs = 0;
   private ratio: number;
   private lastDown = -Infinity;
   private slowAtFloor = 0;
@@ -47,18 +55,24 @@ export class QualityGovernor {
     if (pixels) this.ratio = Math.min(this.max, Math.round((this.ratio + STEP) * 100) / 100);
     this.slowAtFloor = 0;
     this.settle = SETTLE;
+    this.settleMs = 0;
+    this.times = [];
     this.lastDown = -Infinity;
   }
 
   /** One frame while something moves (`dt` in ms, `now` the frame's time). Returns a step when one is due. */
   frame(dt: number, now: number): QualityStep {
+    if (dt <= 0 || dt >= PAUSE_MS) return null;
     if (this.settle > 0) {
       this.settle--;
+      this.settleMs += dt;
+      if (this.settleMs >= SETTLE_MS) this.settle = 0;
+      if (this.settle === 0) this.settleMs = 0;
       return null;
     }
-    if (dt <= 0 || dt >= 100) return null;
     this.times.push(dt);
-    if (this.times.length < WINDOW) return null;
+    const spent = this.times.reduce((a, b) => a + b, 0);
+    if (this.times.length < WINDOW && !(spent >= WINDOW_MS && this.times.length >= MIN_WINDOW)) return null;
     const sorted = [...this.times].sort((a, b) => a - b);
     this.times = [];
     this.measured = 1000 / sorted[Math.floor(sorted.length * 0.75)];

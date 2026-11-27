@@ -55,7 +55,7 @@ test("undo of a 'low' request starts counting again", () => {
   assert.deepEqual(steps[0], { low: true });
   g.undo(false);
   // two fresh slow windows are needed again before the simple look is asked for
-  assert.deepEqual(run(g, 90, 100), []);
+  assert.deepEqual(run(g, 90, 40), []);
 });
 
 test("uneven frames: the median is fine, but the slower quarter shows the stutter (for the sun shadows)", () => {
@@ -82,4 +82,27 @@ test("steady 60 fps: the slower quarter is fast too", () => {
     fps = g.takeSlowQuarterFps() ?? fps;
   }
   assert.ok(fps !== null && fps > 60);
+});
+
+test("a very slow tablet (under 10 fps) is measured too, and quickly (#231)", () => {
+  const g = new QualityGovernor(2);
+  // 300 ms frames: 3 fps; before, frames of 100 ms and more were thrown away and nothing ever changed
+  let fps: number | null = null;
+  let first: number | null = null;
+  for (let i = 0; i < 40 && first === null; i++) {
+    const s = g.frame(300, i * 300);
+    fps = g.takeSlowQuarterFps() ?? fps;
+    if (s || fps !== null) first = i;
+  }
+  assert.ok(first !== null && first < 15, `measured after ${first} frames`);
+});
+
+test("a long pause is not a slow frame", () => {
+  const g = new QualityGovernor(2);
+  const steps = [];
+  for (let i = 0; i < 300; i++) {
+    const s = g.frame(i % 50 === 0 ? 5000 : 16, i * 16);
+    if (s) steps.push(s);
+  }
+  assert.deepEqual(steps, []);
 });
