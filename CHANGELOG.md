@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.36.0.3]
+
+### Fixed
+
+- **A door between two rooms drawn a little apart was closed from the other side** (thanks @tfischer84, #247): each room grew its own wall into the gap, and the door cut only through its own one, so from the neighbour room (and in the plan) the door was hidden behind a strip of wall. A door or window now goes through a wall that lies right in front of it as well, in 3D and in the plan. *Rooms as drawn* (Editor → Settings) still gives the cleanest walls for such plans.
+
 ## [0.36.0.2]
 
 ### Fixed

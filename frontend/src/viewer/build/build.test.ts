@@ -312,3 +312,19 @@ test("a window in a free wall faces the room beside it, whichever way the wall w
     assert.ok(info.toRoom[1] < 0, `drawn ${a} → ${b}: toRoom ${info.toRoom}`);
   }
 });
+
+test("a door between two rooms drawn a little apart goes through both walls (#247)", () => {
+  for (const gap of [0.02, 0.1, 0.25]) {
+    const f = floorOf([room("a", 0, 0, 4, 3), room("b", 4 + gap, 0, 8, 3)], [opening("door", "a", 1, 1.5)]);
+    const { walls } = generateWalls(f.rooms, { exterior: 0.26, interior: INNER });
+    const { spans } = placeOpenings(f, walls, bucketWalls(walls).wallBucket, roofLimits());
+    const cut = walls.filter((w) => Math.abs(w.a[0] - w.b[0]) < 1e-6 && w.a[0] > 3.9 && w.a[0] < 4.4 && (spans.get(w) ?? []).length > 0);
+    assert.equal(cut.length, 2, `gap ${gap}: ${cut.length} walls cut`);
+    for (const w of cut) near(spans.get(w)![0].s1 - spans.get(w)![0].s0, 1, 1e-6);
+  }
+  // a wall further away is left alone
+  const f = floorOf([room("a", 0, 0, 4, 3), room("b", 5, 0, 8, 3)], [opening("door", "a", 1, 1.5)]);
+  const { walls } = generateWalls(f.rooms, { exterior: 0.26, interior: INNER });
+  const { spans } = placeOpenings(f, walls, bucketWalls(walls).wallBucket, roofLimits());
+  assert.equal([...spans.keys()].length, 1);
+});

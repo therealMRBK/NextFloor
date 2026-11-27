@@ -1,7 +1,7 @@
 // Doors, windows and garage doors in the plan: a gap through the wall and a symbol in it (swinging leaves, panes, a garage track).
 
 import { nothing, svg, type TemplateResult } from "lit";
-import { locateOpening, openingHost, pointOnRoomEdge, type Wall } from "../../../geometry/walls.ts";
+import { locateOpening, openingHost, pointOnRoomEdge, wallsAcross, type Wall } from "../../../geometry/walls.ts";
 import { isFrontDoor, openingStyle, sidelightLayout, signedArea, type Floor, type Opening, type Room, type Vec2 } from "../../../model.ts";
 import type { CanvasContext } from "./context.ts";
 
@@ -18,6 +18,8 @@ interface Frame {
   direction: 1 | -1;
   /** Wall thickness on the room's side and on the far side. */
   across: [number, number];
+  /** How far the gap reaches either side: the wall, and a neighbour's wall right in front of it (#247). */
+  gap: [number, number];
   exterior: boolean;
   /** A point of the edge moved `by` metres into the room (negative: out of it), in screen coordinates. */
   at(p: Vec2, by: number): [number, number];
@@ -34,8 +36,18 @@ function frameOf(ctx: CanvasContext, o: Opening, floor: Floor, walls: readonly W
   const direction = signedArea(room.points) >= 0 ? 1 : -1;
   const inward: Vec2 = [-along[1] * direction, along[0] * direction];
   let across: [number, number] = [0.06, 0.06];
-  if (hit) across = hit.wall.free || hit.wall.roomLeft === room.id ? [hit.wall.left, hit.wall.right] : [hit.wall.right, hit.wall.left];
-  return { room, edge, p0, p1, inward, direction, across, exterior: hit?.wall.exterior ?? false, at: (p, by) => ctx.toScreen([p[0] + inward[0] * by, p[1] + inward[1] * by]) };
+  const gap: [number, number] = [0.06, 0.06];
+  if (hit) {
+    const roomLeft = hit.wall.free || hit.wall.roomLeft === room.id;
+    across = roomLeft ? [hit.wall.left, hit.wall.right] : [hit.wall.right, hit.wall.left];
+    [gap[0], gap[1]] = across;
+    for (const { band } of wallsAcross(walls as Wall[], hit.wall, hit.s - o.width / 2, hit.s + o.width / 2)) {
+      const [roomSide, farSide] = roomLeft ? [band[1], -band[0]] : [-band[0], band[1]];
+      gap[0] = Math.max(gap[0], roomSide);
+      gap[1] = Math.max(gap[1], farSide);
+    }
+  }
+  return { room, edge, p0, p1, inward, direction, across, gap, exterior: hit?.wall.exterior ?? false, at: (p, by) => ctx.toScreen([p[0] + inward[0] * by, p[1] + inward[1] * by]) };
 }
 
 const line = (a: [number, number], b: [number, number], klass = "") => svg`<line class=${klass} x1=${a[0]} y1=${a[1]} x2=${b[0]} y2=${b[1]} />`;
@@ -107,7 +119,7 @@ export function openingsLayer(ctx: CanvasContext, floor: Floor, walls: readonly 
   const one = (o: Opening) => {
     const f = frameOf(ctx, o, floor, walls);
     if (!f) return nothing;
-    const gap = [f.at(f.p0, f.across[0] + 0.01), f.at(f.p1, f.across[0] + 0.01), f.at(f.p1, -f.across[1] - 0.01), f.at(f.p0, -f.across[1] - 0.01)];
+    const gap = [f.at(f.p0, f.gap[0] + 0.01), f.at(f.p1, f.gap[0] + 0.01), f.at(f.p1, -f.gap[1] - 0.01), f.at(f.p0, -f.gap[1] - 0.01)];
     const front = o.type === "door" && isFrontDoor(openingStyle(o, f.exterior));
     const on = o.id === selectedId || (!!o.front && o.front === selectedFront);
     const klass = `nf-open nf-open-${o.type}${front ? " nf-open-front" : ""}${on ? " nf-open-sel" : ""}`;

@@ -498,6 +498,36 @@ export function locateOpening(walls: readonly Wall[], o: Pick<Opening, "wall" | 
   return wall ? { wall, s: along(wall, pointOnRoomEdge(host.room, 0, o.offset)) } : null;
 }
 
+/**
+ * Other walls lying across an opening's way through `wall` between s0 and s1 (#247): two rooms drawn a little apart each
+ * grow a wall into the gap, and a door in one must go through the other too. Each comes with the opening's span on it and
+ * how far its faces reach from `wall`'s line (along wall's left normal).
+ */
+export function wallsAcross(walls: readonly Wall[], wall: Wall, s0: number, s1: number): { wall: Wall; s0: number; s1: number; band: [number, number] }[] {
+  const axis = unit(sub(wall.b, wall.a));
+  const nl: Vec2 = [-axis[1], axis[0]];
+  const p0 = add(wall.a, scale(axis, s0));
+  const p1 = add(wall.a, scale(axis, s1));
+  const out: { wall: Wall; s0: number; s1: number; band: [number, number] }[] = [];
+  for (const w of walls) {
+    if (w === wall) continue;
+    const len = norm(sub(w.b, w.a));
+    if (len < 0.05) continue;
+    const ax = scale(sub(w.b, w.a), 1 / len);
+    if (Math.abs(cross(axis, ax)) > 0.01) continue;
+    const d = dot(sub(w.a, wall.a), nl);
+    const same = dot(axis, ax) > 0;
+    const band: [number, number] = same ? [d - w.right, d + w.left] : [d - w.left, d + w.right];
+    // in front of or behind the opening: overlapping its wall, or touching it within 2 cm
+    if (band[0] > wall.left + 0.02 || band[1] < -wall.right - 0.02) continue;
+    const t0 = dot(sub(p0, w.a), ax);
+    const t1 = dot(sub(p1, w.a), ax);
+    const [a, b] = [Math.max(0, Math.min(t0, t1)), Math.min(len, Math.max(t0, t1))];
+    if (b - a > 0.05) out.push({ wall: w, s0: a, s1: b, band });
+  }
+  return out;
+}
+
 /** Finds a position on a room edge in the generated walls: the wall, and the distance from wall.a. */
 export function locateOnWalls(walls: readonly Wall[], room: Room, edge: number, offset: number): { wall: Wall; s: number } | null {
   for (const wall of walls) {
