@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulsowanie",
   "furn_on_effect_flicker": "Migotanie",
   "furn_on_effect_rainbow": "Tęcza",
+  "furn_height_entity": "Wysokość z",
+  "furn_height_entity_hint": "Biurko z regulacją wysokości: czujnik lub liczba z aktualną wysokością (cm, mm lub m wg jednostki). Blat jest rysowany w 3D na tej wysokości.",
   "solar_front": "front lukarny",
   "card_sun_shadows": "Cienie słońca i światło nieba (realistyczny)",
   "sun_shadows_short": "Cienie",

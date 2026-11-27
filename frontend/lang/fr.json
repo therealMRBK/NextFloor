@@ -1731,6 +1731,8 @@
  "furn_on_effect_pulse": "Pulsation",
  "furn_on_effect_flicker": "Scintillement",
  "furn_on_effect_rainbow": "Arc-en-ciel",
+ "furn_height_entity": "Hauteur depuis",
+ "furn_height_entity_hint": "Bureau assis-debout : un capteur ou un nombre avec sa hauteur actuelle (cm, mm ou m selon son unité). Le plateau est dessiné à cette hauteur en 3D.",
  "solar_front": "façade de la lucarne",
  "card_sun_shadows": "Ombres du soleil et lumière du ciel (réaliste)",
  "sun_shadows_short": "Ombres",

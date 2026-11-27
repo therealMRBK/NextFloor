@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulso",
   "furn_on_effect_flicker": "Parpadeo",
   "furn_on_effect_rainbow": "Arcoíris",
+  "furn_height_entity": "Altura desde",
+  "furn_height_entity_hint": "Escritorio regulable: un sensor o número con su altura actual (cm, mm o m según su unidad). El tablero se dibuja a esa altura en 3D.",
   "solar_front": "frente de la buhardilla",
   "card_sun_shadows": "Sombras del sol y luz del cielo (realista)",
   "sun_shadows_short": "Sombras",

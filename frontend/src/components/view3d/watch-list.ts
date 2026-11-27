@@ -45,7 +45,7 @@ function furnitureIds(inputs: WatchInputs): MaybeId[] {
     // a washer's, dryer's or dishwasher's time left comes from a sensor next to its switch
     ...pieces.filter((m) => m.type === "washer" || m.type === "dryer" || m.type === "dishwasher").flatMap((m) => deviceSiblings(hass, furnitureLinks.get(m.id)?.entity ?? furnitureLinks.get(m.id)?.power).filter((id) => id.startsWith("sensor."))),
     ...pieces.flatMap((m) => screenWatched(hass, m)),
-    ...pieces.flatMap((m) => [m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2, ...(m.temps ?? []).map((x) => x.entity)]),
+    ...pieces.flatMap((m) => [m.height_entity, m.door_left, m.door_right, m.soc, m.status, m.charge, m.export, m.temp_entity, m.temp_entity2, ...(m.temps ?? []).map((x) => x.entity)]),
     ...pieces.filter((m) => m.type === "robot_vacuum").map((m) => robotRoomSensor(hass, furnitureLinks.get(m.id)?.entity ?? null, m.room_sensor)),
     // the robot's own map (a map camera, or a tracker with map coordinates): the view follows every change of its position (#210)
     ...(pieces.some((m) => m.type === "robot_vacuum") ? [mapCamera(hass)] : []),

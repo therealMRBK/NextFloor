@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulsazione",
   "furn_on_effect_flicker": "Sfarfallio",
   "furn_on_effect_rainbow": "Arcobaleno",
+  "furn_height_entity": "Altezza da",
+  "furn_height_entity_hint": "Scrivania regolabile: un sensore o un numero con l'altezza attuale (cm, mm o m secondo la sua unità). Il piano viene disegnato a quell'altezza in 3D.",
   "solar_front": "fronte dell'abbaino",
   "card_sun_shadows": "Ombre del sole e luce del cielo (realistico)",
   "sun_shadows_short": "Ombre",

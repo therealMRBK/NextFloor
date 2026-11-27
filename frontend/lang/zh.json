@@ -1092,6 +1092,8 @@
  "furn_on_effect_pulse": "脉动",
  "furn_on_effect_flicker": "闪烁",
  "furn_on_effect_rainbow": "彩虹",
+ "furn_height_entity": "高度来自",
+ "furn_height_entity_hint": "升降桌：带当前高度的传感器或数值（按其单位为 cm、mm 或 m）。3D 中桌面画在该高度。",
  "solar_front": "老虎窗正面",
  "card_sun_shadows": "阳光阴影与天空光（写实）",
  "sun_shadows_short": "阴影",

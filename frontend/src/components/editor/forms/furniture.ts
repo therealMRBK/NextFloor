@@ -299,6 +299,15 @@ function appearanceFields(host: EditorHost, item: Furniture, actions: FurnitureA
   </div>`;
 }
 
+/** A sit/stand desk: the entity with its current height, the top follows it in 3D (#214). */
+function deskHeightField(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
+  const options = entityOptions(host.hass, (id) => /^(sensor|number|input_number)\./.test(id));
+  return html`<div class="nf-form">
+    ${entityField(host, host.t("furn_height_entity"), item.height_entity ?? null, undefined, options, (v) => actions.update({ height_entity: v === "none" ? null : v }))}
+    ${hint(host.t("furn_height_entity_hint"), "nf-wide")}
+  </div>`;
+}
+
 /** The form of the selected piece of furniture. */
 export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: FurnitureActions): TemplateResult {
   const gangs = packItem(item.type)?.gangs ?? 0;
@@ -307,7 +316,7 @@ export function renderFurnitureForm(host: EditorHost, item: Furniture, actions: 
     <div class="nf-h3row"><h3>${item.name || host.t("furniture")}</h3>${actions.lockButton}</div>
     <div class="nf-form">${nameFields(host, item, actions)} ${kindField(host, item, actions.packs, actions)} ${geometryFields(host, item, actions)}</div>
     ${typeNotes(host, item, actions)} ${item.type === "stairs" && item.stair ? stairForm(host, item, actions) : nothing} ${variantField(host, item, actions)} ${paintField(host, item, actions)} ${appearanceFields(host, item, actions)}
-    ${links} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
+    ${links} ${item.type === "desk" ? deskHeightField(host, item, actions) : nothing} ${item.type.endsWith(":sprinkler") ? html`<div class="nf-form">${numberField(host, host.t("spray_reach"), item.spray ?? 3, (v) => actions.update({ spray: Math.min(15, Math.max(0.5, v)) }), 0.5, 0.5)}${hint(host.t("spray_hint"), "nf-wide")}</div>` : nothing}
     ${hasPicture(item.type) ? pictureFields(host, item, actions) : nothing}
     ${packItem(item.type)?.pet
       ? html`<div class="nf-form nf-links">${entityField(host, host.t("pet_room_sensor"), item.room_sensor ?? null, undefined, entityOptions(host.hass, (id) => /^(sensor|device_tracker|input_select|select)\./.test(id)), (v) => actions.update({ room_sensor: v && v !== "none" ? v : null }))}${hint(host.t("pet_room_hint"), "nf-wide")}</div>`

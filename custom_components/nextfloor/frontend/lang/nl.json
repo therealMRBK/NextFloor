@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulseren",
   "furn_on_effect_flicker": "Flikkeren",
   "furn_on_effect_rainbow": "Regenboog",
+  "furn_height_entity": "Hoogte uit",
+  "furn_height_entity_hint": "Zit-sta-bureau: een sensor of getal met de huidige hoogte (cm, mm of m volgens de eenheid). Het blad staat in 3D op die hoogte.",
   "solar_front": "dakkapelfront",
   "card_sun_shadows": "Zonneschaduw en hemellicht (realistisch)",
   "sun_shadows_short": "Schaduw",

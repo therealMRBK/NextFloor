@@ -26,6 +26,8 @@ function plans() {
   const ground = base.floors[0];
   // a device that glows in its own colour with an effect while on (#229)
   if (ground.furniture[0]) Object.assign(ground.furniture[0], { state_entity: "binary_sensor.laeuft", on_color: "#3b82f6", on_effect: "pulse" });
+  // a sit/stand desk whose height follows an entity (#214)
+  ground.furniture.push({ id: "desk-live", type: "desk", x: 1, z: 1, rotation: 0, w: 1.4, d: 0.7, h: 0.75, variant: null, height_entity: "sensor.desk_height" } as (typeof ground.furniture)[number]);
   ground.walls = [...(ground.walls ?? []), { ...newFreeWall(...wallOnSide([20, 1], [24, 1], 0.3, "left")), id: "wall_face_a", thickness: 0.3, axis: "left" }, { ...newFreeWall(...wallOnSide([20, 1], [20, 4], 0.12, "right")), id: "wall_face_b", axis: "right" }];
   applyWallJoins(ground, wallJoins(ground.walls, base.settings.wall_interior));
   const gate = ground.openings.find((o) => o.type === "garage") ?? ground.openings[0];

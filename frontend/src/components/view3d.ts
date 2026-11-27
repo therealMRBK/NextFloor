@@ -57,6 +57,7 @@ import { fanSpin } from "../entities/fans.ts";
 import { sceneEntitiesOn } from "../entities/misc.ts";
 import { fixtureGlow, shinesAsLamp } from "../entities/kinds.ts";
 import { furnitureShown, hiddenFurniture, withoutHidden } from "../entities/visibility.ts";
+import { deskHeightKey, withDeskHeights } from "../entities/desk-height.ts";
 import { pictureUrl } from "../entities/pictures.ts";
 import { fetchImage, markNoteDone } from "../api.ts";
 import { ceilingOf, centroid, furnitureFootprint, groundLevel, isLamp, isStatusDevice, LAMP_MODEL, outdoorGround, outdoorTopAt, pointInPolygon, polygonArea, surfaceHeight, type Building, type Furniture, type Placement, type StartView } from "../model.ts";
@@ -926,13 +927,20 @@ export class NfView3d extends LitElement {
   }
 
   /** The building as the 3D view draws it: without the pieces whose visibility condition is not met. */
+  /** What the shown building depends on beyond the plan: hidden pieces, hidden layers and live desk heights. */
+  private shownKey(hass: HomeAssistant | undefined, b: Building): string {
+    const layers = b.floors.filter((f) => f.layer && this.hiddenLayers.has(f.id)).map((f) => `layer:${f.id}`);
+    return [...hiddenFurniture(hass, b), ...layers, ...deskHeightKey(hass, b)].join(",");
+  }
+
   private shownBuilding(hass: HomeAssistant | undefined): Building {
     const b = this.building!;
     const hidden = hiddenFurniture(hass, b);
-    const layers = b.floors.filter((f) => f.layer && this.hiddenLayers.has(f.id)).map((f) => f.id);
-    const key = [...hidden, ...layers.map((id) => `layer:${id}`)].join(",");
+    const key = this.shownKey(hass, b);
     if (this.shownFor?.building === b && this.shownFor.key === key) return this.shownFor.shown;
-    const shown = withoutHidden(b, hidden);
+    const layers = b.floors.filter((f) => f.layer && this.hiddenLayers.has(f.id)).map((f) => f.id);
+    // a sit/stand desk is drawn at its live height (#214)
+    const shown = withDeskHeights(hass, withoutHidden(b, hidden));
     this.shownFor = { building: b, key, shown: layers.length ? { ...shown, floors: shown.floors.filter((f) => !layers.includes(f.id)) } : shown };
     return this.shownFor.shown;
   }
@@ -994,7 +1002,7 @@ export class NfView3d extends LitElement {
     const changed = force || this.watched.some((id) => this.shownStates.get(id) !== hass.states[id]);
     if (!changed) return;
     // a piece shown only while a helper is on (seasonal decoration) comes and goes with it
-    if (hiddenFurniture(hass, b).join(",") !== this.shownFor?.key) v.setBuilding(this.shownBuilding(hass));
+    if (this.shownKey(hass, b) !== this.shownFor?.key) v.setBuilding(this.shownBuilding(hass));
     this.shownStates = new Map(this.watched.map((id) => [id, hass.states[id]]));
     this.refreshToday(b);
     this.refreshForecast(b);

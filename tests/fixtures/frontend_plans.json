@@ -1429,6 +1429,18 @@
       "variant": null,
       "entity": "light.flur",
       "power": null
+     },
+     {
+      "id": "desk-live",
+      "type": "desk",
+      "x": 1,
+      "z": 1,
+      "rotation": 0,
+      "w": 1.4,
+      "d": 0.7,
+      "h": 0.75,
+      "variant": null,
+      "height_entity": "sensor.desk_height"
      }
     ],
     "placements": [
