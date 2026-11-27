@@ -1754,6 +1754,8 @@
  "start_view_saved": "Une vue de départ personnalisée est enregistrée.",
  "ctx_rotate": "Pivoter de 90°",
  "devices_placed_in": "dans {room}",
+ "devices_placed_outside": "hors des pièces",
+ "devices_place_fixed_confirm": "Cet appareil est fixé. Le déplacer ici quand même ?",
  "devices_narrow": "{n} de plus – affinez la recherche",
  "climate": "Climat de la pièce",
  "climate_temperature": "Température",

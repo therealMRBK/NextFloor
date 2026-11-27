@@ -1801,6 +1801,8 @@
   "start_view_saved": "Está guardada uma vista inicial própria.",
   "ctx_rotate": "Rodar 90°",
   "devices_placed_in": "em {room}",
+  "devices_placed_outside": "fora dos cómodos",
+  "devices_place_fixed_confirm": "Este dispositivo está fixo. Movê-lo para aqui mesmo assim?",
   "devices_narrow": "mais {n}: refine a pesquisa",
   "climate": "Clima da divisão",
   "climate_temperature": "Temperatura",

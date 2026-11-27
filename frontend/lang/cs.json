@@ -1801,6 +1801,8 @@
   "start_view_saved": "Uloženo vlastní výchozí zobrazení.",
   "ctx_rotate": "Otočit o 90°",
   "devices_placed_in": "v {room}",
+  "devices_placed_outside": "mimo místnosti",
+  "devices_place_fixed_confirm": "Toto zařízení je pevně zamčené. Přesto ho sem přesunout?",
   "devices_narrow": "ještě {n} – zúžit vyhledávání",
   "climate": "Klima místnosti",
   "climate_temperature": "Teplota",

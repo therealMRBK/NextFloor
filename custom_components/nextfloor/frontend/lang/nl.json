@@ -1801,6 +1801,8 @@
   "start_view_saved": "Er is een eigen startweergave opgeslagen.",
   "ctx_rotate": "90° draaien",
   "devices_placed_in": "in {room}",
+  "devices_placed_outside": "buiten de kamers",
+  "devices_place_fixed_confirm": "Dit apparaat is vastgezet. Toch hierheen verplaatsen?",
   "devices_narrow": "nog {n}: verfijn de zoekopdracht",
   "climate": "Ruimteklimaat",
   "climate_temperature": "Temperatuur",

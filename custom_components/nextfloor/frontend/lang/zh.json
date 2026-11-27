@@ -1115,6 +1115,8 @@
  "start_view_saved": "已保存自定义起始视角。",
  "ctx_rotate": "旋转 90°",
  "devices_placed_in": "位于 {room}",
+ "devices_placed_outside": "在房间之外",
+ "devices_place_fixed_confirm": "此设备已固定。仍要移到这里吗？",
  "devices_narrow": "还有 {n} 个——请缩小搜索范围",
  "climate": "室内环境",
  "climate_temperature": "温度",

@@ -1939,6 +1939,8 @@
   "start_view_saved": "En egen startvy är sparad.",
   "ctx_rotate": "Vrid 90°",
   "devices_placed_in": "i {room}",
+  "devices_placed_outside": "utanför rummen",
+  "devices_place_fixed_confirm": "Enheten är fastlåst. Flytta den hit ändå?",
   "devices_narrow": "{n} till – förfina sökningen",
   "climate": "Rumsklimat",
   "climate_temperature": "Temperatur",
