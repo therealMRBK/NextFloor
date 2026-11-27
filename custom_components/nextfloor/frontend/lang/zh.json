@@ -563,6 +563,8 @@
  "flip_hinge_hint": "铰链换到另一侧",
  "flip_swing": "反转开启方向",
  "flip_swing_hint": "门向房间内开启或向另一侧开启",
+ "flip_window_side": "交换内外侧",
+ "flip_window_side_hint": "窗户向墙的另一侧开启，卷帘和窗台随之移动",
  "main_leaf": "主扇（从房间内看）",
  "contact_main": "主扇门磁",
  "contact_second": "副扇门磁",

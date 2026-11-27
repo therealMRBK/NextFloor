@@ -215,6 +215,7 @@ export function renderOpeningForm(host: EditorHost, o: Opening, actions: Opening
       ? html`<div class="nf-actions">
           <button class="nf-btn" title=${t("flip_hinge_hint")} @click=${() => at({ hinge: o.hinge === "left" ? "right" : "left" })}>⇆ ${t(o.leaves === 2 ? "flip_main_leaf" : "flip_hinge")}</button>
           ${door ? html`<button class="nf-btn" title=${t("flip_swing_hint")} @click=${() => at({ swing: o.swing === "out" ? "in" : "out" })}>⇅ ${t("flip_swing")}</button>` : nothing}
+          ${window ? html`<button class="nf-btn" aria-pressed=${o.swing === "out"} title=${t("flip_window_side_hint")} @click=${() => at({ swing: o.swing === "out" ? "in" : "out" })}>⇅ ${t("flip_window_side")}</button>` : nothing}
         </div>`
       : nothing}
     <div class="nf-form">

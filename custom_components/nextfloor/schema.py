@@ -158,7 +158,7 @@ OPENING_SCHEMA = vol.Schema(
         vol.Optional("hinge", default="left"): vol.In(["left", "right"]),
         # double doors and windows: two leaves, the second with a contact of its own
         vol.Optional("leaves", default=1): vol.In([1, 2]),
-        # doors: swing into the room ("in") or to the other side ("out")
+        # doors: swing into the room ("in") or to the other side ("out"); windows: "out" swaps inside and outside
         vol.Optional("swing", default="in"): vol.In(["in", "out"]),
         # look: None = automatic (front door in an exterior wall, room door inside; plain window)
         vol.Optional("style", default=None): vol.Any(None, vol.In(_OPENING_STYLES)),

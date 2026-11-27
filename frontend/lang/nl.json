@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Scharnieren naar de andere kant",
   "flip_swing": "Draairichting omkeren",
   "flip_swing_hint": "De deur draait de ruimte in of naar de andere kant",
+  "flip_window_side": "Binnen/buiten wisselen",
+  "flip_window_side_hint": "Het raam opent naar de andere kant van de muur; rolluik en vensterbank gaan mee",
   "main_leaf": "Hoofdvleugel (gezien vanuit de ruimte)",
   "contact_main": "Contact hoofdvleugel",
   "contact_second": "Contact tweede vleugel",

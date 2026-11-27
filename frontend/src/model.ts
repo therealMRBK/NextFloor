@@ -115,7 +115,7 @@ export interface Opening {
   hinge: "left" | "right";
   /** One leaf, or two (double door, French window) opening from the middle. */
   leaves: 1 | 2;
-  /** Doors swing into their room ("in") or to the other side ("out"). */
+  /** Doors swing into their room ("in") or to the other side ("out"); a window with "out" has its inside and outside swapped (#213). */
   swing: "in" | "out";
   /** Look of the door or window (null = automatic: a front door in an exterior wall, else a room door). */
   style?: OpeningStyle | null;

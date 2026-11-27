@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Cerniere dall'altro lato",
   "flip_swing": "Inverti il verso di apertura",
   "flip_swing_hint": "La porta si apre verso la stanza o dall'altro lato",
+  "flip_window_side": "Scambia interno/esterno",
+  "flip_window_side_hint": "La finestra si apre verso l'altro lato del muro; tapparella e davanzale la seguono",
   "main_leaf": "Anta principale (vista dalla stanza)",
   "contact_main": "Contatto anta principale",
   "contact_second": "Contatto seconda anta",

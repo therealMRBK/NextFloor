@@ -1175,6 +1175,8 @@
   "flip_hinge_hint": "Gångjärn åt andra sidan",
   "flip_swing": "Vänd öppningsriktningen",
   "flip_swing_hint": "Dörren öppnas in i rummet eller åt andra hållet",
+  "flip_window_side": "Byt insida/utsida",
+  "flip_window_side_hint": "Fönstret öppnas mot väggens andra sida; persienn och fönsterbänk följer med",
   "main_leaf": "Huvudblad (sett från rummet)",
   "contact_main": "Kontakt huvudblad",
   "contact_second": "Kontakt andra bladet",

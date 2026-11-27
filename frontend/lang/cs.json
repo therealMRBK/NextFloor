@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Panty na druhou stranu",
   "flip_swing": "Obrátit směr otevírání",
   "flip_swing_hint": "Dveře se otevírají do místnosti nebo na druhou stranu",
+  "flip_window_side": "Prohodit vnitřek/vnějšek",
+  "flip_window_side_hint": "Okno se otevírá na druhou stranu stěny; roleta a parapet se přesunou s ním",
   "main_leaf": "Hlavní křídlo (ze strany místnosti)",
   "contact_main": "Kontakt hlavního křídla",
   "contact_second": "Kontakt druhého křídla",

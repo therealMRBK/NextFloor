@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Bisagras al otro lado",
   "flip_swing": "Invertir el sentido de apertura",
   "flip_swing_hint": "La puerta abre hacia la estancia o hacia el otro lado",
+  "flip_window_side": "Intercambiar interior/exterior",
+  "flip_window_side_hint": "La ventana se abre hacia el otro lado del muro; la persiana y el alféizar la siguen",
   "main_leaf": "Hoja principal (vista desde la estancia)",
   "contact_main": "Contacto hoja principal",
   "contact_second": "Contacto segunda hoja",

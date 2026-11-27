@@ -989,6 +989,8 @@
  "flip_hinge_hint": "Charnières de l'autre côté",
  "flip_swing": "Inverser le sens d'ouverture",
  "flip_swing_hint": "La porte s'ouvre vers la pièce ou de l'autre côté",
+ "flip_window_side": "Inverser intérieur/extérieur",
+ "flip_window_side_hint": "La fenêtre s'ouvre de l'autre côté du mur ; le store et l'appui suivent",
  "main_leaf": "Vantail principal (vu de la pièce)",
  "contact_main": "Contact du vantail principal",
  "contact_second": "Contact du second vantail",

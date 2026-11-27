@@ -1037,6 +1037,8 @@
   "flip_hinge_hint": "Dobradiças para o outro lado",
   "flip_swing": "Inverter o sentido de abertura",
   "flip_swing_hint": "A porta abre para a divisão ou para o outro lado",
+  "flip_window_side": "Trocar interior/exterior",
+  "flip_window_side_hint": "A janela abre para o outro lado da parede; estore e peitoril acompanham",
   "main_leaf": "Folha principal (vista da divisão)",
   "contact_main": "Contacto da folha principal",
   "contact_second": "Contacto da segunda folha",
