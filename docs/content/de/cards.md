@@ -53,6 +53,7 @@ Die eigenen Optionen der Karte gewinnen. Eine Änderung im Editor erreicht jede 
 | Option | Vorgabe | Bedeutung |
 |---|---|---|
 | `theme` | `neon` | `neon`, `blueprint`, `day`, `real`, `own` oder `auto` (Tag-Look, solange `sun.sun` über dem Horizont steht, nach Sonnenuntergang Neon). Die Karte hat ein eigenes `theme` und liest die Look-Einstellung des Panels nicht; die im Panel gewählten Tag-/Nacht-Looks gelten nur dort. |
+| `auto_day` / `auto_night` | `day` / `neon` | die Looks, die `theme: auto` über dem Horizont bzw. nach Sonnenuntergang nutzt (jeder Look, wie die Einstellung im Panel) |
 | `accent` | Cyan | Akzentfarbe als `#rrggbb` |
 | `furniture_colors` | die des Hauses | eigene Möbelfarben dieser Karte, z. B. `{body: "#3a2a1a", fabric: "#552233"}`; Rollen: `body`, `wood`, `fabric`, `white`, `metal`, `dark` |
 | `walls` | | Wandmodus der Ansicht |

@@ -53,6 +53,7 @@ The card's own options win. A change in the editor reaches every card that uses 
 | Option | Default | Meaning |
 |---|---|---|
 | `theme` | `neon` | `neon`, `blueprint`, `day`, `real`, `own`, or `auto` (day look while `sun.sun` is above the horizon, neon after sunset). The card has its own `theme`; it does not read the panel's Look setting, and `auto` always uses day by day and neon by night (the day/night looks chosen in the panel apply to the panel only). |
+| `auto_day` / `auto_night` | `day` / `neon` | the looks `theme: auto` uses while `sun.sun` is above the horizon / after sunset (any look, like the panel's setting) |
 | `accent` | cyan | accent colour as `#rrggbb` |
 | `furniture_colors` | the house's | this card's own furniture colours, e.g. `{body: "#3a2a1a", fabric: "#552233"}`; roles: `body`, `wood`, `fabric`, `white`, `metal`, `dark` |
 | `walls` | | wall mode of the view |

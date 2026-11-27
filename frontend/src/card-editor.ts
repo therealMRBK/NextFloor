@@ -5,7 +5,9 @@ import { html, LitElement, nothing, type TemplateResult } from "lit";
 import { fetchBuilding } from "./api.ts";
 import { MARKER_KINDS, type MarkerKind } from "./entities/kinds.ts";
 import { FURNITURE_ROLES, STOCK_ROLE_HEX, type FurnitureColors, type FurnitureRole } from "./furniture-colors.ts";
-import { OWN_LOOK_KEYS, ownLookShown, type OwnLook } from "./themes.ts";
+import { OWN_LOOK_KEYS, THEMES, ownLookShown, type OwnLook } from "./themes.ts";
+
+const AUTO_LOOKS: [string, `theme_${(typeof THEMES)[number]}`][] = THEMES.map((th) => [th, `theme_${th}`]);
 import { CARD_CONTROLS, type CardConfig, type CardControl } from "./card-config.ts";
 import { checkbox, choice, DEFAULTS, flagOption, followOrForce, numberChoice, switchOption, textField, type FormContext } from "./card-editor/form.ts";
 import { editorStyles } from "./card-editor/styles.ts";
@@ -308,6 +310,7 @@ export class NextFloorCardEditor extends LitElement {
           />
         </label>
         ${choice(f, "theme", "theme", [["auto", "theme_auto"], ["neon", "theme_neon"], ["blueprint", "theme_blueprint"], ["day", "theme_day"], ["own", "theme_own"], ["real", "theme_real"], ["nordic", "theme_nordic"], ["warm_evening", "theme_warm_evening"], ["minimal", "theme_minimal"]], v.theme)}
+        ${v.theme === "auto" ? html`${choice(f, "auto_day", "auto_day", AUTO_LOOKS, v.auto_day ?? "day")}${choice(f, "auto_night", "auto_night", AUTO_LOOKS, v.auto_night ?? "neon")}` : nothing}
         ${choice(f, "clock", "clock", [["none", "clock_none"], ["top_left", "clock_top_left"], ["top_right", "clock_top_right"], ["bottom_left", "clock_bottom_left"], ["bottom_right", "clock_bottom_right"]], v.clock ?? "none")}
         <label class="field"
           >${f.t("accent")}
