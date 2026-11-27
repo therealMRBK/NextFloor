@@ -409,6 +409,7 @@ FURNITURE_SCHEMA = vol.Schema(
         # the glow while the state entity is on: its own colour and animation (None = amber / steady)
         vol.Optional("on_color", default=None): vol.Any(None, vol.Match(r"^#[0-9a-fA-F]{6}$")),
         vol.Optional("on_effect", default=None): vol.Any(None, vol.All(str, vol.Length(max=64))),
+        vol.Optional("height_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # lamps: a second entity with the colour and brightness (a relay switches, the bulb knows its colour)
         vol.Optional("color_entity", default=None): vol.Any(None, vol.All(str, vol.Length(max=255))),
         # lamps: further lights of the same fixture (night light, ambient ring)

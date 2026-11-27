@@ -282,6 +282,8 @@ export interface Furniture extends LightEffectConfig {
   /** While the state entity is on: the glow's own colour (#rrggbb; null = amber, or the light's own colour) and animation (pulse, flicker, rainbow or a plugin's; null = steady). */
   on_color?: string | null;
   on_effect?: string | null;
+  /** A sit/stand desk: the entity with its current height (cm, mm or m by its unit); the top is drawn there (#214). */
+  height_entity?: string | null;
   /** Household items: the sensor they show – a bin's pickup, a mailbox's post, a plant's soil moisture (null = none). */
   care_entity?: string | null;
   /** Plants: the soil moisture below which they are thirsty (%, default 20). */

@@ -1916,6 +1916,8 @@
   "furn_on_effect_pulse": "Pulsera",
   "furn_on_effect_flicker": "Flimra",
   "furn_on_effect_rainbow": "Regnbåge",
+  "furn_height_entity": "Höjd från",
+  "furn_height_entity_hint": "Höj- och sänkbart skrivbord: en sensor eller ett tal med aktuell höjd (cm, mm eller m enligt enheten). Skivan ritas på den höjden i 3D.",
   "solar_front": "takkuparens front",
   "card_sun_shadows": "Solskuggor och himmelsljus (realistiskt)",
   "sun_shadows_short": "Skuggor",

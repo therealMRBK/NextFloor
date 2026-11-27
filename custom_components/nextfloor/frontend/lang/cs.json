@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulzování",
   "furn_on_effect_flicker": "Blikání",
   "furn_on_effect_rainbow": "Duha",
+  "furn_height_entity": "Výška z",
+  "furn_height_entity_hint": "Polohovací stůl: senzor nebo číslo s aktuální výškou (cm, mm nebo m podle jednotky). Deska se ve 3D kreslí v této výšce.",
   "solar_front": "čelo vikýře",
   "card_sun_shadows": "Stíny od slunce a světlo oblohy (realistický)",
   "sun_shadows_short": "Stíny",

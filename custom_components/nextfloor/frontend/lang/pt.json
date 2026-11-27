@@ -1778,6 +1778,8 @@
   "furn_on_effect_pulse": "Pulsar",
   "furn_on_effect_flicker": "Cintilar",
   "furn_on_effect_rainbow": "Arco-íris",
+  "furn_height_entity": "Altura de",
+  "furn_height_entity_hint": "Secretária regulável: um sensor ou número com a altura atual (cm, mm ou m pela unidade). O tampo é desenhado a essa altura em 3D.",
   "solar_front": "frente da trapeira",
   "card_sun_shadows": "Sombras do sol e luz do céu (realista)",
   "sun_shadows_short": "Sombras",

@@ -4,6 +4,12 @@ All notable changes to NextFloor, newest first. Every release lists what is **Ad
 
 ## [Unreleased]
 
+## [0.36.0]
+
+### Added
+
+- **Sit/stand desk height from an entity** (thanks @akantifirst, #214): a desk has *Height from* for a sensor, number or input_number with its current height (cm, mm, m or inches by its unit; without a unit, values above 10 count as cm). The top, legs and monitor are drawn at that height in 3D and follow every change; the plan keeps its own height. Covers reporting 0–100 % are not supported.
+
 ## [0.35.0.2]
 
 ### Fixed
